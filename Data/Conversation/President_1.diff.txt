@@ -1,0 +1,77 @@
+[Keyword: Greeting]
+	President: At ease, soldiers! You did a great job. I had faith the high command was organizing a strike team to come find me. It seems my faith was not misplaced.
+		Len: Well, sir, about that...
+		Nails: Right. Uh, listen, Scooter...
+		Sidney: I beg your pardon, but you may want...
+	President: Congratulations on the quality of your disguise! You look more like mercenaries than commandos! I admit that I cannot guess to which division you belong. Please, show me your IDs and I will make sure you get the highest commendations.
+		Igor: I will finally get medal!
+		Grunty: Mother will be very proud!
+		Smiley: At last, the world will know that Alejandro Diaz is a hero!
+[Keyword: Greeting]
+	President: Soldiers? I had faith the high command was organizing a strike team to come find me and arrest the <em>Major</em>... Though I cannot help but notice that he is not handcuffed and he is still armed.
+		Spike: You know why? It's because I'm so very pretty.
+	President: Please don't tell me he was an undercover agent, because after all that he has done, I would find that very hard to believe.
+[Keyword: We are mercenaries]
+	President: Mercenaries?! But why? I overheard people talking in camp about <em>Colonel Faucheux</em> entering the valley with a lot of soldiers. I assumed he was coming to free me and restore order. Why would he need to hire... people like you? And this cold-blooded killer here, is he a "mercenary" as well?
+		Spike: I really was a mercenary, Alphonse. I have some... unfinished business, so I guess I'll be back in action for one last time. But don't hold it against these guys - none of this was part of anyone's plan. It's just a jagged alliance we had to form.
+[Keyword: We are mercenaries]
+	President: Mercenaries?! But why? I overheard people talking in camp about <em>Colonel Faucheux</em> entering the valley with a lot of soldiers. I assumed he was coming to free me and restore order. Why would he need to hire... people like you? No offense.
+[Keyword: Your daughter sent us]
+	President: Emma hired you? But... Of course. The government is too divided. She had to be the one to organize a rescue mission. God knows what she must have gone through. I should have never let myself be captured like that.
+		Spike: Amen to that. You just stood there. I expected a little more fight from someone like you.
+		Fauda: Your daughter is very brave.
+		Gus: That's the risk you gotta take when you lead from the front, Woodrow.
+		Scully: I guess I'm lucky I have so many kids. If I ever got captured, they could form their own army. Scary thought, that.
+[Keyword: Faucheux betrayed you]
+	President: Faucheux is a traitor? That explains a lot, and it suggests much more, none of it good. The right wing wants to line their pockets by selling Grand Chien's resources to the highest bidder and the army will answer to whomever pays them the most. When I was abducted, both groups must have seen an opportunity to accomplish their goals.
+		Spike: Curse their sudden but inevitable betrayal.
+		DrQ: There is never a shortage of opportunities for the selfish and greedy.
+		Grunty: I have learned never to trust rich people or people with guns. They will both try to take something from you.
+		President: Forgive me, but that sounds a little odd coming from a well-paid mercenary.
+		Grunty: The irony is not lost on me.
+		Blood: This kind of thing makes my blood boil, man!
+	President: Well, it's clear what I have to do. If I don't act quickly, this country may descend into another bloody <em>civil war</em>! I must go back to the capital at once and try to prevent it.
+[Keyword: Goodbye]
+	President: Thank you again for your help. I wish you luck getting out of this mess. <em>Faucheux</em> is using you to legitimize his actions. I will uncover his plot as best I can at the capital, but I must first rally my political allies and show the people I'm still alive. You may be on your own here in the <em>Adjani</em> for a while.
+		Spike: Yeah. Both of us have our own mess to fix.
+		President: If you hadn't kidnapped me in the first place...
+		Spike: ...Some Brutus would have shot you right in your palace. Come on, Alphonse, what's done is done. Who knows, it may be for the best.
+		President: I find that very hard to believe.
+		Sidney: Not to worry, old chap! We'll give that rapscallion Faucheux what for and have things buttoned up here right quick.
+		Tex: No sweat, partner! We very good at saving homesteads and driving off banditos!
+		Shadow: Don't worry about us. We know how to stay hidden when we need to.
+	President: Farewell, soldiers. I wish you luck, for strength and courage I know you already have in plentiful supply.
+[Keyword: Are you okay?]
+	President: Yes, this is not the first time I've been shot at. Back in those days I had a gun in my hand, but it is like a memory from another life now. Nevertheless, an <em>old soldier's</em> reflexes never die.
+[Keyword: You were in the military?]
+	President: Of course! Don't they teach that in school?
+[Keyword: You were in the military?]
+	President: I was CO of the Grand Chien special forces brigade, rank of Colonel. Me and my boys ended the civil war when we refused to follow unlawful orders and instead we fought to overthrow the bloody communist regime. 
+		Len: You have my respect, sir.
+		Raider: It isn't always easy, being on the right side of the law.
+		Barry: It is good to have conscience, but is heavy thing sometimes.
+	President: Then we laid down our weapons and I answered in court for insubordination, even served some time in prison.
+		Spike: Guess that's just your luck, eh?
+	President: Luckily, free elections were being held and the new government pardoned me. I ran for President and... The rest is the modern history of Grand Chien.
+[Keyword: Faucheux framed us for committing war crimes]
+	President: A tough lesson I learned from the civil war is that those who are about to commit war crimes often try to blame others for doing the same. It's just how wartime propaganda works.
+		Spike: That much is true. A few of my Legion dummies believed they were "liberating" the locals. I had to come up with all kinds of fairy tales to get them to do their fucking job. Good thing that most of 'em are just shameless looters.
+		PierreMerc: And to think I used to believe you were an honorable man!
+		Fidel: When Fidel commit war crime, Fidel always take credit!
+		Raven: Well, Faucheux is about to find out how much I don't appreciate people saying bad things about me.
+		Ice: Well, this Faucheux guy is about to get a war crime committed right on his damn head, and that's no propaganda!
+[Keyword: Anything we need to know about Faucheux?]
+		Buns: We could use all the information you have on this man.
+		Sidney: Any intelligence you could share would be most appreciated, my good man.
+		Raider: Sir, any information you have on the perp would be greatly appreciated.
+	President: Well, I have only surface impressions of him. Young. Capable. Very ambitious. But I know very well his predecessor as a commander of the special forces... Because that was me.
+	President: Here, I'll write down a few tactical details that may be useful for you.
+[Keyword: Anything we need to know about Faucheux?]
+	President: Well, I have only surface impressions of him. Young. Capable. Very ambitious.
+		Spike: Pretty much your opposite, eh, Alphonse?
+	President: To be honest, I wasn't unlike him back in my day. The only difference between us - and also between me and you, Major, - was that I had my moral code and I served my country.
+		Spike: Yeah, you're one of the good boys. Those like me are of the other kind - we get the job done, but sometimes we just get carried away.
+[Keyword: Do you think the Major was part of the conspiracy?]
+	President: No, I believe he was working for himself. He had his private army and he was de facto ruler of the Adjani. I studied him and got to know him a little. If he had any plans to overthrow the government, he wouldn't side with anyone else to do it.
+		President: But I see he is with you. Why don't you ask him yourself?
+		Spike: Seems like you got a good understanding of me, Alphonse. If I ever mean to overthrow you, you'll know it. You'll be facing me on the battlefield, and you'll be armed.

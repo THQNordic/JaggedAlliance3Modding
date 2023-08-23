@@ -1,0 +1,95 @@
+[*Back to Index*](index.md.html)
+
+ActionFXDecal
+=============
+Places a decal when an FX action is triggered. Inherits [ActionFX](ActionFX.md.html). Read [ActionFX](ActionFX.md.html) first for the common properties. 
+
+
+Properties
+----------
+
+Colorization Palette (`self.ColorizationPalette`)
+:  Can be applied if the decal is exported with a colorization map. The colors in 1,2 and 3 correspond to an RGB colorization map. If there is no colorization map exported, the Color modifier property should be applied instead.
+
+1-3: Base Color (`self.EditableColor1`)
+:  Base color controls the surface tint.
+
+1-3: Roughness (`self.EditableRoughness1`)
+:  Roughness controls how shiny the surface geometry is.
+
+1-3: Metallic (`self.EditableMetallic1`)
+:  Metallic controls the degree of metallic luster a surface has.
+
+AnimationLoops (`self.AnimationLoops`)
+: Additional time.
+
+Object1 (`self.Object`) - Object4 (`self.Object4`)
+:  The id of the decal preset, which will be applied. One of the entities is picked at random when the FX is triggered.
+
+Animation (`self.Animation`)
+: Allowed values are: idle.
+
+AnimationPhase (`self.AnimationPhase`)
+:  
+
+FadeIn (`self.FadeIn`)
+: Fade in time in milliseconds. Included in the overall time.
+
+FadeOut (`self.FadeOut`)
+: Fade out time in milliseconds. Included in the overall time.
+
+Flags (`self.Flags`)
+: Allowed values are: , OnGround, LockedOrientation, Mirrored, OnGroundTiltByGround, SyncWithParent.
+
+Scale (`self.Scale`)
+:  Decal scale in %. 
+
+ScaleMember (`self.ScaleMember`)
+:  Object member, which will be used for the scale. This can also be a method, wich will be called and the result will override the Scale property.
+
+Opacity (`self.Opacity`)
+:  Decal opacity.
+
+ColorModifier (`self.ColorModifier`)
+:  Additional color modifier
+
+UseActorColorization (`self.UseActorColorization`)
+:  Toggle on/off
+
+AlwaysVisible (`self.AlwaysVisible`)
+:  Toggle on/off. When enabled will bypass the engine optimization for or drawing off-screen and far away objects at a performance cost. 
+
+Source (`self.Source`)
+:  
+: Allowed values are: Actor, ActorParent, ActorOwner, Target, ActionPos.
+
+Spot (`self.Spot`)
+: Allowed values are: Origin, Muzzle, Muzzlea, Muzzleb, Stepl, Stepr.
+
+Attach (`self.Attach`)
+: Set true if the object should move with the source.
+
+Offset (`self.Offset`)
+: Offset from the target spot.
+
+OffsetDir (`self.OffsetDir`)
+: Offset direction. Allowed values are "", "SourceAxisX", "SourceAxisX2D", "SourceAxisY", "SourceAxisZ", "ActionDir", "ActionDir2D", "FaceTarget", "FaceTarget2D", "FaceActor", "FaceActor2D", "FaceActionPos", "FaceActionPos2D", "Random2D", "SpotX", "SpotY", "SpotZ", "RotateByPresetAngle"
+
+Orientation (`self.Orientation`)
+: Decal orientation. Has the same allowed values as OffsetDir.
+
+OrientationAxis (`self.OrientationAxis`)
+: Axis used for orientation of the decal.
+
+Pick frame by (`self.anim_type`)
+: This parameter determines the UV scrolling animation parameters that are used when the object is exported with a sprite sheet texture in the materials. The animation consists of a set number of frames, defined by the parameters inside Haemimont Material when exporting from Blender - the Animation Frames X and Animation Frames Y parameters, and has an animation time specified in milliseconds.
+
+Speed Multiplier (`self.anim_speed`)
+: This parameter multiplies the animation time, effectively adjusting the animation speed.
+
+Sequence time (`self.sequence_time_remap`)
+: This parameter allows you to change the pacing of the animation from linear to non-linear. It affects the speed of the animation at different points in time, creating a more dynamic and interesting visual effect.
+
+(insert footer.md.html here)
+<link rel="stylesheet" type="text/css" href="Style.css" />
+<!-- Markdeep: --><style class="fallback">body{visibility:hidden;white-space:pre;font-family:monospace}</style><script src="markdeep.min.js" charset="utf-8"></script><script>window.alreadyProcessedMarkdeep||(document.body.style.visibility="visible")</script>

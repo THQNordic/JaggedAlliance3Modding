@@ -1,0 +1,88 @@
+[Keyword: Greeting]
+	LegionRaider_Jose: Oh la la! Don't shoot! I'm just a bystander here. An innocent civilian! I heard some shots fired up the hill. I came to take a look and I saw the <em>Legion</em> getting their asses kicked.
+		Raven: Exactly what an innocent civilian would do.
+		Omryn: Makes sense to me. Better to watch a fight than be in one.
+		Livewire: I want you to know that I completely believe you, but I really don't think anyone else does.
+	LegionRaider_Jose: But I'm not with them! I was just... umm... doing a bit of scavenging on the beach. Yeah, that's how I provide for my <em>family</em>!
+	[Keyword: Don't worry]
+			Raven: Take it easy, mister. We don't shoot civilians... generally.
+			Buns: That's all right, dear. We don't shoot civilians... generally.
+			MD: Oh, we don't shoot civilians! I mean, sometimes we do. I do. By accident, though. Not on purpose.
+		LegionRaider_Jose: Oh, thank you! Maybe you just let me go on my way now, eh?
+	[Keyword: Civilian? Oh really?]
+			Meltdown: Yeah, and I'm the fucking tooth fairy.
+			Raider: A well armed civilian, I see.
+			Grizzly: That gun just for shooting squirrels then?
+		LegionRaider_Jose: Oh, you mean this gun here? It's just, eh, heh-heh... iiiit's just for protection, boss. These are dangerous times on the island.
+	[Keyword: Why not just shoot you]
+			Fidel: One thing Fidel always say: no such thing as innocent bystander. When shooting start, you run and hide or stay and shoot.
+			Meltdown: Don't bullshit me, boy. I shot the kneecaps off the last dumbass who tried that.
+			Nails: Innocent bystanders are just people who haven't gotten a chance to shoot at me yet.
+		LegionRaider_Jose: Please, boss, I... I don't want any trouble! I have a <em>family</em>. You won't snuff out a family man, right?
+			Fidel: This is good point. I like it better when family is here to watch.
+			Meltdown: Depends on how cranky I am. And just so you know, I ain't pooped yet today.
+			Nails: Hell, everybody's got a family. That don't bother me one bit.
+[Keyword: Tell us about that "Legion"]
+	LegionRaider_Jose: Well, that's the Patriotic Legion of Grand Chien! Quite a gang, they are. I think some of them were trying to snatch that <em>Emma</em> girl, the President's daughter, but I guess it didn't work out.
+[Keyword: What do you know about Emma?]
+	LegionRaider_Jose: Don't know nothing, boss! I've just heard that the <em>Major</em> wants the girl. I guess he wishes to complete the set with her <em>father</em>, he-he.
+		Ice: That dude got kidnapped and that's his daughter you're talkin' about. Put some respect in your mouth.
+		Raven: I can tell how upset you are about it.
+		Barry: What is wrong with you? Where is your compassion?
+		LegionRaider_Jose: Oh, sorry, boss. I guess I dropped it.
+[Keyword: Who's the Major?]
+	LegionRaider_Jose: Oh, well, he's the leader of the <em>Legion</em>, of course! No one really seems to know him at all. They say he operates from a secret base up there in the <em>Highlands</em>...
+		Tex: Sounds like he got a real hole-in-the-wall gang. How we get there? 
+		Red: Speakin' as a Highlander, can ye be more specific? Highlands can be damn tricky terrain.
+		Mouse: I love secrets! Can you tell me? I'm a mime, so you know I won't tell anyone.
+	LegionRaider_Jose: Well I don't know for sure. It wouldn't be much of a secret if I knew it, right?
+[Keyword: Who's the Major?]
+	LegionRaider_Jose: Oh, well, he's the leader of the <em>Legion</em>, of course! No one really seems to know him at all. Very mysterious figure. Very dangerous. May I go now? Please?
+[Keyword: Emma's father - you mean the President?]
+	LegionRaider_Jose: You know, you're right. I think I heard something about that. But I don't know anything! I don't want to be involved in any of this, you know. Can I just go back to my <em>family</em>?
+		Raider: You seem to know a lot for someone who's not involved, don't you?
+		LegionRaider_Jose: Don't know what you're talking about, boss.
+		Meltdown: Jeez, you're shadier than my ass crack.
+		Grizzly: Something stinks here, and I'm not talking about my armpits.
+[Keyword: So you have a family?]
+	LegionRaider_Jose: Oh yes, boss. A big family over in <em>the Rust</em>! That's what we call the area just east of town. It's not a nice place. My boys cannot play <em>football</em> without tripping on old war equipment, hehe.
+		Igor: Family is best important. Dolviches understand.
+		Wolf: Old war equipment? Could be worth checking out.
+	LegionRaider_Jose: They depend on me, you see. If I don't bring home the bacon, they don't eat! My poor family.
+[Keyword: Is this a soccer shirt?]
+	LegionRaider_Jose: Oui! Chiens Sauvages, the best team in Grand Chien! Their merchandise is shit though. I asked for a 13, and they printed 31...
+[Keyword: You're with the Legion!]
+	LegionRaider_Jose: No, no, no! This is not true! Don't shoot me, boss! I mean... Maybe I had some dealings with the Legion in the past, but who doesn't? It is a small island.
+		Buns: Yet I am rather convinced you are part of the Legion "family".
+		DrQ: It is difficult to hide one's true self on such a small island.
+		Thor: My friend, you are hiding mostly from yourself. Let the truth set you free.
+	LegionRaider_Jose: Look, just let me go to my family and I... I will give you <em>diamonds</em> from my secret stash, I swear!
+[Keyword: Hands up!]
+		Fidel: It has been too long since the last time I killed someone! I'm getting itchy.
+		Meltdown: I got a hair trigger and a nasty rash on my finger. Got it?
+		Nails: I can't help wondering what you'd look like dead.
+	LegionRaider_Jose: No, boss! Please, don't shoot! Look, just let me go to my family and I... I will give you <em>diamonds</em> from my secret stash, I swear!
+[Keyword: Hands up!]
+	LegionRaider_Jose: Non-non, no need for violence, boss! I've done nothing wrong! See? I'm cooperating.
+[Keyword: Hand over the diamonds]
+	LegionRaider_Jose: Bien sur! Please, take these. I just found them on the beach, I swear... All yours now. I... I can go? And... You won't shoot me in the back?
+		Fidel: No. Fidel like to aim for belly. More screaming that way.
+		Omryn: I only shoot people for money... and for food.
+		Steroid: Just drop your lunch money and run, little man!
+		Vicki: Life be full of mystery, mon. Only one way to find out.
+[Keyword: Die!]
+	LegionRaider_Jose: Merde!
+		Fidel: Hehehehee... Bad news for you. Good news for Fidel!
+		Meltdown: Time to make some fur fly!
+[Keyword: You may go]
+	LegionRaider_Jose: Thank you, boss, I knew you were kind and gentle people! I go now. Please... um... Please, don't shoot me in the back.
+		Fidel: No. Fidel like to aim for belly. More screaming that way.
+		Meltdown: I'll consider it.
+[Keyword: Goodbye]
+	LegionRaider_Jose: Very kind of you to let me be on my way. Thank you! If your travels take you through <em>the Rust</em> any time soon, you're welcome to visit my family. We'll give you all the hospitality you deserve. I'll give it to you good, I promise!
+		Mouse: Is it just me, or did that sound like a threat?!
+		Wolf: Could have phrased that a little better.
+		Fox: If I had a dime for every man who promised me that, I could buy my own island.
+[Keyword: Goodbye]
+	LegionRaider_Jose: Thank you for sparing me, boss! Heavens bless you! I'm getting out of sight, right away! Thank you! Have a nice day! Au revoir!
+		Fidel: But why let go? Fidel no understand. Maybe we shoot him later?

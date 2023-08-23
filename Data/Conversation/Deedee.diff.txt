@@ -1,0 +1,125 @@
+[Keyword: Greeting]
+	Deedee: It worked! See? It worked! Oh, hi. I'm <em>Deedee Bombastic</em>! You here to pick up some boom-toys? I just sort of blew up the last batch, but I can make some more!
+	[Keyword: Are you okay?]
+			Omryn: Is very bad to make big explosion in small space. Are you hurt?
+			MD: Are you hurt? Any dizziness, ringing in the ears?
+			Thor: Are you on fire a little bit or is that just your aura?
+		Deedee: Oh, don't worry about me! Explosions are common around here. I put a blast shield under the workbench and I've gotten really good at vaulting over it.
+	[Keyword: Nice house...]
+			Wolf: Interesting place you got here. The furnishings say "take cover" while the scorch marks on the wall say "it probably won't matter".
+			Buns: Though I have to point out there isn't much left of it.
+			Vicki: This place has seen more backfires than my garage. I like it!
+		Deedee: Thanks! Flame retardant paint! I make my own. I have to. The off-the-shelf stuff isn't strong enough.
+	[Keyword: Watch out with that!]
+			Meltdown: Careful with that, dumbass!
+			Barry: Explosives are not boom-toys! Explosives are just... boom!
+			Wolf: You trying to get yourself killed?
+		Deedee: What are you so angry about? No one got hurt. When something explodes, people are usually only angry at me because they lost their favorite hand. You didn't even lose a finger!
+			Fidel: Fidel lose finger, you lose foot. Both of them.
+			Red: And let's keep it that way, lass!
+			Grizzly: True, but I might have gained a few gray hairs.
+[Keyword: Greeting]
+	Deedee: Oh hi! Bombastic's the name, boombastic's the game! Get it?
+[Keyword: Do you sell explosives?]
+	Deedee: Yeah, but I'm low on supplies. Bring me <em>parts</em>, so I can create some <em>boom-toys</em>! I can make the boring types, but also some novel designs!
+		Fidel: Oh, oh! Fidel wants to see!
+		Ice: Imma stick with the boring ones. Plannin' to keep my arms and legs where they are.
+		Kalyna: Oh! A quest! I will gather up all the parts on the island!
+[Keyword: We can improve the design]
+		Fidel: This is cute design, but Uncle Fidel show you how <em>save parts</em>. See this safety wire? Only needed for defusing and who wants that? Make room for more boom!
+	Deedee: Wow, that sounds super dangerous! I can't believe I didn't think of it. Thanks!
+		DrQ: This advice seems of profoundly dubious merit.
+		Mouse: There's a little voice in my head that screams "bad idea"...
+		Raven: I just got a sinking feeling. Did anyone else just get a sinking feeling?
+[Keyword: Where do we find parts?]
+	Deedee: Have you tried <em>the Rust</em>? That bunker is full of useful stuff just waiting to be conjured into beautiful explosions!
+		Raider: It's also full of your Legion friends, I presume.
+		Red: This bunker would nae be occupied by soldiers, would it?
+		Omryn: Bunker? Maybe food in there, yes? Maybe bad guys, too.
+	Deedee: There may be some Legion boys around, but they're not that bad when you get to know them. Wait, I'll draw you a map!
+[Keyword: Make us some explosives]
+	Deedee: Gladly! But I must have something to work with. I can't make explosives out of thin air.
+		Larry: Ha! Amateur.
+[Keyword: Make us some explosives]
+	Deedee: Gladly! But I must have something to work with. I can't make explosives out of thin air.
+		Larry: Ha! Amateur.
+[Keyword: Make us some explosives]
+	Deedee: Aww, is it Christmas already? Thank you! Here, let's trade - parts for boom-toys!
+		Ice: Then I say we should be goin' already.
+		Barry: I confess, I am curious. I usually order out of catalogue.
+		Meltdown: Know a guy back home that runs the same kind of operation out of the back of his pick-up.
+[Keyword: Make us some explosives]
+	Deedee: Aww, is it Christmas already? Thank you! Here, this is my present for Uncle Fidel and his friends!
+		Mouse: Oh my god, Fidel is totally the "fun uncle" who sets fire to the backyard at family get-togethers.
+		Fox: "Uncle Fidel"?! Is this how their kind reproduces?
+		Igor: Fidel is uncle? Okay. Let us toast to our uncles!
+[Keyword: Tell us...]
+	Deedee: Talk fast, I just set the timer! Hehehe, I'm <em>joking</em>! I don't even use timers! Hehehe. <em>Explosives</em> are so much fun!
+	[Keyword: Why "Boombastic"?]
+		Deedee: That's what they call me! Well, at least that's what I call myself. That grumpy old guy <em>Basil</em> calls me a bunch of other names, but half of them I don't even understand. What does "whack job" mean anyway?
+			Fidel: Whack job means you do good job wrecking stuff. Whack job is best job!
+		Deedee: At least those <em>Legion</em> boys respect my work! They are very careful and polite around my workshop, and they bring me useful parts for explosives!
+			Red: Sorry to disappoint ya, lassie, but yar chums willnae be able to show up after we're done with 'em.
+			Blood: Hate to break it to you, but your clientele on this island is about to get a whole lot smaller.
+			Livewire: Honestly - and I do not mean to judge - I think you should consider looking for better clientele.
+	[Keyword: Stop helping the Legion]
+		Deedee: But... but... they are nice! They bring me parts to make boom-toys!
+			Fox: They lie to you, girl, just like all men do. They keep the best parts for themselves!
+			Barry: These parts? Very low quality.
+			Red: Oh come on, lass! They dinnae give ye the good stuff!
+		Deedee: However, they don't allow me to go near their Fort which is full of wonderful stuff... If you can convince them to let me inside, I'll have enough parts to make boom toys just for myself!
+			Fidel: Uncle Fidel will beat their ass and let you get the best stuff.
+			Livewire: You bet! Pinky promise!
+	[Keyword: Stop helping the Legion]
+		Deedee: But... but... they are nice! They bring me parts to make boom-toys!
+			Raider: This is wrong! They use your explosives to terrorize people.
+			Deedee: Well, if those people brought me parts, I could give them boom toys to terrorize them right back!
+		Deedee: And... Once a boom-toy is made, I don't care where it goes off. I just want it to make a beautiful explosion!
+	[Keyword: What do you think of Basil?]
+		Deedee: He's not a bad person, he just doesn't see things my way. He likes putting things together. I like blowing them up.
+	[Keyword: Why explosives?]
+		Deedee: Well, it started as a hobby. There's a bunch of old war stuff all along the coast - land mines, artillery shells, mortar rounds. I used to play real life minesweeper with my friends until I ran out of friends.
+			Fidel: Ah, much like Fidel's childhood. We used to play dodgeball with grenades. Good times.
+	[Keyword: Know anything about President LaFontaine?]
+		Deedee: Uh, President who? Sorry, no idea who that is. I hope I haven't blown him up or something. People are so careless in minefields, as if they don't have one at home!
+			Fidel: Yeah! Fidel always wonders the same.
+			Larry: Nah, you can always make one when you need one. Home is where the minefield is.
+			Tex: I have cow pasture near home. Very similar to minefield.
+	[Keyword: Joke]
+		Deedee: Explosives are sooo exciting! They can just blow your mind.
+			Grizzly: ...What?
+			Raven: ...What?
+			Steroid: Hahahahahahaha! Yes! Good one!
+	[Keyword: Joke]
+		Deedee: A sapper walks into a mine... Boom, the mine is disarmed! So is the sapper! Hehe, get it?
+			Red: Hehe... Not bad, lass. Not bad.
+			Barry: I do... unfortunately.
+			Steroid: Uh... no.
+	[Keyword: Joke]
+		Deedee: You know where sappers go when they die? Everywhere.
+			Fidel: Heheheee... I like this little girl. She's funny!
+		Deedee: Oh by the way, what do you think about this design? Please try it out and tell me if it works... if you still can.
+	[Keyword: Joke]
+		Deedee: Knock-knock... What's ticking? Oh shit...
+	[Keyword: Joke explosion]
+			Fidel: Hehehe... Good joke, but would be better with screaming.
+[Keyword: Hands up!]
+		MD: Drop the grenade! I mean, don't drop the grenade! Ah, shoot! I mean, don't shoot!
+		Tex: Reach for the sky, little lady!
+		Wolf: I wanna see those hands!
+	Deedee: No-no-no-no, put that gun down and get out of my workshop! Are you nuts? You trying to blow us all up?
+		Fidel: Ehehehee...
+	[Keyword: Die!]
+			Raven: We're ending your little bomb-making operation right here and now!
+			Omryn: Die, little bomb demon!
+			Meltdown: Time to let some lead fly!
+		Deedee: Wanna play rough, huh? Well, I got a pocket full of boom-toys just for you!
+	[Keyword: Die Explosion]
+		Deedee: Take that!
+	[Keyword: Sorry...]
+		Deedee: Huh. Apology accepted. But don't you ever threaten a boom-toy expert again!
+			Fidel: Yeah! That right!
+[Keyword: Hands up!]
+	Deedee: You have a death wish, do you?! Oh well, then I'll be the genie for you! Wish granted.
+[Keyword: Goodbye]
+	Deedee: Have a boom-boombastic day!

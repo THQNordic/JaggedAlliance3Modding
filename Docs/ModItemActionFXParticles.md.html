@@ -1,0 +1,69 @@
+[*Back to Index*](index.md.html)
+
+ActionFXParticles
+=================
+This mod item creates and places particle systems when an FX action is triggered. Inherits [ActionFX](ActionFX.md.html).  Read [ActionFX](ActionFX.md.html) first for the common properties. 
+
+Properties
+----------
+
+Particles (`self.Particles`) - Particles4 (`self.Particles4`)
+:  The id of the particle system, which will be spawned. One of the entities is picked at random when the FX is triggered.
+
+Flags (`self.Flags`)
+:  Allowed values are: , OnGround, LockedOrientation, Mirrored, OnGroundTiltByGround.
+
+AlwaysVisible (`self.AlwaysVisible`)
+:  Toggle on/off. When enabled will bypass the engine optimization for or drawing off-screen and far away objects at a performance cost. 
+
+Scale (`self.Scale`)
+:  Scale in %. 
+
+ScaleMember (`self.ScaleMember`)
+:  Object member, which will be used for the scale. This can also be a method, wich will be called and the result will override the Scale property. 
+
+FollowTick (`self.FollowTick`)
+:  The time interval (in ms) for setting the particles' position when following an object.
+
+UseActorColorModifier (`self.UseActorColorModifier`)
+: If true, parsys:SetColorModifer(actor). If false, sets dynamic param 'color_modifier' to the actor's color.
+
+Source (`self.Source`)
+: Particles source object or position. Allowed values are: Actor, ActorParent, ActorOwner, Target, ActionPos, Camera.
+
+SourceProp (`self.SourceProp`)
+: Source object property object.
+
+Spot (`self.Spot`)
+: Particles source object spot.
+: Allowed values are: Origin, Muzzle, Muzzlea, Muzzleb, Stepl, Stepr.
+
+SpotsPercent (`self.SpotsPercent`)
+: Percent of random spots that should be used. One random spot is used when the value is negative.
+
+Attach (`self.Attach`)
+: Set true if the particles should move with the source.
+
+SingleAttach (`self.SingleAttach`)
+: When enabled the FX will not place a new particle on the same spot if there is already one attached there. Only valid with Attach enabled.
+
+Offset (`self.Offset`)
+: Offset against source object.
+
+OffsetDir (`self.OffsetDir`)
+: Offset direction. Allowed values are "", "SourceAxisX", "SourceAxisX2D", "SourceAxisY", "SourceAxisZ", "ActionDir", "ActionDir2D", "FaceTarget", "FaceTarget2D", "FaceActor", "FaceActor2D", "FaceActionPos", "FaceActionPos2D", "Random2D", "SpotX", "SpotY", "SpotZ", "RotateByPresetAngle" 
+
+Orientation (`self.Orientation`)
+:  Particles orientation. Has the same allowed values as OffsetDir.
+
+PresetOrientationAngle (`self.PresetOrientationAngle`)
+: Orientation angle used when Orientation is set to "RotateByPresetAngle".  
+
+OrientationAxis (`self.OrientationAxis`)
+:  Axis used for orientation of the object.
+
+
+
+(insert footer.md.html here)
+<link rel="stylesheet" type="text/css" href="Style.css" />
+<!-- Markdeep: --><style class="fallback">body{visibility:hidden;white-space:pre;font-family:monospace}</style><script src="markdeep.min.js" charset="utf-8"></script><script>window.alreadyProcessedMarkdeep||(document.body.style.visibility="visible")</script>

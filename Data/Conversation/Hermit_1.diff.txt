@@ -1,0 +1,166 @@
+[Keyword: Greeting]
+	MikeDitch: That didn't go quite as expected. The <em>mushrooms</em> must have lost their kick - those bandits should have fallen asleep and never caused that much trouble! I guess I'll need to gather some fresh supplies.
+[Keyword: Greeting]
+	MikeDitch: Thank you for convincing <em>Mr. Luthando</em> to join me in my solitude. We frail old men, we need to look after each other.
+		Meltdown: Frail, my ass. You poisoned half the Legion, and he blew up the other half.
+		Mouse: Frail? You're the scariest couple of senior citizens I ever met!
+		Grizzly: I don't think that'll be a problem for you. You're both dangerous as hell and damn tough.
+	MikeDitch: It pains me to know he was attacked because of some cash I left at the mansion... Funny thing, I had completely forgotten about that <em>money</em>. Mr. Luthando brought it back to me, but it's not something I need anymore. Here, you can have it.
+[Keyword: Greeting]
+	MikeDitch: Thank you for convincing <em>Mr. Luthando</em> to join me in my solitude. We frail old men, we need to look after each other.
+		Meltdown: Frail, my ass. You poisoned half the Legion, and he blew up the other half.
+		Mouse: Frail? You're the scariest couple of senior citizens I ever met!
+		Grizzly: I don't think that'll be a problem for you. You're both dangerous as hell and damn tough.
+	MikeDitch: Now I know he was attacked because of some cash I left at the mansion... He told me you tricked him and convinced him that I'm dead so you could get it. I would have given it to you anyway - I don't need money and all the trouble it causes.
+[Keyword: Greeting]
+	MikeDitch: Been hearing a lot of nasty rumors about you, the types of things that stink of an <em>Adonis</em> smear job. I'm not quick to believe them - after all, I am well grounded in the art of <em>mushroom management</em>.
+[Keyword: Greeting]
+	MikeDitch: Would you like to try my special mushroom stew with exotic herbs? It's a once in a lifetime experience!
+	[Keyword: Is it safe to eat?]
+		MikeDitch: It is made from completely natural, non-GMO, gluten-free ingredients!
+			Omryn: Any meat in there?
+			MikeDitch: Definitely not.
+			Omryn: It is okay. I have my own.
+			Blood: Not my favorite ingredients, but I do love a good stew!
+			Thor: Sounds delicious!
+	[Keyword: You first!]
+		MikeDitch: Don't worry. It isn't poisonous - well, not TOO poisonous. But then, my stomach is quite accustomed to the gifts of Mother Nature. I never get sick from my stew, just reeeeeally trippy. And this stew is... mmm, spicy in a very... mmm, transcendental way.
+			Larry: Hey, stop it, man, leave some for me!
+			Larry_Clean: Nope. No way. Not interested. Well... maybe just a taste.
+			Reaper: Many poisons can bring one right to the doorstep of death. Let me get my spoon.
+			DrQ: Fascinating. Many natural remedies can cure as easily as kill. The measurement is critical. Where did you study?
+			MikeDitch: The University of Life, my good dude. Look around. We're sitting in the main lecture hall.
+		MikeDitch: The stew... makes you look and, mmm, see into the great Beyond. God, my hands are huuuge.
+	[Keyword: Yes, why not]
+		MikeDitch: Here, have some. I hope you don't mind using my spoon. I just have the one.
+			Mouse: Ew! I have my own spork.
+			Larry: You haven't licked it very well. Mmm, that's how you do it... Hey man, who turned up the volume on the sun?
+			Larry_Clean: Mmm, it's good. I think I know this taste... It tastes like... mmm, velociraptor steak.
+			Omryn: Good meal. You have more?
+			Blood: Not bad, man! Could use a little salt and a few red pepper flakes, but this is good! Hey, you all right? Your face is melting.
+			Reaper: It's... it's wonderful. I can see the doorway to the other side. I AM the doorway to the other side.
+			MikeDitch: Maybe no second helping for you.
+	[Keyword: No, thank you very much]
+		MikeDitch: Suit yourself. Just means more for me!
+			Larry: Awww, man! C'mon...
+			Omryn: Very rude to refuse gift of food, glavny.
+			MD: Oh, don't let us stop you. Just know I have epinephrine if you need it.
+[Keyword: Greeting]
+	MikeDitch: Good day to you! I hope you are eating healthy food.
+[Keyword: Greeting]
+	MikeDitch: Try this tea and tell me when you see the dancing lights behind your eyelids!
+[Keyword: Greeting]
+	MikeDitch: I'm so glad that <em>Mr. Luthando</em> is with me. Finally, someone to appreciate my mushroom recipes!
+[Keyword: So you are “life coaching” the Legion?!]
+[Keyword: So you are “life coaching” the Legion?!]
+	MikeDitch: I did give them a valuable life lesson, even though their lives didn't last for very long. However, I have no pity for such bandits ever since people like them burned my home ten years ago.
+		Thor: I am a life coach, too! The power of positive thinking can unlock so much potential!
+		MikeDitch: Well, I use mushrooms to unlock potential hallucinations, but... Yeah. Kinda the same thing.
+		Magic: You give bad trips to snapperheads. I dig it.
+		Shadow: A sneaky sort of payback. I like it.
+[Keyword: This wasn’t the first “trouble” you took care of]
+	MikeDitch: Indeed, it was not! After decades swimming with sharks in big corporate business, deceiving a bunch of third world criminals into poisoning themselves every now and again isn't even a challenge... and much more rewarding.
+		Ice: This guy. This guy right here? Little scary, not gonna lie.
+		Kalyna: You are the vengeful spirit of the forest!
+		MikeDitch: That's a little more romantic than I would put it, but I like it.
+		Wolf: Right there with ya. I guide high-powered execs through paintball battles and I've lost count of the times I wished I had a real gun on me.
+		MikeDitch: Wouldn't have done much good. Shoot one VP down and eight junior execs sprout up in his place.
+[Keyword: Do you want us to gather mushrooms for you?]
+	MikeDitch: What? No, why would I?
+		Kalyna: You are an old man living in a cottage! You must be a wizard who needs our help to stop some evil sorcerer! Unless you ARE the evil sorcerer...
+		MikeDitch: The only magic I have is from the gifts of Mother Nature. Is she evil?
+		Livewire: Well, you're an old man living in a cottage who just said he needs some fresh supplies. So, do we have to gather ten poisonous Amanitas or something?
+		Larry: I was hoping you would teach us how to find some SPECIAL 'shrooms, if you get what I mean.
+		MikeDitch: Hmm... I think maybe you could stand to cut back a little.
+	MikeDitch: Anyway, I know well enough which mushrooms and herbs are usable and in what way. I don't need help, but thank you for asking.
+[Keyword: Are you a herbalist?]
+	MikeDitch: I'm just an old man with a lot of free time for reading. Besides, I live close to nature, which means I developed a good understanding of which plants are good for tea and which ones shouldn't be used to wipe your ass.
+		Kalyna: Do you have any magical herbs?
+		MikeDitch: They're all magical, in their own special way.
+		DrQ: Your wisdom humbles me.
+		Scope: Tea? I'm listening.
+		Sidney: Tea leaves? Good show, old chap! I'm always on the prowl for a new brew, eh what?
+	MikeDitch: I can give you some <em>medicinal herbs</em>, if that's what you're looking for. You still trust me after what happened to those bandits?
+	[Keyword: Can we trust you?]
+		MikeDitch: I don't know. Can you?
+			Livewire: You did poison those bandits, but it was a poisoning in self-defense, if we're being completely honest.
+			Raider: That's what we're attempting to establish, sir.
+			Scully: Feels like I'm talking to one of my exes.
+	[Keyword: Poison us and you will die]
+		MikeDitch: I know that if I poison you, I will surely die one day.
+			Nails: Yeah, and "one day" could be today, old man.
+			Grunty: Like Mother always says, "There is no doubt that you will die, so eat a cookie."
+			MD: Not quite the response I was hoping for.
+	[Keyword: Yes, we trust you]
+		MikeDitch: Good for me!
+	[Keyword: Yes, we can recognize which herbs are safe]
+		MikeDitch: Good for you! 
+	[Keyword: Redirect]
+		MikeDitch: Here, help yourselves. These flowers have anti-inflammatory properties, and this beauty here is a powerful pain killer. Chewing just one leaf will help you smile away the pain for a whole day.
+			Larry: It's awesome, man! I've already eaten five leaves and a blossom!
+			MikeDitch: I guess you will have some new experiences.
+			Larry: I doubt that.
+			Grizzly: Leaves? Flowers? Thanks, but I'll stick with aspirin.
+			DrQ: The gifts of Mother Nature are very powerful indeed. I thank you.
+[Keyword: Mushroom management?]
+	MikeDitch: "Feed them shit and keep them in the dark." That's a little strategy I learned from <em>Adonis</em>. Seems like they're still doing it - and now you, my friends, are neck deep in it.
+		Buns: Disgusting, but not inaccurate.
+		Igor: Not to worry. I bring shovel and toilet paper.
+		Fauda: That is a fair assessment of our situation. Revolting, but fair.
+[Keyword: You were a CEO?]
+	MikeDitch: Why, yes. I worked for a diamond industry giant. We were prospecting the diamond deposits along the Adjani when the civil war broke out. I lost my family in the fighting. After that, I just dropped everything and walked away.
+		Barry: That is terrible. I am sorry for your loss.
+		Wolf: Sorry to hear that. May they rest in peace.
+		Len: My condolences on your loss. War always hits the innocent the hardest.
+	[Keyword: Did you work for Adonis?!]
+		MikeDitch: Oh, you know them? Well, let me see if I can put two and two together here. They are trying to get back in business and they hired you to do the heavy lifting. I've been wondering how involved they were in this mess with the Legion.
+			Steroid: Heavy is the only kind of lifting I do!
+			Vicki: Not sure if it be their mess, but they be paying us to clean it up.
+			Meltdown: They're all kinds of sketchy, but they pay good, so who the hell cares?
+		MikeDitch: Truth be told, I don't really care. I walked away from Adonis and I plan on staying away.
+	[Keyword: Do you know Corazon Santiago?]
+		MikeDitch: That who hired you? She's in charge now, huh? I guess that figures. She was my assistant for a while. Very ambitious, very promising. I never liked her.
+			Grunty: I think she's quite charming!
+			Scope: I wouldn't say she is exactly chummy, but she seems like a very capable woman.
+			Red: Cannae trust ambitious women! They always want things.
+[Keyword: Who are you?]
+	MikeDitch: I'm a simple hermit who had enough of modern life and decided to start living in peace and harmony with Mother Nature. And when modern life sends troubles to me, toting guns and trying to look mean, I go ahead and life coach them to death.
+		Hitman: Could have sworn I knew all the ways to kill someone, but that's a new one.
+		Tex: Oh! That is great movie title! Life Coach: He Will Coach the Life Right Out of You!
+		Thor: Life coach them... to death? I am not one hundred percent sure you are using that term correctly.
+[Keyword: Who are you, really?]
+[Keyword: Who are you, really?]
+	MikeDitch: Well, I am certain who I am not. I am no longer <em>Mike Ditch</em>, the CEO asshole... Now I'm just a hermit who enjoys the simple pleasures in life, such as poisoning those bandits and then lecturing them about the benefits of a healthy lifestyle.
+		Thor: Right on! "Don't live in denial of a healthy lifestyle" is one of my mantras.
+		Larry_Clean: Dr. Kronenberg did the same thing with me! It, ummm, definitely gets the point across.
+		Livewire: Bleh. I hate being lectured. And poisoned, too, in case that was at all unclear.
+	MikeDitch: Since people like them burned my mansion across the river and killed everyone, I decided to drop everything and just retire here in the jungle.
+[Keyword: Your friend the Butler is still alive!]
+	MikeDitch: What? My dear <em>Mr. Luthando</em> is alive? How is that possible? I thought that the mansion was in ruins! Do you think he would like to come visit me? I... don't think I can go back to that sad place myself.
+		Steroid: Don't blame you! It is very sad! And very scary!
+		Meltdown: Don't know, but you're gonna owe him a shit-ton of back pay, that's for damn sure!
+		Raven: I feel the same way about LA, but I keep going back.
+[Keyword: Corazon framed us]
+	MikeDitch: I always suspected that Adonis had something to do with this mess. Things were looking good. Grand Chien was just about to become a peaceful country, and then someone with an awful lot of money decides they need more and pushes things back into chaos.
+		Len: A tale as old as time.
+		Wolf: It sucks, but it does give people like us job opportunities.
+		Fauda: Such is the work of Shaitan and his followers. 
+	MikeDitch: And Corazon... This is just like her. Chaos was always her element, even back when she was just my assistant. If an opportunity didn't exist, she'd create one, consequences be damned.
+[Keyword: Can you help us?]
+	MikeDitch: What can I do? I'm just an old man who has given up on the world. I don't even have my <em>archive</em> with me. It must have burned with my mansion ten years ago.
+[Keyword: Can you help us?]
+	MikeDitch: What can I do? I'm just an old man who has given up on the world. I don't even have my <em>archive</em> with me. It must have burned with my mansion ten years ago.
+	Butler: Pardon the intrusion, Mr. Ditch, but your archive is safe. Here, I have brought it with me. I knew you would need it one day.
+	MikeDitch: Well, well! Let me see! Oh, everything is there! Mr. Luthando, you are pure gold. I think we will be able to provide our friends with some spicy <em>documentation</em> about Adonis and our little Corazon.
+[Keyword: Goodbye]
+	MikeDitch: Remember - you are what you eat!
+		Meltdown: Nope. I have never eaten an asshole.
+		Blood: That would be a lot of things. Good thing "a whole person" is one of them!
+		MikeDitch: Uh... What?!
+		Blood: ...What?
+		Buns: Indeed. This is why I only eat properly prepared and well-balanced dishes.
+		Omryn: It is true. Omryn is part reindeer.
+		Fox: Ooooh! My favorite meal is fresh warm pie! What does that say about me?
+		MikeDitch: Nope. Not touching that one.
+[Keyword: Goodbye]
+	MikeDitch: Stay healthy!

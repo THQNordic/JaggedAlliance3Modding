@@ -1,0 +1,96 @@
+[*Back to Index*](index.md.html)
+
+ActionFXLight
+=============
+This mod item places light sources when an FX action is triggered. Inherits [ActionFX](ActionFX.md.html). Read [ActionFX](ActionFX.md.html) first for the common properties. 
+
+Properties
+----------
+
+Type (`self.Type`)
+: Allowed values are: PointLight, PointLightFlicker, SpotLight, SpotLightFlicker.
+
+CastShadows (`self.CastShadows`)
+:  Toggle on/off.
+
+DetailedShadows (`self.DetailedShadows`)
+:  Toggle on/off.
+
+Color
+: Light color.
+
+Intensity
+: Light intensity.
+
+Color0
+: Initial color used when the light flickers.
+
+Intensity0
+: Initial intensity used when the light flickers.
+
+Color1
+: End color used when the light flickers.
+
+Intensity1
+: End intensity used when the light flickers.
+
+Period
+: Flicker period.
+
+Radius
+: Attenuation radius in meters.
+
+FadeIn
+: Fade in time.
+
+StartIntensity
+: Initial intensity, from which to fade in.
+
+StartColor
+: Initial color, from which to fade in.
+
+FadeOut
+: Fade out time.
+
+FadeOutIntensity
+: Final intensity after fade out.
+
+FadeOutColor
+: Final color after fade out.  
+
+Interior (`self.Interior`)
+: Toggle on/off
+
+Exterior (`self.Exterior`)
+: Toggle on/off
+
+InteriorAndExteriorWhenHasShadowmap (`self.InteriorAndExteriorWhenHasShadowmap`)
+: Toggle on/off
+
+Always Renderable (`self.Always Renderable`)
+: Toggle on/off. When enabled will bypass the engine optimization for or drawing off-screen and far away objects at a performance cost. 
+
+Source Radius (cm) (`self.SourceRadius`)
+: Radius of the light source.
+
+Source (`self.Source`)
+: Allowed values are: Actor, ActorParent, ActorOwner, Target, ActionPos.
+
+Spot (`self.Spot`)
+: Allowed values are: Origin, Muzzle, Muzzlea, Muzzleb, Stepl, Stepr.
+
+Attach (`self.Attach`)
+: Set true if the light should move with the source.
+
+Offset (m) (`self.Offset`)
+: Offset from the target spot.
+
+OffsetDir (`self.OffsetDir`)
+: Offset direction. Allowed values are "", "SourceAxisX", "SourceAxisX2D", "SourceAxisY", "SourceAxisZ", "ActionDir", "ActionDir2D", "FaceTarget", "FaceTarget2D", "FaceActor", "FaceActor2D", "FaceActionPos", "FaceActionPos2D", "Random2D", "SpotX", "SpotY", "SpotZ", "RotateByPresetAngle" 
+
+Helper (`self.Helper`)
+: Attach a helper object to the created light for debug purposes.
+
+(insert footer.md.html here)
+<link rel="stylesheet" type="text/css" href="Style.css" />
+<!-- Markdeep: --><style class="fallback">body{visibility:hidden;white-space:pre;font-family:monospace}</style><script src="markdeep.min.js" charset="utf-8"></script><script>window.alreadyProcessedMarkdeep||(document.body.style.visibility="visible")</script>

@@ -1,0 +1,155 @@
+[Keyword: Greeting]
+	SmileyNPC: Haha! The mercs have appeared! Time for you to meet your maker, Boss BLUBBER!
+	FleatownBoss: Normally, I would kill you on the spot for that little insult, but I made a promise to Mollie. Stand down, boys. We'll try to talk this out.
+	Mollie: Smiley! What are you doing here? You must leave!
+	SmileyNPC: Don't worry, my love. You're safe now. This monster will pay for everything he's done!
+	FleatownBoss: Why? What have I done? I saved your life in the market and I gave <em>my Mollie</em> the home she deserves. What have I done? How am I a monster?
+	SmileyNPC: YOUR Mollie?! That's it! You will gurgle in your own blood right now!
+		Luigi: Damn, this is some exciting stuff! Hang on, Boss. Let me get some popcorn!
+[Keyword: Greeting]
+	Mollie: <em>Smiley</em>! I knew you were behind all this! I had convinced <em>Booboo</em> to protect you, but you sent these people to kill him!
+	SmileyNPC: What the...?! I didn't send them, but they were right to kill him! He kidnapped you from me!
+	Mollie: No, you stupid little boy! I ran from you! I didn't want the life of a fugitive. I just wanted a home, and Booboo - my sweet Booboo - gave that to me. I asked him to protect you, but now I see it was him I should have been protecting from monsters like you!
+[Keyword: Greeting]
+	Mollie: He's dead?! My Booboo! My sweet Booboo! How could you do this? Why would you take him from me?
+[Keyword: Boss killed]
+	SmileyNPC: You didn't love him!
+	Mollie: What I had was better than love! I had a life of luxury and security... Now I have to go back to <em>Le Lys Rouge</em>.
+	SmileyNPC: You belong with me! We should be together.
+	Mollie: Never! You are a silly, stupid little boy! Good bye.
+	SmileyNPC: What?! But I... I swear, I don't understand women.
+		Mouse: Me neither.
+		Wolf: Don't think we're meant to.
+		Livewire: That is because every woman is unique and all men are the same.
+	SmileyNPC: What do I do now?
+	[Keyword: Come with us]
+		SmileyNPC: Yes! I owe you that much, at least. I need to help you find <em>Biff</em> so I can apologize for leaving the squad like that.
+			Len: Might make a soldier out of you yet.
+			DrQ: Indeed. Amends should be made.
+			Grunty: You should bring a gift. I like chocolate-covered caramels shaped to look like bullets.
+		SmileyNPC: Thank you for giving me another chance. And... For everything you did. I won't disappoint you, you'll see!
+	[Keyword: You should go home]
+		SmileyNPC: Yeah, I guess... I didn't do too well as a merc, did I?
+			Buns: Let's put it this way: Whatever it was you were doing, it wasn't mercenary work.
+			Shadow: You followed your heart instead of your head. That's a good way to get it blown off.
+			Tex: You have too much passion to be mercenary. Maybe try acting?
+		SmileyNPC: Well, I think I should go home and see mi madre anyway. Here, take my gun. I won't be needing it anymore.
+[Keyword: Greeting]
+	SmileyNPC: No, Mollie, no! Say something! Don't worry, you're gonna be alright! The mercs will help you! Medic!!!
+		MD: Um... I'm sorry. She's lost too much blood. I don't even think I could save her if we were standing in the middle of an ER.
+		DrQ: It is too late. Her spirit is already on it's last journey.
+		Fox: Oh, sweetie, I'm sorry. She's gone.
+		Thor: Her body is finished, mein Freund, but her soul is free now.
+	SmileyNPC: Please don't go... I just wanted to be the one to make you happy! But if I can't make you happy, then you can stay with Blaubert. I don't care... just please stay... Mollie...
+	[Keyword: We’re sorry]
+		SmileyNPC: You! I thought you were supposed to be professionals! How could you let this happen?
+			Len: I'm sorry, son. Not everything on the battlefield can be controlled.
+			Reaper: It was just her time. No one could have prevented it.
+			Fauda: Listen to me. I lost my brother in battle. You must turn your pain into a weapon.
+		SmileyNPC: I... I don't want to be a merc anymore... I want to go home.
+			Ivan: This is life. In life... Всё не так, как надо.
+			Buns: Perhaps it's for the best.
+			Len: Maybe it's for the best.
+		SmileyNPC: Here, take my gun. I won't be needing it anymore... Farewell.
+	[Keyword: It’s all your fault]
+			Buns: If it wasn't for your stubbornness, she would still be alive.
+			Len: That's what you get for not following orders, kid.
+		SmileyNPC: Damn you! I didn't want it to be like this! You should have never allowed this to happen...
+			Ivan: It was accident in battle... Так случилось, женщина ушла.
+			Nails: Yeah, maybe so, but some of that blood on the ground is because of you.
+		SmileyNPC: I... I don't want to be a merc anymore... I want to go home.
+			Buns: Perhaps it's for the best.
+			Len: Maybe it's for the best.
+			Thor: Gut. Allow yourself time to grieve.
+[Keyword: Wait a minute]
+	SmileyNPC: What do you want?! Don't you see him? He kidnapped my girl and now he is mocking me!
+	Mollie: He didn't do anything like that. Why won't you listen...
+	SmileyNPC: I know, love. He forced you to say that. Don't be afraid, it will be over in a moment!
+[Keyword: Open fire!]
+	SmileyNPC: Die, you son of a bitch!
+	Mollie: No, Smiley! Don't...
+		Luigi: Hey, you don't fuck around with my boss!
+[Keyword: What happened at the Market?]
+		DrQ: What was the order of events that transpired after you first arrived at the market with Mollie?
+		Raider: I'd like to hear the whole story. Tell me what happened in the market.
+		Scope: Perhaps we need to take a step back for a better look at this. What happened that day in the market?
+	SmileyNPC: The thugs working for this <em>criminal</em> here, they recognized <em>Mollie</em> and they wanted to take her from me! So I shot one of them.
+		Luigi: Damn! You're either brave or very stupid, bambino.
+	FleatownBoss: They weren't my boys. They were smugglers. If you had killed one of my boys, you'd have been dead a long time ago.
+		DrQ: I see... And what happened after you shot this smuggler?
+		Raider: Okay. Attempted kidnapping, homicide... what happened next?
+		Scope: Right. It's coming into focus. Then what happened?
+	SmileyNPC: Well, the <em>Boss</em> ordered them to stand down and let us escape. But he did that just because he had eyed my <em>Mollie</em> and wanted her for himself!
+	FleatownBoss: I must admit that much is true. She is the best concubine I've ever had.
+	SmileyNPC: You...!
+[Keyword: The Boss is a criminal?]
+	FleatownBoss: The Grand Chien government is always changing their laws, way too often for me to be able to keep track of them, so I may have ignored some... or all of them. But in my own way, I am an honest businessman. 
+		Buns: You mean you are a mob boss and you think yourself above the law?
+		FleatownBoss: I'm comfortable with that description, too. 
+[Keyword: Mollie, did he kidnap you?]
+	Mollie: No! I ran away with <em>Smiley</em> because I didn't want to spend my youth in <em>Le Lys Rouge</em> and end up an ugly old whore. And besides, he was so cute when he smiled at me like that...
+	SmileyNPC: We'll be happy together, my love, you will see! We'll buy a house, and have children, and...
+		Luigi: ...And bang this beautiful ragazza to the end of days. Amen to that! You've got a solid plan there, bambino!
+		SmileyNPC: You... You shut up!
+	Mollie: No, Smiley. I was being stupid. You are really nice, but... I decided I wanted a better life for myself. That's why I'm here with my <em>Booboo</em>.
+	SmileyNPC: No! This isn't right! I'll... I'll prove myself to you! Listen up, mercs - if you don't want to help me, that's fine! I'll kill Boss Blows-bears myself and get my girl back!
+		Luigi: Oh wow, we've got a badass over here!
+		Vicki: Hey, mon, she may be having her own opinion on that.
+[Keyword: How did you leave the church?]
+	Mollie: I knew that <em>Booboo</em> liked me a lot. When a man looks at me, I just know.
+		Luigi: Heey, and how about me, bambina? Look into these deep dark eyes, eh?
+		Mollie: No.
+		Buns: I bet you do.
+		Fox: I know what you mean, sister.
+		Meltdown: When a man looks at me, I look at him right back! Men are like dogs. Gotta establish dominance.
+	Mollie: ...So I asked the <em>Pastor</em> to arrange a secret meeting with him after I told Smiley I needed to pray. I am sorry that I had to lie to you, Alejandro, but I didn't know any other way to get away from you.
+	SmileyNPC: You... You whore!
+	Mollie: That's what I am. You knew that right from the start. But this was the only way to get what I wanted and <em>save your life</em> at the same time.
+		Livewire: I for one commend you on finding such a clever solution to a very difficult problem.
+		Scope: Sneaky, but effective. I like it!
+[Keyword: Save his life?]
+	SmileyNPC: How would YOU save my life?!
+	Mollie: Those thugs would eventually find you, but <em>Booboo</em> promised me he would protect you. He knows that I'd be crying if they had you killed.
+		Luigi: "Booboo"? Oh dear God and la Vergine Maria! I'm crying already!
+[Keyword: Smiley, she made her choice]
+	SmileyNPC: But she is mine! You should be helping me get her back!
+		Fauda: No, she belongs to herself and you are an idiot.
+		Len: We did help you, son. But what's right is right.
+		Kalyna: You know, you can still be the hero of this story by letting the princess go.
+		DrQ: Her journey lies down a different path than yours.
+	SmileyNPC: I'm going back to <em>Arulco</em> and I will show everyone what a real mercenary is made of!
+		Luigi: Si, that's a real man! Show them, bambino! You can do it!
+		SmileyNPC: Shut up, asshole!
+	Mollie: Goodbye, Smiley. I wish only the best for you. I am sure you will make some girl very happy.
+	SmileyNPC: Whore!
+[Keyword: Smiley, she made her choice]
+	SmileyNPC: No, she didn't! She promised to be mine forever!
+		Luigi: That's because she hadn't met me at the time! She would have instantly succumbed to my charms!
+		Raider: Sometimes people change. If you meet the right person, you'll change together.
+		Raven: And then that'll be forever... or at least until you're both shot to pieces and die in battle together.
+	SmileyNPC: If you won't help me, I'll do it all by myself. I can kill Boss Blow-hard and all of his goons!
+		Luigi: We all tremble in fear, bambino!
+[Keyword: Smiley, stand down!]
+		Len: There is no "I" in "team", soldier, but there is "U" in failure. Don't be a failure.
+		Gus: Don't be a dang fool!
+		Raider: Don't make a choice you know you'll regret here, Mr. Diaz.
+		Scully: Take it easy, mate. Plenty of fish in the sea, right?
+	SmileyNPC: But she is mine! You should be helping me get her back!
+		Fauda: No, she belongs to herself and you are an idiot.
+		Len: We did help you, son. But what's right is right.
+	SmileyNPC: I'm going back to <em>Arulco</em> and I will show everyone what a real mercenary is made of!
+		Luigi: Si, that's a real man! Show them, bambino! You can do it!
+		SmileyNPC: Shut up, asshole!
+	Mollie: Goodbye, Smiley. I wish only the best for you. I am sure you will make some girl very happy.
+		Luigi: My beautiful ragazza, you're not just the Carnival Queen, you're the top Drama Queen as well! 
+[Keyword: Smiley, stand down!]
+	SmileyNPC: No, you can't stop me! With or without you, I will have her back!
+		Fidel: Yes, you can't stop Smiley! Let's kill them all!
+		Luigi: Si, enough drama already. Time to put down the popcorn and pick up the gun!
+[Keyword: Boss Blaubert, let her go]
+	FleatownBoss: Do you think I would be where I am if I was taking orders from the likes of you?
+	SmileyNPC: Oh but you will!
+	Mollie: Stop this madness, Smiley! 
+	SmileyNPC: I'm doing it for you, my love!
+	Mollie: You're doing it for yourself, you selfish idiot! I hate you!
+		Luigi: Don't worry, bambina! I'll kill him for you!

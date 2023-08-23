@@ -1,0 +1,140 @@
+[Keyword: Greeting]
+	Shaman: The spirits said you would come. It is well you did so before those <em>Legion</em> thugs put a bullet in me. 
+		Tex: You can always count on us to shoot desperados, partner!
+	Shaman: Their bodies will return to Mother Earth and the worms shall be pleased. Their souls will cross over and gain wisdom.
+	[Keyword: They deserved to die]
+		Shaman: They did not die, they merely lost their bodies. Now their spirits will join the soul of this world and aim for completion.
+			Reaper: Their mortal vessels are now empty and hollow.
+			Fidel: Ehehehee, Fidel does not blow people to pieces. No, Fidel give them completion too! Saint Fidel!
+	[Keyword: It is regrettable]
+		Shaman: Yes, I see the light of kindness in your eyes. You will bring good to this land.
+			Fidel: Fidel brings explosives as well.
+	[Keyword: Save us the mumbo-jumbo]
+			Buns: We have not come here for spiritual guidance.
+		Shaman: Of course. How may I help you then?
+[Keyword: Greeting]
+	Shaman: The spirits doubted you, but I knew you could do it! Do you have the <em>Metaviron</em> and can you spare it to save my family?
+	[Keyword: Yes]
+	[Keyword: No, we need it]
+[Keyword: Greeting]
+	Shaman: Thank you for saving my family. I have learned much from you, including humility. May the spirits guide you on your path.
+[Keyword: Greeting]
+	Shaman: You have done so much for us and the spirits are pleased with your presence here. This is why I have decided to give you my ultimate <em>blessing for spiritual protection</em>. Are you willing to accept it?
+	[Keyword: Yes, please]
+		Shaman: You see... I wasn't always a Shaman. I was a warrior, a <em>death squad commando</em>. I took many lives, until the spirits guided me to a better path. Please, accept this relic of my past to help you find a better future.
+			Ivan: Этот броник воняет, как Игорь после бурной ночи.
+			Gus: Got no idea what kind of army uses such personal armor, but I like it. Hell, I love it.
+		Shaman: Take it as a token of my gratitude for what you have done for our community. May the spirits protect your body and soul.
+	[Keyword: Enough with the mumbo-jumbo]
+		Shaman: As you will. I'm sorry for bringing it up.
+[Keyword: Greeting]
+	Shaman: I heard you have saved this little girl Claudette. I knew it! You already bring good to the land.
+		Reaper: I bring the gift of death with one hand, and salvation with the other.
+		Shaman: And I appreciate your knowledge of the balance in the spirit world.
+[Keyword: Greeting]
+	Shaman: Ahhh! I've seen you have enabled the special TV channels! Now that's pleasing the spirits!
+		Fox: You old pervert.
+[Keyword: Greeting]
+	Shaman: Thank you for helping this <em>"Karen"</em> woman. Not that I liked her, but everyone will be happier when she is back in her own home. I hope she feels the same, but the spirits tell me she is one who complains even louder when she is surrounded by things that should make her happy. Curious.
+[Keyword: Greeting]
+	Shaman: It is good you have finally silenced this <em>"Karen"</em> woman.
+		Reaper: In Death we have given her the gift of peace that she didn't have in life.
+	Shaman: I will perform a ritual to soothe her restless spirit, for I tremble in fear that she may haunt us with her endless complaints.
+[Keyword: Greeting]
+	Shaman: Welcome and be blessed with the spirits' guidance.
+[Keyword: Greeting]
+	Shaman: Tell me about your ailments, child.
+[Keyword: What happened here?]
+	Shaman: Those bandits were repeatedly coming here and forcing me to <em>heal</em> them for free. A <em>Shaman</em> can never refuse to help, but the spirits have sent you to deliver me from them.
+[Keyword: Can you heal bullet wounds?]
+	Shaman: Yes. He who heals the spirit must be able to bring relief to the body as well, even a body corrupted by the soul of a petty bandit.
+[Keyword: You're a Shaman?]
+	Shaman: I commune with spirits to help guide people to health and wisdom. I do not require much as payment, but right now I can not devote much time to it. My own family is suffering from this strange <em>illness</em> and my reputation as a healer is at stake.
+		Len: Your family is sick and you worry about your reputation?!
+	Shaman: If I can't cure my own family, what will my people think? They will lose faith in my abilities, perhaps even in the spirits themselves. They need such faith in these miserable times.
+[Keyword: What illness?]
+	Shaman: It was brought here by a patient from a nearby village who came to me in the night. I have been spared the disease, but my family... The spirits have seen fit to punish my pride in my healing abilities by making them too sick for me to cure.
+[Keyword: Are they quarantined?]
+		Buns: Have you taken measures to put the patients under proper quarantine?
+	Shaman: It is well you know something of healing. It gives me hope. Yes, I allow no one but myself to see or care for them in my tent.
+[Keyword: Are you working for Maman?]
+	Shaman: From time to time she pays me for my services. The girls from the brothel need help from a healer to save them from certain ailments.
+		Buns: I can imagine what kind of ailments.
+		Hitman: Come on, Ace, give me some more details! I need to know what to expect!
+		Shaman: Spirits say no details.
+[Keyword: Maman sent us to look for Smiley]
+	Shaman: Oh, why didn't you start with that!
+[Keyword: Maman sent us to look for Smiley]
+	Shaman: Oh, why didn't you start with that!
+[Keyword: How can we help you?]
+	Shaman: There is a way. If you could find and bring me some <em>Metaviron</em> - a compound made from the sap of the Fallow trees - that will surely do! But it is a rare commodity. I heard they sell it at the <em>Flea Market</em>, but I surely couldn't afford it.
+	Shaman: Or if you are a capable <em>doctor</em> yourself, please cure my family. Their lives are more important than my reputation as a healer.
+[Keyword: How can we help you?]
+	Shaman: You can easily save both my family and my reputation as a healer. I just need some <em>Metaviron</em>, if you happen to have some...
+	[Keyword: You can have the Metaviron]
+		Shaman: Thank you! You have not only saved my family, but my reputation as well. The people in this camp will rest assured that the spirits watch over them. Of course, my humble skills as a healer will be always at your disposal.
+	[Keyword: No, we need it]
+		Shaman: The spirits warned me your path was not the same as mine. So be it, but I beg you to find a doctor who can cure the disease. If the people in the camp see that my own family is dying, they will think the spirits have abandoned us.
+[Keyword: We need blood samples]
+	Shaman: Thanks to you and the power of Metaviron, life flows unhindered in the bodies of my wives and children. How can I say no?
+		Scully: Wait, you've got more than one wife? How'd you manage that, mate?
+		Shaman: There are some secrets you are not yet ready to learn, my young friend.
+		Hitman: Wait, "wives"? You old weasel!
+		Red: Ye got more than one wife? You're off yer head!
+	Shaman: I will collect a drop of their life forces for you. I trust that you will not use it for dark purposes.
+[Keyword: We need blood samples]
+	Shaman: Why would you want that? You did help me preserve the life force of my wives and children, but now you want to take some of it away to be used for some dark purpose?
+	[Keyword: You owe us]
+			Buns: In case you have forgotten, we never asked for anything in exchange for helping your family.
+			Raider: Sir, I can assure you that any blood sample you provide us will not be used in any demon summoning, cannibalism, hematolagnia, or cloning. This is strictly a medical emergency. 
+			Sidney: Your loved ones' blood could help cure a terrible disease, old chap! No better use of someone's life force than that, I'd say.
+		Shaman: Indeed... Well, because you helped me save the lives of my loved ones. now I owe you life for life and blood for blood. So be it.
+	[Keyword: For science]
+			MD: In order to immunize against the disease in question, blood from a host who has already fought off the infection can be used...
+			DrQ: Your loved ones' blood now carries the wisdom necessary to fight this disease. We seek to share this wisdom with others.
+		Shaman: Do not think that because I am Sangoma, I do not understand the power of modern medicine. I see that you mean to fight the sickness that almost destroyed my family. Spirits are pleased with that.
+	[Keyword: For science]
+		Shaman: Do not think that because I am Sangoma, I do not understand the power of modern medicine. But you do not. You say "for science" but what you really seek is a miracle.
+			Gus: We did help you with the power of medicine, Woodley.
+			Shadow: He's got a point there. It's not like we even really know if this will work.
+			Nails: Look, maybe we should've taken better notes, but cut us some slack. It's for science... basically.
+		Shaman: Yet when I requested from you a miracle of science, you supplied established medical practice. I see no reason then why you have need of a blood sample.
+	[Keyword: To appease the Spirits]
+			Livewire: I do appreciate your reticence, but you should probably know that the spirits told me to tell you that this was VERY important. 
+			Magic: This is the kind of thing gonna get you in tight with the spirits, ya dig?
+			Fox: Trust me, sweetie, the spirits LOVE it when people share their bodily fluids with each other.
+		Shaman: I can see through you and I notice your smugness. You think it is really easy to outsmart this superstitious old fool by blabbering about things you do not understand. But I see deeper inside you and I know you mean well.
+			Livewire: You know, I am so happy to hear you say that. It seems everyone but my father can acknowledge that fact.
+			Magic: You are too cool, man.
+			Fox: That is SO sweet!
+		Shaman: I will grant your wish, but try not to insult the spirits anymore.
+	[Keyword: To appease the Spirits]
+			Tex: Spirits will be happy! So happy! They maybe have big spirit hoedown to celebrate.
+			Grizzly: Uh... Spirits say big thank you. Uh... Spirits give big gift.
+			Scully: I'm sure the spirits would like to watch you share your wives. I mean, your wives' blood.
+		Shaman: I can see through you and I notice your smugness. You think it is really easy to outsmart this superstitious old fool by blabbering about things you do not understand. You are insulting the spirits with your ignorance.
+[Keyword: We are searching for someone]
+	Shaman: Everyone is. Poor souls are swarming in from all over the country - war refugees, displaced people, and those who have nowhere else to go. There is no one to look after them - no one but me.
+		Buns: We are searching for several mercenaries. They look just like ourselves - but much less competent.
+		Len: There are several mercenaries MIA, we're looking for them.
+	Shaman: I remember meeting someone who looked like your kind - a fresh-faced young man with a rifle. He said his name was <em>Smiley</em>, which was a name I thought suited him very well.
+[Keyword: Do you know where Smiley is?]
+	Shaman: He came to me with his young and beautiful <em>fiancée</em> and asked me to commune with the spirits so they might receive a blessing for their marriage. I would gladly do that, since such things please the spirits...
+		Fox: I bet they are enormously pleased.
+	Shaman: ...But then they told me she ran away from the brothel of <em>Maman Liliane</em> in Pantagruel. The camp is in enough trouble as it is without making HER displeased.
+		Buns: In short, you would like us to help the people of the camp in exchange for information about Smiley's whereabouts?
+		Shaman: In short... Yes.
+[Keyword: Tell us where Smiley is]
+	Shaman: Smiley wanted a blessing from the spirits for marriage, but when I learned that the girl has escaped from <em>Le Lys Rouge</em>, I told them the spirits were busy. Come back another day. 
+		Raider: Bureaucracy at its finest.
+	Shaman: But they said they could not wait another day, so I said if they were in such a rush to get married, they should go to <em>Fleatown</em>. 
+[Keyword: Read this Maquis Manifesto]
+	Shaman: Oh, look at this! The girls of <em>Le Lys Rouge</em> dressed as Maquis!... Got any more of these? Really pleasing to the spirits, yes.
+		Fox: Why you're a naughty little shaman, aren't you? Still, it's nice to see a man your age can still get his, um, spirit up.
+[Keyword: Read this Maquis Manifesto]
+	Shaman: Ah, that young man, Chimurenga, has been busy. Good, good. Got any more of these? Camp is running low on toilet paper.
+		Fox: Ew.
+		Ice: Yo! TMI, bro!
+		Scope: Running low on toilets, too.
+[Keyword: Goodbye]
+	Shaman: May the spirits guide you.

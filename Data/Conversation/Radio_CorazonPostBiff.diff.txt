@@ -1,0 +1,20 @@
+[Keyword: Greeting]
+	CorazonSantiago: Congratulations, you have located the missing <em>M.E.R.C. team</em>.
+[Keyword: Greeting]
+	CorazonSantiago: My condolences about your late colleague, <em>Biff Appscott</em> from M.E.R.C.
+[Keyword: GreetingRedirect]
+	CorazonSantiago: I understand there may be some confusion about their operations in Grand Chien...
+		Len: You may certainly put it in this way.
+		Gus: No shit.
+	CorazonSantiago: However, please do not jump to conclusions. Let us make a <em>rendezvous</em> and I will explain everything to you.
+[Keyword: Have you deceived Biff?]
+[Keyword: What was your deal with the Major?]
+[Keyword: Is it true that the Major was a merc?]
+[Keyword: Redirect]
+	CorazonSantiago: There is no time to discuss that right now. I explain everything to you once we meet at the <em>rendezvous point</em>.
+[Keyword: Rendezvous?]
+	CorazonSantiago: I have been told that Biff has managed to obtain some very valuable <em>green diamond</em>. Please make sure to bring it to our rendezvous point so I will be able to evaluate it.
+[Keyword: Rendezvous?]
+	CorazonSantiago: I have been told that Biff has managed to obtain some very valuable green diamond, but you failed to secure it. This is disappointing. Anyway...
+[Keyword: RendezvousRedirect]
+	CorazonSantiago: I will be waiting for you at the <em>Refugee Camp</em>. It is sufficiently close to your current location, so please don't make me wait for you.

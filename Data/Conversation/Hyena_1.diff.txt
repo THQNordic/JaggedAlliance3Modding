@@ -1,0 +1,144 @@
+[Keyword: Greeting]
+	Hyena: I heard you cubs tracked down and killed that maniac, Flay. I hope his carcass is torn to shreds by animals and shit out all over the Savannah. Hyeee-hehehe! C'est bien. I had my doubts as to whether you could do it.
+		MD: Me too.
+		Ivan: Значит, ты идиот.
+		Hitman: They don't call me Hitman for nothing. Now, how about we talk money?
+	Hyena: About your payment... Those Legion marauders have nearly bled us dry, but we'll spare what we can for you.
+	[Keyword: You can do better]
+			Buns: And the Legion won't be bothering you anymore either. That calls for something extra.
+			Raider: Poaching is illegal. You should be happy we don't bring you in ourselves.
+			Sidney: Perhaps we can come to an arrangement that will satisfy a number of well-armed fellas who have just gotten you out of your predicament.
+		Hyena: Okay, okay. This is all we have right now.
+	[Keyword: It’s okay]
+		Hyena: Here, your well-earned money!
+[Keyword: Greeting]
+	Hyena: Damn you, cubs! I almost pissed my pants. Hyeee-hehehe!
+		MD: Me too.
+		Sidney: Steady on, old chap.
+		Igor: Nothing to fear! Igor is here!
+		Larry: Hey, man, don't sweat it. I pee my pants all the time.
+	Hyena: C'est bien. We can use his carcass to lure scavengers away from the camp. Here is your money. You earned it!
+[Keyword: Greeting]
+	Hyena: What is this?! Why have you brought him here? That wasn't the deal. I said I wanted him dead.
+	[Keyword: Yes, that was the plan!]
+		Flay: Putain de merde! You brought me here so this poacher could have the final kill shot? Cowards! All of you! Cowards!
+	[Keyword: No, he is working for us]
+		Hyena: Working with you? To do what - murder more of my men?
+			PierreMerc: He is done with that. People can change.
+			Barry: Do not worry! He has repented his sins!
+			Magic: Be cool, man. He ain't about that no more.
+			Shadow: We've given him bigger game to hunt.
+		Hyena: I... I won't pay you!
+		Flay: Oh really? What if I change my mind, eh? I can finish my hunt right here, slaughter the whole herd of you buckheads.
+			Fidel: Even better!
+			Blood: Works for me.
+			Reaper: One way or the other, the Reaper takes his toll.
+		Hyena: Okay, okay! Just calm down. As long as the killing stops, that's all I care about. Here's the money. Take it.
+[Keyword: Greeting]
+	Hyena: So, I heard you... recruited Flay? It was my understanding you would kill this maniac, not add him to your team!
+		Raider: He works for us now. He won't be bothering you again.
+		Barry: Do not worry! He has repented his sins!
+		PierreMerc: He is done with that. People can change.
+		Shadow: We've given him bigger game to hunt.
+	Hyena: Well, at least you didn't bring him here. He's your problem now. Here is your payment - take it and feel free to leave.
+[Keyword: Greeting]
+	Hyena: So, I heard you came to an... arrangement with Flay? It was my understanding you would kill this maniac!
+		Raider: Only if we had to. Don't worry. He won't bother you again.
+	Hyena: Well, I guess as long as he won't be hunting hunters anymore, that's all I care about. Here is your payment.
+[Keyword: Greeting]
+	Hyena: What have you done? Now their <em>Legion</em> friends will come around and shoot every last one of us! And I thought that <em>Flay</em> was our only problem...
+[Keyword: Greeting]
+	Hyena: Have you managed to track down the bastard?
+[Keyword: Greeting]
+	Hyena: My friends! So good to see you again! Come. Sit. Stay a while. Let's talk.
+	Ice: Sounds like someone's settin' up to ask us for a favor.
+		Raven: What's got you feeling so friendly, Hyena?
+		Sidney: Brilliant! I was just thinking it was time for a spot of tea.
+		Hitman: Cut the malarkey, Hyena. What's on your mind?
+		Grunty: Ja. Good idea. I need to stop and get the rocks out of my boots and let my toes breathe, anyway.
+		Raider: Why do I get the feeling the topic of conversation isn't going to be my aunt's new cat?
+	Hyena: A little bird told me you are connected with the Boss in Fleatown.
+	Ice: Here it comes.
+		Raider: And you want us to arrange an introduction.
+		Hitman: I don't like talking birds. They make me nervous.
+		Nails: Maybe we are, maybe we aren't.
+	Hyena: It's these damn smugglers! They are skinning me alive with their prices on supplies... excuse the pun, hyeee-hehehe!
+	Ice: That was awful.
+	Hyena: But if you can arrange a deal for me with the Boss directly, I would be happy to slide some of my profits his way. Would mean some money for you as well, if he likes it.
+	Ice: Told you.
+	[Keyword: Not interested]
+		Hyena: Well, that is unfortunate.
+	[Keyword: Okay, we can arrange that]
+		Hyena: Really? Hyeee-hehehe! Thank you! Here, this is for your help.
+	[Keyword: Actually, we're in charge now]
+		Hyena: I thought so! I heard the rumor, but did not want to announce it in case you wanted to keep it secret. Here, take this. Nice doing business with you!
+[Keyword: Greeting]
+	Hyena: I have nothing to say to you. Just keep moving along... you creepy, man-hunting psychos.
+	Flay: Just be glad I'm no longer hunting you, buckhead!
+[Keyword: Greeting]
+	Hyena: Hello there, master hunters! Always nice to see you.
+[Keyword: We’ll take care of the Legion]
+	Hyena: Sure, as long as someone pays you, I bet. And when the money runs out? What then? It's <em>defenseless people</em> like us that will be left to suffer!
+[Keyword: You’re a bunch of cowards]
+	Hyena: Yep. But there are worse things than being a coward. Being dead is one of them. Hyeee-hehehe!
+		Raven: Got news for you. Cowards aren't any more immune to bullets than anyone else.
+[Keyword: You should be afraid of us]
+	Hyena: Eh... Yes, sir. It was just a little joke. Hyeee-hehehe! What is it you wanted to know again?
+[Keyword: You should be afraid of us]
+	Hyena: Nah, you're the good guys. Hyeee-hehehe!
+		Buns: I'm starting to understand the motivation of this "Flay".
+[Keyword: You're defenseless?]
+	Hyena: Of course we are! What can we do against armed criminals like the Legion?
+		Len: You've got guns and judging by all the animal carcasses around here, you know how to use them!
+	Hyena: Hunting rifles don't exactly measure up against assault rifles. Besides, the <em>last guys</em> who tried to oppose the Legion around here didn't end up in such a good way. 
+[Keyword: Who opposed the Legion?]
+	Hyena: Not likely to forget that one! There was some <em>mercenary</em> like you that almost got me killed! Several Legion thugs were transporting him to <em>Camp Savane</em> and stopped here for a quick shakedown...
+	Hyena: And that idiot must have been bombed out of his mind! He could barely stand up and his eyes were bloodshot and crazy! Still, he called out to me like he knew me! Yelled something like "Beef! How are you, ya old fart?"
+		Len: Beef? I think you mean <em>Biff</em>.
+		Gus: Five'll get you ten he means <em>Biff</em>.
+		Ivan: Beef is <em>Biff</em>. Is clear as glass.
+	Hyena: Legion almost shot me dead on the spot! The asshole admitted his mistake, but I'd already peed my pants twice over! Hyeee-hehehe!
+		Larry: Don't you recognize me, man?
+		Hyena: Well I'll be damned! So it all ended up well?
+		Larry: Well like a wishing well! But I wish you didn't just call me names, man.
+		Hyena: Ugh... I'm sorry.
+		Larry: No problem, man. Make sure you wash your pants.
+[Keyword: Who opposed the Legion?]
+	Hyena: Someone who wasn't a <em>coward</em> like us, apparently. Hyeee-hehehe!
+[Keyword: Tell us who opposed the Legion!]
+[Keyword: What is "Flay"?]
+	Hyena: Not "what", "who". There is a maniac who is hunting my men, one by one, and killing them like... like game! His name is <em>Flay</em>.
+		Buns: He is hunting the hunters? Interesting.
+	Hyena: Please, find Flay and <em>kill</em> him. You'll be doing the world a favor, and I'll pay you, of course! Here, I'll mark on your map his <em>hunting grounds</em>. 
+[Keyword: Any more details about Flay?]
+	Hyena: He appeared some time ago, hunted with us for a week and grumbled all the time about us being "amateurs".
+		Buns: I'm guessing he was not just referring to your lack of hunting licences.
+		Shadow: Judging by the scarring on some of these pelts, he wasn't wrong.
+		Reaper: So, he considers himself an expert on how to kill, huh? I look forward to meeting him.
+	Hyena: Then he left for good. We were happy to see him go... But then my people started <em>disappearing</em>. When we started finding the bodies... No, I can't describe it.
+		DrQ: A body tells many stories about its own death. Please, continue.
+		Fox: Why? Is it gross? Maybe I don't need to hear this part.
+		MD: Please, I know it isn't easy, but any details could be important.
+		Raider: How do you know it's Flay?
+	Hyena: Each... each one has <em>trophy horns</em> nailed to their heads. That damn maniac! When he was with us, he used to joke around about doing such things. I guess he wasn't kidding after all.
+		Blood: Seems like my man has a sense of style.
+		Ice: Yo, man... that? That is fucked up.
+[Keyword: Remind us about Flay]
+	Hyena: He appeared some time ago, hunted with us for a while and then he left. Shortly after, he started hunting down my men, killing them and nailing <em>trophy horns</em> to their heads. I want him <em>killed</em>.
+[Keyword: Read this Maquis Manifesto]
+	Hyena: Oh, yes, I have seen these around. I like the way the girl is holding the rifle. Makes me want to do something productive with my hands, if you catch my meaning. Hyeee-hehehe!
+		Steroid: Hammers and cycles are dumb! You want inspiration, just look at my biceps!
+[Keyword: Read this Maquis Manifesto]
+	Hyena: What's this? Oh, stories, huh? That's good. It gets boring at night. Maybe one of the others can read aloud to us.
+		Steroid: Ya, they are stories all right - stupid fairy tales about communism meant for stupid children!
+	[Keyword: You can’t read, can you?]
+		Hyena: No, nothing like that! I just don't have a good reading voice. Hyeee-hehehe!.
+	[Keyword: It's directions to buried treasure]
+			Livewire: It's a treasure map of the, uh, commies' treasure! But with coded directions. See the hammer and sickle? They indicate the spot.
+		Hyena: Directions, huh? Seems like A LOT of directions... Okay, I'll give you cash for it.
+	[Keyword: It's not important]
+		Hyena: No, no, don't bother explaining. We can always make use of good paper like this. You know, savanna plants have rough leaves.
+[Keyword: Goodbye]
+	Hyena: Good luck and good hunting! Kill that bastard!
+[Keyword: Goodbye]
+	Hyena: Well, good hunting!

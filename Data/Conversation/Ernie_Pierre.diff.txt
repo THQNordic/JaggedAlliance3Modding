@@ -1,0 +1,9 @@
+[Keyword: Greeting]
+	Luc: How could you let that happen, Pierre? <em>Tinhay</em> was like a second father to you!
+	Pierre: What happened to Tinhay was unfortunate, but he should have known what my men would do once they found him. Even if I had been there, I'm not sure I could have stopped them. You cannot defy the Legion.
+	Luc: My son, this is not right...
+	Pierre: Do not call me that! I will tell you what is not right - foreigners meddling in our affairs! My men spotted you heading towards the mansion of that vulture Santiago. What were you doing there?
+	Luc: Pierre, I... I'm sorry. Your men are dead. They attacked Miss Santiago's people and were killed. I went there to ask her to help us, to... to help us find a peaceful resolution.
+	Pierre: You... fool! You are always wishing someone else will solve your problems!
+
+I'm leaving a garrison here. From now on, no one enters and no one leaves without my permission, or they will join Tinhay.

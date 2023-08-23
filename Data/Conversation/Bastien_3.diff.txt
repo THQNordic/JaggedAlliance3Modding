@@ -1,0 +1,49 @@
+[Keyword: Greeting]
+	LegionRaider_Jose: Non-non, no more food rations unless you bring something valuable... Oh, non. Mon Dieu, you again?
+	Fidel: Fidel brings something valuable. It is Fidel!
+	LegionRaider_Jose: I'm sorry, boss, I wasn't talking to you, I mean, I didn't know it was you! I... I didn't expect to see you here, what a nice surprise!
+	Len: I bet you didn't.
+[Keyword: Greeting]
+	LegionRaider_Jose: What brings you here, boss?
+[Keyword: Greeting]
+	LegionRaider_Jose: Yes, boss, what can I do for you?
+[Keyword: We’re here to check on you]
+	LegionRaider_Jose: Check on me, boss? Why? I haven't done anything wrong. Honest! I am helping these people. I swear!
+[Keyword: We’re here for you.]
+	LegionRaider_Jose: Non, boss, don't do it, please! I'm begging you, don't kill me! I don't know what you have heard of me, but it isn't true, I swear! I'll do whatever you want!
+[Keyword: What is the deal with food rations?]
+	LegionRaider_Jose: Not a big deal, boss, not at all. Some of my friends are kind enough to deliver food supplies to the camp and I'm just helping the people get fair trade for their <em>valuables</em>!
+[Keyword: You're profiteering]
+		Magic: Nice racket you have here, man. Such a pity if somethin' happens to it.
+		Fox: You naughty boy! I know exactly what you're doing here, so stop sweating and tell me the details. I won't bite, I promise.
+	LegionRaider_Jose: Non-non, boss, I'm just helping those people! I swear! Without me and my <em>smuggler</em> friends, they would have nothing to eat at all, valuables or not!
+[Keyword: What valuables?]
+	LegionRaider_Jose: Well, boss, a refugee doesn't always mean a poor person. They have escaped with their money or Papa's gold watch or Grandma's diamond ring - anything valuable that could be carried. They surely can afford to pay a fair price for their food, eh?
+	Raven: I'm sure they'd get more favorable exchange rates at a Vegas pawn shop.
+[Keyword: What is your gain of this?]
+	LegionRaider_Jose: I'm just helping the poor refugees to put food on their table! I barely make any profit at all!
+		Raven: What if I check your books and find out?
+		LegionRaider_Jose: It's alright, boss, but I keep no books. No books, no problem!
+[Keyword: You will work pro bono]
+		Raider: Here is the deal. You will continue supplying the refugees, for a market price, and we won't shoot you for war time profiteering. I'll personally check on you.
+		Buns: Personally, I dislike unnecessary violence, but in your case it is completely justified. I want you to start helping people instead of robbing them, or I will do what is necessary. You understand, no?
+	LegionRaider_Jose: But what's in it for me?...
+		Raider: You get to keep your skin free of bullet holes.
+		Buns: Question is, what happens if you don't do as we say.
+		Sidney: That is a jolly good question. I daresay, however, you might not like the answer.
+	LegionRaider_Jose: Okay, okay, boss. You are determined to ruin poor old Bastien with this community service you are forcing him to do... Alright, I'll do it, just let me live.
+[Keyword: You will work for us]
+		Magic: Charity is dangerous business, man. You need protection to do it, and protection doesn't come for free.
+	LegionRaider_Jose: Okay, boss! No problem. I get it. You want your share. You'll even have it in advance! Here, the first payment. Come again next week for more! Now, um, I'll just go supervise the operations, yes?
+[Keyword: Read this Maquis Manifesto]
+	LegionRaider_Jose: Oh, these are Maman Liliane's girls! I wonder if she remembers me from the last time I was there. I should go pay her a visit...
+		Fox: Make sure you bring protection! And I'm not just talking about the nine millimeter kind.
+	LegionRaider_Jose: On the other hand, better not. My kidneys are allergic to heavy boots.
+[Keyword: Read this Maquis Manifesto]
+	LegionRaider_Jose: What is this? The communists have you passing out their propaganda? Huh... They pay you anything to do that? Nevermind. Go ahead and just leave it here. Maybe I can trade it for something useful.
+[Keyword: That’s it, you’re dead]
+	LegionRaider_Jose: You bastards!...
+[Keyword: Goodbye]
+	LegionRaider_Jose: Goodbye, boss! May the "spirits" guide you, boss!
+[Keyword: Goodbye]
+	LegionRaider_Jose: Have a nice day, boss!

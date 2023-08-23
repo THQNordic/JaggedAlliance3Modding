@@ -1,0 +1,51 @@
+[*Back to Index*](index.md.html)
+
+ActionFXSound
+=============
+This mod item creates and plays sound effects when an FX action is triggered. Inherits [ActionFX](ActionFX.md.html). Read [ActionFX](ActionFX.md.html) first for the common properties and refer to the colorization guide in [Entity](ModItemEntity.md.html)
+
+
+Properties
+----------
+
+Cooldown (`self.Cooldown`)
+:  Cooldown (in ms) before the same sound FX can be triggered again.
+
+Sound (`self.Sound`)
+:  The id of the sound preset, which will be used to play a sound.
+
+DistantRadius (`self.DistantRadius`)
+:  Defines the radius for playing DistantSound.
+
+DistantSound (`self.DistantSound`)
+: This sound will be played if the distance from the camera is greater than DistantRadius.
+
+FadeIn (`self.FadeIn`)
+:  Fade in time in milliseconds.
+
+FadeOut (`self.FadeOut`)
+:  Fade out time in milliseconds.
+
+Source (`self.Source`)
+: Sound listener object or position.
+: Allowed values are: UI, Actor, Target, ActionPos, Camera.
+
+Spot (`self.Spot`)
+: The name of the spot, to which the sound should be attached.
+: Allowed values are: Origin, Muzzle, Muzzlea, Muzzleb, Stepl, Stepr.
+
+SpotsPercent (`self.SpotsPercent`)
+: Percent of random spots that should be used. One random spot is used when the value is negative.
+
+Offset (`self.Offset`)
+: Offset against source object.
+
+OffsetDir (`self.OffsetDir`)
+:  Offset direction. Allowed values are "", "SourceAxisX", "SourceAxisX2D", "SourceAxisY", "SourceAxisZ", "ActionDir", "ActionDir2D", "FaceTarget", "FaceTarget2D", "FaceActor", "FaceActor2D", "FaceActionPos", "FaceActionPos2D", "Random2D", "SpotX", "SpotY", "SpotZ", "RotateByPresetAngle"
+
+Attach To Source (`self.AttachToObj`)
+: Attach to the actor or target (the Source) and move with it.
+
+(insert footer.md.html here)
+<link rel="stylesheet" type="text/css" href="Style.css" />
+<!-- Markdeep: --><style class="fallback">body{visibility:hidden;white-space:pre;font-family:monospace}</style><script src="markdeep.min.js" charset="utf-8"></script><script>window.alreadyProcessedMarkdeep||(document.body.style.visibility="visible")</script>

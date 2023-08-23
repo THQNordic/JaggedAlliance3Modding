@@ -1,0 +1,130 @@
+[Keyword: Greeting]
+	Granny: Who the fuck are you and what the fuck you want?
+	[Keyword: We are mercenaries]
+		Granny: Well, I didn't think you were fucking tourists. What the fuck you want, mercenaries?
+	[Keyword: We are friendly]
+		Granny: Good for you. I'm not. I run a store full of fucking guns. If you came here looking for fucking ice cream and lollipops, you're out of luck.
+	[Keyword: Fuck you!]
+		Granny: Is that all that you got? You're fucking children. Don't trade swears with me. I've been sworn at by experts, and you're just schoolyard bullies.
+	[Keyword: Fuck you!]
+			Nails: Well, I'm the fucker who will set your store on fire if you fuck with him. Is that good enough for you?
+			Meltdown: I'm the bitch who's gonna slap you silly if you keep giving me sass!
+			Fidel: Fidel wants what Fidel always wants - to kill people who swear at him.
+		Granny: Ah, I see you're a person of culture. We'll get along just fine.
+[Keyword: Greeting]
+	Granny: Thanks for the fucking rescue. I'm still pissed about the Legion surprising us... I shouldn't have put fucking Mad Hannah on guard duty.
+[Keyword: Greeting]
+	Granny: I can't wait for the fucking Legion to show up so I can see the old gang back in action.
+[Keyword: Greeting]
+	Granny: The fucking Legion had no chance against the <em>Coffee Beans</em>! And you all managed not to fucking piss your pants, so I guess that's something.
+[Keyword: Greeting]
+	Granny: The fucking Legion took us by surprise! Fuck these handcuffs, fuck these bombs, and fuck everything in between!
+[Keyword: Greeting]
+	Granny: What?
+[Keyword: Who are you?]
+	Granny: I'm Granny Cohani, for fuck's sake. Everyone knows me. Back when I was in the <em>Coffee Beans</em> gang, mothers used my fucking name to scare children who misbehaved.
+		Kalyna: So you're some kind of a bogeyman?
+		Granny: Bogeywoman!
+		Scope: Like if they caught them swearing, for example.
+		Granny: Damn fucking right.
+		Raven: You mean like, "Stop swearing or you'll grow up to be a potty-mouthed old hag?"
+		Granny: Fuck you.
+[Keyword: The Coffee Beans?]
+	Granny: The toughest fucking gang in town. In our day, we hung out at the <em>Rye Bar</em>. Good old <em>Ma Baxter</em> ran it back then and she would slap any fucker who wanted to start shit.
+		Mouse: Things are just better when a woman is in control!
+		Raider: I respect a woman who knows how to keep the peace.
+		Igor: I never understand people who start trouble when drunk. What is point of that? Drink is for celebration!
+	Granny: Now she's giving hell only to the devil, and her dumb son is running the bar.
+[Keyword: Is this Ma Baxter’s shotgun?]
+	Granny: What the fuck?! How did you get this relic? No, fuck that, I don't really care. I just want it! I'd trade you my fucking soul for it... if I had one.
+[Keyword: Ma Baxter’s Shotgun]
+	Granny: How much do you want for the gun?
+	[Keyword: $5000]
+		Granny: Right! Now give me the fucking gun. Oh, yes, come to Granny!
+			Sidney: I have the unpleasant feeling that we may have set our asking price a smidge too low.
+			Barry: This was a most efficient trade. I think that is good... right?
+			Nails: I think we may have left some money on the table, Scooter.
+	[Keyword: $10,000]
+		Granny: I don't have that much money, but the <em>Coffee Beans</em> will help cover the cost.
+		Granny: Now give me the fucking gun. Oh, yes, come to Granny!
+	[Keyword: $10,000]
+		Granny: I don't have that much fucking money. Maybe I can see about getting the girls from the old gang to pitch in. That shotgun belongs with the <em>Coffee Beans</em>!
+	[Keyword: We want your gang to fight for us]
+			Fox: I want to see you girls in action!
+			Fauda: I wish to see what kind of warriors are these Coffee Beans.
+			Buns: If they fight as tough as you talk, I would very much like to see your gang in action.
+		Granny: That can be arranged. Just wait till I tell them about Ma Baxter's fucking Argument Invalidator!
+	[Keyword: You can have it for free]
+		Granny: Really? If this is some fucking joke...
+			Len: I never joke about guns, ma'am.
+			Thor: This gun has its own aura... and I sense that it matches yours.
+			DrQ: Perhaps this weapon will serve to remind you how its previous owner did not appreciate rudeness.
+			Granny: What the fuck you mean by that?
+			DrQ: But then again, perhaps not.
+		Granny: So you really mean to just give me the fucking gun? I don't know what to say... Fuck. I mean... Thank you.
+			Granny: And don't you ever mention to the gang that I gave you the "T" "Y" - they'd never respect me again and then I'd have to go and fucking kill you.
+	[Keyword: No way, we need it]
+			Steroid: You are too small and female for this gun.
+			Red: I'll be dead and buried before I see a gun like this put into hands like yours.
+			Omryn: I think gun is for shooting, not for selling.
+		Granny: Well, fuck you then.
+	[Keyword: We’ll think about it]
+		Granny: Well, fuck.
+[Keyword: Why are you so mean?]
+		Kalyna: You remind me of my own babusya. But she does not use profanity like you do.
+		Fauda: Your mouth has no respect. Until it does, you will get none from me.
+		Mouse: There is no need to be so mean.
+		Raven: Sell "sarcastic, crotchety bitch" some place else. We're full up here.
+		Scope: Oh, come on, love. You are overdoing it a bit.
+		Vicki: This be why I prefer cars over people. Engines don't swear at you for nothing.
+		Buns: Your attitude is not appreciated. You'll take a more civil tone or I will put you in time-out.
+		Fox: I'll let you in on a little secret, Gran. Being tough doesn't mean you need to be a bitch.
+		Meltdown: I'm serious - I got two fists just achin' to take the sass right outta your mouth.
+		Livewire: I really do not understand the hostility. We have not done anything bad to you. I would know if we did.
+	Granny: Well, fuck. Don't take Old Gran's mouth so serious, sweetheart. I mostly save it for the men... Uh, I didn't mean that the way it sounded. Anyway, it's just the way I fucking talk.
+[Keyword: Why are you so mean?]
+	Granny: Because it's my only fucking personality trait! Is that a fucking problem?
+		Scully: Nah, it's just weird. I usually have to marry a woman before she starts being mean to me.
+		MD: I'm too terrified to say yes, so I'll say no.
+		Red: I find such honesty incredibly alluring. Do nae be trying to work your feminine wiles on me, woman!
+		Granny: You're too young for me.
+[Keyword: Are you selling guns?]
+	Granny: No, I'm keeping them for sentimental reasons. Of course I'm fucking selling the fucking guns.
+		Kalyna: I am very sentimental about the carbine my babusya used to teach me how to shoot. I could never sell it! What if all these weapons were a gift from your own babusya?
+		Granny: Would be a hell of a gift.
+		Fauda: There is nothing wrong with attaching sentiment to a weapon. I am still keeping my late brother's rifle.
+		Hitman: Got any special promotions going on?
+		Granny: Sure! Just use the promo code "FUCK YOU" at check out.
+		Granny: Oh, I'm just fucking teasing. Take a look and see if you can find something you like. Just don't resell anything to the <em>Legion</em>, okay?
+		Granny: The rule is, you touch something - you pay with money. You steal something - you pay with your fucking life. No reselling to the fucking <em>Legion</em>, or I'll find you and fuck you up.
+[Keyword: You don’t sell to the Legion?]
+	Granny: Fuck no! No guns for those fucking rapists and marauders. They only get bullets from me... for free - if you know what I mean.
+		Reaper: Indeed I do. You give the gift of eternal rest to those who deserve it most.
+		Grunty: What a coincidence! I, too, enjoy giving tiny gifts of pain to all the bad little rapists and marauders of the Legion.
+		Shadow: I think I'm picking up what you're putting down.
+	Granny: Are you planning to do something about their fucking <em>N-Night</em> operation, or are you going to let the fucking Legion take over my fucking Docks?
+[Keyword: Do you accept Grand Chien franks?]
+	Granny: For the love of fuck, no. Give me some real fucking money, not this fucking shit. Grand Chien money isn't even fit for fucking toilet paper.
+		Omryn: It not so bad. I have had worse.
+		Wolf: I'd ask how you know that, but I don't really want to know.
+		Sidney: Right. Well. That's... certainly something to keep in mind.
+[Keyword: N-Night?]
+	Granny: Come on, even the fucking people on the street know about the Legion's grand fucking operation. Those fuckers can't keep a secret even if their fucking lives depend on it... which happens to be the case.
+		PierreMerc: Secrecy requires discipline, and discipline is not something in great supply in the Legion.
+	Granny: They plan to swarm the place in a few days. See? I even marked the <em>N-Night date</em> on my calendar.
+		Ice: Well, look at that. I got me a party to crash.
+		Grizzly: I can't wait to lay out the welcome mat for them... And by "welcome mat", I mean hot lead.
+		Magic: Nice of them to let us know in advance. They're gonna get a magic show like none other.
+[Keyword: Can the Coffee Beans help us?]
+	Granny: To be honest, I'd be happy to see the old gang together again. But... Well, let's say we did not part on the best of terms.
+	Granny: If I try to talk to <em>Gal Wilma</em>, <em>Kayla</em>, <em>Rude Trudy</em>, <em>Old Vinnie</em> or especially <em>Mad Hannah</em>, there would likely be some blood spilled.
+	Granny: Perhaps YOU can convince those fucked-up old hags to help fight off the Legion. If they're interested, tell them to come see me. I promise I won't shoot them.
+		Smiley: I will not fail. I am the best at convincing women to do things they would not ordinarily do.
+		Scully: I've never been much good at convincing women to do anything except divorce me, but I'll give it my best effort.
+		Gus: I won't make any promises, Woody. We'll see if this old dog can remember how to chase some p-... uh, cats.
+[Keyword: Goodbye]
+	Granny: Yeah, fuck off.
+[Keyword: Goodbye]
+	Granny: Fu... Uhhh, goodbye.
+[Keyword: Goodbye]
+	Granny: Goodbye.

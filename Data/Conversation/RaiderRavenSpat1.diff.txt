@@ -1,0 +1,12 @@
+[Keyword: Greeting]
+	Raven: ...
+	Raider: Huns, is something wrong?
+	Raven: Everything is fine, Ron.
+	Raider: Oh, boy. It's about that thing isn't it? I said sorry and everything.
+	Raven: I said everything is fine, Ron!
+	Raider: Shit. It's the other thing, isn't it?
+	Raven: Of course, it's the other thing, you lug!You're sleeping on the couch when we get home.
+	Raider: Oohhh no! Not taking the heat for that one. You're in the wrong and you know it.
+	Raven: Fine then! Like I said, everything's fine!
+	Raider: Fine!
+[Keyword: Goodbye]

@@ -1,0 +1,63 @@
+[Keyword: Greeting]
+	JeanPierre: Oh, good day, my dear friend! I am glad that you decided to visit. I'm happy to report that all mining operations are doing well!
+	[Keyword: Are they?]
+		JeanPierre: Um, yes, of course. What have you heard? I mean, definitely yes. Everything is under control.
+	[Keyword: You're doing great.]
+		JeanPierre: Thank you! I'm sending my reports always on time and in great detail. I hope that lady Corazon appreciates that.
+		[Keyword: Oh, she loves your work.]
+			JeanPierre: Oh really? I mean, of course she does... Wait, is something wrong? 
+[Keyword: Greeting]
+	JeanPierre: Oh, it's you! Miss Santiago said she would be sending someone, but I didn't expect it to be her mercenaries... I don't mean that in a bad way! It is good to see you! In fact, you might be just the help I need.
+		Magic: If you're looking for a fence, bro, I got some bad news for you.
+[Keyword: Greeting]
+	JeanPierre: Have you dealt with those thugs yet? I'm so grateful for your help.
+		Raven: THIS IS THE FIRST INTERJECTION OBJECT LINE 1
+		Fauda: THIS IS FAUDA RESPONDING TO RAVEN'S INTERJECTION
+		Vicki: THIS BE FROM SECOND INTERJECTION OBJECT, LINE 1
+		Raven: THIS SHOULD BE JEAN PIERRE RESPONDING TO VICKI'S INTERJECTION BUT THAT DOESN'T WORK SO TEMPORARILY USING RAVEN TO DELIVER THIS LINE
+		Fauda: THIS BE FROM THIRD INTERJECTION OBJECT LINE 1
+		JeanPierre: THIS IS JEAN PIERRE RESPONDING TO FAUDA'S INTERJECTION
+		Buns: THIS IS 4TH INTERJECTION LINE 1
+		JeanPierre: THIS IS JEAN PIERRE RESPONDING TO BUNS INTERJECTION
+[Keyword: Greeting]
+	JeanPierre: Yes?
+[Keyword: Greeting]
+	JeanPierre: You're back! Did you get the passes from those men?
+		Ice: Got way more than that. You best have a seat.
+	[Keyword: We got the passes.]
+		JeanPierre: Oh, thank goodness! I owe you a great debt. How can I ever repay you?
+			Fauda: I think maybe you cannot.
+		[Keyword: You owed them money.]
+			JeanPierre: I... I see you already know the truth. I did owe them money. After I got this job, I started spending money back home. I wanted to be the big man in town. I wanted to build things and repair all the damage the Legion had caused. 
+			JeanPierre: A new well here and a new sidewalk there... And then... Well, I lost track of my spending. Took out too many loans. When the debt collectors showed up, there was only one way to repay them.
+				Ice: This is what happens when you are small and flaccid. People step on you and you are squished.
+		[Keyword: you gave them the passes.]
+			JeanPierre: They insisted! I couldn't say no! I owed them too much money and they said they could carry more diamonds out in their own pockets than I ever could in mine. I thought it would be okay... that they would only come once.
+			JeanPierre: But of course they kept coming back. They wouldn't even let me see the ledger to see how much I still owed. When I tried to stand up to them, that's when they threatened to hurt my family. 
+				Igor: This is terrible! It makes me want to kill them all over again!
+		[Keyword: What should we do with you?]
+			JeanPierre: Please! Please, I beg you. Show me mercy. I was only trying to do right by my neighbors and my family. I was a fool, yes, but... but... They've already suffered so much! Without my help they have nothing.
+				Shadow: Mercy. Interesting concept. Good in theory. Bad in practice. 
+			[Keyword: Sorry, need to send a message...]
+				JeanPierre: Noooooooooooooo! (Gunshot)
+			[Keyword: You're fired.]
+				JeanPierre: W-what? But I... Well, I suppose I deserved that. I'll just clean out my locker.
+			[Keyword: Take this and stay out of trouble.]
+				JeanPierre: Y-you... You would do this? Truly? Oh, thank you! Thank you! You truly are a saint! I will have a statue built in your likeness outside my home. No, a fountain! I... Ah, but no. Perhaps this is not a good idea.
+					Raider: No, I like the fountain idea. 
+[Keyword: What do you need?]
+	JeanPierre: I... ummm... may have lied a little to Miss Santiago. I do know where the missing diamonds are. There are these men, you see. They found out I have this job and so they come into camp and threaten me and my family if I don't give them what they want!
+		DrQ: It is inevitable that one man's success attracts another's avarice.
+	[Keyword: What thugs?]
+		JeanPierre: I don't know them, exactly. Maybe they used to work for the Legion? I don't know. I just know they are armed and seem very mean.
+			Nails: Ha! Buddy, you just described most of my friends.
+	[Keyword: What about the Militia?]
+		JeanPierre: Well, this is very embarrassing. It is why I have been afraid to ask for help. The thugs have my visitor passes. I... I mislaid them and somehow these men found them. If I tell the militia about it, they'll never trust me! Not to mention what Miss Santiago would do... 
+	[Keyword: Okay, I'll help.]
+		JeanPierre: You will? Oh, thank you! I promise nothing like this will ever happen again. Once you get me back those passes, I'll keep them under lock and key! Here... I'll mark on your map where the thugs can usually be found
+			Len: Gonna take care of this for you, but let's not make it a habit.
+	[Keyword: You're fired.]
+		JeanPierre: W-what? But I... Well, I suppose I deserved that. I'll just clean out my locker.
+			Wolf: Tough break, but hey - there's always mercenary work, right? 
+[Keyword: Goodbye]
+	JeanPierre: Oh, okay. Talk to you later, then.

@@ -1,0 +1,42 @@
+[Keyword: Greeting]
+	Pierre: You have put my patience to the limit. Time to die, merc!
+[Keyword: Greeting]
+	Pierre: My father is dead and I know you played some part in it. This is why all foreigners should be expelled from Grand Chien! You spread pain and misery wherever you go! No more! First, I'll destroy you and then I'll deal with that bitch, Santiago!
+[Keyword: Greeting]
+	Pierre: Now what? Please don't bother me until you have completed your mission.
+[Keyword: Greeting]
+	Pierre: I see our colors fly above Flag Hill. Good job! Ordinarily, I would be impressed, but in this case, it only proves to me how big a fool you are. Foreign mercenaries will never join the Legion, not on my watch anyway. Open fire!
+[Keyword: Greeting]
+	Pierre: You're tough, I'll give you that. This is good. I was hoping we would get a chance to chat before I killed you. Care to tell me why you are here or should we just start shooting each other?
+[Keyword: Greeting]
+	Pierre: So, I finally get to meet Santiago's mercenaries. I was hoping we would get a chance to chat before I killed you. Care to tell me why you are here or should we just start shooting each other?
+[Keyword: Greeting]
+	Pierre: I imagine I have you to blame for killing my men near Flag Hill. I was hoping we would get a chance to chat before I killed you. Care to tell me why you are here or should we just start shooting each other?
+[Keyword: Greeting]
+	Pierre: Now what? Go away. Leave Ernie before my patience with you runs out.
+[Keyword: What's it to you?]
+	Pierre: The Major teaches us to know our enemy. And so I'm asking - why are you here?
+	[Keyword: For the money]
+		Pierre: You came for the diamonds, eh? That's what I thought. Everybody comes for the diamonds. You murder my people and plunder my country for your own profit and for that I will make you bleed.
+			Fidel: Murder, plunder, blood... Now you are just turning Fidel on!
+	[Keyword: For kicks]
+		Pierre: Ha! A Big Game Hunter, eh? Here to hunt Man - the most dangerous game, n'est-ce pas? Well, you chose the wrong hunting ground. The people of Gran Chien are no game, you filthy foreigner!
+	[Keyword: For the respect]
+		Pierre: Then we are the same, you and I. Respect is earned and there is no better place to earn it than in battle. Prepare yourself!
+			Ivan: [Russian] Idiots! [English] Come! Ivan is ready.
+	[Keyword: It's about peace and stability]
+		Pierre: Peace? The Major tells us that peace will come only after we have made a friend of war. Now I see what he meant. Okay then, we won't fight today. I'll be watching you, mercenary.
+	[Keyword: (Lie) To join the Legion]
+		Pierre: You? A foreigner? You wish to be a... Legionnaire? Hehe. Well, perhaps you know a winning side when you see one. Very well. To show me your worth I want you to do what my soldiers failed to achieve. Place the <em>flag</em> of the Legion on <em>Flag Hill</em> and I will open our fortress doors and you will be welcome.
+		[Keyword: Okay]
+			Pierre: Good. Come find me when it is done. I'll be here.
+		[Keyword: Not interested]
+			Pierre: You were making a joke then? I hope you enjoyed it. It was your last!
+[Keyword: Let’s dance, bitch]
+	Pierre: It does not matter. I will get my answers one way or another.
+[Keyword: Goodbye]
+	Pierre: You don't even want to hear my question first?
+	[Keyword: Yeah, okay]
+		Pierre: Good!
+	[Keyword: Not really]
+		Pierre: It does not matter. I will get my answers one way or another.

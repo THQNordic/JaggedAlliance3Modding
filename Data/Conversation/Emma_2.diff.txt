@@ -1,0 +1,212 @@
+[Keyword: Greeting]
+	Emma: Thank you, friends!... May I call you that? I am so sorry for being too informal, but... I'm so happy to see you again.
+	Emma: I am also glad that this time it was you, not Corazon's bodyguards, who rescued me. You have helped preserve our <em>heritage</em> - something I doubt they care about. And I am positive that with the <em>information</em> I found, you will be able to save my father as well.
+[Keyword: Greeting]
+	Emma: Did you learn anything about my father?
+[Keyword: Greeting]
+	Emma: I am sorry that I was so naive as to trust Corazon Santiago. It should have occurred to me that she would prioritize her financial interests, even at the cost of involving her in a <em>coup</em>.
+[Keyword: Greeting]
+	Emma: You are my last hope to save my father.
+[Keyword: What heritage?]
+	Emma: This very building those Legion barbarians damaged is an important part of Grand Chien's past. This is where the independence of our country was proclaimed by <em>Généralissime Chien</em> himself!
+		Nails: Is that the fat guy with the fat dog outside?
+		Emma: I admit that the statue isn't the finest example of contemporary plastic art.
+		Scope: We saw the statue. It's quite... eye-catching.
+		Emma: I admit that the statue isn't the finest example of contemporary plastic art.
+		Wolf: We saw the statue. Did he proclaim independence while he was feeding his dog or something?
+		Emma: I admit that the statue isn't the finest example of contemporary plastic art.
+	Emma: Back before the Legion kidnapped my father, I was trying to convince <em>Gouverneur Le Pingouin</em> to turn it into a <em>Museum of the Adjani</em>.
+		Emma: Poor Monsieur Le Pingouin. He didn't deserve such a fate.
+[Keyword: Can we trust Gouverneur Le Pingouin?]
+	Emma: He is... a good and honest person. Or at least his heart is in the right place. I know I can count on him. After all, he supported my father and he helped me find money to hire you!
+[Keyword: Museum of the Adjani?]
+	Emma: This region is not only rich in resources, it is also the cradle of civilization in this part of the world. It saddens me to see our heritage being smuggled out of the country or destroyed in pursuit of diamonds.
+		Blood: Bloody colonizers suck your country dry.
+		Hitman: It saddens me, too. If you need a hug, I'm your man.
+		DrQ: It is a lamentable fact that culture is very often sacrificed for profit.
+	Emma: If you happen to find any <em>archeological treasures</em>, would you please bring them here?
+[Keyword: The gouverneur agreed to fund the Museum]
+	Emma: Really?! But I thought he would never... Oh, thank you! Not only are you expert warriors, but skilled diplomats. I cannot praise you enough!
+		Fidel: Fidel is full of diplomatics! And TNT.
+		Fox: Oh, well, it's all just a matter of putting the right tongue in the right ear.
+		Sidney: Pish-posh! The old boy was positively squirming with eagerness to help.
+[Keyword: How much can you pay for treasures?]
+	Emma: Oh, I cannot exactly pay for them. Since the museum doesn't technically exist just yet, I cannot get any funding for acquiring artifacts. I am counting on your good will... 
+		Red: Good will doesn't pay the bills, lassie.
+		Tex: You can count on my good will! It is best will this side of the Pecos.
+		Flay: Je suis désolé, ma chère. I have a medical condition - I was born without good will.
+	Emma: But as the President's daughter - and PR representative, as well as secretary - I have a certain amount of influence.
+	Emma: If I can show my people that you are helping our country to restore its pride and dignity, I could convince them to join the <em>Militia</em>. You could then assign them to where they are needed.
+		Wolf: Recruits for relics, huh? That's not a bad deal.
+		PierreMerc: I can only imagine what the Legion could have been if the Major had chosen just such an approach.
+		Len: Hearts and minds, huh? Not a bad idea.
+[Keyword: We brought treasures]
+	Emma: Oh, nice! What have you found? 
+	[Keyword: A figurine]
+	[Keyword: A figurine]
+		Emma: This is very, very old and precious.
+	[Keyword: A golden dog]
+	[Keyword: A golden dog]
+		Emma: Did you know that in ancient times, the dog was the symbol of wealth in this region?
+			Ice: Yeah, especially the ones made outta gold, right?
+			Scully: If you knew the vet bill one of my ex-wives just stuck me with, you'd know they still are.
+			Raven: I really wanted to keep that one.
+	[Keyword: An idol]
+	[Keyword: An idol]
+		Emma: It is beautiful... in its own way.
+	[Keyword: A mask]
+	[Keyword: A mask]
+		Emma: Oh, a ritual mask! It is a miracle that some of these are still preserved to this day. 
+	[Keyword: A tablet]
+	[Keyword: A tablet]
+		Emma: A tablet with an ancient form of writing! Why, these hieroglyphs must date back to at least 2,000 BCE! Can you imagine what my ancestors' lives must have been like back then?
+			Vicki: I can't even imagine life before the invention of the combustion engine!
+			Kalyna: Yes, I can! It was a time of great danger and wonder, when gods and demons played games with the lives of mortals. In the middle of one of these games, a simple farmer decided to play a trick on...
+			Emma: Oh, I'm sorry. That was a rhetorical question.
+			Omryn: Yes. They hunted. They ate. They slept. Life was good.
+	[Keyword: A rare green diamond]
+		Emma: Wow, is this... Can it be? I need to double check, but I'm pretty sure this can be no other but the long lost <em>"Pride of the Adjani"</em>! It is a priceless jewel, but it is also much more than that - it is an important piece of my country's history. I cannot thank you enough for this donation.
+			MD: Gosh, this sure feels right, doesn't it?
+			Fauda: The servants of Shaitan will stop at nothing to take it from you. Prepare yourself.
+			Livewire: We're giving it away?!... We're giving it away. Okay. That's completely fine... I think I need to lie down.
+[Keyword: We want to dispatch Militia]
+	Emma: Great! Where do you want me to send help?
+	[Keyword: Send militia to Port Cacao]
+	[Keyword: Reinforce militia in Port Cacao]
+		Emma: Obviously, we need to make sure the administrative center of the region is secure.
+	[Keyword: Send militia to Old Diamond]
+	[Keyword: Reinforce militia in Old Diamond]
+		Emma: Of course, we need to protect our oldest mine.
+	[Keyword: Send militia to Ernie]
+	[Keyword: Reinforce militia in Ernie]
+		Emma: Of course. I'll put them on the first boat available.
+	[Keyword: Send militia to Fleatown]
+	[Keyword: Reinforce militia in Fleatown]
+		Emma: Hopefully, we will have no problems with the Fleatown mafia.
+	[Keyword: Send militia in Pantagruel]
+	[Keyword: Reinforce militia in Pantagruel]
+		Emma: I hope there will be no problems with those Maquis.
+	[Keyword: Send militia to the Refugee Camp]
+	[Keyword: Reinforce militia in the Refugee Camp]
+		Emma: Please send my regards to Sangoma the Shaman.
+	[Keyword: Send militia to Landsbach]
+	[Keyword: Reinforce militia in Landsbach]
+		Emma: Okay! I hope you handled those thugs.
+	[Keyword: Send militia to Ille Morat]
+	[Keyword: Reinforce militia in Ille Morat]
+		Emma: One does not simply walk into the Cursed Forest where the Beast lurks... But I guess I can assemble a fellowship of brave volunteers.
+	[Keyword: Send militia to Wassergrab]
+	[Keyword: Reinforce militia in Wassergrab]
+		Emma: Restoring the infrastructure in that town will be a challenge, but first things first.
+	[Keyword: Send militia to Diamond Red]
+	[Keyword: Reinforce militia in Diamond Red]
+		Emma: Yes, we need to make sure that the Legion will never again enslave the workers there.
+	[Keyword: Send militia to Camp Savane]
+	[Keyword: Reinforce militia in Camp Savane]
+		Emma: Dangerous place. Some idiot has littered it with improvised mines, but I'll send people with basic explosives discipline.
+	[Keyword: Send militia to Camp Grand Prix]
+	[Keyword: Reinforce militia in Camp Grand Prix]
+		Emma: Yes... I guess it is important to guard the crossroads.
+	[Keyword: Send militia to Camp La Barrière]
+	[Keyword: Reinforce militia in Camp La Barrière]
+		Emma: That barrier sure looks strategically important.
+	[Keyword: Send militia to Camp Chien Sauvage]
+	[Keyword: Reinforce militia in Camp Chien Sauvage]
+		Emma: You sure you want me to send people to that... bestiary? Okay.
+	[Keyword: Send militia to Camp du Crocodile]
+	[Keyword: Reinforce militia in Camp du Crocodile]
+		Emma: Okay! I hope no one else gets eaten by crocodiles.
+	[Keyword: Send militia to Camp Bien Chien]
+	[Keyword: Reinforce militia in Camp Bien Chien]
+		Emma: Yes, it is important to stop the Major from using that horrible prison camp.
+[Keyword: We need information]
+	[Keyword: Pierre]
+		Emma: I think that unlike most other Legion warlords, <em>Pierre</em> actually believed he was helping his country. I heard that the Major punished him and sent him to <em>Diamond Red</em> as a slave miner. Poor boy.
+			Steroid: This is what happens to those who do not lift. They become poor slave miner boys.
+			Nails: Don't feel too sorry for him. The guy's an asshole.
+			Smiley: If it saddens you to know he is there, then I will make it my mission to free him - if only to see you smile again.
+			Emma: Oh, um... Thanks.
+	[Keyword: The Good Place]
+		Emma: It is an horrible place, actually. According to my sources, it is actually run by a former prisoner, a Legion warlord who uses the prison as a slave trade hub... Do you... Do you think they could be keeping my father there?
+			Len: Try not to think about it, Ms. LaFontaine. We'll find your father no matter where he might be.
+			Larry_Clean: Your dad's kinda old, right? They'd probably have to give him lots of drugs to make him work hard... We should probably check it out.
+			Fauda: It is not known, but your father has the spirit of a warrior. He will survive any torment to achieve victory over his enemy.
+	[Keyword: How can we break into the Good Place?]
+			Hitman: Asking specifically about the prison, hehe.
+			Emma: I... don't follow you.
+			Hitman: Um... never mind.
+		Emma: I know it used to be a military facility. At some point, it was converted into a prison. I'm sure that Monsieur Le Pingouin has the plans for it somewhere, but I doubt that he would be willing to share that information with you. 
+	[Keyword: How can we break into the Good Place?]
+		Emma: I know it used to be a military facility. At some point, it was converted into a prison. I'm sure I have the plans for the base somewhere... Yes! Here they are. See this entrance? It looks to be difficult for anyone to defend. It could be locked, I guess.
+			Magic: No sweat. I get along just fine with locks.
+			Shadow: Sounds like it's quiet and secluded. Just the kind of entrance I like.
+			Barry: It will not be a problem. I have special key that explodes any lock.
+	[Keyword: Anything concerning us?]
+		Emma: There was another group of mercenaries that operated in the region shortly before you arrived. I think they called their organization <em>M.E.R.C.</em>
+			Larry: Not my favorite. I wanted to call it "People In Loud Leisure Suits"... or P.I.L.L.S. for short. I had awesome ideas for our uniforms!
+			Larry_Clean: That's what we call it. Other people have other names for it. Not nice names.
+			Smiley: I see the tales of my exploits are already starting to spread!
+	[Keyword: Biff and M.E.R.C.]
+		Emma: They were hired by <em>Corazon Santiago</em> with pretty much the same mission she gave you - to regain control of the diamond mines. From what I heard, they were last seen at the <em>Carnival</em> celebrations in <em>Pantagruel</em>.
+			Larry: Carnival! Oh, man, all those pretty colors...
+			Larry_Clean: Yeah, it was right around that time that things started to get... fuzzy.
+			Smiley: It is a very painful memory for me. I do not wish to speak of it.
+	[Keyword: The Major]
+		Emma: The Major is still a mystery. It seems like everyone has heard of him, but no one has any idea who he is or what he hopes to accomplish by kidnapping my father.
+		Emma: He appeared out of thin air only recently and created the "Patriotic Legion". From what few details I've gathered about him, it doesn't seem like he's a native of Grand Chien.
+			Sidney: Are you suggesting he is some sort of foreign agent? Perhaps I should telephone the chaps down at MI6.
+			Shadow: If he's a spy, he's sure drawing an awful lot of attention to himself.
+			Flay: Another buckhead passing himself off as a hunter.
+		Emma: Before he kidnapped my father, he took the diamond mines from Adonis, but he doesn't seem to care about the money. He lets his warlords spend it and do as they please.
+			Nails: He doesn't sound like such a bad guy to work for.
+			Thor: He sounds like a real enigma. I can't wait to get a look at his aura!
+			Blood: My blood's already boiling just thinking about this guy.
+		Emma: I don't even know for sure where he can be found - some say the highlands, others point to <em>Camp du Crocodile</em> in the swamps.
+			Grizzly: That's funny. Camp Crocodile was the name of the summer camp I went to as a kid. The swimming was great!
+			Grunty: Camp du Crocodile? Is it some sort of petting zoo?
+			Scope: Charming name. Sounds like a delightful place to picnic.
+	[Keyword: The Major]
+		Emma: The Major is still a mystery. It seems like everyone has heard of him, but no one has any idea who he is or what he hopes to accomplish by kidnapping my father.
+		PierreMerc: I know him, but I do not know what he wants. He used to care about the people, but I doubt he cares about anything anymore.
+		Emma: You know him? Were you a part of his so-called Patriotic Legion?
+		PierreMerc: I was. I do not regret my choice to join, but I regret nearly every choice I made after that.
+		Emma: What does he want with my father? Do you know where he is being kept?
+		PierreMerc: He wanted to force the President to give the Adjani to the Legion, but I think even he knew that was insane. As for your father, he was in Le Major's camp in the highlands last I saw him, but that was some time ago.
+		Emma: Yes, I've heard he might be in the highlands. I've also heard <em>Camp du Crocodile</em> in the swamps is another possible location. I'm glad you left the Legion. What the Major is doing isn't right. He must be stopped.
+		PierreMerc: I know. In fact, I think even the Major knows he must be stopped.
+	[Keyword: Col. Faucheux and Corazon]
+		Emma: Le Colonel is plotting something with Adonis? This seems a bit far-fetched... I really hope you are wrong, but I remember well when I asked him for help rescuing my father and he just... patronized me.
+			Meltdown: Honey, he's dirtier than a swamp rat and twice as ugly.
+			Mouse: I hate that! Don't you hate that?... Do you want to get a coffee or... Maybe now's not the right time.
+			Raven: We had guys like that on the force. I'd put laxatives in their coffee. Kept them on desk duty. I figured that was best for everyone.
+	[Keyword: Col. Faucheux]
+		Emma: I knew that he was plotting something the moment I asked him for help saving my father. He was just so... damn patronizing!
+			Buns: Men like him are all the same: They think they are entitled to whatever they want, yet all they do is treat the entire world as one treats a toilet bowl.
+			Vicki: Do not worry yourself one bit about it, sister. We gonna get him right sorted out.
+	[Keyword: ColonelRedirect]
+		Emma: In case you need to take action against him at some point in the future, I know something that might help. When I visited his base, they led me through the <em>underground escape tunnel</em>.
+		Emma: Here, I'll mark it on your map... just in case you need it.
+			Scully: Emma, if I didn't already have eight ex-wives, I'd marry you.
+			Shadow: A secret tunnel, eh? That's one of my favorite kinds of secrets.
+			Flay: Now we know that buckhead's bolt hole. I cannot wait for the hunt to begin.
+	[Keyword: Corazon Santiago]
+		Emma: I... don't really trust her. Neither did my father. He wanted to revise the contracts with foreign corporations like Adonis. But did I really have a choice? It is ironic that she offered me help when almost no one else did.
+			Sidney: Timeo Danaos et dona ferentes.
+			Gus: Trust those instincts, kid. She's up to something.
+			Red: That's how the backstabbers work, lassie! Dinnae turn your back on any woman, er... present company excluded, of course.
+	[Keyword: Corazon Santiago]
+		Emma: Apparently, she planned all this. I have information about major construction projects completed by her order at the old <em>Ernie Fort</em>. She had it all done while you were searching for my father. 
+		Emma: I believe she may be using it as her headquarters now. If you want her, that's where you'll need to go, but be careful... Who knows what kind of trap she may spring on you.
+			Grizzly: It better be a good one if she means to trap a Grizzly.
+			Igor: To trap a Dolvich, one must BE a Dolvich!
+			Scope: Don't worry, love. We'll keep a sharp eye out.
+[Keyword: Coup?]
+	Emma: As part of his election campaign, my father pledged he would revise the concessions to foreign corporations... Such as Adonis. I was so desperate to save my father that I fooled myself into believing that Corazon Santiago would honestly be willing to help us!
+		Raider: Anyone can get taken in a con, ma'am. Don't be too hard on yourself.
+		Steroid: You cannot trust women! I mean... some of them. The bad ones.
+		Kalyna: It is not your fault! She enchanted you. You need to brew a tea of frog eggs, toadstools, and cinnamon. That should break her spell.
+	Emma: Now it seems that she was just using both me and you to regain control of the diamond mines, all the while plotting with reactionary forces in the military to overthrow my father's administration.
+		Emma: The only thing I can't really understand is how the Major fits in to all this.
+		Emma: If what <em>Biff Apscott</em> told you is true, it seems the Major was employed by Corazon to seize the diamond mines and create turmoil so the government would think they still needed Adonis' help. Unfortunately for her, the Major had other ideas.
+[Keyword: Goodbye]
+	Emma: Find my father before it's too late. And... Please be safe.

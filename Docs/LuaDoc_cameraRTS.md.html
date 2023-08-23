@@ -1,0 +1,257 @@
+# cameraRTS reference
+
+
+## cameraRTS.Activate
+
+Activates the RTS camera.
+
+
+void **cameraRTS.Activate**(int view)
+int view
+: set 1 for the first view. Set 0 to activate all the views.
+
+
+## cameraRTS.GetEye
+
+Returns the camera position.
+
+This position is futher modified by the zoom. To get the real camera pos use cameraRTS.GetFramePosLookAt().
+
+
+point **cameraRTS.GetEye**([int view])
+int view
+: optional, set 1 for the first view.
+
+_returns_ point
+: camera position or InvalidPos() on error
+
+
+## cameraRTS.GetFramePosLookAt
+
+Return the exact camera position and look-at (position returned by camera.GetPos() is futher modified by the zoom)
+
+
+point point **cameraRTS.GetFramePosLookAt**()
+_returns_ point pos, point look_at
+: position and look-at position of the camera.
+
+
+## cameraRTS.GetHeight
+
+Returns the camera current height above the 'look at' position.
+
+
+int **cameraRTS.GetHeight**()
+
+## cameraRTS.GetLookAt
+
+Returns the camera look-at position
+
+
+point **cameraRTS.GetLookAt**()
+_returns_ point
+: camera look-at position
+
+
+## cameraRTS.GetLookatDist
+
+Returns the camera current look at ditance.
+
+
+int **cameraRTS.GetLookatDist**()
+
+## cameraRTS.GetPitch
+
+Returns the camera pitch in degrees.
+
+
+int int **cameraRTS.GetPitch**()
+_returns_ int pitch
+: pitch
+
+
+## cameraRTS.GetPitchInterval
+
+Returns the camera minimal and maximal pitch above the ground.
+
+
+int int **cameraRTS.GetPitchInterval**()
+_returns_ int min, int max
+: minimal and maximal pitch
+
+
+## cameraRTS.GetPosLookAt
+
+Returns camera position and 'look at' position of the camera.
+
+This position is futher modified by the zoom. To get the real camera pos use cameraRTS.GetFramePosLookAt().
+
+
+void **cameraRTS.GetPosLookAt**([int view])
+int view
+: optional, set 1 for the first view
+
+_returns_ point pos, point look_at
+: camera position and 'look at' point
+
+
+## cameraRTS.GetProperties
+
+Returns the camera properties in a table
+
+
+table **cameraRTS.GetProperties**(int view)
+int view
+: set 1 for the first view
+
+
+## cameraRTS.GetYaw
+
+Returns the camera yaw in degrees
+
+
+int **cameraRTS.GetYaw**()
+
+## cameraRTS.GetYawRestore
+
+Get the current YawRestore mode of the camera
+
+
+bool **cameraRTS.GetYawRestore**()
+
+## cameraRTS.GetZoom
+
+Changes the current zoom
+
+
+int **cameraRTS.GetZoom**()
+
+## cameraRTS.IsActive
+
+Check if the RTS person camera is active.
+
+
+bool **cameraRTS.IsActive**()
+
+## cameraRTS.IsMoving
+
+Return if the camera is moving
+
+
+bool **cameraRTS.IsMoving**()
+
+## cameraRTS.IsOrbiting
+
+Return if the camera is orbiting
+
+
+bool **cameraRTS.IsOrbiting**()
+
+## cameraRTS.SetCamera
+
+Set camera position and 'look at' point
+
+
+void **cameraRTS.SetCamera**(point pos, point look_at, [int time], [int easing])
+point pos
+: new position of the camera.
+
+point look_at
+: new look at position of the camera.
+
+int time
+: time (ms) to interpolate to the new camera
+
+int easing
+: interpolation easing parameter, see GetEasingIndex()
+
+
+## cameraRTS.SetCameraPrecise
+
+Set camera position and 'look at' point
+
+
+void **cameraRTS.SetCameraPrecise**(point pos, point look_at, [int time])
+point pos
+: new position of the camera multiplied by 1000.
+
+point look_at
+: new look at position of the camera multiplied by 1000.
+
+int time
+: time (ms) to interpolate to the new camera
+
+
+## cameraRTS.SetPitch
+
+Rotate camera on specified degrees
+
+
+void **cameraRTS.SetPitch**(int pitch, [[int time], int view])
+int pitch
+: degrees
+
+int time
+: time (ms) to interpolate to the new camera
+
+
+## cameraRTS.SetProperties
+
+Sets camera properties from a given table
+
+
+void **cameraRTS.SetProperties**(int view, table properties)
+int view
+: set 1 for the first view
+
+table prop
+: may contain the following fields:
+
+MoveSpeedNormal, MoveSpeedFast - normal and fast camera movement speed; fast is used when Ctrl is pressed.
+
+RotateSpeed - the camera rotation speed.
+
+LookatDist - 2D distance from the camera position to the 'look at' point.
+
+CameraYawRestore - yaw restore.
+
+
+## cameraRTS.SetYaw
+
+Rotate camera on specified degrees
+
+
+void **cameraRTS.SetYaw**(int yaw, [[int time], int view])
+int yaw
+: degrees
+
+int time
+: time (ms) to interpolate to the new camera
+
+
+## cameraRTS.SetYawRestore
+
+Set the YawRestore mode of the camera. (the camera yaw is restored to 0)
+
+
+void **cameraRTS.SetYawRestore**(bool restore)
+bool restore
+: enable or disable that mode
+
+
+## cameraRTS.SetZoom
+
+Returns the current zoom
+
+
+void **cameraRTS.SetZoom**(int zoom, [[int time], int view])
+int time
+: time (ms) to interpolate to the new zoom
+
+
+
+
+
+(insert footer.md.html here)
+<link rel="stylesheet" type="text/css" href="Style.css" />
+<!-- Markdeep: --><style class="fallback">body{visibility:hidden;white-space:pre;font-family:monospace}</style><script src="markdeep.min.js" charset="utf-8"></script><script>window.alreadyProcessedMarkdeep||(document.body.style.visibility="visible")</script>

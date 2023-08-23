@@ -1,0 +1,67 @@
+[Keyword: Greeting]
+	Butler: It is over. They are gone. All of them!
+		Blood: And we didn't even have to dress up like ghosts to do it.
+	Butler: Your methods are definitely more effective than mine.
+		Buns: Don't feel bad. We are professionals.
+		Raider: That's because we train hard and fight like a team!
+		Thor: If you're interested, I can give you a ten point plan to unlock your maximum potential.
+	Butler: Maybe with people like you around, those bandits won't bother with an old man in a haunted house... And I can turn it into a home again. Here, I won't be needing these anymore.
+[Keyword: Greeting]
+	Butler: Welcome to <em>Butler's Haunt</em>. You like it? It seems a fitting name for the place these days.
+[Keyword: What will you do now?]
+	Butler: I will try to fix this place up. I still hope the master of the house, <em>Mr. Ditch</em>, will return one day. It is silly, I know, but it would be nice to see him again.
+		Kalyna: That isn't silly at all! I believe hope is the most powerful magic in the world.
+		Thor: Not silly at all, my friend! The power of hope is crucial in focusing your mind and manifesting a better tomorrow.
+		MD: I'm sure you'll see him again! I mean, probably.
+[Keyword: What about the treasure they mentioned?]
+	Butler: It is not mine to give!...
+		Larry: Man, I knew it! There IS a treasure!
+		Nails: Well, then it ain't yours to keep, either. Got it?
+		Kalyna: There's treasure?! How exciting! Is it guarded by a gnome with a bunch of riddles?
+	Butler: ...That is, there is some <em>money</em> hidden in the mansion. But it belongs to <em>Mr. Ditch</em> and as long as there is a chance he is still alive, I would rather die than betray his trust.
+		Blood: Oh come on. If the scuzzball doesn't give a shit about his bloody colonizer money, then why should you care?
+		Nails: That can be arranged.
+		Barry: Such loyalty is admirable.
+	Butler: Since he didn't come to take back his money, I fear he may be in trouble. Please help me find him! I'm sure he will reward you, he is a generous man.
+[Keyword: What about the treasure?]
+	Butler: I guess you should ask <em>Mr. Ditch</em> about it. I have kept his money safe for so long - now that I know he's alive, I can't just give it away without his permission.
+[Keyword: Tell us about Mr. Ditch]
+	Butler: He was a director in some big <em>foreign corporation</em>. I think they had some interest in mining, but that's all I know. He never talked of his job. I think he hated it.
+		Raven: A corporation with some interest in mining? I wonder...
+		Buns: Something about all that sounds very familiar.
+		DrQ: Ten years ago? Hmmm...
+	Butler: He was away from home when the civil war broke out... Maybe for the best. They would have tortured and killed him for his money, as they did with the servants.
+		Blood: It's all clear - when the shit hit the fan, your man just ran away and left you guys to deal with it.
+		Reaper: Sounds like Death was very busy that day.
+		Sidney: Dreadful tragedy. Dreadful.
+	Butler: It has been ten years since. He may be dead, but I wish I could find him, or at least learn where he is buried.
+[Keyword: Read this Maquis Manifesto]
+	Butler: Oh, thanks. I'll put this to work kindling the fire in the stove. Got any more? 
+[Keyword: Mr. Ditch is dead]
+	Butler: Is he? You... you are sure?
+		Magic: That's our job, man. We have a list - just like Santa. Your Mr. Ditch was one of the nice boys, but we were there a bit too late to help him.
+		Butler: You... you saw him die? Did he say something about the mansion? Or... about me?
+		Magic: Oh, yeah. He said: "I wonder if Mister Luthando is still kickin' it? That dude was like my brother! I miss him!" And then he, like... He died.
+		Butler: He remembered me! Poor Mr. Ditch!
+		Livewire: Ooo... Yes. Certain. Absolutely. You know, I saw those thugs kill him before they came here.
+		Butler: They killed him?!
+		Livewire: You've got to believe me, especially considering that they are permanently incapable of arguing against the truth of what I am saying.
+		Butler: I trust you - after all, you saved me.
+		Fox: I'm sorry. Ummm, yes, he's definitely dead. Stiff as a board. Those cutthroats got him earlier. Actually, that's why we came here - to avenge him.
+		Butler: Oh... Thank you!
+	Butler: I guess I don't need to guard this treasure anymore. You helped me and you were with Mr. Ditch on his deathbed. I suppose he would like you to have the <em>money</em>.
+[Keyword: Mr. Ditch is alive!]
+	Butler: Is he? That is the best news I have heard in ten years! Please, tell me his address. I will go see him at once!
+		Buns: Not much of an address - he is living in solitude as a hermit.
+		Mouse: Okay... Better write this down. He is at One Mushroom Place on One Jungle Way.
+		Wolf: Better pack a lunch. Got hiking boots?
+[Keyword: Mr. Ditch is alive... We lied to you]
+	Butler: But... You told me... Oh, I understand, it was all about the money, wasn't it? I hope he won't be angry at me for losing his fortune.
+		Raider: I don't think he cares about money anymore.
+		Ice: Trust me, brother man, your friend ain't got no need for cheddar.
+		Grizzly: He spends his days tripping balls in the jungle. I don't think he's worried about cash.
+	Butler: Anyway, I'm glad he is alive. This is the best news I've heard in ten years.
+[Keyword: Goodbye]
+	Butler: Goodbye. Don't let the past haunt you.
+[Keyword: Goodbye]
+	Butler: I'm going to see Mr. Ditch. I hope he will accept me back as a servant or... just as a friend. Farewell, mercenaires.

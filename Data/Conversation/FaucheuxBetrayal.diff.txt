@@ -1,0 +1,78 @@
+[Keyword: Greeting]
+	Faucheux: My name is Colonel Jules <em>Faucheux</em>.
+[Keyword: Greeting]
+	Faucheux: Ah! Here are the colorful mercenaires again. It is nice to see that you know how to obey when your master pulls your leash.
+[Keyword: GreetingRedirect]
+	Faucheux: As a commander of Grand Chien's military forces in the Adjani region, it is my responsibility to deal with the <em>war atrocities</em> that took place here.
+[Keyword: What happened here?]
+	Faucheux: Hundreds of innocent refugees and other civilians have been killed by a chemical weapon.
+		Len: That is a nasty way to go.
+		Reaper: The spirits of the underworld had a feast this day.
+		Thor: Mein Gott... So many bodies...
+	Faucheux: This vile and craven attack on the people of Grand Chien is to be considered a <em>war crime</em> because it was committed by an unsanctioned <em>paramilitary group</em>.
+		Raven: The goddamn Legion again!
+		Buns: This was surely the work of the Legion.
+		MD: The Legion is certainly callous enough to do something like this, but I wonder how they got their hands on a chemical weapon...
+[Keyword: Where is Corazon Santiago?]
+	Faucheux: She won't be coming, but she sends you her regards.
+		Scully: That's a bit odd, mate. When a woman says she needs to meet me to explain something, she's usually waiting with a baseball bat in one hand and divorce papers in the other.
+		DrQ: That is... very curious.
+		Gus: Something smells fishy here, Woody.
+[Keyword: What about your President?]
+	Faucheux: LaFontaine is a fool. He thought he could run a government in which the fox and the chicken can work together in harmony. It was only a matter of time before he paid for his childish idealism.
+		PierreMerc: The Major used to say "How does a chicken stop being prey for a fox? ...By killing it." I am guessing the President did not possess such wisdom.
+		Flay: C'est vrai. The natural order cannot be changed, Predators hunt. Prey runs... or dies. 
+		Larry_Clean: Hey, man, don't blame the victim. That's not cool.
+	Faucheux: The <em>Major's</em> little kidnapping actually saved Alphonse's life for a while - but it doesn't really matter. The coup was already in motion. All we needed was some time and money.
+[Keyword: You’re working for Corazon Santiago!]
+		Sidney: It appears Ms. Santiago has been manipulating us from the start. You're working for her, aren't you?
+		Shadow: It looks like our friend Corazon might be a wolf in sheep's clothing. Does she have you working for her, too?
+		Grunty: I am beginning to believe Frau Santiago is up to something naughty. You are working for her, are you not?
+	Faucheux: Not for, but with. She is useful... for now. There is much that can be achieved with my soldiers and her money. 
+		Nails: Yeah, like screwing us over, apparently.
+		Blood: I am certain you are right. I'm also certain none of it will be good.
+		Vicki: Not anything good, I wager.
+[Keyword: Did the Legion kill everyone?]
+	Faucheux: No, they do not possess that kind of capability. The only chemical weapons in Grand Chien are closely guarded by the Army. However, that is unimportant because I already know that...
+[Keyword: Your soldiers killed those civilians!]
+		Fidel: You can't fool uncle Fidel! There is chemical canisters everywhere. This is wrong. You had fun without Fidel!
+		Ivan: Бандиты этого не делали. I saw old Soviet chemical canisters on ground.
+		Barry: I have made notice of thermal dissemination chemical canisters utilized by your soldiers. If what I'm thinking is true, you have done a terrible sin.
+	Faucheux: You are very observant. Unfortunately for you, it doesn't matter because I already know that...
+[Keyword: Who did this?]
+	Faucheux: ...<em>You</em> did this. You and your M.E.R.C. friends attacked <em>diamond mines</em> that are the property of the Republic of Grand Chien.
+		Scope: Sorry, but I think you may be just a tad misinformed...
+		Vicki: No, no, no, mon, there is some misunderstanding...
+		Tex: You got the wrong cowboys, partner!
+	Faucheux: Then you used slave labor to operate them, and when the local population rebelled against you, you killed innocent civilians in a show of force. And now you have the audacity to return to the scene of the crime.
+		Len: None of that is true!
+		Wolf: I don't know how to tell you this, chief, but not one word of that is true.
+		Red: Are ye daft!? That is a complete and utter fabrication.
+[Keyword: No one will believe you!]
+	Faucheux: You think? Let's examine the facts. You are foreign mercenaires, paid by <em>Adonis</em>, a foreign corporation, to capture our diamond mines. One of those - <em>Diamond Red</em> - was guarded by Grand Chien troops when some of your people attacked it.
+		Raider: Those were the idiots from M.E.R.C. who attacked it by mistake!
+		Meltdown: Wasn't us, Colonel Fuckshow! It was that moron Biff Apscott and his gang of dumbasses.
+		Vicki: That was Biff and his crew, mon! Get your facts straight in your head.
+		Larry_Clean: But Chimurenga told us it was held by the Legion! How could we know?...
+		Larry: But we had information there was a chemical plant inside that was producing evil laser raptors!
+		Smiley: That was the fault of the Maquis! Señor Apscott would never knowingly do such a thing!
+	Faucheux: I know perfectly well that it was done by the people from M.E.R.C. but the general public doesn't care about such nuances. You will take the blame for it, as well as this massacre, and I will have the perfect reason to intervene and restore order. 
+[Keyword: Your enemy is the Major!]
+	Faucheux: No. His Legion is a collection of criminals, able to terrorize citizens of the Adjani, but not much more. I'm surprised you haven't finished them off by now. Apparently, you're far less capable than I presumed - and I presumed very little. 
+		Mouse: I guess you don't care that he's a monster, what with you being one yourself.
+		Ice: Mm-mm. That mouth of yours be writing a hell of a lot of checks!
+		Kalyna: The Major is EVIL! Don't you care about that sort of thing?
+	Faucheux: We wanted to use the Major as a scapegoat, but too many people believe his patriotic babble. You, however, a group of corporate-sponsored mercenaires, are the very symbol of foreign oppression. You fit marvelously. 
+		PierreMerc: I do not know if the Major's patriotism is truly fake, but I DO know yours is.
+		Shadow: I don't think that's going to work for me. I don't really like how I look in a frame.
+		Tex: You almost good movie villain. Just need to work on being scary. You more like sad, kinda boring villain who talk too much.
+[Keyword: Goodbye]
+	Faucheux: Not so fast, mercenaires. We have something to discuss.
+[Keyword: You will pay for this!]
+	Faucheux: Negative. Someone else will pay the bill. As for you - you have been bought and sold already. You have been useful pawns, but like all good pawns, you will be sacrificed.
+		Grizzly: I got a bad feeling about this...
+		Igor: I do not play chess, but I am thinking his metaphor is maybe bad for us.
+		Steroid: I am not prawn! I am... I am a shark! No, that's not right, sharks have tiny arms.
+		Red: Oh, that's great! Just great. Well, it's been nice knowin' ye.
+		Livewire: While I choose to believe he did not mean that in a literal way, it may be prudent to start thinking of exit strategies.
+	Faucheux: Chien soldiers, at attention! Les mercenaires have committed war crimes against our country. I proclaim them to be enemies of the state.

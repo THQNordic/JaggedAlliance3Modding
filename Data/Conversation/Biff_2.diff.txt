@@ -1,0 +1,58 @@
+[Keyword: Greeting]
+	BiffNPC: We did it! We're still alive! God, that was scary!... I mean, the situation was complicated. Good thing I was around to provide tactical advice.
+		Gus: Like screaming for help and trying to hide?
+		Wolf: I don't know what we would have done without you. Sincerely. I mean that. The possibilities are endless.
+		Larry: Biff, man, you're MOTIVATING. I mean, when you're whimpering and running around, even I feel like a badass merc compared to you.
+		Scope: You're the best distraction for the enemy a sniper could wish for, love. 
+	BiffNPC: ...Anyway. I'm done with this hellhole. Time for me to bail out!
+[Keyword: Where are you going?]
+	BiffNPC: Home! Anywhere but here! Good luck dealing with <em>Santiago</em>. You'll need it. As for me, I just want to put this whole mess in my rear view mirror.
+[Keyword: Can you help us expose Corazon?]
+	BiffNPC: I don't know... If she ever gets brought to justice, I guess I can <em>testify about her shenanigans</em> with the Major, assuming neither of them would be able to, um... do anything to me.
+		Blood: I give you some advice: see a doctor. I think you may be missing some back bone.
+		Raider: I suppose that's better than nothing... but not by much.
+[Keyword: What about the diamond?]
+	BiffNPC: I will keep it as payment for my trouble here. Even if I sell it for a fraction of its real price, I'd probably still get enough to revive M.E.R.C.!
+		Larry_Clean: You got it back there in <em>Diamond Red</em>. You ran away with it and just left me there, man.
+		BiffNPC: You were surrounded! There was no way to save you...
+		Larry_Clean: Well, these guys here - they saved me and took care of me. And I have as much claim on the goddamn diamond as you do.
+		Smiley: Señor Apscott... Biff. We have fought and bled together. This diamond belongs to all of us. You told me at the start that we were all in this together. Was it not so?
+	BiffNPC: Okay, okay! It's precious, but it only brought me bad luck. Alright, I'll leave it with you guys.
+[Keyword: What about the diamond?]
+	BiffNPC: It brought me some really bad luck, but... I've decided to keep it for myself as payment for this horrible mission.
+		Larry: Aren't you going to throw it into a volcano?
+		BiffNPC: Uh, what? No!
+		Larry: I was there, man, three months ago. Destroy it!
+		BiffNPC: No!
+		Larry: It's fate is, like, bound to the fate of Grand Chien!
+		BiffNPC: God damn it, Larry, you're out of your mind.
+[Keyword: What about the diamond?]
+	BiffNPC: It brought me some really bad luck, but... I've decided to keep it for myself as payment for this horrible mission.
+		Vicki: It be a bit too big for a wedding ring, mon.
+		Hitman: Carrying around a rock that big is like having a bullseye painted on your back.
+		Livewire: I completely agree with your decision. If you ever need a safe place to store it, just ask me and I will tell you exactly where you can leave it.
+	BiffNPC: I think I can sell it. Even for a fraction of its real price, I'd probably still get enough to revive M.E.R.C.!
+		Buns: What is dead should stay dead.
+		Len: Sometimes dead is better.
+		Meltdown: Ain't you learned nothing, Apscott? You'd do better just shoving that diamond where no one can see it shine!
+		Kalyna: Then you should check to see if M.E.R.C. actually wants to be revived first. Otherwise, the diamond is wasted.
+[Keyword: Goodbye]
+	BiffNPC: Alright, time for me to leave.
+		Larry_Clean: What about that diamond of yours?
+		Smiley: What about this diamond of yours?
+	BiffNPC: Yes, yes. It's in an envelope over there. No, wait... it's right here in my pocket. Isn't that odd, now? And yet, why not? Why shouldn't I keep it?
+		Smiley: I think you should leave the diamond behind, Biff.
+		Larry_Clean: I think you should leave the diamond behind, Biff.
+	BiffNPC: Oh, yes... of course. You're right, the diamond belongs to this place... To you. Well, time for me to hit the road. Goodbye, friends.
+		Larry_Clean: Until our next meeting.
+		Smiley: Until our next meeting.
+[Keyword: Goodbye]
+	BiffNPC: Well, thanks for the extraction. I'll send you a post card from some place with no weirdos trying to kill me all the time. And if you ever need combat support here in Grand Chien...
+		Len: Yes?
+		Gus: Yeah?
+		Meltdown: No.
+	BiffNPC: ...Or if you need someone with fighting experience against the Legion...
+		Len: ...Yes?
+		Gus: ...Well?
+		Meltdown: Nope.
+	BiffNPC: ...Then please don't hesitate and make sure to call someone else. Goodbye!

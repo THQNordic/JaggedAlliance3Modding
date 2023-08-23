@@ -1,0 +1,121 @@
+[Keyword: Greeting]
+	CorazonSantiago: Please, just listen! I am not responsible for that mess <em>Emma</em> and <em>Faucheux</em> have dragged you into.
+		Spike: And me! Don't forget about me!
+	CorazonSantiago: Clearly, they are using you in their dirty little game. I will help you get out of it... Money, passports - anything! There is no need for any more violence.
+		Fidel: There is always need for more violence!
+		Raider: You cannot bribe my team, miss.
+		Magic: Keep talking. I'll let you know if I like what I hear.
+[Keyword: Faucheux is dead]
+	CorazonSantiago: Is he?... Very well!
+[Keyword: Faucheux escaped]
+	CorazonSantiago: Ah... what a pity!
+[Keyword: FaucheuxRedirect]
+	CorazonSantiago: This is all his fault. He <em>gassed</em> all those innocent people just to frame you! This country is too wicked and chaotic to do business. If you let me leave, I will do everything in my power to help you clear your name.
+		PierreMerc: Your type of business is not anything the people of Grand Chien need.
+		Kalyna: I do not mean to offend, but "your power" does not seem very impressive right now.
+		Hitman: Look around, lady. You don't even have the power to make me a ham sandwich.
+[Keyword: The news didn’t mention gas]
+	CorazonSantiago: No? Well... of course not! That would just frighten people in nearby towns, wouldn't it? I merely assumed it must have been gas. That would be the most practical way to eliminate a lot of people at once.
+		Livewire: Miss, sometimes I do not know when is the right time to stop talking. I can see that you have the same problem.
+		Buns: I am disappointed. I expected you to be a better liar.
+		Fox: Honey, that rouge is killer, but it can't hide your blush from telling a lie that big.
+		Magic: Smooth. A good lie works on most folks, but I always know when someone is trying to pull a trick on me.
+		Gus: Woodnose, you're about as convincing as a snake oil salesman.
+		MD: Flushed skin around the throat and cheeks, averted gaze, altered speech pattern... Yep. She's lying.
+		Thor: I can tell you are lying. Your aura is blushing.
+[Keyword: Faucheux is next]
+	CorazonSantiago: I would advise against any further involvement with this cursed country's internal affairs, but it is your own business.
+[Keyword: What about me?]
+	CorazonSantiago: You! You have no right to come here and threaten me. I dissolved our contract and then you had to go and make yourself into some sort of bandit king!
+		Spike: I like that one!
+	CorazonSantiago: These mercenaries should not have taken you here, they should have brought you to jail!
+		Spike: They brought me here because we have the same score to settle. You screwed me over and then you went ahead and did it to them too. 
+		CorazonSantiago: No, this is not at all...
+		Spike: Thanks, by the way. I think they needed to hear you admit that you hired me in the first place.
+		CorazonSantiago: I... You... I'm finished talking to you.
+[Keyword: Is this your signature on this contract?]
+	CorazonSantiago: What is this? A mercenary contract with <em>Spike Scallion</em>? No, this is not my signature. I never signed a contract with the <em>Major</em>.
+[Keyword: We never mentioned the Major]
+	CorazonSantiago: Um, it is a well known fact that the Major's real name is <em>Spike Scallion</em>.
+		Raider: Actually, it is not. The Major's identity is a well kept secret.
+		Livewire: Actually, no. After several hours of database hacking, I did not find any connection between the former A.I.M. mercenary and the so-called "Major." Only his most recent employer would know - I guess that's you!
+		Buns: This is not true. That fact is well known only to us, and unsurprisingly, to you.
+		DrQ: While trying to confuse the hunter, the fox led him to her lair.
+		Gus: Well known only to you, Woodhead. Now I wonder how that could be?
+		Sidney: Terribly sorry, but I do think you may be mistaken in that regard. The only person who knows that Spike Scallion is the Major is... well, the person that hired him to be the Major.
+[Keyword: What about the Major?]
+	CorazonSantiago: I have nothing to do with that psycho. He has been trying to extort me for money ever since I was appointed as the executive director of Adonis in this region. It is a very common professional risk I have to deal with all the time.
+		PierreMerc: I don't know what the Major really cared about, but I am certain it was not your filthy money.
+		Red: What was that, lass? Sorry, I cannae hear ye on account of the all the SAD VIOLINS!
+		Kalyna: That sounds awful. I have been shot, exploded, punched, kicked, cut, and cursed, but never extorted.
+[Keyword: This is not about the money]
+	CorazonSantiago: Of course it is. You are mercenaries, right? You work for money! Look, I can pay you all enough to take a nice long vacation until I straighten things out here. You fully deserve it, don't you think?
+		Fidel: Fidel does not work for money. Fidel works for the blood and screams and body parts.
+		Fox: That's the first thing you're saying that appears to be true.
+		Wolf: It'll be a cold day in hell before I take any vacation package you're offering.
+	CorazonSantiago: You can lay low for some time and when this unfortunate business is forgotten, you will have lots of other contracts. I know a certain company that would want to hire a team with your talents.
+		Fidel: You have all that Fidel needs. Body parts.
+		Fox: ...And here we go again with the lies.
+		Grizzly: Any company recommended by you is one I plan on staying very far away from.
+[Keyword: You are not talking your way out of this]
+		Fidel: Fidel came here to collect.
+		Nails: Cut the bullshit, lady, or I'll start cutting you.
+		Meltdown: Listen up, bitch. In case you hadn't noticed, I ain't here to negotiate. Just ask your guards. Oh, wait. You can't, because they're all dead.
+	CorazonSantiago: Okay, okay, no need to threaten me!... I will provide any details you need to know.
+[Keyword: You are involved in all this]
+	CorazonSantiago: I am simply a victim of circumstance. I came here to do business, not to be shot at. But I can understand your frustration at how events have unfolded and I am willing to cooperate. Let us start over, shall we? How can I compensate you?
+	[Keyword: Money]
+	[Keyword: Body parts]
+			Fidel: Fidel wants body parts.
+		CorazonSantiago: Excuse me?...
+	[Keyword: Information]
+	[Keyword: The truth]
+	[Keyword: You will answer in court]
+			Raider: Ma'am, you have a lot to answer for and you're going to do it in a court of law.
+			Fauda: You will face justice. It can be here or it can be someplace else.
+			Gus: Time to face the music, Woodwind!
+			Len: Ms. Santiago, war crimes have been committed here. The Hague has some questions for you.
+			Scully: I think you're going to need a lawyer. I know several, but I can't recommend any of them.
+			Thor: It is time for you to cleanse your aura... in front of a judge.
+		CorazonSantiago: I acknowledge that there may be some... irregularities pertaining to my conduct, but I am sure we can reach an agreement that is beneficial to us both.
+	[Keyword: You will answer in court]
+		CorazonSantiago: But what for? I haven't done anything! All of this is Faucheux's fault, and your hostile actions against me are without provocation. However, I am willing to forget all of this and come to some sort of arrangement with you.
+[Keyword: You promised to explain everything]
+[Keyword: Start talking. Now!]
+	CorazonSantiago: Alright, there is no need of any more violence. I said I am willing to cooperate. What do you want of me?
+	[Keyword: Money]
+		CorazonSantiago: Of course, I will see that you are properly reimbursed once you let me go.
+			Igor: And commendation. Do not forget commendation. Is very important.
+			Omryn: Do not forget to include bonus rations. I prefer elk jerky.
+			Mouse: Make sure you include a bonus for Stella... for emotional distress.
+	[Keyword: Information]
+		CorazonSantiago: All this mess is the fault of <em>Colonel Faucheux</em>. He planned a coup against his own president, the father of your friend <em>Emma LaFontaine</em>. He tried to get financial support from me, but I refused to be involved in such a thing.
+			Raven: Yeah right, of course you did.
+			Shadow: At least not publicly anyway, right?
+			Ice: Yeah, I bet. You were too busy trying to get mercs to kill other mercs.
+		CorazonSantiago: Please let me go and I will send you all that I know, so that you can eliminate him... If that is your current contract. I don't need to know the details.
+	[Keyword: The truth]
+		CorazonSantiago: Of course, I will share all the details I know. I trust you will find this information useful enough to let me go unharmed.
+			Spike: You better be convincing. You know you can't fool me.
+			Raider: Don't worry about that right now. Please just concentrate on swearing out a full and accurate confession.
+			Wolf: I guess we'll burn that bridge when we come to it.
+		CorazonSantiago: I have been in contact with <em>Colonel Faucheux</em>, who planned a coup against his own president, the father of your friend <em>Emma LaFontaine</em>.
+			Ivan: Пой, птичка, пой.
+			Blood: That's a good appetizer, now give us the main dish.
+			Fauda: And he wanted money... or maybe mercenaries?
+		CorazonSantiago: He promised to grant me exclusive access to diamond mining in the valley in exchange for financial support, but I swear I didn't know he was planning to kill those people in order to frame you. Here is my copy of the <em>contract</em> I signed with him. Please let me go.
+			Len: Now that's something!
+			Barry: This is first time I have seen a real contract with the devil.
+			Grunty: I admit that I am surprised it is not signed in blood.
+[Keyword: Die, bitch!]
+		Reaper: These are your final moments. I ache to know the thoughts that must be racing through your mind right now.
+		Flay: I will make this quick... but also painful.
+		Spike: Ol' Spike has come to collect his pound of flesh... and then some.
+	CorazonSantiago: No, no, don't do this, this is murder...
+[Keyword: Stay here. You are under arrest]
+	CorazonSantiago: Alright, there is no need of any more violence. I said I am willing to cooperate. What do you want of me?
+[Keyword: Leave this country]
+	CorazonSantiago: Yes, I will. I don't want to be involved in any of this.
+		Raider: We will see each other in court. Don't make me come find you.
+		Tex: You best get while getting is good. And don't show face in town again!
+		Scope: You will still need to testify. Don't make us come looking for you.

@@ -1,0 +1,58 @@
+﻿# Game and Map variables
+
+These are lua global variables that are accessed by their name and associated with the current game/map.
+
+**GameVar(*name*, *initial_value*)**
+:	Declare a game variable with the specified initial value.
+
+**MapVar(*name*, *initial_value*)**
+:	Declare a map variable with the specified initial value.
+
+If *initial_value* is a boolean, a number or a string the variable is initialized with that value.
+
+If *initial_value* is a function, it gets called during initialization and it's return value is used to initialize the variable.
+
+If *initial_value* is a table, a copy of the table is used as initial value of the variable. A third optional parameter can be provided which is used as metatable of the copy.
+
+Map and Game variables are similar in their declaration and use. They have several benefits:
+ - simple use - after their declaration you can use their name to read/set them
+ - automatic initialization and deinitialization when the Map or Game changes
+ - reload friendly - they keep their values during a lua reload
+ - automatically included in savegames
+ - savegame compatibility - they keep their initial values when not found in a savegame; when obsolete variables are found in a savegame they are discarded
+
+The only difference between them is their lifetime:
+ - Game variables are initialized when the _Game_ global value changes (on message "NewGame").
+ - Map variables are initialized when the map changes (on message "NewMap").
+
+The variables in the respective group are initialized in the order they are declared. 
+
+!!! Tip
+    To exclude a game/map variable from the savegame, you can use `PersistableGlobals.<name> = false`
+
+!!! WARNING
+    Game/map variables should not be set to _nil_ as this will effectively remove them and will lead to a warning for new variable creation/use. 
+
+# Examples
+
+Here are some examples of Map/Game variables declaration:  
+~~~~ Lua
+	MapVar("LastNotification", false) -- initial value is false
+	MapVar("TotalNotifications", 0) -- initial value is 0
+
+	-- Debris is initialized with a copy(!) of the provided table
+	MapVar("Debris", {}) 
+	-- ActiveNotifications is initialized with a copy(!) of the table with weak_keys_meta as metatable
+	MapVar("ActiveNotifications", {}, weak_keys_meta)
+
+	-- Seed is initialized with a different random value for each game
+	GameVar("Seed", function() return AsyncRand() end)
+	-- Difficulty is initialized with the definition of the current game difficulty
+	GameVar("Difficulty", function() return GameDifficulties[Game.game_difficulty] end)
+
+~~~~
+
+<script>window.markdeepOptions = {definitionStyle: 'long'};</script>
+
+(insert footer.md.html here)
+<!-- Markdeep: --><style class="fallback">body{visibility:hidden;white-space:pre;font-family:monospace}</style><script src="markdeep.min.js" charset="utf-8"></script><script>window.alreadyProcessedMarkdeep||(document.body.style.visibility="visible")</script>

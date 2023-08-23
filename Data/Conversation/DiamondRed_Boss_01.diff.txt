@@ -1,0 +1,26 @@
+[Keyword: Greeting]
+	DiamondRedBoss: These slaves, I was doing them a favor! They are unfit to live free. They can only work or die!
+		Ivan: You is fascist.
+[Keyword: Why you hate them so much?!]
+	DiamondRedBoss: They are weak! I was in their position once, but I have proven I am strong, and the <em>Major</em> himself noticed me! Oh how they whined and cried, but they have worked, and they worked hard under me! 
+[Keyword: No one deserves to be a slave]
+	DiamondRedBoss: You don't choose the slave life, the slave life chooses you!
+[Keyword: So you were a slave?]
+	DiamondRedBoss: I was so much more! I told my overseers everything about the other slaves - their hopes, their silly plans to escape, their fears. No wonder the <em>Major</em> noticed my zeal and made me an overseer! 
+		Ivan: Сволоч. This man is worse of fascist.
+		Len: I was always against executing prisoners of war... But this time, my finger's itching.
+[Keyword: These people will do much better without you]
+	DiamondRedBoss: Non, they won't. You may give them jobs and start paying them, but they will slack and complain and steal from you. You will see you need someone like me in charge.
+		Ivan: No. My father shot people like you in war - Великая отечественная война.
+	DiamondRedBoss: Do you want me to be your mine overseer... I mean, <em>foreman</em>? I won't be killing people if you say so. I know where the best diamonds are! I'll even give you my <em>secret stash</em> of them.
+		Ivan: Нет. Этого не будет.
+[Keyword: Become a Foreman for us]
+	DiamondRedBoss: You won't regret this! I'll squeeze this maggots hard and they'll produce as much diamonds as before!
+		Len: I already regret this.
+	DiamondRedBoss: Here, this is my stash. Look at them sparkle!
+[Keyword: Become a Foreman for us]
+	DiamondRedBoss: You won't regret this... Hey, what are you doing, don't shoot, non...
+	Ivan: А я сказал - этого не будет.
+[Keyword: Leave now and never come back]
+	DiamondRedBoss: Alright, alright. You won't see me again. But you will regret this.
+		Len: I already regret not shooting you. Now scram!

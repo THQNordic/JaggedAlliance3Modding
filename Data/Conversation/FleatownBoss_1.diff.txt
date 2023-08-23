@@ -1,0 +1,144 @@
+[Keyword: Greeting]
+	FleatownBoss: I like the way you handled that little piece of business with Smiley. I am glad I did not have to kill him. Killing is a messy business and I don't care for messy.
+		Blood: There are clean ways to do it, but it's not as satisfying.
+		Gus: The kid's all right. Just needs to grow up a little.
+	FleatownBoss: In appreciation for your help in avoiding a mess, please accept these <em>diamonds</em>.
+		Steroid: Oh, shiny!
+		Hitman: Might be the first time I ever got paid to NOT kill somebody.
+	[Keyword: We didn't do it for the diamonds]
+		FleatownBoss: I know, and I appreciate that. But you helped me resolve that matter and a reward is due. Take the diamonds or throw them away - I don't care, but let no one say that Boss Blaubert doesn't pay his debts.
+	[Keyword: Well, thanks]
+		FleatownBoss: Now that I've seen what you can do, I would like to ask a small <em>favor</em> of you. It's a task for which I think you might be well-suited.
+	[Keyword: Well, thanks]
+		FleatownBoss: However, I still have a <em>favor</em> to ask.
+	[Keyword: Well, thanks]
+		FleatownBoss: You are welcome, my friends.
+			MD: Gee, that's swell! Thanks, mister!
+			Grunty: I was not expecting such generosity! Danke!
+	[Keyword: Well, thanks]
+		FleatownBoss: With that settled, I can finally give my full attention to the matter of the return of my good friend <em>Luigi</em>!
+		Luigi: I'm touched you finally noticed me, Boss! I didn't mind waiting. I understand that you needed to deal with one of your wife's jealous customers, eh?
+	[Keyword: Well, thanks]
+		FleatownBoss: With that settled, we can discuss the untimely demise of my good friend <em>Luigi</em>.
+	[Keyword: Is that all you can offer?]
+		FleatownBoss: There is more where these came from, but first I would like to ask a small <em>favor</em> of you. It's a task for which I think you might be well-suited.
+[Keyword: Greeting]
+	Luigi: Boss Blaubert! You sent these ragazzi to pick me up, and here I am! I'm really touched, even if it did take you a little while. But hey - I guess you were too busy with your new whore, eh?
+[Keyword: Greeting]
+	FleatownBoss: I liked Luigi. He was smart, but not as loyal as he should have been. In our line of work, there can't be half-friends - for a half-friend is always half an enemy.
+		Ivan: Так точно. This is same in any work with gun and peoples.
+		Hitman: In our line of work, cutting enemies in half is how we make new friends.
+	FleatownBoss: But I didn't lie to you about needing help to run my business. I don't have Luigi anymore, and the Major is mad as a hatter. How about you and I become... <em>partners</em>? I help you and you help me. What do you say?
+		Raven: Partners like you were with Luigi?
+		FleatownBoss: Not if you prove to be as loyal as you are smart.
+	[Keyword: We’re partners then]
+		FleatownBoss: Good! I will call you whenever I need help that requires your particular expertise, and in return you are welcome to ask for my assistance whenever you need it.
+			Raven: Wait, so now we're working with a Mob boss?!
+			Raider: I don't like this "partnership" one bit.
+			Nails: We watch your back, you watch ours. That's a fair deal.
+		FleatownBoss: And take this in appreciation for bringing Luigi to me.
+			Blood: Whoa! Nice. Got anyone else you want us to drag here?
+	[Keyword: No thanks]
+			Raider: Mercenary work is one thing, but working for a mob boss is where I draw the line.
+			Wolf: No dice. In mercenary work, if you have two bosses, you usually end up shooting one of them. Doesn't look good on the resumé.
+			Scope: I think we'd prefer to avoid any potential conflicts of interest.
+		FleatownBoss: Too bad, but I respect your decision. We'll go our separate ways. Please take this in appreciation for bringing Luigi to me.
+			Blood: Whoa! Nice. Got anyone else you want us to drag here?
+[Keyword: Greeting]
+	FleatownBoss: I have been told that my good friend <em>Luigi</em> is dead.
+[Keyword: Greeting]
+	FleatownBoss: What do you want from me?! You killed my boys and now you walk around my place as if you just own it? 
+		Ice: Yeah, you got it 'bout right.
+[Keyword: Greeting]
+	FleatownBoss: I hear you have entered the diamond business. In fact, you did it with a bang.
+		Fidel: Bang is our specialty, ehehehe.
+		Raider: Hope that doesn't mess with any deals you have with your Legion buddies.
+	FleatownBoss: Your quarrel with the Legion doesn't concern me. Trading partners come and go. You can fight. That interests me. I'd like to ask you a small <em>favor</em>. It's a task for which I think you might be well-suited.
+[Keyword: Greeting]
+	FleatownBoss: I see you are very interested in my property, but I am afraid that it is not for sale. Now, my associates will escort you out of it and show you the sights. Please be aware that some of those are laser sights.
+		Blood: Someone else may join them.
+		Meltdown: What the hell was that? I've heard scarier threats from my niece when it's time for her bath!
+[Keyword: Greeting]
+	FleatownBoss: I see you are very persistent. As much as I am flattered, it is time to end your tour. Please send my regards to my former trading partners... in hell.
+[Keyword: Greeting]
+	FleatownBoss: Welcome to my humble home.
+[Keyword: LuigiConfrontation]
+	FleatownBoss: As always - you talk too much, Luigi. And what is worse, you <em>talked</em>.
+	Luigi: Maybe I made a deal with somebody, Boss. That's what we do, me and you, we do business. Or is it only me?
+	FleatownBoss: What do you mean?!
+	Luigi: Rumor has it, you don't do much these days, Boss. You're too busy enjoying your little queen, eh? Don't get me wrong, I would enjoy her as well!
+	Mollie: You wish!
+	FleatownBoss: My personal life is not the topic of discussion, Luigi, your betrayal is. You're here because I need to make a statement. All must see what happens to those who betray me.
+	Luigi: Your personal life is the whole point, Boss. You pay all your attention to a woman and none of it on the business. You need to step down... permanently.
+	FleatownBoss: You know I won't. I see you have turned my men against me, but maybe you are forgetting about the people I sent to find you.
+	[Keyword: We will support you]
+		FleatownBoss: Let's be done with it already.
+	[Keyword: We're with Luigi]
+		Luigi: The times, they are a-changin'. Ragazzi!
+	[Keyword: Don't involve us]
+		FleatownBoss: When you don't pick a side, someone else does it for you.
+		Luigi: I see what's going on. You stand there and watch the Boss and me kill each other and then step in to take over the business yourselves. No chance. Let's kill the mercs first, Boss. We can settle up after.
+[Keyword: LuigiDead]
+	FleatownBoss: Why would you kill him?! I didn't ask you to do that. This is something <em>I</em> had to do. He was my partner and he betrayed my trust.
+		Meltdown: The fuck you want - it was clear you wanted him dead, he's dead. Problem solved.
+		Steroid: What is problem? He is dead.
+	FleatownBoss: You cannot kill a man like Luigi that way, like a dog. His death needs to be a statement and it needs to be done in front of witnesses.
+		Steroid: We are witness.
+		Nails: He's right. The street has its laws.
+		Raider: We don't care for street law. He was a criminal and he resisted.
+		Fauda: Easy fix. Statement is "Don't be like Luigi, or you will die like a dog."
+	FleatownBoss: But I guess things like that don't matter to me as much as they used to. Here, take this. You did a good job finding him and eliminating a loose end for me. That deserves payment.
+[Keyword: We already have a contract]
+	FleatownBoss: I am aware that you are working for the <em>Adonis Corporation</em>, but I also happen to know that you have some... freedom of action. I'm just asking for a small <em>favor</em>.
+[Keyword: Are you in the diamond business?]
+	FleatownBoss: You stand in the way of the <em>Major</em>'s plans for taking over the diamond industry. I'm okay with that. Your quarrel with him doesn't concern me much, as long as you keep it civil at the Market.
+		Magic: We'll be cool if they'll be cool, but I wouldn't count on that.
+		Raider: We'll keep the peace, but I doubt they will.
+	FleatownBoss: I'm also doing business with big buyers like your friends from <em>Adonis</em>. However, sometimes business interest outlives friendship, if you know what I mean.
+[Keyword: You work with Adonis?]
+	FleatownBoss: They pay good money and don't care where the diamonds come from. They're trying to corner the market, but the black market is too slippery for that kind of thing - just the way I like it.
+		Raven: Things are often slippery when they're greasy.
+		Ice: Word. Ice is slippery, too. You feel me?
+[Keyword: The Major?]
+	FleatownBoss: He is an extraordinary man. All I can tell you is, um...
+	Mollie: Booboo, dinner is ready!
+	FleatownBoss: I'm coming, darling! Just give me a minute!
+	Mollie: You shouldn't talk about the <em>Major</em> on an empty stomach. You said yourself he is bad for your digestion!
+	FleatownBoss: She's right. Ask me again when you are done with that little <em>favor</em> I asked of you.
+[Keyword: Now tell us about the Major]
+	FleatownBoss: Oh, the Major, yes. After he stopped doing business with your current employer, he started selling the diamonds from his mines to me. I sell them on the black market, where they are mostly bought by <em>Adonis</em>.
+		Raider: So, the leader of the Legion had dealings with Adonis?!
+		Len: Hold up. Say that again?
+		Buns: Something smells off, and I do not think it is just this man's excessive use of cologne.
+	FleatownBoss: Your boss and the Major were friends not so long ago. Well, maybe "partners" is a better word. But something happened and their deal went sour. I don't know what it was.
+[Keyword: What kind of favor you want?]
+	FleatownBoss: My right hand man <em>Luigi</em> has been stupid enough to get himself thrown in jail. I need him back here to run my business while I... Well, let's just say Mollie and I want to enjoy our new-found relationship without distractions.
+		Larry: This Luigi - is he a plumber?
+		FleatownBoss: What? No. Why would you think that?
+		Larry: Never mind.
+	FleatownBoss: I need you to break into the <em>Good Place</em> where they are keeping him and bring him back to me. You will be handsomely rewarded.
+		Larry: What about his brother?
+		FleatownBoss: What the hell are you talking about?!
+		Larry: Uh... Forget it. We can handle the turtles ourselves.
+		FleatownBoss: ...
+[Keyword: The Good Place?]
+	FleatownBoss: It's something between a state prison and a private concentration camp. Its director gets government grants for imprisoning honest crooks, but I know he's involved in the <em>slave trade</em> as well.
+		Raven: There are no "honest" criminals. Crime is crime.
+		FleatownBoss: Agree to disagree.
+	FleatownBoss: I may not be an angel from heaven, but there are things I would not do. For example, there is no place for slavery at my Market. Honest pay for honest jobs, that's how we do it in the family.
+		Raider: Everybody looks good when compared to someone worse.
+[Keyword: Slave trade?]
+	FleatownBoss: <em>Jackhammer</em> runs the Good Place. He also lends money - with huge interest. Those who miss a payment end up in his prison and the only way out is if he sells you into slavery.
+[Keyword: Read this Maquis Manifesto]
+	FleatownBoss: Hmm, is this <em>Le Lys Rouge</em>? I have always said this is the only good thing in that dump Pantagruel. That and the diamond mine, of course.
+[Keyword: Read this Maquis Manifesto]
+	FleatownBoss: Why are you wasting my time with communist propaganda?!
+[Keyword: Goodbye]
+	FleatownBoss: I hope you will be kind enough to bring my Luigi back to me. Please make sure he comes right here - I'm very much concerned about his health and well-being.
+		Raider: I have a feeling that this Luigi will be going places, and not necessarily "Good places".
+		Raven: Dad jokes again, honey?
+		Raider: Always, love.
+[Keyword: Goodbye]
+	FleatownBoss: Goodbye, my friends.
+[Keyword: Goodbye]
+	FleatownBoss: Goodbye.

@@ -1,0 +1,50 @@
+[Keyword: Greeting]
+	Chimurenga: You may have have defeated me... But you will never defeat the Revolution!
+		Steroid: You just watch!
+[Keyword: Greeting]
+	Chimurenga: Why have you betrayed me! I wasn't ready yet...
+		Buns: A-ha! So you were planning to betray us, no?!
+		Gus: We knew you were planning to double cross us, Woody. Ain't gonna happen.
+	Chimurenga: The Revolution needed those diamond mines... I knew it was about time to strike, but you were ahead of me.
+[Keyword: Time to retire]
+	Chimurenga: You left me with no other choice - retire or die. I choose to live for the Revolution, instead of foolishly die for it.
+		Steroid: Ha-ha, you coward!
+		Chimurenga: If you say so.
+		Chimurenga: I don't trust ya, Woody. You seem too easy to convince.
+		Ivan: Let go. Он хороший человек.
+	[Keyword: You don’t fool us]
+		Chimurenga: What do you want from me, just give up everything I fought for?!
+	[Keyword: Goodbye]
+		Chimurenga: Farewell... Until we meet again.
+			Gus: Rather not, at least if you know what's good for you, Woodman.
+			Steroid: I don't trust this guy!
+[Keyword: Time to retire]
+	Chimurenga: Retire? What am I going to do with my life, start knitting? I am a warrior, I am the Savanna Lion!
+[Keyword: Make Maman happy]
+	Chimurenga: What?... <em>Justine</em> is a very nice woman, but... I never thought about that. Do you think that... she would have me?
+		Scope: Oh, but of course, love. Trust me, she likes you a lot.
+		Fox: You old fool. She loves you. And you never noticed that because of your stupid revolution.
+	Chimurenga: You have crushed my Maquis and my Revolution, and now you want me to trust you with something so... personal?
+	[Keyword: You deserve a normal life]
+		Chimurenga: Perhaps I do. Perhaps I needed a wake-up call.
+	[Keyword: Together you can rebuild this town]
+		Chimurenga: A failed revolutionary and an ex-whore rebuilding a third world country town? Sounds like a bad joke.
+			Ivan: No joke. Fighting is easy, for peace... требуется гораздо больше. More needed.
+			Len: Imagine a old military guy doing mercenary work in some backwater country. Aren't we all?...
+		Chimurenga: I guess you mean well. Maybe I will run for Mayor, who knows?
+	[Keyword: Why not?]
+		Chimurenga: Why not? Why not indeed?! This is ridiculous. Kill me or let me go, but don't you ever make fun of me.
+	[Keyword: Redirect]
+		Chimurenga: I guess I should put the gun down and take the chance to start a new life. Alright, I'll talk to Justine.
+			Gus: My man!
+			Raider: It is never too late to talk to the woman you like. You will start a new life, you'll see.
+			Hitman: Show her the beast, Ace! You're the freakin' Savanna Lion!
+			Raven: You will do alright! She likes you a lot.
+[Keyword: Go and see the world]
+	Chimurenga: So you are sending the Savanna Lion into exile. Alright, I shall comply. 
+		Fidel: Go to Cuba! Best place for revolution!
+[Keyword: Time to die]
+	Chimurenga: You... You have wounded me more deeply than this injury means, for you have wounded the Revolution itself. But it will continue without me!...
+		Steroid: This is watchful thinking!
+		Ivan: I sorry we must do that. Прощай, товарищ.
+		Fox: We shouldn't have done that. Poor old girl will be heartbroken...

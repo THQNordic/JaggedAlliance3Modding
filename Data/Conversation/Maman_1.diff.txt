@@ -1,0 +1,293 @@
+[Keyword: Greeting]
+	Maman: Allo! I am Maman Lilian. And who would you be, darlings? You certainly don't look like the usual clientele of <em>Le Lys Rouge</em>.
+		Hitman: We don't? I am hurt.
+		Fox: Well we may want to apply! Are you hiring?
+		Nails: Just passing through, ma'am... and maybe looking for a little afternoon delight.
+	Maman: I'm warning you, I've got enough <em>trouble</em> on my plate and I won't be having more.
+[Keyword: Greeting]
+	Maman: Allo! Thanks for putting away those filthy bandits. <em>Le Lys Rouge</em> will welcome you with open arms. 
+		Hitman: How about open legs as well?
+		Maman: That's between you and your purse.
+		Igor: Time to party!
+		Red: It wasn't yer arms I had in mind, lass, but an old man takes what he can get.
+	Maman: However, make sure you don't start any <em>trouble</em>. We have enough already. If you ever hurt my darlings, I will pay someone to find and kill you.
+		Steroid: Do not be intimidated by my massively intimidating muscles.
+		Maman: If you say so. It's kind of hard to look past all the guns and grenades and see good, paying customers.
+		Hitman: Just think of us as exterminators.
+		Magic: I ain't here to cause friction, except maybe the friendly kind.
+		Tex: Hey, we no desperados. We just friendly cowboys looking to put our boots up!
+		Flay: There will be no trouble, unless I start to feel itchy where there should be no itchy. Understand?
+[Keyword: Greeting]
+	Maman: Thank you for talking sense into him. Poor Savanna Lion, he was so cute with those horrible flowers he picked, all red with embarrassment...
+	Chimurenga: I can hear you, honey!
+	Maman: Then be a good boy and don't eavesdrop!
+	Chimurenga: Never! A Communist would never do such a thing!
+	Maman: Shoo! Shoo! Go check the girls!
+	Chimurenga: At once, generalissimo! Mission accepted!
+	Maman: ...Of course, I said yes! He is a wonderful man and I am a lucky woman to have him. But don't tell him that - he would be so full of himself that I'd have to ask the girls to throw him in the cold water basin again.
+		Scope: I'm so happy for both of you, love. This place needs you two as an example.
+		Fox: You two are adorable! I envy you. I mean, in a nice way.
+		Maman: I know, darling. Thank you!
+		Larry_Clean: Again? Why? What did he... Never mind. Forget I asked.
+[Keyword: Greeting]
+	Maman: You... You killed Chimurenga?
+		Hitman: That's right, baby! Don't worry no more about that bandit.
+		Steroid: All communists must pay. It is Gontarski creep... er... creed.
+		Blood: Silenced the scuzzwad.
+	Maman: My poor Savanna Lion, you and your stupid revolution! You gave everything to it and never found time for friends and family! Who will bring flowers to your grave now? Only me, the foolish old whore who loved you.
+		Len: Damn.
+		Barry: This maybe not so good.
+		Scope: Oh... biscuits.
+		Raven: Oh... I... had no idea. Do you need a hug or a drink or something? Sorry, I'm no good at this sort of thing.
+		MD: Well, I feel like shit now. Anyone else?
+		DrQ: It seems our choices may not have been the wisest.
+[Keyword: Greeting]
+	Maman: Why did you kill him?! He gave up the life of a revolutionary! You heartless murderers!
+[Keyword: Greeting]
+	Maman: My brave Savanna Lion is dead! I couldn't keep him here... not when there was a threat. He just had to go out and fight those murderers!
+		PierreMerc: He died like a true patriot of Grand Chien. There is no shame in that.
+		Sidney: He was very special to us as well. He will be sorely missed. 
+		Gus: You can't stop an old soldier from being who he is. Believe me, I wish you could.
+	Maman: It's all your fault! You knew he retired... He gave you everything - and you let him die.
+[Keyword: Greeting]
+	Maman: I heard you have punished those abusers, darlings. Thank you! This is how we teach good manners on the Adjani. Here, take your well deserved <em>payment</em>. Feel free to spend it in Le Lys Rouge!
+		Hitman: Oh, we will! I'll demonstrate what good manners look like.
+		Maman: You better.
+		Raider: Your hospitality is most kind, but we have other matters to attend to.
+		Maman: Of course you do, but remember that we'll always be here... to attend to any matter you wish.
+		Fox: Mmm, we'll think about it.
+		Maman: Girl, I have so many special offers for you in mind, you'll have plenty to think about.
+[Keyword: Greeting]
+	Maman: You clever scoundrels! You found the <em>brilliant necklace</em> of Madam Lecoq and you didn't tell me! Don't you know she was the previous owner of <em>Le Lys Rouge</em>? Ah, you should have seen us back in the day!
+		Magic: I don't got the power to go back in time, but I won't say no to looking at some pictures.
+		Mouse: Were you friends or... more than friends?
+		Red: And if ya seen me back in the day, ya would've given me a discount!
+	Maman: Anyway, why would les Mercenaires need such an item? Give it to me for safekeeping - it belongs to this place. I would be very, very thankful!
+[Keyword: Greeting]
+	Maman: Have you considered returning the <em>brilliant necklace</em> of Madam Lecoq back to <em>Le Lys Rouge</em>? I will make sure that you will be loved and adored for that... I think you know what that means in a place like this.
+[Keyword: NecklaceRedirect]
+	[Keyword: Alright, you can have it for free]
+		Maman: Thank you, dear! Once again, the treasure of Le Lys Rouge will be where it belongs!
+			Livewire: Oh sure, no problem. I love returning stuff. Sometimes I return stuff I never even purchased. Um, that's not what this is though, of course.
+			Grunty: Mother was always adamant that all stolen treasures should be returned to their rightful place. Adamant. Repeatedly.
+			Fox: It looks so wonderful hanging from your neck. It really draws the eye!
+			Maman: I never needed much help with that, but thank you, sweetie.
+		Maman: In return, I will make sure that everyone in town treats you as a friend of <em>Le Lys Rouge</em>. And you should know, this comes with a neat discount for our... services.
+			Buns: Forgive me if I withhold my enthusiasm.
+			Scully: Well, I doubt I've ever heard a better excuse to get right friendly with the ladies.
+			Mouse: Yay! I mean, it's good they like us in town. Definitely.
+			Hitman: Oh yeah, Ace! When do we start?
+			Raider: Well, isn't that swell! What a nice gesture.
+			Raven: I'm about to give you a not-so-nice gesture, Ron. Proceed with caution.
+			Raider: But I think we'll pass on that, Maman.
+			Larry: Does that include complimentary beverlies... URP!... um, beverages.
+			Vicki: Pffft. Unless these services include an oil change and tire rotation, I'm not interested.
+			Red: A discount ya say? Well, it's been a while since old Red has had his equipment serviced.
+	[Keyword: No, we need it]
+		Maman: You NEED it, dear? What for?!
+			Buns: It may come in handy as a bit of leverage.
+			Raider: It's evidence. We should probably hold onto it.
+			Sidney: Well, it's quite simple, really. This is a very rare piece. The responsible thing to do would be to donate it to a museum.
+			Magic: Be cool, momma. I respect your feelings, but in this world money's king. We got bills to pay, ya dig?
+			Fox: This necklace really brings out the color of my eyes... er, which is really important in a combat situation.
+			Livewire: Actually, there are many reasons, but most important among them is that there is a certain international cartel that no one should owe money to, especially me.
+		Maman: Look, I don't have much cash. All I have is a piggy bank with about <em>$10,000</em>. Would you accept it for the necklace?
+	[Keyword: You can have it for $10,000]
+		Maman: Thank you, dear! Once again, the treasure of Le Lys Rouge will be where it belongs!
+			Fox: I will miss it. But it surely looks wonderful on you, dear.
+			Maman: Thank you, darling!
+		Maman: Here, this is the <em>Le Lys Rouge</em> piggy bank. It's a bit sticky. People are always spilling things around here.
+			Mouse: Ew. I don't think this is a good deal anymore.
+			Scope: Not to worry. I have kids. I always carry handi-wipes with me.
+			Fidel: Fidel smash!
+			Tex: What a nice little piggy! I will take it to market.
+			Shadow: We're mercenaries. We're used to getting our hands dirty for money.
+			Larry_Clean: Nothing a little rubbing alcohol won't fix... Er, not that I have any on me - or any other type of alcohol. Honest.
+	[Keyword: We'll think about it]
+		Maman: Please consider it carefully, dear. This necklace belongs to Le Lys Rouge after all.
+[Keyword: Greeting]
+	Maman: Allo. Did you find out something about my dear <em>Mollie</em>?
+[Keyword: Greeting]
+	Maman: Oh, it's you, darlings! Thank you for bringing home my poor <em>Mollie</em>. We are her family, not these foreigners who come in here, fill her head with nonsense, and then break her heart.
+		Ivan: Family is important!
+		Scully: You are most welcome, love.
+		Smiley: But I only wanted to... Oh never mind. Can I see her?
+		Kalyna: Rescuing damsels in distress is what we're good at!
+	Maman: She still doesn't want to see you, but she is happier here. You did the right thing.
+[Keyword: Greeting]
+	Maman: No need to tell me, I already know everything. I just wonder, is she really happy with that man?
+		Red: She's a gold digging little hussy, so I dinnae think she could be happier.
+		Smiley: How could she possibly be happy with that fat, disgusting pig?
+		Flay: Let us just say that the bitch has completed her hunt.
+		Scope: She seemed positively smitten!
+[Keyword: Greeting]
+	Maman: Welcome, darlings! My lion, see who has come to visit you!
+		Chimurenga: In a bit, honey! Once I'm done with the pancakes, I'll come and see them.
+[Keyword: Greeting]
+	Maman: Hello there, darlings. Do you bring news of <em>Mollie</em>? Is she okay? Please, have a seat. Tell me everything!
+[Keyword: Greeting]
+	Maman: Welcome home, darlings! Have a seat. Girls! Bring some coffee at once!
+		Mollie: No, I won't!
+		Maman: Come on, Mollie, be a nice girl.
+		Mollie: Do they prefer it with extra cyanide, or only with strychnine topping?
+		Maman: I see that you mean to take a double shift tonight, do you?
+		Mollie: Do they bring any news of Smiley?
+		Maman: You provide the coffee, I'll ask about the news.
+		Chimurenga: One more coffee for me! I enjoy it the most when I'm in the company of friends.
+[Keyword: Greeting]
+	Maman: Welcome to <em>Le Lys Rouge</em>. Have fun and don't start any trouble. We already have enough of it.
+[Keyword: Lys Rouge?]
+	Maman: Right now <em>Le Lys Rouge</em> is closed and we won't open unless those filthy <em>Legion</em> bandits are gone. Even the communist <em>Maquis</em> know they should pay for service and treat my girls with respect!
+		PierreMerc: Yes. It is sad, but there are many in the Legion who know nothing of respect.
+		Tex: Do not worry, little lady. Sheriff Tex is here to clean up town!
+		Scully: I can't stand blokes who don't know how to treat a lady.
+[Keyword: What is Lys Rouge?]
+	Maman: It is a fine establishment for... Who am I kidding? It's a brothel. But at least it is clean and respectable, and the girls are healthy. If I could say the same about our country, it'd be a much nicer place to live.
+		Tex: But your saloon IS a fine establishment, Ma'am!
+		Maman: Thank you, and you are a sweet cowboy.
+		Tex: Just a humble mercenary.
+		DrQ: That is an astute if perhaps overly suggestive observation.
+		Hitman: Imagine that, Ace? A whole country run like a high-class brothel? I think I got to sit down.
+[Keyword: What trouble?]
+	Maman: Oh, well, let's see! My dear <em>Mollie</em> was kidnapped, the <em>Carnival</em> celebrations are ruined, and the town is full of scumbags who think they can <em>abuse</em> my girls and get away with it... What will happen next, a plague of locusts?
+		Len: Could be worse.
+		Hitman: Could be, like, a plague of monster cats.
+		Barry: Yes, that would be biblically bad.
+		Fauda: It is more likely that you will be forced into sex slavery by roaming gangs of armed men. Oh... you were making a joke.
+[Keyword: Tell us about Carnival]
+	Maman: It is a fiesta of love and happiness here in Pantagruel. There is music, drinking, dancing in the streets, then it always comes to its peak on the square in front of <em>Le Lys Rouge</em>. We are the main sponsor of the event, darling!
+		Tex: Sounds like great advertising strategy.
+		Igor: Sounds like fun!
+		Hitman: I might become a sponsor as well, Ace!
+		Red: And of course we missed it! Story of my life.
+		Sidney: I shall make a note to try to attend next year!
+		Scully: Sounds like a right proper shindig. Sorry I missed it.
+	Maman: But this year's Carnival ended up in chaos when <em>Chimurenga</em> started his stupid war with the Legion... Why don't they stop with their games and make love instead? They seem to need it.
+		Fox: Amen, sister.
+		Thor: I could not agree more. Too many people focus on the wrong things.
+		Wolf: That sounds nice. We'd be out of the job, but it does sound nice.
+[Keyword: Chimurenga?]
+	Maman: A fine gentleman, that's what he is. A very clean and good looking man. And what is more important, he is a good person. Any woman would fall for him.
+		Buns: I feel compelled to object to that.
+		Fox: Oh, girl, you got it bad! I can tell you're crushing hard on him.
+		Maman: Playing at being coy is a game for the young, darling. I don't waste my time on it.
+		Scope: You can't hide it from me, love. You see more in this man than just a good neighbor.
+		Maman: I don't like to attach labels to feelings, darling. Let's just say I think some neighbors can be very, VERY good.
+		Meltdown: Pfft. Not my type, not by a mile.
+	Maman: I know he likes me, but... He wouldn't leave behind this foolish "revolution" of his, and just settle down. Grand Chien doesn't need more wars, it needs people like him to rebuild it.
+[Keyword: Read this Maquis Manifesto]
+	Maman: Good old Chimurenga with his stupid revolution again. Oh, you see this? There is a whole empty page here! Such a waste. What about we place a <em>"Lys Rouge" advertisement</em> there?
+		Gus: Communism and whores joining forces to make the People rise up to glory! Good thinking, Woody.
+		Igor: This puts whole new meaning in "Вставай, страна огромная..."
+		Ivan: Что это за бред?! This is... not right.
+		Blood: Now you're cooking with oil!
+		Flay: Très bien. A little meat to lure the lion to the hunt, eh?
+		Maman: Hush, you.
+		Shadow: Not a bad idea. There's not a thing in the world sex can't sell.
+	Maman: I know the Savanna Lion won't like the idea, but I think you darlings can <em>persuade</em> him that this would ensure his pamphlets get a much better reception. Everything sells better with pretty girls on the cover.
+		Fox: You surely got entrepreneurial spirit, sister.
+[Keyword: Mollie is dead]
+	Maman: Oh... So the rumors are true! My poor, poor lovesick Juliette, why would you follow that stupid Romeo?!
+		Scully: My ex-wives probably asked themselves the same question about me. Uh, sorry. Bad comparison. All my exes are still alive... I think.
+		Kalyna: She tried to make her own fairy tale come true and... it killed her. That shouldn't be how the story goes, but it is.
+		Raider: I'm terribly sorry for your loss.
+[Keyword: Mollie?]
+	Maman: Each year they crown the prettiest of my girls as <em>Carnival Queen</em>, dress her only in flowers and carry her around on a throne.
+		Barry: Dressed only in flowers? This is not very decent.
+		Tex: A lady can be lady even naked!
+		Barry: Dressed only in flowers? This is not very decent.
+		Hitman: Pics or it didn't happen.
+		Raven: Oh, give it a rest, Frank.
+		MD: Oh wow... that sounds nice.
+	Maman: <em>Mollie</em> surely looked wonderful. She's a nice girl... maybe a bit too nice. She was smiling at everyone, and you know, darling, she has that twinkle in her eyes that makes everyone like her. But I guess that's why she was <em>kidnapped</em> by one of those crazy <em>Commandos</em>.
+[Keyword: Mollie?]
+	[Keyword: Mollie was kidnapped?]
+		Maman: I think it was that lunatic boy with the rifle - he said his name was <em>Smiley</em>. He came here after the ceremony and wanted to see Mollie. I told him what I told everyone - she was bathing, and besides, there was a waiting list. 
+			Fox: Waiting list for what?... Oh, never mind. I got it.
+			MD: There was a waiting list for the tub? Actually, I guess that makes sense.
+			Len: Dawson?
+			MD: Yeah?
+			Len: Be quiet.
+			MD: Right.
+			Scully: Waiting list? Crikey. I gotta meet this girl.
+			Grizzly: This story is starting to get good.
+		Maman: Then he smiled like an idiot and disappeared. An hour later when I went to check on her, she was missing!
+	[Keyword: Mollie is with Boss Blaubert]
+		Maman: What?! How? I was so sure she was kidnapped by that boy <em>Smiley</em>. He desperately wanted to see her after the ceremony... How is she, darling? What happened to her? That boy is working for the Boss, isn't he?!
+	[Keyword: We will investigate]
+		Maman: Please see what you can do! We are all worried about our little Carnival Queen.
+			Raider: Don't worry, ma'am. We're on the case.
+			Kalyna: A quest to rescue a princess! Or, a queen in this case.
+			Raven: Rescue a president. Rescue a queen. Any other heads-of-state we want to tack onto the list?
+	[Keyword: Where is Smiley?]
+		Maman: If I only knew, he would be dead, darling, commando or not! One cannot kidnap one of my girls and just get away with it. <em>Le Lys Rouge</em> has many friends.
+			Tex: Many plus one, Ma'am!
+			Maman: You are adorable, I'm sure you're aware of that. 
+What was I saying?
+			Maman: All I know is that he was seen leaving town with my Mollie, and they were going <em>South</em>. And if he was stupid enough to go to the <em>Refugee Camp</em>, he will be easily found. Just make sure to ask my friend <em>the Shaman</em> about him.
+			Maman: All I know is that he was seen leaving town with my Mollie, and they were going <em>South</em>. Maybe he brought her to <em>Fleatown</em> or the <em>Refugee Camp</em>? Oh... After the terrible thing that happened at the Refugee Camp, there is no one left to ask.
+			Maman: All I know is that he was seen leaving town with my Mollie, and they were going <em>South</em>. Maybe he brought her to <em>Fleatown</em>? That filthy place!
+	[Keyword: Tell us about those "commandos"]
+		Maman: They are some foreigners like you who worked with dear old <em>Chimurenga</em>. His Maquis have a high opinion of <em>"les Mercenaires"</em>, but all I know is that one of those buffoons kidnapped my Mollie.
+			Buns: She appears to be referring to the mercenaries from <em>M.E.R.C.</em> Such lack of professionalism is typical for them.
+			Len: Those must be <em>Biff's mercs</em>.
+			Gus: Huh. I bet those are <em>Biff's boys</em>.
+			Vicki: Ah, she must be talkin' about <em>Biff and his mercs</em>. I'm not surprised.
+		Maman: You seem to know them. I won't ask questions. I just want Mollie back. If you can return my girl home, I will see that you are rewarded in the best ways <em>Le Lys Rouge</em> can provide to you.
+			Fidel: What ways? Fidel has some ideas.
+			Hitman: I feel instantly motivated!
+			Scope: Well, that doesn't do much for me, although a long soak in the tub might be nice.
+	[Keyword: We want to see the crime scene]
+		Maman: She was bathing in the <em>building nearby</em>, and her room is <em>upstairs</em>. I don't know where exactly she was kidnapped from, but I ordered the girls not to move anything.
+			Raider: Anybody heard any screams?
+			Raven: Didn't she cry out for help?
+			Fidel: If Fidel is taking girl, girl scream all the time.
+		Maman: It is strange... We didn't hear anything. But, of course, the party was quite loud. You know how it is, darling.
+			Hitman: Oh, yeah, I know!
+			Ice: I hear that. Bass was kickin'. Joint was hoppin'.
+			Reaper: An excellent distraction for abduction.
+		Maman: Anyway, please investigate - but be careful around my girls. Whatever their profession may be, they are not toys.
+[Keyword: Abusers?]
+		Tex: You can count on us, Ma'am! Is there lady in distress?
+		Maman: Thank you, darling. Well, actually yes.
+	Maman: No one hurts my girls. No one, ever. No matter if you are Legion or Maquis or the President of Grand Chien - you may never hit a girl... Yet there are some who did just that.
+		Nails: You want us to teach 'em a lesson?
+		Meltdown: You want us to kick their asses?
+		Fauda: You want us to cut off their hands or have you done that already?
+	Maman: I want them dead, so that everyone will learn what happens when you mistreat a lady.
+		Fox: Be a gentleman or die! I love this policy.
+		Ivan: I make painful death for them.
+		Meltdown: My father beat me every day when I was a kid. One day I grabbed a tire iron and broke his back. Maybe you should get your girls some tire irons. 
+		Fidel: Now THIS is the job for Fidel!
+		Reaper: Their fates are already sealed.
+		Fauda: Do you want us to bring you their hands or their heads? Both?
+	[Keyword: Give us the names]
+		Maman: Here, I'll write them down for you. Make them all pay, and I'll pay you. 
+			Hitman: Can we get a free membership instead?
+			Maman: No.
+			Hitman: Worth a shot.
+			Nails: I'm makin' a list. Checkin' it twice. Gonna kill some abuser assholes... which will be nice.
+			Fidel: What if Fidel find other abusers not on list and kill them, too? Will Fidel get...
+			Grizzly: Fidel!
+			Fidel: What?
+			Reaper: I'll memorize the names and then eat the list so there's no evidence.
+			Maman: Um, okay. Or you could just burn it, darling.
+			Reaper: Too risky. Open flames attract attention.
+			Maman: I see... I don't think I've ever met anyone as... intense as you, darling.
+		Maman: Fair service for a fair price, and mutual respect - that is my deal for all of my customers. We may sell our bodies, but we never sold our human rights.
+	[Keyword: We are no bounty hunters]
+		Maman: Are you not?! I have heard otherwise. 
+Anyway, I will find someone else to deal with those abusers.
+[Keyword: Goodbye]
+	Maman: Please find Mollie and return her home, darling. We all miss her dearly.
+[Keyword: Goodbye]
+	Maman: Be careful, darling, and don't die out there! Otherwise the girls would be crying for you, and sad girls are bad for business.
+		Tex: How about you, Ma'am?
+		Maman: If something happens to you, my sweet cowboy, I'd cry the most.
+		MD: "Don't die" is our motto!
+		Len: Dawson...
+		Shadow: They won't even see us... until it's too late.
+		Scope: Don't worry, love. We're very good at neutralizing threats from a safe distance.
+		Flay: Pas de problème, mon amour. I always stay downwind of the prey.
+[Keyword: Goodbye]
+	Maman: Take care.

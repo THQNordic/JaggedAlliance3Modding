@@ -1,0 +1,45 @@
+[Keyword: Greeting]
+	BiffNPC: There is no time to talk! They are incoming! Mayday, mayday! DO SOMETHING!
+[Keyword: Greeting]
+	BiffNPC: Finally! It took you some time! We are dying here! You're here to save us, right?... Or... Did <em>she</em> give you some special orders?
+[Keyword: Greeting]
+	BiffNPC: The cavalry has arrived! Thank God, we're saved! You're here to save us, right? Wait a minute... Did <em>she</em> send you?!
+		Larry: We're here to shave you, man!
+		BiffNPC: Larry! Happy to see you! You mean to... um, save me? I'm... sorry we had to leave you back there in Diamond Red.
+		Larry: No problemo. Guys, anybody got a razor?
+		Larry_Clean: We're coming for you, man! Not leaving you behind like you did.
+		BiffNPC: Larry! Happy to see you! I'm... sorry about that.
+		Smiley: I greet you, Biff, my teacher and companion! 
+		BiffNPC: Smiley! Where have you been?!
+		BiffNPC: It is a long story, Biff. But you will draw your last breath before you hear it from me.
+[Keyword: Redirect]
+	BiffNPC: You guys... You're not here to eliminate us, right?! 
+	[Keyword: Of course not!]
+		BiffNPC: Sorry... I guess I am getting a little paranoid after all that I've learned about her <em>machinations</em> with <em>Spike</em>.
+			Fidel: We are not? Oh. Fidel disappointed.
+	[Keyword: Why would you think that?]
+		BiffNPC: I know too much already. I know all about her <em>machinations</em> with <em>Spike</em>!
+			Sidney: If that was our mission, it would have been pointless. I cannot help but notice that the Legion is already doing a marvelous job on that account.
+[Keyword: What machinations?]
+	BiffNPC: Ever wondered why this <em>"Legion"</em> is all around the place? A couple of years ago this country wasn't all sunshine and roses, but at least the civil war was over and things were getting better.
+	BiffNPC: But no, they wanted the <em>diamond mines</em> for themselves, that's why <em>they</em> needed chaos. And boom, now these bandits are everywhere...
+[Keyword: Spike?]
+	BiffNPC: Major <em>Spike Scallion</em>, known around here as <em>the Major</em>.
+	BiffNPC: I don't know what happened to him in North Korea, but he's not the man I know anymore. Now <em>they</em> hired him to bring together this <em>Legion</em> outfit and he completely lost his mind.
+[Keyword: Who are “they”?]
+	BiffNPC: <em>Adonis Corporation!</em> My employers... and I guess yours as well. 
+		Buns: As a matter of fact, they did hire us.
+	BiffNPC: They planned to exploit the mines under the guise of the <em>Legion</em>, that's why they funded it in the first place. But then <em>Spike</em> screwed them up and they had to come up with something else - they sent us <em>mercs</em> to do the dirty work.
+[Keyword: Adonis created the Legion?!]
+	BiffNPC: Adonis only provided the money... and the orders. <em>Spike</em> created it for them, but then he decided to work for himself, or whatever he's doing. I have this creepy feeling he just enjoys killing people and wreaking chaos. 
+[Keyword: What is your role in all this?]
+	BiffNPC: I guess when she saw where things were heading, <em>Corazon</em> started looking for a way out... She hired us to get the mines for her. She told us they were in the hands of those Legion bandits.
+		Len: She told us the same.
+	BiffNPC: But by the time we attacked it, <em>Diamond Red</em> was still held by Grand Chien soldiers! We're probably war criminals by now... How could we know?...
+		Gus: I knew that something was stinkin' in this whole business, Woody.
+	BiffNPC: This is how I got that cursed <em>green diamond</em>... And now <em>Spike</em> wants to kill me for it!
+[Keyword: Show us the green diamond]
+	BiffNPC: No! We found it! It is ours! Ours!...
+	BiffNPC: I mean... This is not the time. The goddamn Legion will attack any moment now! Spike wants it for himself, and he... he said he will kill me and take it from me, regardless if I'm willing to give it up or not.
+[Keyword: The Legion is attacking!]
+	BiffNPC: Not again! Mayday! I mean, I request immediate combat support! Please...

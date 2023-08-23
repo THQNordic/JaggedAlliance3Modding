@@ -1,0 +1,52 @@
+[Keyword: Greeting]
+	CorazonSantiago: Oh good, you're here. I would offer you refreshments, but there is much to do and time is of the essence. Before we begin securing Grand Chien's diamond mines, I need you to respond to a local emergency. 
+		Sidney: Oh, bother. I was rather looking forward to a spot of tea. Suppose it can't be helped. Do go on.
+		Blood: Well, all right, but... you sure you don't have maybe a sandwich or two somewhere?
+		Grunty: This is good. I am bored and would like to shoot things now.
+		Len: Sounds good. I need to stretch my legs anyway. 
+		Fox: Well, so much for that bubble bath I was hoping to take.
+[Keyword: Greeting]
+	CorazonSantiago: Yes? What can I do for you?
+[Keyword: Greeting]
+	CorazonSantiago: The resistance in the Fort continues to be troublesome. Until you have captured the fort we cannot proceed with operations.
+[Keyword: Mission briefing]
+	CorazonSantiago: I admit, I'm excited to see what you can do. The town of Ernie is being terrorized by a group of outlaws calling itself <em>the Legion</em>. I need you to remove the Legion presence from Ernie and earn the trust of the people.
+	CorazonSantiago: The Legion's activities on <em>Ernie Island</em> threaten our plans to expand onto the mainland of Grand Chien. Your help to remove them is critical to the success of the Adonis Corporation.
+[Keyword: The Legion?]
+	CorazonSantiago: The largest and most dangerous paramilitary group in the region. At first, I thought they could be bought off or easily bullied. Turns out, they respect only direct force. That's why I decided to hire you. They should be no match for professional soldiers.
+		Buns: My dear, I have yet to meet my match.
+		Steroid: I will show them the force of my incredible biceps and they will run or I will smash them! HAHAHAHAHA!
+[Keyword: Ernie Island?]
+	CorazonSantiago: This place is the key to developing our diamond mining operations in <em>Grand Chien</em>. It's isolated and defensible and will serve as a good launch point to expand our influence up the Adjani River. The people here are docile, but resourceful. Help them and they'll help us.
+		Igor: They will all soon know the love of a Dolvich!
+		Hitman: Resourceful is okay, but docile is for the birds. Sounds like they need someone to show them how to throw a punch... or a grenade.
+		MD: Oh, that's swell! They sound nice.
+		Barry: I like this. It is the Christian thing to do.
+	CorazonSantiago: Anyways...
+	CorazonSantiago: Please, excuse me. I must take this...
+	CorazonSantiago: Yes?... No!... Just tell them to wait.... Just tell them to wait, goddamnit!
+	CorazonSantiago: My apologies. Where were we?
+[Keyword: What was that about?]
+	CorazonSantiago: It was... Well, it was nothing that concerns your mission. It was simply, er... certain logistical issues that require my attention from time to time. Again, I apologize. Do you have any further questions for me?
+[Keyword: Tell us...]
+	CorazonSantiago: What else would you like to know?
+	[Keyword: Adonis Corporation?]
+		CorazonSantiago: Adonis Corporation's business is in precious stones and metals, among other things. You can understand our interest in the region and our interest is now your interest. Each mine you secure for us will pay you a dividend. Maintain control of enough mines and you could become quite wealthy.
+			Buns: That's the best thing I've heard since the Prime Minister of Denmark told me he was thinking of commissioning a statue in my honor.
+			Fidel: This is good. Fidel's favorite cigars are not cheap.
+	[Keyword: Grand Chien?]
+		CorazonSantiago: The Adjani River Valley is the only part of Grand Chien you need to concern yourself with. I'll tell you more about it once you've secured the island, but for now just know that it's a hot mess. It will require a firm hand to pacify the region, but I have every confidence you can do the job.
+			Len: Cleaning up hot messes is my specialty.
+			Meltdown: Well, shit! Firm hand is the only kind of hand I have!
+	[Keyword: You already have soldiers...]
+		Thor: I see you have your own soldiers. Why are we here?
+		CorazonSantiago: Yes... It's true that Adonis has its own security force, but we prefer to leave the heavy lifting to professional soldiers.
+[Keyword: We have wounded]
+	Buns: Despite our superior tactics, the enemy managed to score some lucky hits. Any supplies you can spare will greatly increase our chances of success.
+	CorazonSantiago: As per our contract, you should be bringing your own tools and supplies. I'll give you what medical supplies my bodyguards scavenged after the recent attack. After that you are on your own.
+[Keyword: We have wounded]
+	CorazonSantiago: As per our contract, I believe you have been provided with a limited amount of basic supplies for just such an emergency. Any additional supply requests have to be made with the appropriate form filed with Purchasing... It's best if you just get what you need from the locals.
+[Keyword: Goodbye]
+	CorazonSantiago: Good luck. I'll be keeping in touch via radio but feel free to return to me if you need to.
+[Keyword: Goodbye]
+	CorazonSantiago: I would say "good luck" but with what you're being paid, I do not think luck should be involved.

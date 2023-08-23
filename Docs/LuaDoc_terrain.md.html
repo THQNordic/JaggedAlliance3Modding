@@ -1,0 +1,921 @@
+# terrain Overview
+
+The terrain is represented by two raster grids - type grid and height grid.
+
+The materials used to texture the terrain are in the TerrainTextures table. Each material consists of several PBR textures similar to other materials in the game - base color, normal map, roughness / metallic, etc.
+
+The layout of these materials on the terrain is controlled by the terrain type grid, which describes what material to use for each grid tile. Each tile can reference only one material. However, materials are blended along type pixel boundaries with a fairly wide blending border, to avoid obvious pixelation.The values in the pixels are 8 - bit indices in the TerrainTextures table.
+
+The geometry of the terrain is described by a dense heightfield, with the same density as the type grid. Each grid value indicates the height in this point, as a 16 - bit number. That number is then scaled to obtain the final height in game units (i.e.centimeters). The height grid samples are located at the type grid tile corners, i.e. the height grid is 1 pixel bigger than the type grid.
+
+
+# terrain reference
+
+
+## terrain.AreaPassable
+
+Checks if there is enough connected passable tiles at a given location (forming a connected area).
+
+
+bool **terrain.AreaPassable**(point pos, int area, [int pfclass = 0, bool bUseTunnels = false])
+
+bool **terrain.AreaPassable**(int x, int y, int z, int area, [int pfclass = 0, bool bUseTunnels = false])
+
+bool **terrain.AreaPassable**(object obj, int area, [bool bUseTunnels = false])
+point pos
+: position to check.
+
+int x, y, z
+: position to check.
+
+object obj
+: position and pfclass to check.
+
+int area
+: number of connected passable tiles.
+
+int pfclass
+: pfclass to use (optional, default 0).
+
+bool bAvoidTunnels
+: ignore connectivity through tunnels (optional, default false).
+
+
+## terrain.ChangeHeight
+
+Modifies all values in the height grid by given value
+
+
+void **terrain.ChangeHeight**(diff)
+int diff
+: value to add.
+
+
+## terrain.CirclePassable
+
+Checks if a circle area with given radius is passable.
+
+Usefull to verify if there is enough space to fit safely something at a given position.
+
+
+bool **terrain.CirclePassable**(point pos, int radius, [int pfclass = 0])
+
+bool **terrain.CirclePassable**(int x, int y, int z, int radius, [int pfclass = 0])
+
+bool **terrain.CirclePassable**(object obj, int radius)
+point pos
+: position to check.
+
+int x, y, z
+: position to check.
+
+object obj
+: position and pfclass to check.
+
+int radius
+: radius to check.
+
+int pfclass
+: pfclass to use (optional, default 0).
+
+
+## terrain.ClampBox
+
+Clamp a box with the map bounding box.
+
+
+box **terrain.ClampBox**(box, border)
+box box
+: box to clamp
+
+int border
+: optional, if specified the function will shrink the map boundaries by this amount for the purpose of the clamp.
+
+
+## terrain.ClampPoint
+
+Clamp a position with the map bounding box.
+
+
+point **terrain.ClampPoint**(pos, border)
+point pos
+: position to clamp
+
+int border
+: optional, if specified the function will shrink the map boundaries by this amount for the purpose of the clamp.
+
+
+## terrain.ClampVector
+
+Clamp a vector with the map bounding box.
+
+
+point, point **terrain.ClampVector**(ptFrom, ptTo)
+point ptFrom
+: vector begin point to clamp
+
+point ptTo
+: vector end point to clamp
+
+
+## terrain.ClearWater
+
+Clears all water from the map.
+
+
+void **terrain.ClearWater**()
+
+## terrain.CountPassable
+
+Counts the passable tiles in a circle area with given radius.
+
+Usefull to estimate how passable is a given area compared to another.
+
+
+int **terrain.CountPassable**(point pos, int radius, [int pfclass = 0])
+
+int **terrain.CountPassable**(int x, int y, int z, int radius, [int pfclass = 0])
+
+int **terrain.CountPassable**(object obj, int radius)
+point pos
+: position to check.
+
+int x, y, z
+: position to check.
+
+object obj
+: position and pfclass to check.
+
+int radius
+: radius to check.
+
+int pfclass
+: pfclass to use (optional, default 0).
+
+
+## terrain.FindAreaPassable
+
+Search a position with enough connected passable tiles (forming a connected area) starting from a given position.
+
+Different passability levels could be considered when tunnels are allowed only.
+
+
+bool **terrain.FindAreaPassable**(point pos, int area, int radius, [int pfclass = 0, bool bUseTunnels = false, function filter = false, ...])
+
+bool **terrain.FindAreaPassable**(int x, int y, int z, int area, int radius, [int pfclass = 0, bool bUseTunnels = false, function filter = false, ...])
+
+bool **terrain.FindAreaPassable**(object unit, int area, int radius, [bool bUseTunnels = false, bool bCanDestlock = false, function filter = false, ...])
+point pos
+: position to check.
+
+int x, y, z
+: position to check.
+
+object unit
+: unit at position and pfclass to check.
+
+int area
+: number of connected passable tiles.
+
+int radius
+: search radius around the position to check.
+
+int pfclass
+: pfclass to use (optional, default 0).
+
+bool bAvoidTunnels
+: restrict search in a single level and ignore connectivity through tunnels (optional, default false).
+
+bool bCanDestlock
+: if an unit is provided, check for destlockable positions only.
+
+function filter
+: if provided, each position (x, y, z) will be tested with. All remaing parameters are forwarded.
+
+
+## terrain.FindPassableTile
+
+Search for the nearest passable tile around a center position, according to certain criteria, specified by flags.
+
+The initial position is tested without tile alignment, to handle the trivial case where the center position is passable.
+
+The function is faster than *terrain.FindPassable*.
+
+
+point **terrain.FindPassableTile**(obj, tfp_flags, ...)
+
+point **terrain.FindPassableTile**(pos, tfp_flags, ...)
+
+point **terrain.FindPassableTile**(x, y, z, tfp_flags, ...)
+CObject obj
+: search center. The pass class and pass flags are deduced from it, in case there is a path component.
+
+point pos
+: search center.
+
+int x, y, z
+: search center.
+
+int tfp_flags
+: Flag based number defining different modifications to the default behavior. If some of the behaviors require aditional params, they should follow in the correct order. The available flags are:
+
+-- const.tfpLimitDist
+
+Limits the search between min/max distance.
+
+Additional param: max_dist, min_dist (int)
+
+-- const.tfpPassClass
+
+Specifies a pass class, overriding the pass class in *obj* param, if any. Exepcts a pf class index or an object.
+
+Additional param: pfclass (int/object)
+
+-- const.tfpCanDestlock
+
+Searches for destlockable positions only. Exepcts a deslocking radius, an object or a boolean too indicate to use the one found in *obj*.
+
+Additional params: destlock_radius (int/object/bool)
+
+-- const.tfpVoxelCenters
+
+Restricts the search to voxel centers only.
+
+-- const.tfpReturnXYZ
+
+Forces the result to be the point coordinates instead.
+
+-- const.tfpCollectList
+
+Forces the result to be a list of all pass positions in a list, instead of the first one. Exepcts  max results count, or a boolean.
+
+Requires *const.tfpLimitDist*. Incompatible with *const.tfpReturnXYZ*.
+
+Additional params: max_results (int,bool)
+
+-- const.tfpLuaFilter
+
+A Lua filter expecting as parameters coordinates: x, y, z
+
+Any additional parameters passed after the *filter* are passsed back to it when called, after the coordinates.
+
+Additional params: filter (function)
+
+
+
+_returns_ point pass_pos
+: a passable position if found (or its coordinates if *const.tfpReturnXYZ* is specified, or a list with all positions matching the criteria if *const.tfpReturnList* is specified).
+
+
+
+Example:
+
+~~~~ Lua
+	local nsp_flags = const.tfpLimitDist | const.tfpLuaFilter
+	local max_dist, min_dist = 16*guim, 2*guim
+	local danger_pos, danger_dist = self:FindDangerAround()
+	local pos = terrain.FindPassableTile(self, nsp_flags, max_dist, min_dist, function(x, y, z, danger_pos, danger_dist)
+		return not danger_pos or not IsCloser(danger_pos, x, y, z, danger_dist)
+	end, danger_pos, danger_dist)
+~~~~
+
+## terrain.FindPassableZ
+
+Returns the closest passable Z in the specified range.
+
+
+void **terrain.FindPassableZ**(pt, pfclass, max_below, max_above)
+
+void **terrain.FindPassableZ**(x, y, z, pfclass, max_below, max_above)
+
+void **terrain.FindPassableZ**(obj, max_below, max_above)
+point pt
+: map position.
+
+int x, y, z
+: map position as coordinates.
+
+Object obj
+: game object to use as position and pf class.
+
+int pfclass
+: pf class to check (0 by default)
+
+int max_below, max_above
+: search range (unlimited by default).
+
+_returns_ : int pass_z
+: the pass Z if found or nil.
+
+
+## terrain.FindReachable
+
+Search for a reachable passable position around a given start position (or unit), according to a set of rules.
+
+Supports several rules for filtering, weighting and randomizing the results.
+
+The search is 3D but wont change passability levels unless via a tunnel. Thus providing a starting point on impassable would search around within the provided limits, ignoring passable positions on adjacent layers.
+
+The only case where the starting layer is changed, is for positions with valid Z exactly on the terrain, resulting from providing visual position of units.
+
+
+point **terrain.FindReachable**(obj, rule, ..., [rule2, ...], ..., [ruleN, ...])
+
+point **terrain.FindReachable**(start_pos, pf_class, rule, ..., [rule2, ...], ..., [ruleN, ...])
+CObject obj
+: object to be used as starting position, applying its pf class
+
+point start_pos
+: starting search position
+
+int pf_class
+: pathfinding class
+
+int rule
+: operation rule. Each rule have different input parameters expected after its declaration:
+
+-- const.tfrResCount, count
+
+*count* results are expected (1 by default). Unlimited results can be specified by providing -1.
+
+
+
+-- const.tfrResCollect, results, start_idx
+
+Pushes the results into the given table *results* instead into the stack. If no table is providied (false), then such table is created and pushed into the stack. Always pushes the collected count into the stack as well. If *start_idx* is false then the results are pushed at the end of the table.
+
+
+
+-- const.tfrRandom, seed
+
+The result(s) are randomized based on the given *seed*
+
+
+
+-- const.tfrDir, angle
+
+Sets the orientation to *angle* (used by some of the operation rules)
+
+
+
+-- const.tfrLimitDist, max_dist, min_dist
+
+The result(s) are located between *min_dist* and *max_dist* traversed distance from the start.
+
+
+
+-- const.tfrLimitDir, max_angle, min_angle
+
+The result(s) are located between *min_angle* and *max_angle* absolute deviation form the given orientation (the object*s angle by default).
+
+
+
+-- const.tfrBoxFilter, filter_box
+
+The result(s) are accepted only if inside the provided box (2D).
+
+
+
+-- const.tfrCenterRadius, max_radius, min_radius, center_pos
+
+The result(s) are located between *min_radius* and *max_radius* linear distance around the *center_pos* (the object's pos by default).
+
+This rule can co-exists with *const.tfrLimitDist* to make it possible to apply constraints by 2 different positions (e.g. *Roam* behavior).
+
+The *start_pos* can be outside the allowed *max_radius* around *center_pos*, but in that case the results are not guaranteed to be the best possible.
+
+
+
+-- const.tfrWeightDir, max_angle_weight, min_angle_weight, angle_weight_distrib
+
+Apply weights to the results according to how close/far they are to a given orientation (the object's angle by default). The weight distribution law can be linear (1), quadratic (2), etc.
+
+
+
+-- const.tfrWeightDist, max_dist_weight, min_dist_weight, dist_weight_distrib
+
+Apply weights to the results according to how close/far they are to the start position (according to the traversed distance). The weight distribution law can be linear (1), quadratic (2), etc.
+
+
+
+-- const.tfrWeightRadius, max_radius_weight, min_radius_weight, radius_weight_distrib
+
+Apply weights to the results according to how close/far they are to the center position (according to the linear 2D distance). The weight distribution law can be linear (1), quadratic (2), etc.
+
+
+
+-- const.tfrPassCost, max_cost, min_cost
+
+Filter the result(s) by pathfinding cost.
+
+
+
+-- const.tfrPassLOS
+
+Restrict the results to have passable LOS to the start position. Tunnels are therefore ignored in this rule.
+
+
+
+-- const.tfrPassClass, pfclass
+
+Specify a pf class.
+
+
+
+-- const.tfrVoxelCenters
+
+Results will be confined to voxel centers only.
+
+
+
+-- const.tfrPassBorder, pass_border
+
+Limit the result(s) to those located at a minimum distance *pass_border* to impassable.
+
+
+
+-- const.tfrCanDestlock, destlock_radius
+
+Restrict the results to be destlockable positions.
+
+You can set a custom destlock_radius (-1 sets it to to the given unit's destlock radius).
+
+If a point is given, in stead of a unit, destlock_radius is necessary
+
+
+
+-- const.tfrDbgStats
+
+Debug only: print statistics.
+
+
+
+-- const.tfrDbgMap
+
+Debug only: return point to weight map as first result
+
+
+
+-- const.tfrLuaFilter, filter, [filter_params]
+
+Call a Lua filter for each result.
+
+The function is called with the coordinates *x*, *y* and *z*, followed by all *filter_params*.
+
+This should be the last rule in the parameters as everything after it is considered as filter parameters.
+
+_returns_ point pos1, pos2, ...
+: Number of results specified by rule const.tfrResCount (1 by default)
+
+
+
+Multiple rules can be requested in the same call by providing them in succession.
+
+Example:
+
+~~~~ Lua
+	local pos = terrain.FindReachable(self,
+		const.tfrRandom, seed,
+		const.tfrLimitDist, max_dist, min_dist,
+		const.tfrCenterRadius, max_radius, min_radius, center_pos,
+		const.tfrWeightDir, max_angle_weight, min_angle_weight, angle_weight_distrib,
+		const.tfrPassCost, max_cost, min_cost,
+		const.tfrLuaFilter, filter, ...)
+~~~~
+
+## terrain.FixHeightBorder
+
+Fix any discontinuities at the height border, as some operation are not applied there.
+
+
+void **terrain.FixHeightBorder**()
+
+## terrain.GetAreaHeight
+
+Returns the average height of the specified circle area. If no parameters are specified, then the average for the whole map is computed.
+
+
+int **terrain.GetAreaHeight**(pos, radius)
+point pos
+: optional, center of the circle area.
+
+int radius
+: optional, radius of the circle area.
+
+
+## terrain.GetGrassDensity
+
+Returns the grass density at given position.
+
+
+int **terrain.GetGrassDensity**(pos)
+point pos
+: position to check.
+
+
+## terrain.GetHeight
+
+Returns the terrain height at given position.
+
+
+int **terrain.GetHeight**(pos)
+point pos
+: position to check.
+
+
+## terrain.GetMapHeight
+
+Returns the map height/sizey.
+
+
+int **terrain.GetMapHeight**()
+
+## terrain.GetMapSize
+
+Returns the size of the map (terrain) rectangle as two integers (sizex and sizey).
+
+
+int, int **terrain.GetMapSize**()
+
+## terrain.GetMapWidth
+
+Returns the map width/sizex.
+
+
+int **terrain.GetMapWidth**()
+
+## terrain.GetMinMaxHeight
+
+Returns the min & max terrain height in a given box. The box bounderies are rounded up to the height grid alignment.
+
+
+int, int **terrain.GetMinMaxHeight**(bbox)
+
+## terrain.GetPassId
+
+Returns an unique number defining the passability state of the terrain.
+
+Different pass ID-s can denote the same passability state, but the same ID cannot denote two different passability states.
+
+
+int **terrain.GetPassId**()
+
+## terrain.GetSlopeOrientation
+
+Returns the orientation angle of the terrain normal projection at the given position.
+
+
+int **terrain.GetSlopeOrientation**(pos)
+point pos
+: position to check.
+
+
+## terrain.GetSurfaceHeight
+
+Returns the max surface height at given position (e.g. water).
+
+
+int **terrain.GetSurfaceHeight**(pos)
+point pos
+: position to check.
+
+
+## terrain.GetSurfaceNormal
+
+Returns the normal to the terrain surface, with all components multiplied by 100.
+
+
+point **terrain.GetSurfaceNormal**(pos)
+point pos
+: position to check.
+
+
+## terrain.GetTerrainNormal
+
+Returns the normal to the terrain, with all components multiplied by 100.
+
+
+point **terrain.GetTerrainNormal**(pos)
+point pos
+: position to check.
+
+
+## terrain.GetTerrainSlope
+
+Returns the slope angle of the terrain at the given position, as determined by the terrain normal.
+
+
+int **terrain.GetTerrainSlope**(pos)
+point pos
+: position to check.
+
+
+## terrain.GetTerrainType
+
+Returns the terrain type at the given map position.
+
+
+int **terrain.GetTerrainType**(pos)
+point pos
+: position to check.
+
+
+## terrain.GetTerrainsCount
+
+Returns the number of available terrain types.
+
+
+int **terrain.GetTerrainsCount**()
+
+## terrain.GetWaterHeight
+
+Returns the water height at given position.
+
+
+int **terrain.GetWaterHeight**(pos)
+point pos
+: position to check.
+
+
+## terrain.HeightMapSize
+
+Returns the x and y sizes of the heightmap grid.
+
+
+int, int **terrain.HeightMapSize**()
+
+## terrain.IntersectRay
+
+Returns the intersection point of a ray with the terrain.
+
+
+point **terrain.IntersectRay**(pt1, pt2)
+point pt1
+: start point of the ray.
+
+point pt2
+: end point of the ray.
+
+
+## terrain.IntersectSegment
+
+Returns the intersection point of a segment with the terrain.
+
+
+point **terrain.IntersectSegment**(pt1, pt2)
+point pt1
+: start point of the segment.
+
+point pt2
+: end point of the segment.
+
+
+## terrain.InvalidateType
+
+Forces a recalculation of the typemap in the specified area or the entire map.
+
+
+void **terrain.InvalidateType**(area)
+box area
+: optional, area to recalculate.
+
+
+## terrain.InvlidateHeight
+
+Forces a recalculation of the height values in the specified area or the entire map.
+
+
+void **terrain.InvlidateHeight**(area)
+box area
+: optional, area to recalculate.
+
+
+## terrain.IsMapBox
+
+Checks if a box is the same or bigger than the map bounding box.
+
+
+bool **terrain.IsMapBox**(box)
+box box
+: box to check
+
+
+## terrain.IsPointInBounds
+
+Returns true if the specified point is inside the terrain boundaries.
+
+
+bool **terrain.IsPointInBounds**(pos, [border])
+point pos
+: position to check.
+
+int border
+: optional, if specified the function will shrink the map boundaries by this amount for the purpose of the check.
+
+
+## terrain.IsVerticalTerrain
+
+Returns true if the specified point is s considered vertical terrain depending on the terrain normal.
+
+
+bool **terrain.IsVerticalTerrain**(pos)
+point pos
+: position to check.
+
+
+## terrain.IsWater
+
+Returns whether water is present at given position.
+
+
+int **terrain.IsWater**(pos)
+point pos
+: position to check.
+
+
+## terrain.IsWaterNearby
+
+Checks for water/land in a given radius.
+
+
+bool **terrain.IsWaterNearby**(pos, radius)
+point pos
+: position to check.
+
+int radius
+: check radius.
+
+
+## terrain.ReplaceTypeCircle
+
+Replaced the terrain type in a circle area.
+
+
+void **terrain.ReplaceTypeCircle**(ptCenter, nRadius, hTypeOld, vType)
+point ptCenter
+: center of the circle area to change.
+
+int nRadius
+: radius of the circle area to change.
+
+int hTypeOld
+: terrain type to be replaced.
+
+int hTypeNew
+: terrain type to apply.
+
+int vType
+: optional, alternative terrain type to apply on vertical terrain areas.
+
+
+## terrain.ScaleHeight
+
+Scales all values in the height grid by given nominator and denominator.
+
+
+void **terrain.ScaleHeight**(mul, div)
+int mul
+: nominator value to apply.
+
+int div
+: denominator value to apply.
+
+
+## terrain.SetHeight
+
+Sets the terrain height at the given position to the specified value.
+
+
+void **terrain.SetHeight**(pos, height)
+point pos
+: the position to alter.
+
+int height
+: the new height to set.
+
+
+## terrain.SetHeightCircle
+
+Calculates the average height in the given circle, then modifies it by the given value
+
+
+void **terrain.SetHeightCircle**(pt, nInnerRadius, nOuterRadius, nHeightDiff)
+point pt
+: the center of the circle area to alter.
+
+int nInnerRadius
+: radius of the inner circle, where the desired height will be set without smoothing.
+
+int nOuterRadius
+: radius of the outer ring, where the new height will be smoothed toward the current values.
+
+int nHeightDiff
+: value to add to the computed average height.
+
+
+## terrain.SetHeightCircle
+
+Sets the height values in the given circle, smoothing the height in the outer ring toward the existing values
+
+
+void **terrain.SetHeightCircle**(pt, nInnerRadius, nOuterRadius, nHeight, mode)
+point pt
+: the center of the circle area to alter.
+
+int nInnerRadius
+: radius of the inner circle, where the desired height will be set without smoothing.
+
+int nOuterRadius
+: radius of the outer ring, where the new height will be smoothed toward the current values.
+
+int nHeight
+: new height to set.
+
+int mode
+: optional, can be const.hsDefault (default, set target values directly), const.hsMin (new_height = Min(new_height, current)) or const.hsMax (new_height = Max(new_height, current)).
+
+
+## terrain.SetTerrainType
+
+Sets the terrain type at the given position.
+
+
+void **terrain.SetTerrainType**(pos, type)
+point pos
+: position to change.
+
+int type
+: new terrain type.
+
+
+## terrain.SetTypeBox
+
+Sets the terrain type in a rectangular area.
+
+
+void **terrain.SetTypeBox**(box, type)
+box b
+: the area to change.
+
+int nType
+: terrain type to apply.
+
+
+## terrain.SetTypeCircle
+
+Sets the terrain type in a circle area.
+
+
+void **terrain.SetTypeCircle**(ptCenter, nRadius, hType, vType)
+point ptCenter
+: center of the circle area to change.
+
+int nRadius
+: radius of the circle area to change.
+
+int hType
+: terrain type to apply.
+
+int vType
+: optional, alternative terrain type to apply on vertical terrain areas.
+
+
+## terrain.SmoothHeightCircle
+
+Smooths the terrain height in the given circle.
+
+
+void **terrain.SmoothHeightCircle**(pt, radius)
+point pt
+: the center of the circle area to smooth.
+
+int radius
+: the radius of circle area to smooth.
+
+string mode
+: (optional) you can specify "min" or "max" to be used when setting the terrain height at each point.
+
+
+## terrain.TypeMapSize
+
+Returns the x and y sizes of the typemap grid.
+
+
+int, int **terrain.TypeMapSize**()
+
+## terrain.UpdateWaterGridFromObject
+
+Sets the water height from the position of a given object.
+
+
+void **terrain.UpdateWaterGridFromObject**(obj)
+object obj
+: object to use (or it's position).
+
+
+
+
+
+(insert footer.md.html here)
+<link rel="stylesheet" type="text/css" href="Style.css" />
+<!-- Markdeep: --><style class="fallback">body{visibility:hidden;white-space:pre;font-family:monospace}</style><script src="markdeep.min.js" charset="utf-8"></script><script>window.alreadyProcessedMarkdeep||(document.body.style.visibility="visible")</script>

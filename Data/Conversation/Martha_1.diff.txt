@@ -1,0 +1,91 @@
+[Keyword: Greeting]
+	Martha: Well, you sure know how to handle those Legion thugs. Wish I could say the same for my <em>husband</em>... They waved their guns at him and he just tucked his chin and followed.
+		Steroid: Everyone's a hero in their own way. Just not everyone has my MIGHTY BICEPS! Just look at them!
+		Mouse: You make it sound like that's a bad thing.
+		MD: That's what I did the first time someone waved a gun at me... And the second time. And the third...
+		Wolf: Some guys don't like fighting. Never understood that, myself.
+	Martha: If he isn't kidnapped, he's going to wish he were dead when I lay my hands on him.
+[Keyword: Greeting]
+	Martha: Welcome to Martha and Herman's... Or probably just Martha's.
+Now if you would excuse me, I've got work to do.
+[Keyword: Greeting]
+	Martha: Still no trace of my dummy <em>husband</em>? I'm starting to worry.
+[Keyword: Your husband?]
+	Martha: Those <em>Legion</em> bastards came here and drank everything, and then they pushed my Herman outside and said they want to pay him for his services...
+		Steroid: If I was here, they'd never take your husband alive!
+		Igor: They drank... everything?
+		Grizzly: I'm guessing that didn't mean they wanted to lay some cash on him.
+		Omryn: Did they eat everything, too? Just curious.
+	Martha: I am worried about him, but I have my doubts about this whole affair, I tell you!
+[Keyword: We'll look for your husband]
+	Martha: Thank you! It's good to know there are still decent people in this world. Please bring my Herman back to me.
+		Omryn: Do not worry. Omryn is best tracker. I have snack and then go.
+		Wolf: If your man's out there, we'll track him down.
+		MD: We'll make sure he gets home safely.
+	Martha: And if he happens to be fooling around with that little hussy - <em>Deedee</em> from the <em>Emerald Coast</em>, be sure to tell me!
+		Raider: With all due respect, ma'am, we're not marriage counselors.
+		Raven: But if we were, we would take a "lead by example" approach: The couple that shoots together, stays together.
+		Raider: With all due respect, ma'am, we're not marriage counselors.
+[Keyword: We'll save your husband!]
+	Martha: I wish he was as brave as you are! Please bring him back to me.
+		Raider: Don't worry, ma'am. We'll do our best to bring your husband home.
+		Hitman: Sure, we'll bring him back to you... if that's what you want.
+		Thor: Don't worry. We will fetch your husband with all his chakras intact.
+	Martha: I hope he's not fooling around with that little hussy <em>Deedee</em> from the <em>Emerald Coast</em>. If that is the case, I'll kill him myself!
+[Keyword: We'll save your husband!]
+		Steroid: Not to worry, lady! We'll save your little husband in distress.
+		Kalyna: Fear not! We will vanquish the evil-doers and return your beloved!
+		Igor: It is good. We will retrieve wayward husband.
+	Martha: You're just saying that to comfort me. But in fact, he may be dead, or worse!
+		Red: What the hell could be worse, woman?!
+		Steroid: I'll bring him dead or alive.
+		Martha: Alive is better.
+		Kalyna: Oh, worse than death is very bad.
+	Martha: He may be fooling around with that little hussy <em>Deedee</em> from the <em>Emerald Coast</em>. If that is the case, I'll kill him myself!
+[Keyword: We'll save your husband!]
+	Martha: You're just saying that to comfort me. But in fact, he may be dead, or worse!
+	Martha: I am sure he is fooling around with that little hussy <em>Deedee</em> from the <em>Emerald Coast</em>. But that's none of your business!...
+		Fox: Oh, I see... You think he's stepping out on you, right?
+		Livewire: You think he's with another woman? It's hard to see how that's worse than death. I think if you calm down and...
+		Martha: Calm down?! DON'T TELL ME TO CALM DOWN!!!
+	Martha: ...If he's with her, I swear I'll kill him myself!
+[Keyword: We saved your husband!]
+	Martha: Then where is he?! Don't tell me that he is with that harlot <em>Deedee</em>!... I'll kill him myself!!!
+[Keyword: Nothing to worry about]
+	Martha: We'll see about that. In any case, Herman will have a lot of explaining to do. Now if you'll excuse me, I need to get back to work.
+[Keyword: Herman has his little secrets]
+		Ice: He's a playah, your man.
+	Martha: IS THAT SO?! We'll see about that! Thanks for letting me know - oh, he'll have to explain EVERYTHING once he gets home!
+[Keyword: Deedee?]
+	Martha: "Deedee Bombastic". She's some kind of wild child who spends her days blowing things up and making explosives for the <em>Legion</em>.
+		Fidel: Fidel's kind of girl.
+		Raven: So she's an accomplice.
+		Meltdown: You just take the middle part of that and you could be talking about any one of my nieces.
+	Martha: She's had her eye on my <em>Herman</em> for a while now. Wouldn't surprise me if she sent those thugs to kidnap him for her!
+		Mouse: Well, that sounds a little far fetched.
+		Vicki: I be strongly doubting it.
+		Kalyna: An evil sorceress who kidnaps young men! I have heard of such things.
+[Keyword: Emerald Coast?]
+	Martha: It's a nice stretch of beach and sand dunes. Herman and I were planning to build a cottage up there, but we found out the place is littered with land mines.
+		Fidel: A few mines never hurt anybody! I mean, mostly anybody.
+		Livewire: This is so true! Good real estate is very hard to find.
+		Omryn: Minefields always make me so tired.
+		Barry: I do not like minelayers. They never pick up after themselves.
+	Martha: And I'm sure it is all her doing! That harlot!
+[Keyword: This is none of our business]
+	Martha: But... he could be hurt, or... worse! He may be seduced by some other woman! Isn't there anything you can do?
+		Mouse: We're not private investigators. We don't track down cheating husbands.
+		Martha: He better not be cheating on me!!! But if he is, I'll kill him personally!
+[Keyword: He's probably dead...]
+		Buns: You should consider the possibility that instead of flirting with some girl, he may be dead.
+		Meltdown: Hate to break it to you, but by now he's probably takin' a dirt nap.
+		Nails: This Herman guy is probably dead, but we could find his body if you want.
+	Martha: What a cruel thing to say! I don't know why I thought you'd be different from those Legion thugs, but I want nothing to do with you from now on.
+		Red: Calm down, woman, we'll see what we can do.
+		Martha: Calm down?! DON'T TELL ME TO CALM DOWN!!!
+[Keyword: What about the President?]
+	Martha: What president? Oh, come on. My man's missing, I don't care about politics!
+[Keyword: Goodbye]
+	Martha: If Herman has been cheating on me, I want to be the one to kill him.
+[Keyword: Goodbye]
+	Martha: I need to get back to work. Please tell me if you learn something about my man.

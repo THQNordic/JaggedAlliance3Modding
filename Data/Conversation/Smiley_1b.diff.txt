@@ -1,0 +1,29 @@
+[Keyword: Greeting]
+	Pastor: Smiley, my son, it's not what it seems...
+	SmileyNPC: Did you have a deal with the Boss, Padre? Yes or no.
+	Pastor: I only did what I had to do to protect you both. Trust me, she is alive and well! I love both of you stray lambs and I have done everything in my power to help you!
+	SmileyNPC: Is it true what they said?
+	Pastor: Yes, I let them take her to <em>Rimville</em>, but it was only because...
+	SmileyNPC: That's all I needed to know! You Judas! You have sold my girl to these beasts! I'll kill you right here on the spot!
+[Keyword: Smiley, stand down!]
+		Len: Stand down, son, or I'll shoot you myself. That's not how we do things in A.I.M.
+		Gus: Settle your dang self down!
+		Raider: Mr. Diaz, let's just calm down now.
+		Scully: Take it easy, mate.
+		Thor: Take some deep breaths. Center yourself.
+		Fauda: Calm yourself. There are no threats here unless you make one.
+	SmileyNPC: But he has sold my girl to those people!
+	Pastor: Mollie is safe, Smiley, I can promise you that. Things have a way of working out as they should, you just have to trust in God.
+	SmileyNPC: We will see about that! I am going to <em>Boss Blaubert</em> to get her back, and God help you and him both if she has been harmed at all!
+[Keyword: Smiley, stand down!]
+		Ivan: Включи мозги, идиот!
+		Hitman: Stuff a sock in it, hothead.
+		Ice: Chill, dude! Father Tooker was just tryin' to help.
+	SmileyNPC: You are not my commander and you can't tell me what to do!
+	Pastor: Dear Lord, let the spirits take my soul and bring it to your kingdom...
+[Keyword: He deserves to die]
+		Fidel: You want me to shoot him for you?
+		Reaper: Reap what you sow, Pastor.
+		Igor: He lied to you and gave up your girlfriend to a gangster. It is clear he must die.
+	Pastor: Dear Lord, let the spirits take my soul and bring it to your kingdom...
+	SmileyNPC: Shut up and die, Judas!

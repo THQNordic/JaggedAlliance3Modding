@@ -1,0 +1,148 @@
+[Keyword: Greeting]
+	Pastor: Welcome to the House of Blessed Spirits, a church of God and temple to the <em>spirits</em>! I am Father Tooker. All are welcome here, especially if you have <em>diamonds</em> to sell. All sales contribute to the good of the village.
+		Barry: Church? So you are priest? Look more like fortune-teller.
+		Pastor: And you look like a soldier, but that is not all that you are, yes?
+		Magic: Man, I dig your style.
+		Vicki: Everyone be cool. This one be a houngan - a voodoo priest.
+		Thor: Well, I guess that's one way of believing in the healing power of crystals.
+[Keyword: Greeting]
+	Pastor: Not that I'm ungrateful for dealing with the person who was scratching at the walls of this house of worship, but... Now it is YOU who are doing this sacrilege! Why would you do that?!
+		Barry: Forgive us, father, for we make sin. But we will make money as well!
+		Scully: Sorry, mate, but this gold is going to pay for a lot of child support.
+		Ice: Guess you missed the part where we pulled a bar of solid gold bling outta your wall?
+	[Keyword: We're gathering evidence!]
+			Fox: Have to make sure he didn't leave behind any nasty surprises. You don't mind if I get down on my hands and knees and check, right?
+			Livewire: I do not think it is fair to blame me for being very thorough in an investigation YOU asked us to do free of charge.
+			Magic: Be cool, my brother. Just checking for termites.
+		Pastor: Oh, I see. Of course. Please continue. I am just a pastor and know little of such things.
+	[Keyword: We're gathering evidence!]
+		Pastor: You are lying to me, my child! I saw you taking a gold bar from the wall. Our Lord and savior will forgive you, but the spirits are fond of punishing thieves.
+	[Keyword: We found some gold. Here, it's yours]
+		Pastor: Gold? Really? Thank you for telling me. May God and the spirits bless you and and your loved ones. I will use it to help the poorest people of the town.
+	[Keyword: We found some gold. It's ours now]
+		Pastor: Stealing gold from the House of Blessed Spirits is a sin in the eyes of the Lord and an insult to the spirits! Remember that when luck abandons you and a terrible fate befalls your group!
+			Vicki: Damn, mon, the priest has cursed us! 
+			Steroid: Oh no! We are cursed now!
+			Nails: We'll see. Not the first church I knocked over.
+[Keyword: Greeting]
+	Pastor: I have been asked to tell you that you are kindly invited to meet <em>Boss Blaubert</em> in <em>Rimville</em>. He is a very important man, you know. 
+[Keyword: Greeting]
+	Pastor: Have you found out why this "restless spirit" was scratching the walls of the House of Blessed Spirits?
+	[Keyword: Hidden treasure]
+		Pastor: Treasure? Really? Thank you for telling me. May God and the spirits bless you, my child. I will remove it at once and use it to help the poorest people of the town.
+			Grizzly: You're a heck of a guy, Tooker. Little scary-looking, but a heck of a guy.
+			Raider: We're happy to help. Keep fighting the good fight!
+			Len: Nice to see someone around here giving a shit about the poor. Best of luck to you, padre.
+	[Keyword: No idea, but we dealt with him]
+		Pastor: May God and the spirits bless you! I shall bring the good news to my flock. They will be relieved to know that at least one restless spirit in this land has been appeased.
+			Hitman: Sure. Appeased. That's what we'll call it.
+			Meltdown: Hell, yeah. Appeased the fuck outta that sumbitch.
+			Reaper: I doubt he was appeased, but he is very definitely at rest.
+[Keyword: Greeting]
+	Pastor: May God and the spirits bless you!
+[Keyword: God AND spirits?!]
+	Pastor: The spirits guided the people of these lands long before they learned of Christ. The teachings of their ancestors must be seen in the teachings of the Lord if we want the people to understand and live with true faith in their hearts. 
+		Barry: The word of God needs no help to be understood!
+		Pastor: But the ones hearing it often do, my child.
+		Igor: Religion is opiate of the masses. Myself, I prefer booze.
+		Thor: That... is so beautiful. My aura is hugging your aura right now.
+		DrQ: This is great wisdom. You honor your people by giving them such spiritual guidance.
+	Pastor: But it is no secret that lately the people's faith has been shaken. The recent <em>trouble</em> we've been having here at the House of Blessed Spirits isn't helping.
+[Keyword: What trouble?]
+	Pastor: There has been a <em>restless spirit</em> scratching and poking around the church walls at night. Of course, I know it's just a man, but one no doubt possessed by an evil spirit. 
+		Raider: Scratching and poking, eh? The level of criminal activity in this country is astounding.
+		Ivan: Конечно.
+		Omryn: You sure it is not chicken? Sounds like could be chicken.
+	Pastor: Please, if you could deal with this problem, I would be grateful. As long as the restless spirit persists, my flock loses more and more faith in my ability to give them hope and guidance.
+		Fauda: Restless spirits are the servants of Shaitan. We will deal with this.
+		Reaper: Death shall consume those who are desecrating a house of worship.
+		Steroid: What if he really is a spirit! A... g-g-ghost?
+[Keyword: Where is this "restless spirit"?]
+	Pastor: Once, I sacrificed a goat to try to coax the evil spirit out of him, but when I approached the man, he ran off towards the river. 
+		Shadow: Likes to hide near the river, eh? Probably doing the old reed-breathing trick.
+		Omryn: Got any of that goat left?
+		Kalyna: I wonder if he's cursed? He sounds cursed.
+	Pastor: I lost him along the <em>Southeast</em> bank, not far from here. The smugglers have tried to catch him as well, but he always manages to hide in time.
+[Keyword: You buy diamonds?]
+	Pastor: Yes. The House of Blessed Spirits needs repairs and <em>insurance</em> payments need to be made. The humble profit I make <em>reselling</em> diamonds allows me to help those in need by offering them a free meal every day.
+		Barry: This is good deed indeed.
+		Omryn: I am interested in this free meal of which you speak.
+		Grizzly: Downright charitable. I like it.
+	Pastor: But if you are interested in <em>buying diamonds</em>, I can sell you a few tiny pieces I have.
+[Keyword: About those diamonds...]
+	Pastor: Sell a diamond, buy a blessing!
+	[Keyword: What insurance?]
+		Pastor: I need to make payments to my good friend <em>Boss Blaubert</em> so he can continue to protect this church from vandals and thieves.
+			Nails: Right, your best friend.
+			Hitman: Yeah. It's a nice church. Be a shame if somethin' were to happen to it.
+			Raider: If there's one thing you can always find anywhere in the world, it's a protection racket.
+		Pastor: He is... a good man. Not necessarily a kind person, but he is fair and never resorts to violence unless needed. Very well respected. He keeps the peace. 
+	[Keyword: Where do you get diamonds from?]
+		Pastor: My flock is very poor, but they sometimes find a tiny diamond, one way or another. And as I always tell them - every diamond is clean in the eyes of God!
+			Omryn: You would not say that if you knew how people smuggle diamonds out of Kamchatka.
+			Raven: Diamond laundering, huh? Just when I think I've heard of everything.
+			Grunty: Mother says the same thing about guns.
+	[Keyword: Who buys the diamonds from you?]
+		Pastor: This is no secret, I will tell you. My friend <em>Lalee</em> at the <em>Flea Market</em> buys them from me and resells them on the black market.
+			Vicki: Right, mon. That guy be playing you plain and proper.
+			Blood: Friend, that's what is called a middle-man, and they are the scum of the earth.
+			Nails: I'm no expert on diamond trading, but it sounds like you may be getting taken for a ride.
+		Pastor: I am no trader, so I am grateful for his help in selling the diamonds. He is truly a godsend!
+	[Keyword: You can offer better prices]
+		Pastor: Probably, but you don't just get money for your diamonds, you will also have my blessing! Everyone in town will know that you contributed to the well-being of the House of Blessed Spirits and they will love you for it!
+			Livewire: Oh, come on, old man! Blessing is good, but money is better.
+			Fox: Mmm, you know what? I've always had a thing for tall men with top hats. Bless me, daddy!
+			Magic: Man, we can sell at this price anywhere. Gimme somethin' better.
+		Pastor: Perhaps I can offer you a slightly better price, but it won't be much. My margin is already quite low. I barely turn much of a profit as it is.
+	[Keyword: We'll sell a diamond for $600]
+		Pastor: Thank you! You are helping the poor people of Fleatown! May the good Lord and the spirits around us bless your kind soul.
+	[Keyword: We'll sell a diamond for $700]
+		Pastor: Thank you and be blessed.
+	[Keyword: We'll buy a diamond for $1000]
+		Pastor: Thank you! You are helping the poor people of Fleatown! May the good Lord and the spirits around us bless your kind soul.
+	[Keyword: We'll buy a diamond for $900]
+		Pastor: Thank you and be blessed.
+[Keyword: Still buying diamonds?]
+	Pastor: No, my child. What you have done to the Boss has deprived Lalee and the market of stability. The Boss had committed a great many sins, so I cannot condemn you...
+		Hitman: He had it coming.
+		Gus: Dang right, padre! He was dirtier than a pig pen with a chili trough.
+		Fidel: No worry about that - Fidel been condemned many times!
+	Pastor: But now I must rely on you to enforce order in this town and hope Lalee and the smugglers can find a way to make diamond trading safe again. Until then, I cannot trade with you.
+		Vicki: You made a deal with the devil, mon, and now you want us to save your ass.
+		Len: Enforcing order is just standard operating procedure for us.
+		Tex: We will make sure everyone know there is new sheriff in town, partner!
+[Keyword: We are searching for Smiley]
+	Pastor: Since he <em>killed a smuggler</em> in the market, there have been many people searching for this young man... But I know nothing of his whereabouts. Perhaps someone else would know. I definitely don't. 
+		Magic: You DEFINITELY don't?
+		Pastor: Yes. Most definitely. 
+		Ivan: You make same face Igor make when he hide vodka.
+		Scope: My children make the same face when I ask them who ate the last biscuit.
+[Keyword: We know you are hiding Smiley]
+	Pastor: I see... Well, what can I say? I am just a pastor and pastors are not very good at lying. Yes, he is here. You are like him, right? A mercenary?
+		Buns: Yes, exactly like him. But better.
+		Len: Not quite like him. He still hasn't learned when to use his gun and when to use his rifle, if you take my meaning.
+		Fauda: He is no mercenary. He is lovesick boy.
+	Pastor: It is good that you are finally here to help <em>Smiley</em>. I couldn't hide him much longer... Those smugglers are looking to kill him for <em>what he has done</em>.
+[Keyword: What did Smiley do?]
+	Pastor: At the Flea Market a smuggler recognized his fiancée as one of the "working girls" in <em>Le Lys Rouge</em>. He and his partners wanted to bring her back to Pantagruel for a reward, but Smiley shot him.
+		Ivan: I approve of this boy. Молодец!
+		Fox: How romantic!
+		Reaper: Sloppy. Boy needs training. A cooler head would've killed them all.
+	Pastor: The other smugglers were about to lynch him - but <em>Boss Blaubert</em> intervened and dispersed the crowd. Smiley and the girl ran away and I hid them in the House of Blessed Spirits.
+[Keyword: Lead us to Smiley]
+	Pastor: Through this door. Here, I'll unlock it for you. Please bear in mind that he is still upset about his <em>girlfriend</em> who... well, she left him.
+[Keyword: You have met Smiley?]
+	Pastor: Oh, um, everyone in town knows about Smiley. He is the man who killed one of the <em>smugglers</em> at the Flea Market. It was very foolish, but also very brave... from what I've heard - from what others have told me, I mean.
+[Keyword: Read this Maquis Manifesto]
+	Pastor: What is this? An advertisement for a house of sin and some communist cell?! Wait, is this...? Yes, I recognize her. This is  <em>Smiley's</em> girlfriend on the picture!
+		Hitman: Regular blushing beauty, ain't she?
+		Grizzly: I get the feeling he's not her only boyfriend.
+		MD: She seems nice!
+[Keyword: Read this Maquis Manifesto]
+	Pastor: Communist propaganda is just the same as heresy. It must be removed so it can't confuse the heads of the innocent.
+		Steroid: Amen!
+		Ivan: Religion makes man kill man. Communism is opposite!
+		Barry: Says who, the priest of the House of the Blessed Spirits? Seems you are the one who is confused, "father".
+		Grizzly: You may be weird looking, but at least your head is screwed on straight.
+[Keyword: Goodbye]
+	Pastor: Walk in peace with God and the spirits!

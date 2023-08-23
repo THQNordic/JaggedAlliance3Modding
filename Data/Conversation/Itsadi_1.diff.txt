@@ -1,0 +1,88 @@
+[Keyword: Greeting]
+	Itsadi: Greetings. Do you have moneys?
+	[Keyword: What for?]
+		Itsadi: Moneys are used to buy junk.
+	[Keyword: Tell us something we don't know]
+		Itsadi: Foolish person know, wise person ask. You ask and I tell you this: <em>Frédéric Le Furet</em> has moneys.
+		Itsadi: You take from him. No one cry for Frédéric.
+			Raider: Sir, I'm going to have to caution you against soliciting us to commit a crime.
+			Scope: Perhaps except for the poor chap himself, I imagine.
+			Scully: Well, no one except poor old Freddy, I bet.
+	[Keyword: What money?]
+		Itsadi: Wise question. I, Itsadi, seek paper moneys of Grand Chien. They are good for Itsadi.
+			Grunty: This is very strange. The Grand Chien Frank is currently worth less than my toe nail clippings... And no, you may not have those.
+			Wolf: You sure? The GC Frank isn't even worth the paper it's printed on, chief.
+			Omryn: Paper is not good to eat. Rat or squirrel is much better. You know about rat jerky? I show you.
+	[Keyword: Anything can be money]
+			Buns: My half-eaten lunch is worth more than a bag of Grand Chien Franks!
+			Thor: Let go of the pursuit of profit. Instead, try pursing your potential!
+			DrQ: You perceive worth where none exists. You are either delusional or simply foolish.
+		Itsadi: You have wisdom. But you have no moneys.
+	[Keyword: Yes, we have money]
+		Itsadi: Then where is your bags of Grand Chien Franks? You lie.
+	[Keyword: Yes, we have money]
+		Itsadi: Lovely Franks! Good. Now you buy. Shop is open.
+	[Keyword: No money]
+	[Keyword: We just want to talk]
+		Itsadi: You talk. Good for you.
+[Keyword: Greeting]
+	Itsadi: Good morning.
+[Keyword: Greeting]
+	Itsadi: Good morning. You have moneys?
+[Keyword: It's not morning]
+	Itsadi: There is always mornings some place in the world.
+		Larry: That's beautiful, man.
+		Larry_Clean: I used to say "It's five o'clock somewhere" all the time. Wow, I'm really thirsty all of a sudden. 
+		Tex: It is also high noon some place on world. Oh, that make for good movie title!
+[Keyword: Who are you?]
+	Itsadi: Itsadi is the Fisher. Itsadi fishes junk.
+		Meltdown: Then I reckon you'd catch a lot in my backyard. Uh... that ain't no invitation. I catch you fishing my junk, I blow your head clean off!
+		Barry: One man's junk is another man's fish.
+		Vicki: Good for you, mon! Junkyard be one of my very favorite places.
+	[Keyword: Teach us fishing]
+		Itsadi: Itsadi sell junk, you have junk for one day. Itsadi teach fishing, you have junk for life and never buy junk with moneys. No, Itsadi never teach fishing.
+[Keyword: Why take only local currency?]
+	Itsadi: Itsadi has no need of other moneys but Grand Chien paper moneys. Itsadi has all the junk, but not enough moneys. Moneys have good use.
+		Grizzly: What's wrong with the good ol' American greenback?!
+		Igor: I give you rubles. Very useful. I have bought many vodkas with rubles.
+		Sidney: My good man, I assure you that there is nothing more useful than the Queen's own currency - the British Pound Sterling.
+	Itsadi: Your moneys are weak, because they come in small number. But Grand Chien moneys are strong! Itsadi gets whole bag of money for junk!
+[Keyword: Why do you need that money?]
+	Itsadi: Grand Chien moneys make best wall paper. Good strong paper, even against water or mold. People make moneys and give Itsadi more good junk. Make Itsadi rich man.
+		Shadow: If he's rich, he sure does disguise it well.
+		Red: I think ye got some water or mold in yer head!
+		Ice: For real? You livin' that Cristal and Courvoisier life? Damn... Guess I'm in the wrong business.
+[Keyword: Where can we find more money for you?]
+		Buns: If you must have Grand Chien Franks, then at least tell us where to find them. I haven't seen a single bank since we arrived.
+		Raider: What would be a good way for us to get a lot of cash quickly? Please don't say "rob a bank".
+		Sidney: And where might we acquire Grand Chien Franks? Mind you, we're not terribly keen on picking through the trash... er, no offense.
+		Fox: Any ideas on where I can find some Franks? I'm just sooo eager to get my hands on your junk!
+		Livewire: Sometimes people are very careless and leave a large pile of money in a place anyone could find it, like a wall safe or an ATM. Anything like that around here?
+		Magic: Just tell me where I can score this dough you lookin' for so we can get down to business.
+	Itsadi: <em>Frédéric Le Furet</em> has moneys here in city. The <em>Major</em> has moneys in his camp.
+[Keyword: You know where the Major's camp is?!]
+	Itsadi: Itsadi know many things. Major has camp in mountains, in <em>House of Eagle</em>. Itsadi show on map and you bring moneys.
+		Fauda: We find a blessing where we least expect it. We should attack while fortune favors us.
+		MD: Well, look at that! Gosh, it's sure lucky we ran into you.
+		Scope: That's the Major's camp? Do you know if the President is there?
+		Itsadi: Itsadi does not know this. Itsadi only knows location of bag of moneys.
+		Scope: That is a very specific talent you have, love.
+		Itsadi: Itsadi is aware, yes.
+[Keyword: What do you have for sale?]
+	Itsadi: Itsadi has junk, if you have moneys.
+[Keyword: TradeRedirect]
+	Itsadi: Go on in, pick your junk and give Itsadi one <em>bag of moneys</em>. Then you take your junk.
+[Keyword: There is a conflict at the Dump]
+	Itsadi: This is not good for business. Tell them this: make garbage, not war. The junk must flow.
+[Keyword: There is a conflict at the Dump]
+		Gus: You got Knights fighting Nobles over there, Woodhouse. It's a regular War of the Roses, except the roses smell like old grease traps.
+		Barry: It is a very peculiar situation, like something from a science fiction novel. By some chance, do you have ability to control big worms?
+		Scully: You got a real Donnybrook going on over there, mate.
+[Keyword: There is a conflict at the Dump]
+	Itsadi: People come and people go, but garbage remains forever.
+		Grunty: I detest people who refuse to pick up after themselves. They should be rounded up and put in... Never mind.
+		Mouse: Speaking as someone who's had plenty of garbage thrown at her, I know exactly what you mean.
+		Reaper: I sometimes dream of a world relieved of the burden of humanity... I said that out loud, didn't I?
+	Itsadi: Tonight, Itsadi will go and see with his own eyes. Meet Itsadi there, and he will give judgement.
+[Keyword: Goodbye]
+	Itsadi: Good buy.

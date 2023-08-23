@@ -1,0 +1,49 @@
+[Keyword: Greeting]
+	CorazonSantiago: Hello again. What would you like to know?
+[Keyword: Tell us about the Legion]
+	CorazonSantiago: Led by a man calling himself the <em>Major</em>, it is the largest paramilitary group in the region. They seized all our diamond mines before my security teams could respond. They are brutal bullies, but not smart or well-trained. They should be no match for professional soldiers.
+	CorazonSantiago: Little is known about the <em>Major</em> himself, but we do know he's as dependent on the diamond mines as we are. Securing the mines will no doubt force him into the open, where we'll stand a good chance to eliminate him.
+		Raven: Just give me a nice clean shot and I'll make him part of this country's history.
+		Grizzly: The big, scary monster doesn't like his doggie bowl taken away, huh? Good to know.
+		Tex: Out in open is best place to have showdown!
+[Keyword: There were some other mercenaries]
+	CorazonSantiago: Yes, we hired a team from <em>M.E.R.C.</em> I assume you're familiar with them. 
+		Meltdown: What the hell you go and do a dumbass thing like that for?
+		Ice: Yeah, I used to run with them. Got out before they got me killed.
+		Raider: Only by reputation.
+		Buns: Yes, they are the low-calorie version of A.I.M. - tasteless and unsatisfying.
+		Grizzly: Bunch of clowns without a circus, you ask me.
+	CorazonSantiago: Their primary objective was to eliminate <em>The Major</em> himself. At the time, we thought he was a more manageable threat than he's proven to be.
+	CorazonSantiago: Needless to say, it appears they weren't successful. They went missing and by all accounts the Major is still very much alive.
+		Ice: Gonna have to thank Magic again for pulling me out of that sketchy-ass group.
+		Meltdown: I ain't one goddamn bit surprised.
+		Buns: It is as they say - you get what you pay for.
+	CorazonSantiago: I don't want to distract you from securing the diamond mines and rescuing the president, but if you happen to find out what happened to the M.E.R.C. team, I would appreciate it if you notified me immediately.
+[Keyword: M.E.R.C.?]
+	CorazonSantiago: We haven't heard from <em>Biff Apscott</em>, the M.E.R.C. team's leader, since they left Ernie Island.
+		Meltdown: Biff! That guy's five cans short of a six pack.
+		Ice: I had a lot of reasons for leaving M.E.R.C. Biff's about half of them.
+		Wolf: Biff couldn't lead a dog to a tennis ball factory carrying a pocket full of jerky!
+	CorazonSantiago: I know they only spent a little time here before heading to the mainland. I lost contact with them shortly after they landed. I'm sure the locals there can tell you more, Biff and his team were not exactly... low profile, shall we say?
+[Keyword: Eliminate the Major?]
+	CorazonSantiago: Yes, this was before he kidnapped the President. He was seizing our diamond mines and couldn't be bargained with, so I took the only course open to me.
+	CorazonSantiago: Obviously, it didn't work. I encourage you to learn from my mistake. Do not underestimate the <em>Major</em>.
+		Igor: Where others have failed, Igor Dolvich will succeed!
+		Barry: I always learn from mistakes of others. It is how I still retain full number of fingers.
+		Mouse: Oh, jeez, this guy sounds really dangerous!
+[Keyword: The diamond mines]
+	CorazonSantiago: There are two mines that are perhaps the easiest to reach from here - <em>Diamond Red</em> and <em>Mfumu's Mine</em>.
+[Keyword: Diamond Red?]
+	CorazonSantiago: <em>Diamond Red</em> is a strip mine located almost due north from here on the Savanna Coast. It is rumored the <em>Major</em> is using slave labor to mine the diamonds there.
+		Blood: I look forward to making him regret that decision.
+		Grunty: Anyone who employs such methods needs to become a part of the past... and stay there.
+		Thor: That kind of thing makes me very angry... and I am not an angry person.
+[Keyword: Mfumu's Mine?]
+	CorazonSantiago: The excavation of Mfumu's Palace began as part of an initiative by <em>Alphonse LaFontaine</em> to recover artifacts from the past and raise national pride after the revolution. After digging started, diamond deposits were found. They now call the place <em>Mfumu's Mine</em>.
+		DrQ: Where profit trumps culture, there is where humanity is lost.
+		Kalyna: That is very sad. So many stories lost...
+		Blood: This type of thing happens so often that I'm not even angry about it anymore, just disappointed.
+[Keyword: Goodbye]
+	CorazonSantiago: Good luck. I'll be keeping in touch via radio but feel free to return to me if you need to.
+[Keyword: Goodbye]
+	CorazonSantiago: Goodbye.

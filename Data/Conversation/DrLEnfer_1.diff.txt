@@ -1,0 +1,150 @@
+[Keyword: Greeting]
+	DrLEnfer: The name's Dr. L'Enfer. Who the hell are you? Are you the <em>constables</em> I heard about? You here to <em>investigate the murders</em> in the area?
+	[Keyword: We are here to investigate]
+		DrLEnfer: Oh, really? May I look at your IDs? Badges? No? Of course not. As I see it, you are either some new breed of inventive bandits, or the government is so desperate they started delegating law enforcement to random amateurs.
+			Mouse: Hey! Quit it with the name-calling, mister!
+			DrLEnfer: The Hippocratic Oath doesn't prevent me from hurting your feelings, little missy.
+			Magic: "Inventive bandit"! Love that, man! I'd put that on my business card if I had one.
+			Raven: I wouldn't exactly say we're amateurs.
+			Wolf: Think of us as private dicks.
+			DrLEnfer: You may rest assured that I most certainly will.
+	[Keyword: We are just mercenaries]
+		DrLEnfer: So you have no legal reason to be here. You are just meddling in other peoples' affairs in the hope that someone will pay you to kill someone else?
+			Buns: I wouldn't put it quite that way.
+			Blood: Wow. That pretty much sums it up. Yes.
+			Grizzly: Gimme a break, Doc, you're reading me my job description.
+			Reaper: We are harbingers of death serving a purpose in life.
+			DrLEnfer: Me too, but I have a degree in medicine to prove it.
+[Keyword: Greeting]
+	DrLEnfer: You're a sight for sore eyes. So much I wish I was blind.
+[Keyword: Greeting]
+	DrLEnfer: Nice day for grave disturbing, isn't it? Hu-ha.
+[Keyword: What is going on here?]
+	DrLEnfer: Right now, a bunch of gun-toting kids are disrupting the work of a medical professional.
+		Raven: You mentioned murders.
+		Red: I h'aint been called a kid since I was a wee bairn! Do I look like a wee bairn to ye?!
+		MD: I think he means us.
+	DrLEnfer: You need to know more? Please do not hesitate to go outside and <em>ask someone</em> who cares.
+[Keyword: Tell us about the murders]
+	DrLEnfer: What do you need to know? As far as I'm concerned, they have been very successful as such. The patients are surely one hundred percent dead.
+[Keyword: Tell us about the murders]
+	[Keyword: Tell us everything you know]
+		DrLEnfer: Hmmm... You want me to tell you the story about the gorgeous nurse who helped me with my study of Gross Anatomy?
+			Hitman: Yes, please!
+			Fox: Mmm, that might be interesting.
+			Wolf: I'm listening.
+			Smiley: You have my undivided attention.
+		DrLEnfer: No, now that I think of it, I'll keep it to myself. You would not have the stomach for it.
+			Blood: Yeah, right... Try me.
+			Nails: You're talking to a man who's watched every piece of pornography ever recorded. Hit me, Doc.
+			Grizzly: I have literally seen people explode, but whatever. Keep your secrets.
+	[Keyword: Where were you at the time of the murder?]
+		DrLEnfer: Working alone in my clinic, looking over the results of the previous murder. Are you asking me if I have an alibi?
+			Raven: Yes, we are.
+			Raider: This is an ongoing investigation and we just need all the information we can get.
+			Livewire: If you don't have one, that's okay, too. I've already thought up a couple for you.
+			Vicki: Might be a good idea to get one, mon.
+		DrLEnfer: No, I don't have an alibi - which is equally true for you as well, "constable".
+	[Keyword: What do you think of the “vengeful spirits”?]
+		DrLEnfer: Do YOU believe in Santa Claus? No, actually - don't tell me. I'm afraid to hear the answer I'd get.
+			Fidel: What is problem with Santa Claus?!
+			Ivan: Дед Мороз is like God - people need to believe lies.
+			DrLEnfer: Amen to that. It's the basic truth of the human condition.
+			Smiley: Santa Claus is a great role model for me. I too wish to bring gifts to all the good girls of the world.
+	[Keyword: What are the autopsy results?]
+		DrLEnfer: Some were shot, others were poisoned. All died with great success.
+			Raven: You don't say.
+			Scope: Success being a relative term.
+			DrLEnfer: Indeed.
+			Fidel: Nobody blew up? BORING!
+		DrLEnfer: However, there was never one who was poisoned and shot at the same time. That probably means the murderer is a responsible person who does not waste resources.
+			Blood: Good work, Doctor!
+			Reaper: Perhaps, but a simple method of murder does not imply an elegant one.
+			Raider: Got it. So, our suspect is someone who thinks wasting lives is okay, but not resources.
+			Sidney: Well, as the great detective once said, "There is nothing more deceptive than an obvious fact."
+	[Keyword: We found cyanide in your cabinet]
+		DrLEnfer: Good job! And if I was a miner, you would have found a sharp pickaxe in my shed, right? Hmm, now that I think of it, I'm quite certain I actually have one somewhere around here.
+			MD: He has a point, cyanide has some medical uses in clinical chemistry.
+			DrLEnfer: Oh, a colleague? And where do you see a chemical lab in here, young man?
+			MD: Umm, it can also be applied in emergency situations to produce a rapid decrease in blood pressure?
+			DrLEnfer: Correct. You get an A minus, where the minus stands for one dead patient because you're too smart to be practical.
+			Sidney: So sorry, my good man! But, erm, you see, my method of investigation is founded upon the observation of trifles.
+			Larry: You use a pickaxe for autopsies?
+			DrLEnfer: I'm guessing you used to suck on paint chips as a child.
+			Larry: Sure! Got any?
+[Keyword: Can you provide medical aid?]
+	DrLEnfer: Can shit fly? Regrettably for those on the receiving end, it can. But, to be perfectly honest, neither activity gives me great joy these days.
+[Keyword: Are there cases of Red Rabies here?]
+	DrLEnfer: You could say so, but not in the literal sense. What now, is that old hag <em>Kronenberg</em> sending you after me? I told her I'm not helping her and I meant it. Please go and advise her to apply both the superius and inferius labia oris to my gluteus maximus.
+	[Keyword: Do what now?]
+			Buns: No, don't ask about that...
+			MD: Erm... I think he wants her to...
+			DrQ: I believe what the doctor is suggesting is...
+		DrLEnfer: In short, you can tell her to kiss my ass.
+	[Keyword: She got the Red Rabies]
+		DrLEnfer: Did she? If this isn't some karmic justice! When is the funeral?
+	[Keyword: It's about saving human lives!]
+		DrLEnfer: If I subscribed to Dr. Kronenberg's approach to saving human lives, I would go around putting calculators in first aid kits. Now stop wasting my time.
+	[Keyword: Her research keeps her alive]
+			Larry_Clean: She thinks she's close to a cure, but from what I've seen... it's worse than the disease.
+			Red: She's mad as a hatter, that one is. Finishing her research will finish her!
+			Fox: Well, she looks awful. I think her "research" is only making her worse.
+			Magic: Man, I think she's gone crazy. She thinks her research is helping, but it's just making her sicker.
+			Livewire: I may not be a doctor, but in my opinion, the research is the only thing keeping her alive.
+		DrLEnfer: So basically you're telling me that the sooner I help her with her research, the sooner we'll get rid of her? That's very cynical of you. I'll help any way I can.
+	[Keyword: Help us and we'll leave you alone]
+			Flay: You help us with this and we will never cross paths again.
+			Gus: This is painful for both of us, Dr. Woodchipper. Give us what we want and we'll get out of your hair.
+			Larry: Hey, man, it's cool. You just give us the stuff and we go away and forget your name, y'know? Oh, wait... What was your name?
+			Larry_Clean: If you help us out, I swear we will leave and never, ever get anywhere near your medicine cabinet.
+			Reaper: I offer a simple deal, doctor. Give us what we want, and you will never be in my crosshairs again.
+			Shadow: This is uncomfortable for both of us. Give us what we want and you'll never see us again... not even our shadows.
+			Buns: Give us what we want and we promise to leave you alone... in this rather sad and filthy place.
+			Raider: Doctor, if you give us that sample, you'll be off our person-of-interest list. Sound good?
+			Sidney: Do be a good doctor and give us that sample. Good doctors are far less interesting to me than bad ones... if you take my meaning.
+		DrLEnfer: You promise? I'll hold you to your word, so don't expect me to answer any pesky questions about any murders. You can go play detective somewhere else.
+		[Keyword: Just help us with the virus]
+			DrLEnfer: Okay, I'll share with you my own research. Now go give it to Kronenberg and get off my back!
+[Keyword: We have a suspect for the murders]
+	DrLEnfer: Good for you! Do you want me to gather those annoying Van Tassels and Le Domas so you can tell them about it, or do you need more time sniffing around and asking repetitive questions?
+		Livewire: Seriously. I feel like a cop. Eugh.
+		Ice: I hear that. I didn't sign on to this gig to walk around and act like five-oh.
+		Sidney: I must admit, I am rather enjoying myself!
+	[Keyword: Gather them]
+		DrLEnfer: Alright. Let's get this over with.
+	[Keyword: Not yet]
+		DrLEnfer: I wonder if you'll ever leave... No, no, don't tell me - I like the suspense.
+[Keyword: We found the will of the L’Enfer brothers]
+	DrLEnfer: Hm. Is grave robbing your occupation, or just a hobby?
+		Fidel: Hobby!
+		Nails: Occupation.
+		Blood: Actually, we're more into the grave filling business.
+		Mouse: Well, this is really more like grave borrowing... Except, that sounds weird, doesn't it?
+	DrLEnfer: Before you decide to start digging out my other <em>L'Enfer relatives</em>, I will tell you what you need to know.
+		Fidel: But we did put them back!
+		Gus: Might have done that from the start, Woodman, and spared us some digging.
+		Shadow: Maybe next time start with that.
+	DrLEnfer: Yes, I'm the <em>last living heir</em> of the L'Enfer family and I own this land. However, decades ago the Manors were sold separately to the horrible Van Tassel and Le Domas families.
+[Keyword: How did the L’Enfer brothers die?]
+	DrLEnfer: That shameful incident is a family secret.
+		Blood: A-ha! So they did kill each other after all!
+		Steroid: Is it scary?...
+		Kalyna: We promise not to tell!
+	DrLEnfer: Okay, here is the story: one hundred years ago, the servants were cleaning a cesspool. One of them succumbed to the toxic fumes coming out of it, fell inside and started drowning...
+	DrLEnfer: <em>Huey L'Enfer</em> tried to help him, but also fell down the shit hole. Then <em>Dewey</em> came to help, with the same result...
+		Mouse: Eeew...
+		Len: Damn, that's ugly.
+		Raider: Let me guess - there was a third brother named <em>Louie</em>?
+		DrLEnfer: Oui. He is my grandfather. He died in France, away from this shithole.
+		Thor: I suppose there are worse ways to go, but I'm having difficulty thinking of any at the moment.
+		Magic: Come on, man. You're puttin' me on.
+		Wolf: Important reminder to double check your safety equipment, people! All right. Continue.
+	DrLEnfer: A total of five people died that fateful day drowning in shit, and it's definitely not written on their gravestones.
+		Raider: That explains the speculations about their deaths.
+		Larry: Man, your family is full of shit.
+		DrLEnfer: Ha. Ha.
+		Larry_Clean: Man, your family is full of shit.
+		DrLEnfer: Ha. Ha.
+		Tex: More like smeared! Ha, ha! ...What? Nothing?
+[Keyword: Goodbye]
+	DrLEnfer: It's never too early to stop wasting my time.

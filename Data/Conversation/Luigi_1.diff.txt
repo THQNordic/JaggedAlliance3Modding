@@ -1,0 +1,88 @@
+[Keyword: Greeting]
+	Luigi: Splendido! Now, how many kisses do I owe each one of you beautiful people for springing me?
+	PrisonerJoseph: I could kiss them for you, Boss.
+	Luigi: It, uh... doesn't work that way, Joseph.
+	PrisonerJoseph: Oh... Should I take out the <em>Thing</em>, Boss?
+	Luigi: Not yet. Just wait a bit, bambino.
+[Keyword: Who are you?]
+	Luigi: Just call me Luigi. I'm a simple Italian cook! Right, Joseph?
+	PrisonerJoseph: You mean when you killed a guy with a spoon?
+	Luigi: Err... Hehe. Well, you can't make pasta without breaking some heads, right?
+	PrisonerJoseph: If you say so, Boss.
+	Luigi: Anyway, thanks for getting me out of that cell, ragazzi. Now, I have some business to attend to... I've got to serve a dish to someone special.
+[Keyword: Is it a dish that is best served cold?]
+	Luigi: You seem to know something about cooking, eh, ragazzi? Oh, yes, I mean to serve some cold, cold dishes on a plate that is six feet deep.
+		Gus: Sounds like you got a score to settle, Woodburn.
+		DrQ: The nutritional value of revenge is quite low. In fact, it's more like poison, one that only acts on the cook's soul.
+		Thor: Seeking vengeance will only twist your soul into a knot and cause a lot of bloating and constipation.
+[Keyword: Why are you in here?]
+	Luigi: I'm doing a favor for someone very special to me. I'm innocent, but I'm loyal, capiche?
+		Shadow: Taking the rap for someone in a place like this? That's one hell of a favor.
+		Raider: Oh, I capiche all right. You take the rap here, while someone else takes the rap for you somewhere else. I've seen it a hundred times.
+		Flay: Loyalty is for defenseless herd animals.
+[Keyword: What are you planning to do now?]
+	Luigi: I'm gonna walk around. I'm gonna breathe free air. I'm gonna go see... an old friend.
+	PrisonerJoseph: <em>Boss Blaubert</em> is our friend now?
+	Luigi: He's more than a friend, he's family.
+	PrisonerJoseph: Oh... Like that guy you told me to drop the <em>Thing</em> on, your cousin Mario?
+	Luigi: Shush, bambino. What happens in the family, stays in the family.
+[Keyword: What is the Thing?]
+	Luigi: It's just a <em>Thing</em> that Joseph made in the prison workshop. He made it as a form of, uh... artistic expression, capiche?
+	PrisonerJoseph: I did a good <em>Thing</em>.
+	Luigi: You sure did, bambino! The guard in the workshop didn't like it at first, but he soon got into the swing of things and liked it so much he let Joseph take it back to his cell.
+		Raven: Oh, I get it. It's a weapon. You criminals can't ever stop speaking in code, can you?
+		Nails: So you made the Grand Daddy of all shivs. Big fuckin' deal.
+		Luigi: Everybody's a critic.
+		Hitman: Sometimes you need to be beat over the head with art before you can understand it.
+		Luigi: That is beautiful! I'm gonna put those words on a plaque and mount it over my fireplace.
+[Keyword: We killed Boss Blaubert]
+	Luigi: You... killed him? You killed Boss Blaubert? Huh... Well, that is some real good news, ragazzi. You spared me a whole lot of cooking, eh? How did he die? I hope he didn't suffer much. He was a good man, all things considered.
+		Raven: He was a crime boss and he paid for it with his life. That's what crime gets you.
+		Luigi: Easy there, pretty lady. You're starting to scare me.
+		Reaper: He died the way all mortal creatures do. His final breath of life was agony, his first breath of death was of an ecstasy unknowable to living creatures.
+		Luigi: Riiiiight... Hey, do me a favor and let me know the next time you're gonna say something so I can be somewhere else.
+		Fidel: Fidel will show you how he died. I drew pictures. Come, look. Mira.
+	PrisonerJoseph: Poor Boss Blaubert. He was good to me.
+	Luigi: Well, anyway, I guess I should be making my way back to <em>Rimville</em> to get all his affairs in order. Come visit me when you get the chance! I'll give you some warm Italian hospitality. And, uh, don't worry... I don't mean the kind that involves cement boots.
+		Ice: Sure, just don't be busting out no mattresses, neither.
+		Blood: Oh, my mouth is already watering for some home-cooked Italian food!
+		Tex: Glad to hear that! Cement boots no good for riding horse.
+[Keyword: Boss Blaubert sent us]
+	Luigi: The Boss sent you to take care of me, eh? Well, well... You see, Joseph? He remembers his favorite cook after all!
+	PrisonerJoseph: The Boss doesn't forget, Boss.
+	Luigi: And here I thought the old man was going soft. Alright, ragaz-... mercenaries. If you're gonna take care of me, why don't you just do it already, eh?
+		Nails: I've been asking myself the same question.
+		Barry: I am thinking perhaps my understanding of this expression is not of adequacy. Is rescuing someone not taking care of them?
+		Luigi: What, are you from another planet?
+		Fauda: We have freed you... is this not taking care of you? Do you require us to feed and clothe you as well?
+		Luigi: Are you for real? You don't know what I'm talking about? Have you been living in the desert your whole life?
+		Fauda: Very near to it, yes.
+[Keyword: Blaubert wants to see you]
+	Luigi: What? He sent you down here just to free me? Huh... Oh, I get it. I see his play here. He thinks I'm gonna walk back to him all innocent and grateful and apologetic and crap.
+		Shadow: If you want to surprise him, that's a great way to sneak in through the front door.
+		Magic: You show him what he expects to see, he's got no chance to see anything else.
+		Mouse: I know a mime trick you could use to make it look like you're crying!
+	Luigi: Yeah... Alright, I guess that works for me just fine. Once me and Joseph get past whichever guards you haven't iced yet, we'll be on our way back to <em>Rimville</em>. Right, Joseph?
+	PrisonerJoseph: Whatever you say, Boss.
+	Luigi: You see? Don't you worry, ragazzi. I won't start anything without you. I'd like you to watch me and Boss Blaubert resolve our, uh... differences of opinion on certain matters. Who knows, you might even take my side, eh?
+		Raven: I wouldn't hold my breath if I were you.
+		Scully: Not likely, mate. I don't like to get involved in other people's family drama. I got enough of my own.
+		Len: If it suits our objectives... we'll consider it.
+[Keyword: LeaveRedirect]
+	Luigi: Alright, we're ready. Before we go, you want that we should help you take out the rest of the prison guards? Me and Joseph, we got a <em>Thing</em> or two to tell 'em.
+	PrisonerJoseph: We sure do, Boss, starting with this <em>Thing</em> right here.
+[Keyword: You aren't going anywhere]
+	Luigi: Good boys stay where they're told to stay, bad boys go wherever they want. Isn't that right, Joseph?
+	PrisonerJoseph: I... I kinda like it here, Boss. So... does that make me a good boy?
+	Luigi: You're the best boy, bambino! Don't worry about it. Now, be a good boy and get the <em>Thing</em> ready.
+	PrisonerJoseph: Okay, boss.
+[Keyword: You may go]
+	Luigi: Gonna be forever grateful and so on. See you in <em>Rimville</em>, ragazzi! Ciao!
+[Keyword: We’ll meet you in Rimville]
+	Luigi: You know what? I really hope you do. Maybe you'll see how a real Boss operates, especially one that knows how to reward loyalty. Come on, Joseph, let's go gather the ragazzi! We're leaving this good place.
+	PrisonerJoseph: Okay. I'm glad we can take our new prison friends with us, Boss.
+		Luigi: Me, too. I think they'll like <em>Rimville</em>... and I can't wait for <em>Boss Blaubert</em> to meet them. Hehehe.
+[Keyword: Help us take the prison]
+	Luigi: Hey, it's the least we can do for our new friends. Once we're finished with the guards, Joseph and me will head back to <em>Rimville</em> and get prepared. Next time you visit, you'll see how a real Boss should operate.
+	PrisonerJoseph: Hey, Boss, you want I should get our prison friends to help?
+	Luigi: Joseph, bambino! Look at you thinking with more than just your <em>Thing</em>. Yeah, go get the boys. Tell them it's payback time.

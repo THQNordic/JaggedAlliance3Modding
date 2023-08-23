@@ -1,0 +1,51 @@
+[Keyword: Greeting]
+	Luc: Who are you? You are soldiers, but not with the <em>Legion</em>. Who sent you?
+	[Keyword: Emma LaFontaine sent us]
+		Luc: Emma? The President's daughter? She's alive? I am so glad! I tried to leave the village to warn her about the Legion troops trying to capture her, but my... My son <em>Pierre</em> didn't like that.
+	[Keyword: Prefer not to say]
+		Luc: But... Well, of course. I just hope that if you are fighting the Legion you are helping Emma LaFontaine. I tried to leave the village to warn her about the Legion troops trying to capture her, but my... My son <em>Pierre</em> didn't like that.
+	[Keyword: Redirect]
+		Luc: He commands the <em>Legion</em> forces here on the island, but he's not really one of them. I mean, he is not like them. He's a good boy. Please, if you are here to fight the Legion, please try to spare my boy.
+		[Keyword: We'll do our best to spare Pierre]
+			Luc: Thank you! You have a heart of gold! Now I have some hope for the future.
+		[Keyword: Pierre is a criminal!]
+				Fidel: Fidel no like this Pierre. You feel better after I kill him, don't worry.
+			Luc: I... I suppose I deserved that. Still, there is no need to be cruel to an old man.
+		[Keyword: Goodbye]
+			Luc: I beg you, mercenary. I know you are not here to help an old man save his son, but if you see him again, please spare my Pierre. 
+[Keyword: Greeting]
+	Luc: Thank you, my friends! My boy is alive, thanks to you. If I die today, I die a happy man. Here, I was keeping these for Pierre. Take them, I insist!
+[Keyword: Greeting]
+	Luc: I wish it had not needed to come to this. Now that we have raised a hand against our own, things can never be the same again.
+[Keyword: Greeting]
+	Luc: I'm so glad you talked Basil out of hanging <em>Herman</em>. The village would never be the same if we raised a hand against our own.
+[Keyword: Greeting]
+	Luc: We came here to escape violence, and now we need violence to protect ourselves. Peace is forsaken in this wicked country.
+[Keyword: Greeting]
+	Luc: Do you bring any news about <em>Pierre</em>?
+[Keyword: Greeting]
+	Luc: Greetings! Always nice to see good friends.
+[Keyword: Greeting]
+	Luc: I have heard that you fought <em>Pierre</em>! He is dead, isn't he? And you, you promised to spare him! Why would you give hope to an old man and then break his heart?
+[Keyword: Greeting]
+	Luc: I have heard that you fought <em>Pierre</em>! He is dead, isn't he? No! No, my little boy!...
+[Keyword: Greeting]
+	Luc: Leave me to my grief!
+[Keyword: What's the story with Pierre?]
+	Luc: He... he doesn't understand the <em>choices</em> I've had to make. He doesn't respect me, so he won't listen. But he might listen to you. He's just <em>misguided</em>. Make him see that what he is doing can only end in his death.
+		DrQ: Wisdom only comes to the willing, never to the willful.
+[Keyword: What choices?]
+	Luc: After my wife was killed by a band of river pirates, I convinced a group of friends to move with me and my son to <em>Ernie Island</em>, away from all the fighting. But <em>Pierre</em>... Well, he doesn't understand why I did not seek vengeance. So, he ran away and joined the Legion.
+[Keyword: Pierre is just "misguided"?]
+	Luc: Pierre always had a sense of honor. But the Legion corrupted him, made him do bad things in the name of discipline and strength. Now, he can't tell the difference between justice and cruelty.
+[Keyword: Tell us about Ernie Island]
+	Luc: Pierre hates this place, but he also wants to protect it. When my friends and I came here, we dreamed of building a safe haven. In his own way, so does Pierre.
+[Keyword: What happened to Tinhay?]
+	Luc: He was my oldest and dearest friend. He used to take care of my son when he was little, but when <em>Pierre</em> came back with his new Legion friends, they slaughtered old <em>Tinhay</em> like a dog in the street. 
+And Pierre just watched and did nothing to stop them.
+		Fidel: Fidel also enjoys watching such things.
+[Keyword: Have you seen some other mercenaries?]
+	Luc: Oh, those people. One of them - what was his name? Beef? Bev? ...can't remember. Anyway, he was planning to dock at the abandoned resort, <em>Côte d'Azur</em>. I warned him to avoid it...
+	Luc: The underwater rocks there are treacherous - that's why they canceled construction. He laughed at me - said his <em>fancy new boat</em> with the modern fiberglass hull could handle it.
+[Keyword: Goodbye]
+	Luc: Farewell.

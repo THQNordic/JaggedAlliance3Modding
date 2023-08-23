@@ -1,0 +1,143 @@
+[Keyword: Greeting]
+	Monday: Or maybe you're not <em>cadavérés</em>? I must be getting the hallucinations again. Got to stop drinking this merde and find some stronger merde to <em>drink</em>.
+		Kalyna: A monster who talks and drinks? Hmmm... Do you have a name?
+	Monday: ...
+		Kalyna: Hello? Are you friendly?
+	Monday: You still there? I guess this merde is merde, too.
+[Keyword: Greeting]
+	Monday: Yeah! We have the merde, we have the people... You know what you get when you put together the merde AND the people?
+		Nails: Good times!
+		Igor: Hangover!
+		Raider: Noise complaints.
+		Scully: Regret.
+		Scope: A lot of ruined linens.
+		Tex: A good, old-fashioned ho-down, partner!
+	Monday: Party! Forever! Never stop the party. Never turn into cadavéré! Not this Monday! Not ever!
+		Igor: We really deserve a medal this time.
+		Kalyna: So, the curse is lifted?
+		Monday: This isn't a curse. This is a blessing! I will stay drunk FOREVER!
+		Omryn: Forever party will need steady supply of snacks. I supervise.
+[Keyword: Greeting]
+	Monday: I see you saved some people. Now we need some more merde... moonshine, and then we can party forever! Never turn into cadavéré. Not this Monday! Not today!
+		Kalyna: Do not worry, mister monster. We will save everyone!
+		Igor: This is noble cause!
+[Keyword: Greeting]
+[Keyword: RedirectKilledBella]
+	Monday: You killed her? You killed her!!! Good riddance! She was trash, and not even good-looking trash these days. But you know what that means? That means you secured ALL THE MERDE! Yeah! All that moonshine! Time for a party!
+		Larry: Oh yeah! Give me a syringe, I'll show you a trick or two.
+		Igor: На здоровье!
+		Larry_Clean: I'm actually not allowed to be within thirty feet of a party. Sorry.
+		Kalyna: Does this mean the curse is lifted?
+		Monday: You are ADORABLE! I tell you what - I will let you know after I finish drinking all of the witch's magic potions.
+	Monday: Oh, wait. Nobody can actually come to the party, except for les cadavérés and they're no fun. I need people, REAL people to drink with!
+		Igor: I'm here for you, my friend! Cheers!
+		Larry: Don't worry about it, man. Imaginary people are WAY better than real people. Right, Ted?
+		Kalyna: I guess we have to kill some more monsters before the curse is finally lifted. A hero's job is never done.
+[Keyword: Greeting]
+	Monday: Still too many cadavérés shambling around... People are afraid to come to the party. What, do you want me to drink myself to death all alone? I want to drink myself to death in good company!
+		Igor: Hey, are we not good enough for you?!
+		Monday: You killed my ex, so you're my hero! But, I know you have other exes you need to go kill.
+		Reaper: You will die as everyone dies. Alone.
+		Monday: You are definitely NOT invited to the party.
+		Sidney: Eat, drink, and be merry, for tomorrow we die, eh?
+		Monday: Unless tomorrow is Monday!
+[Keyword: Greeting]
+	Monday: How's <em>Bella</em>? Still alive-ish? Come on, go make some noise! Free her soul, and all the moonshine with it.
+[Keyword: Greeting]
+	Monday: Every day is Monday if you're desperate enough!
+[Keyword: Greeting]
+	Monday: Cheers to Bella, the best ex!... At least now that she's dead.
+[Keyword: Greeting]
+	Monday: Monday is the party day! All day, every day! Isn't that right, people?
+[Keyword: You’re drunk]
+	Monday: I know! I've been <em>drinking</em> since Monday. Not sure about the week. Just call me <em>Monday</em>. Have you met <em>my ex</em>?
+		Scully: No thanks, mate. I'm full up on exes.
+		Larry: You've been drinking since Monday and you've got X? Are... are you my spirit animal?
+		Monday: Heeeeyyyy... You're going to do just fine here.
+		Fox: You have an ex? Now, who would let a catch like you slip away?
+		Monday: I know, right?!
+[Keyword: Why are you drinking?]
+	Monday: Because it's Monday! That Monday when <em>Bella</em> dumped me, I started drinking so hard that when I woke up, I didn't know the day of the week anymore. And the streets were full of them <em>cadavérés</em>, moaning and attacking everyone but me.
+		Igor: Ah. It happens from time to time.
+		Larry: I know exactly what you mean, man! It's terrible!
+		Larry_Clean: I know this can't be right, but why do I have this feeling of Déjà vu?
+	Monday: So I did what any man in my situation would do - I continued drinking and partying! I think that's why I didn't turn into one of them... At least not completely. I'll never stop drinking! Not this Monday! Not today!
+		Igor: Toast to you, my friend! You deserve a medal.
+		Kalyna: Poor sad lonely monster.
+[Keyword: What are those cadavérés?]
+	Monday: Cadavérés... They're like me. I mean, I'm like them. But not yet, not yet! Need more merde to drink. Cheers...
+		Igor: Cheers! I can show you how to make potato vodka.
+		Monday: Is it good merde?
+		Igor: The best! You will see... unless it make you go blind.
+		Kalyna: Oh, you're not a monster, but you're changing into one! Well, I guess that would make me drink, too.
+[Keyword: Cadavérés are just sick people]
+	Monday: Right, and today is just another manic Monday...
+		Kalyna: I wish it was Sunday.
+		Mouse: I wish it was Sunday.
+	Monday: I know. You're sober and you need a reason to do the right thing. So let me tell you this: some of those people have already killed their own friends or relatives. Would YOU like to wake up from that nightmare and discover what you did?
+		Igor: No. I drink to forget.
+		Kalyna: No! I could never go on living with the thought that I have become a monster!... Oh, I'm sorry. I didn't mean to offend you.
+		Larry: I wouldn't know I did it.
+		Larry_Clean: No. A hundred times no.
+	Monday: After all, what reason do you need to die? Just send them to heaven and let them party with the angels.
+[Keyword: We are not cadavérés]
+		Kalyna: No! We are not monsters like them or... like you.
+		Steroid: We are not dead peoples! Check out these biceps! Would a dead guy have this much definition?
+		Thor: We are not dead. We are alive and full of potential!
+	Monday: You're not? You sure? They must still be locked in their <em>houses</em> then. Some may be non <em>cadavérés</em>. But what is important... What's <em>important</em>... What was I talking about?
+	[Keyword: About houses]
+		Monday: Yes! Um, I grew up in one of those! I can't remember which one anymore, and I'm all alone anyway, so it's not important... 
+	[Keyword: About what’s important]
+		Monday: Yeah, well, I know what's important! What's important is that... Uh... It had to do with the thing before the important thing... 
+	[Keyword: About rocket science]
+		Monday: Right! It's not that hard to grasp, once you understand Kepler's laws. After all, the square of a satellite's orbital period is always proportional to the cube of its average distance from the planet, right?
+			Vicki: Don't look at me, mon. I work on cars, not rocket ships.
+			Buns: That is... correct. I suppose I should be surprised, but I never let anything surprise me.
+			Ice: ...You're distant from the planet.
+		Monday: Wait... Um... That wasn't what I was talking about...
+	[Keyword: DistractionRedirect]
+		Monday: What was I talking about?
+	[Keyword: About cadavérés]
+[Keyword: Tell us about cadavérés]
+	Monday: Oh, yes. Cadavérés. They are not good company, with one notable exception - myself! But, eh, the others, I mean the people who are NOT les cadavérés - they are all locked in their houses, waiting for those who ARE les cadavérés to get tired.
+		Igor: And do you? That is, um, do you not get hangover?
+		Monday: Not at all! I may look like merde and you would think I would have to stop at some point...
+		Kalyna: And do you ever get tired, or are you some sort of restless, drunken spirit?
+		Monday: You know, I should be exhausted, but I feel GREAT! Drunk, but great. Still, I should maybe try to take a nap...
+	Monday: But that isn't going to happen. Cadavérés don't get tired! Look at me, drinking day and night. I need drinking companions! So go on and shoot them. I mean, les cadavérés, not the other people.
+		Igor: You are my role model. You and Uncle Ivan, of course!
+		Kalyna: Don't worry, mister monster. We will save everyone and you will never feel lonely again!
+[Keyword: Give us a blood sample]
+	Monday: No problem! Give me a bucket, I have a knife. But be careful not to drink it all at once. There is more alcohol than blood in my blood.
+		MD: That's... We're not... What?!
+		Blood: I wasn't even thinking of doing that... but now you got me curious.
+		Larry_Clean: I really wish you hadn't told me that.
+[Keyword: Give us a blood sample]
+	Monday: In my case, that's an alcohol sample. Wait... I'm not giving you my alcohol. I drank it, it's mine now. Kill Bella! Save the merde! Then you can have all the blood you want from me. 
+[Keyword: Your ex?]
+	Monday: It's all her fault! She brought it to us. <em>Bella</em>, you cold-hearted bitch, I'm drinking to your health. Non, not health. She's a cadavéré. She did this to me. To all of us!
+		Igor: To Bella! Or not to Bella! Cheers!
+		Larry: To all of us!
+		Kalyna: It's a lover's curse! Oh, that's very bad.
+[Keyword: Tell us about Bella]
+	Monday: When she returned from that "business trip", she knew she had the disease. Then she dumped me and made a huge party in her house on the hill, with lots of dancing, and sex, and merde... moonshine. 
+		Fox: That sounds bad. The more I think of it... Mmm, definitely a bad girl.
+		MD: That is absolutely irresponsible. If I was her, I would never do that. I mean, um, I'm not talking about the part where she dumped you. Wait, don't get me wrong, I... Oof, I'll just shut up.
+		Raven: When do we kill that bitch?
+	Monday: She spread that merde over the whole town! And I just tried to drink myself to death. But that's not the point! The point is...
+	Monday: What's the point? Ah! She has the merde! All of the moonshine. Go there, kill her, save the merde. I need it. It is a matter of life and... (hic) merde.
+		Igor: Don't worry, we will save all the moonshine and kill the woman!
+		Kalyna: So we bring the happy ending by... killing the princess and helping the prince become drunk? What kind of story is that?!
+		Monday: It is a merde story. Welcome to Grand Chien, miss.
+		Red: Kill a psychotic little hussy. Pick up whiskey. Dunnae worry, lad. I'm an expert in this particular type of to-do list.
+[Keyword: We killed Bella]
+[Keyword: Goodbye]
+	Monday: Never stop drinking and your drinks will come true!
+		Igor: Cheers to that! Wise wisdom.
+		Larry: That is so beautiful, man.
+[Keyword: Goodbye]
+	Monday: Hic.
+[Keyword: Goodbye]
+	Monday: Not this Monday! Not today.
+[Keyword: Goodbye]
+	Monday: Cheers! Hic. Merde.

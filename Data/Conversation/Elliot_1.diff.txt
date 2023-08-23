@@ -1,0 +1,119 @@
+[Keyword: Greeting]
+	Elliot: You?!... What are YOU doing here?! No-no-no, this can't be happening... Wait. Whatever it is you think I am, let me assure you that I am... not.
+		Smiley: Heeey... I know you! Everybody in <em>Arulco</em> knows who you are!
+		Gus: The hell ya doin' here, Woody?
+		Grunty: I swear I have seen you before, only last time you had many more bruises.
+[Keyword: Greeting]
+	Elliot: Please don't shoot me, Your Highn-... I mean, Your Mercenary-ness. If you've come here for me, you should know that I'm not me. I mean, I'm not who you think I am! I'm the <em>Major</em>!
+		Smiley: Heeey... I know you! Everybody in <em>Arulco</em> knows who you are!
+		Gus: The hell ya doin' here, Woody?
+		Grunty: I swear I have seen you before, only last time you had many more bruises.
+[Keyword: Greeting]
+	Spike: Hello, boy.
+	Elliot: What? How?! W-w-why are you here, Your Highn-... um, Your Major-ness?
+	Spike: I let you keep that rank you bought off a Grand Chien officer because I thought it was funny. Come to find out you been using it to impersonate me. Now I don't think it's funny anymore.
+	Elliot: B-but I didn't mean to do it! I just never corrected people who got the wrong idea... Oh, god, why did you bring THEM here with you?! No-no-no, not again!
+[Keyword: Greeting]
+	Elliot: Please don't shoot me! I'm an idiot!
+[Keyword: Greeting]
+	Elliot: No, no, no, don't shoot me please... I surrender!
+[Keyword: Greeting]
+	Elliot: Don't kill me, Your Highness! I mean... I'm an idiot! I don't want to be a <em>Major</em> anymore!
+[Keyword: You are Elliot from Arulco]
+		Spike: Ladies and gentlemen, I present to you a dear old friend, the runner up in every competition with two participants, the one and only - "Major" <em>Elliot</em> from <em>Arulco</em>!
+		Buns: I have a perfect memory of faces and yours is one I recall being very close to Deidranna.
+		Smiley: Come on, stop playing games. We both know who you are.
+		Len: You're that little guy with all the head wounds in the Meduna Palace, right?
+		Gus: Guess you didn't fly away far enough, Woodfinch. I recognize you.
+		Grunty: You were the one to whom Deidranna administered many beatings. Your face looks much better.
+	Elliot: Alright, I confess. I am <em>Elliot</em>. I just... I had to go somewhere after you mercenaries killed Deidranna and ruined <em>Arulco</em>.
+		Len: We didn't ruin it, we liberated it.
+		Elliot: Po-TAY-to, Po-TAH-to...
+		Smiley: The glorious and noble mercenaries saved it! It was Deidranna who was ruining it.
+		Elliot: She was just misunderstood.
+		Grunty: I seem to recall her using tanks to flatten whole villages. What was that?
+		Elliot: That was just... land re-development.
+	Elliot: Grand Chien isn't a bad place if you have some connections... As a <em>Major</em>, I have the chance to get the <em>respect</em> I deserve! I mean, I'm still waiting for the respect, but... But now you mercs have to come along and ruin everything... again!
+[Keyword: So you are from Arulco]
+		Fox: Did big bad mercenaries blow up your country and give you a boo-boo? Awww. Want me to kiss it and make it better?
+		Livewire: Why are you so mad about what happened in Arulco? Did you have a lot invested in Deidranna's plans?
+		Magic: That Arulco business got you all worked up. Did you have some kind of gig with the old lady's regime?
+	Elliot: Yes, but... No! I just know about Arulco because I watched the news on TV. I was horrified to see how viciously you defeated Her Highness <em>Deidranna</em> and her noble advisor <em>Elliot</em>.
+		Grizzly: Her noble advisor... who?
+		Elliot: Elliot!
+		Scope: I don't remember any advisor. I do remember a little rat-faced man she used to kick around... What was his name?
+		Elliot: Elliot! And I... HE doesn't have a rat face, he just has very sharp facial features.
+		Ice: Never heard of no Elliot. Oh, wait. Was he the dude in the Palace with all them bitch-slap bruises on his face?
+		Elliot: Those were... just a misunderstanding.
+[Keyword: Your soldiers don’t respect you?]
+	Elliot: No, not really... But at least they fear me! And that's the same as respect, isn't it?
+		Igor: Nyet. If I respect someone, I protect them. If I fear someone, I kill them.
+		Len: Having a soldier's respect means they'll die for you. Making them fear you means one day you'll get out of bed and step on a land mine.
+		Kalyna: You are an idiot.
+	Elliot: They know I can always throw them to the crocs! Just like I did with... oh, poor <em>Stony</em>.
+[Keyword: What happened to Stony?]
+	Elliot: During the opening ceremony of this <em>Croc Plank</em> I wanted to show them what happens if they don't listen to me... It wasn't my fault... I told him, "STONY, YOU IDIOT! Don't stand so close to the edge!"
+		Mouse: I think I know what's coming. Covering my ears.
+		Larry_Clean: Not sure I want to hear the rest.
+		Larry: Hey man, the edge is where LIFE is!
+	Elliot: I was just going to push him a little, just to make a show, but when I did, he... he slipped and... the crocs ate him. He was my only friend...
+		Blood: Man, you are an idiot.
+		Flay: Wonderful! I am sad that I missed it.
+		Sidney: Apologies if this has been mentioned before, but... you truly are an idiot.
+	Elliot: I know. I'm an idiot. I told everyone I did it on purpose, because... he was plotting against me. I feel awful, but what could I do? My soldiers would never respect me if they knew the truth!
+[Keyword: Elliot, you idiot!]
+		Spike: Elliot, you idiot!
+		Nails: I've known some idiots in my time, Elliot, but you take the cake.
+		Shadow: Elliot, has anyone ever told you you're an idiot?
+	Elliot: I know, I know! I'm an idiot, Your Highn... I mean, um, yes.
+[Keyword: Who do you think WE are?]
+	Elliot: You are those darn mercenaries who devastated Arulco!
+		Fidel: It makes Fidel very happy to know his work is appreciated!
+		Raven: Well, we can't take all the credit. Deidranna's tanks did most of the work.
+		Barry: This is not true! I only exploded what needed to be exploded.
+	Elliot: A-and are devastating Grand Chien, too, of course! That's more important to me, because I'm not from <em>Arulco</em> or anything. Nope. I am a <em>Major</em> of the Grand Chien army... and you'll show me some respect - even if my own soldiers don't.
+[Keyword: Are you THE Major?]
+	Elliot: Yes, I am! Just ask anyone... except maybe my soldiers.
+		Tex: No, you not look right for part. Not tall enough. Get yourself platform soles.
+		MD: Gosh, I expected the Major to be a lot bigger... and less fidgety.
+		Omryn: This major is too small. I say we throw him back. Wait for bigger one.
+[Keyword: You are not THE Major]
+		Hitman: You may be a major weenie, but... you're not THE Major.
+		Fauda: If you are the Major, Shaitan must be having trouble finding good help.
+		PierreMerc: He is not Le Major. I do not even think he is "a" major.
+		Raider: I reviewed my notes. Your story doesn't add up. I don't believe you're the Major.
+		Scully: If you're the Major, I'm a monkey's uncle. Actually... I might be a monkey's uncle, but that still doesn't make you the Major.
+		Thor: I do not think you are the Major. I would imagine his aura to be very dark. Yours is the color of... urine.
+	Elliot: True... But the real Major is far away from here, up there in <em>Eagle's Nest</em> in the <em>Highlands</em>. So what if people think I am the big, scary Major? It's not hurting anyone.
+		Wolf: I don't think you really thought that one through, chief.
+		DrQ: Wisdom is a gift that is given to precious few people. I hope you one day receive it.
+		Vicki: You know there be people trying to kill the Major, right mon?
+[Keyword: Time to decide what to do with you]
+	Elliot: No! No! Please, your Highn-...  uh, Your Mercenary-ness. Don't shoot me! I never wanted to be bad, I just wanted some respect... 
+[Keyword: We are here to kill the Major]
+	Elliot: Are you...? No! Not again!...
+[Keyword: We are here to kill the Major]
+		Reaper: The Major must die. I will allow you a moment to pray, but please refrain from begging or blubbering.
+		Steroid: The Major has been targeted for... termination.
+	Elliot: No! No! Please!... I'm not the real Major... Please let me go! I haven't done anything wrong!
+	[Keyword: You did something horrible to your friend]
+		Elliot: Mama... I killed a man... Placed this Plank where he should tread, pushed too hard and now he's dead...
+	[Keyword: Got any of Arulco's money with you?]
+		Elliot: What? Why would you... Oh. Right. Yes! I've got it right here, all that I have left. Take it. Just let me go!
+	[Keyword: Give us the money and scram]
+		Elliot: Yes! I will! Thank you, your Highness! Here, this is all the money I have. I'll leave right away!
+	[Keyword: You must go to jail]
+		Elliot: Yes... Of course... Goodbye, everybody, I've got to go. Gotta leave my Plank behind and face the truth!
+	[Keyword: Just leave]
+		Elliot: Yes! I will! Thank you, Your Highness! I mean... Thank you! I'll leave right away!
+	[Keyword: Time for the "Major" to die]
+			Spike: The mission is to kill the Major, boy. I'm not the Major anymore, so I guess that just leaves you...
+		Elliot: But I'm not... Oh, no. Not again!
+	[Keyword: Time to join Stony]
+		Elliot: Mama... oooh, I don't want to die...
+[Keyword: Goodbye]
+	Elliot: Alert! Intruder alert! Soldiers, your <em>Major</em> commands you! Come to my side, you idiots!
+[Keyword: Goodbye]
+	Elliot: Please, don't kill me... I can't stop my troops from fighting you, but I won't be any trouble, I swear. I'll just find somewhere to hide.
+[Keyword: Goodbye]
+	Elliot: Very well, Your Highn-... Your Mercenary-ness. I'll just wait here.

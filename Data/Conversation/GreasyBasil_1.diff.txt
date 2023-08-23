@@ -1,0 +1,178 @@
+[Keyword: Greeting]
+	GreasyBasil: I saw you handle those <em>Legion</em> thugs. Not bad. I don't expect you did it for free, huh? We don't have the money to pay for your protection.
+	[Keyword: We don't require payment]
+			Raider: Our client wanted us to get the Legion out of your town for you.
+			Buns: Don't worry. Our client expressed interest in helping you, so we did.
+		GreasyBasil: Really? I can't see how that works for you, but I wouldn't say no to a good thing.
+	[Keyword: We don't require payment]
+		GreasyBasil: Yeah, right. There is no such thing as a free lunch. Please, at least don't get us killed. 
+	[Keyword: You can spare some coin]
+		GreasyBasil: Does it look like I'm hiding money bags in my pants? 
+			Fox: I can always tell when a man is hiding something in his pants.
+			Livewire: While it is true that I know little of your pants, I think that maybe you have more than just the one pair.
+		GreasyBasil: Well, I suppose it's better what money we do have goes to you than the Legion. Here, take it - at least you kicked them out.
+	[Keyword: You can spare some coin]
+		GreasyBasil: Look at this place. Do you really expect us to have money hidden in the walls? We barely have walls! Whatever we had, the Legion took it already.
+	[Keyword: Redirect]
+		GreasyBasil: If you really mean to <em>help</em> us, you better do it before the Legion returns and someone else gets <em>killed</em>. Or were you just planning on running off like those <em>other mercs</em>?
+[Keyword: Greeting]
+	GreasyBasil: What is this? After all <em>Pierre</em> has done to us, you have recruited him?!
+	[Keyword: We will keep him in check]
+		GreasyBasil: I hope you will. I really do - not for your sake, but for poor <em>Luc</em>. I almost hanged him because of this unworthy son of his.
+			Len: Don't worry, sir. I'll make a good soldier out of this young man.
+	[Keyword: We will keep him in check]
+		GreasyBasil: Yeah, tell that to <em>Tinhay</em>. You should never trust a snake not to bite you. If you do, then you are just a fool.
+			PierreMerc: You are the fool here, uncle Basil. You almost hanged papa because of your thick head.
+			GreasyBasil: Shut up, boy. If I had done that, it would have been because of your actions.
+	[Keyword: It is our decision to make]
+		GreasyBasil: It's easy to say "I decided this and that", but when things go south, will you handle it? It's your responsibility if someone else dies because of this boy.
+			PierreMerc: No, it is my own responsibility. I'm not a wild dog, you know. I know right from wrong.
+			GreasyBasil: I doubt that.
+	[Keyword: All fools deserve a second chance]
+		GreasyBasil: Just as <em>Luc</em> said it, and he is a wise man. But wisdom alone cannot help the foolish, especially when good people can die because of them. You should well remember this and keep a close watch on this <em>Pierre</em>.
+[Keyword: Greeting]
+	GreasyBasil: I appreciate you taking the time to teach us how to defend the town. I have to say, the <em>militia</em> that you trained would certainly benefit from having that <em>machine gun</em> you got there to back them up, if you can spare it.
+[Keyword: Greeting]
+	GreasyBasil: I see you've got a machine gun! I hope you can spare it. We could sure use it to keep those <em>Legion</em> types away.
+[Keyword: MachineGunRedirect]
+	[Keyword: The machine gun is yours]
+		GreasyBasil: Now that's a hell of a weed-wacker. A little grease, a new tripod and it'll be ready to keep those Legion types from sprouting up again. 
+			Vicki: Ya, mon. Make sure you clean that feed block. She be always hungry, but she be very messy eater.
+			Fidel: Why is machine gun leaving?
+			Grizzly: Hate to see her go, but at least she'll have a good home.
+			Meltdown: Aw, hell. Was hoping I could play with that a little longer.
+			Omryn: Machine gun is better for defense than offense. We will not need. We going to give very great offense.
+	[Keyword: We'll keep it]
+		GreasyBasil: Eh, can't blame you for that. It will probably end up killing more <em>Legion</em> marauders in your hands than in ours.
+			Grizzly: Count on it. I'll make sure she eats right and gets plenty of exercise.
+			Meltdown: You're goddamn right it will.
+			Grunty: Ja. Every time this adorable kitty purrs, I will stroke it and think of you.
+			GreasyBasil: Uhhh... Thank you?
+[Keyword: Greeting]
+	GreasyBasil: Hello, my friends. I appreciate what you have done for us. I really do. But as long as Pierre's bandits still control the old <em>Fort</em>, we'll never be safe.
+[Keyword: Greeting]
+	GreasyBasil: All my life, I never trusted foreigners. And now some foreigners helped us regain our freedom. Fate loves to challenge our assumptions, huh?
+		Wolf: The Legion don't seem like foreigners here. Would you trust them one bit?
+		GreasyBasil: You have got a point.
+		Thor: This is how Karma works.
+		Grizzly: We're here to help.
+	GreasyBasil: But I guess what I was trying to say is, uh, thanks. I've been thinking what a grease monkey can do for you, and... I came up with this. It's a bit ugly, but it works. Hope it serves you well.
+[Keyword: Greeting]
+	GreasyBasil: My nephew says you're the coolest. Well, I can't disagree with the boy. I appreciate you teaching us how to defend ourselves.
+		Wolf: It was good to teach people how to defend themselves. I've been teaching businessmen how to throw paint at each other for too long.
+		Raider: Next time those Legion criminals show up, you'll be in good shape to protect yourselves.
+		Red: They still barely know whether to wipe their watches or wind their arses, so don't thank us yet!
+		Fox: He's a very energetic young man with a lot of stamina. I like that!
+		Ice: Hey, it's learn fast or die young. You feel me?
+		Tex: All you homesteaders are now one mean posse!
+[Keyword: Greeting]
+	GreasyBasil: I am still wondering if I did the right thing. I suppose I always will. I... I miss him sometimes.
+		Mouse: It's okay to miss him. It doesn't mean you did the wrong thing.
+		Thor: Doing what you think is right is one thing. Living with it is another.
+		Meltdown: That why you keep his body hanging up there?
+		Raider: Sometimes justice demands a sacrifice. I'm sorry for your loss.
+[Keyword: Greeting]
+	GreasyBasil: Sometimes I feel bad when I see <em>Herman</em> hanging there. Then I remember I almost hanged my old friend <em>Luc</em> because of that weasel.
+		Ice: Nah. That snitch got what was comin' to him. 
+		Grizzly: Wouldn't shed too many tears for that guy. He was a loser.
+		Wolf: You got the right guy. That's all that matters.
+[Keyword: Greeting]
+	GreasyBasil: In the end, it is a good thing we didn't use that noose. Still... I'm going to leave it up there - it is a good reminder of what we almost did.
+		Raven: That's a good purpose to serve. Makes people think a bit before doing something stupid.
+		Fidel: Fidel is sad. Poor useless noose.
+		Mouse: Yeah... Just maybe keep the kids away from it, huh?
+[Keyword: Greeting]
+	GreasyBasil: Good thing you helped the boy with that movie projector of his. It will keep him from doing mischief. I was just too busy to fix it myself.
+		Steroid: Only challenge was not to crush it by accident! I mean the projector, not your nephew.
+		Livewire: It was my pleasure, but you should know that I cannot be held responsible for the type of movie he might use it to watch.
+		Kalyna: I used to fix the one back home every time it broke, which was a lot.
+[Keyword: Greeting]
+	GreasyBasil: What do you want?
+[Keyword: Greeting]
+	GreasyBasil: Hello, my friends.
+[Keyword: Someone was killed?]
+	GreasyBasil: My friend <em>Tinhay</em>. When the Legion came and started plundering, he shot at <em>Pierre</em> from a sniper's spot. He missed, but they caught him later... If I find the guy who ratted him out, there'll be hell to pay.
+[Keyword: What is the story with Pierre?]
+	GreasyBasil: He took off when he was just a kid and joined the <em>Legion</em>. Came back home recently leading a bunch of marauders. Broke his papa's heart.
+		Igor: You don't do this to your old papa. Family is important. Dolviches know.
+		Thor: I feel that his journey has yet to complete its circle.
+		Meltdown: Sounds like that little shit's overdue for a spanking.
+	GreasyBasil: <em>Luc</em> still loves his son, still sticks up for him, even after Pierre killed our friend <em>Tinhay</em>. Sometimes I'm wondering... But no, Luc wouldn't betray his old friend, would he?
+[Keyword: Do you know anything about the President?]
+	GreasyBasil: Nah, I'm sorry. Politics doesn't concern me. My neighbors and I, we haven't seen anything good coming from the government. The goddamned President can die or live forever, I don't care.
+[Keyword: What kind of help do you need?]
+	GreasyBasil: We don't know how to fight the Legion - there's not a single person here who has military training. I can teach my nephew over there how to fix a gun, but not how to use it.
+		Steroid: I can teach you how to use a gun to break a head, and THEN fix it! The gun, I mean.
+		Livewire: I know precisely what you mean.
+		Kalyna: I am very good at both, but not very good at teaching.
+	GreasyBasil: If you would help me assemble a <em>militia</em>, we may stand a chance against those bandits.
+		Tex: You got it, partner! Time for training montage.
+		Wolf: Assembling a militia is my middle name!
+		Raider: This town needs a security force, no doubt about it.
+[Keyword: Is that all the help you need?]
+	GreasyBasil: Well, some time ago I had buried a few old rifles. I could clean them and do some repairs, but that's hardly enough to defend ourselves.
+		Igor: This works only for one kind of gun. It is Russian.
+		Wolf: Couldn't agree more, chief. Any idea where you could find more firepower?
+		Fox: That's not even enough protection for a quickie! Battle, I mean.
+	GreasyBasil: I know there should be at least one <em>machine gun</em> left over from the war hidden around the island. If you bring it here, I can fix it up and we can mount it somewhere with a clear field of fire.
+		Fidel: Yes! Fidel deserves a machine gun!
+		GreasyBasil: But... I was hoping to...
+		Fidel: Machine gun and Fidel will be best friends.
+		Meltdown: I have a better idea. Why don't we just grab the fucking machine gun and fucking kill them all with it, and then keep it for ourselves?
+		GreasyBasil: I guess that also works.
+		Grizzly: Machine gun? Now you're talking my language.
+		Grunty: As Mother always likes to say, "There are few problems a machine gun cannot solve".
+[Keyword: Help us help you!]
+	GreasyBasil: I don't know how a poor man can help people like you... I'm not in the business of killing people.
+		Buns: All the better that we excel at that. You can contribute with logistical support. 
+		Raider: Leave the perps to us, mister. We will appreciate any material support you can provide. 
+	GreasyBasil: Well, I work with gizmos and gadgets. See if these are any use to you.
+[Keyword: We have found a machine gun]
+	GreasyBasil: Oh, you're not wasting your time! I hope you can spare that gun. We could sure use it to keep those <em>Legion</em> types away.
+[Keyword: Any advice on taking the Fort?]
+	GreasyBasil: From what I know, they store their ammo supplies in the <em>old bunker</em> at <em>The Rust</em>. If you take it from them, they'll have trouble shooting back at some point.
+		Steroid: ...And then I will crush their tiny heads with my bare hands!
+		Mouse: Oh, it's much better when they don't shoot back!
+		Omryn: Taking supplies is good. Omryn favors having many supplies.
+[Keyword: Any advice on taking the Fort?]
+	GreasyBasil: Have you met <em>Deedee</em> from the <em>Emerald Coast</em>? That wacko is happily supplying the Legion with grenades and all kinds of explosives and just doesn't seem to grasp what the hell is wrong with that.
+		Fidel: Uh... What is wrong with that?
+		GreasyBasil: Anyway...
+		Red: Aye, she's a bit addled, but a good lass.
+		Barry: Very much is wrong with that. Explosives are not to be given like candy on holidays!
+	GreasyBasil: If you talk sense into her, you should have better chances at the Fort.
+[Keyword: Any advice on taking the Fort?]
+	GreasyBasil: There is another nasty gang around here, <em>Bastien's Family</em>. I'm sure they work with the Legion. I've seen him going towards <em>Flag Hill</em>, probably running some errands for Pierre.
+		Omryn: Face like rat? Move like crab? Yes, we have met him.
+		Mouse: He seemed nice... in a clutch-my-purse-with-both-hands-while-he-gives-me-a-tour kind of way.
+		Ice: That dude was sketchy as fuck.
+[Keyword: What other mercs?]
+	GreasyBasil: Some buffoons who tried to look tough, but mostly failed. I asked them to give us a hand with just another gang, but they said they were too busy with some important mission they had.
+		Tex: You think maybe they kidnap <em>President</em>?
+		GreasyBasil: I don't know.
+		Vicki: Other mercenaries? But not tough? I got a creepy-crawly feeling, mon.
+		Omryn: Good. Maybe they already kill bad guys and now we have easy job.
+	GreasyBasil: They had a shiny new boat with the <em>Adonis</em> logo on it, but I don't think they were the corporate types. I told them they could just hire me to <em>give them a ride</em> - these waters are treacherous - but they didn't listen.
+		Raider: <em>Adonis</em> seem to have their own troops on payroll, why would they need to hire independent mercenaries?
+		Raven: My gut says something's not right here.
+		Wolf: I think we should have a talk with that <em>Corazon</em> lady, chief.
+[Keyword: We'll need a ride]
+	GreasyBasil: Well, I'm available for charter, but I'll make you a deal - if you take care of our problems with the <em>Legion</em>, I can give you a <em>discount</em> on my fee.
+		Fidel: Say we kill all Legion here, then we use boat to bring more Legion here and kill them, too. Maybe you give us even bigger discount?
+		GreasyBasil: Um... No.
+		Fidel: Fidel had to try.
+		Meltdown: If we kill every fucking last one of 'em, do we get to travel for free?
+		GreasyBasil: I'm sorry, but... No. I have to feed my family after all.
+		Meltdown: Doesn't matter. We'll kill every fucking last one of 'em anyway.
+		Livewire: Offering discounts to people who kill your enemies is really a very brilliant marketing strategy! I only hope you never have a competitor. 
+	GreasyBasil: When you're good to go, just open the map and show me the route, and I'll get old Betty gassed up and ready for travel. Keep in mind that once I drop you on the mainland, I'll be heading back home. You can rent another boat from any <em>Port</em> sector on the mainland.
+[Keyword: We'll need a ride]
+	GreasyBasil: Of course, friends. You have a <em>discount</em> for helping us, you know.
+		Fidel: Look, Fidel brought you eight livers from Legion soldiers. Do we get better discount now?
+		GreasyBasil: Eurgh... No.
+		Fidel: Fidel knew it. Must gather full ten livers before completing quest.
+	GreasyBasil: When you're good to go, just open the map and show me the route, and I'll get old Betty gassed up and ready for travel. Keep in mind that once I drop you on the mainland, I'll be heading back home. You can rent another boat from any <em>Port</em> sector on the mainland.
+[Keyword: Goodbye]
+	GreasyBasil: Goodbye, my friends.
+[Keyword: Goodbye]
+	GreasyBasil: Au revoir.

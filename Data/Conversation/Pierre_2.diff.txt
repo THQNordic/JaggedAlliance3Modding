@@ -1,0 +1,153 @@
+[Keyword: Greeting]
+	Spike: How are you doing, kid? You enjoying your stay in the camp?
+	Pierre: Major! You... Les mercenaires worked for you all along?!
+	Spike: Nah. We came to an agreement. Let's just say we're helping each other tie up a few loose ends. 
+	Pierre: I... I don't understand. Have you come here to mock me?
+[Keyword: Greeting]
+	Pierre: What are you doing here? You came to mock me for being wrong about the <em>Legion</em>? Mock me if you will, but you are no better than them.
+[Keyword: Greeting]
+	Pierre: What are you doing here? You came to mock me for being wrong about the <em>Legion</em>?
+[Keyword: Greeting]
+	Pierre: You, here? I have heard about your deeds, but I didn't expect you to come to this god-forsaken place. I... I feel compelled to admit that you were right and I was wrong about the <em>Legion</em>.
+[Keyword: Redirect]
+	[Keyword: Actually not]
+		Spike: Do you remember what I taught you about honor, valor and nobility?...
+		Pierre: Yes, I remember all too well.
+			Raider: Careful what you're about to say, Spike.
+			Buns: Major Scallion, now is not the time for one of your "jokes".
+			Sidney: Major Scallion, if I may, I would ensure your next words are of a conciliatory nature.
+		Spike: Well... I was full of shit. I was using you and all the other Legion boys just to get what I wanted. Most of the Legionnaires were just thieves and murderers, so I don't feel too bad about it. But you... Well, you were different. You deserved better than that.
+		Pierre: Then why did you send me to the mines? Why did you send me here?
+		Spike: Because I couldn't bring myself to kill you, but I had to punish you to make an example for the others. And I knew you were strong enough to take it. Simple as that. Look, I don't expect you to forgive me, but... I am sorry.
+		Pierre: I do not know if I believe you, but I... will think about what you said.
+	[Keyword: Actually not]
+	[Keyword: They just used you]
+		Pierre: Yes, and now you want to use me as well. I would rather rot here in this hell hole than serve someone else's "great purpose". Leave me be.
+			Red: Have it your way, ya thick-headed ninny!
+			Mouse: Go ahead and rot then. See if I care.
+			Wolf: I don't know about any "great purpose" but you're sure missing out on a lot of fun!
+	[Keyword: They just used you]
+		Pierre: Yes, they did. How could I not see through all those hollow words and promises for a great future? I was so easy to fool.
+			Livewire: Yes, it is true. You are very naive. But you are not completely without hope.
+			Fox: Don't feel bad. You're young and cute, so it's easy for people to take advantage of you. I have some experience in that area.
+			Magic: Hey, don't sweat it. Everybody falls for an illusion every now and again, ya' dig?
+	[Keyword: Karma is a bitch!]
+			Spike: Do you remember what I taught you about honor, valor and nobility?
+			Pierre: Yes, I remember all too well.
+			Spike: And everything I said about your sacred patriotic duty to your country?
+			Pierre: Yes?
+			Spike: And about the virtues of the Legion?
+			Pierre: Yes, I do!
+			Spike: Well, it was complete and utter bullshit, kid.
+			Pierre: ...
+		Pierre: You want me to admit I was a fool? Okay, I was. Gloat all you want.
+			Meltdown: Dumbass.
+			DrQ: Fate is a wheel trapped in a waterfall, but a person can choose to be the water or the wheel.
+			Thor: To learn the lessons karma teaches, you must calm your soul and align your chakra.
+[Keyword: Greeting]
+	Pierre: What do you want from me?
+[Keyword: Greeting]
+	Pierre: Yes?
+[Keyword: What happened to you?]
+	Pierre: YOU happened to me. Le Major does not tolerate failure, and I accepted my punishment. I deserved it... 
+		Gus: No, you didn't, Woodman. A good commander doesn't throw his soldiers in prison for losing a battle. That's what the commies do. 
+		Len: I don't think so. Only dictators throw their soldiers in prison for losing a battle.
+		Meltdown: You're welcome, dumbass.
+		Ice: You're welcome, dude. Anytime.
+	Pierre: But in <em>Diamond Red</em> I saw... I saw how they treat our people in the name of the <em>Legion</em>. I learned of all the slavery and the abuse, I heard the stories and I saw what kind of people Le Major favors. People like <em>Slave Master Graaf</em>.
+[Keyword: What happened to you?]
+	Pierre: YOU happened to me. And you, <em>Major</em>, punished me for failing to defeat those that you have now joined. Isn't that ironic? I accepted my punishment, but what about you?
+	Spike: Don't worry about me, kid. When the time comes, I'll take my punishment and I doubt I'll get off as easy as just being sent to <em>Diamond Red</em>.
+	Pierre: In Diamond Red I saw... I saw how you treated our people in the name of the <em>Legion</em>. I learned of all the slavery and the abuse, I heard the stories and I saw what kind of people you favor. People like <em>Slave Master Graaf</em>.
+	Spike: He served his purpose. I couldn't afford to have you escape and come try to kill me. You were the only one in the whole Legion I think could've actually done it.
+	Pierre: I... How do you do that? Your words fill me with anger and pride at the same time.
+	Spike: What can I say? I got a gift.
+		Len: I'd say it's more like a curse, old buddy.
+		Gus: Yeah, you got a gift. A real gift for getting into trouble.
+		Grunty: It's called demagoguery and it is a gift no one wants.
+		Shadow: It's called manipulation. It's like a form of camouflage, but for words.
+[Keyword: So the Legion isn't what you expected?]
+	Pierre: We needed a cause to unite us, a promise that we can serve our country and work for a better future... At least some of us did. Others just needed an excuse.
+		Spike: You nailed it! I always knew you were smart, kid.
+		Len: It's always like that. War attracts those types of people like shit attracts flies.
+		Fauda: Where there is war, there are always profiteers.
+		DrQ: It is much easier to add evil to evil than it is to add good.
+	Pierre: At the end of the day, the <em>Legion</em> turned out to be just a cover for greed and violence, and for the madness of <em>Le Major</em>.
+		Spike: I am not mad. I am differently sane.
+[Keyword: We killed Graaf]
+	Pierre: Yes, I heard that and I'm glad you did. For some people, it is a real shame they can be killed only once. 
+		Meltdown: You got that right!
+		Fidel: Some people? Why only only some people?
+		Ivan: Да. Fascist needs to die.
+		Spike: Don't look at me! I've been killed at least three times, judging from the rumors I've heard.
+	Pierre: My only regret is I couldn't kill him myself. I tried. Yes, it's true... and I almost succeeded. That's why they moved me here.
+		Spike: Bullshit. I sent you here, because if you tried again and succeeded, the boys would have expected me to execute you. To tell the truth, I was kinda hoping you'd break out of here and come try to kill me instead.
+		Pierre: Why would you want that?
+		Spike: I wasn't planning on letting you succeed! It was my getaway plan. You and I could fake my death, you could take over the Legion and do what you want with it, and I could disappear. But these A.I.M. yahoos got to me first, so there went that idea.
+[Keyword: We hired Graaf to keep him in check]
+		Livewire: Oh, we found an original solution for the problem with that asshole Graaf. We hired him! That way, we can always keep an eye on him. Brilliant, right?
+		Fox: We didn't trust that Graaf either! That's why we hired him, so that we could control him. We couldn't let him keep being naughty, could we?
+		Magic: Graaf's working for us now. We cut a deal. He plays it straight, he gets to live.
+		Spike: Yeah. Just like me. They're collectors of lost souls, our friends here. When do you join in?
+		Pierre: Don't even think about it.
+	Pierre: You could have just killed Graaf!
+		Fox: And become just like him? No thanks.
+		Livewire: True, but then we would have had to hire someone else and there would have been this big long interview process and... ugh! Who needs that?
+		Magic: Still might. Guess we'll see if he can keep his nose clean.
+	Pierre: Anyway, I hope you will make him atone for his sins.
+[Keyword: We killed the Major]
+	Pierre: This is for the best. You should have met him before... He was an inspiring leader and a good man.
+		Gus: Some of us have, Woody. You're right, he was one of the good ones.
+		Len: I had the honor of knowing him... before. He was a good soldier, and a good friend.
+	Pierre: But it seems like he had been rotting from the inside, and that rot slowly turned him into a madman. Yes, I think even he knew at some point he had to be stopped.
+[Keyword: You can help us make things right]
+	Pierre: Really?...
+		Spike: You and me, like the good old days - what could go wrong?
+		Pierre: You let them hang <em>my father</em> and now you will make that right, will you?
+		Pierre: You hired <em>Le Major</em> here, the monster who filled my head with lies...
+		Pierre: You hired that bloodsucker <em>Graaf</em> and let him abuse your workers just to squeeze more tiny diamonds out of them...
+		Pierre: ...You have taken the riches of my country and handed them over to those <em>greedy foreigners</em>...
+	Pierre: ...And you want me to believe that somehow you will make things right? No, I don't trust you. I would rather rot to death in this hell hole than help you.
+		Red: Oh, look who's a fine judge of character all of a sudden. Well, to hell with ya!
+		Tex: Frontier justice is harsh mistress, kemosabe.
+		Shadow: Well, we never claimed to be perfect.
+[Keyword: You can help us make things right]
+		Buns: It's not too late to help fix the damage the Legion has done.
+		Sidney: Not to sound unreasonably optimistic, but I believe there is still a chance to undo the damage the Legion has done.
+		Raider: There's still a chance to restore law and order to this country.
+	Pierre: It sounds weird, but... From what I have been hearing about you, I feel I can trust you.
+		Pierre: Even though you spared this madman here...
+		Spike: They gave me a second chance. Look at me, full of remorse, but reformed, all in white like an angel!
+		Pierre: Shut up. I'm talking to les mercenaires. As I said, despite not killing him, you did some good.
+		Pierre: You ended the bloody reign of <em>Le Major</em>...
+		Pierre: You killed that slaver and murderer <em>Graaf</em>...
+		Pierre: You made sure that snitch <em>Herman</em> was punished...
+		Pierre: You have taken care of my dad's friends in <em>Ernie</em>...
+		Pierre: You achieved something unheard of when you forced that snake <em>Bastien</em> to help people instead of abusing them...
+	Pierre: ...And above all, you seem to genuinely care about our country. So... what do you want me to do for you?
+	[Keyword: Join us]
+		Pierre: And you want to... take me with you? Let me become one of you? This is a great honor and I hope I won't disappoint you, mercenaires.
+			Spike: I don't know about great honor... But I promise you we'll have a lot of fun.
+			Nails: I got my eye on you, punk.
+			Len: Guess we'll see. Fall in.
+			Raider: As long as you're sincere about being reformed, I'm sure you won't.
+			Gus: Yeah, we'll see. Now let's get you some gear, Woodstock.
+			Scope: Brilliant! I'm sure you'll do fine. Just maybe check with us first before killing any civilians, right?
+			Fauda: Fight well and with honor and you will fit right in.
+			Grunty: I am sure you won't. I only have one rule: Stay away from my foot powder.
+			Shadow: I'll be watching you. You won't see me, but I'll see you.
+		Pierre: And I have just one thing to ask - please, don't disappoint me as well. Be honorable to the end.
+			Spike: I'll try not to disappoint you, kid. I suppose I owe you that much. But I'll leave that whole "honor" thing up to you.
+	[Keyword: Go home]
+		Pierre: Yes... I can do that. I will return to <em>Ernie</em> and do my best to heal the damage I have done. I will protect my people from those who are like the fool I was.
+			Spike: He's looking at me again!
+			Blood: That's the best news I heard in a while.
+			Fox: Say hi to that cute dad of yours for me!
+			Barry: I have full heart from wholesomeness.
+			Raven: Be good! Don't kill any more of your dad's friends!
+			DrQ: Your path will be no less easy, but it will offer you riches you have not yet known existed.
+			Ice: Be cool, playah. Don't make us come find you.
+[Keyword: Goodbye]
+	Pierre: Leave me be.
+[Keyword: Goodbye]
+	Pierre: Farewell.

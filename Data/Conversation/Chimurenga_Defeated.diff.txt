@@ -1,0 +1,95 @@
+[Keyword: Greeting]
+	Chimurenga: You may have defeated me... But you will never defeat the Revolution!
+		Steroid: You just watch!
+		Ivan: Let go. Он хороший человек.
+		Nails: That's all right, pops. Ain't my country anyway.
+		DrQ: We do not have to defeat the Revolution. It will surely defeat itself.
+		Reaper: Cut the head off the snake, the body will die.
+		Smiley: I don't care about the Revolution. I defeated the Savannah Lion! Someone take a picture.
+[Keyword: Greeting]
+	Chimurenga: The Revolution needed those diamond mines... I knew it was getting time to strike, but you... struck first.
+		Buns: A-ha! So you admit you were planning to betray us?
+		Gus: We knew you were planning to double cross us, Woody. Ain't gonna happen.
+		Shadow: I guess we just got bored of waiting for you to make the first move.
+	Chimurenga: Why have you betrayed me! I wasn't ready yet...
+[Keyword: Time to retire]
+	Chimurenga: You leave me with no real choice - retire or die. Alright then. I choose to live for the Revolution, instead of foolishly die for it.
+		Steroid: Ha-ha, you coward!
+		Chimurenga: If you say so.
+		Mouse: But you'll miss your big chance to be a martyr!
+		Chimurenga: Fitting. At my lowest, I am mocked by a little mouse.
+		Kalyna: Good for you! You can retire and write your book.
+		Flay: Are you certain? Your head would look very nice on my wall.
+	[Keyword: Don’t try to fool us]
+			Igor: Nu pogodi, Cheburashka! You cannot deceive me.
+			Gus: I don't trust ya, Woodman. You seem too easy to convince.
+			Thor: I can see you are hiding something. Don't be afraid to let the truth out. That's when the healing begins.
+			Scully: I know a faker when I see one. What were you really going to do?
+			DrQ: Forced retirement is a bitter pill to swallow. You seem to be swallowing it too easily.
+		Chimurenga: Yes, I intended to deceive you and continue the good fight... But what do you want from me, just give up everything I fought for?! Isn't there any chance for my Revolution?
+	[Keyword: Time for you to leave]
+		Chimurenga: Farewell... Until we meet again.
+			Gus: Don't think so, at least not if you know what's good for you, Woodshed.
+			Steroid: I don't trust this guy!
+			Shadow: The hairs on the back of my neck just stood up. That's a bad sign.
+			Scope: I'm all for showing a bit of mercy, but I think we just released a wounded lion into our own backyard.
+			Omryn: I think he will come back and make trouble. We should get something to eat.
+			Wolf: I got a feeling that guy's gonna be a problem, chief.
+[Keyword: Time to retire]
+	Chimurenga: Retire? What am I going to do with my life, start knitting? I am a warrior, I am the Savanna Lion!
+[Keyword: Make Maman happy]
+	Chimurenga: What?... <em>Liliane</em> is a very nice woman, but... I never thought about that. Do you think that... she would have me?
+		Scope: Oh, but of course, love. Trust me, she likes you a lot.
+		Fox: You old fool. She loves you. And you never noticed that because of your stupid revolution.
+		Igor: She can be your Crocodile Gena.
+		Chimurenga: ...
+		Igor: Sorry. Stupid joke.
+		Fauda: That woman cares for you. I think she should not, but it is her heart. You should go to her.
+		Vicki: There be only one way to find out, mon.
+		Red: I would nae be wasting my breath on this if I thought otherwise, now would I?
+	Chimurenga: You have crushed my Maquis and my Revolution, and now you want me to trust you with something so... personal?
+	[Keyword: You deserve a normal life]
+			Scully: Time to pound that sword into a ploughshare, mate. That's what the fancy lads call a double entendre.
+			Thor: Now is the time for you to realize that what you have always wanted has been right there in front of you the whole time.
+			Livewire: What is the point in struggling your whole life if you cannot get to a place where you can rest?
+			Barry: You have fought too long. Now is time for love.
+			Buns: I think it is clear you are very bad at leading a revolution. Maybe this you will be good at?
+			DrQ: War has not worked for you. Perhaps peace and love would be better.
+			Gus: Everyone deserves a shot at being happy. Even you, Woodhead.
+			MD: A man your age and in your condition should really slow down and try to relax.
+			Vicki: Leave that revolution stuff alone. Be done with it and let your body rest.
+		Chimurenga: Perhaps you are right. Perhaps I needed a wake-up call.
+	[Keyword: Together you can rebuild this town]
+		Chimurenga: A failed revolutionary and an ex-whore rebuilding a town in a third world country? Sounds like a bad joke.
+			Raider: It is a jagged alliance, isn't it?
+			Buns: It is some kind of a jagged alliance.
+			Sidney: It is quite a jagged alliance, isn't it?
+			Ivan: No joke. Fighting is easy, for peace... Надо гораздо больше. More needed.
+		Chimurenga: I guess you mean well. Maybe I will run for Mayor, who knows?
+			Grizzly: Mayor Chimichanga? Sounds a little silly, but I suppose a funny sounding name doesn't hurt in politics.
+			Chimurenga: It's Chimurenga.
+			Grizzly: Well, it's called politics where I come from, but I wouldn't expect you to understand that.
+	[Keyword: Why not?]
+		Chimurenga: Why not? Why not indeed?! This is ridiculous. Kill me or let me go, but I won't tolerate you mocking me.
+	[Keyword: Redirect]
+		Chimurenga: I guess I should put the gun down and take the chance to start a new life. Alright, I'll talk to Liliane.
+			Magic: My man!
+			Raider: It is never too late to talk to the woman you like. You will start a new life, you'll see.
+			Hitman: Show her the beast, Ace! You're the freakin' Savanna Lion!
+			Raven: You'll do fine! She likes you a lot.
+			Grunty: Just make sure you have adequate foot powder. If you are like me, sweaty feet have been a problem on dates.
+			Tex: This best part of script. Hero accepts challenge!
+[Keyword: Your revolution ends here]
+	Chimurenga: So you are sending the Savanna Lion into exile. Alright, I shall comply. 
+		Fidel: Go to Cuba! Best place for a revolution!
+		Wolf: Can't have you hanging around here causing trouble. Go find a beach and sit on it.
+		Nails: Time for you to hit the road and see the world, Scooter.
+[Keyword: Time to die]
+	Chimurenga: You... You have wounded me more deeply than this injury means, for you have wounded the Revolution itself. But it will continue without me!
+		Steroid: This is watchful thinking!
+		Ivan: I sorry we must do that. Прощай, товарищ.
+		Fox: We shouldn't have done that. Poor old girl will be heartbroken...
+		Meltdown: Oh, quit your yapping and just die already!
+		Flay: And so the hunt ends for the great Savanna Lion. I will take this head for my trophy room.
+		Nails: Be a good little revolutionary and just die now, okay?
+		Fidel: Now Fidel is confused. Do I keep wounding you or kill you? Meh. I just kill you.

@@ -1,0 +1,172 @@
+[Keyword: Greeting]
+	Bounce: This here club is members only, and I don't remember making you one. How did you even get in here? Give me a good reason why I shouldn't throw you out.
+	[Keyword: Take a look at this coin]
+	[Keyword: Siegfried sent us]
+	[Keyword: The good old "break and enter"]
+			Meltdown: I go where I damn well want to go and do what I damn well please. You got a problem with that?
+			Fidel: It was easy. Fidel break. Fidel enter. Now Fidel wants to break more - people or things, it make no difference to Fidel.
+			Nails: I'm not real big on rules. If there's a place I want to get into, I invite myself. That's not a problem for you, is it?
+		Bounce: Well, you got some balls on you... Alright. If you came looking for a fight, you came to the right place. We got some good fighters here, but we could always use some more.
+	[Keyword: The good old "break and enter"]
+		Bounce: Oh, you making some kind of joke? <em>Night Club</em> is MY house. You don't break into my house and then laugh about it in my face. Imma show you what I do to bitch ass clowns who disrespect me.
+	[Keyword: This was the only way to reach you]
+		Bounce: There's a reason I'm not within everyone's reach, cuz. But after all, it turned out this didn't apply to you. 
+	[Keyword: This was the only way to reach you]
+		Bounce: I don't have time for this crap, cuz. There's a reason I'm not within everyone's reach. Now, let me show you how we handle unwelcome guests. Guards!
+	[Keyword: Here's your reason: <em>Diesel</em>]
+			Gus: We're looking for information about stolen Diesel, Woodward. We didn't figure that asking at the front door was the best way to go about it.
+			Scully: We're looking for information on stolen Diesel, mate. We got the feeling it's not the type of thing you get by walking in the front door.
+			Thor: We sensed that stolen Diesel is a sensitive subject, so we decided to try to talk to you as discreetly as possible.
+			Fox: Sorry about sneaking in. I just prefer the back door, especially if I'm looking for something naughty... like stolen Diesel, for instance.
+			Livewire: I find it is generally a good idea to avoid the front door when trying to acquire information on stolen goods... like Diesel, for instance.
+			Magic: Word on the street is you the man to talk to about stolen Diesel. Didn't figure asking at the front door was gonna get us an invitation.
+		Bounce: Yo, let's keep it on the down-low, alright? This place may be mine, but the walls got ears, know what I'm saying? Just relax. We'll talk.
+	[Keyword: Here's your reason: <em>Diesel</em>]
+		Bounce: That right? That crazy old German send you? Yeah, I figured he'd try to take me out. What? You think I ain't prepared?! You just a bunch of bitch ass clowns who about to FIND OUT!
+[Keyword: Greeting]
+	Bounce: You having a good time, cuz? Walk around, talk to the girls. If you want to fight, you just pick someone and I'll set it up.
+[Keyword: Greeting]
+	Bounce: Nice moves, cuz. You just net me a lot of dough. Most people here thought you were fresh meat, but I knew you were a killer. I cleaned up! That means I owe you that information you been looking for.
+		Thor: This was about money?! Mein Gott... sometimes this country really tests my faith in humanity.
+		Ice: You had us kill a dude just to win a bet? Damn, that's cold.
+		Scope: You bet on us? That's sweet. Bloodthirsty and sociopathic, but sweet.
+	Bounce: I saw a van with some canisters strapped to the roof hauling ass away from Siegfried's place the other day. I could swear I've seen the same van down near <em>the abandoned gas station</em> a few times before that.
+	Bounce: Tell you what, cuz... If you do find the stolen <em>Diesel</em>, do me a solid and come back here before giving it to <em>Siegfried</em>. I'm gonna make you an offer you can't refuse.
+		Tex: Oh, I know what kind of deal this is! Haha! It is... um, not a good one for us.
+		Bounce: Chill, cuz. It'll be good for both of us.
+		Raven: You want to become a dealer or something? Has that become the Grand Chien Dream now?
+		Bounce: Nah, I got bigger plans than that.
+		Gus: We'll think about it, Woodscrew. Enjoy your winnings.
+[Keyword: Greeting]
+	Bounce: Hey there, cuz. Any luck finding that sweet <em>Diesel</em>?
+	[Keyword: Not yet]
+		Bounce: Check your map. The guys who stole the <em>Diesel</em> should be somewhere near that <em>abandoned gas station</em> I showed you. If you find it, come back here and we'll talk.
+	[Keyword: Yes]
+		Bounce: That's what I'm talking about, cuz. I'll let you in on a little secret. I hired those <em>Legion</em> dudes to steal it from <em>Siegfried</em>. I knew the old man was doing some weird shit with it, but I couldn't risk stealing it myself.
+			Buns: And then you had us steal it back for you. That was a bit underhanded, but also quite clever.
+			Bounce: You don't last long in Landsbach unless you're underhanded and clever.
+			Grizzly: So, you used us. That's just great.
+			Kalyna: What kind of "weird shit"? I have read many books about weird things.
+		Bounce: Don't know what he's done to it, but imma find out. Anyway, I'm taking him down. I'm tired of everything being owned by some rich-old-white dude. Things around here are gonna change. You give me the <em>Diesel</em>, I give you my best gun. Then we go take out <em>Siegfried</em> and split the mine fifty-fifty. You in?
+		[Keyword: No way. We're telling Siegfried]
+			Bounce: Hahaha... And what makes you think imma let that happen?
+		[Keyword: Ok. Take the Diesel]
+			Bounce: I knew you were alright, cuz. Now let's get ready for some action. Meet me near the <em>diamond mine</em>. And this here is my best gun - the PSG1. I promise, you ain't never used a weapon like this before. It bites like a raptor.
+				Larry: Get it away from me! It's looking at me!
+				Scope: Bloody 'ell!... Uh, that is to say... thanks, love.
+				Reaper: Thy PSG-1 and ammo clip, they comfort me.
+	[Keyword: This is not street Diesel. It's enhanced.]
+		Bounce: Well, it looks like you got some brains, cuz. Alright, let me deal you in. I already know this ain't the shit the <em>Legion</em>'s been poisoning our people with. <em>Siegfried</em> has been changing it into something that turns his soldiers into damn war machines.
+		Bounce: I needed to steal some so I could turn the tables on him. So, I used you and the <em>Legion</em> to do it. Wish I could say I was sorry, but I'm not.
+			Ice: You played us? That ain't right.
+			Bounce: No, it ain't. But it is how it is.
+			Meltdown: I'm about ten seconds from MAKING you sorry, so you better start saying something I want to hear or there's gonna be a meltdown!
+			Fauda: Do not be sorry. It would be sad if your last moments on earth were spent being sorry.
+		Bounce: Take the mine for yourself, I don't care about it. Just give me the <em>Diesel</em> and help me take down <em>Siegfried</em>. Otherwise, we don't stand a chance against his soldiers. If it makes the deal any sweeter, I'll throw in my favorite gun. You in?
+		[Keyword: No way. We're telling Siegfried]
+			Bounce: That ain't happening.
+		[Keyword: It's a deal]
+			Bounce: I knew you were alright, cuz. Now let's get ready for some action. Meet me near the <em>diamond mine</em>. And this here is my best gun - the PSG1. I promise, you ain't never used a weapon like this before. It bites like a raptor.
+				Larry: Get it away from me! It's looking at me!
+				Scope: Bloody 'ell!... Uh, that is to say... thanks, love.
+				Reaper: Thy PSG-1 and ammo clip, they comfort me.
+[Keyword: GreetingResponse]
+	Bounce: You come from the old German Shepherd, huh? Make yourself at home, then. But you know the rules, cuz. If this is your first time in <em>Night Club</em>, you have to fight.
+		Gus: Oh, I had my share of nights and fights, Woodrow. Leave the old man alone, will ya?
+		Grizzly: Alright! Bring it on.
+		Nails: You got a problem with me, Scooter?
+		Bounce: Not for now, cuz. You just make sure it's stays like that.
+[Keyword: GreetingResponse]
+	Bounce: Anyways. Tell me what's on your mind, cuz.
+	[Keyword: What is this place?]
+		Bounce: This fine establishment is called <em>Night Club</em>. Lots of folks come in here to loosen up a bit. After a full shift in Siegfried's mine, everybody needs something to take the edge off. I make sure that edge comes off real nice and smooth.
+			Magic: That's magic to my ears.
+			Fox: Oh, it's one of THOSE clubs. I have a list of my favorite safe words if anyone needs one.
+			Larry_Clean: Oh god, I want my edge taken off... Nope. No, I'm okay. I'll just, um... get a seltzer.
+			Igor: Igor loves night clubs. But where are the cocktails and the dancing girls?
+		Bounce: Take a walk around, chat up the girls. If you want to join the fights, you just pick someone and I'll set it up. 
+	[Keyword: What's the deal with Landsbach?]
+		Bounce: This here is Siegfried's company town, cuz. Everybody here works for him or owes him money, whether they know it or not. People with no place else to go come to <em>Landsbach</em>, and the German Shepherd makes them part of his flock.
+			Omryn: German Shepherd good with flock. Also good at hunting walrus. You ever cook walrus guts on spike? The best stuff you can eat in all of Chukotka.
+			Len: They owe their souls to the company town, huh?
+			Bounce: Some of them don't get a day older, but they all get deeper in debt.
+			Red: Ye dunnae work the mines unless yer in debt to somebody, lad.
+			Fauda: When you have no safe place to go, that is when Shaitan's arms look as warm as your own mother's.
+[Keyword: Goodbye]
+	Bounce: Stay out of trouble, cuz. I run <em>Night Club</em> nice and smooth, so I got people watching for trouble. If you start making things rough, you gonna find your ass out on the street.
+		Magic: Be cool, man. Smooth is my middle name... uh, my other middle name. Maybe I should make it a hyphenated last name.
+		Nails: Oh, yeah? Well, I'll build my own night club, then. With blackjack. And hookers. In fact, forget the night club.
+		Sidney: I assure you, we will be model guests. Now, point me in the direction of the nearest baccarat table.
+		Bounce: Sorry, cuz. This ain't no place for no James Bond, but I like your style.
+		Scully: No worries, mate. We're just here to have a bit of fun and look for clues that won't make any sense to us until several days later.
+		Fauda: I will find my ass exactly where it is. If anyone touches it, they will lose both hands and eyes.
+		Bounce: Daaamn... Alright, be cool. I was just sayin' is all.
+		Shadow: Oh, I promise they won't see a thing.
+		Ice: Be cool and just chill. Don't front. We ain't looking for no fight, but we ain't afraid of none neither.
+		Bounce: Oh, I'm chill, cuz. I'm chilly fucking Gonzales. If you wanna fight, you came to the right place. I'm just saying, if you go looking for problems, you gonna find one.
+[Keyword: Goodbye]
+	Bounce: Enjoy the fights, cuz. Let me know if you need anything. I'll hook you up.
+[Keyword: Tell us about Siegfried]
+	Bounce: <em>Siegfried Von Essen</em>... Our holy führer. Fancy white suit, sharp tongue and a black heart. You can't miss him. He came to <em>Landsbach</em> several years ago. Didn't take him long to become the boss around here.
+		Red: Certainly hard to miss the mansion where he plants his arse!
+		PierreMerc: He is exactly the type of man this country doesn't need, but we always seem to get.
+		Smiley: I would love to have a house like his one day. I wonder why he has no wife... and several very beautiful daughters.
+	Bounce: He owns the land. He owns the mine. Hell, he owns this very <em>Night Club</em>. Everybody's working for the big white man, cuz. Even me.
+[Keyword: Who is the Mole?]
+	Bounce: Shit, cuz. If I were you, I'd stay away from that cockroach. The dude would sell his mother's liver for pocket change.
+		Ice: Near as I can tell, that don't make him no different from most folks around here.
+		Bounce: True dat.
+		Grunty: His own mother? That... is unbelievable!
+		Bounce: Just watch your back around him, cuz... And your liver.
+		Fidel: This type of exchange is of interest to Fidel.
+		Flay: Animal organs and skin are sold for pocket change all the time... some of them human.
+		PierreMerc: He sounds like the type of merchant the Legion enjoys working with.
+		Mouse: Come to think of it, his pockets were jingling when we met him... I think I might be sick.
+		Bounce: Use the bucket near the fight ring.
+	Bounce: You gotta make a living if you want to survive in <em>Landsbach</em>, but you gotta be careful where you eat and where you shit. Understand what I'm saying? I can't ever tell when the <em>Mole</em> is lying or telling the truth. Safest to assume he's lying, otherwise you might get served a shit sandwich.
+[Keyword: Who stole Siegfried's Diesel?]
+	Bounce: We both working for the same man, so I'm tempted to tell you what I know, but I ain't sure yet if that's the right thing to do. Trust don't come easy in <em>Landsbach</em>. Everyone in this town is just looking out for themselves.
+		Magic: No disrespect or nothing, but that's true all over the world.
+		Nails: Then Landsbach's no different than my home town... and every other place I've ever been.
+		Livewire: Yes, but in point of fact, we are not from here. Therefore, it is reasonable to trust us.
+		Bounce: Nice try.
+		Shadow: And you think mercenaries are any different?
+		Bounce: No worries, then. You'll fit right in.
+[Keyword: What's so important about this Diesel?]
+	Bounce: It's a street drug. Somebody must have given old <em>Siegfried</em> his own supply. Maybe he didn't want to buy from the local dealers. It's on every corner in <em>Landsbach</em>. Didn't you see the junkies? A few shots of happiness and then your brain turns into tapioca.
+		MD: Oh, I see. I guess he's self-medicating.
+		Wolf: I guess the old-timer must be using it for his pain.
+		Omryn: Tapioca is wonderful pudding... Now I am hungry.
+[Keyword: You're saying we shouldn't trust you?]
+	Bounce: I'm just stating a fact, cuz. We got no relationship. See, I don't know you, so I might just tell you what you want to hear to make you go away. Or I might tell you the truth, but then I'd be breaking trust with somebody else.
+	Bounce: Now, maybe I could be convinced to do that, but you got to earn my trust first. See the big fella in the back? That's <em>The Bonecrusher</em>, one of the champions here in <em>Night Club</em>. I want him out of the game, alright? Permanently. Take care of him for me and I'll do something good for you.
+		Hitman: Take care of him? What, are we in the mafia now? Should I get you some cannoli, Mr. Corleone?
+		Steroid: Pff. He is no bone crusher. He does not even look big enough to crush tiny chicken bones.
+		MD: Em... Isn't there a high chance of a bone fracture in this plan?
+		Bounce: No offense, cuz, but it's probably better if you be the corner man rather than the fighter.
+		Vicki: I be crushin' your lazy bones, mon, if you be trying to get us into some nasty scheme of yours.
+		Bounce: I like your style, sister. If you ever think of switching professions, don't hesitate to call me.
+		Vicki: In your dreams, mon.
+	[Keyword: Why don't you shoot him yourself?]
+	[Keyword: You want us to gun him?]
+[Keyword: About this Bonecrusher...]
+[Keyword: Not gun him]
+	Bounce: I need his ass beat in the ring, cuz. It needs to look clean. I can't have people thinking they might get shot if they become the next champion. It ain't like that. Just go challenge him to a fight and nail him into the ground - as in, six feet under it.
+		Nails: Don't tell me how to nail someone, Scooter. I've been nailing people my whole life.
+		Wolf: What's your problem with him anyhow? Been champ too long? Won't accept retirement?
+		Bounce: It's personal.
+		Wolf: Got it. A woman, then.
+		Sidney: Now this sounds like a proper tavern brawl! A bit of bare knuckle fisticuffs, eh? You know, I used to be quite the boxer at university.
+		Igor: This will be fun! If I win, you will put picture of Igor on wall, yes?
+		Bounce: Uh... sure, cuz. Whatever you want.
+		Len: Not sure we really need to get involved in this.
+		Raider: Setting aside the fact that this is highly illegal and unethical, I'm not so sure this is a good idea.
+	Bounce: One last thing, cuz. He's one tough motherfucker. I'd suggest challenging some of the other fighters first to see how you stack up against the competition.
+	[Keyword: We'll think about it]
+	[Keyword: We'll do it]
+[Keyword: Redirect]
+	Bounce: Remember, no weapons. It has to be a fair fight... with an unfair ending for <em>Bonecrusher</em>.
+		Tex: Would be better to have shootout. Much more dramatic!
+		Fidel: Hijole... What about grenades? Give Fidel something to work with.
+		Blood: If we need to do this, I'm ready. I'll make it quick.
+		Steroid: We will see who will be the one crushing the bones and who will be boning the... crush.

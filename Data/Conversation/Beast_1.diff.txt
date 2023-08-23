@@ -1,0 +1,145 @@
+[Keyword: Greeting]
+	TheBeast: You killed my Wlad! I have been protecting him for so many years. The Beast... The Beast shall have you. All of you!
+[Keyword: Greeting]
+	TheBeast: Wlad!... You have no right to die! Not after I have been protecting you so many years, not after you have been taking care of me so long!
+		Mouse: We're sorry...
+		Len: I'm sorry for your loss.
+		Fauda: May his soul watch over you.
+	TheBeast: He's dead, and I... I don't care anymore.
+[Keyword: Greeting]
+	TheBeast: Well hello again, my sweet children. Do you recognize me? Are you not afraid of the <em>Beast</em>?
+[Keyword: Greeting]
+	TheBeast: Come, wayward souls that wander through the darkness! Are you not afraid of the <em>Beast</em>?
+[Keyword: GreetingRedirect]
+	[Keyword: Are you the Beast?]
+		TheBeast: Yes. The Beast is just an old woman who protects her people disguised as an avenging spirit of the forest. You should never underestimate old women, they are always more than they seem.
+			Meltdown: Fuckin' A right!
+			Shadow: Especially one dressed in an armored stealth suit and packing automatic weapons.
+			TheBeast: You like?
+			Shadow: Like? I think I'm in love.
+			Fauda: I did not expect to find a role model today, but here we are.
+			Kalyna: Wait, I know! You're a shapeshifter! Will you teach me your magic?
+			TheBeast: There is no magic, dear. There is only the thirst for justice, the lust for battle, and the willingness to do terrible things.
+	[Keyword: You are the old woman in the woods]
+	[Keyword: You are a formidable fighter]
+			Len: All I can say is I admire your spirit, ma'am.
+			Buns: We have been admiring your work, madam. You are keen, methodical, and effective.
+			Raider: Anyone who takes a stand for justice is okay in my book. You are the hero Grand Chien deserves.
+			Sidney: It is an honor to meet you, madam. Your martial technique is an inspiration to us all.
+		TheBeast: Aww, you know how to make an old lady giggle and blush.
+	[Keyword: No, we enjoy killing just like you do]
+			Fidel: This murder Beast reminds Fidel of his good old granny.
+			Flay: Oh, I know the thrill of the hunt when you track them, trap them and see the horror in their eyes before you slay them.
+			Meltdown: I consider it a waste of a day if I ain't kicked somebody's ass!
+			Nails: I ain't having fun unless some blood gets spilled.
+		TheBeast: I kill for vengeance and for justice, but it is true that sometimes I enjoy it. It is a terrible thing to enjoy and I take no pride in it.
+	[Keyword: Are you here to help us against those thugs?]
+		TheBeast: Oh yes, I will. I am vengeance, I am the night, I am the Beast.
+			Tex: We should do movie! Tex and the Beast. This summer, justice has two guns and four paws!
+			TheBeast: No.
+			Tex: Okay. I have my agent call your agent.
+			Mouse: That is so cool!
+			Reaper: Don't oversell it.
+			Kalyna: Wow... I think I just peed a little. Not that much. Just a little.
+	[Keyword: Time to fight the bad guys]
+		TheBeast: Yes. The Beast shall unleash its fury upon those naughty children who terrorize its village.
+	[Keyword: We just want to talk]
+		TheBeast: Is this why you have summoned the Beast? To just talk? Be careful, the Beast may decide you are being naughty.
+			Grunty: I am never naughty. Mother made sure of that.
+			Wolf: Got it. We don't mouth off and you don't come at us all teeth and claws.
+			Fox: And if I'm naughty, do I get a spanking?
+			TheBeast: Not the kind you'd like, my dear.
+		TheBeast: But I see you have already slain those who would hurt the ones the Beast protects. The Beast will remain passive and answer your questions.
+			Kalyna: Oh, good! I have so many. Let's see... Where did you get your powers from? Was it an ancient grimoire? Are you cursed? Did someone make you this way? Are there more like you? Do you have a lair?
+			TheBeast: Calm yourself, child. Remember to breathe.
+	[Keyword: We just want to talk]
+		TheBeast: You summoned the Beast and fought along side to protect this village. This pleases the Beast. You did well. We shall talk.
+[Keyword: Greeting]
+	TheBeast: No time to talk. The Beast has naughty children to punish.
+[Keyword: Greeting]
+	TheBeast: I'll be going home soon to my lovely <em>cabin</em> in the woods. Just can't stand watching Wlad play around in this filth like a pig.
+		Wlad: This is not filth! These are valuable crafting components.
+		TheBeast: Filth.
+[Keyword: Greeting]
+	TheBeast: Anything else before I leave?
+[Keyword: So the Beast is just an old granny]
+		Larry: What big hands you have, Granny!
+		TheBeast: Aww, you're so sweet, I could just eat you up.
+		Larry: Ooohhh...
+		Reaper: The power of the Beast is shining through this mortal shell you will soon discard.
+		Grunty: You remind me of my mother, only with much more body armor.
+	TheBeast: Yes, I'm just an old woman. And like all old women, I'm tough, stubborn, and enduring. I have been walking these woods for years now, and I've been murdering lots of people with guns. People like you.
+		Len: No need for threats, ma'am. Like you, we're here to help.
+		Ivan: Ну ни хрена себе!
+		Grizzly: We kinda been doing the same thing, only we don't make it look half as good as you do.
+[Keyword: Do you live here?]
+	TheBeast: Not anymore. I used to be married to this rascal <em>Wlad</em> here, but he prefers to live in filth, because all he cares about are his crazy devices.
+		Wlad: Hey! I care about my tools, too! And besides, you kept cleaning and tidying so much I could never find anything!
+		TheBeast: Only because you refused to look where it made sense to put them!
+		Wlad: It made sense to put them where I left them in the first place!
+		TheBeast: In filth.
+		Wlad: Bah!
+	TheBeast: Anyway, since our <em>mansion</em> was flooded some years ago, I moved into a small <em>cabin in the woods</em>. It is much better this way.
+[Keyword: What ties you to this village?]
+		Kalyna: Do you stay here because of the loss of a loved one? Does a curse bind you to this place? Are you an eternal guardian charged with protecting an ancient shrine of mystical power?
+		TheBeast: My, what an imagination you have.
+		Kalyna: It's my best quality!
+		TheBeast: Can you control it?
+		Kalyna: There's been little evidence of that so far.
+	TheBeast: There was a time when I lived in the sunken <em>mansion</em> over there with that rascal <em>Wlad</em>, but both our marriage and the house have been washed away by years of conflict.
+		Mouse: Wow! You had a mansion?...
+		Scully: I can relate.
+		Scope: War is hard. Marriage is harder.
+	TheBeast: Now I live a peaceful life in the woods, only returning to the village when it needs the protection of the Beast.
+		Raven: As costumed vigilante origin stories go, that's not bad.
+[Keyword: Anything valuable left in the mansion?]
+	TheBeast: Yes... There was my Beast Cave and the prototype of the Beast Suit that Wlad crafted for me. I loved it like a wedding dress, only more so.
+		Wlad: Oh, stop being sentimental, woman. The new one is way better!
+	TheBeast: I doubt the suit survived, but I guess there is still some money and diamonds in the safe. I don't need either anymore. I left in a hurry, so the safe should be unlocked. If you're willing to go for a swim, I can tell you where to dive for it.
+[Keyword: Where is your cabin in the woods?]
+	TheBeast: Well, come and find it. Are you afraid to wander in the Cursed Forest? You should be. There is a Beast lurking out there.
+		Steroid: There is ANOTHER Beast!?
+		Barry: Just to be clarified, you are referring to yourself, correct?
+		Kalyna: I love wandering in Cursed Forests! When can we go?
+[Keyword: Where is your cabin in the woods?]
+	TheBeast: Are you afraid to search for it in the Cursed Forest? You should be. There is a Beast lurking out there.
+		Raider: It's all right. I hear the Beast doesn't eat police officers.
+		Len: We'll be on our best behavior.
+		Gus: Maybe we'll bring along some Legion deadbeats for her to chew on.
+		Scully: The Beast wouldn't hurt a fella with twenty-one kids to feed, would she?
+		TheBeast: Oh my... No, it sounds like you've already been through enough!
+	TheBeast: Anyway. Here, I'll show you on the map. Come over, I'll bake you some cookies.
+		Scope: That would be lovely. We should exchange recipes.
+		Kalyna: A nice old lady who bakes cookies and lives in a cabin in the middle of a Cursed Forest? Can I come live with you?!
+		TheBeast: Let's just start with a visit and see how it goes.
+		Thor: Are they vegan cookies?
+[Keyword: Are you some kind of superhero?]
+		Larry: Because if you are, I want an autograph!
+	TheBeast: No. I'm just an old woman who murders people to save her friends and family, and who bakes cookies in her spare time.
+		Livewire: Not to sound too judgmental, but that fits very closely the profile of a serial killer.
+		Magic: A little scary and a little sweet. I dig it.
+		Igor: I have grandmother very much like you.
+[Keyword: Will you help us defeat the Legion?]
+	TheBeast: Me? Are you out of your mind? I'm just a tired old woman who tries to preserve the lives of the people she loves.
+		Len: You're a hell lot more than just a tired old woman, ma'am.
+		Blood: In that suit, there is nothing tired or old about you.
+		Ice: Don't sell yourself short. You got mad skills.
+	TheBeast: My place is with my people. They need my protection. Why would I leave them to pursue the Légion when they can be attacked again right here?
+	[Keyword: To help other people as well]
+			Buns: You can show the people of your country that they can stand up for themselves.
+			DrQ: Was it not your compassion that made you brave? Why doubt it now?
+			Thor: Believe in yourself! Be the hero you were meant to be!
+		TheBeast: Well, I have to admit you did set a good example by helping us out here.
+	[Keyword: To help other people as well]
+		TheBeast: Is that what you do? You work as hired guns and you "help people" at the same time? That's merde, if you'll excuse my French.
+	[Keyword: To punish the bad guys]
+			Scully: Seems to me like it might be time to take the fight to the enemy.
+			Gus: If I learned one dang thing in life, it's that if you don't hit bullies where they live, and hit 'em HARD, they'll never leave you alone.
+			Raider: A lot of people hurting out there. A lot of justice needs to be served.
+		TheBeast: Well, I have to admit that this Légion seems to be filled with youngsters who need severe attitude adjustments.
+	[Keyword: To punish the bad guys]
+		TheBeast: Really. I thought you were mercenaries who just work for money.
+	[Keyword: Redirect]
+		TheBeast: Anyway, my place is here, with my people. They need my protection. But if you help make my village a safer and happier place, you are welcome to come to my <em>cabin in the woods</em> and I may reconsider.
+[Keyword: Goodbye]
+	TheBeast: Remember, be good kids, or the Beast will come for you at night and you won't even get the chance to scream before your throats are choked with your own blood. Au revoir!

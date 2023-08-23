@@ -1,0 +1,97 @@
+[Keyword: Greeting]
+	Emma: Thank God, you made it! I wanted to warn you, but you were already enroute. <em>Legion</em> forces have landed on Ernie! They even tried to attack us here at the villa. I can't imagine what they want with this tiny island.
+	CorazonSantiago: It is neither <em>Ernie Island</em> nor my villa they want. It is you. Perhaps they think capturing you would make your father more cooperative.
+	Emma: Then I'm sorry I came. I didn't mean to put anyone else in jeopardy.
+		MD: I know how you feel. That's why I prefer bandages over bullets.
+		Tex: Don't you worry, little lady. Jeopardy is my business!
+		Barry: Have faith. Barry is here.
+		Grizzly: Don't sweat it. You got yourself a Grizzly now.
+		Vicki: Don't worry, mon! We gonna sort it all out. Everything gonna be all right.
+		Blood: Soon, the only people in jeopardy will be the scuzzwads who took your father.
+		Livewire: I really think you should place the blame on the enemy and not on yourself.
+[Keyword: Greeting]
+	CorazonSantiago: Hello again. What would you like to know?
+	Emma: Did you need something?
+[Keyword: We can handle them]
+	Emma: I am so grateful to hear you say that. Grand Chien's own government can't do a thing to help. I'm reassured by your confidence. Here, please take this as a gesture of my appreciation.
+	[Keyword: Thank you]
+			Kalyna: Thank you so much! This is the nicest gift I have ever received for shooting at someone.
+			Ice: Ain't nothin' wrong with a little extra dough. Thanks!
+			Red: I dunnae think I've ever been appreciated by a woman before... er, thank you, lassie.
+		Emma: You're quite welcome.
+	[Keyword: That's not necessary]
+[Keyword: We've had warmer welcomes]
+	Emma: Yes. Again, you have my apologies. Please, accept this as recompense for having to fight your way to our rendezvous.
+	[Keyword: You can do better than that]
+			Fox: Not to sound bitchy, but I got my hair done because I thought we'd be meeting in front of cameras. Thankfully, we're not, because now my hair is a complete disaster...
+			Livewire: That is a nice gesture, but technically you are in breach of contract, so I truly feel a little more compensation is warranted.
+		Emma: Y-yes, of course. I have some extra cash I was saving for... never mind. Please, take it.
+	[Keyword: You can do better than that]
+			Omryn: This is nice, but Omryn is hungry from exertion. Maybe you give snacks, too?
+			Meltdown: That's nice and all, but I got sand in my crotch from that damn beach. Maybe you can put a little more on the table.
+			Nails: That all you got? Doesn't exactly fill me with confidence about your ability to bankroll us.
+		Emma: I'm sorry, it's all I have to spare. Please, take it.
+	[Keyword: That's not necessary]
+			Hitman: Oh, well that's mighty nice of you, but you go ahead and keep it. We're just here to put a smile back on that pretty face of yours.
+			Thor: Your gift would be better donated to help your people rise up and realize their potential!
+			MD: Oh, you don't have to do that... Right, guys?
+		Emma: Your professionalism is admirable and I'll make sure everyone knows it.
+[Keyword: Redirect]
+	Emma: Now, as to beginning your search, I suppose questioning the Legion soldiers on <em>Ernie</em> about <em>my father</em> would be a good way for you to start.
+	Emma: This is <em>Corazon Santiago</em>. She's the Director of Operations in Grand Chien for the Adonis Corporation. Her people encountered <em>the Legion</em> face to face. She will manage additional funding while you are in the field.
+		Wolf: Doesn't matter to me who writes the checks, chief - just so long as they don't bounce.
+		Omryn: Additional funds are good. Snacks are also good.
+		Igor: Good! I also wish to encounter enemy faces.
+		Raider: That's fine by me. Something tells me we're going to need significant operational support.
+		Kalyna: Oh, how nice! This is like having two fairy godmothers!
+		Nails: Yeah, but there's a catch, right?
+	CorazonSantiago: Hello. It is good to meet you. As Emma said, I will provide you with a cut of the proceeds from the Adonis diamond mines to help fund your mission as you liberate each one from Legion control.
+		Blood: Just so you know, I like my cut nice and thick.
+		Raven: As long as I don't have to do any cavity searches for loose diamonds, I'm in.
+		Fidel: Fidel love mining! Lots of explosives, lots of fun!
+		Fox: Whole mines full of diamonds!? Well, now you've got this girl's attention.
+		Mouse: Oh, I like mines! Lots of little holes to hide in.
+		Livewire: If I am being completely honest, this would not be the first time I have liberated diamonds.
+	Emma: But first things first. The <em>Legion</em> has overrun the island, capturing the town and the old fortress. Liberating the town is essential to securing transport to the mainland, but securing the whole island will insure you have a good base of operations. Additionally, the locals may be appreciative and give useful intel.
+		Thor: I am feeling confident and optimistic, like I just had a good bowel movement.
+		Meltdown: The hell we waitin' for? Let's start crackin' skulls!
+		Wolf: Sounds like this little island could serve as a good HQ, chief.
+[Keyword: Any more details about the Legion?]
+	CorazonSantiago: Led by a man calling himself the <em>Major</em>, it is the largest paramilitary group in the region. They seized all our diamond mines before my security teams could respond. They are brutal bullies, but not smart or well-trained. They should be no match for professional soldiers.
+		Buns: My dear, I have yet to meet my match.
+		Grizzly: Beating up dumb bullies happens to be my favorite type of mission. This will be fun.
+		Barry: Our training is of exceeding professional. We will be victorious.
+		Steroid: I will show them the force of my incredible biceps and they will run or I will smash them! HAHAHAHAHA!
+		DrQ: It is always satisfying to discover how a bully will react when they are themselves bullied.
+		Grunty: My mother taught me to shoot a gun when she found out I was being bullied at school. The next thing she taught me was how to hide a body.
+[Keyword: Who is the Major?]
+	Emma: Perhaps the biggest warlord in Grand Chien. Not much is known about him except that he runs the Legion like a cult of personality. He is both worshipped and feared. It's likely you'll have to deal with him directly in order to rescue my father.
+		Ice: Sounds like this dude needs an attitude adjustment.
+		Red: Dinnae fear, lassie. I've dealt with plenty of Majors in my day.
+		Wolf: Sounds like a real bozo. Can't wait to meet him.
+		Meltdown: Oh, we'll deal with him directly, all right. My boot is going to go directly in his ass!
+		DrQ: It is every warlord's fate to die violently. I see no reason why this one would be an exception.
+		Hitman: If he's dreaming of being a god, he's about to get a real wake-up call.
+[Keyword: Tell us about Ernie Island]
+	Emma: This island is isolated and defensible and will serve as a good launch point for missions into the Adjani River Valley. The people here are docile, but resourceful. Help them and they'll help you.
+		Igor: They will all soon know the love of a Dolvich!
+		Hitman: Resourceful is okay, but docile is for the birds. Sounds like they need someone to show them how to throw a punch... or a grenade.
+		MD: Oh, that's swell! They sound nice.
+		Barry: I like this. It is the Christian thing to do.
+	Emma: Some may prove more helpful than others, I'm sure, but you should talk with as many of them as you can. They may have information that could be of use to...
+	CorazonSantiago: Please excuse me. I must take this.
+	CorazonSantiago: Yes?... No!... Just tell them to wait.... Just tell them to wait, goddammit!
+	CorazonSantiago: My apologies. Where were we?
+		Livewire: That did not sound good.
+		Meltdown: That your mom? Mine's always calling me at a bad time.
+		Grizzly: Let me guess - cable guys?
+		Buns: What was that about?
+		Barry: Who was that?
+		Raider: Problem?
+		MD: What was that about?
+		DrQ: That conversation sounded... distressing.
+		Mouse: Did you get some bad news?
+		Wolf: Was that something we need to be worried about?
+		CorazonSantiago: It was... Well, it was nothing that concerns your mission. It was simply, er... certain logistical issues that require my attention from time to time. Again, I apologize. Do you have any further questions for us?
+[Keyword: Goodbye]
+	Emma: Good luck. Corazon and I will be keeping in touch via <em>radio</em>.

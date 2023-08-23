@@ -1,0 +1,77 @@
+[Keyword: Greeting]
+	DiamondRedBoss: These slaves, I was doing them a favor! They are unfit to live free. They can only work or die!
+		Ivan: Ты - фашист.
+		PierreMerc: I am here to return the favor.
+		DiamondRedBoss: P-p-pierre? You escaped from the camp...
+		PierreMerc: Only so I could return and thank you in person for sending me there.
+[Keyword: Why do you hate the slaves so much?]
+	DiamondRedBoss: They are weak! I was in their position once, but I proved I was strong. The <em>Major</em> himself noticed me! Made me their master. Oh how they whined and cried, but I made them work harder than they ever knew they could! 
+		PierreMerc: Am I weak?
+		DiamondRedBoss: Non, Pierre... You tried to escape.
+		PierreMerc: I would have succeeded, if it wasn't for you.
+		DiamondRedBoss: I am sorry, Pierre.
+[Keyword: No one deserves to be a slave]
+	DiamondRedBoss: You don't choose the slave life, the slave life chooses you!
+[Keyword: So you were a slave?]
+	DiamondRedBoss: I was so much more! I told my overseers everything about the other slaves - their hopes, their silly plans to escape, their fears. No wonder the <em>Major</em> noticed my zeal and made me an overseer!
+		PierreMerc: Oh yes. I remember well why you got promoted. You snitched on me.
+		Ivan: Сволочь. This man is worse of fascist.
+		Len: I have always been against hurting prisoners of war... But this time, my finger's itching.
+		Blood: You turn my stomach, and I HATE when my stomach turns.
+		Grunty: I would call you a disgusting slug, but I am quite fond of slugs and do not wish to insult them.
+[Keyword: So you were a slave?]
+	DiamondRedBoss: I was so much more! I told my overseers everything about the other slaves - their hopes, their silly plans to escape, their fears.
+		Ivan: Сволочь. This man is worse of fascist.
+	DiamondRedBoss: But when I prevented the escape of that asshole <em>Pierre</em>, the <em>Major</em> noticed my zeal and made me an overseer!
+		Len: I have always been against hurting prisoners of war... But this time, my finger's itching.
+		Blood: You turn my stomach, and I HATE when my stomach turns.
+		Grunty: I would call you a disgusting slug, but I am quite fond of slugs and do not wish to insult them.
+[Keyword: Pierre was here?]
+	DiamondRedBoss: He failed as a commander on Ernie and the Major sent him here for punishment.
+		Nails: Tough break, I guess.
+		Reaper: Would have been kinder to just kill him.
+		DrQ: Not a forgiving sort, this Major.
+	DiamondRedBoss: He thought he was better than all of us, but I showed him he was wrong. He had the nerve to try to escape, but I caught him! They will teach him good manners in <em>Camp Bien Chien</em>.
+[Keyword: These people will do much better without you]
+	DiamondRedBoss: Non, they will not! You will pay them to work and give them clean uniforms, but they will slack and complain and steal from you. You need someone like me in charge.
+		Ivan: No. My father в Великую Отечественную shot полицаев. Scumbags like you.
+		PierreMerc: We need someone like you in a deep hole covered with dirt.
+		Meltdown: You're an even bigger asshole than my first boss. Him I shot in the nuts. You... I haven't decided where I'm gonna shoot you yet.
+		Raven: I wouldn't even put you in charge of cleaning dog shit off sidewalks.
+		Fox: You're disgusting. I know Hollywood producers less creepy than you.
+	DiamondRedBoss: I could oversee this mine for you! I mean, be a normal <em>foreman</em>, like with hardly any beatings. I won't kill anyone unless you say so. I know where the best diamonds are! I'll even give you my <em>secret stash</em>.
+		Ivan: Нет. Этого не будет.
+		PierreMerc: How about you become a slave again? You're so good at it.
+[Keyword: Become a Foreman for us]
+	DiamondRedBoss: You won't regret this! I'll squeeze these maggots hard and they'll produce even more diamonds than before!
+		Nails: Any one of them steals so much as a plastic fork, you know what to do.
+		Fidel: Tell me when you squeeze! I like to watch.
+		Flay: If you catch any thieves, release them and I will hunt them myself.
+	DiamondRedBoss: Here. As promised, this is my stash. Look at them sparkle!
+[Keyword: Become a Foreman for us]
+	DiamondRedBoss: You will not regret this... Hey, what are you doing? I thought you said... Wait! Don't shoot! Non-non...
+[Keyword: You deserve to die]
+	DiamondRedBoss: Please don't kill me, I... I have a great diamond collection. Please, spare me and it's all yours!
+		PierreMerc: Any diamonds from you are blood diamonds.
+		Shadow: Kept a little hidden away for yourself, huh? Guess you're not a complete idiot.
+		Hitman: I always think it's kind of funny how people suddenly become wealthy when begging for their lives.
+		MD: Well, that sounds very reasonable to me.
+	DiamondRedBoss: Let me go, and I'll give you my <em>secret stash</em>.
+[Keyword: You deserve to die]
+	DiamondRedBoss: Please don't kill me, I... 
+[Keyword: Time for you to die]
+	DiamondRedBoss: Non, non, I can help you run this place! You need me! Please...
+[Keyword: Leave and never come back]
+	DiamondRedBoss: Alright, alright. You won't see me again. But you will regret this.
+		Ivan: Наш командир идиот.
+		PierreMerc: Really? We are going to let this snake get away with what he has done?!
+		Len: I already regret not shooting you. Now scram!
+		Vicki: If I never see you again, then I regret nothing!
+		Mouse: Good riddance! I thought he'd never leave.
+[Keyword: Give us the diamonds and leave]
+	DiamondRedBoss: Alright! Alright. Sparkling little diamonds, all the blood and the sweat washed off them. Here they are!
+		Ivan: Наш командир жадный ублюдок.
+		PierreMerc: Really? We are going to let this snake get away with what he has done?!
+		Len: I already regret not shooting you. Now scram!
+		Scully: Something tells me he won't run fast enough to escape all the people he's wronged. I won't lose sleep over it.
+		Livewire: Yuck. I do not want to think about where he hid these when the Major came to visit.

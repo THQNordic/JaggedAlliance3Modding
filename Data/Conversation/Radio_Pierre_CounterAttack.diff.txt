@@ -1,0 +1,3 @@
+[Keyword: Greeting]
+	Pierre: <em>Emma LaFontaine</em>, if you're listening to this - your father is a fool, and so you are. You think you can stop the Legion with a bunch of mercenaires? Think again!
+	Pierre: And you, <em>mercenaire</em> dogs! You have defied the Legion and attacked my village. For this insult, you will pay with your life.

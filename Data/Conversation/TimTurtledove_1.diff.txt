@@ -1,0 +1,102 @@
+[Keyword: Greeting]
+	TimTurtledove: Happy to see you again! Mister <em>Chimurenga</em> has informed me that he decided to agree with our terms and conditions. You must have been very persuasive! Now...
+[Keyword: Greeting]
+	TimTurtledove: Hello there! Welcome to the <em>"Vulture of Hope"</em> - the best <em>clinic</em> in the region! We shall start our life saving operations any day now!... As soon as we solve a <em>minor issue</em> or two.
+[Keyword: Greeting]
+	TimTurtledove: Happy to see you again at the <em>"Vulture of Hope"</em>!
+	TimTurtledove: Regrettably, we still have some <em>minor issues</em> to solve before we open for business.
+[Keyword: Greeting]
+	TimTurtledove: Happy to see you again at the <em>"Vulture of Hope"</em>!
+[Keyword: Vulture of Hope?!]
+	TimTurtledove: Yes! We wanted to name the clinic "The Dove of Hope", but the <em>Donation Board</em> pointed out that we need to be more sensitive to the local heritage, so we were asked to pick a local bird.
+		Len: "The Vulture of Hope" sounds just about right for this place.
+		MD: Well, I suppose having a name like that is one way to cut down on ER visits.
+		Raven: You should have called it "The Raven of Hope." Has a nicer ring to it.
+		TimTurtledove: Ah, well, you see there aren't any ravens around these parts.
+		Raven: No, there is one.
+		TimTurtledove: One?
+		Raven: Never more.
+		Flay: This name is good. The vulture, she is strong, resilient and... uh, very good at sanitation. Nature's janitors, no?
+		DrQ: The "Quail of Hope" was not acceptable?
+		TimTurtledove: The Board thought it sounded too scary.
+		Reaper: I think it's rather elegant.
+[Keyword: What is this Donation Board?]
+	TimTurtledove: Well, the money for the hospital comes from donations, and the good madams and sirs on the Donation Board make sure it is well spent!
+[Keyword: A clinic?]
+	TimTurtledove: This country has its problems and one of the worst is the lack of quality healthcare! We have a mission to provide it, free of charge, to any and all <em>civilians</em> who need it.
+		Larry_Clean: Man, that is so great. I just love free clinics.
+		Shadow: So I'll need a convincing disguise. Got it.
+		Steroid: I am very civil. I am civiler even than you, I bet!
+	TimTurtledove: You fine people wouldn't really qualify for free aid, because you're not civilians, nor local <em>militia</em>. But once we open for business, we can provide you with medical assistance at some very reasonable prices!
+[Keyword: Read this Maquis Manifesto]
+	TimTurtledove: This is very, um, interesting. Are these young ladies from the... Yes, I see. Maybe I should pay them a visit to, um, survey them about their medical needs.
+		Hitman: I would survey them as well! I'd survey them big time.
+		Wolf: Survey them, huh? Well, that's a new one.
+		Red: If ye plan on taking notes, just make sure your pen is sterilized, lad.
+[Keyword: Read this Maquis Manifesto]
+	TimTurtledove: I have signed a contract that stipulates non-involvement in local politics. Apologies, but I am not allowed to read this document.
+		Grizzly: Lucky you.
+		Steroid: It is good to exercise your stipulates.
+		Kalyna: It's very boring. Not a single witch or demon or anything! One out of five stars. Would not recommend.
+[Keyword: What minor issue?]
+	TimTurtledove: Since you have already resolved your conflict with these... Maquis people, I'm anxious to open for business! However, it seems the, um, <em>Donation Board</em>...
+		Meltdown: If you mention that Board again, I'll punch you in the gut, you pathetic little fuck.
+		Raider: Let me guess - another minor issue?
+		Nails: Can suck my left nut.
+	TimTurtledove: It's just not safe out there. Those Legion thugs can attack any moment, can't they? If there was some solution to this security issue - like a local <em>militia</em> protecting the town, for example - I'm sure we could open right away!
+[Keyword: What about a donation?]
+[Keyword: We have trained Militia]
+	TimTurtledove: Oh! You have? Really?
+		Len: Really.
+		Gus: Open your eyes, Woodstock!
+		Scully: The streets are filled with fresh squaddies, mate.
+[Keyword: Open the clinic NOW]
+		Nails: Don't bullshit me, dweeb. Open the fucking clinic, or you'll be the first one that's gonna need to use it.
+		Flay: Your skin... There is something wrong with it.
+		TimTurtledove: My skin?! What's... What's wrong with it?
+		Flay: It's too thin. Really hard not to damage it while flaying. But I like the challenge.
+		Fidel: Fidel is tired of watching your mouth move. Maybe I put grenade in it.
+		Meltdown: Listen here, you little shit! Open this damn clinic up or I'll kick your ass so hard you'll need to get an X-ray to find my boot!
+	TimTurtledove: Oh, dear! That is, um... Please don't hurt me.
+[Keyword: What minor issue?]
+	TimTurtledove: There is this gentlemen, Mister... um, <em>Chimurenga</em>. He was very enthusiastic about us opening a clinic here in Pantagruel, yet he made a request that the <em>Donation Board</em> could never approve of...
+		Meltdown: Your fucking board again!
+		Larry_Clean: Did he ask for a frequent customer program? I've tried making that request at clinics back home.
+		Grunty: Did he want a clown that makes balloon weapons instead of balloon animals? My mother made that request at the hospital where I had my tonsils removed.
+		Red: Did he ask for a free sponge bath with every visit? Hehe. Tried that one myself.
+	TimTurtledove: He wants us to provide free healthcare to the People, meaning, well, his people - <em>The Maquis</em>, I believe he calls them? Well, that we cannot do. They qualify neither as <em>civilians</em> nor local <em>law enforcement</em>. The Board would never allow it.
+	[Keyword: What about a donation?]
+		TimTurtledove: Oh, well, if you were to contribute a substantial sum, say, <em>three thousand</em>, then you would actually be entitled to join the <em>Donation Board</em>! In fact, you'd be my boss!
+			Meltdown: Could we fire you?
+			TimTurtledove: Uh, well... No.
+			Meltdown: Then what the hell's the point?
+			Smiley: Boss of a hospital! That would be wonderful! I volunteer to personally oversee the nursing staff.
+			Omryn: So, I tell you bring me snack, you do it?
+			TimTurtledove: Um, well, we actually have tea and biscuits available in the...
+			Omryn: Okay. Sound good.
+	[Keyword: We’ll donate $3000]
+		TimTurtledove: Thank you for your generosity! I have no choice but to accept this wonderful donation.
+			DrQ: May you always have the resources to carry out your noble mission.
+			Smiley: Good. I have a few ideas about uniforms for the nurses...
+			Larry_Clean: So, as board members, do we get free samples? Know what? Forget I asked that.
+	[Keyword: We’ll donate $1000]
+			Buns: The actual sum doesn't matter as long as it is big enough, correct?
+			Raider: Sir, please accept this donation and our heartfelt promise to help protect and serve this clinic.
+			Sidney: I happen to have a contact or two at the British Embassy. If you accept this somewhat more modest donation, I can assure you that Her Majesty's government would be eternally grateful.
+		TimTurtledove: Well, to be honest, it's not the size of the sum that matters, it's the spirit in which it is given. Thank you! I happily accept your donation.
+	[Keyword: The Maquis ARE the local law enforcement]
+			Buns: In case you had not noticed, the Maquis are the ones running this town.
+			Raider: I can assure you that the Maquis are more than capable of keeping the peace.
+			Sidney: My good man, I know they may not look the part, but the Maquis actually make for quite an acceptable group of bobbies.
+		TimTurtledove: Uh, you mean, they qualify as a local enforcement body under the provisions of article 72, paragraph 11-b of the Donation Board Establishment Act? Hmm, I hadn't thought of that...
+	[Keyword: We’ll talk to Chimurenga]
+		TimTurtledove: I wish you good luck! Uh, that is, I am sure you will get along smashingly with the gentleman!
+[Keyword: Redirect]
+	TimTurtledove: Let me think if there are any other issues that need addressing...
+		Meltdown: My boot's itching to start kicking.
+		Fidel: Fidel drop his grenade! Where it went? Here, ps-ps-ps-ps grenade!
+		Flay: You like this knife, oui? Would you like to see how it feels against your skin?
+		Nails: I can answer that for you right now: There ain't.
+	TimTurtledove: No, it appears we've got everything in order... We can open for business right away! The <em>"Vulture of Hope"</em> will fly high and wide! Uh, hooray!... I guess.
+[Keyword: Goodbye]
+	TimTurtledove: Goodbye and have a nice day! Don't you worry, the "Vulture of Hope" will be there for you soon enough!

@@ -1,0 +1,149 @@
+[Keyword: Greeting]
+	LarryNPC: Man, you're like a... uh, like a dozer in a kindergarten. I mean... What I mean? Uh, I mean, you just can't fly. You may be big, you may be yellow, but you just can't fly, man.
+		Len: Larry Roachburn. When I heard Biff was in country, I might have known you wouldn't be far.
+		LarryNPC: Oh, I'm far, man. Far out! I'm, like, way beyond the planets and stuff, but I'm falling fast... or maybe slow. Like, reeeeeal slow.
+		Vicki: Don't you know my face, mon?
+		LarryNPC: Well, you got a nice face for a dozer, but you just can't fly, man. Don't you try to fool me.
+		Steroid: Hey, look! It is the tiny man who was always trying to steal my vitamins!
+		LarryNPC: Gah! A giant!
+	[Keyword: Sorry, can’t fly]
+		LarryNPC: That's okay, man. You can't pig either. And you can't dog. Well I guess you can BITCH about something like those <em>jerks</em> in the <em>camp</em>. Always whining about something...
+	[Keyword: Can YOU fly?]
+		LarryNPC: Oh, man, I'm flying high in the sky. Trust me, I'm a sci-fi high fly!
+			MD: Shaking hands, watery eyes, dilated pupils, occasional tremor - I would say that you must be pretty "high" indeed.
+		LarryNPC: Hey man, do you like my <em>art</em> projects?
+	[Keyword: I’m not a man]
+		LarryNPC: I don't know, man. Don't care who you are as long as you don't stab me with a sword in the face, or something.
+			Vicki: Not until you claim that no mon can kill you.
+[Keyword: Greeting]
+	LarryNPC: Hey, watch where you're going! Don't walk on any of my <em>art</em> projects!
+[Keyword: Greeting]
+	LarryNPC: Hey, good to see you! It's a bit lonely out here since you got rid of those jerks in the camp.
+[Keyword: Greeting]
+	LarryNPC: Heyyyy... You got that magic pill I told you about?
+[Keyword: Greeting]
+	LarryNPC: Hey man! What's up?
+[Keyword: Tell us about those jerks]
+	LarryNPC: Bunch of jerks, man. Sure, they give me explosives so I can make my <em>art</em>, but then they just take away most of what I create. I'd kick their teeth in if I, y'know, could get on my feet without falling over.
+		Igor: I have been there, comrade. Is terrible.
+	LarryNPC: But it's cool, I guess. They got plenty of stuff for me to play around with. They keep it in the <em>Boom Tent</em>. You wanna fly? They got shit in there blow you straight to the moon!
+		Fidel: Oh, Fidel wants to go to the Boom tent!
+		Red: And just where might this Boom Tent be located, lad?
+		Barry: This tent. You will show it to us, yes?
+		Gus: Like to get a look inside that tent.
+		Hitman: Maybe you show us where this tent is, huh?
+		Ivan: Boom Tent is located locally?
+		Len: All right, Larry. Understood. Just show us where this Boom Tent is.
+		Meltdown: Well, hot damn! That sounds like my Uncle Jim Bob's tent on the Fourth of July!
+		Nails: Sounds like where the party is. Just point me in the right direction.
+		Reaper: This Boom Tent sounds useful. Where is it?
+		Scully: All right, mate. Color me curious. Which way to the Boom Tent?
+		Wolf: Boom Tent, huh? Could probably find some useful stuff in there.
+		Fauda: They keep explosives in tents? Not underground? Amateurs.
+	LarryNPC: See? It's over there! I can mark it on your map! I...  Hmmm... where'd I put my crayons?
+[Keyword: Tell us about the camp]
+	LarryNPC: Don't know, man. Ain't no summer camp, I can tell you that. Well, maybe it's sorta like summer camp: I'm doped outta my mind and blowing stuff up. It's kinda my thing. My <em>art</em>.
+		Fidel: My man!
+[Keyword: No more jerks in the camp]
+	LarryNPC: Really? Oh, man, now who will appreciate my <em>art</em>?
+		Len: Every poor soul who has the bad sense to walk on it, I'm afraid.
+[Keyword: You call this Art?!]
+	LarryNPC: I don't know, I've never thought of a name. But you know, I think Art is a bit too pretentious name for a <em>minefield</em>. Maybe Peter? Or Larry? Ah, I just don't know...
+		Fidel: To Fidel, it look like playground.
+[Keyword: A minefield?]
+	LarryNPC: Yeah, these jerks wanted me to help them defend their <em>camp</em>. It's not a bad deal. I give them stuff that explodes and they give me stuff to... ummm... help with my allergies. 
+[Keyword: It's awesome!]
+		Fidel: Fidel loves it! The way how you placed detonators in all them weird parts... Ahh, you got the spark.
+	LarryNPC: Oh, finally someone to appreciate it! Those <em>jerks</em>, they just scream and swear.
+		Tex: Some people do not understand modern art, partner.
+[Keyword: It's... very nice]
+	LarryNPC: Yeah. It's what I'm good at, y'know? Well, this and breaking into medicine cabinets, but I don't know if you can count that.
+		Vicki: Your mum must be so proud.
+		Raider: Well, the police certainly count it.
+		Sidney: Charming.
+[Keyword: Who are you?]
+	LarryNPC: Whoa, man. Why you gotta give me the third degree? Start with, like, some easy questions first.
+[Keyword: You must be Larry]
+	LarryNPC: Must I? Ugh, I don't know. Today I feel more like Arthur, or maybe Jock. May I be Jock please?
+[Keyword: You’re a joke alright]
+	LarryNPC: Then why aren't you laughing? Oh, I must be a bad joke.
+		Livewire: Oh, it's just not right. Making fun of you while YOU are here is like playing a violin in the presence of Paganini.
+		Fox: Be a naughty joke, that's what I prefer doing.
+	LarryNPC: And you must be quite a joker, man. You're more fun than those <em>jerks</em>.
+[Keyword: Don’t you know your name?]
+		Vicki: How could you be forgetting your own name, mon?
+		Len: You got a head wound or something? You don't know your name?
+	LarryNPC: I know my name! I know lots of names. I'm just not sure which one is mine.
+		Igor: I have been there, comrade. Vodka is cruel mistress. Happens to everyone.
+		Omryn: It sounds to me like you are in need of nap.
+	LarryNPC: Those jerks in the camp call me "hey weirdo".
+		Fauda: I do not think this is a good name, but I understand why they have given it to you.
+[Keyword: You have amnesia]
+		MD: What kinds of drugs have you taken? This sounds like amnesia.
+		DrQ: Your mind has wandered far from your body. In western medicine it is called amnesia.
+		Fox: Oh, honey, I think maybe you bumped your head. It sounds like you have amnesia!
+	LarryNPC: Amnesia?! Man, I don't have amnesia! I just can't remember anything after I <em>snorted</em> some weird powder in that funny little town during the Carnival. It's not amnesia, it's... Oh, wait. That is amnesia.
+[Keyword: You have amnesia]
+	LarryNPC: Amnesia?! Man, I don't have amnesia! I wash my hands every day.
+		Fidel: Fidel washes hands even more! Every two days!
+	LarryNPC: And how could you know if I had it? You're not even a <em>doctor</em>!
+[Keyword: Remember Diamond Red?]
+	LarryNPC: I don't know, man. Was he a wrestler? Sorry, I just can't remember shit since I <em>snorted</em> some weird powder in that funny little town during Carnival.
+[Keyword: What have you snorted?]
+	LarryNPC: Oh, it was some cheap mix I got at the <em>Carnival</em> celebration... Just wanted to test it, y'know? But later that night we got into a fight with, um... somebody? That's when I got captured.
+		Igor: Ah, it happens.
+		Hitman: Ya got loaded and then got into a firefight? What's-a-matter-wit-you?
+		Ivan: Идиот. Я не удивлен.
+	LarryNPC: They gave me a shot of something... Oh man, when it mixed with that other shit? Things got REAL interesting... I think. Can't really remember.
+		Buns: There is a valuable life lesson somewhere in this whole story.
+		DrQ: When the body is polluted, the mind is clouded.
+		Thor: You need an herbal cleanse, followed by a twenty-four fast... and then probably another herbal cleanse.
+	LarryNPC: I wish there was some <em>magic pill</em> to clear my head, man. But all the pills I can think of will probably just make it worse.
+[Keyword: Magic pill?]
+	LarryNPC: Yeah, like if there was a cure-all or something... Wait a sec. You know what? There IS a magic pill. Well technically it's a shot, but it should do the trick. Hey, you think you can find <em>Metaviron</em> around here somewhere?
+[Keyword: Here, take this Metaviron]
+	LarryNPC: Is that it? The actual shit? Oh man, I don't even wanna know what or who you had to do to get this! Here, help me find a vein.
+		MD: Oh, wow. Look at all the track marks! How are you not dead?
+[Keyword: Do you remember now?]
+		Len: Anything coming back to you now, Larry?
+		Vicki: Hey, Larry. You feelin' all right, mon?
+	LarryNPC: Yes! Um, I guess. I... I remember I was with Biff's team in <em>Pantagruel</em>, then we attacked the <em>Diamond Red</em> mine... I remember EVERYTHING! It was awesome.
+		Igor: Ha-ha, this how I feel after first vodka shot in the morning.
+		Raven: Guess that stuff really works.
+		Meltdown: Well, look at you! You were lower than a whipped dog and now you're full of piss and vinegar!
+	LarryNPC: I feel so alive, man! That shit's the shit! I gotta find some more of it. Can I come with you guys?
+[Keyword: What happened in Pantagruel?]
+	LarryNPC: We had a deal with those communist guys, the <em>Maquis</em>. They said they'd help us take the <em>Diamond Red</em> mine from the Legion and Biff was all for it. Turned out to be horseshit! They led us into a trap.
+[Keyword: Tell us about Diamond Red]
+	LarryNPC: It was fortified as hell and the <em>Legion</em> hit us from behind... <em>Biff</em> yelled "Retreat!", but my head was all blurry and I kinda retreated toward the enemy. It was an epic battle, with pink unicorns and laser raptors! 
+		Magic: My man... someday you have got to let me see the magic show that goes on in your head. 
+		Tex: Sound like bad deal, partner. I never work with laser raptor. Chew every scene.
+		Vicki: Sure, mon. And which one you be riding?
+	LarryNPC: No, wait. Not unicorns. I think it was elephants. Then the Legion questioned me and I told them all I knew... Which left them a bit confused, actually.
+		Buns: But I imagine they know all there is to know about pink elephants and laser raptors, no?
+		Igor: Pink elephants. Very dangerous.
+		Fauda: And I bet they got more confused with every question you answered.
+	LarryNPC: Anyway, I was already drugged to the brim, when they decided to use some "truth serum" shit on me and, boom, goodbye blue sky! It was nice though.
+[Keyword: Goodbye]
+	LarryNPC: See you, man. Watch your step.
+[Keyword: Go home]
+		Len: Time to go home, Larry. You need some rest.
+		LarryNPC: Yeah, you're right, Len. Maybe I'll just find a little something to help me get straight and then I'll hit the road.
+	LarryNPC: The whole reason I came here was to keep myself away from all the temptations at home.
+		Blood: I know what you mean. I'd get in trouble shooting people back home. That's why I do it here.
+		Hitman: I know what you mean. I came here to get away from Mama Gianna's cannolis. Fuggetaboutit.
+		Fox: Ugh! I know what you mean. Too many ex-boyfriends still have my phone number!
+		Buns: Larry, I have to point out that keeping busy didn't exactly help you avoid these temptations here, no?
+		LarryNPC: How was I supposed to know they would be celebrating <em>Carnival</em>!
+	LarryNPC: But I guess I can check back into rehab for a while. They keep a room reserved for me, but I'll be ready for action if you need me.
+		Raider: I'm sure they do.
+		MD: Let me know if you need a referral.
+		Grizzly: You're number one on the call list if we ever need a laser raptor.
+	LarryNPC: Anyway! Here. I won't need these back home.
+[Keyword: Let's go!]
+	LarryNPC: Let's go, man! I got a score to settle with these Legion dudes. I'm ready to go after them like a giant ten-tentacled robot with rainbow machine guns on fire!
+		Vicki: You... sure you be fine, mon?!
+		LarryNPC: Fine as rain, Vicki! Right as an elbow!
+		Vicki: Uh-huh...
+		Steroid: Is good to have one more pair of hands. Even tiny like his.
+		LarryNPC: Tiny hands make quick work, right? Or something? Hey, uh, Steroid? You got any, um, vitamins on you?

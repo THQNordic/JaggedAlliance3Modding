@@ -1,0 +1,199 @@
+[Keyword: Greeting]
+	HeadshotHue: See? I told you I was the brains of this operation. Now I got me this slammin' <em>shotgun</em> for sale! Whoo!
+		Buns: For sale? I thought you had other reasons for helping us.
+		Barry: I am now questioning the better angels of your nature, Mr. Hue.
+		Raider: Are you trying to sell me a stolen weapon? You have the right to remain silent. Anything you say... Sorry. Reflex. Just... don't do that, okay?
+	HeadshotHue: Come on, fellas, you wouldn't even have this opportunity without me. All I'm asking is a, uh... little consideration.
+	[Keyword: What if we tell Lurch the real story?]
+		HeadshotHue: I guess maybe you forgot the part about me and Lurch being old friends? And about him being a bonehead? Who do you think he's gonna believe?
+			Fox: If I tell him to come and search you, he'll obey like a trained puppy. Have you seen how he looks at me?
+			Livewire: I think he believes his mother just took the gun, so I think he will believe me when I tell him I saw you stealing it from her.
+			Magic: Easy as pie. I'll tell him you stole the gun from his mamma... and, uh, I might mention you weren't too gentle about it.
+		HeadshotHue: Alright, alright, look... I don't want no trouble. I'll give you the gun for half price, okay?
+	[Keyword: What if we tell Lurch the real story?]
+		HeadshotHue: I guess maybe you forgot the part about me and Lurch being old friends? And about him being a bonehead? Who do you think he's gonna believe?
+I don't like you tryin' to play me like that. Price just went up.
+	[Keyword: What if we just take it from you?]
+			Meltdown: What if I punch that hollow head of yours and just take the gun?
+			Nails: I don't like a shakedown. It makes me anxious. When I feel anxious, I like to hit people.
+			Fidel: Fidel has sudden urge to put grenade into the hole in your head.
+		HeadshotHue: That's, um... that's real ugly. I thought we were partners. You shouldn't threaten a partner. The price just went up.
+	[Keyword: We’ll pay $1000]
+	[Keyword: We’ll pay $2000]
+	[Keyword: We’ll pay $3000]
+	[Keyword: Redirect]
+		HeadshotHue: Yeah, now that's what I'm talking about! Everybody wins, right? I think you'll like that piece. Just be careful with the headshots, know what I'm sayin'? Hehehe.
+	[Keyword: We’ll think about it]
+		HeadshotHue: Yeah, alright, I can wait. I'll be where I'm at. It's cool. It's not like I'm tired and my throat is sore from my dope as hell acting performance or anything.
+[Keyword: Greeting]
+	HeadshotHue: Guess you had your reasons to shoot my bonehead friend <em>Lurch</em>. Can't blame you, he was a headhunter, too, back in his day... But I can't say it's cool with me.
+[Keyword: Greeting]
+	HeadshotHue: Aye, now I'm the last headhunter of the Adjani... Get lost. I'm lit as shit.
+[Keyword: Greeting]
+	HeadshotHue: What's up? Ain't never seen you here before. You like to <em>gamble</em>? I bet you love it. They call me <em>Headshot Hue</em>. You can call me Headshot, or Hue. Just don't call me Headhole. That shit ain't funny.
+[Keyword: Greeting]
+	HeadshotHue: Hey, hey, look who it is! Still afraid of a little bet?
+[Keyword: Greeting]
+	HeadshotHue: S'up gangstahs? I been thinking about changing my persona. Gonna start introducing myself as the Russian Roulette world champion! he-he.
+[Keyword: Greeting]
+	HeadshotHue: S'up playahs? Hey, check it out. I got the bullet that hit my head, right here around my neck. Hair of the dog, he-he.
+[Keyword: Greeting]
+	HeadshotHue: Yo, for real? Sometimes I envy Lurch. He does what he wants and wants what he does - wipes glasses, pours beer, takes cash. Real simple. Everyone else, we all think too much to be happy.
+[Keyword: Greeting]
+	HeadshotHue: Oh, hey. I just had this thought come into my head... Aaand now it's gone.
+[Keyword: “Headshot” Hue?]
+	HeadshotHue: Yeah, that's a wild story, man. I got shot in the head and survived. Now I got this hole that goes right through my brain. Crazy.
+		Ice: You for real or you playin'?
+		HeadshotHue: It's the straight dope!
+		MD: The odds of surviving something like that are astronomical... Fascinating.
+		Omryn: Such a thing is possible with chickens. Perhaps you are part chicken.
+	HeadshotHue: You don't believe me, do you? Come on, bet some money and I'll show you!
+	[Keyword: No way, show us!]
+	[Keyword: Okay, show us]
+	[Keyword: Redirect]
+		HeadshotHue: You guys are mercenaries, right? Headhunters? Yeah, that used to be my gig too, but then I took a bullet in the head... See the hole, all the way through!
+			MD: Oh, this is exciting! May I examine it? You should know you are extremely lucky. Bullets almost never make such a precise exit hole. They usually, um, splash up everything as they tumble through tissue.
+			HeadshotHue: Yeah, right, I'm the luckiest man alive, that's who I am.
+			DrQ: If the bullet passes through unused gray matter, the brain damage can be minimal. I am guessing you have a large quantity of unused gray matter.
+			HeadshotHue: I don't think too much about it, Doc.
+			Thor: Only a mind trained in positivity and a fully cleansed aura could defend against such an attack. Tell me, did you have an exceptional bowel movement prior to receiving the wound?
+			HeadshotHue: Yeah, hehehe... Wait, you're for real?
+		HeadshotHue: Now please pay up. Then we can <em>throw some dice</em> and you'll win your money back in no time!
+	[Keyword: That is entirely possible]
+			MD: This is very interesting! There is a well-documented similar case with a railroad worker in 1848! I'd like to examine the wound, if that's okay with you.
+			Gus: I've seen soldiers survive it, Woodhead, but they were never, um... quite the same.
+			DrQ: Such a thing is possible, though exceedingly rare. Perhaps you have a soft skull.
+		HeadshotHue: Oh, uh... I didn't realize y'all were doctors. Damn. Well, look, how about you pay me a fee for taking a peak at it?
+	[Keyword: We don’t care]
+		HeadshotHue: Come on, don't be like that! Ain't it worth it just for the story? Argh, you're as good as a hole in the head.
+[Keyword: Tell us about headhunters]
+	HeadshotHue: Well, they're like you. Back when the civil war started, this country was straight burning. The police were fighting for one side or the other, so they paid people like me and my boy <em>Lurch</em> to hunt criminals: thieves, murderers, rapists - you name it.
+		Len: Sounds more like bounty hunting. Mercenary work is mission-based, not head-based.
+		HeadshotHue: Sure. You say potato, I say Mr. Potato, right?
+		Tex: Oh, so you are like Old West bounty hunters? Did you have horses?
+		HeadshotHue: Check out my man here asking if we had horses. Yo, Lurch, did we have horses?
+		Raven: Paid vigilantes provide vengeance, not justice.
+		HeadshotHue: We didn't kill most of them. We just took them back to town so somebody with a badge could do it.
+	HeadshotHue: But these days, the scumbags we once hunted down now control the Adjani. All the headhunters are gone. Me and <em>Lurch</em> are the last ones, and we're... retired, but we still got some <em>information</em> that might be useful.
+[Keyword: We are not headhunters]
+	HeadshotHue: Well, you're getting paid to kill those Legion assholes. What's the difference?
+		Buns: We receive funding to conduct military operations and eliminate threats. Headhunters are simply getting paid to pursue and kill offenders.
+		HeadshotHue: Uh-huh.
+		Sidney: A mercenary is hired to achieve objectives of strategic value. A headhunter's objective has only personal value.
+		HeadshotHue: I may have a hole in my head, but even I know all objectives are personal.
+		Ice: The difference is I ain't got no hole in my head.
+		HeadshotHue: Well, maybe you ain't been at it long enough.
+[Keyword: What’s wrong with Lurch?]
+	HeadshotHue: Headshot, same as me. That damn bullet ricocheted after it left my head and hit his big noodle, too. But check this out - the dude was wearing a helmet! Must have rung his bell hard, because I can still talk like I always did... but now he's a retard. 
+		Mouse: You shouldn't use the r-word. That's insensitive.
+		HeadshotHue: Words won't cease to exist just because someone is offended by them. As for Lurch, he's a bonehead and he's perfectly okay with that. And don't you try to cross him, or he'll kick your ass retardless how regarded he is. Anyway...
+		MD: Actually, the accepted term is...
+		HeadshotHue: Intellectually disabled. Know what it was before that? Retard. Before that? Moron. Before that? Idiot. And before that? Simpleton. The term ain't the problem, it's the people using it. You think I'm bustin' on my boy Lurch?
+		MD: Well, n-no, but if that's the case... Say we become friends. Could I refer you to as my n-
+		HeadshotHue: No... I'm just messin' with you! But seriously, no. Anyway...
+		Ivan: Может быть, так надо. Может быть, именно в этом великая сермяжная правда.
+	HeadshotHue: I say it with love. He's my partner, my boy. It just makes it easier to use one of those old words when I gotta remind him he ain't pissed in a while... Well, fuck it, right? Life is just a big joke. Lady Luck loves to play <em>pranks</em> on people... and so do I.
+[Keyword: Tell us what you know]
+	HeadshotHue: Hey, you got the dough, I got the know!
+	[Keyword: The plans of the Legion]
+		HeadshotHue: You mean, aside from their plan to bum rush the Docks? You heard about that, right? <em>Operation N-Night</em>?
+			Shadow: Things are easy to hear from the shadows.
+			Magic: Do I look like I don't know what's goin' on?
+			Scope: I suppose I must have, but why not refresh my memory, love?
+		HeadshotHue: Everybody knows they comin', and some of us even know the <em>exact date</em>.
+			HeadshotHue: Shit, they already sent a bunch of dudes to take Port Cacao and capture Mr. President's sweet little <em>daughter</em>. But I'm guessing you knew that, because you tight with her.
+	[Keyword: Where is the President?]
+		HeadshotHue: Back in the day, me and my buddy Lurch would have already gone and got his dumb ass. Five thousand bucks in advance, thirty percent discount if you didn't need him alive. 
+			Ice: Yeah, yeah, but now you got a hole in your head.
+			HeadshotHue: Don't mean I can't put a hole in YOUR head. Don't be thinking I ain't packin'!
+		HeadshotHue: But these days... You'll have to go and pick him up yourselves. The Legion's got him in the <em>Major's camp</em>. That's too far for Lurch and me.
+	[Keyword: Where is the Major?]
+		HeadshotHue: That dude's been making his location known for a while, like he wants some attention. He's down in the swamps, some place called <em>Camp du Crocodile</em>. I'd be careful about sticking your head in there, hehehe. Seriously, he's a baaad dude.
+			Ice: You trippin'. If he hiding in a damn swamp with crocodiles, he don't sound bad - just dumb.
+			HeadshotHue: What?! Dude, are you too young to remember Miami Vice?
+			Ice: That was an alligator. And the dude didn't live in a swamp, he had a pimped-out boat and dressed fresh as hell.
+[Keyword: Gamble?]
+	HeadshotHue: How do you feel about throwing some dice? Maybe a friendly game of Klondike?
+	HeadshotHue: But, uh... I'm a little low on funds right now, so I can't put up much of a stake. If you want to give me some money in exchange for some information, maybe you could win it back?
+		Livewire: That seems a little suspicious... and yet also very fun!
+		Magic: I smell a hustle.
+		Fox: So, that's the game, huh? I guess we'll see who comes out on top.
+[Keyword: Let’s throw dice]
+	HeadshotHue: Look at you! You got a full crib, fives over fours. And all I got is snake eyes. Not my lucky day, but I guess it's yours. Wanna double up?
+		Fidel: Fidel is winning! See? Lucky Fidel!
+		Ice: I ain't trying to get hustled.
+		HeadshotHue: Chill, man. It's just a friendly game of dice.
+		Magic: I've seen this hustle before, even run it a few times myself.
+		HeadshotHue: Ain't no hustle... just a friendly game of dice.
+		Tex: Must warn you - I once play riverboat gambler in movie. I am very very good at this!
+		Smiley: Lady Luck sits upon my lap today!
+[Keyword: Let’s throw dice]
+	HeadshotHue: Your four of a kind beats mine! Damn... You got some luck on you today! Let's double up again.
+		Fidel: Hahaa, Fidel is master of the dice!
+		Livewire: If my father were here, he would take my money, burn it, and then tell me he saved me some time. Strangely, this makes me want to continue.
+		Smiley: Lady Luck is dancing on my lap!
+		Tex: Let's roll some bones, partner!
+[Keyword: Let’s throw dice]
+	HeadshotHue: Well, shoot me in the head! Another win for you!
+		Fidel: No one throw like Fidel!
+		Tex: They no call me Six-Shooter Tex for nothing!
+		Smiley: Lady Luck is making my pocket swell!
+[Keyword: Let’s throw dice]
+	HeadshotHue: Wow, you sure got some fast hands. Uh... yeah, you won.
+		Magic: I'm sure you meant "lucky hands", right?
+		HeadshotHue: Yeah, absolutely. Come on, let's play again.
+		Fox: Oh honey, you haven't seen anything yet. I can make them move so fast it would make your head spin!
+		HeadshotHue: Oh... I bet it would.
+		Livewire: Yes, it's true. I suspect I have an anxiety disorder, but my father insists that I'm just "fidgety."
+		HeadshotHue: Uh-huh.
+[Keyword: Let’s throw dice]
+	HeadshotHue: Looks like luck's with me this time! Go again?
+		Fidel: Next time Fidel will throw the dices with special Fidel double throw!
+		Scope: And now I remember why I don't like to gamble. Too many ways to lose.
+		Sidney: What a savagely random game. Anyone for a contract or two of Bridge?
+[Keyword: Let’s throw dice]
+	HeadshotHue: Oh, tough break. Hey, you'll win it back on the next toss, right?
+		Fidel: Nooooooo! Stupid dices!
+		Blood: I'm better at tossing knives than at tossing dice!
+		Igor: This is dumb game and I am dumb for playing it.
+[Keyword: Let’s throw dice]
+	HeadshotHue: Bad luck! Sorry to see it. Want to try again?
+[Keyword: What pranks?]
+	HeadshotHue: Mostly on <em>Lurch</em>. Just harmless fun. His memory is all jumbled up, so stuff that happened twenty years ago could have happened yesterday - it's all the same to him... 
+		Igor: I know what you talk about.
+		Ivan: Igor is same.
+		Larry_Clean: I'm the same way, man, except I also remember stuff that never actually happened.
+	HeadshotHue: Hey, you guys want to hear about a prank I'm planning?
+[Keyword: About the prank]
+	HeadshotHue: <em>Lurch</em> has this really cool <em>shotgun</em> over there. It belongs to his mother, the legendary <em>Ma Baxter</em>! He doesn't really need it and I'm sure he's forgotten about it. If I can trick him into giving it to me, maybe I can sell it to you.
+		Magic: You want to steal your best friend's momma's gun and sell it to us? You got a hole in your head or something?
+		Ice: You gonna steal your hommie's piece? Not cool, man.
+		Nails: I'm listening.
+	[Keyword: Isn’t Lurch your friend?]
+		HeadshotHue: Damn right he is. He's also slow and gets confused a lot. Having that gun around means I got to watch him every second. Take the gun away, and that's a whole lot of messiness I don't got to worry about.
+			Wolf: That's good looking out. You think he'll understand?
+			Mouse: That is so sweet.... but won't it make him sad? After all, it belonged to his mom.
+			Ice: I hear that. You think he'd be cool with losing it?
+		HeadshotHue: I'll take the bonehead being sad for a minute about losing the gun over being dead because he forgot to unload it before cleaning it or some shit. Besides, as soon as it's gone, he probably won't remember it was ever there.
+	[Keyword: Ma Baxter?]
+		HeadshotHue: <em>Lurch's mom</em> ran this place back in our headhunter days. Tough lady. You must have heard that old joke by now - "a robber walked into the Rye Bar, but no robber ever walked out."
+		HeadshotHue: She died in a big shootout five years ago. The gang she was running with, the <em>Coffee Beans</em>, they split up soon after.
+	[Keyword: The Coffee Beans?]
+		HeadshotHue: A bunch of old ladies you do NOT want to cross. Back in their day, they terrorized this town with <em>Ma Baxter</em>, and now they're like the town mascots.
+	[Keyword: What’s your plan?]
+		HeadshotHue: Lurch is like a big ugly child. If <em>Ma Baxter</em> walks in and asks him to give over the <em>shotgun</em>, he won't doubt it for a second, even though she's as dead as her son's brain.
+			Reaper: Are you planning on reanimating her corpse?
+			Grunty: I am curious - are you planning on digging her up, wheeling her in, and operating her like a puppet?
+			Steroid: How will you get a dead lady to help you? Please, do not tell me it will be her ghost.
+		HeadshotHue: I can do a good impression of her, so all I need to do is look like her. That's her photo. See that curly red hair of hers? That's a <em>wig</em>, very popular back in her day, but very tough to find now.
+	[Keyword: Where do we find a wig?]
+		HeadshotHue: Hmm, maybe you can ask around at the <em>junk dealers</em>? And then there's that crazy <em>Baronne</em> something-or-other at the <em>Dump</em>. I'm pretty sure she wears a wig - her "hair" looks exactly like Ma Baxter's. She'd probably sooner die than give it you.
+			Fidel: Then Fidel knows how to bring wig!
+			HeadshotHue: Oh-no-no-no, wait... You wouldn't murder an old lady for her scalp, would you?
+			Fidel: Oh, if only Fidel had nickel for every time he was asked this question. He'd be a rich man!
+	[Keyword: We have the wig!]
+		HeadshotHue: What?! HOW? No, don't tell me. Probably safer I don't know.
+[Keyword: We have the wig]
+	HeadshotHue: That's all we need! Now I just need to dress up as Lurch's mom. Wait for me here. It's show time!
+[Keyword: Goodbye]
+	HeadshotHue: Watch your head!

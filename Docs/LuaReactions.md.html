@@ -1,0 +1,47 @@
+# Reactions
+
+Reactions are code objects that run when a message is fired - essentially a message handler attached to an instance of data.
+
+Reactions can be defined only for messages that have a definition (a *MsgDef* instance).
+Some data definitions inherit `MsgReactionsPreset` and can have *reactions* (message handlers) attached to any of their instances.
+Ractions can also have a *target* which can filter out messages.
+
+# Message definitions
+
+Message definitions (or *MsgDef*) are presets which describe a message or event.
+Their *Id* must match the message or event they describe, as well as their *Params*.
+Finally the message or event can be associated with a specific *Target* they are concerned with.
+
+# Message reaction presets
+
+Message reaction presets (or *MsgReactionPreset*) are presets that contain code which can react to messages being fired, similar to global message handlers ([see *OnMsg*](LuaMessages.md.html)).
+This message handler is associated with the preset instance and it's lifecycle.
+When the reaction function is called, the first parameter is always *preset*.
+
+# Unit reaction presets
+
+This type of data can contain event handlers that are attached to units (their *Target* is *Unit*), while the preset is associated with the unit in some way.
+Instead of reacting to global [Lua messages](LuaMessages.md.html), these handlers react to events the units can fire themselves by calling `self:CallReactions(event_id, ...)`.
+When the reaction function is called, the first two parameters are always *preset, unit*.
+
+## Reference
+
+Note that *Unit* inherits *ReactionObject*.
+
+**function ReactionObject:AddReactions(instance, list, insert_locations)**
+:	Registers all handlers from the reaction objects in *list*. These reactions are associated with the object *instance*.
+
+**function ReactionObject:RemoveReactions(instance)**
+:	Removes the reactions associated with the object *instance*.
+
+**function ReactionObject:AddEventReaction(event_id, instance, handler)**
+:	Registers a single event *handler* (as opposed to a *Reaction* object). The handler will react to the event *event_id*.
+
+**function ReactionObject:RemoveEventReactions(event_id, instance)**
+:	Removes all event handlers associated with this *event_id* and *instance*.
+
+**ReactionObject:CallReactions(event_id, ...)**
+:	Emits an event, which will call all registered reactions/handlers.
+
+(insert footer.md.html here)
+<!-- Markdeep: --><style class="fallback">body{visibility:hidden;white-space:pre;font-family:monospace}</style><script src="markdeep.min.js" charset="utf-8"></script><script>window.alreadyProcessedMarkdeep||(document.body.style.visibility="visible")</script>

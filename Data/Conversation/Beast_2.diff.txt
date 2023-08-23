@@ -1,0 +1,125 @@
+[Keyword: Greeting]
+	TheBeast: You killed my Wlad! I have been protecting him for so many years. The Beast... The Beast shall have you. All of you!
+[Keyword: Greeting]
+	TheBeast: What have you done?! I have protected Wlad for so many years, and you, you just let him die... Go away, or the Beast will have you.
+		Mouse: We're sorry...
+		Len: I'm sorry for your loss.
+		Fauda: May his soul watch over you.
+	TheBeast: He's dead, and I... I don't care anymore.
+[Keyword: Greeting]
+	TheBeast: Oh, hello, sweet children of mine. How's Wlad?
+[Keyword: Greeting]
+	TheBeast: Hello! Have you been good kids? Are you eating well?
+[Keyword: Greeting]
+	TheBeast: Hello, sweet children. What are you doing in the lair of the Beast?
+[Keyword: Greeting]
+	TheBeast: Hello, sweet children. Has the Beast not gotten to you... yet?
+[Keyword: Greeting]
+	TheBeast: Well hello, sweet children. Are you lost in the woods?
+	[Keyword: Yes]
+	[Keyword: No]
+	[Keyword: Maybe]
+	[Keyword: We don’t know]
+	[Keyword: Can you repeat the question?]
+	[Keyword: Redirect]
+		TheBeast: You should be careful. These woods belong to the <em>Beast</em>. It munches cute little kids like you for breakfast.
+			Larry: Ooooh, I know, I know! You are an old woman living in a small cottage in the forest, and you are surrounded by those creepy scarecrows, and... 
+			TheBeast: And?
+			Larry: Please, Missis Witch, do not turn me into a scarecrow!!!
+			TheBeast: Only if you have been a naughty boy.
+			Hitman: Most important meal of the day! ...What? Sorry, I zoned out for a second and all I heard was breakfast.
+			Red: Well, if the wee beastie likes his meat tougher than week old haggis and twice as spicy, he's free to take a bite of this "cute kid" anytime!
+			Kalyna: It sounds like an evil spirit that feeds on the young and innocent. I can't wait to meet it!
+			TheBeast: Be careful what you wish for, my dear.
+[Keyword: Tell us about the Beast]
+	TheBeast: Most of the time it slumbers in its lair, but... But there are times when the moon's too bright, the chain's too tight, and the Beast won't go to sleep.
+		Larry: Gulp...
+	TheBeast: Then it goes out, this murderous Beast, and it roams these woods until it's satisfied with blood and carnage.
+		Reaper: I couldn't have explained the dance of an Angel of Death any better myself.
+		Omryn: Is werewolf? Is okay. I have silver bullets.
+		Flay: This Beast and I, we are much alike. I look forward to hunting it.
+		Kalyna: Hmmm... Sounds like a werewolf, but it could be a bugbear or maybe a vampire. Does it drink blood?
+		TheBeast: Aren't you a curious little one? No, it does not.
+		Kalyna: Okay, so vampire is out.
+[Keyword: YOU are the Beast, aren’t you?]
+		Barry: This Beast. I am thinking it is you.
+		Buns: Unless I'm wrong, and I never am, YOU are the Beast.
+		MD: Signs of blood under the nails. Powder burns on the knuckles. Excuse me, ma'am, but are YOU the Beast?
+		Kalyna: Wait, I know! You're a shapeshifter! Will you teach me your magic?
+		TheBeast: There is no magic, dear. There is only the thirst for justice, the lust for battle, and the willingness to do terrible things.
+		Kalyna: But I already have those things and I'm no Beast.
+	TheBeast: Aren't we all? Aren't you?... When you raise your gun at one of those bandits, and...
+		Larry: What big eyes you have, Granny!
+		TheBeast: Um, thank you. As I was saying...
+	TheBeast: ...Then you catch them on the move, and you feel the recoil when the bullets rip them in half, and... And the feeling is joy.
+		Blood: Gosh... This woman scares me.
+		Reaper: This woman fascinates me.
+		Flay: At this moment, I find you very attractive.
+		Fidel: Yes! Ay, dios mío! This is what bring laughter to the heart of Fidel!
+		Wolf: It's just a job - one I'm good at. Nothing more.
+[Keyword: What’s the deal with the scarecrows?]
+	TheBeast: They are here to keep the Beast asleep. They remind it of the good people it had known.
+		Kalyna: I knew it! You are a good witch that repels evil with her magic!
+		Larry: Oh, man... Let's split up and get out of here.
+		Larry_Clean: Oh, kinda like my sobriety bear, only waaay creepier.
+		Hitman: Hey, whatever it takes to get to sleep at night, right?
+[Keyword: Is this how the “Beast” lives?]
+	TheBeast: Yes. Most of the time, I'm just a harmless old woman. There are so many advantages to that. No one takes you seriously... until it's too late.
+		Larry: I take you seriously! I don't want to be turned into a scarecrow!
+		Shadow: The "sweet little old lady" disguise. One of my favorites.
+		DrQ: Always seem less than you are and people will soon reveal their true nature to you.
+		Kalyna: Woe to the careless traveller who takes the gifts of the forest without paying for them!
+		TheBeast: Oh, my dear. You almost make me wish I had a daughter.
+[Keyword: Are those cookies!?]
+	TheBeast: Yes! Help yourselves. I hope you will find them... enchanting.
+		Larry: Zoinks! Listen to me, people, DON'T EAT THE COOKIES!!! That's how she turned all these people into scarecrows!
+		Kalyna: Magical cookies from a sweet old lady in a cabin in a Cursed Forest!? I can't wait to try!
+		Omryn: There is enough for Omryn, but you will need more for others.
+		Scope: I always tell my kids not to take sweets from strangers, but fresh-baked cookies are a different thing entirely!
+	[Keyword: Thank you!]
+		TheBeast: Come, have some more! Once people taste my cookies, they just don't ever seem to want to leave my cottage.
+			Larry: I won't touch 'em with a ten-foot pole, man!
+			Mouse: Yay! They're as tasty as it gets! May I have one more?
+			TheBeast: Of course, sweet child. Take as many as you want, there are more where these came from.
+			Scope: Mmm, darling, they are delicious! Would you care to share the recipe?
+			TheBeast: But, of course! I'll write it down for you.
+			Scope: Marvelous! And this here is my favorite cookie recipe. I would be delighted if you'd give it a try.
+			Blood: Now this is what I call hot cuisine!
+			TheBeast: I think you mean "haute cuisine" my dear, but thank you.
+			Omryn: Okay, it is agreed. Omryn will stay here.
+			TheBeast: I'm going to need more flour. A lot more.
+			Kalyna: When do I turn into a gingerbread person?
+			TheBeast: These are sugar cookies, dear, and you're already sweet enough as it is.
+	[Keyword: No thanks]
+		TheBeast: That almost breaks my heart. Well, I guess I will have to give them to the Beast.
+			Larry: Let's leave this place before the Beast smells them!
+			TheBeast: It may be a little too late for that, child.
+			Larry: Oooohhh... Keep your eyes peeled, Ted!
+[Keyword: Hands up!]
+	TheBeast: Are you out of your mind? Put that gun down immediately! You will upset the Beast!
+	[Keyword: Hands up, now!]
+		TheBeast: I see you're a bunch of naughty kids like all the others. The Beast will have you.
+	[Keyword: Mercs, open fire!]
+		TheBeast: No, you won't kill the Beast so easily.
+	[Keyword: Sorry, we were joking]
+		TheBeast: Goodness! That was one very dangerous joke. The Beast doesn't like naughty kids scaring a frail old lady like that!
+[Keyword: Will you support us against the Legion?]
+	TheBeast: My answer remains "no". The people of my village still need their silent guardian, their watchful protector... their Beast.
+[Keyword: Will you support us against the Legion?]
+	TheBeast: Yes. Now that my people are safe... I was thinking - do you know the only remaining reward for being the Beast?
+		Scope: Being able to bake top notch cookies in peace?
+		Steroid: To see your enemies driven before you?
+		Nails: A bitchin' outfit?
+	TheBeast: ...You just get to be... the Beast! So, I will unleash my true self and show it to all of Grand Chien.
+		Reaper: May you reap the souls of the wicked.
+		Larry: Um... We better start sleeping in shifts, Ted.
+		Len: And a grateful Grand Chien will thank you for your service.
+		Smiley: I too wish to expose myself to all of Grand Chien!
+[Keyword: Goodbye]
+	TheBeast: Farewell and be careful. Beware of the Beast.
+[Keyword: Goodbye]
+	TheBeast: If you see Wlad, remind him to eat and sleep sometimes. He keeps forgetting to do that.
+[Keyword: Goodbye]
+	TheBeast: Make sure you watch over Wlad, or the Beast will come for you.
+[Keyword: Goodbye]
+	TheBeast: Farewell and beware of the... Oh, I forgot that you already know who I am. Must be getting old. Take care anyway. 

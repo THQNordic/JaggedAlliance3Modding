@@ -1,0 +1,100 @@
+[Keyword: Greeting]
+	KingChicken: Who... Who are you? Did <em>le Major</em> send you? I hope he is not unhappy with us. Is this an inspection?
+	[Keyword: No, we are here to liberate you]
+			Magic: We're busting you out of the big house.
+			Raider: This is an illegal prison camp and we're shutting it down.
+			Thor: Time for you to leave your prison and open yourself to greater possibilities! Embrace the new you!
+		KingChicken: Liberate us?! Oh, mon Dieu, but... What if this is not the right time? I... I should discuss this with the <em>guards</em>...
+	[Keyword: Yes, this is an inspection]
+			Blood: We just want to make sure your moldy cheeses aren't too moldy.
+			Omryn: We want to sample your food to make sure it is good to eat. All of it.
+			Sidney: We're just here to make sure everything is ship-shape and Bristol fashion!
+		KingChicken: Oh, of course, of course it is. Wait, I'll call the <em>guards</em> right away!
+	[Keyword: Yes. Back to your shack, maggot]
+			Fidel: Run away, fat man, before Fidel carve you up like roast chicken!
+			Nails: Hit the road before I make your face hit the floor.
+			Meltdown: You better get out of my way or the first thing I'll inspect is your ass with my foot!
+		KingChicken: Right away! You won't hear me cluck! Unless you want me to, of course.
+	[Keyword: We are looking for someone]
+		KingChicken: God forbid, but are you searching for <em>Pierre</em>? He's right there at the flogging post. Go on and shoot him, I'll go tell the <em>guards</em>. They'd love to watch, you know.
+[Keyword: Greeting]
+	KingChicken: How can I serve you? Would you like some scrambled eggs? Very tasty, very nourishing!
+[Keyword: Greeting]
+	KingChicken: You... You killed them! All of them! What will I do now? I was a king among the prisoners, and now... Now I'm going to be just a nobody!
+[Keyword: Greeting]
+	KingChicken: Don't kill me, please! I'm not with the <em>Legion</em>, I was just doing what I needed to do to survive! It is a tough world, you know... And I was helping the other prisoners with eggs and everything!
+[Keyword: Greeting]
+	KingChicken: No one left here... Just that bitter old asshole <em>Pangloom</em>. He's pretending to help me with the chickens, I'm pretending not to notice when he's stealing eggs.
+[Keyword: Who are you?]
+	KingChicken: They call me <em>King Chicken</em>, because they, um, they appreciate me. I take care of all the chickens in the camp, so that everyone is well fed and happy! Even my fellow prisoners, they get a free egg each week!
+		Grizzly: There's only one king of chickens in my mind, and he's a full bird colonel.
+		Omryn: I would like two whole chickens.
+		KingChicken: They are not for eating! Just for laying eggs.
+		Omryn: I am very disappoint.
+		Raven: Sounds like you really rule the roost.
+		KingChicken: I wish I could tell you that is the first time I heard that joke.
+		Raven: That's okay. It wasn't my best effort.
+[Keyword: What else are the prisoners eating?]
+	KingChicken: Um, whatever they find. Mostly roots, I guess. Perhaps some bugs and worms. We have a very democratic system here in <em>Camp Bien Chien</em> - everyone fends for themselves!
+		Igor: I think maybe you mean capitalist system.
+		Blood: Roots and bugs?! I think I changed my mind about sampling the local cuisine.
+		Omryn: Mash bugs, worms, and roots together and make good forest pâté.
+	KingChicken: But I take care of them, yes I do. They get a free egg per week, and even more if they help me out with my chores and duties!
+[Keyword: Who are you?]
+	KingChicken: They called me <em>King Chicken</em>... They, um, they appreciated me for taking care of all the chickens in the camp. I made sure everyone was well fed and happy! Even my fellow prisoners, I was giving them one free egg each week!
+		Hitman: There's only one king of chickens for me, and he's a full bird colonel.
+		Grunty: I think when you say "everyone was well fed and happy" you are referring mainly to yourself.
+		KingChicken: I have a problem with my glands!
+		Grunty: Yes. You are feeding your glands too many eggs!
+		Wolf: Sounds like you really ruled the roost!
+		KingChicken: Was that supposed to be funny?
+		Wolf: Hey, look, not every pitch is a strike, okay?
+[Keyword: Why is Pierre here?]
+	KingChicken: I've heard he pissed off <em>le Major</em> himself! Pierre was one of his lieutenants, but a bunch of mercenaries kicked his ass. It's no wonder. The Legion troops west of here are crap! Our guards in <em>Camp Bien Chien</em>, they are the real deal!
+		Fauda: We will soon determine their worth for ourselves.
+		Flay: I look forward to seeing if they prove to be difficult game.
+		KingChicken: Oh, I'm not sure they play any games, besides the one where they throw rocks at me.
+		Scope: I'm sure they're lovely, dear. I can't wait to get them in my sights and see for myself.
+[Keyword: Tell us about this place]
+	KingChicken: Oh, it is our <em>prison camp</em>! Here are the barracks, and there is where they stash the weapons, ammo and stuff. Over there is the flogging post where that stupid asshole <em>Pierre</em> is being punished. That way you'll find my fellow prisoners, minding their own business in the mud.
+		Sidney: Well, it's quite charming, isn't it? Can't wait to have a look around.
+		Barry: We should inspect the weapon stash to make sure everything is properly stored.
+		Fox: Something tells me that's not the kind of mud bath I'd be interested in.
+[Keyword: Tell us about this place]
+	KingChicken: It's just a <em>prison camp</em> for me and my fellow prisoners... That way is the flogging post where that stupid asshole <em>Pierre</em> is being punished, and over there are the guard barracks.
+		Buns: Where do you wash?
+		KingChicken: Wash what?
+		Buns: Never mind.
+		DrQ: Most unsanitary. Do you not fear disease?
+		KingChicken: Sure! I fear all kinds of stuff: Rats, fleas, thrown rocks, hard kicks, death, disease, pollution, Edvard Munch paintings...
+		DrQ: That's enough. Thank you.
+		Ice: It ain't much, but it's home, right?
+		KingChicken: It sure is!
+[Keyword: Do not call the guards!]
+	KingChicken: Oh, but of course I won't! I can see now, you are here to take them by surprise and liberate us all, right? So nice of you! I'll just remain here and wait for the shooting to stop, okay?
+		Steroid: You wait here while more manly peoples take care of puny guards!
+		Tex: You just take cover, partner. Gonna be a shootout!
+		Smiley: Do not worry. We will soon clean out your muddy hole.
+[Keyword: You are working for the guards]
+		Livewire: I can smell a snitch from a mile away and, not to sound rude or anything, but you smell real bad.
+		Barry: I think maybe you have good deal with guards. Maybe too good.
+		Buns: The moment we turn our backs, you're going to start squeaking like a rat, aren't you?
+		DrQ: I think you enjoy your life here far more than you reasonably should.
+		Gus: Dang it, Woodcock! You're gonna rat us out. Admit it!
+		MD: Maybe I'm jumping to conclusions, but I get the feeling you like the guards more than you like us.
+		Scully: Be straight with us, mate. What's the deal with you and these guards?
+		Thor: I sense you're holding something back. Be honest with us about your deal with the guards. You will feel better.
+	KingChicken: Oh non, I'm a prisoner like everyone else! I'm just a bit more entrepreneurial. I take care of the chickens and everything. Everyone appreciates a good omelette du fromage, right?
+[Keyword: Die!]
+	KingChicken: Non, non, I won't cluck, I won't... Argh...
+[Keyword: You passed the test]
+		Livewire: Well, it's nice to see somebody here knows what they're doing. I hope there are more like you around.
+		Magic: You seem like you're hip to what's going down around here. What's the skinny?
+	KingChicken: I know, I know! <em>Le Major</em> has sent you to check on his goons, right? At this hour they are playing cards in the barracks... You can sneak up on them just like that, hehe.
+[Keyword: Goodbye]
+	KingChicken: Goodbye! Have a nice day! Thank you for coming!...
+	KingChicken: Guards! GUARDS! Intruders over here! The camp is under attack!
+[Keyword: Goodbye]
+	KingChicken: Goodbye! Have a nice day! If you need me, I'll be right here! King Chicken at your service!
+[Keyword: Goodbye]
+	KingChicken: Goodbye then... Have a nice day!

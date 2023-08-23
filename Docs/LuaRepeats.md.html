@@ -1,0 +1,70 @@
+
+# Repeats
+
+In many cases, there is a need to periodically execute some code. 
+While you can create and manage threads to achieve the same effect, there are already functions to factilitate just that:
+
+**MapGameTimeRepeat(*name*, *interval*, *func*)**
+:	Declares a repeating function *func* which will be called every *interval* milliseconds of *GameTime* while there is a map loaded.
+
+**MapRealTimeRepeat(*name*, *interval*, *func*)**
+:	Declares a repeating function *func* which will be called every *interval* milliseconds of *RealTime* while there is a map loaded.
+
+The function *func* receives as parameter the time from the previous invocation. On the first invocation it receives *nil* as parameter. 
+
+*func* can return a value which will be used (one time only) as sleep time before the next invocation instead of the *interval* provided. 
+
+!!! WARNING
+    If *interval* is zero or a negative number *func* will be called in a loop without any delay. In that case it **must** sleep otherwise it will freeze the entire game.
+
+
+Since *func* runs in its own thread it can sleep or wait for wakeup or wait for messages. You can easily wakeup a repeat function:
+
+**WakeupPeriodicRepeatThread(*name*, ...)**
+:	Wakes up the thread of the periodic repeat with *name*. To have an effect, the repeat function *func* should have called *WaitWakeup()*.
+
+Repeats have several advantages:
+- after lua reload, the new *func* is called instead of the old one
+- after loading a savegame created with an old repeat func the new func gets called instead
+- when loading a savegame created before the repeat was introduced in the code, the repeat is started
+- the repeat is started on entering a map and stopped it when exiting the map
+
+
+# Examples
+
+Update the daily quest once a day. In this case, we know the map starts at 6am, 
+so we use the first invocation when *interval* is *nil* to sleep 6 more hours 
+and then call *UpdateDailyQuest()* exactly at 12h every day thereafter.
+
+~~~~~~~~~~ Lua
+MapRealTimeRepeat("", const.HourDuration * 24, function (interval)
+	if not interval then
+		return const.HourDuration * 6 -- sleep 6h on the first invocation
+	end
+	UpdateDailyQuest()
+end)
+~~~~~~~~~~
+
+
+If updating the UI is slow, it can be done in a thread after *UpdateUI* is called 
+but no more often than once every 100ms:
+
+~~~~~~~~~~ Lua
+MapVar("UIUpdatePending", false)
+MapRealTimeRepeat("UpdateUI", 100, function (interval)
+	if not UIUpdatePending then WaitWakeup() end
+	UIUpdatePending = false
+	UpdateUIForReal()
+end)
+
+function UpdateUI()
+	UIUpdatePending = true
+	WakeupPeriodicRepeatThread("UpdateUI")
+end
+~~~~~~~~~~
+
+
+<script>window.markdeepOptions = {definitionStyle: 'long'};</script>
+
+(insert footer.md.html here)
+<!-- Markdeep: --><style class="fallback">body{visibility:hidden;white-space:pre;font-family:monospace}</style><script src="markdeep.min.js" charset="utf-8"></script><script>window.alreadyProcessedMarkdeep||(document.body.style.visibility="visible")</script>

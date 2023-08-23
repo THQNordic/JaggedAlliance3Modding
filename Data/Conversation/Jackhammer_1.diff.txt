@@ -1,0 +1,137 @@
+[Keyword: Greeting]
+	Jackhammer: Why have you attacked my <em>prison</em>? You have committed a <em>criminal</em> act against a legitimate Grand Chien detainment facility. The authorities will hear of this!
+[Keyword: Greeting]
+	Jackhammer: If you are here to free someone, then get on with it. But be warned, if you release any of these <em>criminals</em>, there will be dire consequences.
+[Keyword: Who are you?]
+	Jackhammer: My name is Jacques Marteau and I am the director of the <em>Adjani State Prison</em>. I'm a public servant and you have no right to attack my people or this institution!
+[Keyword: Your “prison guards” are Legion soldiers]
+		Ivan: Больше похоже на ГУЛАГ.
+		Buns: Using Legion soldiers to guard your prison hardly lends it an air of legitimacy.
+		DrQ: A prison that employs Legion soldiers as guards is not one which houses legitimate prisoners.
+	Jackhammer: The trouble in the region has forced certain... budget cuts. Some of the guards may have taken side jobs to compensate. I don't control what they do outside these walls.
+[Keyword: We want you to release Luigi]
+	Jackhammer: Is that why you are here? You just want that little Italian asshole? ...Fine. I'll release him if you let me go. I don't want to hang around if releasing prisoners is what you want to do.
+		Raider: Really? Are we going to make a deal with one criminal in order to release another?!
+		Scope: What's the matter, love? Is it possible some of them have grievances they might wish to air?
+		Jackhammer: I think you already know the answer to that question.
+		Magic: That sounds fine to me... Just don't try any tricks - I know every single one of them, ya dig?
+[Keyword: How did you become a prison director?]
+	Jackhammer: The <em>Major</em> took this place because he needed recruits. I was not just an inmate, I was the leader of its most powerful gang. The Major recognized that fact and made me the new director of this place.
+		Raider: Prisoners running the prison... my worst nightmare come true.
+		Grizzly: No offense, but you stink at your job. This place is falling apart!
+		Jackhammer: Only the parts we don't need. See? Direction.
+		Mouse: I don't even want to ask what happened to the old prison director.
+		Jackhammer: Don't worry your pretty little head. He's just resting... in peace.
+	Jackhammer: This good place turns criminals into soldiers for the <em>Legion</em>... or laborers. Inmates here either submit to my will and pay off their debts with service, or they never leave. That's why they call me Jackhammer the Breaker!
+		Sidney: An appropriate, if redundant, moniker to be sure.
+		Larry: Oh man, that's a cool name! They call me Larry the Roach. This is my friend, Ted.
+		Larry_Clean: That's a cool name, man. I was Larry the Breaker for a while, but it was only because of the number of sobriety oaths I broke.
+		Reaper: They call me Reaper. I look forward to showing you why.
+		Tex: Mmm... Name needs work. Too long. Would not look good on movie poster.
+		Steroid: That is so weak! You should get that name only by breaking stones or something.
+		Jackhammer: When I was an inmate, I broke plenty of stones. Now, I break wills.
+		Steroid: It sounds to me like you are scaling down your workouts. Soon you will be soft and flabby.
+[Keyword: You are a criminal]
+	Jackhammer: And who says that? I am a director of a respected institution that you unlawfully attacked!
+	[Keyword: I say that]
+			Spike: I say that, Jack.
+		Jackhammer: I saw you there, Major. I did not say anything, because I thought you were testing me. Is that what this is, a test?
+			Spike: Afraid not, Jack. The Legion needed soldiers and miners, and you provided them, but now the Legion is gone. I'm out. Just got a few loose ends to tie up.
+		Jackhammer: You're... out? Just like that? But what about... Wait! Take me with you. I can fight, you know I can!
+			Spike: I do. That's why I'm going to make this quick. Goodbye, Jack.
+			Len: Spike, what are you... No!
+	[Keyword: I say that]
+			PierreMerc: Hello, Jacques. Remember me?
+		Jackhammer: Pierre, I thought that was you, but you have less shit on your face than the last time I saw you so I couldn't be sure. Escaped from <em>Diamond Red</em>, or did your new masters here rescue you?
+			PierreMerc: Your insults mean nothing to me. You are beneath my contempt. Even so, I must thank you. You were the first to open my eyes and show me what the Legion really is by sending me to that hell hole.
+		Jackhammer: I did my job, Pierre. It was never anything personal.
+			PierreMerc: Let me tell you something, Jacques. When you make someone a slave, it is very personal.
+	[Keyword: You imprisoned innocent people]
+		Jackhammer: And who says they are innocent? Or did they just TELL you they are innocent? How naive can you be? EVERYONE in prison claims to be innocent.
+			MD: True, but to be fair, some of them actually are.
+			Thor: I can smell guilt a mile away. The only thing I smelled in some people down there was sadness, shame... and excessive body odor.
+	[Keyword: Boss Blaubert says that]
+		Jackhammer: Well, if your "information" comes from a mob boss, it isn't worth much, is it? People like Boss Blaubert do not get to say who is a criminal and who's not.
+			Livewire: It seems to me that people like Boss Blaubert can say whatever they wish, but I will let him know you disagree.
+			Smiley: Or whose girlfriend he can steal or not!
+			Jackhammer: What?
+			Smiley: Nothing...
+	[Keyword: You can’t fool us]
+			Nails: I don't buy your shit, dweeb. You're the worst kind of crook - one that pretends to work for the fucking cops.
+			Ice: You just a thug that thinks he's a playah. You ain't foolin' me. Quit frontin'.
+			Magic: You're not being straight with me, man. You're just a crook with a badge. Worst type of snapperhead.
+			Raider: Back in LA, we did use petty criminals like you as informants. We didn't promote them to prison directors though.
+			Raven: I've heard enough. You're so crooked it's a wonder you can stand up straight.
+			Livewire: I once pretended to be a mountain climber, something I know nothing about, in order to meet a very cute boy I liked. I did a much better job at it than you are doing pretending to be a prison director.
+			Fox: Honey, I've dated my fair share of bad boys, so I've gotten pretty good at recognizing one.
+			Thor: I know you are lying to us, but you are also lying to yourself. Come, unblock your spleen and let the truth out.
+	[Keyword: People from Port Cacao say that]
+		Jackhammer: Well, if your "information" comes from some worthless beggar who can't pay their <em>debts</em>, it can't be very reliable, can it?
+			Scully: Well, that raises the question of what sort of person would loan money to a beggar, doesn't it?
+			Fauda: Only a monster who trafficks in human suffering would expect a beggar to pay him back.
+	[Keyword: You're a loan shark]
+		Jackhammer: I'm just trying to help people. It's not my fault they are lazy and won't pay back their debts.
+			DrQ: A prison director whose prisoners owe him money is not a person whose judgement is to be trusted.
+			Vicki: Speaking of lazy - that be one real lazy excuse.
+	[Keyword: Owing money is not a crime]
+		Jackhammer: I am sorry, but being unable to pay your debts is a crime here in Grand Chien. What can I do? Such is the law.
+			Meltdown: Then it's a real shitty law and it should be ignored, same as all the other shitty laws.
+			Shadow: Oh yeah? Does the law say anything about the legality of owing money to your own prison director?
+			Jackhammer: Eh... it does not specify.
+	[Keyword: Owing money is not a crime]
+		Jackhammer: I am sorry, but being unable to pay your debts is a crime here in Grand Chien. What can I do? Such is the law.
+			Raider: You can't give loans with one hand and imprison people for debts with the other.
+			Fauda: Law cannot be an excuse for injustice.
+			Gus: Then that law is full of crap, Woodrot! Same as you.
+			Len: If that law allows a prisoner to owe money to a prison director, it's the same as legalized slavery. That's... not acceptable.
+			Thor: There is a higher law, one that I'm sure punishes those who profit from others' misfortune.
+		Jackhammer: Perhaps my lending practices have landed some people in prison. My judgement is not perfect, oui? But whose is? Let they who are without sin be the first to throw a stone.
+			Meltdown: Alright, I guess I'll wait to go second.
+			Kalyna: I don't think I've sinned... But I am not very good at throwing. Someone else should go first.
+			Raven: Oh, I've got a magazine full of stones I'm thinking about throwing...
+			Fidel: Fidel will throw much more than stone.
+			Barry: I will not be standing for blasphemy. I am tempted to throw first stone... a shaped stone.
+[Keyword: You are involved in slave trade]
+	Jackhammer: Alright, alright. Yes, I am doing a little bit of involuntary workforce distribution, and in return I get a little something for myself. It's not as bad as it sounds, the prisoners work off their loans and get some exercise as well!
+		Red: Forced labor is no kind of exercise, ya daft idiot!
+		Grunty: My mother told me exactly what to do if I ever met someone like you. I warn you, it will involve the removal of your toe nails.
+		Hitman: It's okay to shoot him now, right, Ace?
+	Jackhammer: Let us be reasonable. If you want to have one of those wretches down below, just name him! We don't have to fight over some goddamned prisoner, do we?
+[Keyword: What if we just shoot you?]
+	Jackhammer: I don't believe you would do this. You don't look like the kind of people who would just kill an innocent public servant.
+		Len: I don't trust him, but we don't really know if he's guilty or not.
+		Grizzly: Innocent, my ass. But he's got a point. We have no proof.
+		Reaper: Everyone is innocent of some things and guilty of others. Death does not care.
+	Jackhammer: ...But I can see you mean business! Why don't you just let me go? I will tell the rest of the guards to go home for the day. I've also got some money here. You can have it.
+		Wolf: Are you trying to bribe us? We only take bribes from people we like.
+		Flay: Look at the buckhead squirm!
+		Blood: This is blood money.
+	Jackhammer: This isn't blood money - it's a... a fee. Nothing more. Take it as mercenary work - only, you don't have to work! Just let me go and you'll be <em>rewarded</em> immediately. It is a good deal, n'est-ce pas?
+[Keyword: Time to die]
+	Jackhammer: You cannot do this! I am an officer of the law! The authorities will hear of this...
+		Nails: That only makes this more fun for me!
+		Meltdown: Shut your cock holster, ass face!
+		Fidel: Yes, Fidel wants everyone to hear! Scream very loud, please.
+[Keyword: Time to die]
+	Jackhammer: No! I can give you money! I can give you slaves! Please, whatever you want...
+		Fauda: I want you to tell my brother what a piece of shit you are.
+		Reaper: There is only one thing I want, and it is mine to take, not yours to give.
+		Blood: The world is going to be a better place without a scuzzwad like you in it.
+[Keyword: You will go to prison]
+	Jackhammer: Eh... Do I have any other choice?
+		Raider: Maybe you get to choose which cell to be in... if you're lucky.
+		Sidney: I'm afraid not. It's either that or hanging by the neck until you're dead.
+		Grunty: The only other choice involves the removal of your toe nails... followed by incarceration.
+	Jackhammer: Okay, okay. I'm not resisting arrest. Back to prison it is, then.
+[Keyword: Get out of here]
+	Jackhammer: Right away! It is your prison now.
+[Keyword: Get out of here]
+	Jackhammer: Thank you! You are true saviors. I will restart my life - a good life! Very far from here!
+[Keyword: Get Out Redirect]
+		Raider: I can't believe this is happening. We are releasing this criminal and slaver just like that?!
+		Ivan: Наш командир идиот.
+		Omryn: We own prison now, glavny? I have heard prison food is bad. I will investigate.
+		Jackhammer: I'll make sure they release <em>Luigi</em> immediately.
+		Jackhammer: Oh, and here's that <em>money</em> I promised. I hope it does more for you than it did for me!
+[Keyword: Goodbye]
+	Jackhammer: I'm sure you will find out this is a big mistake.

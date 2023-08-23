@@ -1,0 +1,99 @@
+[Keyword: Greeting]
+	Pierre: <em>My father</em> was a fool, but he was my father after all. Now that he's dead because of you foreigners, I hate you more than ever. You spread pain and misery wherever you go! No more. The <em>Legion</em> will destroy you and everyone who deals with you!
+[Keyword: Greeting]
+	Pierre: I do not see our colors above <em>Flag Hill</em>. But then, you never intended to do it in the first place, did you? You just wanted to see how big a fool I am. Do you think I am a fool?
+[Keyword: Greeting]
+	Pierre: I see our colors fly above <em>Flag Hill</em>. I almost want to let you in, just to see what you will do, but I know you are no Legion recruits. You only wanted to trick me! Do you think I am a fool?
+[Keyword: RedirectFlag]
+	[Keyword: Yes]
+			Thor: The only fool here is the one who's lying to himself about what a beautiful and powerful soul he has inside. Do you know who that fool might be?
+			Raven: I don't know. You're the one terrorizing your home town and killing your own neighbors... you tell me.
+			Barry: I think this is maybe trick question, but I will say "yes."
+		Pierre: Well, I am not. Foreign mercenaires will never join the Legion, not on my watch. Prepare to die.
+	[Keyword: No]
+			Buns: Of course not. We're just exploring our options.
+			Raider: Calm down, sir. We're not doing anything but investigating at this time.
+			Sidney: Perish the thought, my good man!
+		Pierre: Oh, really? Then you just needed an opportunity to see more of this beautiful island, did you?
+	[Keyword: No]
+			Grunty: I do not think you are a fool, but you are perhaps a little high-strung.
+			Kalyna: My babusya told me that if I do not have anything nice to say about someone, I should say nothing at all. So... um...
+			Grizzly: What's the matter? Can't take a joke?
+		Pierre: Then YOU are the fools and the joke is on you. But I am a soldier of the Legion and to me this is no game.
+	[Keyword: We had to try]
+			Livewire: It seemed like a good scam at the time, but in retrospect, it probably needed a little more lying and cheating.
+			Fox: Well, can't blame a girl for trying.
+			Magic: Worth a shot. Gotta give us some credit for the effort.
+[Keyword: Greeting]
+	Pierre: So you are all les mercenaires the <em>President's money</em> could buy! And you have the audacity to come and challenge me here, in my own forteresse?! You have some guts, I give you that.
+		Vicki: This be your fortress, mon? Look more like a junkyard to me.
+		Wolf: Guts, guns, ammo, explosives... we got all different kinds of stuff. 
+		Steroid: I also have muscle. A lot of muscle.
+[Keyword: RedirectMajor]
+	Pierre: I am tempted to kill you all right now, but I will spare you this time. My reasons are my own. You should walk out of here while you still can and never return.
+[Keyword: Greeting]
+	Pierre: So you are les mercenaires <em>Bastien</em> was so excited about. You don't look half as tough as he describes you - but we both know he's a coward and a fool. Well, I am not.
+		Fox: Looking tough is overrated. Looking good is not, and from where I'm standing, you need a make-over.
+		Raven: You'll have to pardon us if we don't just take your word for it.
+		Grizzly: Don't be too quick to judge. You haven't seen us in action yet.
+[Keyword: Greeting]
+	Pierre: So you are les mercenaires <em>Bastien</em> told me about. I'm not impressed - neither was he, and he's a coward! But let's pretend for a moment that there is more to you than meets the eye.
+		MD: Probably isn't, if I'm being honest.
+		Kalyna: Oh, I love playing pretend! Hang on. Let me get my magic wand and slippers.
+		Mouse: I get that a lot, but no. Sorry. This is really all there is.
+[Keyword: Greeting]
+	Pierre: So you are the reason why <em>Bastien's</em> squad did not return from Flag Hill. We shall honor them later, but first things first.
+		Grizzly: We just mopped up the remains of it.
+		Igor: This Bastien deserve no medal. Unlike Dolviches.
+		Wolf: There's nothing honorable about that guy. Trust me, I know the type.
+[Keyword: RedirectDefault]
+	Pierre: <em>Le Major</em> teaches us to know our enemy. And so, before we start shooting each other, I have one thing to ask you - why have you come to <em>Grand Chien</em>?
+[Keyword: Where is the President?]
+	Pierre: If you're looking for him, then you came to the wrong place. <em>Le Major</em> has him in his camp, so why don't you go ask him yourself?
+		Igor: In Russia, you don't kidnap President. President kidnap you!
+		Raider: Don't worry. It's on the to-do list.
+		Omryn: More work that way. Easier to just ask you.
+[Keyword: So this is the Legion?]
+	Pierre: Yes! We are the Patriotic Legion of Grand Chien, the new protectors of this country against foreigners like you!
+		Ice: Hell of a gang name, killah.
+		Grunty: Do you have uniforms? I would recommend you stay away from brown shirts or red arm bands.
+		Blood: I can respect that, but I think some of your neighbors object to your "protection" methods.
+[Keyword: Your father is concerned about you]
+	Pierre: What my father is concerned about is none of your business!... Is... Is he safe?
+		Livewire: He just worries about you too much. Some fathers are like that.
+		Barry: He is safe, but worries about his son. You should call.
+		Buns: He's fine, but you need to work on being a better son. Start with not killing his friends.
+		DrQ: He is safe, but he is old and time is the great enemy. Spend some with him.
+		Gus: Heck of a lot safer than you, I expect.
+		MD: Well, his vitals are mostly good. Blood pressure's a little high... Oh! But, yes, he's safe.
+		Scully: About as safe as can be expected. You should see him more often. You're the only son he's got!
+		Thor: He is safe, but his soul needs nourishment. I think you could help with that.
+		Vicki: Ya, mon, he be fine. He be better if you put down that gun and help him fix up the town.
+[Keyword: Your father asked us to spare you]
+	Pierre: Did he now? Oh, how generous of you! I think I should save you the trouble.
+		Steroid: It is no trouble. We will just pummel you until you have been properly pummeled.
+		Meltdown: Don't sweat it, tough guy. Your old man didn't say nothin' about sparing your kneecaps.
+		Omryn: Thank you. I don't like trouble. It always make me tired.
+	Pierre: Legion! Attention! Prepare for battle!
+[Keyword: We are here to set things right]
+	Pierre: Are you? Hmm, I can see that you believe what you're saying, and that counts for something in my book.
+		Raider: We're just here to restore order and help a young woman find her father.
+		Buns: We are here to help reunite a young woman with her father.
+		Sidney: Happy to hear you say that! We don't mean to be a bother. Just trying to reunite a lost father with his daughter.
+	Pierre: Your purpose may be noble, but this is my island - and I did not invite you. I'm giving you one last chance to leave.
+[Keyword: We are here to set things right]
+	Pierre: Oh really. As if this is what my country needed - a bunch of armed foreign mercenaires to come and solve our problems. Get out of here, before I solve YOUR problems in the most final way possible.
+		Grizzly: That's some tough talk. Let's see if you can back it up.
+		Wolf: For the record, I don't actually care about setting things right.
+		Omryn: Sounds nice. Now you make Omryn want to take nap.
+[Keyword: We are here to kick your ass]
+	Pierre: Bring it on! Let's see what you dogs on a leash can do in battle.
+		Thor: I like that positive attitude, but I think you need to focus on being CONstructive instead of DEstructive, okay?
+		Fox: Excuse me! I am NOT a dog.
+		Barry: There is no need for name-calling. It is like no one wants to be polite these days.
+[Keyword: We are here to join the Legion]
+	Pierre: You? You wish to be... Legionnaires? Ha. Well, perhaps you know a winning side when you see one.
+		Livewire: Totally! It's not technically losing when you swap sides, right?
+		Fidel: Wait, Fidel is confused. Now we go kill Emma or what?
+		Fox: Well, I'll have to look at your benefits plan first, but in terms of compensation - I'm flexible. Very flexible.
+	Pierre: Very well. To show me your worth I want you to do what my soldiers failed to achieve. Place the <em>flag</em> of the Legion on <em>Flag Hill</em> and you will be welcome in our forteresse.

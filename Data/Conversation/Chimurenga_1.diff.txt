@@ -1,0 +1,341 @@
+[Keyword: Greeting]
+	Chimurenga: Grand Chien has changed. I see it in the intel reports. I feel it in my bones. I smell it on the wind.
+		Red: Sorry lad, that's just me. Gassy as all hell today.
+		PierreMerc: Yes, Grand Chien is changing. But to what... I am no longer sure.
+		Thor: You must have a very sensitive soul. It's reaching out. That's great!
+	Chimurenga: There is no one that lives who still remembers the old Resistance. No one but me. And I'm tired of fighting. I'm thinking that the time has come for the Savanna Lion to <em>step down</em>.
+		Len: Yeah, I know what you mean. I'm also not as young as I used to be. 
+		Gus: It's no use, Woodrow. They'll just pull you right back.
+		Red: There's no bloody point. You stop moving, you die. Of course, if you move forward, you die that way, too. Either way, yer fucked!
+	[Keyword: What about your Maquis?]
+		Chimurenga: My Maquis are nice boys and girls. They are good at following orders, but there is not one visionary among them. The Revolution needs a leader with vision, otherwise it becomes a monster that eats its own children.
+			Sidney: Revolutions have a nasty habit of burning out or burning up. The flames rarely are concerned about who is consumed.
+			Ivan: Leader with vision бывает even bigger монстр.
+			Kalyna: Child-eating monsters? Yuck! Those are the worst.
+			DrQ: Indeed. Revolution simply means change. Change without vision is chaos.
+			Smiley: I do not know about vision, but I know about revolution. It is best done when there is a common problem to solve, like trying to depose a deranged psychopath who likes to run over babies with her tanks.
+			Grizzly: You guys should really consider democracy. You get to have mini-revolutions every few years and hardly anybody dies.
+	[Keyword: Who will succeed you?]
+		Chimurenga: You. I have watched you closely. I see what you are doing and I already know it: you will bring the change that Grand Chien needs.
+			Steroid: What? We are no Commies.
+			Gus: Ya'll trust us with that, Woody?!
+			Grizzly: You're pulling my leg, Chimichanga. I'd rather be dead than red.
+		Chimurenga: You have proven to me that you care about our life, our struggle, our pride. You know about our problems and you have the strength to solve them. Whatever power I have, I give it to you, to help you. Do not disappoint me.
+			Ivan: Вот это настоящий командир!
+			Gus: A Commie giving instead of taking... This world must be going crazy.
+			Len: I've never met a reasonable Commie in my life. You're the first and probably the only one.
+			Sidney: I'm certainly impressed.
+			Fidel: Let's make ourselves a revolution!
+			Igor: This is great honor.
+			Vicki: You no fooling around? You serious? Aieee... All right, mon. We do our best.
+			Nails: I ain't wearing no damn beret.
+		Chimurenga: I give you <em>Fosse Noire</em> and the command over my Maquis. As for me... I guess it is time to go and see the world.
+	[Keyword: Don't you have a family?]
+		Chimurenga: No. The Revolution was always my bride and the Maquis were my children.
+	[Keyword: How about Maman Liliane?]
+		Chimurenga: Hmmm... She's been trying to get me to retire for years. <em>Liliane</em> is a good woman and I... Well, as the Maquis leader I needed to remain devoted to the cause. I do not object to her profession, but I could never risk the distraction.
+			Fox: All work and no play makes for a very dull revolution if you ask me.
+			PierreMerc: That is... very noble of you. I did not expect that.
+			Scully: Yeah, mate, I gotta tell you - I heard all the words you just said, but they didn't make a lick of sense to me.
+			Larry_Clean: Hey man, I get it. You have to stay away from enablers.
+		Chimurenga: But now that I have found fresh leadership for the Maquis, perhaps I can allow myself a bit of personal happiness. So, what do you think? Will she have me?
+		[Keyword: You will make her happy!]
+				Fox: You bet! You're a nice looking man and a real gentleman on top of that. If I was her, I'd say "yes" before you even started!
+				Scope: Don't worry, love. She's all yours, you just have to ask her.
+				Raven: You're both fierce. You're both leaders. I think we're looking at a power couple here.
+		[Keyword: She needs a man like you]
+				Fox: Somewhere deep inside every woman is a scared little girl. Trust me - having the Savanna Lion by her side is going to make that little girl jump for joy.
+				Fox: Somewhere deep inside every woman is a scared little girl. Trust me - having the Savanna Lion by her side is going to make that little girl jump for joy.
+				Meltdown: That's utter bullshit and if you ever say that again I will beat you until there is nothing left but a scared little girl.
+				Fox: See? That's the scared little girl talking.
+				Meltdown: Shut. Up.
+				Raider: You'll do alright. She needs a real man who's not afraid to take charge when she needs to take a break from being strong all the time.
+				Raider: You'll do alright. She needs a real man who's not afraid to take charge when she needs to take a break from being strong all the time.
+				Raven: Ron, you better shut that pretty mouth of yours or I'm going to start kissing it.
+				Raider: Well, now I'm feeling conflicted.
+				Wolf: Don't let a good woman slip through your hands just because you're afraid of what comes next, chief. You get your ass over there and grab her.
+				Fauda: She is not the type of woman who needs a man to take care of her. Yet, she needs you. That should tell you something.
+		[Keyword: Redirect]
+			Chimurenga: I have seen so many battles in my life, and I was never as nervous before a fight as I am now. But I will trust you and I will talk to Liliane.
+				Magic: My man!
+				Raider: It is never too late to talk to the woman you like. You will start a new life. You'll see.
+				Hitman: Show her the beast, Ace! You're the freakin' Savanna Lion!
+				Raven: You'll do fine! She likes you a lot.
+				Grunty: Just make sure you have adequate foot powder. If you are like me, sweaty feet have been a problem on dates.
+				Tex: This best part of script. Hero accepts challenge!
+			Chimurenga: I'll ask her. And you know what? I won't need the <em>Lion's Roar</em> where I'm heading. Here, take it. Let its voice terrify the enemies of the People. Now, wish me luck, comrade!
+				Scope: Good luck, love, but you really don't need it. You'll see.
+				Larry_Clean: Good luck! Stay clean! I mean... oh gosh. Best wishes!
+				Steroid: She will not know what hit her. Wait... Do not hit her!
+	[Keyword: Safe travels!]
+		Chimurenga: Good luck to you. Farewell!
+[Keyword: Greeting]
+	Chimurenga: Thank you, comrade Mercenaires, for liberating my brave <em>Maquis</em>! Let me hug you and kiss you for that!
+		Ivan: Конечно, товарищ.
+		Mouse: Oh, um... Sorry. Cold sore. Really bad one.
+		Fox: French kiss or a normal kiss?
+		Chimurenga: Communists kiss on both cheeks and the mouth.
+		Fox: Oh, okay! So, where are the other two guys?
+		Chimurenga: Er... Maybe I just kiss you on the cheek for now.
+		Ice: Nah, I'm good.
+		Grizzly: Sorry, Chimichanga. You gotta buy me dinner first if you want that kind of action.
+		Igor: Ah! Your breath smells of vodka. Let me kiss you again.
+	Chimurenga: As a reward, I offer you the greatest gift of them all - the friendship between our people!
+		Red: Well, if that isn't everything I ever wanted. I feel all warm and fuzzy-like.
+		Grunty: Friendship is indeed the most precious gift one can give... except possibly a rocket launcher.
+		Thor: This... This is so wonderful!
+		Larry: That's right, man! This is lit! Friendship is MAGIC!!!
+		Larry_Clean: We almost died because of your bullshit, man. And all you have to offer is "friendship".
+		Gus: Got to tell ya, Woody, I kinda prefer the Capitalist way of expressing gratitude.
+[Keyword: Greeting]
+	Chimurenga: Thank you for helping us, and please forgive me for this little deceit. I am aware you are not the same group as <em>les Mercenaires</em> of <em>Biff Apscott</em>, but my people needed some reassurance.
+	[Keyword: We don’t mind, comrade]
+			Ivan: Всё в порядке. People need faith in command.
+			Igor: We are all brothers in one great family!
+			Shadow: I've been known to use a little deception myself.
+		Chimurenga: I see we have much in common.
+			Steroid: You don't see much.
+			Red: You should maybe get your eyes checked, lad.
+			Fauda: Yes. Mainly enemies, but it is enough.
+	[Keyword: You are deceiving your troops]
+		Chimurenga: It is the unfortunate necessity of any government. People want to hear something that makes sense to them. The truth is not for everyone.
+			Ivan: Конечно.
+			Gus: Yeah, you Commies just love this shit.
+			Chimurenga: You Americans are not much different.
+			Kalyna: It's true! Most people just want a good story. The problem with the truth is there isn't any end to it. It just keeps going. A story has a nice neat ending, usually a happy one.
+			Chimurenga: You have uncommon wisdom for one so young.
+			Kalyna: I read a lot.
+	[Keyword: We would have attacked the Legion anyway]
+		Chimurenga: Yes, but now the friends of the Revolution will see you as heroes for doing that!
+			Fidel: Fidel does not just kill people and have fun! Fidel is a hero! When will they go and make Fidel a statue?
+			Shadow: If I see even one poster with my face on it looking bravely into the middle distance, you and I are gonna have words.
+			Chimurenga: Uh... Of course, my friend, of course! I would never allow that to happen.
+			Tex: Maybe you put me on poster? Look, I make hero pose.
+[Keyword: Greeting]
+	Chimurenga: I heard about what you did at the <em>Refugee Camp</em>, comrades. I'm sure you had your reasons. We Maquis will support you, even if others have betrayed you.
+	[Keyword: We didn’t do it!]
+			Scully: Don't believe everything you hear, mate.
+			Gus: It's fake news, Woodward. We're being set up.
+			Raider: We're innocent until proven guilty, and there is zero evidence. We didn't do it.
+			Spike: We got stabbed in the back - multiple times, in fact. Whoever did that, it wasn't us.
+		Chimurenga: Someone is making you out to be the villain, is that it? I've been a victim of that myself in the past. Regardless, I know your worth and we will remain by your side.
+	[Keyword: We didn’t do it!]
+			Flay: If I had been there, I would have left my mark.
+			Scope: We would never have done such a horrible thing!
+			Larry_Clean: We're being set up, man! You gotta believe me!
+		Chimurenga: If you say so. You don't have to explain your operations to me, comrades.
+	[Keyword: Thank you, comrade]
+		Chimurenga: I'm sure you have a plan for how to handle the situation. I don't expect you to share it with me. The less I know, the better.
+	[Keyword: It is all part of our plan]
+		Chimurenga: I have seen you operate. You are as cunning as a fox, comrades. I'll be watching to see your next move.
+			Fox: We're as foxy as it gets.
+			Livewire: Honestly, you should not watch too closely. Maintaining plausible deniability might be better for you.
+			Magic: I'm thinking we need to pull a rabbit out of a hat - a rabbit riding a main battle tank.
+			Chimurenga: Ha! Now that is a trick you will have to teach me.
+[Keyword: Greeting]
+	Chimurenga: Greetings, comrade Mercenaires!
+[Keyword: Greeting]
+	Chimurenga: Good day, Mercenaires.
+[Keyword: Who are you?]
+	Chimurenga: They call me <em>Chimurenga</em>, the Savanna Lion. I am the leader of the People's Provisional Revolutionary Government. We are struggling to bring down the heartless capitalist government and lead the people of Grand Chien into a bright communist future!
+		Ivan: This is the plan каждый раз.
+		Igor: Cheburashka, hahaha. Good name.
+		Chimurenga: It is pronounced Chimurenga.
+		Igor: Chunga-Changa, whatever.
+		Steroid: Communist dumb speaking!
+		Grizzly: I've heard it all before Chimichanga. There's no bright future under communism. It's just a big lie.
+		Chimurenga: Chimurenga. It is pronounced Chimurenga.
+		Grizzly: Doesn't matter how you pronounce it or what you call it - socialism, collectivism, welfare - it's all the same system of control. 
+		Chimurenga: No, I meant... Never mind.
+		Kalyna: And I thought I was the one who believed in fairy tales.
+		Omryn: This kind of talk give me stomach ache.
+	Chimurenga: But the truth is, our <em>Revolution</em> falters. The USSR fell and everyone says "why do it again"? To the young fighters, the <em>Legion</em> capitalists with their policy of free looting and pillaging are more attractive than communism.
+		Steroid: They are more real Commies than your Commies, ha-ha.
+		Gus: You can always say "but it wasn't real communism" and call it a day, heh.
+		Chimurenga: You think I haven't tried to explain how the USSR was built on Stalin's paranoia and not actually on the theories of Marx or Engels? The youth have no patience for nuanced debate.
+		Shadow: Sounds like you're just not as good at redistributing wealth as the Legion.
+		Grunty: You should be the Fun Communist Party. Organize things like Workers' Karaoke Nights and ice cream socials. Wear festive hats. That sort of thing.
+		Reaper: You should remind them that joining the Legion will only result in their tragic and premature death.
+		Red: Damn kids with their looting and pillaging...
+[Keyword: Why are you fighting the Legion?]
+	Chimurenga: Before we can take over the corrupt government, we need to seize the means of production - namely, the <em>diamond mines</em>. Those capitalists dig diamonds that belong to the People of Grand Chien!
+		Ivan: Они тоже проклятые капиталисты.
+		Buns: And the People need you to take care of the diamonds, no?
+		Chimurenga: The People rarely know what is good for them.
+		Scully: So, your plan is to distribute diamonds to all the people in Grand Chien?
+		Chimurenga: My plan is to keep the diamonds out of the hands of fascists and capitalists!
+		Vicki: Good luck with that one, mon. Capitalists really love their diamonds.
+[Keyword: We also want those mines]
+	Chimurenga: But of course I understand this. You are the enemy of my enemy and you will have need of diamonds. As long as you do not take <em>Fosse Noire</em> away from me, I will have no problem with you.
+[Keyword: Tell us about M.E.R.C.]
+	Chimurenga: Our <em>Mercenaires</em> comrades made a spectacular appearance during the <em>Carnival</em> celebrations, just before we attacked <em>Diamond Red</em> together.
+		Gus: They were "your" comrades?!
+		Len: Mercenary comrades, huh? What the hell is Biff up to?
+		Omryn: Sound like story time. I get snack.
+[Keyword: Tell us about M.E.R.C.]
+	[Keyword: Carnival celebrations?]
+		Chimurenga: Yes. There is a great Carnival celebration in town each year organized by <em>Maman Liliane</em> and her working girls.
+			Gus: Greatest working class heroes, eh, Woody?
+			Larry_Clean: That sounds like a wild party, man. Good thing I missed it, otherwise I'd have been... Oh, wait. Damn.
+			Barry: I suppose there is too much hope I have for such girls giving up lives of sin for Lent?
+			Smiley: Such a wonderful night!
+		Chimurenga: <em>Les Mercenaires</em> comrades appeared that night under cover, trying to move through the crowd unnoticed. But it was a party and they were stumbling around like clowns, so I knew they were doing it just to entertain us. We had a good laugh.
+			Vicki: I wouldn't be so sure, mon.
+			Grunty: Clowns? What type of clowns? Did they have big shoes?
+			Chimurenga: I... I don't think so.
+			Grunty: Hmmm. This is very interesting.
+			Shadow: Probably just trying to blend in. Doesn't sound like they succeeded.
+			Larry_Clean: I do remember a lot of laughing, but I think it was mostly me.
+			Smiley: Señor Apscott instructed us to blend in with our surroundings. I guess it worked?
+	[Keyword: What happened in Diamond Red?]
+		Chimurenga: Our <em>Mercenaires</em> comrades agreed to join our struggle against the enemies of Grand Chien!
+			Len: Which enemies exactly, I wonder?
+			Gus: They did what now, Woodstock?
+			Larry_Clean: Yeah, I kinda remember that.
+		Chimurenga: Together with my Maquis, they used the <em>Carnival</em> celebrations as a distraction while they went to attack <em>Diamond Red</em>. Alas, something went wrong and they failed.
+			Larry_Clean: Your idiot Maquis lead us right into a trap, man, that's what happened! We thought we had the damn Legion in front of us!
+			Larry: Yeah! They had laser raptors and we did not! It just wasn't fair.
+			Gus: What a surprise.
+			Meltdown: Yeah. The thing that went wrong was Biff Fucking Apscott.
+	[Keyword: Where is M.E.R.C. now?]
+		Chimurenga: I have reason to believe that <em>les Mercenaires</em> and some of my fighters were <em>captured</em> alive. But I can't spare the force needed to liberate them - you saw how ferocious the counterattack of the Legion was.
+			Larry: It is preferable to be captured alive. I'd be really pissed if they captured me dead.
+			Larry_Clean: Yeah... I got captured, all right. Good thing I was tripping balls or I'd be pissed, man.
+			Igor: Don't worry, Cheburashka, we will save everyone and you will give us a medal.
+			Chimurenga: Chimurenga.
+			Grizzly: Don't you worry, Chimichanga. We'll get your people out of there.
+			Chimurenga: It's Chimurenga.
+			Grizzly: Sorry, but I don't really care what you natives call it. We'll get your guys back safe and sound.
+	[Keyword: What exactly happened in Diamond Red?]
+		Chimurenga: My Maquis and your <em>M.E.R.C.</em> comrades joined their effort against the rotten <em>capitalist forces</em> in Diamond Red. But the capitalists from <em>la Legion</em> had the very same idea and treacherously attacked our forces from behind.
+			Gus: "Capitalist forces", Woody?
+			Larry_Clean: I don't know, man. Maybe if your idiot Maquis didn't lie to us...?
+			Larry: They appeared in our back riding laser raptors! It all happened so fast!
+			PierreMerc: Treacherous. Such an interesting word.
+			Sidney: That was impressively well-timed on their part. Very curious.
+			Grunty: The Legion being able to orchestrate such a maneuver is a very worrying thought.
+		Chimurenga: However, while my Maquis fell into captivity as the Legion conquered the mine, your mercenary friends did better. Thanks to their superior commander and utter professionalism, they managed to <em>retreat</em>.
+			Buns: They surely are very professional when it comes to retreating.
+			Larry: Except for me! I continued fighting and I shot no less than three laser raptors!
+			Larry_Clean: It's so easy to get turned around when everything is spinning.
+			Len: That's a hell of an after-action report, sir. Thank you.
+			Gus: Superior commander? I know this place is a bit backwards, Woody, but I didn't expect it to be upside down.
+			Meltdown: You sure you ain't kissing Apscott's ass too much?
+			Chimurenga: Biff Apscott is a hero who wants to leave a kind and generous mark upon the world!
+			Meltdown: Kind and generous skid mark, maybe.
+	[Keyword: Wasn't the mine held by the Legion?]
+		Chimurenga: Well, back at the time it was held by <em>Grand Chien</em> troops. We had to... deceive your comrades a little bit. I believe you will understand - we needed their military support to take <em>Diamond Red</em>.
+			Len: You told Biff they will be fighting the Legion, then the real Legion hit them from behind?
+			Larry_Clean: You just wanted that big diamond, man - and all the diamonds everywhere... probably. Anyway, I'm happy you won't get it.
+			Barry: This is a most terrible thing. You should have shame.
+			Larry: You didn't fool me! I saw right through your machinations as clear as I see this green rabbit on your shoulder.
+			Steroid: You lying Commies!
+			Grunty: Mother taught me that lying is very bad, unless it is to an enemy. Did you think M.E.R.C. was an enemy?
+			Chimurenga: No! They are heroes! I used them as expendable assets to accomplish my goal, yes, but they are still heroes.
+			Grunty: Hmmm. Yes, that is the one exception to Mother's rule.
+			Smiley: Señor Apscott trusted you!
+			Grizzly: Never trust a Commie.
+			Tex: That was a low-down, dirty trick!
+		Chimurenga: Sometimes the Revolution requires sacrificing a small portion of the truth.
+			Ivan: Это понятно.
+			Gus: Your revolution is horsecrap.
+			Raven: So much for high ideals, huh?
+	[Keyword: We didn’t find M.E.R.C. in Diamond Red]
+		Chimurenga: I am sorry to hear that. I need to see one of your comrades as well... It seems they <em>took something from us</em>.
+			Gus: Ah, now they are "our" comrades, huh?
+			Magic: I hope they did. Seems to me like you owe them.
+			Wolf: They tried to help you out. Maybe you should call it even?
+		Chimurenga: During the battle for Diamond Red, one of my elite fighters was able to retrieve an exquisite <em>green diamond</em> from the mine.
+			Ivan: Elite fighter? Sound more like idiot fighter.
+			Larry_Clean: Oh, I remember! When they pinned us down, I saw this guy leave his position and instead of covering us, he ran over to the main building. And I thought to myself - ah, what an elite fighter!
+			Scope: Let me get this straight. Instead of fighting, your man was looting?
+			Chimurenga: I prefer to see it as making the best of a bad situation.
+			Red: And I hope the damned fool got a bullet in his arse!
+			Chimurenga: He did. He died.
+			Red: Well... Good!
+		Chimurenga: I am told he trusted it to your comrades and made them swear as he died in their arms to bring the <em>diamond</em> to me. I hope they have a good reason for not doing so.
+			Larry_Clean: Yeah, man, it's outrageous. What about me?! I got a bunch of cheap drugs and no diamond at all.
+			Larry: We'll help you retrieve it, man. You have my gun! And my crowbar! And my booby-trapped teddy bear!
+	[Keyword: Where do you think M.E.R.C. went?]
+		Chimurenga: One of them was taken prisoner - they transferred him to <em>Camp Savane</em>. I don't know about the main group, but if were in their shoes, I would retreat to the <em>Highlands</em>.
+			Larry: Hello! Is it me you're looking for?
+			Chimurenga: Glad to see you survived, my friend.
+			Larry_Clean: I have a name, man! Now that I can remember it.
+			Chimurenga: Glad to see you survived, my friend.
+			Gus: I hope you're not bamboozling us this time, Woody.
+		Chimurenga: I trust you to find them, and I want the <em>green diamond</em> back. It belongs to the People.
+			Gus: Yeah... I even know the People by name.
+[Keyword: How can we help the Revolution?]
+		Ivan: We can lend hand, товарищ.
+		Igor: Maybe you give commendation for help growing Revolution?
+		Livewire: I think you are some of the nicest people I have met so far. Do you need anything stolen, er, procured?
+		Scully: I suppose you blokes aren't all bad. You need any help with your little Revolution?
+	Chimurenga: I know you have your own mission. But if you want to be comrades of the Revolution, there is another thing you can do for us. Take these pamphlets with the <em>Maquis Manifesto</em> and let them reach everyone you talk to. The People must learn of our struggle!
+		Buns: Especially about your struggle with grammar, as I happen to notice while I'm reading it.
+		Scully: Sounds like a great way to meet new people.
+		Steroid: This is very unapproving!
+	[Keyword: Alright, why not]
+		Chimurenga: Spread the word and let the world know we stand united as comrades!
+			Gus: Whoa, whoa, whoa, let's not overdo it, Woody.
+			Steroid: I didn't never not approve of this!...
+			Larry: May I illustrate them? I've got my crayons!
+			Chimurenga: Um... No.
+			Smiley: This is a good idea. I will make sure this is put in the hands of every girl in town!
+			Grizzly: I wouldn't go that far, Chimichanga, but I guess there's no harm in letting people make up their own minds about your little Revolution.
+			Ice: Whoa... Did I just join a gang?
+	[Keyword: Rather not]
+		Chimurenga: I see I cannot consider you as my comrades. This is fine.
+			Steroid: I am in deep pity for that!
+			Gus: Cry me a river, Woody.
+			Grizzly: Sorry, Chimichanga. Uncle Sam would never forgive me.
+[Keyword: Maman has this idea…]
+	Chimurenga: You want to do... WHAT?! Out of the question. The Maquis Manifesto can't be associated with some brothel!
+	[Keyword: This is how you reach the masses]
+			Fauda: People will see that the Revolution cares about their... needs.
+			Kalyna: Your manifesto is a little dry. It could use some... uh, juice.
+			Livewire: Pretty pictures are a great way to keep people distracted!
+			Reaper: Like sheep to the shepherd, they will come... That may have been an awkward metaphor for this situation.
+		Chimurenga: You think? I guess the masses need their opium in one form or another.
+			Gus: Well, both the Commies and the whores will screw them. At least the girls know their business.
+			Chimurenga: The Revolution is no business! We shall unite the Proletariat and lead them to a bright future!
+			Fox: They are dubbed "working girls", hence they are part of the Proletariat and the masses.
+			Igor: It is either that, or we add pictures of Gena the Crocodile.
+		Chimurenga: Alright, I agree to this historic compromise.
+	[Keyword: Dress the girls like Maquis!]
+			Fox: You could ask the girls to wear cute little berets!
+			Livewire: You could ask the ladies to pose with hammers and sickles.
+			Magic: I bet those girls got some real nice communist-red lingerie they could wear.
+		Chimurenga: You think that would look appropriate? Hmm. Well, I suppose if they behave for the photo and we dress them properly...
+			Fox: You better undress them properly.
+		Chimurenga: Alright, I agree. Just make sure you deliver the pamphlets.
+	[Keyword: Whatever]
+		Chimurenga: Now stop joking around and do what you promised. Let those pamphlets get to the People!
+[Keyword: About the Clinic…]
+	Chimurenga: We sorely need that clinic, but my answer remains "no." Healthcare should be free for everyone, especially for my freedom fighters.
+	[Keyword: You need to reconsider… comrade]
+			Igor: Come on, comrade Cheburashka!
+			Chimurenga: You are starting to get on my nerves.
+			Grizzly: Come on, Chimichanga, quit being an old grump.
+			MD: What better way to make new comrades than to share the same healthcare everyone else uses?
+		Chimurenga: Alright, I owe you a favor. Let it be as he requires. My Maquis will have to pay for medical service.
+			Gus: Seems like the taint of Capitalism is all over you, Woody! Will you ever wash the stain, eh? He-he.
+			Grizzly: You're all right in my book, Chimichanga!
+			Chimurenga: Please... Just call me "comrade".
+			Grizzly: Nonsense! We're on a first name basis here!
+			Steroid: Yes! You WILL pay!
+	[Keyword: Ask them to pay for protection!]
+			Livewire: Easy-peasy, grandpa! Ask them for payment for protection or something and then subtract - and boom! Free healthcare!
+			Magic: You just stroll down there and say: "Real nice clinic you got here. Be a shame if something were to happen to it." Ya dig?
+			Fox: I'm sure they'd be happy to pay a big, strong man like you to protect them.
+		Chimurenga: What do you mean? We pay them for medical service and... then they pay us back for protecting them? Hmm, this may work. It helps me to save face.
+			Gus: Welcome to Capitalism, Woody! Hope it doesn't hurt much.
+[Keyword: What do you think of Maman Liliane?]
+	Chimurenga: She is a very brave and beautiful woman. Perhaps in another life... Alas, the Revolution is my bride and the Maquis are my children.
+		Fox: You like her, you naughty old man!
+		Chimurenga: I thought I was better at keeping secrets.
+		Fox: You can't fool a woman about such things.
+		Raven: It doesn't have to always be like that.
+		Scully: Crikey... And here I thought I had a lot of kids.
+	Chimurenga: Maybe one day, if I ever retire... But let's not talk of that. My feelings for Liliane and the Revolution are two separate things.
+[Keyword: Goodbye]
+	Chimurenga: Good luck in your struggle!

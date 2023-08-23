@@ -1,0 +1,97 @@
+# ApplyModOptions
+
+
+function OnMsg.**ApplyModOptions**(mod_id)
+: fired when the user applies changes to their mod options.
+
+
+# ApplyModOptions
+
+
+function OnMsg.**ApplyModOptions**(mod_id)
+: fired when the user applies changes to their mod options.
+
+
+# ChangeMap
+
+
+function OnMsg.**ChangeMap**()
+: message fired when a new map loading begins
+
+
+# ClassesBuilt
+
+
+function OnMsg.**ClassesBuilt**()
+: use this message to perform post-built actions on the final classes
+
+
+# ClassesGenerate
+
+
+function OnMsg.**ClassesGenerate**()
+: use this message to mess with the classdefs (before classes are built)
+
+
+# ClassesPostprocess
+
+
+function OnMsg.**ClassesPostprocess**()
+: use this message to make modifications to the built classes (before they are declared final)
+
+
+# ClassesPreprocess
+
+
+function OnMsg.**ClassesPreprocess**()
+: use this message to do some processing to the already final classdefs (still before classes are built)
+
+
+# LoadGame
+
+
+function OnMsg.**LoadGame**( metadata, version )
+: fired after a game has been loaded.
+
+
+# NewMapLoaded
+
+
+function OnMsg.**NewMapLoaded**()
+: fired after a new map has been loaded
+
+
+# PostLoadGame
+
+
+function OnMsg.**PostLoadGame**( metadata, version )
+: fired after LoadGame and with fixups. The loaded game is ready to run (e.g. UI can update).
+
+
+# PreLoadGame
+
+
+function OnMsg.**PreLoadGame**( metadata )
+: fired before a game is loaded.
+
+
+# SaveGameStart
+
+
+function OnMsg.**SaveGameStart**()
+: fired before the game is saved.
+
+
+# SelectedObjChange
+
+
+function OnMsg.**SelectedObjChange**(object, previous)
+: fired when the user changes the selected object.
+
+
+
+
+
+(insert footer.md.html here)
+<link rel="stylesheet" type="text/css" href="Style.css" />
+<!-- Markdeep: --><style class="fallback">body{visibility:hidden;white-space:pre;font-family:monospace}</style><script src="markdeep.min.js" charset="utf-8"></script><script>window.alreadyProcessedMarkdeep||(document.body.style.visibility="visible")</script>

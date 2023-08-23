@@ -1,0 +1,39 @@
+[Keyword: Greeting]
+	CorazonSantiago: I'm glad you're here. I have some information that might prove useful to you...
+	CorazonSantiago: It's a bit embarrassing, so I would appreciate it if what we discuss here doesn't leave this room.
+	CorazonSantiago: Before bringing you in, Adonis had contracted <em>another team</em> of mercenaries - not to secure the diamond mines, but for a different reason. Theirs was a more... clandestine mission.
+		Len: Sometimes you get what you pay for.
+		CorazonSantiago: Unfortunately that seems to be the case here.
+	[Keyword: Another team?]
+		CorazonSantiago: Yes, we hired a team from <em>M.E.R.C.</em> I assume you're familiar with them. 
+		CorazonSantiago: Their primary objective was to eliminate the leader of the Legion himself - "<em>The Major</em>". At the time, we thought he was a more manageable threat than he's proven to be.
+		CorazonSantiago: Needless to say, it appears they weren't successful. They went missing and by all accounts the Major is still very much alive.
+		CorazonSantiago: I don't want to distract you from securing the diamond mines, but if you happen to find out what happened to the M.E.R.C. team, I would appreciate it if you notified me immediately.
+		[Keyword: M.E.R.C.?]
+			CorazonSantiago: We haven't heard from <em>Biff Apscott</em>, the M.E.R.C. team's leader, since they left Ernie Island.
+			CorazonSantiago: I know they only spent a little time on the island before heading to the mainland. I lost contact with them shortly after they landed. I'm sure the locals can tell you more, Biff and his team were not exactly... low profile, shall we say?
+		[Keyword: The Major?]
+			CorazonSantiago: Much about this man still remains a mystery, but we know he's as dependent on the diamond mines as we are. Securing the mines will no doubt force him into the open where we'll stand a good chance to eliminate him.
+		[Keyword: Diamond mines?]
+			CorazonSantiago: Obviously securing the mines is our top priority and the reason we've structured our deal with you so that you'll receive a share of the proceeds from each mine. However, the fate of Apscott and his team is a matter I would personally reward you for investigating.
+			CorazonSantiago: If you find any of them, let me know as soon as you are able.
+		[Keyword: Goodbye]
+			CorazonSantiago: I hope to hear some news from you soon.
+[Keyword: Greeting]
+	CorazonSantiago: I appreciate the fact that you have provided the locals with the means to defend themselves. I firmly believe this will contribute to a more peaceful work environment.
+[Keyword: Greeting]
+	CorazonSantiago: I don't understand your decision to recruit Pierre, but I do acknowledge your independence regarding these matters. As long as your new hire proves to be an asset, I see no problem.
+[Keyword: Greeting]
+	CorazonSantiago: Though personally I don't mind your involvement with the local penal system, I have to stress that as per contract, the Corporation is not liable for your actions, be it directly or indirectly.
+[Keyword: Greeting]
+	CorazonSantiago: I have enjoyed your flexibility while dealing with this local scoundrel - Herman. You have shown a real corporate spirit out there. Maybe when this is over, we should discuss your future in the Adonis administration.
+[Keyword: Greeting]
+	CorazonSantiago: It looks like you have gained the trust of the locals. Good job, this will facilitate a substantial <em>discount</em> on their services. As a note for the future, improving the loyalty of locals who live and work around diamond mines will increase each mine's <em>productivity</em>.
+[Keyword: Greeting]
+	CorazonSantiago: I like the way you dealt with this local warlord. This is the type of work I expect of you.
+[Keyword: Greeting]
+	CorazonSantiago: Yes?
+[Keyword: Tell us...]
+	CorazonSantiago: I'm sorry but I really don't have time for this. I think you know what you need to do.
+[Keyword: Goodbye]
+	CorazonSantiago: Goodbye and good luck.

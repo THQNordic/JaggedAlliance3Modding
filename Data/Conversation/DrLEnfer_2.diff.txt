@@ -1,0 +1,47 @@
+[Keyword: Greeting]
+	DrLEnfer: What is it, "officers"? I'm dying to learn who your suspect is. Or shall we resort to exorcism?
+[Keyword: Greeting]
+	DrLEnfer: Now, have you made up your mind already? Who is your <em>murderer</em>, "constables"?
+[Keyword: You did it]
+	DrLEnfer: Oh really? If I was as bad at doctoring as you are at investigating, I'd be running a morgue instead of a clinic.
+		Red: It would be a better match for your bedside manner, that's for certain!
+		Scope: It would certainly be a better match for your personality.
+		Tex: Sorry, old-timer. Time for frontier justice!
+	DrLEnfer: I hardly even need to ask, but what do my good neighbors think?
+[Keyword: Van Tassels did it]
+[Keyword: Le Domas did it]
+	DrLEnfer: I think you're not entirely wrong, but you could be multiplying the wrongs instead of subtracting.
+		Steroid: Math is hard!
+		Shadow: I swear, this guy's got a riddle for everything.
+		Fidel: Philosophy of Fidel is that many wrongs make right.
+	DrLEnfer: Well, what do my good neighbors have to say to these accusations?
+[Keyword: The Families were killing each other]
+	DrLEnfer: As a notorious pessimist, I confess to feeling a little disappointed. I expected you to be as shortsighted as my half-wit neighbors.
+		Fidel: Fidel is confused. You making fun of Fidel?
+		Nails: That's what you get for misunderestimating us.
+		MD: I had my shortsightedness corrected when I was in high school.
+		Igor: All Dolviches have superior shortsight. It is genetics.
+	DrLEnfer: I just hope you have enough evidence.
+		Raider: Oh yes, we nailed them.
+		Buns: Plenty - and it's all been properly bagged, labeled, and color-coded.
+		Sidney: My dear Dr. L'Enfer, of course I have evidence. I never guess. It is a shocking habit, destructive to the logical faculty.
+		DrLEnfer: Alright, Sherlock, keep your deerstalker hat on.
+		Gus: Doc, we got more evidence than the OJ trial. Wait, bad example.
+	DrLEnfer: Well, what do my good neighbors have to say to these accusations?
+[Keyword: The Families were killing each other]
+	DrLEnfer: As a notorious pessimist, I confess to feeling a little disappointed. I expected you to be as shortsighted as my half-wit neighbors.
+		Smiley: Oh, but we are at least twice as shortsighted as your neighbors! Perhaps even three times.
+		PierreMerc: They are pathetic and beneath my contempt. It would be a mercy to kill them.
+		Steroid: They do not lift. It is no wonder they are so small and unhappy.
+		Tex: No one has better shortsight than Tex Colburn! Sharpest shortsight in whole world.
+	DrLEnfer: I just hope you have enough evidence.
+		Hitman: Erm, yeah, sort of.
+		Reaper: I need no evidence, for the spirits of the dead speak tales of horror to my ear.
+		Fidel: Evidence? Who needs evidence when you got grenades?!
+		Larry: Yes! I even drew a detailed evidence map!
+		DrLEnfer: I see. The pink unicorn in the corner looks very suspicious. So...
+	DrLEnfer: Well, what do my good neighbors have to say to these accusations?
+[Keyword: It was the vengeful spirits]
+	DrLEnfer: Really. For the sake of what little faith in humanity I have left, I will assume you are joking. 
+[Keyword: We need more time to investigate]
+	DrLEnfer: How much more time? Good thing I already have my will written out - I'm starting to think I won't live to see the end of your "investigation".

@@ -1,0 +1,52 @@
+[Keyword: Greeting]
+	Herman: I don't know who you are, but I owe you my life!
+		Steroid: Then you must know you are saved by the mighty arms of Bobby Gontarski!
+		Thor: Then take your life back! Realize your potential!
+		Igor: I hope I get medal for this.
+	Herman: Now I got to go home. My wife <em>Martha</em> will be upset. I'll never hear the end of it...
+[Keyword: What’s this all about?]
+	Herman: The goddamned <em>Legion</em>!
+[Keyword: Are you the one that was kidnapped by the Legion?]
+	Herman: Yes... They said they will pay me, and now I see what they meant!
+[Keyword: What happened?]
+	Herman: They came into the village, taking what they please. But then that idiot <em>Tinhay</em> shot at them! They started beating people up and asking questions, so... I told them who did it.
+		Ice: You did what?! You squealed? Daaaamn.
+		Mouse: You snitched? Oh, that's not good. I've found it's always better to be a mouse than a rat.
+		Meltdown: Nobody likes a rat.
+	Herman: I thought they would just slap him around! How could I know they'd shoot him?! 
+		Raven: Sure. Hard to imagine armed criminals killing anyone.
+		Ice: Not cool, dude, not cool.
+		Tex: Desperados do not slap. They just shoot.
+	Herman: Then they brought me here and I thought I was a goner...
+	[Keyword: Tell us...]
+		Herman: I wish I could stay and chat, but I really should be getting back to <em>Martha</em>, my wife.
+	[Keyword: How about Deedee?]
+			Fox: Your wife has some questions about that girl <em>Deedee</em>.
+			Ice: Your old lady says you got a side piece named <em>Deedee</em> around here.
+			Kalyna: Your wife said there is an evil sorceress named <em>Deedee</em> who lives near here.
+		Herman: What about her? Oh, no! Don't tell me my wife is all worked up about that wacko again. She gave me a kiss ONE time when I let her borrow something from the store and Martha won't ever let me forget it. But it was nothing! I would never get anywhere near her blast radius... If you follow me.
+			Mouse: Ha, that girl is giving you more goose bumps than all of the bandits together!
+			Red: Now, she's a fine lassie.
+			Steroid: Crazy girls are bad. Crazy girls with bombs are... very, very bad.
+		Herman: She's plain crazy! And, um, I mean, that girl, not my wife. Definitely not my wife.
+			Fox: Honey, as long as you're sure, that's enough for me.
+			Ice: I hear ya, playah.
+			Raven: Riiiiiiight.
+	[Keyword: Goodbye]
+		Herman: Let's keep this thing about <em>Tinhay</em> between us, eh? Everyone in town would get the wrong idea.
+			Ice: What's to get wrong, dude? Ya sold out one of your peeps. Time to face the music.
+			Fox: And we totally shouldn't mention Deedee as well?
+			Herman: What? For the last time, I have nothing to do with her!... Oh Gott, what I have gotten myself into...
+			Omryn: I think there is only one idea here, unless I have miscounted.
+			Livewire: I completely know what you mean. People can be so judgemental.
+		Herman: See, I know you don't work for free, but I'll reward you when I'm back at my shop... I'll give you everything I've got, just please keep my little secret. Okay?
+		[Keyword: Okay, we won't tell]
+			Herman: Thank you! You've saved my life twice over. Come see me at my shop and I'll give you everything I have.
+				Ice: I like a little bling if I'm not gonna sing, know what I'm sayin'?
+				Meltdown: Your secret's safe with us, pal!
+				Mouse: Well, in that case, I'll be quiet as a... well, you know.
+		[Keyword: We can't promise]
+			Herman: Is there no end to my suffering? Please reconsider. They'll kill me! And if something happens to me, who will look after Martha?
+				Ice: No deal with a rat, dude.
+				Raider: I won't judge you, but it's only right that someone from your town should.
+				Buns: I'm fairly certain that dear Martha can look after herself.

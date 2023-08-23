@@ -1,0 +1,89 @@
+[Keyword: Greeting]
+	Pastor: Rejoice, my child! I have brought friends to help you.
+	SmileyNPC: Friends? What friends? I... I don't know these people. Who are you guys? My name is Alejandro Diaz, but most people call me <em>Smiley</em>.
+[Keyword: Greeting]
+	SmileyNPC: Um... Who are you guys? My name is Alejandro Diaz, but most people call me <em>Smiley</em>. Where is the pastor? He promised he'd give me asylum!
+[Keyword: Greeting]
+	SmileyNPC: What's the hold up? Let's go out and search for my girl already!
+[Keyword: So you are a merc?]
+	SmileyNPC: You bet I'm a merc! Trained by the legendary <em>Biff Apscott</em> himself!
+		Mouse: Biff? Legendary? Uh... sure. I'm sure you'll be every bit as legendary as he is someday.
+		Len: Biff is a... dependable merc. I know Colonel Roachburn liked him.
+		Meltdown: Legendary, my ass!
+		Nails: Oh, he's legendary, all right - a legendary prick.
+[Keyword: Where is Biff now?]
+	SmileyNPC: Umm... I don't know. I kinda got separated from the squad in Pantagruel when I met my fiancée <em>Mollie</em>. You should have seen how beautiful she was that night!
+		Scully: Oh, I hear that, mate! I never could resist chasin' after a Sheila, either.
+		Nails: You ditched your squad to chase a skirt? Hell, I don't know whether to shoot you or salute you.
+		Gus: Plenty of time for dames when the mission's over, rookie!
+	SmileyNPC: I guess that wasn't very professional of me, but... She is the love of my life! What else could I do?!
+[Keyword: What happened to you?]
+	SmileyNPC: Me and my fiancée, we went through so much together! We wanted to be married, so we came here to this backwater town.
+		Buns: It's "fiancée and I".
+		SmileyNPC: What? What about my fiancée and you?
+		Buns: No. It's just grammar.
+		SmileyNPC: It better be just grammar!
+		MD: Actually, it's "my fiancée and I".
+		SmileyNPC: You and your girl were there, too?
+		MD: What?
+		SmileyNPC: What?
+		Sidney: Terribly sorry. Don't mean to interrupt, but I believe you mean "my fiancée and I".
+		SmileyNPC: Oh, no, señor. I know nothing about you and your fiancée. I was just talking about Mollie and I.
+		Sidney: Mollie and me.
+		SmileyNPC: What about Mollie and you?
+		Sidney: You know what? Forget I said anything. Do go on.
+	SmileyNPC: Well, not long after we arrived someone recognized <em>Mollie</em> and he tried to take her from me! I shot him. I think I may have killed him!
+		Ivan: Молодец! That's how you do it!
+		Fidel: You did not check? That is why Fidel always shoots twice. Just to be sure.
+	SmileyNPC: The rest of his gang came for us, so we ran from the market and ended up here in La Boue. We hid for a little while, but <em>Mollie</em>... well, one day she disappeared.
+[Keyword: You’re in trouble]
+		Len: You are in deep trouble, son.
+	SmileyNPC: No shit! My fiancée <em>Mollie</em> is missing, the whole town is trying to kill me and I'm just hiding here, pissing in a bucket like a goddamn prisoner...
+		Len: That's what you get for not following orders, kid. Now stop complaining, man up and report!
+		SmileyNPC: Um... Sir, yes, sir! Situation is FUBAR, sir!
+		Gus: Pissing, moaning and crying over some dang girl! Get it together, junior!
+		Red: Lad, I dinnae mean to be harsh, but you're acting like a wanker.
+[Keyword: What happened to your fiancée?]
+	SmileyNPC: The day after we got here, <em>Mollie</em> insisted she go to the church to pray. I never saw her again! <em>Father Tooker</em> told me some masked men snatched her. He said he was sure she wouldn't be harmed, but that I would be if I went after them.
+		Vicki: Something be fishy about this whole story, mon.
+		Raider: I wonder how he knew that...
+	SmileyNPC: I've been crazy with worry, but now that you've found me, we can go on the offensive! If you help me get Mollie back, I promise I will do <em>mercenary work</em> for you for free!
+		Fauda: Good. We need someone to dig the latrine.
+		Kalyna: I've always wanted to rescue a princess!
+		SmileyNPC: Actually, she's a queen! The Carnival Queen!
+[Keyword: Mollie is with the Boss]
+	SmileyNPC: I knew it! I just knew it was him!
+[Keyword: Mollie was with the Boss]
+	SmileyNPC: I knew it! I just knew it was him!
+	SmileyNPC: The day after we got here, <em>Mollie</em> insisted she go to the church to pray. I never saw her again! <em>Father Tooker</em> told me some masked men snatched her. He said he was sure she wouldn't be harmed, but that I would be if I went after them.
+		Raven: Well, we took care of that little problem for you.
+	SmileyNPC: But now that you have killed the bastard, I can go and save my girl! I'll do anything for you, I will do <em>mercenary work</em> for free - just lead me to the love of my life!
+		Buns: Not on this squad you won't! But... I suppose we should help.
+[Keyword: Mollie is dead]
+	SmileyNPC: What?! How...
+		Raven: It was a stray bullet that was intended for the person who kidnapped her from you... We are deeply sorry.
+		Ivan: It was accident in battle... Так случилось, женщина ушла.
+		Meltdown: She got caught in the middle when the fur started to fly. Tough break, kid.
+		MD: Multiple gun shot wounds. Massive internal bleeding. She went into shock and... Oh. Maybe you meant "how" in a more general sense...
+	SmileyNPC: Why would you let her die! You are the mercs! I thought mercs don't make mistakes!
+		Len: I'm sorry, son. Not everything on the battlefield can be controlled.
+		Reaper: It was just her time. No one could have prevented it.
+		Fauda: Listen to me. I lost my brother in battle. You must turn your pain into a weapon.
+	SmileyNPC: I... I don't want to be a merc anymore... I want to go home.
+		Vicki: I think maybe that be for the best, mon.
+		Len: Maybe it's for the best.
+[Keyword: Read this Maquis Manifesto]
+	SmileyNPC: This is not the time for stupid Communist... Wait, is that <em>Mollie</em>?! A picture from the Carnival celebration! Damn, look how beautiful she is!
+		Hitman: Believe me, I've looked!
+		Flay: Je sais! I have regarded her picture quite closely while cleaning my rifle at night.
+		Nails: Hell of a pair of lungs on her. Bet she's a screamer, amiright?
+	SmileyNPC: Give me that! I shall keep it close to my heart!
+[Keyword: Read this Maquis Manifesto]
+	SmileyNPC: This is not the time for stupid Communist bullshit! They should have printed an advertisement for <em>Le Lys Rouge</em> instead.
+[Keyword: We’ll help you]
+	SmileyNPC: Thank you!
+[Keyword: We’ll see]
+	SmileyNPC: Don't worry, we can do it together! And even if they have returned Mollie to the brothel, I can steal her again!
+		Buns: When you put it that way, I am starting to think maybe helping you isn't such a good idea.
+		MD: That's the spirit! Wait... what?
+		Thor: While I admire your positivity, I am not quite sure it isn't misplaced.

@@ -1,0 +1,52 @@
+[Keyword: Greeting]
+	Martha: Well, look who it is - the mercenaries that got us kicked out of Ernie! Here to cause more trouble for us? Our lives are ruined and it's all your fault!
+	Herman: Umm... But, darling...
+	Martha: Don't you "darling" me, Herman! It's all your fault as well!
+	Herman: Yes, dear.
+[Keyword: Greeting]
+	Martha: You again! We are stuck in this hellhole because of you!
+[Keyword: Greeting]
+	Martha: What do you want? Are you here to mock us?!
+[Keyword: It was Herman's fault]
+	Martha: My Herman did what he had to do to save the town! Those people should have thanked us!
+	Herman: Yes, how could I have known they would kill...
+	Martha: Oh, just shut up, Herman. You SHOULD have known!
+	Herman: Of course, dear.
+[Keyword: How did you end up here?]
+	Martha: There was a man in <em>Fleatown</em> who promised us tickets to <em>Arulco</em>. Accommodations and a job opportunity included! He requested upfront payment and my gullible husband couldn't wait to agree!
+	Herman: But, honey, it was your idea...
+	Martha: You should have checked him out! I closed the deal because I assumed you verified he was legitimate! I should have known the only things you were paying attention to were the girls at the dock!
+	Herman: You told me to watch the luggage...
+	Martha: I won't listen to your excuses! Now we are stuck here with no money and no tickets, all because of you and these stupid mercenaries!
+[Keyword: We’ll help you with money]
+	Martha: Of course you will! That's exactly the kind of... Wait. Did you say you'd help us?
+	Herman: Really? You will help us out?
+	Martha: I... I don't know what to say...
+	Herman: Now that's something!
+	Martha: Shut up, Herman!...
+	Herman: Yes, darling.
+	Martha: Well, I suppose it's the least you could do after the mess you mercenaries made in Ernie. It's nice to know you're not completely incapable of doing the right thing. Come along, Herman.
+[Keyword: We can give you jobs in a mine]
+	Martha: A mine?! We're shopkeepers, not filthy hole diggers! After all we've been through...
+	Herman: Martha... Shut up.
+	Martha: WHAT?! I will not shut up and you are in no position to...
+	Herman: SHUT. UP. These people are giving us a second chance, can't you see? We can start a new life and make up for the mistakes of the past.
+	Martha: Well, you picked a fine time to grow a backbone! You'll need one for all the digging you'll be doing! Oh, Herman... What about Arulco?
+	Herman: Arulco can wait.
+	Herman: Thank you, mercenaries. We'll be happy to work for you. That is, I'll be happy to work and Martha will be happy to have a whole new set of things to complain about.
+[Keyword: We can give you jobs in a mine]
+	Martha: Was this your plan all along? First, you turn us into beggars and then you force us into slave labor? Sickening! It's almost enough to make me want to join those ridiculous Maquis communists!
+	Herman: Actually, I hear they do have a good health plan.
+[Keyword: Can’t help you]
+	Martha: Of course, you can't! Stick to your strengths - destroying peoples' lives and forcing them to rot in some god-forsaken refugee camp!
+[Keyword: Read this Maquis Manifesto]
+	Herman: No, thanks, we don't need any propaganda pamph... Oh, woah!
+	Martha: What is this? HERMAAAN?!? Why are you looking at those filthy pictures?! You have no shame, you pig!
+	Herman: But, darling, I was not looking at the pictures! I was interested in this nice pair of, um... political articles!
+	Martha: Give me that!
+[Keyword: Read this Maquis Manifesto]
+	Martha: Is that how you will make up for destroying our lives?! Fill our heads with communist propaganda?
+	Herman: Yes, we are not so easy to fool!
+	Martha: Shut up, Herman. Of all people, you are the easiest to fool.
+[Keyword: Goodbye]
+	Martha: Good riddance!

@@ -1,0 +1,140 @@
+[Keyword: Greeting]
+	DocRobert: Well, it looks like the cavalry's arrived! Come to check up on what's happening here? The name's <em>"Painless" Doc Robert</em>. Don't let the name fool ya. I can be a plenty big pain in the ass when I want to be, it's just not my specialty. HA!
+		DrQ: I too try to engage the matters at hand in the most painless way possible. But sometimes to relieve pain at one location, pain must be inflicted at another.
+		DocRobert: Let me guess: Acupuncturist?
+		DrQ: Among other things.
+		Reaper: Pain is nothing but a sign post pointing toward the final destination.
+		DocRobert: Charming. You must be a hit at parties.
+		Larry: I've got a pain that needs a little treatment. A little voyage dans la lune if you catch my drift. You think you can help me out, doc?
+		DocRobert: I know the perfect bullet for you, my boy. But sadly I'm all out of stock.
+	DocRobert: Anyways. What can I do for you, fellas?
+[Keyword: Greeting]
+	DocRobert: Well, well, if it isn't the wild bunch. What is it this time? Looking for meds or looking for trouble? What can Painless Doc Robert do for you?
+		Tex: We much better than Wild Bunch, partner. You see when I make movie about us!
+		Larry_Clean: I'm always looking for meds, but what I usually find is trouble.
+		Scope: We're always looking for trouble, love. It's in the job description.
+[Keyword: Greeting]
+	DocRobert: Hey, hey... the wild bunch is back in the game. I didn't expect to see you again.
+		Magic: Well, I didn't expect you'd see anything at all with those glasses. So I guess we were both fooled.
+		Shadow: Not my first choice, either.
+		Wolf: What can I say? I guess we just can't quit you, Doc.
+	[Keyword: What happened here? Why is everybody dead?]
+	[Keyword: Who are all these armed men?]
+	[Keyword: You're behind this, aren't you?]
+[Keyword: Redirect]
+	DocRobert: I'm afraid things took a different turn while you were gone. These fine gentlemen came here all the way from <em>Landsbach</em> to be our new hosts.
+		Meltdown: If those guys are gentlemen, then I'm a goddamn princess.
+		Omryn: New hosts? Like... dinner hosts?
+		Blood: I don't think "gentlemen" is the right word for them. I would describe them as "scuzzballs" or "people I may have to kill soon."
+	DocRobert: ...And my new disease hosts, though they don't know it yet. But as <em>Dr. Kronenberg</em> says - if you interfere with an experiment, you become the experiment!
+		Grizzly: That's sick, Doc.
+		MD: That's... awful! What is wrong with you!?
+		Grunty: That is horrible! Does your mother know what you do?
+	DocRobert: Speaking of interfering, I'm afraid your days of sticking your noses where they don't belong are over. Time for the wild bunch to meet their inevitable, bloody end. Guards!
+[Keyword: What's happening in this town?]
+	DocRobert: Oh, you know, the usual drill. Small fishing village where people's attitudes towards personal hygiene range from ambivalent to hostile. And now they are dying, surprise-surprise.
+		Fox: A filthy mind is one thing, but a filthy body is disgusting... Unless it's sweat - a nice, glistening sheen of sweat...
+		MD: Unsanitary conditions can easily lead to the rapid spread of disease. Do you suspect it's an epidemic?
+		DocRobert: An epidemic of filth and carelessness is about all I'm sure of right now.
+		Barry: I have field manual on hygiene if you need.
+		Grunty: If it would help, I can arrange an emergency delivery of soap and foot powder.
+		Buns: I made an instructional video on the importance of personal hygiene. It's called "Clean and Fresh for Success." I shall send you a copy.
+		DocRobert: I'll be counting the days until it gets here.
+		Thor: It sounds to me like these people need to reinvigorate their auras with a good colon cleanse. Here's what I like to do...
+		DocRobert: Please. Stop. Just write it down for me and I'll look it over later. Okay, Dr. Moonbeam?
+[Keyword: What is the cause of all these deaths?]
+	DocRobert: Natural causes not good enough for you, eh?
+		Reaper: Dying is as natural as living. The two of them are inseparable. Like two lovers swirling in an endless dance.
+		Gus: Dang, Woodstock, can't you talk straight?
+		Buns: We would like answers, not jokes, Doctor. Give us your expert medical opinion.
+	DocRobert: Just kidding. Well, if it's a disease it's not any one I'm aware of. No traces of poisoning, either. No contamination in the water. Now, you may have noticed that the locals are a little superstitious around here. They're simple-minded country folk.
+		Nails: Hey, man. I'm a little bit country myself.
+		Larry: If you saw the shit that I've seen you'd be superstitious too, man!
+		Omryn: A little superstition is good protection against calamity.
+	DocRobert: I, on the other hand, am a man of science. But God, or whoever is in his place, as my witness: I can't find a single scientific explanation for this carnival of death.
+		Thor: That is because science moves us away from nature. It is only by moving towards nature that we achieve enlightenment.
+		Fidel: Ooh! Dia de Los Muertos! This is Fidel's favorite holiday. I bring many gifts of death!
+		Steroid: I went to a carnival once and found out the strongman game was rigged. It did not start out as a carnival of death, but I made sure it ended that way!
+[Keyword: Can you provide medical aid?]
+	DocRobert: Sure, why not. I'm sure your mission is more important than mine. All these dying people can wait while I kiss your boo-boos.
+[Keyword: What can you tell us about Voodoo?]
+	DocRobert: Bunch of baloney, if you ask me, but don't take those crazy-ass pagans lightly. Those people are dangerous. You know, there's something fishy about that old witch <em>Wanda</em>. And I'm not just talking about her steady catch-of-the-day diet!
+		Omryn: This is good idea. We should investigate her food.
+		Tex: Ooh. A fish called Wanda. We should get autograph!
+		Flay: Fishing is to hunting as checkers is to chess.
+		Raven: Pagan Voodoo fishy witch lady? Okay. I'll just add her name to our list of bizarre and suspicious people... if there's room.
+		Kalyna: Perhaps we should throw water on her and see if she turns into a fish!
+		Nails: My old man used to go fishing with a gun, some twine, and a tarp. I never knew what he caught. He invited me along once. I didn't go.
+[Keyword: Tell us about the dead writer]
+	DocRobert: My friend <em>Roger Wilcox</em>, right there on the autopsy table. Go ahead and ask him anything you like. You'll find he's very open.
+		Flay: That is a very good joke. I will have to remember it.
+		MD: Why do coroners always have such a sick sense of humor?
+		Barry: You're not capable of any humility, are you doctor?
+		Mouse: How did he die? Was it the disease?
+		Raider: Have you been able to establish a link to the other recent deaths?
+		Steroid: Hello? Dead person? Can you hear me? Hmmm. I think he is asleep.
+	DocRobert: He came here to write a book that I was sure no one would ever read. And now it has turned out to be a scientific fact! He died just as elegantly as the other ones.
+[Keyword: Any more details about the dead writer?]
+	DocRobert: Well, aren't you the nosey type? Can't tell you much. I don't have time for reading, apart from medical journals, so writers don't really interest me. I know he spent his days mostly hanging out with that weirdo <em>Xavier</em>, and scribbling notes in his <em>cabin</em> right behind this one.
+[Keyword: Isn't the whole Sanatorium infected with a deadly disease?]
+	DocRobert: Could be. I know they had their hands full trying to treat it, that's for sure. I haven't been back there in months and haven't heard any news, either. Who knows? Maybe they're all dead by now.
+[Keyword: There are some missing pages in Wilcox’s diary]
+	DocRobert: Beats me. If I'm certain of one thing in this village, it is that everyone around here is funny in the head. Have you met the <em>Hog Lady</em>?
+		Mouse: Excuse me! That is no way to refer to a lady.
+		Scully: Women generally like to be called by their names, mate. That's a lesson I had to be taught a few times before I remembered it.
+		Magic: Oh, there's plenty of cuckoos in this town, Doc. I don't even have to look out the window to see one.
+		Scope: There is very definitely a bit of looniness in the air here, Doctor. You may want to test yourself to be certain you haven't caught it.
+		Hitman: Just remember, when you point your finger there's four more pointing right back at ya, Doc.
+		Nails: The only hog I know that's also a lady is my Harley-Davidson FL Hydra-Glide. Now, she's what I call an easy ride!
+[Keyword: What are you doing here?]
+	DocRobert: I've been sent to investigate why these poor wretches are dropping faster than the dot-com stock market. I usually work as the coroner at the <em>Sanatorium</em> not far from here. That's how I introduced myself, but the fools started calling me "the colonel." Don't mind them... Language barrier.
+		Tex: They think you are a colonel? I guess that make you new sheriff in town!
+		DocRobert: God, I hope not! I'm more of a "have scalpel, will travel" kind of guy.
+		Magic: Sanitarium? You worked with those creepy cadavers? That's wild, man. Couldn't pay me enough for that.
+		DocRobert: That's what I keep telling 'em!
+		Red: Ye did autopsies on those zombies!? It's a wonder you're still alive.
+		DocRobert: We don't like to use the Z-word.
+		Vicki: That Sanitarium place be creepy, mon!
+		DocRobert: Well, creepy is a relative term in my line of work, but... yes.
+		Sidney: What is your opinion of Dr. Kronenberg?
+		DocRobert: One hell of a smart lady, but I try to stay away from her. I recommend you do the same.
+		Larry_Clean: I saw that market dip coming, man! Dot-coms are a scam. I'm invested in big pharma.
+		DocRobert: And I can tell by the tracks on your arms that big pharma has invested a lot into you.
+	DocRobert: Anyway, I stopped correcting them, so now I guess I'm promoted, huh? Haha!
+		Len: Military rank is not a joke, Doctor.
+		Igor: Impossible. You cannot be colonel without many commendations.
+		Gus: Congrats, Colonel! My advice? Retire.
+[Keyword: We found Wilcox’s diary]
+	DocRobert: Well, here's your proof, wild bunch. Our deceased friend here might be a crazy fool, but he's nothing compared to that old bat <em>Wanda</em> and her pet chicken-heads. They are killing off their own. And they surely won't stop. Just say the word and I guarantee the witch will get what she deserves.
+	[Keyword: You are right, doc. Wanda needs to die.]
+			Nails: Time for the Voodoo lady to take a dirt nap.
+			Barry: It is a thing of regret, but thou shalt not suffer a witch to live.
+			Larry_Clean: She's gotta die, man! I mean, think of the chickens!
+		DocRobert: Now, that's what I'm talking about. Glad to see you got a good head on those shoulders and a large enough set of balls to do the right thing. Let's put an end to that freak show. 
+	[Keyword: Not yet]
+			Scully: Hang on, mate. We gotta think this through first.
+			Sidney: Sorry, but before we start our own Spanish Inquisition perhaps we should take a moment to consider our options.
+			Scope: Let us take a moment to step back and look at this from range first.
+			DrQ: Greater deeds need a greater amount of time and focus. We should never underestimate the forces of nature.
+			Reaper: The time is not yet ideal.
+			Shadow: Let's snoop around and see if we can dig up that lost page first.
+		DocRobert: Yeah, yeah. Take your time, no need to hurry. It's not like people are dying left and right or anything.
+[Keyword: We know you infected the whole village]
+	DocRobert: That is a bit far-fetched. I have thrown a spark, but the fire burns on its own. And this strain of the <em>Red Rabies</em> is hot as hell! The patients enter the catatonic phase before the personality loss phase, which may be the solution to <em>Dr. Kronenberg's</em> main issue!
+		MD: Jesus! How can you call yourself a doctor?
+		Steroid: I feel bodily urges to squash you like a puny bug.
+		Fauda: You are a servant of Shaitan! Prepare to be sent back to him... with my regards.
+		Smiley: I do not know what any of these medical words mean, but I will be sure to ask someone after I kill you.
+		Mouse: You are easily in the top five of the most disgusting people I have ever met!
+		Blood: I'll be sure to pass your notes along to someone who cares right after I finish carving you up like a dinner roast.
+	DocRobert: Now, before you become too emotional for me to handle, please meet my friends from <em>Landsbach</em> who needed this village as much as I needed their cooperation.
+[Keyword: We know you infected the whole village]
+	DocRobert: That is a bit far-fetched. I have thrown a spark, but the fire burns on its own. And this strain of the <em>Red Rabies</em> is hot as hell! The patients enter the catatonic phase before the personality loss phase, which may be the solution to <em>Dr. Kronenberg's</em> main issue!
+		MD: Jesus! How can you call yourself a doctor?
+		Steroid: I feel bodily urges to squash you like a puny bug.
+		Fauda: You are a servant of Shaitan! Prepare to be sent back to him... with my regards.
+		Smiley: I do not know what any of these medical words mean, but I will be sure to ask someone after I kill you.
+		Mouse: You are easily in the top five of the most disgusting people I have ever met!
+		Blood: I'll be sure to pass your notes along to someone who cares right after I finish carving you up like a dinner roast.
+[Keyword: Goodbye]
+	DocRobert: And let's not forget about social distancing. Whatever we've got here is probably very infectious.

@@ -1,0 +1,38 @@
+[*Back to Index*](index.md.html)
+
+Font
+===============
+
+This mod item allows you to import new fonts into the game and replace existing fonts with them. This enables modders to add new fonts for unsupported languages. To add translations for unsupported languages use the [LocTable mod item](ModItemLocTable.md.html).
+
+Each font mod item allows you to import multiple font `AssetFiles`. Each font asset has a path to the font file which can be set using the Import button. Immediately after a font file is chosen from the browse dialog the file is processed and loaded into memory. If the file cannot be processed correctly an error dialog will open and the file path will be reverted back to the default false value.
+
+Supported font file formats are **TTF and OTF** with cmap encoding tables for **Unicode encoding** and platformID = 3 (Microsoft Windows) or platformID = 0 (Unicode). Fonts that don't define a cmap table for Unicode encoding will not be processed and will show the error dialog. Refer to the cmap table documentation pages from the OTF and TTF specs for more details:
+ - [OTF spec - cmap — Character to Glyph Index Mapping Table](https://learn.microsoft.com/en-us/typography/opentype/spec/cmap#windows-platform-platform-id--3)
+ - [TTF spec - The 'cmap' table](https://developer.apple.com/fonts/TrueType-Reference-Manual/RM06/Chap6cmap.html)
+
+Note that the current font system does not support ligatures. This means that languages like Hindi can still be displayed using fonts like Noto Sans Devanagari but instead of ligatures between consonants, the first consonant will be displayed whole with a halant to explicitly signify the lack of a vowel.
+
+Once your fonts are imported the next step would be to replace existing in-game fonts with them. Each font mod item has a list of `ReplaceMappings` which allows you to map which font should replace which. In the dropdowns of each replace mapping you will find all loaded fonts with their full names (usually in English). Note that this name might be different from the font file name. 
+
+The font replace mappings will be applied automatically as soon as the `Replace` and `With` fonts are chosen and will remain active as long as the mod is loaded. When loading a mod the mappings are applied when the specific font mod item is loaded. This means that in the case of multiple font mod items that have an overlapping replace mapping for a specific font, the active one will be the last one loaded. All other non-overlaping replace mappings will be combined in the final mapping.
+
+The replace mappings are not the only way to change in-game fonts. It's also possible to do it using a TextStyle mod item or a [LocTable mod item](ModItemLocTable.md.html). The font replace mappings however have the advantage that you can change all usages of a font with a single mapping. To do the same with TextStyle or LocTable mod items would require considerably more work.
+
+The full font name used in the replace mapping dropdowns is taken from the name record the font name table as described in TTF and OTF font specs. The name record used is with nameID = 4, platformID = 3 (Microsoft Windows) or platformID = 1 (Macintosh) and the platform-specific languageID for English. Refer to the name table documentation pages from the OTF and TTF specs for more details:
+ - [OTF spec - Naming Table](https://learn.microsoft.com/en-us/typography/opentype/spec/name#name-ids)
+ - [TTF spec - The 'name' table](https://developer.apple.com/fonts/TrueType-Reference-Manual/RM06/Chap6name.html)
+
+Properties
+---------------
+
+AssetFiles
+: A list of font files to import into the game. Supported font file formats are **TTF and OTF** with cmap encoding tables for **Unicode encoding** and platformID = 3 (Microsoft Windows) or platformID = 0 (Unicode).
+
+ReplaceMappings
+: A list of mappings defining which fonts should be replaced with which. Note that the name of your font in the dropdowns might be different from the font file name.
+
+
+(insert footer.md.html here)
+<link rel="stylesheet" type="text/css" href="Style.css" />
+<!-- Markdeep: --><style class="fallback">body{visibility:hidden;white-space:pre;font-family:monospace}</style><script src="markdeep.min.js" charset="utf-8"></script><script>window.alreadyProcessedMarkdeep||(document.body.style.visibility="visible")</script>

@@ -1,0 +1,56 @@
+[Keyword: Greeting]
+	Pierre: Well, you did it, mercenaires. You have won and I... I lost everything... Father, forgive me...
+[Keyword: Greeting]
+	Pierre: Cease fire, mercenaires! You have won. There is no shame in losing to stronger warriors. My life is in your hands.
+[Keyword: Greeting]
+	Pierre: Cease fire, mercenaires! You have won. There is no shame in losing to honorable opponents. My life is in your hands.
+[Keyword: Where is the President being kept?]
+	Pierre: <em>Le Major</em> has him back in his camp. Don't even think about trying to rescue him - on the mainland there is no other power but the Legion, and no God but Le Major himself.
+		Barry: The Lord's light shines everywhere, even into the dark and stinky hole where this Major hides.
+		Kalyna: Ooo, it sounds cursed! When can we go? 
+		Grizzly: I'll come loaded for bear.
+[Keyword: What will you do if we let you go?]
+	Pierre: I will leave this cursed island. I must report to <em>Le Major</em>, and then... I don't know. My life belongs to the <em>Legion</em>.
+		Thor: No, your life belongs to you. Unlock your potential! Do not fear success!
+		Mouse: Honestly, I think you can do better. I see you running your own travel agency or giving tours or something.
+		Livewire: If I am being completely honest, I think the Legion is yesterday's fashion. Time to put it away and move on.
+[Keyword: What will you do if we let you go?]
+	Pierre: You may have bested me, but my life belongs to the <em>Legion</em>. I will not lie to you - I will report to <em>Le Major</em>, and he will probably order me to hunt you down and kill you. If you don't want that... You know what to do.
+		Meltdown: Don't need to tell me how to do my job, dumbass. I can kill you whenever I want. 
+		Wolf: You don't hunt the Wolf, boy. The Wolf hunts you.
+		Omryn: You should hunt elk or rabbit instead. Much better for stew.
+[Keyword: Where do we find the Major?]
+	Pierre: It is not a big secret, but you won't learn it from me. Kill me if you will... I am no traitor like <em>Herman</em>. 
+		MD: I don't mean to be nit-picky, but you DID sell out your home town to the Legion, so you're sorta exactly like him... I guess?
+		Raven: Sure. You brought a bunch of armed thugs into your home town. Totally different.
+		Ice: Nah, man. Not like Herman. You come back to your old 'hood with gangbangers and guns, You WAY worse than Herman.
+[Keyword: Where do we find the Major?]
+	Pierre: It is not a big secret, but you won't learn it from me. Kill me if you will... I am no traitor. 
+		Meltdown: What if I kick you in the teeth? Just a few times, or maybe a few dozen times.
+		Fidel: Fidel likes that! Fidel can kill him now, right?
+		Igor: This is no problem.
+[Keyword: Where do we find the Major?]
+	Pierre: It is not a big secret, and you are honorable opponents. Le Major would enjoy meeting you in battle. You will find his fort at the <em>Eagle's Nest</em>, up in the highlands.
+		Meltdown: His face will enjoy meeting my fist, just like yours did.
+		Omryn: That sounds far. We should pack an extra lunch.
+		Red: Perfect! Blowing up forts in the highlands was how I spent my youth.
+[Keyword: Time to die]
+	Pierre: Yes. I shall go to join my mother and father. And you? I hope you kill every rotten, lying, worthless inhabitant of this god forsaken country.
+		Fidel: Thank you! Fidel will try his best!
+		Meltdown: Oh yes we will. Such a shame you won't be there to see it, dumbass.
+		Fauda: You are a disgrace to your people. Shaitan take you!
+[Keyword: Time to die]
+	Pierre: I understand. <em>Le Major</em> teaches us to show no mercy to a beaten enemy. Go ahead, I'm ready!
+		Fidel: Fidel is even more ready!
+		Meltdown: Oh, cut the dramatics and just die.
+		Barry: May God have mercy on your soul.
+[Keyword: You may go]
+	Pierre: What? Mercy? To a beaten enemy?... I... I thank you, I guess.
+		Fidel: Who is this Mercy? Why let go? He said we can have his life.
+		Raven: Remember - we are not like your stupid Legion.
+		Steroid: Run away now or the beatings will continue.
+		Thor: Everyone deserves a second chance. Go. Make today the first day of the rest of your life!
+	Pierre: Perhaps we will meet again - but I can't promise not to fight you when the time comes.
+		Meltdown: Anytime, dumbass. 
+		Buns: We have bested you, and we will do it again.
+		Wolf: Next time, try a little harder, will ya? I barely broke a sweat.

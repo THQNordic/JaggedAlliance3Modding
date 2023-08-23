@@ -1,0 +1,179 @@
+[Keyword: Greeting]
+	DrKronenberg: Who are you? Why have you <em>murdered my patients</em>?!
+[Keyword: Greeting]
+	DrKronenberg: Who are you? Why have you shot the clinic guards and <em>murdered my patients</em>?!
+[Keyword: Greeting]
+	DrKronenberg: Now what do you want? Haven't you caused enough trouble by <em>murdering my patients</em>?!
+[Keyword: Greeting]
+	DrKronenberg: What now?
+		Larry: Hi, Doc! I'm here for more of your sweet, sweet treatment.
+		Larry_Clean: I'm fine, Dr. Kronenberg, I swear! I'm clean! There is no need for any more treatment!
+		DrKronenberg: Mr. Roachburn, I do not have time for you right now. Please see one of the nurses.
+[Keyword: Greeting]
+	DrKronenberg: I... have not made much progress. I need more samples. Do I need to go and gather them myself?!
+		Larry: I'll do anything to help you, Doc! Come on. Where's the table? Strap me down and give me the electric blasts of your maternal love.
+		Larry_Clean: But you told me we were making progress, Doctor. You told me that every time you flipped the switch!
+		DrKronenberg: Mr. Roachburn, control yourself.
+[Keyword: Greeting]
+	DrKronenberg: Where are my samples? I don't have much time! AND STOP MAKING SO MUCH NOISE WITH YOUR SHOES!
+		Larry: Yes, Doc, I'm ready! I'm taking them off right away, Doc! Please strap me down and unleash your electric love upon me!
+		Larry_Clean: I'm taking them off right away! I'll be good, I swear. There is no need of any more electrical treatment!
+		DrKronenberg: Thank you, Mr. Roachburn, that won't be necessary. Now LEAVE before I change my mind.
+[Keyword: Greeting]
+	DrKronenberg: It is... it is too late... WHERE HAVE YOU BEEN?!
+		MD: Um...
+		Fox: Well...
+		Ice: See, what had happened was...
+	DrKronenberg: I DON'T NEED YOUR EXCUSES! I need a transfusion... Arrrgh, I can't... This is all your fault!
+		Fidel: You sound like Fidel's own mamá!
+		Livewire: I cannot help but point out that I am certainly not completely to blame here.
+		Reaper: Time to reap the whirlwind, Doctor.
+[Keyword: Greeting]
+	DrKronenberg: You have the samples! Good. Now, the moment of truth. I should be able to extract a <em>serum</em> that kills all forms of the virus. With a little bit of luck, it may even work on me.
+		MD: Um, I see the visual markers of progressing inflammation, as well as some increased salivation...
+		Buns: I would advise you to be careful, as your illness has obviously progressed.
+		DrQ: It may be too late for the Queen Bee to be saved, but there is still a chance for the hive to survive.
+	DrKronenberg: YES! I can confirm it is working well on the cellular level, and a healthy immune response is observed... STEP ASIDE YOU MORONS!
+		Fidel: You sound like Fidel's own mamá!
+		Shadow: Gladly. I don't even want to be in the same room with you.
+		Thor: I guess it's true what they say - doctors make the worst patients.
+	DrKronenberg: What is... NO, NO, NO! The infection has spread too far! I... not enough... healthy tissue... Need more... ARGH!
+[Keyword: Your “patients” are monsters]
+	DrKronenberg: They are people in dire need of medical aid and I refuse to let them die without receiving it.
+		Fauda: You give them medicine, but still they die? What is the point of this?
+		MD: So it is okay when they die WITH medical aid?
+		Thor: You almost make it sound as if YOU are the one receiving the aid.
+	DrKronenberg: I am doing what I can... I am doing what I HAVE to do. At the very least, I am relieving their pain and not <em>shooting my patients</em>.
+[Keyword: Your guards did shoot your patients]
+	DrKronenberg: It is up to the hospital guards' discretion to stop an outbreak by any means necessary.
+		Fidel: Fidel has means to stop all the outbreak!
+		Len: So you're saying it is alright if your goons are doing the atrocities, ma'am?
+		Gus: They call that plausible deniability, Dr. Woodworm.
+		DrKronenberg: My name is Dr. Kronenberg.
+		Gus: I'll make a note of it.
+[Keyword: Not much medical aid]
+		MD: The medical procedures I observed on my way here are in the best case, um, unsanitary.
+		Blood: This place looks more like a butcher shop than a hospital!
+		Thor: This place seems to do little to heal the body and even less to tend to the soul.
+	DrKronenberg: And who are you to tell me how I am to handle my patients?! If they need to die for the sake of science, then they will die and no half-baked field nurse can tell me what to do with them!
+		Buns: And I suppose the sloppy hospital management and filthy conditions here are supposed to prove your superior medical skills?
+		Fox: The term is "combat medic"! I only dressed up as a field nurse that one time.
+		Mouse: Excuse me! I am fully baked! No, wait, that came out wrong.
+	DrKronenberg: And I can order YOU to be infected as well!
+[Keyword: Doc Robert infected a village for you]
+		Blood: Doc Robert was a real psychotic scuzzwad, but he's fish food now.
+		MD: Doc Robert was doing nightmarish experiments with the Red Rabies virus. Did you know about that?
+		Scope: Many people died at Chalet de la Paix because your coroner decided to play mad scientist.
+	DrKronenberg: That moron. Yes, I did send him to the village, but that doesn't mean I am accountable for his mistakes. However, working on a cure for a disease of this scale is a complex process and collateral damage is inevitable.
+		Shadow: The damage was not collateral. Those people were targeted.
+		DrQ: I would not call the deliberate infecting of half a town's population "collateral damage"... Doctor.
+		MD: Collateral damage? He was using those people like lab rats! They didn't even have a choice!
+		DrKronenberg: As I said - I cannot be held responsible for his... carelessness.
+[Keyword: People are dying in here]
+	DrKronenberg: Of course they are dying here! People don't go to the beach to die, they come to the hospital!
+		Fidel: Ah, Fidel see you have never been to Havana beach.
+		MD: Um... That may be statistically true, but... It is not the actual reason why people go to the hospital.
+		Grunty: Your logic is inescapable... but strangely, I am not comforted.
+[Keyword: There is something wrong going on here]
+	DrKronenberg: Yes, there is. A group of armed thugs appeared and started murdering my patients!
+[Keyword: YOU are the one murdering your patients!]
+	DrKronenberg: It is not murder when it is done in the name of science.
+		Grunty: Why are you not laughing?
+		DrKronenberg: What?!
+		Grunty: You should be laughing maniacally when you say something like that. 
+		Raven: Ah, I see, you're doing it for science! Did you promise them cake?
+		Sidney: I hope you're making some sort of sick joke, Doctor. Murder is murder.
+	DrKronenberg: The <em>Red Rabies</em> is no joke. It is virulent and deadly, and the hosts spread it through acts of brutal violence. I was so close to breaking its genome when I became <em>infected</em>...
+		DrQ: The work consumed your soul, now it consumes your body.
+		Mouse: Oh, gross! Nope. Uh-uh. I think I need to be going now.
+		Scope: And I'll be taking just a step or two back now.
+	DrKronenberg: I soon discovered that a blood transfusion from a newly infected host can temporarily halt the disease progression. In the interest of expediency, it was necessary to <em>infect volunteers</em> to insure a steady supply of recently exposed blood and tissue.
+		Shadow: Somehow, I doubt these volunteers knew exactly what they were volunteering for.
+		MD: This... This is too much. I think I'm going to be sick.
+		Red: Are ye daft, woman?! You cannae play God with people like that.
+	DrKronenberg: I am so close to discovering a <em>cure</em>! Who will be helped if I die before I complete my research?
+[Keyword: You can’t go around infecting people!]
+	DrKronenberg: Why? Hundreds have died already, but if I do not <em>finish my research</em> the disease will spread and it will claim the lives of millions more. It is simple math.
+		Ivan: Правильно. Hundreds may die to save millions.
+		Sidney: I hate to admit it, but she does have a point.
+		DrQ: If this is their fate, then millions must die. It is not her choice to make.
+		MD: This is not the only way to do medical research. As doctors, our job is to alleviate suffering, not make use of it.
+		DrKronenberg: Ha! Tell that to the doctors of both World Wars. Nothing has contributed to medical science more than using human test subjects.
+		Flay: Meh. The herd will be thinned. The strong will survive and the weak will perish. This is Nature.
+		Vicki: That kind of math don't add up to nothing for me.
+	DrKronenberg: I need to continue with my <em>experiments</em>, or the Red Rabies will kill me and my research will die with me.
+	[Keyword: That is reasonable]
+		DrKronenberg: I am pleased to see that someone can see reason. I will make sure my... condition remains stable, and I will continue with my experiments. However, some <em>help with my research</em> would be appreciated.
+			MD: Wait, are we going to become accomplices to her hideous crimes?
+			Sidney: It is regrettable, but it is for the greater good.
+			Fox: This is horrible. I don't want to be part of this.
+			Nails: Whoever is dumb enough to volunteer for her experiments deserves what they get. 
+			Omryn: Ugh... This kind of talk make me lose appetite.
+			Mouse: If it ends that icky rabies virus sooner, then it's probably the best thing to do... right?
+	[Keyword: Out of the question]
+		DrKronenberg: That means not only will I become just another victim of the disease, but there will be thousands and probably millions more soon after.
+			Ivan: Так точно. We make mistake.
+			MD: Then millions must die. The alternative is inhumane.
+			Hitman: Not so sure we're making the right call here, Ace.
+			Reaper: Death will always take who it will take. Our struggles against it are futile.
+			Blood: I wonder if maybe the evil doctor lady might be right about this.
+			DrQ: If we sacrifice our humanity to save humans, then we are nothing more than animals.
+		DrKronenberg: Well... We still have a chance to avoid that fate if we act quickly. You must <em>help me with my research</em> with utmost haste before the disease... makes that impossible.
+[Keyword: What do you need to finish your research?]
+	DrKronenberg: I need <em>samples</em> of Red Rabies strains and mutations from all over the region. And I need them fast. I will give you a map and I can provide the necessary equipment.
+		Blood: Do you need... Blood samples?
+		DrKronenberg: Normally yes, but you are not my Type.
+		Tex: I will wrangle those samples for you, Doc!
+		Raven: Greaaaat. Virus hunting. This will be... not even remotely fun.
+[Keyword: We will need medical supplies]
+	DrKronenberg: Of course. Here, take these. Just make sure you put them to good use. We are in dire need of medications ourselves.
+		Buns: Why, are you out of cyanide?
+		DrKronenberg: I will not respond to that.
+		Grunty: I am surprised. I was under the impression you were killing more patients than saving.
+		DrKronenberg: I will not respond to that.
+		Shadow: Must be tough to make room in the budget for new meds when you have to order so many body bags.
+		DrKronenberg: I will not respond to that.
+[Keyword: Time to die!]
+	DrKronenberg: You! You made a mistake...
+		Blood: No mistake, Miss.
+		Fauda: Mistake? I have made many. This will not be one.
+		MD: Do we really have to, um, just kill everyone we meet?
+		Meltdown: Newsflash, Doc. All I do is make mistakes.
+		Barry: I fear God's judgement. Yours, not so much.
+		Scully: I was feeling bad about this, but now you just sound like every one of my ex-wives.
+[Keyword: Die, murderer!]
+	DrKronenberg: No! There is no one but me qualified enough to...
+		Vicki: You gonna pay now for these things you been doing!
+		Len: The graveyards are full of irreplaceable people.
+		Nails: I've scraped shit off my boot I liked better than you.
+[Keyword: Actually, you must die]
+	DrKronenberg: You psychopaths!...
+		Fidel: You sound like Fidel's own mamá!
+		Mouse: That is SO not fair. A girl is allowed to change her mind. That doesn't make her crazy!
+		Scope: It takes one to know one, love.
+[Keyword: Goodbye]
+	DrKronenberg: Get away from my lab and leave this place, or I'll call the guards!
+[Keyword: Goodbye]
+	DrKronenberg: Get out of here, you murderers! I can't stop you from invading my hospital, but at least leave my lab! I have important work to do here.
+[Keyword: Goodbye]
+	DrKronenberg: Leave! Leave!
+[Keyword: Goodbye]
+	DrKronenberg: The hospital is at your disposal, but please, stop killing my patients. 
+		Grunty: Yes. Apparently, that is your job.
+		Red: Now that'd be a real shame, wouldn't it missy.
+		Wolf: Awww... And here I was thinking you didn't care about them.
+	DrKronenberg: I need them alive as long as possible for... Well, you know why I need them.
+[Keyword: Goodbye]
+	DrKronenberg: Alright, hurry up and find me those samples. The clock is ticking.
+		MD: We will do our best. 
+		Tex: We promise to be back before high noon!
+		Grizzly: We're on it, Doc. Just sit tight.
+	DrKronenberg: In the meantime, the hospital is at your disposal. Please refrain from killing my patients.
+		Scope: Same to you, love.
+		Grunty: I encourage you to do the same, Frau Doctor.
+		Mouse: We will if you will. Let's make a pinky promise!
+[Keyword: Goodbye]
+	DrKronenberg: Alright, back to work. You know where the door is.
+		Larry: We sure do, Doc. Okay if we grab some Jell-O on the way out?
+		Larry_Clean: Of course, Dr. Kronenberg. We'll be good, we promise. You look, um, lovely as always.
+		DrKronenberg: Mr. Roachburn... Just leave.

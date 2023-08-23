@@ -1,0 +1,18 @@
+[Keyword: Greeting]
+	Bounce: Hey, looks like someone's getting ready to jump in the ring. Who do you wanna challenge, cuz?
+	[Keyword: The Bonecrusher]
+	[Keyword: The Bonecrusher]
+	[Keyword: Eraser Head]
+	[Keyword: Eraser Head]
+	[Keyword: Dr. Fracture]
+	[Keyword: Dr. Fracture]
+	[Keyword: Bulldozer]
+	[Keyword: Bulldozer]
+	[Keyword: Sebastocrator]
+	[Keyword: Sebastocrator]
+	[Keyword: Actually, we don't want to fight]
+		Bounce: Then quit bothering the fighters, cuz. They got serious business on their minds.
+	[Keyword: Redirect]
+		Bounce: On second thought, you don't look too good, cuz. These fights are tough. Try stitching up those wounds before coming to the ring.
+	[Keyword: Redirect]
+		Bounce: Alright, cuz. Let's get this party started!

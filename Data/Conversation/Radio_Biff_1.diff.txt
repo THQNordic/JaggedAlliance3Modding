@@ -1,0 +1,45 @@
+[Keyword: Greeting]
+	BiffNPC: Mayday, mayday! We need backup! Our situation's out of control!
+	BiffNPC: ...Is this even working? 
+Mayday! MAYDAY! <em>Biff Apscott</em> requesting support...
+	BiffNPC: Oh my god... They're shooting at us! We need immediate extraction! Mayday! Over!
+	[Keyword: We hear you]
+		BiffNPC: God! Thank you! Oh my God, we're <em>saved</em>! You hear this, team? The cavalry is coming!... 
+Wait, wait, wait, did <em>she</em> send you?!... Over!
+	[Keyword: Calm down and report]
+		BiffNPC: Yes! At once! We are surrounded and...
+		BiffNPC: Oh my God, they're shooting again!!!
+But you're coming to <em>save</em> us, right? Oh, wait, wait, wait, did <em>she</em> send you?!... Over!
+[Keyword: Save you from what?]
+		Smiley: We are coming, commander Biff, sir! We shall give you a hand in your darkest hour! Who is your enemy, sir? 
+		BiffNPC: Smiley? Is that you?! Where have you been? You didn't even follow your squad, boy!
+		Smiley: I'm sorry, sir, I... I've got lost. But now I'm coming to your aid with reinforcements, sir!
+		BiffNPC: You better hurry... The <em>Legion</em> got us under siege!
+	BiffNPC: The <em>Major</em> wants his <em>diamond</em> back, and he doesn't even WANT us to give it back! He said, he wants to take it from my cold dead body... He's a goddamn maniac! Help! I mean, we need extraction!... Over!
+[Keyword: Save you from what?]
+	BiffNPC: SAVE US FROM BEING SHOT!!! By the goddamn <em>Legion</em>!
+	BiffNPC: The <em>Major</em> wants his <em>diamond</em> back, and he doesn't even WANT us to give it back! He said, he wants to take it from my cold dead body... He's a goddamn maniac! Help! I mean, we need extraction!... Over!
+[Keyword: The Major?]
+	BiffNPC: Yes, the goddamn Major... He owns everything around here, and we even helped him get <em>Diamond Red</em> as well... No time to discuss. Are you coming? Over.
+[Keyword: What diamond?]
+	BiffNPC: The one from <em>Diamond Red</em>! It belongs to me! I mean, to us! Not to this liar <em>Chimurenga</em>, and not to the so called <em>Major</em>, and certainly not to <em>her</em>! Over.
+[Keyword: You have found a diamond?]
+	Larry: Heeey, man, you left me behind and you got a nice diamond in return? That's a good deal, man!
+	BiffNPC: Larry! You're alive! Sorry, mate, we had to fall back, we had no time to search for you...
+	Larry: No problem, man. If I was you, I'd do the same. I lick diamonds.
+	BiffNPC: Wait, what? You mean, you like diamonds?
+	Larry: Ahhh... Yeah.
+[Keyword: You have found a diamond?]
+	BiffNPC: Hey, wait, you are supposed to save us, right? Not to rob us! That diamond is ours. It's ours! Over!
+[Keyword: Where are you?]
+	BiffNPC: I'm in deep trouble! Oh, you mean... We're in a small village in the highlands, North from... um, <em>Pantagruel</em>. Not much of a village now since they brought those goddamn <em>mortars</em>!
+	BiffNPC: My God, another one! Take cover! Over.
+[Keyword: How many mortars?]
+	BiffNPC: I have no idea! One is too much already! Over!
+[Keyword: Who is “she”?]
+	BiffNPC: That bitch <em>Santiago</em>!... She has sent us to retake those mines without <em>telling us</em> ANYTHING! We had to fight innocent Chien soldiers, then the <em>Major</em> unleashed hell on us, and she just left us to die!...
+		Len: Didn't tell you what, son?
+	BiffNPC: They're closing in! Over...
+[Keyword: Goodbye]
+	BiffNPC: Hurry up! We're at the <em>Hill Station</em>, up North from Pantagruel. I don't know how long we can...
+	BiffNPC: Oh my God, THEY'RE ATTACKING! Mayday, mayday! OVER AND OUT!!!

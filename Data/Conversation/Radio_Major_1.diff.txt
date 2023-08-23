@@ -1,0 +1,7 @@
+[Keyword: Greeting]
+	TheMajor: You just don't know how to lose, girl, do ya?
+	CorazonSantiago: You! I have nothing to discuss with you.
+	TheMajor: Listen up, girl. This is my theater now and I'm running the show. Keep your dogs away from my <em>diamond mines</em>, 'cause in Grand Chien dogs get shot.
+	CorazonSantiago: You are the rabid treacherous dog that needs to be put down!
+	TheMajor: You tried to off me once already. They say the second time is better!
+	CorazonSantiago: We will see about that. Corazon out.

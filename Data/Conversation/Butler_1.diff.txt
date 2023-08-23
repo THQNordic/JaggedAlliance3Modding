@@ -1,0 +1,59 @@
+[Keyword: Greeting]
+	Butler: Get out! GET OUT! GET OUUUUUUUUUUUUUT!!!
+		Larry: Zoinks! Like, it's a ghost, man!
+		Steroid: Uh-oh! Time to leave this place!
+		Blood: Damn, that's one angry spirit, but I bet it bleeds like a man.
+		Ivan: Призраков не существует.
+[Keyword: Greeting]
+	Butler: We are trapped! They have finally come for me! Maybe this is the end already?
+[Keyword: Greeting]
+		Blood: Still haunting around?
+	Butler: Leave me alone already, you meddling kids!
+[Keyword: You’re not a ghost]
+		Buns: Not much of a ghost. Your costume could use a little work.
+		Fox: I know this sounds weird, but would you mind if I pulled your hair?
+	Butler: But I am a restless spirit. Go! Get away from these cursed grounds while you still can!
+[Keyword: Are you a restless spirit?]
+	Butler: I am the ghost of the man who had been the <em>butler</em> of the mansion!
+		Blood: Did you die a violent death?
+		Fidel: Did you blow yourself up?
+	Butler: I haunt these grounds because I died a horrible death, just like all the... others... Oh god, spare their poor souls...
+		Larry: Hey, man... You mean, like, there are more ghosts?
+		DrQ: The sadness of this spirit washes over this place. It is in the walls... and in the ground.
+[Keyword: What happened to the others?]
+	Butler: Dead. All dead... I'm the only one left alive. I wish I had been there so... um... that is to say...
+		Steroid: Wait... you are alive AND dead? Oh! Are you UNDEAD!?
+		Larry: Hey, now wait a second, man. Just hang on a minute... Like, what?
+		Blood: I thought you said you suffered a horrible death.
+		Fox: Well, that's no fun! I was looking forward to pulling your mask off!
+	Butler: Oh, just leave me alone, you... You meddling kids!
+[Keyword: Tell us...]
+	Butler: Non! Leave me alone!
+[Keyword: Your home?]
+	Butler: I have lived and worked here for thirty-five years. Ten years ago <em>they</em> came here and killed everyone and looted the house. I was away, shopping for supplies when it happened.
+	Butler: When I returned, I had no choice but to bury the bodies, repair what I could and wait for the master to return. He never did. 
+[Keyword: Who are “they”?]
+	Butler: I do not know. Maybe they were just thieves or maybe they were from the army or deserters of the army... In Grand Chien, they are all the same.
+	Butler: They never returned, but a short time ago these Legion thugs moved in and started searching the place, looking for <em>treasure</em>. That is when I decided they would find only death. 
+[Keyword: Is there a treasure?]
+	Butler: Non. No treasure. Anything of value was taken from the house long ago.
+		Fauda: Except a minefield's worth of explosives, apparently.
+		Grunty: I don't know. I quite liked the hippopotamus.
+[Keyword: You are the one planting those mines!]
+	Butler: And I would have gotten away with it, if it weren't for you meddling kids...
+		Fidel: Ehehehehee...
+		Buns: Right up until the Legion finally catches you. Then you WILL be a ghost.
+		Steroid: I never medaled. I was disqualified for PEDs.
+	Butler: This is my <em>home</em> and I will defend it as I see fit! Now, leave! Leave!
+[Keyword: We can protect you]
+	Butler: Can you? There are still some of those murderers outside. I can smell them! They smell of grease and piss. Non, I will not leave my refuge.
+[Keyword: We have eliminated the intruders]
+	Butler: Have you?... Maybe I should consider... Wait. Do you hear that?
+		Ivan: Тревога! Снова враги!
+[Keyword: Die, ghost!]
+		Blood: Let's see if a ghost can bleed.
+	Butler: Go ahead. I should have died ten years ago.
+[Keyword: Goodbye]
+	Butler: Leave! Leave this cursed place and never return!
+[Keyword: There are more of them!]
+	Butler: They have finally found me.

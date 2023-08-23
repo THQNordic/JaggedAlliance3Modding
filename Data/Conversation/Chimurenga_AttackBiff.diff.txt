@@ -1,0 +1,44 @@
+[Keyword: Greeting]
+	Chimurenga: Biff! You were a comrade to us, and yet you stole from us! The <em>green diamond</em> you have taken belongs to the People of Grand Chien. Give it back!
+	BiffNPC: No.
+	Chimurenga: Biff Apscott!
+	BiffNPC: It is mine, I tell you. My own. My precious. Yes, my precious.
+		Tex: This very familiar. I audition for part once with lines like this. Hmmm... What movie?
+		Omryn: This is fun. I want popcorn.
+		Kalyna: Oh, the diamond has control of him! Watch. He'll try to hide it.
+[Keyword: Greeting]
+	Chimurenga: I will never let the pride of Grand Chien fall into the hands of foreigners! My brave Maquis warriors, attack!
+		Smiley: Now is the time for Alejandro Diaz to prove his worth!
+[Keyword: Biff, give him the green diamond]
+		Gus: Hand over the dang diamond, Apscott!
+		Thor: Let it go, Biff. Just let it go.
+		Scully: That thing is only going to way weigh you down, mate. Time to give it up.
+		Buns: Biff. The diamond. Now.
+		Raider: Biff, that doesn't belong to you. Do the right thing.
+		Sidney: I say, Biff old chap, don't you think that stone has caused you enough trouble? Why not hand it over and let it be someone else's problem?
+		MD: Wow, you got a really good grip on that thing. It's like we'd need to cut your fingers off to get you to let go. Ha-ha... That was just a joke.
+	BiffNPC: You are right. It's precious, but it only brought me bad luck. Alright, I'll give it to Chimurenga.
+	Chimurenga: Very noble of you to give back what belongs to the People of Grand Chien. We shall forever remember that, comrade.
+	BiffNPC: Just take it and go away before I change my mind.
+	Chimurenga: Yes. Just one minor detail though - it is still in your pocket.
+	BiffNPC: Ah! Er, he-he. I forgot. How silly of me. Um, okay. Here, take it.
+	Chimurenga: Thank you, comrade.
+		Kalyna: What? Well, that was disappointing. I was hoping we'd need to find a wizard to figure out the diamond's curse.
+		Wolf: For a second there, I thought we were going to have to toss Biff into a volcano to get him to give up that diamond.
+		Tex: So familiar... Name of movie is on tip of my tongue! "Bored of the Things?" No, no...
+[Keyword: Biff, give him the green diamond]
+	BiffNPC: Never! He wants it for himself! And besides, he has deceived us, he lied to us. Yes, he lied to us! I shall never give you the diamond, Chimurenga!
+	Chimurenga: Very well then. You have sealed your fate. My brave Maquis warriors, attack!
+		Meltdown: Biff, you jackass!
+		Flay: Time to hunt the Savanna Lion!
+		Grunty: I have concluded that diamonds are very overrated. They only seem to make people irritable.
+[Keyword: Finders keepers]
+		Igor: You cannot have it, Cheburashka!
+		Chimurenga: ...
+		Grizzly: Finders keepers, Chimichanga.
+		Chimurenga: I hate you so much.
+		Reaper: And how much blood will you sacrifice for it?
+		Fauda: You want it? Come and take it.
+		Tex: It is precious to usssss... That from "Lord of the Bling"! No, wait... that was different film.
+	Chimurenga: I will never let the pride of Grand Chien fall into the hands of foreigners! My brave Maquis warriors, attack!
+		Smiley: Now is the time for Alejandro Diaz to prove his worth!

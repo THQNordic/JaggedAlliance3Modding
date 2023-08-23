@@ -1,0 +1,221 @@
+Entity
+======
+
+An **entity** in the game's engine holds together everything necessary to visualize a single object in the game - meshes, animations or their inheritance from already existing ingame, materials and their corresponding textures, as well as some metadata like attach points, collision geometry etc. Virtually everything visible in the game world - with the notable exception of sky, terrain, and particle system effects - is an entity.
+
+Entities are authored in an application such as Blender and exported into a game-friendly format by tools provided with the game. A mod can contain multiple entities. They usually need to be referenced by another ModItem item to be usable - e.g. a building entity won't automatically be recognized as a building and integrated into the build menu; you need another type of ModItem for that, named "Building" (accessible via RMB menu: New->Gameplay->Building).
+
+Exporting an Entity from Blender into the game
+----------------------------------------------
+
+!!! WARNING
+    Make sure you've run the game at least once before attempting export from Blender.
+
+To export entities into the game from Blender, you need to first install the exporter add-on into Blender. Open Blender 2.93 or later, open the *User Preferences* Panel -> *Add-ons -> Install from File...*. Navigate to the game installation folder and select *`ModTools/HGBlenderExporter.zip`*. Make sure it is enabled (checked) in the list of Blender Add-ons.
+If it is properly installed, a tab called *HGE Tools* will appear in the Blender Sidebar.
+
+ 
+Load a Blender scene (e.g. one of the sample mod assets in *`ModTools/Samples/Assets`*) and from the *Export* panel in the *HGE Tools* tab, click *Export All*. When the export process completes successfully, the entity file with an *.ent* extension will appear at the root of *`%AppData%/Jagged Alliance 3/ExportedEntities`*, and its associated items - meshes, animations, textures etc. - in the appropriate subfolders.
+ 
+!!! WARNING
+    Keep in mind that the export process in incremental and previously exported parts of an entity will never be deleted automatically, but will be overwritten or built upon.
+    To circumvent issues arising from this (like change of State) you might need to delete the files in your *`ExportedEntities`* folder.
+
+Now that the Blender scene is properly exported to the Haemimont Games engine format, you need to create a new mod that will use the exported entity.
+ 
+Run the game and select Mod Editor from the Mod Manager pre-game menu.
+
+
+From the Mod Editor toolbar, click the New icon and enter a name. Double-click the new mod from the leftmost column, and it will open in a new window. Add a new *Entity* (accessible via RMB menu: New->Assets->Entity).
+
+Then you need to import the entity. In the rightmost column, look for the *Import* field and click on the "..." button. Navigate to *`%AppData%/Jagged Alliance 3/ExportedEntities`* and choose the *.ent* file exported from Blender in the previous step. Press the *Import* button to the right of the filename. Save by pressing the top most left icon in ModEditor toolbar.
+
+This will copy the entity file and the necessary files around it to the mod folder, *`%AppData%/Jagged Alliance 3/Mods/.../Entities`*. You can press the *Test* button in the Mod editor toolbar (the icon looks like an eye) and the game will place the newly imported entity on the terrain near the centre of the screen.
+ 
+!!! NOTE
+    Please note, that once entities are imported in the Mod Editor, they will not be reloaded after re-exporting. To re-load a re-exported entity, you need to restart the game (or choose a new unique entity name and import again). 
+
+
+Blender Add-on
+---------------------
+
+The add-on adds a new *HGE Tools* tab to the Blender Sidebar (shortcut: N). In it there are several panels:
+
+1. HGE Tools
+ - Contains information about the add-on version (and game name) + some useful buttons.
+
+2. Object
+ - Shows contextual information about the currently selected object.
+ - Also allows editing of properties like Entity, Mesh, Animation inheritance (male / female) and State witch by default is idle.
+ - Spot names (contextual, depending on Blender Outliner selection).
+ - Lastly, it shows potential problems (errors/warnings) that may arise when exporting.
+
+3. Animations
+ - Shows a list of animations in the scene (the filed shows the Entity, Mesh, and corresponding animation State).
+ - Select an entry in the list to edit its animation properties.
+ - Use the +/- buttons on the right to add or remove new entries.
+
+4. Statistics
+ - Shows an overview of what will be exported to the game.
+
+5. Export
+ - Contains the buttons for exporting the contents of the scene.
+
+Scene structure
+---------------
+
+1. Origin
+ - An empty object or an armature. (Top most parent)
+ - Everything will be positioned relative to this object.
+ - This way you can organize the scene better.
+
+2. Entity Mesh
+ - Meshes are what's visible inside the game.
+ - It's a mesh object parented to an *Origin*.
+ - Multiple mesh objects can be part of the same *entity mesh*. (Note that this is different to Blender mesh object structure; it allows Jagged Alliance 3 to use sub-meshes.)
+ - Mesh objects are associated with Entities.
+ - Mesh objects must be a part of at least one state (enforced by the UI).
+
+3. Spot
+ - Spots are logical points attached to a mesh.
+ - Represented as an empty object parented to an *entity mesh*.
+ - When a mesh is animated, the spots must be parented to the specific bone they should move along with (Ctrl+P -> Bone).
+ - Note that an origin spot is added automatically.
+
+4. Surface
+ - Surfaces are mesh objects used for things like Collision (check the dropdown list "Surface type" to see possible usages).
+ - Surfaces are mesh objects parented to an *entity mesh*.
+ - Surfaces cannot be animated.
+
+
+States & animations
+-------------------
+
+Entities are created and defined using the *Entity name* field in the *Object* panel of an *Entity Mesh*. An entity can have multiple states.
+
+States are defined variations a given Entity. For example, the Entity 'ElectricHeater' has two states - 'idle' and 'working'
+States are defined in two places:
+ - *State name* field in the *Object* panel of the *HGE Tools* sidebar. 
+ - *Animations* panel in the *HGE Tools* sidebar.
+The `idle` state is always required (animated or not).
+
+An *Entity mesh* can be used either for a static state or an animated state, but not for both at the same time. This is determined from the skinning of the mesh - if skinned, the mesh can only be used for animated states.
+
+An animation can be added to an existing state (which is already defined in the *State name* field from the *Object* panel of an *Entity mesh*) via the +/- buttons in the Animation panel. The state name of the added animation must match the state name set in the Object panel.
+
+An animation can define by itself a new state name (one *Entity mesh* can be used in multiple states).
+
+To add an animation:
+1. Click the [+] (plus) button right of the animations list in the *Animations* panel (named "Mark animation").
+2. In the popup, select the *Entity mesh* to be animated, the *Armature* used for that.
+3. Choose the animated state's name.
+4. Choose start and end frame.
+5. Click OK.
+6. Optionally tweak the settings of the animation below the list.
+Multiple animations can be created in one Blender scene by occupying different ranges on the timeline (thus the frame start/end fields).
+Animations can have compensation for moving objects - use CME for linear motion, and VDA for nonlinear motion.
+
+A Note on Materials
+-------------------
+
+*Jagged Alliance 3* uses PBR-based materials using the *Metalness* workflow. Textures should be supplied in 24-bit or 32-bit uncompressed TGA format. Material settings can be edited **only** inside the *Haemimont Material* panel in the Material properties (other changes will be ignored/overridden). All textures should use the first (and only) UV map. The following textures can be associated with an object:
+
+Base colour
+: The albedo for diffuse surfaces, or the specular colour for glossy surfaces. If the *BaseColor* texture contains alpha channel, the option *Use Alpha Test*  under *Haemimont Material* in *Material* tab, should be checked.
+
+Normal
+: Normal map.
+
+Roughness/metallic
+: R channels - "roughness" (0 - polished surface, 1 - rough surface).
+: B channel - "metalness" (0 - dielectric, 1 - metal).
+
+AO
+: Grayscale ambient occlusion.
+
+Self illumination
+: Grayscale emissive level (self-illumination).
+: Pure white (1.0) is treated as extra emissive (HDR), e.g. the surface of light sources.
+
+Colorization
+: Texture used for colorizing meshes. 
+
+The Blender Add-on will try to replicate what will be seen in the game as closely as possible using the Eevee engine. Use this as a reference only - the entity will appear differently in the game, since the Eevee engine is not identical to Haemimont Games engine. In case the add-on doesn't update the shader nodes automatically, you can use the "Recreate shader nodes" button in the *HGE Tools* panel.
+
+Also, an appropriate number should be set for the "Number of masked colors in CM" property, depending on the number of parts the model is separated into. This property can be found inside the Haemimont Material. This can be found in Blender by following the steps: 
+    * Select object -> "Materials Properties" tab -> Haemimont Material -> Maps -> "Colorization mask" and "Colorization mask colors".
+
+The maximum number of parts is 4. The texture will act as four masks combined into one:
+
+* Black color (#000000ff) will be ignored.
+* Red color (#ff0000ff) will mark the "first" part.
+* Green color (#00ff00ff) will mark the "second" part.
+* Blue color (#0000ffff) will mark the "third" part.
+* The alpha channgel (#00000000) will mark the "fourth" part.
+There cannot be any mixing at the edges between two different parts and all colors must match those hex codes exactly. The Base Color texture should also be prepared. Parts that will be colorized should be grayscale. Recomended values range from 190 to 220.
+
+
+Sample Assets
+-------------
+
+Sample Blender scenes for a weapon and for unit clothing are provided as examples in *Jagged Alliance 3* Steam installation folder along with the sample mods (\Steam\steamapps\common\Project Zulu\ModTools\Samples\Assets). Here are some useful tips and important notes that will help you structure your scenes and prepare your assets for export.
+
+1. M1A1 Thompson 
+ - The Blender scene includes hand reference and overall reference for the weapon. Those are not exported, they are used only for scale. The weapon is in a seperate collection. It has 2 components - the weapon itself and the magazine. Note that only the meshes that are parented by an empty object (Origin) will appear as options for export. Since the weapon and the magazine have seperate origins, they will appear in the list for export alongside their LODs. The LODs will be included in the same entity file as the original asset since they have the same entity name.
+ - The Weapon group includes the mesh, the LOD and empty objects - *spots* - for the left hand grip, the muzzle and the magazine. The spot names should be filled in according to the game requirements in the HGE exporter tool, since the name of the object itself in Blender is not used by the game. 
+ - Note that the magazine mesh has its origin at the same plase as the magazine spot in the weapon. This is how the spots of the weapon correspond to the parts that can be attached to them. 
+
+2. Smart Suit
+ -  The Blender scene demonstrates how to create pieces of clothing that will inherit the animations based on the skeleton that is also used in the game, along with a Male body reference. To see how the skeleton is connected with the meshes in the exporter, open the object properties panel and check under custom properties for the field "hgskeleton". In this field, you need to type in the entity name followed by "_" followed by the mesh name. When listing more than one item, different items are separated by | . This step is used for the game to recognize the animation and if skipped will result in static entity.
+
+
+Properties
+----------
+
+Can be inherited (`self.can_be_inherited`)
+: 
+
+Inherit entity (`self.inherit_entity`)
+: Entity to inherit meshes/animations from; only entities with 'Can be inherited' checked are listed.
+: Allowed values are: AnimatedTextureObject, AutoAttachObject, Deposition, Decal, FloorAlignedObj, Mirrorable, Animal, ForestDebris, HumanHead, ResourceEntityClass, ResourcePileEntityClass, Bush, Plant, Tree
+
+Class (`self.class_parent`)
+: Classes which this entity class should inherit (comma separated).
+
+Material type (`self.material_type`)
+: Physical material of this entity.
+
+On collision with camera (`self.on_collision_with_camera`)
+: Behavior of this entity when colliding with the camera.
+
+Fade category (`self.fade_category`)
+: How the entity should fade away when far from the camera.
+
+Wind trunk stiffness (`self.wind_axis`)
+: Vertex noise needs to be set in the entity material to be affected by wind.
+
+Wind branch stiffness (`self.wind_radial`)
+: Vertex noise needs to be set in the entity material to be affected by wind.
+
+Wind modifier strength (`self.wind_modifier_strength`)
+: Vertex noise needs to be set in the entity material to be affected by wind.
+
+Wind modifier mask (`self.wind_modifier_mask`)
+: Vertex noise needs to be set in the entity material to be affected by wind.
+
+Detail class (`self.DetailClass`)
+: Determines the options details. Essential will be visible always, Optional at high/medium setting, and EyeCandy at high setting only.
+
+FX target override (`self.FXTargetOverride`)
+: Plays effects related to the target material when the material breaks. 
+
+FX target secondary (`self.FXTargetSecondary`)
+: Plays a second effect with a different material. 
+
+
+
+
+
+(insert footer.md.html here)
+<link rel="stylesheet" type="text/css" href="Style.css" />
+<!-- Markdeep: --><style class="fallback">body{visibility:hidden;white-space:pre;font-family:monospace}</style><script src="markdeep.min.js" charset="utf-8"></script><script>window.alreadyProcessedMarkdeep||(document.body.style.visibility="visible")</script>

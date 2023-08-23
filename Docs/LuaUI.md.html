@@ -1,0 +1,396 @@
+# X
+
+## Overview
+
+*X* is a UI toolset. It relies on *terminal* for user input and on *UIL* for drawing.
+
+The core tenets of X are *dynamic layout*, *component re-use* and *expressiveness*. These affect UI creation in a number of ways:
+
++ single UI definition handles variety of situations
++ there is no separate visual layout and UI logic
++ shorter code for better readability
++ using properties is preferred to using code
++ storing code and data together (code is a property value)
++ easy to blend pre-made and custom components
++ easy modding by replacing specific components
++ visual editors that can be used even by non-programmers for easier prototyping and minor modifications
++ visual inspector and real-time update for easier creation/editing/debugging
+
+
+
+## XWindow lifetime
+
+*XWindow* is the base class for all on-screen UI elements in X. It inherits *InitDone* and its children are created by calling **new**:
+~~~~ Lua
+	local win = XWindowChild:new({
+		Id = "idChild",
+		Background = RGB(0, 0, 0),
+	}, parent, context)
+~~~~
+The initialization order is as follows:
+
+* *InitDone:new(instance, ...)*
+	* *instance* is a table that is converted to an object - an immediate table in this example.
+	* Any values provided in the instance become property values and all *XWindow* children respect property values passed this way.
+* *XWindow:Init(parent, context)*
+	* *parent* is the window parent
+	* *context* is the data associated with the window (see [XContextWindow](#x/xcontextwindow-dynamiccontent))
+* *Init* methods of all *XWindowChild* ancestors in order of inheritance
+* *XWindowChild:Init(parent, context)*
+	* This is a suitable place to create sub-windows.
+
+Next step is calling **win:Open(...)** - this method triggers fade-in and similar effects and will automatically call all children *Open(...)* methods. Therefore you need to call *win:Open(...)* only on the top level window of the hierarchy you've created. This is typically done by the functions *OpenXDialog* which is the ultimate method for creating window hierarchies. This also means that when *Open* is called the entire window hierarchy is already created.
+
+After these steps the window is ready and will be positioned by the layout engine, rendered on the screen and sent appropriate keyboard, mouse or controller events.
+
+**win:Close(...)** is used to initiate closing of the window. Close triggers the fade-out and similar effects and when they're over deletes the window. Note that Close is not recursive as this will lead to immediate disappearance of children without fade-out effects.
+
+**win:delete(...)** is used to destroy a window, disconnect it from its parent hierarchy, terminate its lifetime and delete all its children. Deleting a window has an immediate effect and does not display any fade-out or similar effects and affects all its children and their children.
+Windows that are not properly opened will trigger an assert at this point. 
+Any resources associated with the window have to be released at this point.
+
+
+
+## XWindow hierarchy
+
+Each window has a parent window which it resides into. A window can have any number of child windows. A window belongs to a desktop - the same desktop as its parent. So the windows are organized in a tree with varying number of children of each node. At the top of the tree is the desktop and at the bottom of the tree are the leaf windows that have no children.
+
+A window's children are stored in the array part of the window table and can be enumerated with *for i, win in ipairs(self) do .. end*
+
+The **ZOrder** property of a window is used to sort (stable sort) the children in their parent. The order of the children affects their draw order, their interaction order and their layout order. An exception is that windows with the property DrawOnTop are drawn after all other child windows.
+
+The window visibility (Clip property) or interaction (ChildrenHandleMouse property) might be restricted by its parent.
+
+The window **Id** property is used as member name which points to the window from the parent node. A parent node is the first parent window with **IdNode** = true. This is used for easy access to child windows from code:
+~~~~ Lua
+	self.idText:SetText("Hi") -- address my child "idText"
+~~~~
+Note that the above code will work ONLY if self has **IdNode** = true.
+
+The window **Id** is also used for communication between siblings:
+~~~~ Lua
+	self:ResolveId("idText"):SetText("Hi") -- address my child or my sibling "idText"
+~~~~
+The above code will look for a window with *Id* "idText" registered in the parent node of the window. This mechanism allows easy communication between windows in the same hierarchy which might be at different depths or within different sub-windows.
+
+The special *Id* "node" resolves to the parent node where a window is registered as member. Note that a window with *IdNode* = true does not register in itself, but in its parent node.
+
+By convention *Id* values typically start with "id" and are followed by a name in camel casing. This is done to improve readability and avoid conflicts with existing property names.
+
+
+
+## XWindow Draw
+
+When the window content changes the *Invalidate* method will schedule a redraw pass of the UI as soon as possible.
+
+The entire desktop is drawn using *UIL* methods by calling *XWindow:Draw* which does the following:
+
+* sets up any modifications applied to the window (see below)
+* *DrawBackground(box)* - draws the background which includes its border and padding (but not margins or layout space)
+* if *Clip* is specified clips further drawing to content area
+* *DrawContent(context_box)* - draws the content which excludes the border and padding
+* *DrawChildren* - visible children are drawn in the content area
+
+Drawing produces a stream of render commands which are rendered each frame for optimal performance. If the list of render commands includes images that are not loaded yet, the use of the render stream is delayed until these images become available.
+
+### XDrawCache
+Re-drawing any control requires redrawing the entire desktop. When a small and fast updating component requires frequent re-draw (e.g. every frame) all windows are drawn to produce the full render stream. To speed this process, large screen components that do not update as often should inherit *XDrawCache* which copies the render commands from the previous stream for the entire window sub-tree if it was not changed.
+
+### Modifications/Interpolations
+
+## XWindow Visibility
+
+Window visibility might be controlled at run time with *SetVisible(show, immediate)*. This allows changing the UI without rebuilding it. 
+
+Hiding or showing a control may trigger fade-in or fade-out effects.
+
+Note that making a control invisible does not affect the window layout. This allows changing visibility without moving controls around. To exclude a control from the layout use *SetDock("ignore")* (see [XWindow Layout](# XWindowLayout) below) or set the FoldWhenHidden property to true.
+
+
+
+## XWindow Layout
+
+### Box model
+Each window is given certain space by the layout logic (*SetLayoutSpace* method). The window HAlign and VAlign properties define where in that space it will be positioned.
+
+![HAlign and VAlign properties example](Images/X-align.png)
+
+The window *box* is computed after subtracting the margins from the assigned space. The window *content box* is computed by further subtracting the border and padding from the window box. So, the window content is surrounded by padding and border which defines the window box and further surrounded by margins which are outside the window.
+
+![Margins, border, padding and window content example](Images/X-box-model.gif)
+
+### Layout process
+The layout process has two phases - measure and layout. 
+
+In the first phase, all windows are measured from bottom to top. 
+
+During a measure pass, each window is given the maximum width and height it can possibly occupy and it returns the minimum width and height it needs to occupy. The minimum width and height of all child windows are used to compute the minimum size of their parent and so on for all windows to the top. So the measurement phase works from the bottom (the leaves of the window tree) to the top (the desktop).
+
+It should be noted that the size returned by the measure pass is a suggestion. The layout pass decides what specific space to assign to the window.
+
+The layoput phase assigns each window specific space (*SetLayoutSpace* method) which is used to compute its box and content_box according to the box model. Then the window children are assigned their own space relative to their parent. So the layout pass works from the top (the desktop) to the bottom (the leaves of the window tree).
+
+Some properties affect the window measurement (e.g. new text in a text control) while others can affect the window layout (e.g. a child window changing order). The *InvalidateMeasure* and *InvalidateLayout* methods allow requesting new measure or layout pass.
+
+Overriding the method *Measure(max_width, max_height)* allows a window to provide its own measurement logic (including measuring its children).
+
+Overriding the method *Layout(x, y, width, height)* allows a window to implement a custom layout logic for its children.
+
+Overriding the method *UpdateLayout* allows a window to implement custom layout logic for itself that ignores the layout logic of its parent.
+
+### Layout methods
+
+The LayoutMethod property specifies which of the available layout methods will be applied to the window children:
+
+* *None* - children are not touched
+
+* *Box* - all children are given the same space - the entire content area of the window. The window is as wide as its widest child and as tall as its tallest child. This method might seem too simple and with limited use at first but is very useful in a number of situations and is the default layout method.
+
+* *HList* - all children are ordered from left to right next to each other with *LayoutHSpacing* between them. The window tries to be as tall as its tallest child and wide enough to contain all its children. If UniformColumnWidth is true, each child is given as much space as the widest child.
+
+* *VList* - all children are ordered from top to bottom next to each other with *LayoutVSpacing* between them. The window tries to be as wide as its widest child and tall enough to contain all its children. If UniformRowHeight is true, each child is given as much space as the tallest child.
+
+* *Grid* - children are organized in a grid and occupy a rectangle of cells in the grid defined by the GridX, GridY, GridWidth, GridHeight properties. The layout respects both UniformColumnWidth and UniformRowHeight properties.
+
+Note that the area used by the layout is affected by any docked children and may not be the full content box (see below).
+
+### Docking
+
+Some children of the window are excluded from its general layout and positioned depending on their *Dock* property:
+
+* *box* - the window is given space the entire current box (which starts as large as the entire content box of the window)
+* *top*, *bottom*, *left*, *right* - the window is positioned in a strip at the top, bottom, left or right in the current box. The strip is large enough to contain the window. The current box is reduced so it does not cover the window. This works as docking a window in Visual Studio or Haerald.
+* *ignore* - the window is excluded from the layout
+
+Note that the docking behavior is dependent on children order as the current box gets modified as windows get docked. If the first child docks at the *box* then it is given the entire content box of the parent. If the last child docks in the *box* it will cover only what space is left uncovered by the other docked windows.
+
+Note that the window layout orders the non-docked children within the final current box computed after all docked children have taken space from the content box of the window.
+
+#### Scale
+Each window has a *scale* member (a point, so scale can be different in X and Y directions) which is computed from the scale of its parent window by applying its *ScaleModifier* property. All measurement related properties are used after the scale is applied to them. This includes *Margins*, *BorderWidth*, *Padding*, *MinWidth*, *MinHeight*, *MaxWidth* and *MaxHeight*.
+
+Changing the scale of a window allows its content to appear smaller or larger. 
+
+
+
+## XWindow Interaction
+
+*XWindow* inherits *TerminalTarget* and receives appropriate events through *XDesktop* which is registered as terminal target.
+
+When it handles an event the handler function should return *"break"* to interrupt further handling of the event. All other return values will result in further processing of the event.
+
+### Focus
+*XDesktop* takes care of tracking the focused window and forwards it keyboard and controller events. Only one window can have the focus at any given time.
+
+Changing the keyboard focus is done by calling *XWindow:SetFocus*. XDesktop calls *XWindow:OnSetFocus* when a window gets the focus and *XWindow:OnKillFocus* when a window looses it. These methods are called for all parent windows of the window getting or losing the focus as well.
+
+Events are forwarded to the focused window by calling the appropriate handler function. If the window event handler does not return "break" for an event, the event is sent to its parent window and so on. If one of the handlers returns "break" the processing of the event stops and the event is not sent to any other windows or terminal targets. 
+
+For example, this mechanism allows a text control to handle all ordinary key presses, its parent control to handle "Enter" to set a property value, a dialog somewhere higher in the hierarchy to handle "Tab" and change the focus to another control and a different terminal target to handle the shortcut Alt-F4 for closing the application.
+
+*XDesktop* keeps a log of all windows which had the focus so that it can restore the focus to an appropriate window should the focused window gets destroyed. There is no need to do anything to use this feature. Typically the client code may need to set the focus once on dialog creation and on click when implementing a custom control. Adding more SetFocus calls rarely works better.
+
+The focus is limited to windows within the current modal window (see [Modal Window](# XDesktopModalWindow)).
+
+### FocusOrder
+
+The *FocusOrder* property of XWindow defines the position of the window in a two-dimensional virtual focus grid. The *GetRelativeFocus* function allows obtaining the window with different relative position in the grid to a provided position. It is used to implement changing the focus via "Tab"/"Shift-Tab" and the controller DPad.
+
+The *EnumFocusChildren* function allows enumerating all extended children (not only direct children but their children as well) which have a FocusOrder assigned to them. It can be used to implement custom focus navigation. 
+
+The *RelativeFocusOrder* property (values: "", "new-line" and "next-in-line") allows defining a window's *FocusOrder* when windows are dynamically created and therefore their focus order is hard to know in advance. When an XDialog opens it calls *ResolveRelativeFocusOrder* which generates the appropriate *FocusOrder* for all its children with *RelativeFocusOrder* set.
+
+### Keyboard 
+
+Keyboard event handlers are *OnKbdKeyDown*, *OnKbdKeyUp* and *OnKbdChar*. OnKbdChar is generated for character events and might be sent repeatedly for a single key press (auto-repeat).
+
+Shortcuts such as "Ctrl-V" are handled in *OnShortcut* which is called with a shortcut code if all handlers of OnKbdKeyDown did not handle the key down event.
+
+### Controller
+
+Controller event handlers are *OnXbuttonDown*, *OnXButtonUp*. These are sent to the focused window and handled in exactly the same way as the keyboard events. 
+
+Possible button names are:
+
+* DPad: DPadLeft, DPadRight, DPadUp, DPadDown
+* buttons: ButtonA, ButtonX, ButtonB, ButtonY
+* triggers: LeftTrigger, RightTrigger
+* bumpers: LeftShoulder, RightShoulder
+* sticks: LeftThumbLeft, LeftThumbRight, LeftThumbUp, LeftThumbDown, LeftThumbClick, RightThumbLeft, RightThumbRight, RightThumbUp, RightThumbDown, RightThumbClick
+* other: Start, Back, TouchPadClick
+
+### Mouse
+
+Mouse event handlers are *OnMousePos*, *OnMouseButtonDown*, *OnMouseButtonUp*, *OnMouseButtonDoubleclick*, *OnMouseWheelForward*, *OnMouseWheelBack*, *OnMouseEnter*, *OnMouseLeft*.
+
+Mouse events are sent to the window under the mouse. When that window changes, the new window under the mouse receives *OnMouseEnter* while the previous window receives *OnMouseLeft*. These messages are sent as well to all window parents up to the first common parent of the new and old mouse target.
+
+The default handler of OnMouseEnter/OnMouseLeave calls *SetRollver(bool)* which triggers rollover specific behaviors for the window, including showing/hiding the window *idRollover* (see [Hierarchy](# XWindowHierarchy)). 
+
+The possible button names are *L, R, M, X1, X2, X3*.
+
+Note that *OnMouseButtonDoubleclick* calls *OnMouseButtonDown* by default. Unless a window needs to make the difference between the two, implementing *OnMouseButtonDown* is enough.
+
+The mouse input can be captured by a single control by calling *XWindow:SetMouseCapture*. This directs all mouse events to the window who has the mouse capture even if it leaves the window. The window which captured the mouse still receives OnMouseEnter/OnMouseLeft events, but the other windows do not receive them. When losing the mouse capture a window receives *OnCaptureLost* event. The mouse capture is limited to windows within the current modal window (see [Modal Window](# XDesktopModalWindow)).
+
+Mouse shortcuts such as "Ctrl-MouseR" can be handled in *OnShortcut* which is called when a mouse button down event was not handled by any window or terminal target. 
+
+
+## XWindow Threads
+
+Each window can have several named **real-time** threads associated with it. When the window is deleted the threads associated with it are deleted as well, which makes the code easier to read and write.
+
+Such threads are created by calling *XWindow:CreateThread* and deleted by calling *XWindow:DeleteThread*.
+
+Creating a thread with a given name destroys the previous thread with the same name. For clarity, the client code should call DeleteThread to avoid ambiguity or an assert will trigger.
+
+
+## XDesktop
+
+*XDesktop* is the root of a window hierarchy and handles the interaction and drawing of the entire hierarchy. 
+It registers itself as a terminal target, handles system events and forwards other events to the appropriate window (see [Interaction](# XWindowInteraction)).
+
+### Modal window
+
+XDesktop limits all interaction to the windows within a single modal window. Changing the modal window immediately forces the focus and mouse rollover within the current modal window.
+
+All modal windows are kept in a list, so when the current one is destroyed, XDesktop can select the topmost visible of the previous modal windows therefore always providing a valid modal window for interaction.
+
+The focus is similarly kept in a focus list so when the focused window is deleted or the modal windows change, the focus can be directed to the most appropriate window.
+
+
+## XContextWindow - dynamic content
+
+*XContextWindow* may include dynamic content which depends on its context. When **XObjUpdate** is called with a particular context all windows associated with the context receive **OnContextUpdate**. Calling *ObjModified* results in *XObjUpdate* for the object.
+
+A number of controls recalculate their content when **OnContextUpdate** is called. This includes *XText* and *XLabel* which translate their content again providing their (updated) context as translation context. *XTemplateContent* re-spawns its template when its context changes allowing the creation of entirely different window hierarchy depending on its context.
+
+While it is possible to create dynamic window content by alternative means, client code is encouraged to make as much use of *XContextWindow* as possible.
+
+
+## XControl
+Below is a list of control base classes which add various functionality:
+
+* *XControl* - can be disabled. It has different border and background colors when disabled or when focused. Can fire FX events - *XControl:PlayFX*.
+* *XFontControl* - has several text properties - font, color, shadow, etc. These can be set together by copying them from another control.
+* *XTranslateText* - has Translate property and can handle translated text. Translates again when its context changes.
+* *XEditableText* - handles translatable text input. Can generate translation ids if necessary.
+* *XPopup* - a base class for popup windows. Can position itself relative to another window and closes when it loses focus.
+* *XButton* - a button base class which manages button states
+* *XScroll* - a scroller base class
+
+Below is a list of controls which implement read-to-use functionality:
+
+* *XPopupList* - a popup list which closes after a selection is made (used by *XCombo* and *XMenu*)
+* *XEdit* - a single line edit control
+* *XCombo* - an edit control with a combo box
+* *XLabel* - a single font text control
+* *XText* - a text control that supports tags, images and different fonts and colors
+* *XImage* - draws an image
+* *XFrame* - draw a frame (an image split in 9 parts)
+* *XTextButton* - a button that has an image (optional) and a text (optional) ordered horizontally or vertically
+* *XList* - a list of windows that can be selected. *XListItem* can be used as an item window.
+* *XMultiLineEdit* - a multi-line edit box
+* *XScrollBar* - a simple scroll bar with a variable size thumb (and no arrows)
+
+
+## XAction
+*XAction* contains all properties needed to fully describe a user action - internal id, user visible name, shortcuts, action function and more. Once defined an action can be shown in different menus or toolbars. This class allows detaching the presentation and activation from the actual action code. 
+
+*XActionsHost* contains a list of actions and activates them when the corresponding shortcut is triggered.
+
+*XActionsView* is a base class that monitors the actions of its parent *XActionsHost*. It can be inherited to create a menu, a toolbar or take any other form. It's function *RebuildActions* is called whenever the actions in *XActionsHost* change.
+
+*XMenuBar* inherits *XActionsView* and is a top-level application menu seen in many apps. It can show many actions organized in a menu hierarchy. Actions are triggered by selecting them from the menu.
+
+*XToolBar* inherits *XActionsView* and is a toolbar that shows actions as buttons. It can show only icons, only text or both icons and text.
+
+
+## XDialog
+
+XDialog represents a standalone interface element. Example dialogs include a message box, an infopanel of a building, a loading screen, a full-screen pre-game menu such as the game options.
+
+A dialog has Mode which can allows changing its behavior. When the mode changes it notifies all its children about the change.
+
+**OpenXDialog** opens a global copy of a dialog given a class name or an *XTemplate* (see below). Opening the same dialog again will only add another open reason (if not present already).
+
+**CloseXDialog** removes an open reason for a dialog and if that is the last open reason it closes the dialog with the provided result.
+
+**XDialog:Wait** and **WaitXDialog** functions allow waiting for a dialog to be closed and return the close result.
+
+**GetXDialog** returns the global dialog opened with *OpenXDialog*.
+
+**XRemoveOpenReason** removes a particular reason from all open dialogs potentially closing some of them.
+
+### XLayer
+
+Layers are standalone components that can be used either separately or as part of other dialogs. Example layers include pause-the-game layer, hide-the-in-game-interface layer and show-the-planet-earth layer.
+
+In combination with the open reasons and *XDialog*, layers allow easy reuse of functionality and convenient lifetime management.
+
+### XTemplateContent
+
+*XTemplateContent* is a host window for a class or an *XTemplate* that allows on-demand recreation of a UI component. A good example is the research queue in the research UI - when the queue changes the queue UI is recreated which simplifies significantly its implementation.
+
+
+## XTemplate
+
+*XTemplate* is a hierarchy of nodes that create and control the creation of interface components. *XTemplate* can have its own custom properties and include code which makes it virtually the same as a class. 
+
+**XTemplateSpawn** function can create both *XTemplates* and classes and requires a parent window and a context. Since the exact data is known at the time of spawn it is possible to have conditional creation and multiplication of interface elements matching the data. The mix between code and property selection allows simplicity of the *XTemplate* definitions without sacrificing any power. 
+
+Below is a list of possible nodes in an *XTemplate* hierarchy (they all inherit *XTemplateElement*):
+
+- *XTemplateWindow* - creates a new window of the given class and sets the specified properties. All sub-nodes are executed with this new window as parent.
+- *XTemplateTemplate* - spawns another template using the current parent and context. Allows setting additional properties of the returned window. Sub-nodes are executed with parent certain window from the spawned hierarchy (the top-level window by default)
+- *XTemplateGroup* - allows specifying a new context and parent that will be used to execute the sub-nodes. A condition allows skipping the execution of all sub-nodes in the group.
+- *XTemplateAction* - spawns an action and adds it in the *XActionsHost* higher in the hierarchy of the parent window. Sub-actions are executed with this action as context.
+- *XTemplateMode* - executes the sub-nodes if the mode of the *XDialog* in the parent hierarchy matches a specified one.
+- *XTemplateLayer* - creates an invisible window of class *XOpenLayer* which opens a layer (via *OpenXDialog*).
+- *XTemplateCode* - executes a piece of code which can execute the sub-nodes as many times as it sees fit and can modify the execution parameters at will. This element can be used to create the effects of all other elements.
+- *XTemplateForEach* - executes its sub-nodes for each element in a given array and then runs some code that can tweak the result. A map function allows mapping the elements to other values or filtering some of them out. The array elements can be used as a context of the sub-nodes.
+- *XTemplateForEachAction* - executes its sub-nodes for each matching action in the parent *XActionsHost*. Can be used to create a menu from the actions registered in the host.
+- *XTemplateFunc* - allows assigning a function to the parent window. Often used to add event handlers to controls.
+- *XTemplateProperty* - adds a property to the template which can be specified when instantiating the template. The provided set/get functions are assigned to the first window spawned by the template (which is also the one being returned).
+
+An *XTemplate* can declare the class of the window it spawns (the "Is kind of" property) which allows further customization of these properties when later instantiating the template.
+
+The "Template content parent" property allows providing special parent to all sub-nodes of the *XTemplateTemplate* node used to spawn the template. An example of this is an infopanel template which has a content container somewhere in the hierarchy. The actual content is specified as sub-nodes of the *XTemplateTemplate* node creating the infopanel.
+
+
+## XWindow Inspector
+The XWindow Inspector allows navigating and inspection of an XWindow hierarchy for debug purposes. It shows information about a particular window.
+
+The inspector consists of a toolbar, path and two panels. The path shows the name of the current window prefixed with the name of its parent and so on to the desktop. 
+
+A window name is its class, id and dock (if any).
+
+The first panel is a tree control showing the names of all windows starting with the desktop.
+Clicking selects the window for inspection in the second panel. Ctrl-click opens a new inspector for the clicked window.
+
+The second panel shows the properties of the currently selected window. An action allows showing only the non-default properties.
+
+When the selection changes a black/white border flashes around the newly selected window.
+
+Here is a list of the available actions (toolbar buttons):
+
+- rollover mode - moving the mouse changes the currently selected window in the inspector. Left click selects the window under the mouse for inspection and cancels the rollover mode. Right click reverts to the previously selected window and cancels the rollover mode.
+
+- inspect the last mouse target.
+
+- inspect the current focused window.
+
+- toggle focus logging - an in-game print shows the path to the focus when it changes
+
+- toggle rollover logging - an in-game print shows the path to the last_mouse_target when it changes
+
+- toggle context logging - an in-game print shows each context update (if connected to any windows) and lists the path to all windows being updated
+
+
+
+
+
+
+
+(insert footer.md.html here)
+<!-- Markdeep: --><style class="fallback">body{visibility:hidden;white-space:pre;font-family:monospace}</style><script src="markdeep.min.js" charset="utf-8"></script><script>window.alreadyProcessedMarkdeep||(document.body.style.visibility="visible")</script>

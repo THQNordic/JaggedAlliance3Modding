@@ -1,0 +1,133 @@
+[Keyword: Greeting]
+	Gunther: If you were my guests, I would offer you some of my finest selections of brandies. However, I do not recall inviting any of you into mein haus. So, perhaps you will forgive me if I ask a blunt question - what do you want?
+		Thor: Apologies, mein Herr. Do not trouble yourself. I travel with my own specially prepared smoothies - muesli, asparagus und sauerkraut.
+		Gunther: If ever there was a concoction that could use alcohol to make it worth drinking, that would be it. Nevertheless, why are you here?
+		Grizzly: Uh, door was open? Hey, has anyone ever told you that you look like the KFC guy?
+		Gunther: Only every time I meet someone new. Has anyone ever told you that you look like a thief who will soon be shot if you don't give me a good explanation of your presence this very second?
+		Igor: Brandy is not favorite of Igor, but if you have vodka, I will help you drink it!
+		Gunther: I have servants for that, but I will keep it in mind. Is vodka the reason you are in mein haus?
+		Reaper: My presence in any time or space is of no one's concern. An angel of death can come and go wherever they intend... and precisely when they mean to.
+		Gunther: Ha! An angel of death? Well, I hate to be a party pooper, but you'll be coming to my house only when I intend you to, soul collector. Now, you may leave or explain why you are really here.
+	[Keyword: Just looking around]
+	[Keyword: We're interested in the mine]
+[Keyword: GreetingResponse]
+	Gunther: Don't think that I didn't notice you coming to Landsbach. I am perfectly aware of every step you make, A.I.M. mercenaries. I know you are after the diamonds. Everybody wants the diamonds.
+		Shadow: Every step? I doubt it. I cover my tracks. Where was I three days ago?
+		Gunther: I meant collectively, you dummkopf. And wipe that ridiculous paint off your face. You are in a mansion, not a swamp.
+		Grunty: Forgive me, mein herr, but not everyone. I, for instance, want nothing more than to soak my feet.
+		Gunther: That is the most believable lie as to why you are here that I have yet heard, junge.
+		Scope: You can track our movements? That's not something you really should have revealed, love.
+		Gunther: I am too old for games, young lady, especially when I already know all the moves. People are no different than clockwork mechanisms. When you've been stuck in this world for as long as I, you tend to know what makes them tick.
+		Mouse: You shouldn't spy on people. It isn't very nice.
+		Gunther: And you should not take a mercenary contract that exchanges blood for diamonds without expecting that there will be people - powerful people - who will be watching you.
+[Keyword: Greeting]
+	Gunther: Ah. It is you again. I hope the reason for this visit is more interesting than the one you provided last time.
+[Keyword: Greeting]
+	Gunther: Killing off <em>Bounce</em> cost me precious time and resources. I dislike it when my proxies are tampered with, and when I dislike something, I usually find someone to punish.
+	Gunther: Luckily for you, your little show in the <em>Night Club</em> proved to be beneficial for me. In the ensuing chaos, my little birds caught wind that <em>Bounce</em> had been planning to betray me. Therefore, the result was a net gain, so your transgression is forgiven.
+[Keyword: Greeting]
+	Gunther: As you can see from my condition, time is a resource I have precious little of, so I tend to be careful how I spend it. Now that I see you've made some progress on our little agreement, it would seem time spent on you has value, ja?
+[Keyword: Greeting]
+	Gunther: What are you waiting for? The mine is yours. Go and do whatever dirty things you have in mind with those diamonds.
+[Keyword: Tell us about the diamond mine]
+	Gunther: Ah, yes. Straight to business. I appreciate that. As I'm sure you noticed, the mine is heavily guarded. My security force is exceptionally well-trained and conditioned. I would not dare to test them, if I were you.
+		Meltdown: They look like a bunch of pretty-boys to me, but if that's your thing... Hey, I don't judge.
+		Nails: Don't sweat it, gramps. I hate tests.
+		MD: Well, I'm glad you said that, because I have about a dozen tests in mind, starting with urine.
+		Raider: If they keep the peace around here, I have no problem with them... aside from maybe some glute envy.
+	Gunther: I do not keep the mine well-guarded for reasons of greed. I have all the wealth I need. No, the mine is important to me for reasons that extend a great deal beyond financial security.
+		Livewire: Wait, are you saying there are more important reasons to do things than for financial security? I... I think I need to sit down.
+		Wolf: Did you find ancient relics down there or something? If you found a golden idol, don't try replacing it with a bag of sand.
+		Kalyna: Does your family have a mausoleum down there? Is it haunted?
+	Gunther: Aside from extracting diamonds, the area around the mine is a place where I... conduct other business. Recently, something related to this business was <em>stolen</em>.
+[Keyword: What is this place?]
+	Gunther: The <em>diamond mine</em> is the primary source of income for the nearby town of <em>Landsbach</em>. Both places were little more than trash heaps until I came and invested in building them up.
+	Gunther: If you go east of here, you will find the docks, and a place called <em>Night Club</em>. It is an establishment I built to keep the diggers happy. One can gamble, fight, drink... all the things those of lesser minds enjoy.
+		Shadow: With the nice ancillary benefit of putting their paychecks back into your pocket.
+		Magic: And all the proceeds flow right back to you. Not a bad little scheme.
+		Red: What you really mean is, you get them too blootered to notice yer pickin' their pockets.
+		Ice: How the poor stay poor and the rich stay rich, Exhibit motherfuckin' A.
+		Tex: Sound to me like good deal for everyone, partner!
+		Blood: I'm getting a bad taste in my mouth just listening to you... and I hate when things taste bad.
+[Keyword: What was stolen from you?]
+	Gunther: <em>Diesel</em>. I don't know why, but several gallons of it were stolen from me. It may seem trivial to you, but I am not talking about the normal kind of diesel. It is... sehr special to me.
+		Barry: Could be dangerous. Diesel is not most ideal of explosive fuels, but it can still create destruction of noteworthy magnitudes.
+		Gus: People go crazy over fuel, Woodman. I saw an old lady shoot a biker who cut in front of her at the gas station during the shortage a while back.
+		DrQ: I am always astonished, and distressed by the amount of emotional attachment people form to material items.
+		Hitman: Everybody thinks their own gas is special and that everyone else's stinks.
+	Gunther: I need it back. Unfortunately, investigation is not something my men excel at, but I suspect you do. Help me retrieve what was stolen and <em>Landsbach Diamond Mine</em> will be yours. I am done with this place and I've no wish to fight you for it.
+		Scope: Not to be rude, but they also don't seem to excel at guarding your Diesel, either.
+		Gunther: And yet you managed to be rude, regardless. I do so enjoy the British and their ability to be childishly clever. For your information, the theft happened off the premises.
+		Nails: Scooter, you got yourself a deal. Any man who takes his fuel that seriously is a man I can respect.
+		Grunty: That is a most generous offer. I look forward to toasting our success with brandy... and perhaps some schnitzel?
+		Shadow: I don't get it. A whole mine full of diamonds for a few gallons of gas? Something doesn't add up.
+		Gunther: Math is hard. Don't strain yourself.
+[Keyword: Who might have stolen the Diesel?]
+		Raider: Have you seen anyone suspicious sniffing around your special gas, sir?
+		Raven: Do you have any enemies? Jilted partners, disgruntled employees, angry neighbors who don't like your dogs on their lawn... y'know, stuff like that.
+		Sidney: Let us begin by eliminating the suspects... Pardon me, I meant to say "narrowing."
+	Gunther: I don't know who might have stolen it, but I do know it was not stolen from here. A van was transporting my <em>Diesel</em> to a... location I do not wish to disclose. The van left here on schedule but never arrived. I suspect it was ambushed en route.
+	Gunther: As you can see, I don't get out much. I have few personal contacts. You should probably ask around in town and see if someone might know more. A good place to start is <em>Night Club</em>. I imagine many of the patrons know a good deal about local criminal activity.
+		Larry: Heey, now we're talking. I'll ask everyone in the <em>Night Club</em> about drugs... No, wait - it's gas, right? I'll ask them about that, too.
+		Vicki: If we gonna be jammin' in a club, that place better be dropping some serious Reggae beats, mon.
+		Scully: Careful there, Siegfried. Your class bias is showing.
+		Ice: Hell, yeah. We gonna walk into the club all like, "What's up? We lookin' for a weasel wants to talk about Diesel."
+[Keyword: What is this Night Club?]
+	Gunther: Do not be fooled. Das ist not a techno club. It is an arena. The diggers like to go there to satisfy their base desires. They drink, they gamble, they fool around with girls... and they fight - sometimes, to the death.
+		Tex: Mortal Kombaaat! Great game. Terrible movie.
+		Reaper: Isn't life just one big fight to the death?
+		Grunty: Das ist too bad... I love techno.
+		Red: Ah. Sounds like one of me favorite pubs back in Edinburgh.
+	Gunther: The club is open every night in the warehouse near the docks. I let <em>Bounce</em> handle this enterprise, as I do not enjoy mingling with the maggots. Take this <em>coin</em> and show it at the door. Otherwise, they won't let you in.
+[Keyword: You ordered the attack on Chalet de la Paix]
+	Gunther: That was... a mistake on my part. The men I hired proved to be not just unreliable, but dangerous. I had hired them to secure a certain plant that grows near the village. I encouraged them to work with <em>Dr. Robert</em> to identify and collect it.
+		MD: Doc Robert was a monster, not a doctor.
+		Sidney: That man was a lunatic. Instead of working in a hospital, he should've been committed to an asylum.
+		Shadow: They weren't looking for plants, they were looking for ways to sneak up on a defenseless town.
+	Gunther: When they alerted me to the rapid decrease in the town's population, I advised them to move quickly. They either misinterpreted my meaning, or took that as motivation to enact some plan they had come up with on their own to seize the town and plunder it. I cannot fix what was done, but I do regret it.
+[Keyword: Your bodyguards look unnatural]
+	Gunther: It is not just the looks. Although I have been devoting much of my time on that, as well. Deterrence is a key element of creating a super soldier. This is the art of producing in the enemy... the fear to attack. Just like your fear of attacking my mine, ha-ha.
+		Magic: Man, you should be a leader. With the whole package, you know. Red flags, black boots, stylish imperialistic uniforms and all these things.
+		Gunther: The world is too important to be left to politicians. They have neither the time, the training nor the inclination for the bigger picture.
+		Len: I must say that I'm impressed. I can see a military education put into good use here.
+		Meltdown: Chill down, gramps. You'd have to work harder if you wanna see my fear.
+	[Keyword: It's not just the training, right?]
+		Gunther: Hahaha. You think of me as a mere capitalistic entrepreneur. I am no producer. I am a creator. My canvas is the human body. My muse is the art of war.
+			DrQ: If the mind is willing, the flesh could go on and on without many things. Sun Tzu.
+			Ivan: Ты фашист проклятый.
+			Len: You're talking about mass murder, not war.
+	[Keyword: We're not afraid]
+		Gunther: Oh. But you should be. I dare you to attack one of my soldiers. I promise you a quick and painful result.
+[Keyword: We found your Diesel]
+	Gunther: Ah, so you have. I suspected you would be suitable to the task. You have my sincere gratitude, mercenaries.
+		Fauda: When I have a task before me, I let no one stand in my way... although I do allow some to sit or lay down.
+		Igor: Gratitude is nice, but I prefer commendation.
+		Grunty: As well as brandy and schnitzel, I hope!
+	Gunther: As promised, I will withdraw my soldiers. The mine will be yours. Now, please hand me my <em>Diesel</em>.
+	[Keyword: It's yours]
+		Gunther: Mein <em>Diesel</em>... I will remember this favor. Please know you will always be considered invited guests in mein haus. Now, here are the deeds to the mine. I have informed the workers of their new employer. The <em>mine</em> is yours.
+	[Keyword: We know about your Enhanced Diesel]
+		Gunther: So, your investigation skills are better than I expected. Well, now you understand the stakes here. With strong discipline, natural selection, and the power of chemistry, I am creating a better breed of man. Some say chemistry is the study of matter. I say it is the study of change.
+			Larry_Clean: Oh, man, that was beautiful. Chemistry is my favorite subject, too... even though I got a D on my final exam.
+			Thor: Natural selection is a theory pertaining to animals. A human being should ascend beyond that. You can't awaken the giant within using artificial enhancements.
+			Wolf: I think we've all heard this speech before, Siegfried. Put a sock in it.
+			DrQ: The spirit is constant and eternal, the body is temporary.
+		Gunther: I see you are skeptical. That is understandable. I do not require you to believe me. I do, however, require your cooperation. Therefore, in addition to giving you the <em>diamond mine</em>, I shall also leave you some <em>militia</em>, drawn from the local populace, to help defend it. What do you say?
+		[Keyword: That seems like a good deal]
+			Gunther: I am very happy to hear that, mein freund. Come, let us toast to our mutual success. Prost!
+		[Keyword: We are putting and end to this]
+			Gunther: And who is paying you to do that? No one. I am giving you the diamond mine - the very thing you are contracted to take - yet you wish to interfere in my business instead. Why?
+				Meltdown: Because you talk too much and I'm damn tired of it!
+				Steroid: Because I hate Nazis!
+				Omryn: Because you are bad host who does not give snacks. I joke. It is because you are insane and also dangerous.
+			Gunther: You think it is because you are righteous? You are mercenaries! You have no cause beyond feeding your own bank account. Your kind solves problems with solutions that are only temporary, while I... I am trying to provide a final solution.
+	[Keyword: No. The deal's off]
+		Gunther: Then you are no better than the thieves that took it in the first place. Therefore, I will do to you what I would do to them if they were here.
+[Keyword: Bounce took your Diesel]
+	Gunther: Is that so? I always knew <em>Bounce</em> despised me, but I didn't think he had der testikels to betray me. If you discovered his treachery, he is no doubt aware of it. He is probably planning to storm the house as we speak.
+		Flay: I must admit, I am hoping he will. There is a perfect spot on your wall where his head should be mounted.
+		Fidel: Let him come! He will get a face full of Fidel!
+		Reaper: If it is death he seeks, he shall find it.
+	Gunther: He will discover for himself what fate awaits der Untermensch at the hands of der Übermensch... Thank you for telling me this. Your professionalism is admirable. I am certain now that you will soon recover mein Diesel.
+[Keyword: Goodbye]
+	Gunther: You will excuse me if I do not show you to the door. Auf Wiedersehen.

@@ -1,0 +1,228 @@
+[Keyword: Greeting]
+	Broker: Welcome to my little corner of Fleatown! My name is Lalee. You here to buy or sell? Don't tell me, let me guess... You're here about <em>diamonds</em>, right? I got a <em>good nose</em> for diamond traders - they smell like dirt, sweat, and blood. Or maybe that's just your clothes. Errr, no offense, of course.
+[Keyword: Greeting]
+	Broker: Have you found the necklace of Madam Lecoq? Please, tell me you got it!
+	[Keyword: We have the necklace]
+		Broker: Let me see it! Oh, looking good! I can't wait to see how much I can squeeze out of those diamond-hungry <em>Adonis</em> fools for it! But I am getting ahead of myself. How do you feel about letting it go for <em>three grand</em>?
+		[Keyword: Okay, here it is]
+			Broker: That's the way to strike a deal! Boom, and it's done! Here, take the money plus a little present in appreciation for not wasting my time. Hope you like it!
+				Red: May have left a wee bit of money on the table, but the vest will come in handy.
+				Fox: I do like presents, especially ones I can put on... and then take off.
+				Gus: I'll take a Kevlar vest over a dang necklace any day!
+				Nails: A Kevlar vest, huh? It's cute, but not my type.
+		[Keyword: Fifty grand!]
+			Broker: Fifty!? You see the Hope Diamond on this thing or something? No. Best I can do is ten grand.
+				Tex: Then we go sell somewhere else!
+				Raven: I'll tell you what I DO see - a robbery in progress!
+				Scope: We had to ruin a good deal of fine upholstery to find this thing, you know.
+				Blood: A lot of blood was spilled over this necklace... or at least, there could be.
+			Broker: But, wait. No. For you, I can do better. Probably wasn't easy finding it, right? You deserve a little extra for that! <em>Twelve grand</em>.
+				Tex: Good thing I know how to haggle!
+		[Keyword: Make it twenty]
+				Buns: We have already paid you a diamond for the information that has lead us to finding this necklace. We are not, however, bound by contract to sell it to you.
+				Raider: That necklace looks valuable. Maybe we should consider finding its rightful owner.
+				Sidney: Allow me to clarify. You were good enough to sell us the information regarding this object. However, since a price for the object was not stipulated at the time, we are not bound to solely consider your offer...
+			Broker: You certainly know how to haggle. Shall we agree to <em>fifteen grand</em>? It's refreshing to meet someone who can really play this game. Haggling is better than chess, change my mind!
+		[Keyword: Adonis?!]
+			Broker: Since they lost control of their mines, they've been gobbling up all the diamonds that appear on the black market. The fools are paying top dollar! Diamonds make people crazy.
+				Raven: I hadn't noticed.
+				Blood: Typical colonizer move.
+				Fauda: They seek to accomplish their objective through other means. Makes sense.
+	[Keyword: Still searching for it]
+		Broker: You come to me first if you find it, okay? You won't find a better deal anywhere else, and besides, don't forget that I was the one who tipped you off, eh?
+[Keyword: Greeting]
+	Broker: My friends! I heard that <em>Boss Blaubert</em> wants to meet you. You won't forget your old friend Lalee now that you're swimming with the big fish, eh?
+[Keyword: Greeting]
+	Broker: Found a chair but no necklace, eh? Don't get discouraged!
+		Fauda: We have more important things to do than playing your game of chairs.
+		Thor: Oh, I never get discouraged. That's what my breathing exercises are for.
+		Meltdown: I ain't discouraged. You'll know when I get discouraged. Stuff usually blows up.
+	Broker: I'm telling you, the necklace is inside the lining of one of those chairs! Keep looking! Find the <em>diamond necklace</em>, bring it to me and I'll give you a good price for it.
+[Keyword: Greeting]
+	Broker: Well hello, my friends! You need <em>information</em>, or you just love to see my face?
+[Keyword: Greeting]
+	Broker: Well hello, my friends! I just came up with a great new concept. I call it <em>subscription</em>. You give me a diamond a month, and in return I will mail you a loot box! Great idea, isn't it?
+		Red: That's a crock o'shit, lad. I willnae be buyin' somethin' I dinnae need, ye ken?
+		Meltdown: Last guy who tried to sell me a subscription got a magazine jammed up his ass.
+		Igor: I am already subscribed to vodka-of-the-month club.
+	Broker: Are you here to buy <em>loot boxes</em>, or you need <em>information</em>?
+[Keyword: Greeting]
+	Broker: Well hello, my friends! Tell me what you think of this: the <em>season pass</em>! You give me a lot of diamonds up front, and I will give you a lot of loot boxes at some point in the future! Sounds exciting, eh?
+		Buns: So we don't even get a cat in a sack for our money, but only the promise of a potential cat in a sack?!
+		Broker: Exactly! This is the future of commerce!
+		Igor: What about opposite: You give me vodka. I drink all of it. Next day, you come for payment while I have hangover. I guarantee you get biggest deal of your life.
+		Grunty: Ach! So complicated! I would rather go back to the barter system.
+		Grizzly: Only season pass I have is for football - the MANLY kind of football, not this sissy-footsy ball you got over here.
+	Broker: Are you here to buy <em>loot boxes</em>, or you need <em>information</em>?
+[Keyword: Greeting]
+	Broker: Well hello, my friends! You know, diamonds are great, but with so many people trying to control mining, cutting, selling... bleh! It's confusing! I'm thinking I should introduce a new kind of currency - an electric currency - controlled by just me, trustworthy Lalee! I call it <em>shitcoins</em>! Working title. 
+		Mouse: In that case, why don't you give me the diamonds and you keep your... er, whatever it is you called it.
+		Livewire: Well, you will need some kind of a public ledger, as well as some way to encrypt and broadcast the transactions... Hmm, I'll give it some thought.
+		Wolf: Yeah, you might want to workshop that title a bit.
+	Broker: Are you here to buy <em>loot boxes</em>, or you need <em>information</em>?
+[Keyword: What information?]
+	Broker: Oh, I happen to know all sorts of things. If you would be kind enough to grant me a <em>tiny diamond</em>, trusty Lalee will tell you a secret. What do you say? Trade what's in my head for what's in your pockets?
+		Vicki: A whole diamond for your pep talk? You be crazy, mon.
+		Len: If it's good intel, it's a deal. If it's not, then we might have a problem.
+		Shadow: I give you a diamond and you give me a story? Better be one hell of a story.
+[Keyword: What information?]
+	Broker: I know what's cooking! One <em>tiny diamond</em> for each recipe, my friends.
+	[Keyword: How do we get rich?]
+		Broker: Save your money and never get sick. Next question. I am joking with you, of course! It just so happens your friend Lalee has a little get-rich-quick scheme you might be interested in...
+	[Keyword: Something about Smiley]
+	[Keyword: Something about Smiley]
+		Broker: I knew it! You are after the boy! You're not the only one. A group of smugglers went after his girl and he <em>killed</em> one of them. They were ready to cut him down on the spot!
+			Ivan: Молодец!
+			Grizzly: Kid's got balls.
+			Wolf: Sticks up for his girl, huh? I like him already.
+			Kalyna: Like a prince from a fairy tale!
+		Broker: I don't blame the boy - the <em>Carnival Queen</em> from <em>Pantagruel</em> is quite a treat. He was about to get sliced into pieces, but Boss Blaubert himself intervened and told the smugglers to get out. You should have seen their faces!
+			Nails: Me, I'm starting to like this Boss.
+			Fox: I'm sure this "Boss" was eying the girl.
+			Hitman: That worked? No wonder they call him the Boss.
+			Magic: Smooth. Boss likes things chill on his turf.
+		Broker: And now comes the spicy part: the chick is with <em>Boss Blaubert</em> now! If you want to find her - Mollie, I think is her name - then check Blaubert's place down in <em>Rimville</em>. Be careful, though. The Boss doesn't like trespassers!
+			Fox: A-ha!
+			Kalyna: A captured princess! But what of the prince... er, I mean, Smiley.
+			Omryn: This story is long. Is there popcorn?
+		Broker: As for the boy, my exquisite nose tells me my friend <em>Father Tooker</em> knows more about him than he lets on. Uh, don't tell him I said so, though.
+	[Keyword: The secrets of this town]
+		Broker: Geez, I could write a book on that topic, and it wouldn't be enough to cover it! Where should I start?
+			Buns: When writing books, I start with an outline, followed by a glossary of terms, followed by a list of contributing sources. When those are complete, I...
+			Broker: Never mind the book. It was just a joke, eh?
+		Broker: Hmm, I think I know what you might be interested in. Come on, give me your map.
+	[Keyword: What is the meaning of life?]
+		Broker: Oh, that's an easy one! It's 42. Next question!
+			Nails: Listen up, you little shit. How about you stop playing games with me, and I don't break your pretty nose. Deal?
+			Fidel: How about Fidel break that many bones in your body?
+			Meltdown: Are you trying my patience, dumbass? 
+		Broker: Okay, okay, I was just joking! Here, have your diamond back, and another one as a way to say "I'm sorry". We're friends again, yeah?
+			Nails: We've never been buds, and we'll never be.
+			Meltdown: We're not "friends", it's just me not kicking you in the nuts.
+			Fidel: You want that?! Friends of Fidel, they no live very long. 
+	[Keyword: What is the meaning of life?]
+		Broker: Oh, that's an easy one! It's 42. Next question!
+			Vicki: That be a very dumb joke, mon. Give us our diamond back!
+			Grizzly: Nerd jokes? Man, we didn't fork over a diamond for nerd jokes.
+			Scope: That joke was old when I was young. You expect us to pay for that?
+		Broker: Come on, you asked a question! It was a fair deal.
+			Red: Pushing yer luck, ye ken?
+			Livewire: Actually, looking at the question from a computer programming perspective, this answer is really quite correct.
+			Mouse: Ask a stupid question, get a stupid answer.
+	[Keyword: Can you forge a passport?]
+		Broker: Sure! No problem, my friends! Just tell me the name. Oh, it will cost you <em>one diamond</em>, please.
+	[Keyword: Forge a passport for Karen Gosling]
+		Broker: Here you go, even better than the real McCoy.
+[Keyword: Read this Maquis Manifesto]
+	Broker: Nice paper, very soft to the touch. Not many readers around here, but everybody poops, right? You got any more of these? Most people haven't had a good wipe in years. This is the new shit, everyone will love it!
+		Barry: I have no love for communism, but I do not think manifesto was meant to be personal hygiene aid.
+		Broker: Communists believe in propaganda. I believe in supply and demand!
+		Grizzly: Fuck yeah! Another victory for capitalism!
+		Igor: Well, at least the proletariat will have good hygiene. We will call it a win for comrade Lenin.
+[Keyword: Are you buying diamonds?]
+	Broker: Not buying. No, no. Trading! If you have diamonds, I have some very special items you may be interested in acquiring. You see, I have an innovative approach which one day will become the future of commerce! I'm trading only in <em>loot boxes</em>!
+[Keyword: Loot boxes?!]
+	Broker: Oh yes!... 
+[Keyword: Loot boxes]
+	Broker: Just one <em>tiny diamond</em> for a box, my friend! There could be anything inside. Definitely won't be nothing.
+	[Keyword: Remind us about these “loot boxes”]
+		Broker: A <em>loot box</em> is a box of mystery! Maybe you'll find a pile of treasure or maybe you'll find a pair of dirty underwear. Who knows? Fun, right? No money involved - just <em>one tiny diamond</em> buys you a box. Buy as many boxes as you like! 
+			Ivan: Idiot game for idiots.
+			Fauda: Just so we're clear - if you sell me a box of dirty underwear, I'll make you eat it.
+			Larry: Is this gambling? Sounds like gambling. I'm in!
+	[Keyword: Where do we get diamonds?]
+		Broker: You should go to my good friend <em>Father Tooker</em> in La Boue! The holy man buys and sells diamonds to support his hobby of saving the souls of the needy - which is good, because those poor buggers are DAMN needy! 
+			Barry: The Father has strange ideas, but he has good heart.
+			Thor: I'm guessing you don't get much sensitivity training around here.
+			Grunty: Everyone needs a hobby. Mine is collecting early twentieth century clown paraphernalia.
+		Broker: And I'm proud to say that I'm contributing to his noble mission by helping him <em>resell</em> any gems he manages to find.
+	[Keyword: What is your deal with Father Tooker?]
+		Broker: Oh, I'm glad you asked! You see, he pays about 600 per gem. If he resells them to the <em>smugglers</em>, they'd give him merely 400 per gem. That's why he makes a deal with <em>my generous person</em> for 900. Are you following me?
+			Vicki: Okay...
+			Buns: I already have questions...
+			Ice: With you so far...
+		Broker: Then he pays 100 more to <em>Boss Blaubert</em> in exchange for protection against acts of God and whatnot, and keeps the remaining 200 for his church. Then I sell the gems to the <em>smugglers</em> for only 400 a piece, because they are my friends and everyone must make a profit!
+			Vicki: What the...
+			Buns: My questions have multiplied...
+			Ice: Hold up, homes. You lost me.
+		Broker: The <em>smugglers</em> sell to the <em>Boss</em> for 500 a piece, which he can pay because he's rich. He then resells all the gems to <em>Adonis</em> at 600 each, which they'll pay, because they prefer to deal with the boss instead of all the small fish.
+			Vicki: What the hell, mon?!
+			Buns: Did you just say Adonis?
+			Ice: Yeah, okay. That last part I got.
+		Broker: Finally, Adonis pays me 600 as a broker's fee, and everyone is happy, because everyone gets their share! Simple, right?
+			Vicki: So, you be nothing more than a middle-man.
+			Broker: I prefer to think of myself as a facilitator who oils the wheels of commerce!
+			Buns: So, you're just using everyone to make money off of Adonis?
+			Broker: Why not? They're the ones with the money.
+			Ice: Ain't you afraid someone will find out you're cheating everyone?
+			Broker: Who's cheating? Everyone sacrifices a little profit to make sure everyone makes a little profit.
+	[Keyword: You mentioned Adonis?]
+		Broker: They used to control the diamond mines until the Legion pushed them out. They must miss their <em>diamonds</em>, because lately they've been buying them off the black market in bulk! Nice people with deep pockets who let everyone get their share!
+			Magic: Nice people with deep pockets are my very favorite kind of people.
+			DrQ: Deep pockets often hide deep secrets.
+			Omryn: They seem nice. Hey, do you sell snacks? You should sell snacks.
+	[Keyword: Sell us a loot box]
+		Broker: Happily! Just one <em>tiny diamond</em> per loot box! Don't have any? Go buy some from Father Tooker!
+	[Keyword: Sell us a loot box]
+		Broker: There you go! Do you like it? This here is a powerful substance, my friends - it prolongs life, grants visions of the future, and makes your eyes blue! You might have to take a lot of it to make that last thing happen.
+	[Keyword: Sell us a loot box]
+		Broker: Hmm, looks like a dead cat. Well, that's the mystery of the loot box for you! Could have just as easily been a live one, but it wasn't.
+	[Keyword: Sell us a loot box]
+		Broker: Whoa! Damn, that cat scared the poop out of me! How did it even survive in there? Well, that's the mystery of the loot box. Could have just as easily been a dead cat, but it wasn't.
+	[Keyword: Sell us a loot box]
+		Broker: BANG! He-he, made you jump! I'm sure you'll have a blast with those.
+	[Keyword: Sell us a loot box]
+		Broker: Well, I guess you'll get some use out of those. Me, I don't like guns. I prefer loot boxes! Care to try again?
+	[Keyword: Sell us a loot box]
+		Broker: Well, that's... You know, I'm not sure how that even fit in there. Well, that's the mystery of the loot box for you!
+			Igor: He-he, my favorite toy. I will call it "Legion Surprise"!
+			Ivan: Наконец-то этот идиот продал нам что-то стоящее.
+			Ice: Now that's what I call a good deal!
+	[Keyword: Sell us a loot box]
+		Broker: Oh, a comic book collection! Good quality paper, too. Good for reading, that is, not for wiping. Too much ink.
+			Larry: I love it, man!
+			Larry_Clean: I love it, man!
+			MD: Oh, hey! Neat!
+			Kalyna: Now THIS is a treasure!
+	[Keyword: Sell us a loot box]
+		Broker: Oh, that's... You know, I have no idea what that is. Behold, the mystery of the loot box! Care to try again?
+	[Keyword: Sell us a loot box]
+		Broker: Hmm, this came as a shipment from <em>Ille Morat</em>. There is this weird mechanic lives down around there...
+	[Keyword: Sell us a loot box]
+		Broker: Oh, this seems to be our promotional package, my friends! You pay one diamond, and you get back two! 
+[Keyword: Be careful about your nose]
+		Red: Ya know what's bad about your good nose? Someone may break it for smelling too much.
+		Nails: You want that nose of yours smashed?
+		Broker: Non-non...
+		Nails: Then don't play the smart guy.
+		Hitman: That's funny. I don't like so much you being funny.
+	Broker: No need to get worked up, my friends. I can't help myself. My nose is specially designed for smelling useful <em>information</em>.
+		Red: Don't worry, lad, I can fix it.
+		Broker: It would be a shame to damage such an exquisite tool!
+[Keyword: Remind us about the twelve chairs]
+	Broker: This is the story: some years ago <em>twelve special chairs</em> from the mansion of the late Madam Lecoq in Pantagruel were sold right here in this very market.
+		Len: We don't deal in stolen goods.
+		Broker: They weren't stolen! It was an estate sale. Now listen:
+		Reaper: Special how? Were they constructed out of the bones of her ancestors?
+		Broker: What?! No! Why would you even think that? Nevermind. I don't want to know. Just listen:
+		Ice: He-he... Madam Lecock?
+		Broker: It's pronounced "Lecoq." Now listen:
+	Broker: Rumor has it that good old Madam Lecoq sewed her priceless <em>brilliant diamond necklace</em> into one of those chairs! In a journal an associate of mine just recovered, she admitted doing this because she feared Pantagruel commies would rob her. Sadly, she left no clue as to which chair she used!
+		Vicki: Why you be telling us that, mon?
+		Magic: Sounds to me like you need a personal shopper, not a merc.
+		Wolf: Now comes the part where you tell us the chairs were bought by a bloodthirsty warlord.
+	Broker: Look, I'd track them down myself, but I'm no treasure hunter. You, on the other hand, I bet you've got what it takes to get that necklace. Bring it to me and you'll get both a good price and the undying gratitude of me - trusty Lalee! 
+		Fauda: But this necklace was property of the old woman. Does her family not search for it?
+		Broker: Don't worry, she's got no living heirs.
+		MD: You... You think I've got what it takes? I mean, of course! Of course, I do!
+[Keyword: Where do we find those chairs?]
+	Broker: I know for sure that two of the chairs were given as "good will" gifts to <em>Boss Blaubert</em>. You're lucky, because one of them is right here in his villa! The other one is probably in <em>Rimville</em>.
+	Broker: Speaking for myself, I wouldn't touch something that belongs to the guy who practically owns Fleatown, but you... well, I'm betting the boss doesn't scare someone like you, he-he!
+		Reaper: Fear is a commodity bought and sold at auction, where the loudest voice gets the most.
+		Broker: I like that! I'm not sure what it means, but I like it!
+		Buns: I haven't been scared since I was a little girl. Mommy forgot it was class picture day and dressed me in overalls. I don't like to talk about it.
+		Broker: I'll make a note never to bring it up.
+		Grizzly: I eat fear for breakfast and crap bullets in the afternoon.
+		Broker: You may want to see a doctor about that.
+[Keyword: Goodbye]
+	Broker: Goodbye, my friends!

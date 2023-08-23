@@ -1,0 +1,176 @@
+[Keyword: Greeting]
+	Witch: I welcome you to this consecrated ground. Let our souls touch in the spirit world.
+		Hitman: How about we touch in the physical world first and see where it goes from there?
+		Thor: I can feel my aura gently rubbing against yours.
+		DrQ: You honor me with your offer.
+[Keyword: Greeting]
+	Witch: Are you here to receive guidance for your soul, or do you need your body to be mended?
+		Hitman: I need guidance for my body!
+		Larry_Clean: The Doctor told me I need a lot of both of those things.
+		Gus: Got anything to cure a limp?
+		Witch: Some would say so.
+[Keyword: Greeting]
+	Witch: Why are you in the house of spirits at night?! You are not welcome here! Be gone at once, or I will summon <em>vengeful spirits</em> upon you!
+		Steroid: Oh no! G-g-ghosts!
+		Vicki: Don't you be waving no evil spirits at me, I don't scare so easily.
+		Fauda: Go ahead and summon them and I will send them back to Shaitan!
+[Keyword: Greeting]
+	Witch: I have warned you.
+[Keyword: Greeting]
+	Witch: You have destroyed the reincarnations of my late husbands. Their spirits have left this plane and they are no longer here to guide me. I submit to your power.
+[Keyword: Greeting]
+	Witch: You have destroyed the reincarnations of my late husbands. Their spirits have left this plane and they are no longer here to guide me. I submit to your power.
+[Keyword: Greeting]
+	Witch: I am here to serve this land and all its people.
+[Keyword: Greeting]
+	Witch: What do you ask of the spirits?
+[Keyword: CombatRedirect]
+	Witch: <em>Spirit</em>, <em>Specter</em>, <em>Phantom</em> and <em>Ghost</em>, I command thee! With your powers combined, devour these bodies!
+		Larry: Phew, we're so lucky not all five of them are around. They would have summoned Captain Croc or something.
+		Steroid: She has summoned flesh-eating ghosts! Hide!
+		Raider: Team, prepare for a croc attack.
+[Keyword: Are you some kind of Shaman?]
+	Witch: Yes, I am Lami, healer of the body and guide of the soul. I take care of the people of <em>Wassergrab</em> and satisfy their many needs. And their needs have grown ever since their greed brought devastation to this land.
+		Fox: Looks like you're taking care of a wide range of their needs, mmm?
+		Ice: Word on the street is they got you up all night satisfying needs.
+		Magic: Sister, you must be exhausted.
+[Keyword: What happened to Wassergrab?]
+	Witch: It was a peaceful village until they discovered diamonds and started digging. They devastated their streets and fields, dug under their church and destroyed their own houses. Their greed attracted evil men, who enslaved them.
+		Ice: More money, more problems.
+		Larry: They delved too greedily and too deep, man!
+		Raven: It doesn't sound like you're doing much to help them out.
+		Raven: Says who, the person who is using them for unwitting labor?
+[Keyword: Are those crocs yours?]
+	Witch: In a sense. I have walked-in the souls of my late husbands to each one of them. I have borrowed their bodies and enchanted them to become my guardians.
+		Scully: And I thought I was the one obsessed with his exes.
+		Hitman: I wonder if that counts as polygamy, or maybe just that you're a happy widow.
+		Barry: This is most evil and wicked.
+		Fox: Are you still doing it with...?
+		Witch: No.
+		Mouse: So... you are taken... in a sense?
+		Witch: Actually no.
+[Keyword: Where is the man who entered your house?]
+	Witch: He is down the hole on a spirit journey in the holy cave of our ancestors. I shall join him soon to complete the ritual of unity. Be gone from here, and meddle not in things you do not understand.
+		Hitman: Yeah, right, a "ritual".
+		Nails: You, uh, get a lot of guys come in here and explore your hole?
+		Witch: Only those with the proper amount of stamina.
+		Grizzly: Oh, I don't want to meddle, but I think I might like to watch.
+[Keyword: Where is the man who entered your house?]
+	Witch: I am a bridge between our world and the <em>Spirit World</em>. He walked through me last night, and I have guided his soul.
+		Hitman: Damn, lady, I feel lost! Can you guide my soul as well? I promise we'll be walking in the Spirit World all night long!
+		Fox: Walking in the Spirit World? I don't think I've heard it called that before!
+		Thor: That is beautiful. Two souls joining and moving... in and out... My aura feels flushed and tingling.
+[Keyword: Tell us more about the “Spirit World”]
+		Thor: Enlighten me about the Spirit World.
+		Barry: This sounds like pagan nonsense.
+		Reaper: I only know one way to get to the Spirit World.
+		Omryn: You will talk of Spirit World. I will have snack.
+		Buns: If I promise not to laugh, will you tell me about the Spirit World?
+		Raider: I'm guessing the Spirit World isn't a place I can find on a map, right?
+		Sidney: I've travelled a great deal over the years, but I've never visited the Spirit World. I'm keen to learn more about it.
+[Keyword: Why is there a shaft near your hut?]
+[Keyword: What are you doing to the men of Wassergrab?]
+[Keyword: RedirectRituals]
+	Witch: Men from the village come to me for guidance every night, and I am joining with their bodies and souls in search of the wisdom of the spirits... All night long.
+		Mouse: A dark hole doesn't look like the most comfortable place for a, err, joining... But you make it sound hot! Ow, did I say that?
+		Fox: At the bottom of a dark hole, huh? Kinky.
+		Hitman: Where do I sign up for a ritual or two?
+		Barry: You wicked witch! You are raping men in your pit of sin!
+		Red: Och! I remember when I used to be able to search for the wisdom of the spirits all night long.
+		MD: ALL night long? I mean, you take breaks and stuff... right?
+		Smiley: This is a gift you are giving. I wish to show you my spirit. Should I just take it out now?
+		Thor: I feel my soul swelling just thinking about it.
+		Buns: You could try just teaching them how to practice self-love... That sounded different in my head.
+[Keyword: You are forcing the men to dig for diamonds]
+	Witch: I am not exactly forcing them. They come willingly, thinking they will enjoy a night of sexual satisfaction.
+		Hitman: Who can blame them?
+		Livewire: But you turn the tables and use them to get money! It's the honey pot! I love that scam.
+		Nails: I bet they do!
+	Witch: What actually happens is I give them a drug to induce submission and a mild euphoria. Then, I have them dig <em>diamonds</em> for me. In the morning they remember nothing, so they go home exhausted and full of happy thoughts.
+	[Keyword: This is unfair]
+		Witch: Why? I'm selling a dream and they are willingly buying it. Is it my fault that men are stupid?
+			Fox: I hear you, girl!
+			Buns: When you put it that way, I tend to agree.
+			Meltdown: Wasn't sure I liked you, at first. Now I know I do.
+	[Keyword: What if we tell them your secret?]
+		Witch: You are welcome to try. I don't think anyone will believe you. Over the mundane reality, people always prefer the exciting dream.
+			DrQ: Indeed. Most often, we perceive the reality we wish to believe.
+			Kalyna: Hey! I identify with that remark.
+			Omryn: This is why I like sleeping.
+	[Keyword: You have to stop doing this]
+		Witch: And what if I don't? Will you just shoot me? No, you won't, because I am under the protection of powerful spirits. And even if you do, you will only rob the villagers of their dream.
+	[Keyword: Hands up!]
+	[Keyword: What you're doing is actually cool]
+		Witch: I am glad that you understand. Will you keep my secret? Let it become... our secret. If you will honor me as the beautiful and terrible witch, the mistress of this land, I will even share with you a thing or two.
+			Hitman: Oh, I'll honor you! I'd honor you twice if you let me!
+			Mouse: Ooh... It is quite hot in here, isn't it?
+			Grizzly: What you want to share wouldn't happen to be at the bottom of a hole, would it?
+		Witch: Indeed, I am willing to offer you <em>diamonds</em>... and more.
+			Raider: Thanks, but we'll stick with the diamonds.
+			Raven: Damn right you'll stick with the diamonds.
+			Fox: Where have I heard THAT before...
+			Kalyna: A witch's bargain?! How exciting! Hang on, I have a book that talks all about this kind of thing.
+	[Keyword: We’ll keep your secret]
+		Witch: Then you deserve to be rewarded.
+			Hitman: Yeah, just let's skip the part with the drugs, shall we?
+			Mouse: Yes!
+			Larry: Whatever you've been giving those villager dudes, just make mine a double.
+	[Keyword: You will stop exploiting those men]
+		Witch: I will comply. Ever since you defeated my late husbands, I am in your power. 
+			Scully: Whoa there, lady! That escalated quickly. I been married eight times and I'm not ready to make another future ex-wife just yet.
+			Hitman: Whoa... ENTIRELY in our power?
+			Witch: I can gouge out your eyes while you sleep and put them on a crocodile's skull.
+			Hitman: Uh, I'll take that as a no.
+			Shadow: Until she gets a chance to feed us to another batch of crocs.
+		Witch: I shall become the healer and guide the people of Wassergrab do not deserve, but guide and help them, I will. Greater powers have commanded me, and I obey.
+			Fidel: Fidel is greater power! Omnipotent Fidel!!!
+			Flay: It is nice to be recognized.
+			Steroid: Don't feel bad. You are strong, for a girl.
+	[Keyword: You will share your profit with us]
+		Witch: I will comply. Ever since you defeated my late husbands, I am in your power. 
+			Scully: Whoa there, lady! That escalated quickly. I been married eight times and I'm not ready to make another future ex-wife just yet.
+			Fox: Mmm, domination feels good.
+			Smiley: I wish it always worked like that.
+		Witch: Here, this is all I have. I hope it is enough for you. Now please leave this place - I need to bury my husbands' hosts and summon more fools to restore my losses.
+[Keyword: You are forcing the men to dig for diamonds]
+	Witch: How could I force anyone? I am a woman, and they are big strong men. And besides, has any one complained that I am exploiting them like that?
+	[Keyword: You are probably drugging them]
+		Witch: Your wisdom has penetrated my secrets.
+			Fox: I know manipulation when I see it!
+			Livewire: Can't scam a scammer!
+			Magic: I know every trick in the book.
+			Larry: Wait... I was right?
+			Larry_Clean: I know a thing or two about what drugs can do to people.
+			Buns: It wasn't hard.
+			Barry: I have good knowledge of wickedness.
+			DrQ: The observant mind sees more than what is in front of it.
+			Gus: Call it a gut feeling, Woodstock.
+			MD: Six years of medical school, actually.
+			Scully: Not the first time I've seen that trick pulled.
+			Thor: I could sense it. Your aura had a chemical smell to it.
+	[Keyword: Repent, witch! We have power over you!]
+			Barry: Nobody expects the A.I.M. inquisition!
+			Kalyna: You are powerless without your spirit guardians!
+			Omryn: I have protective charm and you no have ugly monsters anymore.
+		Witch: You do have power over me.
+[Keyword: Hands up!]
+	Witch: You dare to threaten me? I am under the protection of ghosts and specters, phantoms and spirits.
+		Steroid: Uh-oh, gggghosts!
+		Barry: Unholy power is at work here!
+		Reaper: Cute. I'm an Angel of Death. Let's see what happens.
+		Buns: She is obviously referring to the names of her pet crocodiles.
+[Keyword: Spirits don’t scare us. Hands up!]
+	Witch: So be it.
+[Keyword: Goodbye]
+	Witch: The spirits watch and judge your deeds.
+		Steroid: Even in toilet?!
+		Fox: So the spirits are voyeurs, are they now? 
+		Shadow: We'll see. I'm REALLY good at hiding.
+[Keyword: Goodbye]
+	Witch: Walk with the spirits and leave me alone already.
+[Keyword: Goodbye]
+	Witch: May the spirits walk with you.
+		Steroid: Uh... Do they have to?
+		Scully: If you mean the crocs, no thanks.
+		Reaper: They always do.
+		DrQ: And with you.

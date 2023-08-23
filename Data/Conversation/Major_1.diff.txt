@@ -1,0 +1,133 @@
+[Keyword: Greeting]
+	TheMajor: Great job, boys! I really enjoyed the performance. I wish I could've trained my <em>Legion</em> to be half as impressive, but those dummies couldn't even shoot the goddamned <em>president</em>!
+		Mouse: I am not a boy.
+		Raven: So, we're just going to set aside the whole issue with that not really being something they should be doing in the first place?
+		Grunty: Ja. To be honest, I am a little embarrassed for them.
+		PierreMerc: Maybe they just didn't believe in you anymore.
+		TheMajor: Pierre? You still alive, kid? I'll be damned.
+		Len: Spike? Spike Scallion? Is that really you?
+		Spike: The one and only, old buddy.
+[Keyword: Greeting]
+	TheMajor: Great job, boys! I really enjoyed the performance. I wish I could've trained my <em>Legion</em> to be half as impressive, but at least those dummies managed to shoot the goddamned <em>president</em>!
+		Blood: And we made them pay for it. Now it's your turn.
+		Hitman: I don't think that's really something you want to hang your hat on.
+		DrQ: An achievement of dubious merit.
+		PierreMerc: Maybe the reason your Legion "boys" aren't very impressive is that they are done trying to impress you.
+		TheMajor: Pierre? Well, I'll be damned. I figured this day would come, kid. Just didn't think you'd be flanked by A.I.M.'s finest.
+		Len: Spike? Spike Scallion? Is that really you?
+		Spike: The one and only, old buddy.
+[Keyword: Why were you trying to kill President LaFontaine?]
+[Keyword: Why have you killed President LaFontaine?]
+	TheMajor: Honestly, I didn't really care. Idealists like him always die before their time is up anyway. If not me, it would have been some other asshole trying to carve out a piece of this place to make their own.
+		Wolf: There it is - the excuse given for bad behavior by assholes everywhere.
+		Magic: That don't mean that asshole had to be you.
+		Fauda: Perhaps this is true, which is why such people need to be protected.
+	TheMajor: Besides, I wanted to see if I could boost my boys' morale. They really hated that guy. I thought if they killed him, they might feel powerful enough to kill you. Nothing personal. As the <em>Major</em>, I'm expected to give those kinds of orders.
+		PierreMerc: Oh, I'm very aware of the kinds of orders you give. The order to send me to <em>Diamond Red</em> - that was one of my favorites.
+		TheMajor: Look at the bright side, kid. I could've just ordered your execution.
+		PierreMerc: Why didn't you?
+		TheMajor: Just gettin' soft, I guess.
+[Keyword: You were a merc like us, Spike]
+		Len: What has gotten into you, Spike?!
+		Gus: What the hell ya think you're doing, Woodsman?!
+		Ivan: Спайк! Что ты натворил, Спайк?!
+	TheMajor: Well, I'm still just like you - only less delusional, especially since I came here. I became the <em>Major</em> when I decided to stop letting people yank me around on a string.
+[Keyword: So, you're the Major]
+	TheMajor: The name's <em>Spike Scallion</em>, formerly of A.I.M. Just a <em>merc</em>, like you - only less delusional. I became the <em>Major</em> when I decided to stop letting people yank me around on a string.
+		Shadow: A merc just like us, huh? Funny, I don't see the resemblance.
+		Mouse: Have you considered being a puppeteer? You can yank little puppets... around... on... strings. Never mind. I'll be quiet now.
+		Scope: Are you quite sure you're less delusional? There is a considerable amount of evidence to suggest otherwise.
+[Keyword: RedirectMerc]
+	TheMajor: Ya see, I first came here as just a merc with a contract. Your amiga <em>Corazon</em> hired me to destabilize the region and take some of those sweet diamond mines. I went right to work. My <em>Legion</em> may not be the best military force there is, but it did the job, and it spread like wildfire.
+[Keyword: Why did you break with Adonis?]
+	TheMajor: My deal was with <em>Corazon</em>. It was all off the books. I seized the mines and she and I split the profits. That was the deal, but that bitch got greedy, canceled my contract and demanded I hand the mines and the Legion over to her.
+		Raider: She strikes me as the kind of person who doesn't like to share.
+		Blood: Different century, same colonizer bullshit.
+		Scully: You got off easy, mate. First, she just wants the diamonds, but then it's the house, the car, the kids...
+	TheMajor: I told her where she could stick that idea. That's when she got stupid - hired <em>Biff Apscott</em> and his band of buffoons to take me out. Ha! I would've felt bad for him, except I was laughing too hard.
+		Flay: Never send prey to do a predator's job.
+		Fidel: This is the problem Fidel has! I cannot feel bad, because I am always laughing... and killing.
+		Thor: I get the feeling you could use some sensitivity training.
+	Smiley: You will take that back! I am no buffoon!
+	Larry_Clean: Hey, that's not nice!
+	Larry: Hey, man. That's not cool. We, like, worked really hard... sometimes.
+	TheMajor: Then you A.I.M. mercs showed up and my Legion proved to be no match for professionals. But you made the same mistake I made with <em>Corazon</em> and now she's got the knife ready to plunge into your backs.
+		PierreMerc: That's what this whole thing is about? Just some ridiculous revenge plot and some... some... MONEY?! What about what you taught us of patriotism, pride, honor...
+		TheMajor: That was bullshit, kid. I had to spew that crap to fill the ranks. Might not have bothered, all I got was murderers and thieves anyway. Except you. You were different.
+		PierreMerc: I should kill you where you stand.
+		TheMajor: Believe it or not, kid, I been waiting for you to try. I had plans for you. Big plans. Too late now. Go ahead and kill me. I guess I got it coming.
+[Keyword: Do you have any evidence against Corazon?]
+	TheMajor: Of course! I've still got the <em>contract</em>. The wording is purposefully vague, but along with some correspondence I kept it'll sound pretty convincing in court. Here, this is where I keep all that stuff. You're welcome to it. I hope you nail that bitch.
+		Barry: Justice will be done!
+		DrQ: The evidence of one's transgressions will always come to light.
+		Reaper: This is why I always destroy the paper trail. It's a sword that cuts both ways.
+[Keyword: Do you have any evidence against Corazon?]
+	TheMajor: I burned my contract a while ago. I'm way past letting documents control my life. I'm in the jungle now. Jungle rules are the only ones I respect.
+		Grizzly: "Survival of the fittest" doesn't seem to be working out so well for you.
+		Ice: That's a road that dead ends quick.
+		Nails: Yeah? Well, I respect the rules of the road. Actually, wait. No, I don't.
+[Keyword: Biff was your friend]
+	TheMajor: I don't know what gave you that idea. He was always a poor excuse of a merc and it was about time he and his bunch of M.E.R.C. clowns got a reality check.
+		Buns: I have to admit I do agree with your point, but I do not agree with your way of proving it.
+		Fauda: It is true. The hard lessons of battle bring wisdom.
+		Kalyna: But why? Reality is boring.
+	Smiley: I will warn you once again, sir! Your insults will not go unpunished!
+	Larry_Clean: I mean... I suppose you're not wrong.
+	Larry: We were a CLOWN troupe!? Oh, man, so many things make sense now.
+[Keyword: We will destroy your Legion]
+	TheMajor: Go right ahead! I'm done with 'em. I tried my best to make an army out of 'em, but they're a bunch of losers. Go ahead and kill the rest if you want. I won't stop you. They don't deserve to live any more than that stupid bitch <em>Corazon</em>.
+		PierreMerc: And to think I once believed in you...
+		Flay: Then let the hunt begin!
+		Shadow: I think I can see where your leadership style could use a little improvement.
+[Keyword: Your Legion could have performed better]
+	TheMajor: Yeah, that much is true. I saw the reports of your Militia doing a pretty decent job against my Legion boys. Reminded me of the good old days of training villagers how to protect themselves from tyrants. Damn, you live long enough to be a hero, and then...
+		Len: It's not too late for you, old pal.
+		Gus: Then you retire! Dang, Spike! You're not supposed to become a monster!
+		Raider: Then you become a leader. Not a warlord. A leader.
+		Scully: What? Then what? Did you get married? That's what I did. A lot.
+[Keyword: You're going to answer for this]
+	TheMajor: I think I already have. You broke the Legion. You beat me in my own camp. Major Spike Scallion's last hoorah is finished. Only thing to do now is finish the Major himself.
+		Fox: Don't think I won't! You wouldn't be the first man I've had to finish off.
+		Livewire: This is why I like to move around a lot. There's SO much less you have to answer for if you don't keep a permanent address.
+		Meltdown: Well then, what the hell we waitin' for?
+[Keyword: Time to die]
+	TheMajor: Go on then. I'll die like a soldier.
+		PierreMerc: Wait! Before you die, tell me why you didn't just kill me after my failure in Ernie or after I tried to kill <em>Graaf</em>. Why send me to the camp?
+		TheMajor: That's easy, kid. You were my ticket out of here. I figured a little while in the camp would make you realize the only way for you to survive was to kill me.
+		PierreMerc: You're not making sense!
+		TheMajor: I figured by the time you got yourself free, I'd have finished my business with <em>Corazon</em> and the rest of the corrupt assholes shitting all over this country. You'd come for me, but I'd be ready. I was gonna make you a deal. We fake my death, you take over the Legion and I... I just disappear.
+		PierreMerc: I... take over? You're insane.
+		TheMajor: I agree that I didn't have all the details worked out, but it doesn't matter now. Too late for all that. So, go ahead. Take your best shot, kid.
+[Keyword: You will go to jail]
+	TheMajor: Oh, no, that won't do at all. I want to die a soldier, not a fucking prisoner! Come on, boys, don't do that to me. You know I deserve better.
+		PierreMerc: Wait! Before you die, tell me why you didn't just kill me after my failure in Ernie or after I tried to kill Graff. Why send me to the camp?
+		TheMajor: That's easy, kid. You were my ticket out of here. I figured a little while in the camp would make you realize the only way for you to survive was to kill me.
+		PierreMerc: You're not making sense!
+		TheMajor: I figured by the time you got yourself free, I'd have finished my business with Corazon and the rest of the corrupt assholes shitting all over this country. You'd come for me, but I'd be ready. I was gonna make you a deal. We fake my death, you take over the Legion and I... I just disappear.
+		PierreMerc: I... take over? You're insane.
+		TheMajor: I agree that I didn't have all the details worked out, but it doesn't matter now. Too late for all that. So, go ahead. Take your best shot, kid.
+[Keyword: You will go to jail]
+	TheMajor: Oh, no, that won't do at all. I want to die a soldier, not a fucking prisoner! Come on, don't deny me that! Damn you!...
+		Raider: No can do, Spike. You need to answer for your crimes in a public trial.
+		Raven: I think I'd rather watch you do a perp walk.
+		Scope: Sorry, love. We're mercenaries, not executioners.
+		Magic: Can't do the time, don't do the crime.
+		Thor: Hey, calm down, man. Think of all the time you'll have in prison to get in touch with your inner child and reinvent yourself!
+		Scully: Settle down, mate. I know a good lawyer. Well... a good divorce lawyer, anyway.
+[Keyword: What if WE hire you?]
+	TheMajor: You can't hire the Major of the Legion, boys, ya don't have that kind of money. And I'm not for hire anymore...
+	TheMajor: But I would come with you for free, just to see the face of that little bitch when she sees her worst nightmare coming true. But are you sure ya want to be involved with a war criminal? Because let's not bullshit each other, that's what I am.
+[Keyword: What if WE hire you?]
+	TheMajor: You can't hire the Major of the Legion, boys, ya don't have that kind of money. And I'm not for hire anymore...
+	TheMajor: But I would come with you for free, just because you dealt with that little bitch Corazon and I want to see how the rest of this plays out. But are you sure ya want to be involved with a war criminal? Because let's not bullshit each other, that's what I am.
+[Keyword: RedirectHire]
+		Fauda: All wars are crimes. Get your gun.
+		Fidel: Fidel is also war criminal! It is fun to make new friend!
+		Flay: Then it is best to stay on the hunt, non?
+		Livewire: Yes, but it is not ALL that you are. Don't let other people's laws define you!
+		Nails: Kicking a lot of ass ain't a crime in my book.
+		Tex: Time to join the posse, partner!
+		PierreMerc: I cannot sort out how I feel about you joining us, but I know you are acting more like le Major I first met than you have in a long time.
+		TheMajor: Not the Major anymore, kid. Just call me Spike. And don't worry about your feelings. They just get in the way anyhow.
+[Keyword: Welcome to the team]
+	TheMajor: What a day! No, what a year!... I guess ol' Spike's last hoorah ain't over yet. Pretty sure I ain't leaving this country alive, but let's see how much ass I can kick before I take a dirt nap.

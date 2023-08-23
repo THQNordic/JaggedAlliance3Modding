@@ -1,0 +1,14 @@
+[Keyword: Greeting]
+	Luigi: Thank you, ragazzi. You made just the right choice! You are part of the family now, and the family rewards loyalty. Joseph, gimme the thing!
+	Luigi: Take this as something to remember me by. And if your luck ever abandons you, come back to the family and we'll see what we can do.
+	Luigi: Now please excuse me. Mister Blaubert needs a proper funeral as the great Boss he was.
+[Keyword: Greeting]
+	Luigi: Ciao ragazzi! Welcome to Rimville!
+[Keyword: Greeting]
+	Luigi: The mercenaries again, eh? You bet on the wrong horse, then go back to the stable? Well I've got news for you, ragazzi - you're not welcome in Rimville anymore.
+[Keyword: Greeting]
+	Luigi: What is this, ragazzi? You have killed my beloved Boss, eh? What do I do now with you?!
+		Raven: Come on, you were about to kill him yourself.
+	Luigi: It was MY JOB to kill Boss Blaubert. He grew soft-hearted, he neglected our business, he put shame on the face of the family. I was his right hand man, I should have killed him, not you.
+		Raven: You both should have rotten in prison.
+	Luigi: Here, take this money and leave. I don't want to see you again.

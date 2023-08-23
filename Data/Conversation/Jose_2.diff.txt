@@ -1,0 +1,83 @@
+[Keyword: Greeting]
+	LegionRaider_Jose: Eh bien! My friends from the beach! I was just talking about you, wasn't I?
+	LegionRaider: C'est vrai.
+	LegionRaider_Jose: And now you have come to meet my big family, eh?
+	LegionRaider: Yes, big family. Many mouths.
+	LegionRaider_Jose: So true! But I'm sure our friends here are willing to help pay for our <em>hospitality</em>. After all, they saw little miss <em>Emma</em> and her rich friend. I'm thinking they gave you money, non? You don't want to be selfish and let my poor family starve!
+	LegionRaider: Hospitality does not fill stomachs. Your money... Now.
+[Keyword: Greeting]
+	LegionRaider_Jose: Eh bien! My friends from the beach! I was just talking about you, wasn't I?
+		PierreMerc: How about me, my dear Bastien? Don't you consider me a friend?
+	LegionRaider_Jose: But of course, Pierre! I just didn't expect to see you here... And I was unaware these people are part of the family, boss.
+		PierreMerc: They are now. What are you doing here, Bastien?
+	LegionRaider_Jose: Well, um, me and my frérots happened to get the <em>diamond</em> shipment from the Major. I was trying to call you and report, boss, I swear!
+[Keyword: Give up the diamonds]
+	LegionRaider_Jose: Of course, Pierre, I was just about to suggest you take them! In fact, I was searching for you, but I couldn't find you anywhere. Here, that's all I've got. May I go now, boss?
+		PierreMerc: Yes, get lost. You and your boys, I don't want to see you again.
+	LegionRaider_Jose: Yes, Pierre! We were just leaving, boss!
+		PierreMerc: Weren't you just searching for me to give me the diamonds? No, don't answer. Get out before I change my mind.
+		Fidel: We kill them now, right? Why not? We have the diamonds, yes?
+[Keyword: What hospitality?]
+	LegionRaider_Jose: That's right. I showed you hospitality by letting you visit my <em>shack</em>, now you have to pay for accommodation, plus interest.
+	LegionRaider: Wait, what shack?
+	LegionRaider_Jose: Oh, it's actually just a lean-to, not like I stash things there or something...
+	LegionRaider: Uh, stash? Hey! You been holding out on us?
+	LegionRaider_Jose: No! I would never!
+[Keyword: He's been holding out on you]
+		Livewire: Oh, perhaps you have forgotten all the diamonds you showed us?
+		Buns: I must point out that you're not very good at lying.
+		Raider: Back in my day, in the L.A.P.D. I dealt with some good swindlers. You're nowhere near their level. You're not convincing at all.
+		Fox: But, Bastien! You were so proud when you told us about how you've been stealing from your friends for so long without them noticing! Don't be shy about it now. 
+	LegionRaider: I thought so! I knew he's been stealing from us! Get him, boys!
+	LegionRaider_Jose: Merde!
+[Keyword: We'll pay]
+	LegionRaider_Jose: Nice doing business with you, boss! Now give me the money.
+	[Keyword: Here is $1000]
+		LegionRaider_Jose: Heheheee... Come on, boys, drinks are on me.
+			MD: Well, that seemed a reasonable fee to pay.
+			Thor: It's good to find other ways besides violence to solve our problems.
+			Red: Choke on it, ya wee dobber.
+	[Keyword: Here is $500]
+		LegionRaider_Jose: Heheheee... Come on, boys, drinks are on me.
+	[Keyword: Or rather not]
+		LegionRaider_Jose: Putain merde, you think I'm joking?!
+[Keyword: We'll pay]
+	LegionRaider_Jose: Nice doing business with you, boss! Now give me the money.
+		Meltdown: The fuck I'll give you the money! Take this, you piece of shit!
+		Nails: How about I give you your teeth after I knock 'em out of our skull?
+		Fidel: Fidel does not pay in money. Fidel pays in bullets!
+[Keyword: We don't have much]
+		Buns: I think we could reach an agreement for a discount. Imagine if we end up shooting each other - it would be terribly unhealthy to bleed in this mud. 
+		Raider: We'll give you half. Not a penny more.
+	LegionRaider_Jose: Oh yeah, boss, but of course I'll make a discount for you! After all, you're our first client of the day! Half price for you, eh?
+		Barry: In terms of highway robbery, this is reasonable.
+		Ice: This is some bullshit.
+[Keyword: We don't have much]
+	LegionRaider_Jose: No way, boss. These are trying times. Everyone has to contribute. Your money. Now.
+[Keyword: Hands up!]
+		Fidel: Maybe Fidel fill your stomachs. Fill your stomachs with lead!
+		Meltdown: Got a counter offer. How about we just kill every last one of you fuckheads?
+	LegionRaider_Jose: Uhhh... heh-heh... We're just kidding, my friend! My associates, they, uh... they watch too many gangster movies, oui?
+[Keyword: Hands up!]
+	LegionRaider_Jose: Hehe, you hear that, boys? Is it just me, or is le petit chien trying to bark?
+[Keyword: You pay us]
+	LegionRaider_Jose: Okay, okay, let us be reasonable. We're just poor scavengers, aren't we, boys? We don't have much! Look at my wallet. It's all yours. There is no need for violence, yeah?
+	LegionRaider: You have a wallet? I don't even have that! Bastien, we are going to have a talk...
+[Keyword: What about the diamonds?]
+	LegionRaider_Jose: Oh, umm... Well...
+	LegionButcher: You idiot, you blabbered about that?!
+	LegionRaider_Jose: Shut up, I was going to bamboozle them something... Damn, forget it. Look, boss, we have the diamonds. They are hidden nearby. You can have 'em. Just let us go, okay?
+[Keyword: Give us the diamonds and get out]
+	LegionRaider_Jose: Thank you, boss, we won't forget your kindness, boss. Here, you can have 'em. We will meet again some sunny day, I promise.
+		Vicki: You better hope not, mon... for your sake.
+		Tex: Time for you banditos to make tracks. Go on, get!
+	LegionRaider_Jose: Allez, boys, let's get out of here while we can...
+[Keyword: Drop your guns!]
+	LegionRaider_Jose: Eh... I don't know if that's such a good deal for us. This a dangerous island. A lot of people are up to a lot of trouble. You'd be forcing us to be at the mercy of thugs and robbers!
+		Wolf: Sounds like your kind of people. So I'm sure you'd feel right at home.
+		Raven: And yet somehow I don't feel bad about it.
+		Steroid: Ya, that is why you should lift.
+[Keyword: Your guns! Now!]
+	LegionRaider_Jose: Easy now! Take it easy. That's okay. No problem. Take our weapons. Me and the boys, maybe we'll just take up fishing, right?
+[Keyword: Die!]
+	LegionRaider_Jose: Merde!

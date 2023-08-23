@@ -1,0 +1,74 @@
+[Keyword: Greeting]
+	FlayNPC: What a surprise! Someone has managed to track me after all! I didn't know there were any capable hunters around here. Who are you?
+[Keyword: We're mercenaries]
+	FlayNPC: Mercenaries, huh? Not working for those buckheads at the poacher camp are you?
+		Buns: Now why would you ask a question like that, I wonder?
+		Wolf: And why would poachers want to hire mercenaries?
+		PierreMerc: You sound like a little boy asking if he is in trouble after he hurt the neighbor's dog.
+	FlayNPC: You are, aren't you? No wonder they'd hire someone to find me. They can't track their own footsteps in cow shit.
+[Keyword: Did YOU kill those poachers?]
+	FlayNPC: But, of course! Do you like the <em>trophy horns</em> I nail on their heads? Fitting, don't you think?
+		Blood: I got to admit, I admire your style.
+		Fidel: Meh. Would be better if you rigged the bodies to explode.
+		Fox: Ugh... disgusting.
+		Grunty: Yes, very poetic. Dark, disturbing and gruesome, but very poetic.
+[Keyword: Why are you doing this?]
+	FlayNPC: I have killed every sort of animal you can think of. When I heard the hunting along the Adjani was the most dangerous in the world, I joined some poachers out of Pantagruel to see if the rumors were true.
+		Omryn: I am guessing it is not the animals that make the hunting dangerous.
+	FlayNPC: Only thing dangerous about the hunting was the Legion patrols. The poachers I was with - led by that old wind bag, <em>Hyena</em> - celebrated for a week after killing a sick old rhino. Pathetic.
+		Buns: Sounds like their speed.
+	FlayNPC: I told them they could hunt better if they just killed off those Legion patrols, but they nearly shit their pants when I suggested it. So... I decided I would teach them a lesson. Hunt or be hunted.
+[Keyword: Read this Maquis Manifesto]
+	FlayNPC: What is this? A half-naked girl with a gun? Something to curl up with at night, eh? Merci beaucoup.
+		Vicki: This guy creeps me out.
+[Keyword: Read this Maquis Manifesto]
+	FlayNPC: What is this? "Workers of the world unite?" You passing out communist propaganda? Give it to those buckheads at the camp. You think I am a fool?
+	[Keyword: Yes]
+	[Keyword: No]
+			Thor: Not at all! Hey, forget the pamphlets. Let's relax and find our chakras.
+			Gus: Of course not! Now just calm down a dang minute!
+			MD: N-n-no! Sorry! Sorry, sorry, sorry!
+			Scully: Hey, settle down, mate! No worries. Just a simple misunderstanding.
+		FlayNPC: Good. Then save your pamphlets for the foolish.
+	[Keyword: No]
+		FlayNPC: Putain! You think you can come out here and mock me?
+[Keyword: You’re a psychopath]
+	FlayNPC: À Paris? Oui. In New York? Yes. In Grand Chien? Hahaha... I think not. Out here only the strong survive. I am teaching those poachers how to be strong. They should thank me.
+		PierreMerc: You sound like the Major.
+		FlayNPC: I have heard of this man. I should like to meet him one day... or perhaps hunt him.
+		Raven: Typical psychotic narcissist. You can rationalize anything.
+		FlayNPC: If I have to. Usually, I do not bother with reasons, but I like your face, so for you I make an exception.
+[Keyword: You deserve to die]
+	FlayNPC: You think so? Then let the hunt begin!
+[Keyword: You have to stop]
+	FlayNPC: I suppose I should - I am bored. I killed plenty of poachers and instead of fighting back, all they did was hire you. They'll never learn. Anyway, what else would I do?
+	[Keyword: Want to hunt for us?]
+			Buns: We may have an opening for a good hunter.
+			Raider: What do you think about putting your skills to work for us?
+		FlayNPC: Instead of hunting poachers, you want me to join you and hunt... what? Nevermind. I don't care. Just by looking at you, I already know it will be something worth my time. One question - do I get to flay them and take trophies?
+			Blood: I certainly won't stop you.
+			Raider: Not a chance in hell, pal.
+			Grunty: I would not rule it out.
+			Fox: Ew. No.
+			Buns: Out of the question.
+		FlayNPC: Let us agree to leave it an open question. All right! Count me in.
+			Blood: Oh yeah, we'll make a great team!
+			Len: Wait, what? This man can't be a soldier, he's Section 8!
+			Buns: He is somewhat repulsive, but I have to admit he could be an effective fighter.
+			Grizzly: I do not want to work with this maniac.
+	[Keyword: You’re hired]
+		FlayNPC: Let the hunt begin!
+	[Keyword: Why not hunt the Legion instead?]
+			Nails: Forget those pussies and go hunt the Legion instead.
+			Fidel: Why not kill the Legion guys? Always fun for Fidel!
+		FlayNPC: I would be lying to you if I said I have not thought about it. You have some experience with them? Are they a good hunt?
+			Meltdown: Hell, yeah! They scream like they did not expect to die!
+			Fidel: Eh. Dunno. Fidel no hunt. Fidel just blow things up..
+			Nails: Five out of seven.
+		FlayNPC: Ah, well. Time to move on and see what kind of trophies I can find in these <em>Legion camps</em>!
+	[Keyword: Just stop this madness]
+			Raider: Flay, listen to me. This is insane. You need to stop.
+		FlayNPC: Where you see madness, I see natural selection. But you're right. It's time for me to move on and find some better game.
+[Keyword: You have to stop]
+	FlayNPC: In fact, I do not. If you have come to stop me, you will need more than words.
+		Grizzly: Don't you worry about that. I got a whole bag full of things that ain't words.

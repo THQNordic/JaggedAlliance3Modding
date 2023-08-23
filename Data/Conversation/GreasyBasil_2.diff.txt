@@ -1,0 +1,60 @@
+[Keyword: Greeting]
+	GreasyBasil: You were my friend, Luc. <em>Tinhay</em> was your friend, too. What happened is all your fault.
+	Luc: I can see you've already made up your mind, Basil. Nothing I say will change anything.
+	GreasyBasil: Your goddamn <em>Pierre</em> has become a monster, yet you still protect him like a baby. And now Tinhay's dead because of it!
+	Luc: You are right, Basil. I have failed both as a father and as a friend. I should have taught my son to...
+	GreasyBasil: Is that all you can think of? He is not YOUR Pierre! Pierre is a vile gangster! Tinhay was a good man! And now he is gone and Pierre walks free and that is why you stand here today with a noose around your neck!
+	Luc: Then do what needs to be done.
+[Keyword: Greeting]
+	GreasyBasil: You were my friend, Luc. <em>Tinhay</em> was your friend, too. What happened is all your fault.
+	Luc: Do whatever you want. I have outlived my son... There is no reason for me to go on living.
+	GreasyBasil: Yes, <em>Pierre</em> is dead, rightfully so. He was a vile gangster and he got what he deserved, but you helped him and now Tinhay is dead because of it. If it wasn't for you...
+	Luc: Enough talk. Do what needs to be done. Me and Pierre, we will be together soon.
+[Keyword: GreetingInterjectionsRedirect]
+		Fidel: Mira, look! They're going to hang him! I wonder if there is going to be popcorn stand? Something? Chocolate? I don't know.
+		Meltdown: Hey, check out that gallows! Damn near nicest thing they got in this town.
+		Grizzly: This doesn't look good.
+		Ice: This is fucked up.
+	GreasyBasil: What are you staring at, merc? This is village business. It doesn't concern you.
+[Keyword: What's going on?]
+	GreasyBasil: Tinhay, Luc and I - we were best pals. We built this village. Now, Tinhay's dead, because of Luc.
+	GreasyBasil: <em>Tinhay</em> hated how the Legion was trying to bully us. So, he tried to take out some of Pierre's men hanging around the town, but missed. Luc would do anything for his damned son! He told them who did the shooting and he doesn't even deny it.
+[Keyword: This is none of our business]
+	GreasyBasil: Even so, I'm sorry you have to see this. I'm sorry any of us have to be here today. Let's get this over with. Goodbye, Luc. May God have mercy on your soul.
+		Fidel: Ehehehee! Look at his feet shake!
+		Omryn: This is bad. His spirit will not protect this place. Maybe curse it.
+		Vicki: This be horrible. Luc was a good man.
+		Mouse: I feel a little sick. I don't want to watch this.
+		Ivan: Покойся с миром, старик.
+		Meltdown: Oh, damn! He really did it!
+		Ice: Fucked. Up.
+[Keyword: Herman did it!]
+	GreasyBasil: Wait, what?! Herman? Herman, is this true?
+	Herman: I... I don't have to explain myself to you!
+	Martha: WHAT?! Herman, what's going on?
+	Herman: I did it for you, my dear! You were the one who said you couldn't stand it here! Kept nagging me about how we should have gone to Arulco. The beaches! The peace and quiet! Well, that takes money, doesn't it?
+	Martha: You... You idiot! Why?! The one time you decide to listen to me, and you do this stupid thing! 
+Basil, please, let him live! He couldn't have known they'd kill Tinhay!
+	GreasyBasil: Shut up, Martha! Men! Grab that bastard!
+	Martha: Noooo! Please, don't...
+	GreasyBasil: Luc, I'm sorry. I see now it wasn't Pierre you were protecting.
+		Luc: Herman is just a fool, Basil. And I'm the fool that raised a bad seed, and twice the fool for still loving him. But you made a fool of yourself just now, right? Maybe all fools deserve a second chance.
+		Luc: No need to be sorry, Basil. I have no reason to live, now that my son is dead. Leave this fool be and take me instead.
+		GreasyBasil: That's nonsense, Luc.
+	[Keyword: Spare Herman]
+			Raider: What he did was dumb, but he doesn't deserve to die for it.
+			MD: Haven't you people seen enough bloodshed?
+			Grizzly: Cut the guy some slack, will ya? Wait I... didn't mean that the way it came out.
+		GreasyBasil: Right. Enough is enough. Herman, you can go, but I don't ever want to see your face again.
+		Herman: But...
+		Martha: Shut up, before he changes his mind, dear, or I'll hang you myself! Come, help me gather our belongings.
+	[Keyword: Herman should hang]
+		GreasyBasil: Oh yes, he will! Ratted on Tinhay and was just about to watch Luc hang for his own crime? You're garbage, Herman!
+		Herman: No! Please...
+		GreasyBasil: Herman, you will hang until you are dead! Martha, you'd better clear out and never come back.
+			Fidel: No! Hang them both! Hang them all!
+			Vicki: Seems a bit harsh.
+			Buns: Good. That sniveling little man will get what he deserves.
+			Ivan: This drama like American TV. Boring.
+			Meltdown: Good. Never did like that little creep.
+			Tex: People who rat out pals get frontier justice!

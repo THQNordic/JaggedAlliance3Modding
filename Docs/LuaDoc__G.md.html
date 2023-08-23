@@ -1,0 +1,1073 @@
+# Global reference
+
+
+## AddCustomGameNotification
+
+Display a custom on-screen notification.
+
+
+void **AddCustomGameNotification**(string id, string title, string text, string image, function callback, table params)
+string id
+: unique identifier of the notification.
+
+string title
+: title of the notification.
+
+string text
+: body text of the notification.
+
+string image
+: path to the notification icon.
+
+function callback
+: optional. Function called when the user clicks the notification.
+
+table params
+: optional. additional parameters.
+
+Additional parameters are supplied to the translatable texts, but can also be used to tweak the functionality of the notification:
+
+- _'cycle_objs'_ will cause the camera to cycle through a list of _GameObjects_ or _points_ when the user clicks the notification.
+
+- _'priority'_ changes the priority of the notification (choose between _"Normal"_, _"Important"_ and _"Critical"_; default=_"Normal"_).
+
+- _'dismissable'_ dictates the dismissability of the notification (default=_true_)
+
+- _'close_on_read'_ will cause the notification to disappear when the user clicks on it (default=_false_).
+
+- _'expiration'_ is the amount of time (in _milliseconds_) that the notification will stay on the screen (default=_0_).
+
+- _'game_time'_ decides if the expiration countdown is done in _RealTime_ or _GameTime_ (default=_false_).
+
+
+## AddCustomGameNotification
+
+Display a custom on-screen notification.
+
+
+void **AddCustomGameNotification**(string id, string title, string text, string image, function callback, table params)
+string id
+: unique identifier of the notification.
+
+string title
+: title of the notification.
+
+string text
+: body text of the notification.
+
+string image
+: path to the notification icon.
+
+function callback
+: optional. Function called when the user clicks the notification.
+
+table params
+: optional. additional parameters.
+
+Additional parameters are supplied to the translatable texts, but can also be used to tweak the functionality of the notification:
+
+- _'cycle_objs'_ will cause the camera to cycle through a list of _GameObjects_ or _points_ when the user clicks the notification.
+
+- _'priority'_ changes the priority of the notification (choose between _"Normal"_, _"Important"_ and _"Critical"_; default=_"Normal"_).
+
+- _'dismissable'_ dictates the dismissability of the notification (default=_true_)
+
+- _'close_on_read'_ will cause the notification to disappear when the user clicks on it (default=_false_).
+
+- _'expiration'_ is the amount of time (in _milliseconds_) that the notification will stay on the screen (default=_0_).
+
+- _'game_time'_ decides if the expiration countdown is done in _RealTime_ or _GameTime_ (default=_false_).
+
+
+## AsyncCompress
+
+Compresses a string using LZ4 or ZSTD compression.
+
+Use [AsyncDecompress](#AsyncDecompress) to get back the original vlaue.
+
+
+string compressed_data **AsyncCompress**(string original_data, bool pstr, string compression_algo)
+original_data
+: string to be compressed.
+
+pstr
+: if the result should be returned as a *pstr* string.
+
+compression_algo
+: the compression algorithm to be used - either *"lz4"* or *"zstd"*.
+
+_returns_ compressed_data
+: the compressed data as a string.
+
+
+## AsyncDecompress
+
+Decompresses a string generated using [AsyncCompress](#AsyncCompress) and returns the original value.
+
+
+string original_data **AsyncDecompress**(string compressed_data, bool pstr)
+compressed_data
+: string to be decompressed.
+
+_returns_ original_data
+: the descompressed data as a string.
+
+
+## AsyncWebSocketConnect
+
+Creates a WebSocket connection to the specified URL.
+
+
+string err, WebSocket connection **AsyncWebSocketConnect**(string url)
+string url
+: the URL to connect to
+
+_returns_ string err
+: nil if no error occurred, string explaining the system error or HTTP status code.
+
+_returns_ string connection
+: WebSocket object.
+
+
+## Compress
+
+Compresses a string using LZ4 compression.
+
+Use [Decompress](#Decompress) to get back the original vlaue.
+
+
+string compressed_data **Compress**(original_data, str compression = config.SerializeCompressAlgo)
+original_data
+: string to be compressed.
+
+_returns_ compressed_data
+: the compressed data as a string.
+
+
+## ConnectivityCheck
+
+Check if there is any path between a source position and a list of destinations.
+
+
+bool **ConnectivityCheck**(src, dest, pfclass = 0, pass_search_dist = 0)
+point src
+: Point or object indicating the source position.
+
+table dest
+: List of points/objects or a single point/object, indicating the destination(s).
+
+int pfclass
+: PF class to be used. If *nil* is provided, it will be taken from the src object. If no object is provided, then the default is 0.
+
+int pass_search_dist
+: If the source is on impassable, the max distance to search for passable. Optional, with default value of 0.
+
+_returns_ bool connectivity
+: True if there is connectivity to any of the destination points.
+
+
+## DecodeURL
+
+Decodes a given URL. Compatible with the RFC 3986 standart.
+
+
+decodedUrl **DecodeURL**(url)
+
+## Decompress
+
+Decompresses a string generated using [Compress](#Compress) and returns the original value.
+
+
+string original_data **Decompress**(compressed_data, int offset = 0)
+compressed_data
+: string to be decompressed.
+
+offset
+: 1 based offset in the string to begin decompressing from.
+
+_returns_ original_data
+: the descompressed data as a string.
+
+
+## DivRound
+
+DivRound - short for Divide, Round.
+
+
+ret **DivRound**(value, divisor)
+int numerator
+: numerator used for the calculation.
+
+int denominator
+: denominator used for the calculation.
+
+_returns_ 
+: the result from the division, rounded to the nearest integer.
+
+
+## DumpDiff
+
+A tool for finding differences between files. Work with extremely large files (> 200 MB)
+
+The resulting differences are stored into two files with suffix "_diff" to the original filename.
+
+A typical usage is to find Lua leakes between sessions:
+
+1. Start the game in the main menu, without loading a map
+
+2. Dump the Lua state using DumpAll("dump1.lua")
+
+3. Load a map and perform all typicial actions
+
+4. Return to the main menu
+
+5. Dump the Lua state again using DumpAll("dump2.lua")
+
+6. Run the diff tool DumpDiff("dump1.lua", "dump2.lua")
+
+7. Any Lua leaks will be present in "dump2_diff.lua"
+
+
+void **DumpDiff**(file1, file2)
+
+## EncodeURL
+
+Encodes a given URL. Compatible with the RFC 3986 standart.
+
+
+encodedUrl **EncodeURL**(url)
+
+## EndAllBanter
+
+Stop all banter.
+
+
+void **EndAllBanter**()
+
+## EndBanter
+
+Find banters associated with the specified unit and end them.
+
+Optionally one banter can be excluded from the search.
+
+Optionally the unit can be matched by the string in the banter line which led to this unit being picked.
+
+
+void **EndBanter**(Unit unit, BanterPlayer exclude, String actor_string)
+
+## ExecuteProcess
+
+Execute a routine from a named process. If the process is currently suspended, the call will be registered in ordered to be executed once the process is resumed. Multiple calls with the same context will be registered as one.
+
+
+void **ExecuteProcess**(string process, function func, table obj)
+string process
+: the name of the process, which routines should be suspended.
+
+function func
+: the function to be executed.
+
+table obj
+: optional function context.
+
+
+## FindNearestObject
+
+Finds the nearest object from the given object list to the given point.
+
+
+object **FindNearestObject**(table ol, point pt[, function filter])
+table ol
+: the object list to search in.
+
+point pt
+: the point or object to which distance is measured; if the point is with invalid Z the measured distances are 2D, otherwise they are 3D.
+
+function filter
+: optional object filter function.
+
+
+## FlightFindLanding
+
+Search for a landing position around a center location. A landing position is a passable position exactly at the flight height.
+
+
+int **FlightFindLanding**(grid, pos, pfclass, filter, ...)
+grid grid
+: flight map.
+
+point pos
+: center location.
+
+int pfclass
+: pf class to check for passability.
+
+function filter
+: filter to check position with args (x, y, z, h).
+
+
+## FlightGetHeight
+
+Returns the max between the flight height and the terrain height at given position. Returns 'nil' if the flight height is infinite.
+
+
+int **FlightGetHeight**(grid, pos)
+point pos
+: position to check.
+
+
+## GetPassablePointNearby
+
+Searches around and returns the nearest passable/walkable point.
+
+
+point **GetPassablePointNearby**(point pt)
+point pt
+: original point.
+
+_returns_ point
+: nearest passable point or an *invalid* point, if none was found.
+
+
+## GetUniqueGridValues
+
+Given a HSL::Grid, a tile size and the maximum amount of unique values finds the unique values in the grid and returns a vector with them.
+
+Memory Limitation: max_values <= 65536
+
+
+
+
+void **GetUniqueGridValues**(pGrid, nTileSize, max_values)
+HSL::Grid pGrid
+: HSL::Grid compliant grid
+
+HSL::Coord nTileSize
+: the grid tile size
+
+HSL::data_t max_values
+: the maximum amount of unique values
+
+_returns_ std::vector<HSL::data_t> unique_values
+: the unique values in the grid
+
+
+## GridWaterArea
+
+Computes the water surface based on a water level
+
+
+int **GridWaterArea**(Grid *gSrc, Grid *gDst, HSL::Point pt)
+
+int **GridWaterArea**(Grid *gSrc, Grid *gDst, HGE::GameObject pObj)
+
+int **GridWaterArea**(Grid *gSrc, Grid *gDst, int x, int y, int z)
+Grid *gSrc
+: height grid
+
+Grid *gDst
+: resulting water mask
+
+HSL::Point pt
+: map position
+
+HGE::GameObject pObj
+: game object on the map
+
+int x, y
+: grid coordinates (not map!)
+
+int z
+: height level (not scaled!)
+
+_returns_ int
+: computed water surface area (water grid tiles)
+
+
+## GridWaterLevel
+
+Computes the water level based on a water surface area (in water tiles)
+
+
+int **GridWaterLevel**(Grid *gSrc, Grid *gDst, HSL::Point pt, int nArea[, int nErrPct])
+
+int **GridWaterLevel**(Grid *gSrc, Grid *gDst, HGE::GameObject pObj, int nArea[, int nErrPct])
+
+int **GridWaterLevel**(Grid *gSrc, Grid *gDst, int x, int y, int nArea[, int nErrPct])
+Grid *gSrc
+: height grid
+
+Grid *gDst
+: resulting water mask
+
+HSL::Point pt
+: map position
+
+HGE::GameObject pObj
+: game object on the map
+
+int x, y
+: grid coordinates (not map!)
+
+int nArea
+: water surface area to match  (grid tiles)
+
+int nErrPct
+: water surface area error tolerance  (int percents)
+
+_returns_ int
+: computed water surface level (scaled in meters)
+
+
+## IsDlcAvailable
+
+Returns if the player has a specific DLC installed.
+
+
+bool **IsDlcAvailable**(string dlc)
+dlc
+: The ID of a DLC.
+
+_returns_ bool
+: If the DLC is available and loaded.
+
+
+## IsProcessingSuspended
+
+Checks if the processing of routines from a named process is currently suspended
+
+
+bool **IsProcessingSuspended**(string process)
+
+## IsValidPos
+
+Checks if a position is on the map
+
+
+bool **IsValidPos**(object obj)
+
+bool **IsValidPos**(point pos)
+
+bool **IsValidPos**(int x, int y, int z)
+_returns_ bool
+: returns true, if a position is on the map.
+
+
+## IsValidZ
+
+Checks if a position has a valid Z coordinate (not on the terrain)
+
+
+bool **IsValidZ**(object obj)
+
+bool **IsValidZ**(point pos)
+
+bool **IsValidZ**(box bx)
+_returns_ bool
+: returns true, if the position has a valid Z coordinate.
+
+
+## LuaCodeToTuple
+
+Evaluates a string generated using [TupleToLuaCode](#TupleToLuaCode) and returns the original values.
+
+
+error, values **LuaCodeToTuple**(string code, table env)
+string code
+: code to be evaluated.
+
+table env
+: evaluation environment.
+
+_returns_ error, values
+: error string (or nil, if none) and the evaluated tuple.
+
+
+## MulDivAdd
+
+MulDivAdd - short for Multiply, Divide, Add.
+
+
+ret **MulDivAdd**(value, numerator, denominator, addend)
+int value
+: value used for the calculation.
+
+int numerator
+: numberator used for the calculation.
+
+int denominator
+: denominator used for the calculation.
+
+int addend
+: addend used for the calculation.
+
+_returns_ 
+: the integer calculation (value*numerator + addend)/denominator.
+
+
+## MulDivRound
+
+MulDivRound - short for Multiply, Divide, Round.
+
+
+ret **MulDivRound**(value, numerator, denominator)
+value
+: value used for the calculation. Both number, point or box values are allowed.
+
+int numerator
+: multiplier used for the calculation.
+
+int denominator
+: divisor used for the calculation.
+
+_returns_ 
+: the result from (value*numerator)/denominator, rounded to the nearest integer.
+
+
+## MulDivTrunc
+
+MulDivTrunc - short for Multiply, Divide, Truncate.
+
+
+ret **MulDivTrunc**(value, numerator, denominator)
+value
+: value used for the calculation. Both number, point or box values are allowed.
+
+int numerator
+: multiplier used for the calculation.
+
+int denominator
+: divisor used for the calculation.
+
+_returns_ 
+: the integer calculation (value*numerator)/denominator.
+
+
+## Normalize
+
+Returns a point with a vector direction defined by the given two or three coordinates, but with vector length 4096. If only two coordinates are given, returns a 2D point with z = InvalidZ.
+
+
+point **Normalize**(int x, int y, [int z])
+int x, y, z
+: two or three coordinates specifying a vector direction.
+
+_returns_ point n
+: a point with length 4096 with the same direction as specified with x/y/z.
+
+
+## PlaneFromHeight
+
+Compute the plane that fits the terrain around an object (e.g. in order to cut the object below the terrain)
+
+
+int **PlaneFromHeight**(object obj, int flags = 0, ...)
+object obj
+: the object to be considered
+
+int flags
+: various flags changing the default computing behavior
+
+-- const.pfhLocal
+
+The resulted plane is computed in the object's local space.
+
+
+
+-- const.pfhBox
+
+Uses the object's box to detect the terrain intersection. Otherwise it's collision mesh would be used.
+
+
+
+-- const.pfhAbove
+
+Adjusts the plane above the highest detected terrain.
+
+
+
+-- const.pfhBelow
+
+Adjusts the plane above the lowest detected terrain.
+
+
+
+-- const.pfhOffset
+
+Moves up or down the matched plane. Expect an additional *offset* parameter (int).
+
+
+
+-- const.pfhTime
+
+Moves the object's time. Expect an additional *delta* parameter (int).
+
+
+
+-- const.pfhNegative
+
+Changes the orientation of the plane.
+
+_returns_ int
+: packed plane
+
+
+## PlayAndWaitBanter
+
+Play a banter and wait for it to finish.
+
+
+BanterPlayer **PlayAndWaitBanter**(string banter_preset_id, array associated_units, Unit fallback_actor)
+string banter_preset_id
+: Banter to play.
+
+array associated_units
+: Units to assign as banter actors.
+
+Unit fallback_actor
+: Unit to use if the actor cannot be found within the associated_units.
+
+@returns BanterPlayer - object responsible for playing the banter.
+
+
+## PlayBanter
+
+Create a banter player which shows the banter text and plays the sounds.
+
+
+BanterPlayer **PlayBanter**(string banter_preset_id, array associated_units, Unit fallback_actor, string any_actor_override)
+string banter_preset_id
+: Banter to play.
+
+array associated_units
+: Units to assign as banter actors.
+
+Unit fallback_actor
+: Unit to use if the actor cannot be found within the associated_units.
+
+string any_actor_override
+: Banter lines with actor "any" will be played by the first /object/ from this group.
+
+bool wait_setpiece_end
+: The banter will wait for any current setpiece to end before playing
+
+@returns BanterPlayer - object responsible for playing the banter.
+
+
+## RGB
+
+Represent an RGB color in integer format.
+
+
+int **RGB**(int red, int green, int blue)
+int red
+: red componnent, ranging from 0 to 255
+
+int green
+: green componnent, ranging from 0 to 255
+
+int blue
+: blue componnent, ranging from 0 to 255
+
+_returns_ int
+: RGB color represented by an integer.
+
+
+## RGBA
+
+Represent an RGBA color in integer format.
+
+
+int **RGBA**(int red, int green, int blue, int alpha)
+int red
+: red componnent, ranging from 0 to 255
+
+int green
+: green componnent, ranging from 0 to 255
+
+int blue
+: blue componnent, ranging from 0 to 255
+
+int alpha
+: alpha componnent (opacity), ranging from 0 to 255
+
+_returns_ int
+: RGB color represented by an integer
+
+
+## ReadModPersistentData
+
+Reads data from a persistent storage, that can be accessed between different game sessions.
+
+This storage is not shared, but is per mod. Anything read here has been previously stored only by the same mod using [WriteModPersistentData](#WriteModPersistentData).
+
+
+err, data **ReadModPersistentData**()
+_returns_ err
+: error message or nil, if successful.
+
+_returns_ data
+: data previously stored or nil.
+
+See also: [LuaCodeToTuple](#LuaCodeToTuple), [Decompress](#Decompress), [AsyncDecompress](#AsyncDecompress);
+
+
+## ResolveInteractableObject
+
+Resolves the interactable in a collection.
+
+An interactable can be in a collection with other objects.
+
+One is the interactable and the rest are considered visuals.
+
+
+object **ResolveInteractableObject**(obj)
+obj
+: An object in the collection.
+
+
+## ResumeProcessing
+
+Resumes the processing of routines from a named process. Resuming an already resumed process, or resuming it with time delay, would lead to an error.
+
+
+void **ResumeProcessing**(string process, type reason, bool ignore_errors)
+string process
+: the name of the process, which routines should be suspended.
+
+type reason
+: the reason to be used in order to resume the processing later. Could be any type.
+
+bool ignore_errors
+: ignore resume errors (e.g. process already resumed).
+
+
+## StateIdx
+
+Gets the index of a state (animation) by its name.
+
+
+int **StateIdx**(int state)
+_returns_ int
+: state index or -1 if not found.
+
+
+## StateName
+
+Gets the name of a state (animation) by its index.
+
+
+string **StateName**(int state)
+_returns_ string
+: state name or an invalid name if not found.
+
+
+## SuspendProcessing
+
+Suspends the processing of routines from a named process. Multiple suspending with the same reason would lead to an error.
+
+
+void **SuspendProcessing**(string process, type reason, bool ignore_errors)
+string process
+: the name of the process, which routines should be suspended.
+
+type reason
+: the reason to be used in order to resume the processing later. Could be any type.
+
+bool ignore_errors
+: ignore suspending errors (e.g. process already suspended).
+
+
+## Transform
+
+Transform a point by rotation, translation and scaling
+
+
+point **Transform**(pos, angle, offset = point30, axis = axis_z, scale = 100, inverse = false)
+
+point **Transform**(x, y, z, angle, offset = point30, axis = axis_z, scale = 100, inverse = false)
+point pos
+: pos to be transformed.
+
+int x, y, z
+: pos given as coordinates to be transformed.
+
+int angle
+: rotation angle.
+
+point offset
+: translation offset.
+
+point axis
+: rotation axis.
+
+int scale
+: scaling percents.
+
+bool inverse
+: perform the inverse transformation.
+
+_returns_ point
+: the transformed point.
+
+
+
+Transform a box by rotation, translation and scaling
+
+
+box **Transform**(bx, angle, offset = point30, axis = axis_z, scale = 100)
+box bx
+: bx to be transformed.
+
+int angle
+: rotation angle.
+
+point offset
+: translation offset.
+
+point axis
+: rotation axis.
+
+int scale
+: scaling percents.
+
+_returns_ box
+: the transformed box.
+
+
+## TupleToLuaCode
+
+Converts a tuple of values to an executable Lua expression.
+
+Use [LuaCodeToTuple](#LuaCodeToTuple) for evaluating the Lua expression.
+
+
+string code **TupleToLuaCode**(values...)
+values...
+: tuple of values to be converted to executable code string.
+
+_returns_ string code
+: the supplied tuple, converted to Lua code.
+
+
+## ValueToLuaCode
+
+Converts a value to an executable Lua expresion.
+
+Use _'LuaCodeToTuple()'_ for evaluating the Lua expression.
+
+
+string code **ValueToLuaCode**(value, int indent)
+value
+: value to be converted.
+
+int indent
+: initial number of indentations.
+
+pstr pstr
+: pstr string to serialize into.
+
+table injected_props
+: table with metadata of properties injected from parent objects.
+
+_returns_ string code
+: the supplied value, converted to Lua code.
+
+
+## WaitCustomPopup
+
+Displays a custom popup and waits for the players response.
+
+This function should always be called from within a GameTime thread.
+
+
+int choice **WaitCustomPopup**(string title, string text, table choices, window parent)
+string title
+: title of the popup.
+
+string text
+: body text of the popup.
+
+table choices
+: array of up to four choices for the user.
+
+window parent
+: parent window (this is optional only ingame).
+
+_returns_ int choice
+: The users choice.
+
+
+## WaitCustomPopup
+
+Displays a custom popup and waits for the players response.
+
+This function should always be called from within a GameTime thread.
+
+
+int choice **WaitCustomPopup**(string title, string text, table choices, window parent)
+string title
+: title of the popup.
+
+string text
+: body text of the popup.
+
+table choices
+: array of up to four choices for the user.
+
+window parent
+: parent window (this is optional only ingame).
+
+_returns_ int choice
+: The users choice.
+
+
+## WriteModPersistentData
+
+Writes data into a persistent storage, that can be accessed between different game sessions.
+
+The data must be a string, no longer than *const.MaxModDataSize* - make sure to always check if you're exceeding this size.
+
+This storage is not shared, but is per mod. Anything stored here can only be read by the same mod using [ReadModPersistentData](#ReadModPersistentData).
+
+
+err **WriteModPersistentData**(data)
+data
+: the data to be stored (as a string).
+
+_returns_ err
+: error message or nil, if successful.
+
+See also: [TupleToLuaCode](#TupleToLuaCode), [Compress](#Compress), [AsyncCompress](#AsyncCompress);
+
+
+## WriteModPersistentStorageTable
+
+Writes `CurrentModStorageTable` into a persistent storage, that can be accessed between different game sessions.
+
+This is an ease-of-use function for the most common use case of persistent storage - when storing data in a table.
+
+It uses [WriteModPersistentData](#WriteModPersistentData) internally, thus the *const.MaxModDataSize* limit applies.
+
+
+err **WriteModPersistentStorageTable**()
+_returns_ err
+: error message or nil, if successful.
+
+
+## array_set
+
+A set that preserves the order in which keys were inserted.
+
+Can be iterated like an array.
+
+Insertion is O(1).
+
+Removal is O(n).
+
+
+
+
+array_set **array_set**(...)
+values...
+: key/value pairs to be inserted into the array_set
+
+
+
+Example:
+
+~~~~ Lua
+	local set = array_set()
+	set:insert("foo")
+	set:insert("bar")
+	set:insert("baz", "123")
+	set:insert("bag", "456")
+	for i, obj in ipairs(set) do
+		print(i, obj, set[obj])
+	end
+	-- 1 foo true
+	-- 2 bar true
+	-- 3 baz 123
+	-- 4 bag 456
+	set:remove("foo") -- can remove by value
+	set:remove("baz", 2) -- can specify the index for removal
+	for i, obj in ipairs(set) do
+		print(i, obj, set[obj])
+	end
+	-- 1 bar true
+	-- 2 bag 45
+~~~~
+
+## ripairs
+
+Reverse array iterator. It is safe to remove from the array the elements already returned including the current one.
+
+
+... **ripairs**(array)
+array table
+: the array to reverse-iterate.
+
+
+## sync_set
+
+An unordered set that can be iterated like an array.
+
+Unlike the regular set, iteration is synchronous.
+
+Insertion is O(1).
+
+Removal is O(1).
+
+It is implemented by putting the last element of the array part of the set into the index of the removed element.
+
+
+
+
+sync_set **sync_set**(...)
+values...
+: objects to be inserted into the sync_set
+
+
+
+Example:
+
+~~~~ Lua
+	local set = sync_set()
+	set:insert("foo")
+	set:insert("bar")
+	set:insert("baz")
+	for i, obj in ipairs(set) do
+		print(i, obj)
+	end
+	-- 1 foo
+	-- 2 bar
+	-- 3 baz
+	set:remove("foo")
+	for i, obj in ipairs(set) do
+		print(i, obj)
+	end
+	-- 1 baz
+	-- 2 bar
+~~~~
+
+## xxhash
+
+Calculates a hash of all its parameters. Uses [xxhash64](http://cyan4973.github.io/xxHash/).
+
+No bitshifting or XOR magic, xxhash functions only.
+
+
+number **xxhash**(...)
+...
+: arbitrary number of params of type string, number, bool, nil, grid, userdata
+
+_returns_ number
+: hash of the concatenated byte content of all the parameters.
+
+
+
+
+
+(insert footer.md.html here)
+<link rel="stylesheet" type="text/css" href="Style.css" />
+<!-- Markdeep: --><style class="fallback">body{visibility:hidden;white-space:pre;font-family:monospace}</style><script src="markdeep.min.js" charset="utf-8"></script><script>window.alreadyProcessedMarkdeep||(document.body.style.visibility="visible")</script>

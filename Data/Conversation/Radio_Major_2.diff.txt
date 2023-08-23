@@ -1,0 +1,29 @@
+[Keyword: Greeting]
+	TheMajor: A friendly warning, boy: get your hands off those <em>diamond mines</em>. They belong to my Legion. And you're following a <em>beaten path</em> that ain't going to good places.
+[Keyword: Who are you?]
+	TheMajor: I'm the button you push when you need someone out of your way. And if you keep pushing me, boy, I'll scrap ya along with your <em>Corazon</em> girlfriend.
+		Ivan: I am no boy. I am army Major. А что ты, никто не знает.
+		TheMajor: My apologies, Major Dolvich. I wasn't referring directly to you.
+		Ivan: Apology taken. 
+[Keyword: What claim do you have over those mines?]
+	TheMajor: None. Same as you. They're just a low hanging fruit, but the dirty hands of your <em>Corazon</em> girlie won't get it.
+		Len: With all due respect, Sir, we are establishing order in the region. I regret to say this gang of punks you call "Legion" rather acts on the contrary.
+		TheMajor: With all due respect, Corporal Anderson, this is beyond your level of expertise.
+[Keyword: Beaten path?]
+	TheMajor: You know you're not the first goon to do the dirty work of <em>Corazon</em>, right? And by now you probably figured out that she throws away her broken toys. Ask that clown <em>Biff</em> when you meet him... If my boys don't get him first.
+		Larry: Heey, Biff may not be the greatest military genius in the world, but at least he's not an asshole. And you, man, are the assholiest!
+		TheMajor: Don't ya push your luck, boy. It saved ya once, but it may abandon ya next time.
+[Keyword: Where is Biff?]
+	TheMajor: In hell - soon. You wanna follow?
+		Smiley: After you!
+		TheMajor: Keep your pants on, lover boy. 
+[Keyword: You had business with Corazon?]
+	TheMajor: Ain't working with this snake anymore. You should quit as well. But I'm fine if you want to die here - I'll even help you, boy!
+		Reaper: I welcome Death.
+		TheMajor: That's the spirit, boy!
+[Keyword: You have worked for her as well!]
+	TheMajor: Who's a smart boy? You're a smart boy! Now bark! Roll over! Play dead! Or just get outta here, or I'll teach you how to do that last trick really, really well.
+		Meltdown: Bite me. Stop calling everyone "boy", or I'll find you, I'll cut you and I'll bring parts of you home to my rottweilers. 
+		TheMajor: Now that's my type of girl! Come on, I'm waiting for ya.
+[Keyword: Goodbye]
+	TheMajor: Now, I'll send my Legion to <em>take back</em> my diamond mines. You get out of here while you can - or remember that I've warned you.

@@ -1,0 +1,6 @@
+[Keyword: Greeting]
+	Dummy: BREAKING NEWS: HUNDREDS KILLED IN GAS ATTACK
+	Dummy: Hundreds of refugees have been killed in an unprecedented gas attack in the troublesome Adjani Valley of Grand Chien. This is the heaviest incident in the country since the civil war several years ago.
+	Dummy: The region is still unstable, as multiple militant groups are fighting over the newly found diamond deposits in the Adjani Valley.
+	Dummy: Asked who is responsible for the attack, <em>Col. Faucheux</em> of the Grand Chien army revealed that it was most probably committed by the mercenary groups <em>M.E.R.C.</em> and <em>A.I.M.</em> which are led by a warlord known as <em>Alpha</em>. 
+	Dummy: The Colonel stated that a large detachment of the Grand Chien army has been tasked with restoring order in the region, and he is firmly determined that the militants would pay a "heavy price" for the atrocities.

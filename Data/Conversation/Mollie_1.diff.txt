@@ -1,0 +1,138 @@
+[Keyword: Greeting]
+	Mollie: No! Smiley! What have you done? Look what you have done!
+		Fauda: You are not without blame here, girl. Maybe if you weren't so dependent on men this kind of thing wouldn't happen.
+		Fox: When it comes to women, boys are always so eager to start shooting their guns off.
+		Livewire: I really think if you look at the sequence of events in detail you will find that I am not the one to blame. Not completely, anyway.
+	Mollie: Smiley, you fool! Why didn't you stay away? I never wanted you to die! I just wanted a better life for me, and now I am being punished for that...
+		Raven: Somehow I doubt you're the one being punished here.
+		Scope: Sorry, love. Never underestimate the stupid things a man will do for lust.
+	Mollie: What do I do now? Do you think Maman will take me back? 
+		Hitman: If you're lookin' for a new boyfriend, I'm available.
+		Vicki: You have a chance to walk away from all this and you want to go back to being a working girl? That be crazy.
+	Mollie: I'm going back to the brothel. It's not the life I wanted, but... they are the only family I have now.
+[Keyword: Greeting]
+	Mollie: No! Smiley! What have you done? Look what you have done!
+		Fauda: You are not without blame here, girl. Maybe if you weren't so dependent on men this kind of thing wouldn't happen.
+		Fox: When it comes to women, boys are always so eager to start shooting their guns off.
+		Livewire: I really think if you look at the sequence of events in detail you will find that I am not the one to blame. Not completely, anyway.
+	Mollie: Smiley, you fool! Why didn't you stay away? I never wanted you to die! I just wanted a better life for me, and now I am being punished for that...
+		Raven: Somehow I doubt you're the one being punished here.
+		Scope: Sorry, love. Never underestimate the stupid things a man will do for lust.
+[Keyword: Greeting]
+	Mollie: How could you just kill my <em>Booboo</em>?!
+		Luigi: What can I tell you, bambina - I have talent!
+		Raven: "Booboo" was a gangster, honey. This is how they always end up.
+		Fidel: It was easy! Here. I show you.
+	Mollie: Why... Why would you do that?!
+		Luigi: You can't make pasta without breaking a few heads, ragazza!
+		Reaper: It was his time.
+		Fauda: We do what we must because we can.
+[Keyword: Greeting]
+	Mollie: How could you just let my <em>Booboo</em> die?!
+		Raven: "Booboo" was a gangster, honey. This is how they always end up.
+		Fidel: It was easy! Here. I show you.
+[Keyword: All Alone Redirect]
+	Mollie: What do I do now?! I'm all alone in this world...
+		Raven: In a magnificent mansion, all by yourself, wiping your tears with money. Poor, poor girl.
+		Buns: All alone in this huge kitschy mansion. Poor, poor girl.
+		Hitman: If you're lookin' for a new boyfriend, I'm available.
+		Luigi: You have me, ragazza!
+		Mollie: I'd rather be dead!
+[Keyword: Greeting]
+	Mollie: Get away from me, you monsters!
+[Keyword: Greeting]
+	Mollie: What have you done?! Booboo! Are you okay?
+	FleatownBoss: Ugh... I'm fine. Did your... <em>Maman</em> send those people?
+	Mollie: No! She would never do that! Oh, my poor Booboo!...
+[Keyword: Greeting]
+	Mollie: What do you want from us?! Please leave us alone!
+[Keyword: Greeting]
+	Mollie: Hello! You look a lot like those <em>Commandos</em> in Pantagruel! Could you be friends with... No, I guess the world can't be that small. 
+	FleatownBoss: Who are you talking to, my love?
+	Mollie: I... don't know. Some people. I think they are searching for you.
+	FleatownBoss: Hmm, we'll see about that.
+[Keyword: Greeting]
+	Mollie: Oh, hey! You... remind me of someone. Are you friends with <em>Smiley</em>?
+[Keyword: Greeting]
+	Mollie: Shush, do not anger <em>Booboo</em>. He has bad digestion when he is annoyed.
+	[Keyword: A few questions...]
+		Mollie: Okay, but...
+		FleatownBoss: Mollie? Do you know where my antacids are?
+		Mollie: Yes, Booboo! I'm coming!
+...Sorry, can't talk right now.
+	[Keyword: Wait, it is about Smiley!]
+		Mollie: Ohhh... My poor <em>Smiley</em>! What's wrong with him? Is he alright? Is he still hiding?
+[Keyword: Greeting]
+	Mollie: Make yourselves comfortable! The friends of <em>Booboo</em> are my friends as well!
+		Omryn: In that case, I will have a roast beef sandwich.
+		Mollie: Oh, I... Well, I will go see what we have.
+		Nails: "Friends with Booboo" was the name of my band in high school.
+[Keyword: Who are you?]
+	Mollie: You don't recognize me? Oh, but you are new to the Adjani Valley, n'est ce pas? I am the Carnival Queen of <em>Pantagruel</em>! They were carrying me on the throne with flowers and everything!... It was just before I ran away with Smiley, and, well... 
+	Mollie: Wait, are you his friends? You look like mercenaries, same as <em>Smiley</em>. Are you also from <em>M.E.R.C.</em>? He told me they were the best mercenaries!
+		Len: Some may have a different opinion on that.
+		Meltdown: Ha! The best at getting the crap kicked out of 'em, maybe!
+		Nails: They're a bunch of dweebs running around playing soldier.
+		PierreMerc: They are incompetent fools.
+[Keyword: Maman is missing you]
+	Mollie: And I miss her too! Terribly! But you see, I like my new life here with <em>Booboo</em>.
+		Ice: Don't blame you. This crib is phat.
+		Fauda: Looks to me like you just traded one cage for another.
+[Keyword: Are you the whore from Le Lys Rouge?]
+	Mollie: Heeey! I'm not just a whore! I am a person!...
+		Len: Oh, I'm sorry, miss, we didn't mean to...
+		MD: Umm, uh, sorry. Guess that did sound kinda mean.
+	Mollie: And besides, I'm much better than those other girls. I am the Carnival Queen after all!
+		Fox: Let's not get carried away, okay? Something about putting makeup on a pig?
+		Mollie: Oh yeah? At least I know how to put on makeup! You've got more foundation than a construction site!
+	Mollie: It's the celebration. Carnival? You know, the Throne of flowers, the crowds, the parties? I'm sure you must have heard of it.
+		Hitman: I guess we've got a lot to learn from you. Are you giving private lessons?
+		Mollie: That's all behind me. Er, I mean, that's in my past.
+[Keyword: Booboo?...]
+	Mollie: Yes! I mean <em>Boss Blaubert</em>, of course! But to me, he's my sweety-meaty Booboo-bear!
+		Mouse: Eeew.
+		Scope: That sounds lovely.
+		Buns: Oh come on.
+		Raven: Sweety-meaty?
+	Mollie: He is very special to me, and I'm his one and only... But I wish he was more open with me. I guess a man like him has a lot of <em>secrets</em> to keep, even from the love of his life, right?
+[Keyword: Boss Blaubert keeps secrets from you?]
+	Mollie: I don't know. There are just times I ask him questions and he doesn't answer or pretends not to hear. I'm sure it is nothing.
+		Shadow: Everyone is hiding something. Most aren't that great at it.
+		Grunty: Perhaps his ears produce an over abundance of wax and he cannot hear you. That happens to me sometimes.
+		Scully: Take it from a guy who's had eight wives: it's something.
+[Keyword: Boss Blaubert keeps secrets from you?]
+	Mollie: I'm sure it's nothing. I mean, a man who loves his woman wouldn't hide anything important from her!
+		Buns: Oh, my sweet summer child...
+		Raider: I know some detectives in the SVU who would strongly beg to differ.
+		Sidney: Yet, if I may, a discreet gentleman knows which parts of himself to keep hidden from those he cares not to offend. Er, if you take my meaning.
+		Fox: Everyone has their naughty little secrets. I keep mine in a tight little box. No one is allowed in without permission.
+		Livewire: Oh, but everyone has secrets! That is why I learned hacking and lock-picking. Otherwise, I would have no idea what is going on in this world!
+		Magic: Every man out there got at least one secret he keeps from his old lady. Don't worry. Most times, it's just his collection of nudey mags.
+	Mollie: ...But then again, he avoids my questions about that <em>globe</em> in the living room. It's password protected and he refuses to even let me try to guess it! Can you unlock it and see what's in there? Please? I'm dying to find out!
+		Grunty: As my mother likes to say, "Don't go looking for secrets, you'll only find dead bodies." I look anyways, and just pretend I don't notice the bodies.
+		Raven: It's probably incriminating evidence that he's a serial killer. Or maybe just porn. Hopefully not both.
+		Shadow: In case we find the remains of his previous girlfriends in there, you might want a few hiding spots picked out for yourself.
+[Keyword: Yes we are]
+		Grizzly: Pals for life.
+		Scully: Aye, we're mates.
+		Wolf: Yep. Best buds.
+		Scope: We prefer the term "associates".
+	Mollie: Oh! Good! I hope he's okay. I... I had to leave in a bit of a hurry. 
+[Keyword: Where is Smiley now?]
+	Mollie: Oh, I'm... not sure. I hoped you could tell me. I wonder if the <em>holy man</em> is still hiding him.
+	FleatownBoss: Honey? Do you know where my suspenders are? Lately I just can't find anything...
+	Mollie: Yes, Booboo! I'm coming!
+...Sorry, can't talk right now.
+[Keyword: Where is Smiley now?]
+	Mollie: Oh, I'm... not sure. I hoped you could tell me. I wonder if the <em>holy man</em> is still hiding him.
+[Keyword: Who the hell is Smiley?]
+	Mollie: Oh, I... thought you were someone else. I shouldn't be speaking with you...
+[Keyword: Goodbye]
+	Mollie: See you around!...
+[Keyword: Redirect]
+	FleatownBoss: Honey? Who are you talking to?
+	Mollie: Oh! No one! I mean, some old friends brought news of <em>Maman Liliane</em>! They were just leaving, Booboo!
+	FleatownBoss: They better be.
+	Mollie: Okay, nice to see you and so on, but Booboo needs my attention. Bye!
+[Keyword: Goodbye]
+	Mollie: Please feel free to take a look around and enjoy our mansion!

@@ -1,0 +1,115 @@
+[Keyword: Greeting]
+	Faucheux: Greetings. I am <em>Colonel Jules Faucheux</em>. I expected to meet the mercenaire unit the President's daughter managed to hire, but judging by the quality of your equipment and clothing, I suppose you are the salesmen or accountants for that group.
+	[Keyword: Yes, we are the mercenaries]
+		Faucheux: Are you? I expected something more impressive, but I suppose I should not be surprised.
+			Len: Sir, I assure you that we are professionals and a lot of us have a solid military background.
+			Shadow: We don't like to draw a lot of attention to ourselves.
+			Steroid: That is because I am not flexing. I did not want to scare you.
+	[Keyword: Your troops look worse]
+		Faucheux: Do they? At least they look like professional soldiers, unlike you.
+			Larry: Hey, that really hurts, man. Look what you did, you made Ted cry!
+			Larry_Clean: We're what you might call "irregulars", man. And I'm VERY irregular, because I'm not allowed to have caffeine.
+			Raven: Well, it's laundry day. You know how it is.
+			Gus: Sorry about that, Woodchuck. Our dress blues are still at the dry cleaner.
+	[Keyword: Your troops look worse]
+			Buns: If this group of misfits are what you call "soldiers", I would prefer to be compared to an accountant, thank you very much.
+			Raider: Sir, my team is outfitted to execute the variety of roles we need to perform. As for your own troops, I must say that back in LA I saw gangs that were better organized and equipped.
+			Sidney: I do appreciate your analogy, sir, but if you allow me to extend it just a tad - we are indeed wholesale dealers of carefully measured violence, while your soldiers seem more akin to... street peddlers.
+		Faucheux: Is that so?... I suppose, in time, we shall see who are the better soldiers.
+			Nails: The hell do you mean by that, Scooter?
+			Reaper: I feel the shadow of Death has entered the conversation. Intoxicating.
+			Meltdown: If that's some kind of subtle threat, you should know something: Norma don't do subtle.
+	[Keyword: Fuck you!]
+			Meltdown: Stick it where the sun don't shine, Colonel Fancy Pants!
+			Nails: You can suck on an exhaust pipe, Colonel Fuckface.
+			Fidel: You can eat the corn from mi mierda, Colonel Cabrón.
+			Flay: I invite you to kiss my derrière, Colonel Faux Pas.
+		Faucheux: So that's the level of "professionalism" that can be expected from a group of mercenaires. You are lucky I am a soldier and not an amateur like you.
+	[Keyword: GreetingRedirect]
+		Faucheux: But let us not get carried away. Why are you here?
+[Keyword: Greeting]
+	Faucheux: What may I help you with? If you need instructions on how to reload your gun or buckle up your tactical vest, I can send a private to assist you.
+		Meltdown: You do that and I'll kick your private in the privates.
+		MD: Oh, gee... Um, that'd actually be swell!
+		Ivan: Он вернется к тебе грузом 200.
+[Keyword: Greeting]
+	Faucheux: Right now I have no time for you. I have work to do, but I promise to give you my full attention soon enough. Dismissed.
+[Keyword: Greeting]
+	Faucheux: Yes? Speak and be quick about it.
+[Keyword: We are here to save your President]
+		Faucheux: I don't see him with you. I guess you tried to play at being soldiers and failed, didn't you? Do you even know where he is being kept?
+		Faucheux: Then go ahead and save him. I am sure elite commandos like you can handle it. You probably already know where he is being kept, right?
+	[Keyword: Yes]
+		Faucheux: Well, then all that remains is to go ahead and free him. Good luck!
+			DrQ: Your well-wishes are as hollow as a dead tree.
+			Barry: Your voice is missing something. I am thinking it is... sincerity.
+			Igor: You maybe give commendation for success?
+			Faucheux: Oh, absolument!
+	[Keyword: No]
+		Faucheux: Oh really? If great commandos such as yourselves can't locate him, how can a humble soldier like me have any hope? And yet... it just so happens that I have extensive <em>reconnaissance data</em> about the president's whereabouts, and you... have none.
+			Red: Ye dinnae have to be a jackass about it!
+			Grizzly: Hey, we're just a bunch of mercs here, okay? It's not like we have a link to a satellite or... Um, never mind.
+			Wolf: Yeah, I get it. You good, we bad. Now, just give us the damn intel... please.
+		Faucheux: Here, take it. I insist. I am honored to be able to help such an elite team.
+	[Keyword: No]
+		Faucheux: Oh really? If great commandos such as yourselves can't locate him, how can a humble soldier like me have any hope?
+			Thor: Sarcasm is a "can't do" tone. Instead, why not fill up your voice with "can do"?
+			Faucheux: I can't possibly be the only person who has difficulty taking you seriously.
+			Smiley: It is true that we are amazing, but you should not be discouraged by that.
+			Grunty: I think you are right, Herr Colonel. You should consider withdrawing your forces and going home.
+	[Keyword: Perhaps]
+		Faucheux: You mean that you don't know, but you won't admit it. Amateurs.
+			Hitman: Stuffed shirt.
+			Magic: Snapperhead.
+			Blood: Noodle dick.
+			Vicki: Bagga mouth.
+			Mouse: Neanderthal.
+			Kalyna: Oh yeah? Well, you are a... a very mean man!
+[Keyword: What do you know about us?]
+	Faucheux: I know <em>Emma LaFontaine</em> hired you to find her father instead of trusting that the government - HIS government - would do it. I also know that you A.I.M. mercenaries are notorious for being, shall we say... colorful? You fit the profile. I was curious to see you up close.
+		Raven: Well, I certainly hope we can give you an eyeful of color - black and blue, preferably.
+		Shadow: You only see us because we decided to show ourselves.
+		Red: Wha-? If that is some kind of crack at gingers, ye can stuff it!
+		Magic: What can I say? We like to bring a bit of showmanship to the job.
+		Thor: That is because our auras are healthy and vibrant. Yours, however... Hmmm, have you considered yoga?
+	Faucheux: And now that I've met you, I see the word "colorful" doesn't do you justice. I think "unbalanced" or "delusional" might be more appropriate.
+[Keyword: Where do you know Corazon Santiago from?]
+	Faucheux: She has the resources to help us stabilize the region - and by "resources" I don't mean you. That being said, you may still prove to be of some use to me.
+		Len: Our contract is with Ms. Lafontaine and Ms. Santiago. If your mission objectives overlap with ours, so be it. But, sir... Respectfully, we don't take orders from you.
+		Faucheux: I wouldn't dream of it... corporal.
+		Gus: You got something cooking in that bean of yours, Woodstove, I can smell it.
+		Faucheux: A good commander always has... contingency plans.
+		Raider: The hairs on the back of my neck just stood up. What kind of use do you mean, exactly?
+		Faucheux: The kind that will guarantee a bright future for Grand Chien, of course.
+[Keyword: You seem to be an art connoisseur]
+	Faucheux: That's true, but what you see here are just cheap reproductions that my loyal yet unsophisticated soldiers brought from the nearby villages. They mean well, but they couldn't tell the difference between a Monet and a child's finger painting.
+		Fox: You surely have something more impressive to show off!
+		Magic: I can see you got some style. I bet you have some museum quality pieces!
+		Livewire: The pattern that you used to decorate this room suggests that there are a few pieces missing that are much more valuable.
+	Faucheux: Of course, there are some good finds - all of which I spotted personally. But I wouldn't hang those precious pieces here in this filth. Works of art belong inside a <em>work of art</em>, nothing less. But this is none of your business.
+[Keyword: Your art collection sucks]
+	Faucheux: THIS!? This is not my art collection! These are cheap reproductions my dimwit soldiers brought me from the nearby villages. I found several good pieces on my own, but I would not hang them here. Works of art belong inside a <em>work of art</em>...
+		Ice: I'm all ears!
+		Vicki: Totally know what you mean, mon! Like a Cadillac in a Dali painting.
+		Igor: Ah, you mean like Matryoshka dolls.
+		Mouse: Like a mime inside an invisible box!
+	Faucheux: But I see no reason to explain this concept to you. You are even more uncouth than my idiot soldiers. They, at least, can dress themselves properly.
+[Keyword: Why are YOU here?]
+	Faucheux: I have come from the capital with orders to resolve the Adjani crisis. After the President was kidnapped, I told Emma not to worry her pretty little head - I would extract her father once I made a few important tactical <em>arrangements</em>.
+		Raven: What could be more important than rescuing the President?
+		Scully: Wouldn't want to rush. Might make a real mess of those pretty uniforms.
+		Tex: I never understand why cavalry always like to wait for nick of time.
+	Faucheux: ...But no, instead of waiting for me to put things back in order, she ran to <em>Santiago</em> and hired you. Just like her father, she has no idea <em>what is going on</em> in her country.
+[Keyword: What other arrangements?]
+	Faucheux: I had important work securing the capital after LaFontaine's abduction. It was not something that could be abandoned - the seat of government is more important than one man. Nevertheless, here I am, ready to wipe his ass and clean up his mess.
+		Hitman: I'm guessing you didn't vote for him.
+		Smiley: Señor Apscott made me do the same. I mean, he made me clean up his mess... not the other thing.
+		Omryn: I often wonder if seat of government is comfortable chair.
+[Keyword: What is going on?]
+	Faucheux: Nothing that concerns a group of half-baked foreign mercenaries. This is my advice: leave now and let the real soldiers deal with the Legion and poor old Alphonse. I promise that I will return him alive and well to his daughter.
+		Larry: Hey, man, I will have you know that I am FULLY BAKED!
+		Larry_Clean: I am totally not baked, man!
+		Reaper: Who is it that holds a promise in one hand and a gun in the other? It is only Death.
+		Fauda: You are correct that the real soldiers will do this. The fake soldiers will clean their pretty uniforms.
+[Keyword: Goodbye]
+	Faucheux: Dismissed.

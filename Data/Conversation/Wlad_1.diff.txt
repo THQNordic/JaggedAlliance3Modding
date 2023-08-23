@@ -1,0 +1,159 @@
+[Keyword: Greeting]
+	Wlad: You are not welcome here. She is dead because of you.
+[Keyword: Greeting]
+	Wlad: That wasn't half bad! The <em>Beast</em> herself couldn't kill them much faster.
+		Magic: We just annihilated a bunch of thugs and you think that "isn't half bad"? Have you been working in a slaughterhouse, grandpa?
+		Wlad: I guess you could say so, but you are too young to let me infect you with such a cynical view of married life.
+[Keyword: Greeting]
+	Wlad: Good thing you figured out how to summon the <em>Beast</em>! You probably couldn't deal with those guys without her.
+		Blood: We can fry any scuzzwad who stands in our way.
+		Sidney: Agreed! They might have had us in a bit of a sticky wicket if it weren't for her help.
+		Flay: We have hunted all kinds of people... and beasts. 
+[Keyword: Greeting]
+	Wlad: Thank you for liberating the workers at Belle Eau and arming our young people. Now they can defend us, and our poor old Beast can take some days off.
+		TheBeast: Who are you calling old? My hearing is still very good, you absent-minded wizard.
+[Keyword: Greeting]
+	Wlad: Now that you have armed and trained my neighbors, we're all dangerous Beasts! She won't need to worry as much about us anymore.
+[Keyword: Greeting]
+	Wlad: Thank you for liberating those poor young people at Belle Eau. They are the future of Grand Chien! We old Beasts, we belong to the past.
+		TheBeast: Speak for yourself.
+[Keyword: Greeting]
+	Wlad: It's a glorious day for engineering!
+[Keyword: Greeting]
+	Wlad: You have my full, uh... Where did I put that thing?
+[Keyword: Greeting]
+	Wlad: Oh hey! Can you pass me that wrench over there? Thanks!
+[Keyword: Greeting]
+	Wlad: Hello! Pass me that hammer, would you?
+[Keyword: Greeting]
+	Wlad: Hello!
+[Keyword: The Beast is a “she”?!]
+	Wlad: Aren't they all?
+		Meltdown: You want me to smash your face in with a brick?
+		Wlad: Non-non! I was just joking! Women are more like gentle and tender flowers.
+		Meltdown: That's it, I'm looking for a brick.
+		Fox: In more ways than one, but some of us are cute and foxy little beasts.
+		Livewire: I do not think that is an accurate or at all kind thing to say.
+		Mouse: You can call me a beast if you want, but I think we both know who the pig is.
+		Raven: You do realize that I know seven different ways to kill you just from where I'm standing, right?
+		Scope: Well, that was uncalled for!
+		Vicki: Gimme a break, mon.
+		Buns: You are very lucky that I happen to excel at showing patience and restraint toward male jackasses.
+		Fauda: If they wish to survive.
+		Kalyna: That's not very nice!
+		TheBeast: I can hear you, old man.
+	Wlad: Oh well, beasts can sometimes be lovely as well. In the case of this particular Beast, "sometimes" translates to "long ago".
+		TheBeast: Long ago you were young and foolish. These days, you're just plain foolish.
+[Keyword: Tell us about the Beast]
+	Wlad: Well, she's a bloodthirsty monster, who happens to be my ex-wife and probably also an ex-human...
+	Wlad: ...Hmm, no reaction. Okay, I guess she's not listening. Look, I'll tell you this - she's got the heart of a warrior and the spirit of an angel. Even though we've separated, I'm always going to help her protect our people. 
+		TheBeast: You... You sweet, silly old bastard.
+		Wlad: Have you been eavesdropping, woman?! Forget what I told you. She's a horrible monster with donkey ears. Nothing but trouble!
+		TheBeast: You're impossible, Wlad.
+[Keyword: Did you make the Effigy?]
+	Wlad: Oh, yes! It was easy to design and fun to build. The <em>Beast Suit</em> was a much greater engineering challenge, but it turned out to be quite successful as well.
+		Vicki: Oh, I'd really like to take a look at what's under that thing's hood, mon!
+		Magic: It's one badass suit. I'd love to see how you put it together.
+		Gus: I could certainly use something like that for myself. I don't move as good as I used to.
+	Wlad: It helped her silence dozens of those bandits. But there are always more of them. Without the suit, her constant acts of bravery would have killed her by now.
+		TheBeast: Did you just call me "brave"?
+		Wlad: Also, the mask is a great aesthetic improvement to her face.
+		TheBeast: You're truly insufferable.
+[Keyword: You and the Beast were a couple?]
+	Wlad: Yeah, I was married to a Beast. Not uncommon, when you think of it. Guess that makes me the Beauty, eh?
+		TheBeast: You should really craft yourself a mirror.
+		Wlad: Oh I did, but it broke to pieces when you looked into it.
+		TheBeast: Ha. Ha.
+[Keyword: Can't you fight the Legion?]
+	Wlad: There are mostly just old and sick people left around here. We're not soldiers. Look at me - I'm a grease monkey. I'm good at putting stuff together, not taking people apart.
+		TheBeast: Wlad may be an old and ugly angel, but as for me, I have no problem with violence. Teach the others to use guns and I'll be joining them to murder any scum that tries to rob our village.
+	Wlad: Perhaps you could teach the others to shoot. We need a <em>militia</em>.
+[Keyword: Is the Legion giving you trouble?]
+	Wlad: Ah, me? Non. But they have taken all the younger people and forced them to dive for diamonds in <em>Belle Eau</em> over there, across the river.
+	Wlad: Me and, um, my ex-wife - we don't have children, but the others do, and they're worried sick.
+	[Keyword: Can’t the Beast liberate Belle Eau?]
+		Wlad: Well, she can be quite a pain in the ass - of all people, I should know - but she couldn't handle a job like that alone.
+			TheBeast: You're saying I'm unable to kill a bunch of bandits?!
+			Wlad: Brunhilde... Please don't. The suit is designed for ambushes, not frontal assaults on prepared positions. It's too much to ask of one fighter... Even one that's a Beast.
+	[Keyword: We will liberate Belle Eau]
+		Wlad: Really? Can you?
+			Larry: Can lead fly? Can horses laugh? Can cannery can? Of course we can!
+			Grizzly: You mentioned they're kidnapping young people and using them as slaves. We will end them.
+			Blood: Trust me, my man, it's what I live for.
+			Ice: Hell, yeah. They about to find out what happens when the Iceman cometh.
+			Meltdown: You just get yourself someplace safe. Hurricane Norma is comin' to town.
+			Fauda: Your young people will be saved and their captors sent back to Shaitan. This I swear.
+			Wlad: Look, if you go to liberate Belle Eau, I think I can arrange some, uh, unexpected reinforcements for you.
+			TheBeast: Yeah. Totally unexpected. But yes, I will be there.
+[Keyword: So you are an engineer?]
+	Wlad: More like an inventor. I love to fiddle with gadgets until I make them work. Sometimes the result can be surprising, and that's the best part.
+		TheBeast: Like that one time when you turned our only washing machine into some weird fishing device?!
+		Wlad: Yeah! Exactly!
+	Wlad: You know what? If you bring me some <em>parts</em>, I can craft something for you! I guarantee it will be something that works, but, uh... I can't promise it will always be what you might need.
+		TheBeast: I needed. A washing. Machine.
+[Keyword: Craft something for us]
+	[Keyword: Craft]
+		Wlad: There you go! A bit ugly, but it is still a very functional machete.
+			TheBeast: Ugly but functional? I see you're taking self-expression through your work very seriously.
+			Wlad: Ha-ha, very funny.
+		Wlad: You see? It can slice through two bad guys in one swipe... and still cut a tomato!
+			Scully: Now, that's a knife!
+			Blood: I'll take it! No questions asked.
+			Nails: Oh, yeah. Come to papa, baby.
+	[Keyword: Craft]
+		Wlad: Ugh... This was supposed to be a plasma gun, but apparently it can work only in vacuum. Anyway, it could still be useful as a crowbar.
+			Larry: I love it! It is just like a stormtrooper blaster - can't hit anything at distance.
+			Larry_Clean: I love it! It's just like a stormtrooper blaster - can't hit anything at distance.
+			Vicki: I think I could use this... but I have no idea for what.
+			Wlad: That's the spirit!
+			Grunty: This device sounds very strange to me. I like it.
+	[Keyword: Craft]
+		Wlad: See, I attached a few plates to this leather jacket... It will provide some decent protection for a while. Also, there is a drink holder on its belly, so you have a place to put your coffee when killing people.
+			Larry: Whoa, man. I don't know what pills you're on, but I want some, too!
+			Mouse: Oh, so you can fix coffee holders? The one on my home computer is broken and I don't know what to do to fix it. 
+			Wlad: The coffee holder on your... computer?
+			Mouse: Yes. It doesn't retract anymore when I press the button.
+			Wlad: ...
+			MD: A field medic's dream come true!
+			Fidel: You are now friend of Fidel for life!
+	[Keyword: Craft]
+		Wlad: When you take a light helmet as a base and weld additional armor here and there...
+			Larry: Man, this thing is lit! The folks at Burning Man would love it.
+			Larry_Clean: Man, this thing is lit! The folks at Burning Man would love it.
+			Grizzly: This thing looks like it could stop a rocket, maybe even a nuke.
+			Barry: Could be very useful if bomb goes off near head.
+	[Keyword: Craft]
+		Wlad: Hmm. This happens every now and again - I slap some random parts together, and out pops an AK-47.
+			Ivan: Молодец!
+			Igor: You have Russian origins, do you?
+			Wlad: Non. But my mother was a Bulgarian from Kasanlak. She worked at the sewing machine factory there.
+			Igor: Ah, I see. Special Soviet sewing machines.
+			Sidney: Funny thing that. "Out pops an AK-47" is the working title of my memoir.
+			Wolf: You are one hell of a useful guy to have around.
+	[Keyword: Craft]
+		Wlad: Here, I made some modifications to your rifle! I hope you like it.
+			Igor: Entire Russian army work for YEARS to produce this, and you just assemble it in your garage?!
+			Ivan: Уважаю.
+			Raven: I would kiss you, but I'm a married woman.
+			Wlad: Well, I'm glad you like it.
+			Raven: So, I guess I'm kissing you, but just with my mind.
+			Wlad: Um...
+			Raven: Not in a weird way. Just, like, in a friendly way.
+			Wlad: I see...
+			Raven: Like, just little mind-kisses. I'm blowing little mind-kisses at you.
+			Wlad: Ooooo-kay...
+			Ice: That ain't no rifle. That's a work of art.
+	[Keyword: Craft]
+		Wlad: Umm, this was supposed to be a trumpet, but I just can't tune it very well...
+			Gus: Why the hell would we need a trumpet, Woody?
+		Wlad: However, with a few modifications it can work fairly well as a grenade launcher.
+			Gus: I... I am speechless.
+			Grizzly: Now that's the kind of instrument that can make some beautiful music.
+			Meltdown: Come here, baby. Let momma love you.
+			Wlad: That is not necessary.
+			Meltdown: I was talking to the rocket gun!
+			Fauda: This instrument will play a beautiful symphony of destruction.
+			Ivan: Ну, молодец! If we bring many parts, can you build советский мирный трактор?
+			Wlad: Oh, yes! But first I should build a Beastmobile, or that devilish woman will keep nagging me.
+[Keyword: Goodbye]
+	Wlad: Bye! See you later.
