@@ -33,7 +33,7 @@ PlaceObj('UnitDataCompositeDef', {
 				}),
 			},
 			'Conditions', {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('UnitHireStatus', {
 							Status = "Hired",
@@ -92,7 +92,7 @@ PlaceObj('UnitDataCompositeDef', {
 				}),
 			},
 			'Conditions', {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('UnitHireStatus', {
 							Status = "Hired",

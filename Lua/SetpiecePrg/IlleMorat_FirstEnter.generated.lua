@@ -18,5 +18,6 @@ SetpiecePrgs.IlleMorat_FirstEnter = function(seed, state, TriggerUnits)
 	prgdbg(li, 1, 9) sprocall(PrgPlayEffect.Exec, PrgPlayEffect, state, rand, false, "BanterDone", {PlaceObj('PlayBanterEffect', {Banters = {"IlleMoratMarauders_approach",},searchInMap = true,searchInMarker = false,}),PlaceObj('QuestSetVariableBool', {Prop = "Given",QuestId = "Beast",}),})
 	prgdbg(li, 1, 10) sprocall(SetpieceCamera.Exec, SetpieceCamera, state, rand, false, "BanterDone", "Tac", 0, "", "linear", 8000, false, false, point(119573, 133100, 8358), point(107844, 122648, 19358), point(119573, 133100, 8358), point(107844, 122648, 19358), 4200, 1300, {floor = 0,}, 0, 0, 0, 0, 0, 0, "Default", 100)
 	prgdbg(li, 1, 11) sprocall(SetpieceWaitCheckpoint.Exec, SetpieceWaitCheckpoint, state, rand, "BanterDone")
-	prgdbg(li, 1, 12) sprocall(PrgForceStopSetpiece.Exec, PrgForceStopSetpiece, state, rand, "")
+	prgdbg(li, 1, 12) sprocall(PrgPlayEffect.Exec, PrgPlayEffect, state, rand, true, "", {PlaceObj('QuestSetVariableBool', {Prop = "IlleMorat_FirstEnter",QuestId = "Beast",}),})
+	prgdbg(li, 1, 13) sprocall(PrgForceStopSetpiece.Exec, PrgForceStopSetpiece, state, rand, "")
 end

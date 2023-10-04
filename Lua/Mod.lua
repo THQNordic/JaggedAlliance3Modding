@@ -65,6 +65,9 @@ end
 
 function CheatNewModGame(start_type)
 	CreateRealTimeThread(function()
+		local pickedCampaign = WaitListChoice(nil, GetCampaignPresets(), "Select campaign", 1)
+		if not pickedCampaign then return end
+	
 		if start_type == "quickstart" then
 			if WaitQuestion(terminal.desktop, Untranslated("Quick Start"), Untranslated("A new quick test mod game will be started. It will skip the merc hire & arrival phase.\n\nUnsaved mod changes will not be applied. Continue?"), Untranslated("Yes"), Untranslated("No")) ~= "ok" then
 				return
@@ -106,7 +109,8 @@ function ModEditorOpen(mod)
 			}
 			local ged = OpenGedApp("ModManager", ModsList, context)
 			if ged then ged:BindObj("log", ModMessageLog) end
-			if not ModdingHelpShownOnEditorOpen then
+			if not ModdingHelpShownOnEditorOpen 
+				and (AccountStorage.OpenModdingDocs == nil or AccountStorage.OpenModdingDocs) then
 				ModdingHelpShownOnEditorOpen = true
 				if not Platform.developer then
 					GedOpHelpMod()

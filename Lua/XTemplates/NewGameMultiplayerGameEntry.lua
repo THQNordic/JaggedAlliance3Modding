@@ -118,6 +118,7 @@ PlaceObj('XTemplate', {
 			'LayoutMethod', "VList",
 		}, {
 			PlaceObj('XTemplateWindow', {
+				'__condition', function (parent, context) return not Platform.console end,
 				'VAlign', "center",
 				'LayoutMethod', "HList",
 			}, {
@@ -165,8 +166,12 @@ PlaceObj('XTemplate', {
 			'func', function (self, rollover)
 				self.idGameName:SetRollover(rollover)
 				self.idCampaignName:SetRollover(rollover)
-				self.idMods:SetRollover(rollover)
-				self.idModsTitle:SetRollover(rollover)
+				if self.idMods then
+					self.idMods:SetRollover(rollover)
+				end
+				if self.idModsTitle then
+					self.idModsTitle:SetRollover(rollover)
+				end
 				self.idDay:SetRollover(rollover)
 				if rollover then 
 					PlayFX("MainMenuButtonRollover") 
@@ -195,7 +200,8 @@ PlaceObj('XTemplate', {
 			'name', "SetSelected(self, selected)",
 			'func', function (self, selected)
 				self:SetFocus(selected)
-				if GetUIStyleGamepad() then self:SetRollover(selected) end
+				self:SetRollover(selected)
+				
 				self.idImgBcgrSelected:SetVisible(selected)
 				if selected then
 					local parent = self.parent	
@@ -212,17 +218,13 @@ PlaceObj('XTemplate', {
 					local actions = mm:ResolveId("idSubMenu"):ResolveId("idToolBar")
 					local joinButton = actions and actions:ResolveId("idjoin")
 					if joinButton then
-						joinButton:SetEnabled(selected, true)
-						ObjModified("action-button-mm")
+						RunWhenXWindowIsReady(mm, function()
+							joinButton:SetEnabled(selected, true)
+							ObjModified("action-button-mm")
+							mm.isMMFocused = not selected
+						end)
 					end
 				end
-			end,
-		}),
-		PlaceObj('XTemplateFunc', {
-			'name', "OnKillFocus",
-			'func', function (self, ...)
-				self:SetSelected(false)
-				XButton.OnKillFocus(self)
 			end,
 		}),
 		}),

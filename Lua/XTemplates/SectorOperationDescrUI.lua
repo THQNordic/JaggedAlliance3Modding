@@ -232,7 +232,7 @@ PlaceObj('XTemplate', {
 			}),
 		PlaceObj('XTemplateTemplate', {
 			'comment', "table",
-			'__condition', function (parent, context) return not context.operation or (context.operation.id~="TrainMercs" and context.operation.id~="CraftAmmo" and context.operation.id~="CraftExplosives") end,
+			'__condition', function (parent, context) return not context.operation or (context.operation.id~="TrainMercs" and not IsCraftOperationId(context.operation.id)) end,
 			'__template', "SectorOperationStatsTableUI",
 		}),
 		PlaceObj('XTemplateTemplate', {

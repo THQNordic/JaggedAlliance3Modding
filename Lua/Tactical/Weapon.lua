@@ -1,6 +1,22 @@
 const.PowerLossPerTile = 5
 const.BulletImpactBig = 2
 const.EmplacementWeaponMinDistance2D = 2000
+const.RicochetDistance = 8*guim
+BulletRicochetMaterials = {
+	["Surface:Asphalt"] = true,
+	["Surface:Brick"] = true,
+	["Surface:Brick_Inv"] = true,
+	["Surface:Concrete"] = true,
+	["Surface:ConcreteThin"] = true,
+	["Surface:Metal_Inv_Imp"] = true,
+	["Surface:Metal_Props"] = true,
+	["Surface:Rock"] = true,
+	["Surface:Stone"] = true,
+	["Surface:Tin_VFX"] = true,
+}
+local BulletVegetationCollisionMask = const.cmDefaultObject | const.cmActionCamera
+local BulletVegetationCollisionQueryFlags = const.cqfSorted | const.cqfResultIfStartInside
+local BulletVegetationClasses = { "Shrub", "SmallTree", "TreeTop" }
 
 local function CaliberModPropsCombo()
 	local items = ClassModifiablePropsNonTranslatableCombo(g_Classes.Firearm)
@@ -215,11 +231,6 @@ function BaseWeapon:PrecalcDamageAndStatusEffects(attacker, target, attack_pos, 
 		local ignore_armor = hit.aoe or IsKindOf(self, "MeleeWeapon")
 		-- Order/method of damage buff calculations might need a revision. The are quite a few now and they seem to be added arbitrary.
 		if not hit.stray or hit.aoe then
-			if hit.critical then
-				local crit_mod = IsKindOf(attacker, "Unit") and attacker:GetCritDamageMod() or const.Weapons.CriticalDamage
-				damage = MulDivRound(damage, 100 + crit_mod, 100)
-			end
-						
 			local data = {
 				breakdown = record_breakdown or {},
 				effects = {},
@@ -231,10 +242,15 @@ function BaseWeapon:PrecalcDamageAndStatusEffects(attacker, target, attack_pos, 
 				action_id = action and action.id,	
 				weapon = self,
 				prediction = prediction,
+				critical = hit.critical,
+				critical_damage = const.Weapons.CriticalDamage,
 			}
-			Msg("GatherDamageModifications", attacker, target, attack_args or {}, hit or {}, data) -- only called for non-stray hits (no misses)
-			Msg("GatherTargetDamageModifications", attacker, target, attack_args or {}, hit or {}, data)
+			Msg("GatherDamageModifications", attacker, target, action and action.id, self, attack_args or {}, hit or {}, data) -- only called for non-stray hits (no misses)
 			damage = Max(0, MulDivRound(data.base_damage + data.damage_add, data.damage_percent, 100))
+			if data.critical then
+				damage = Max(0, MulDivRound(damage, 100 + data.critical_damage, 100))
+			end
+			hit.critical = data.critical
 			for _, effect in ipairs(data.effects) do
 				EffectTableAdd(effects, effect)
 			end
@@ -478,9 +494,11 @@ function FirearmBase:SetWeaponComponent(slot, id, is_init)
 	end
 	
 	local reload_ammo_type
-	if not rawget(self, "is_clone") and slot == "Magazine" and self.ammo and not is_init then
-		reload_ammo_type = self.ammo.class
-		unload_weapon(self)
+	if not rawget(self, "is_clone") and self.ammo and not is_init then
+		if slot == "Magazine" or (self.ammo and self.ammo.Amount > self.MagazineSize) then
+			reload_ammo_type = self.ammo.class
+			unload_weapon(self)
+		end
 	end
 	
 	-- Remove old component
@@ -630,7 +648,6 @@ function FirearmBase:HasComponent(id)
 		print("Unknown weapon component effect", id)
 	end
 	
-	local effect = WeaponComponentEffects[id]
 	for slot_id, component_id in pairs(self.components) do
 		local def = WeaponComponents[component_id]
 		local effects = def and def.ModificationEffects or empty_table
@@ -1155,7 +1172,7 @@ function Firearm:GetDistanceImpactForce(distance)
 	return 0
 end
 
-function Firearm:BulletCalcDamage(hit_data)
+function Firearm:BulletCalcDamage(hit_data, ricochet_idx)
 	local attacker = hit_data.obj
 	local target = hit_data.target
 	local action = CombatActions[hit_data.action_id]
@@ -1163,26 +1180,30 @@ function Firearm:BulletCalcDamage(hit_data)
 	local record_breakdown = hit_data.record_breakdown
 	local prediction = hit_data.prediction
 
-	local dmg_mod = hit_data.damage_bonus or 0
-	if type(dmg_mod) == "table" then
-		dmg_mod = dmg_mod[obj]
-	end
-	if record_breakdown and dmg_mod then
-		table.insert(record_breakdown, { name = action and action:GetActionDisplayName({attacker}) or T(328963668848, "Base"), value = dmg_mod })
-	end
-
-	local basedmg = attacker:GetBaseDamage(self, target, record_breakdown)
-	local dmg = MulDivRound(basedmg, Max(0, 100 + (dmg_mod or 0)), 100)
-	if not prediction then
-		dmg = RandomizeWeaponDamage(dmg)
+	if not ricochet_idx then
+		local dmg_mod = hit_data.damage_bonus or 0
+		if type(dmg_mod) == "table" then
+			dmg_mod = dmg_mod[obj]
+		end
+		if record_breakdown and dmg_mod then
+			local name = action and action:GetActionDisplayName({attacker}) or T(328963668848, "Base")
+			table.insert(record_breakdown, { name = name, value = dmg_mod })
+		end
+		local basedmg = attacker:GetBaseDamage(self, target, record_breakdown)
+		local dmg = MulDivRound(basedmg, Max(0, 100 + (dmg_mod or 0)), 100)
+		if not prediction then
+			dmg = RandomizeWeaponDamage(dmg)
+		end
+		hit_data.damage = dmg
 	end
 	local target_reached
 	local forced_target_hit = hit_data.forced_target_hit
 	local impact_force = self:GetImpactForce()
 
-	for idx, hit in ipairs(hits) do
+	for idx = ricochet_idx or 1, hits and #hits or 0 do
+		local hit = hits[idx]
 		local stray = hit.stray
-		local dmg = dmg
+		local dmg = hit_data.damage
 		local obj = hit.obj
 		local is_unit
 		if obj and IsKindOf(obj, "Unit") and not stray then
@@ -1222,7 +1243,7 @@ function Firearm:BulletCalcDamage(hit_data)
 						end
 					end
 				end
-				if not penetrated then
+				if not penetrated and not hit.ricochet then
 					-- remove the rest of the hits
 					for i = idx + 1, #hits do
 						hits[i] = nil
@@ -1263,9 +1284,6 @@ function Firearm:PrecalcDamageAndStatusEffects(attacker, target, attack_pos, dam
 		for _, effect in ipairs(self.ammo and self.ammo.AppliedEffects) do
 			table.insert_unique(hit.effects, effect)
 		end
-		if IsFullyAimedAttack(attack_args) and self:HasComponent("MarkWhenFullyAimed") then
-			table.insert_unique(hit.effects, "Marked")
-		end
 	end
 end
 
@@ -1296,11 +1314,63 @@ function Firearm:ApplyHitResults(target, attacker, hit)
 	end
 end
 
-local BulletVegetationCollisionMask = const.cmDefaultObject | const.cmActionCamera
-local BulletVegetationCollisionQueryFlags = const.cqfSorted | const.cqfResultIfStartInside
-local BulletVegetationClasses = { "Shrub", "SmallTree", "TreeTop" }
+function Firearm:BulletHit(projectile, hit, context)
+	local surf_fx_type = GetObjMaterial(hit.pos, hit.obj)
+	context.fx_target = surf_fx_type or hit.obj
 
-function Firearm:ProjectileFly(attacker, start_pt, end_pt, dir, speed, hits, target)
+	-- temporary, only play Impact FX when unit is still alive
+	-- ideally this should cause the unit to die at the end of the attack, reacting to all precalculated hits meanwhile
+	if hit.water then
+		context.water_hit = true
+	end
+	local is_unit = IsKindOf(hit.obj, "Unit")
+	if is_unit and not hit.grazing then
+		context.last_unit_hit = hit.pos
+		if (hit.impact_force or 0) >= const.BulletImpactBig then
+			PlayFX("BulletImpactBigSplatter", "start", projectile, hit.obj, hit.pos, context.dir)
+		else
+			PlayFX("BulletImpactSmallSplatter", "start", projectile, hit.obj, hit.pos, context.dir)
+		end
+	end
+	local impact
+	if hit.vegetation then
+		PlayFX("VegetationImpact", "start", projectile, context.fx_target, hit.pos, context.dir)
+	elseif not is_unit or not hit.obj:IsDead() then
+		if not is_unit and context.last_unit_hit and IsCloser(context.last_unit_hit, hit.pos, 2 * const.SlabSizeX) and not context.water_hit then
+			local fx_dir = context.dir
+			if IsKindOf(hit.obj, "WallSlab") then
+				-- override direction with object's +/-X axis (whichever points in the _same_ direction as 'dir')
+				local normal = Rotate(axis_x, hit.obj:GetAngle())
+				fx_dir = Dot(context.dir, normal) > 0 and normal or -normal
+			elseif IsKindOfClasses(hit.obj, "FloorSlab", "CeilingSlab") then
+				-- override direction with +/-Z axis (whichever points in the _same_ direction as 'dir')
+				fx_dir = Dot(context.dir, axis_z) > 0 and axis_z or -axis_z
+			elseif IsValid(hit.obj) and hit.norm then
+				fx_dir = SetLen(Dot(context.dir, hit.norm) > 0 and hit.norm or -hit.norm, 4096)
+			elseif hit.terrain then
+				fx_dir = SetLen(-terrain.GetSurfaceNormal(hit.pos), guim)
+			end
+			PlayFX("BloodSplatter", "start", projectile, context.fx_target, hit.pos, fx_dir)
+		elseif not (context.water_hit and hit.terrain) then
+			if not hit.grazing then
+				if (hit.impact_force or 0) >= const.BulletImpactBig then
+					PlayFX("BulletImpactBig", "start", projectile, context.fx_target, hit.pos, context.dir)
+				else
+					PlayFX("BulletImpactSmall", "start", projectile, context.fx_target, hit.pos, context.dir)
+				end
+			end
+			impact = true
+		end
+	end
+	if hit.obj and (hit.damage or impact) then
+		self:ApplyHitResults(hit.obj, context.attacker, hit)
+	end
+	if context.target and hit.obj == context.target then
+		context.target_hit = true
+	end
+end
+
+function Firearm:ProjectileFly(attacker, start_pt, end_pt, dir, speed, hits, target, attack_args)
 	NetUpdateHash("ProjectileFly", attacker, start_pt, end_pt, dir, speed, hits)
 	dir = SetLen(dir or end_pt - start_pt, 4096)
 
@@ -1337,78 +1407,42 @@ function Firearm:ProjectileFly(attacker, start_pt, end_pt, dir, speed, hits, tar
 		table.sortby_field(hits, "distance")
 	end
 
-	local t = 0
-	local last_unit_hit, water_hit
-	local fx_target
-
-	local target_hit
-	for _, hit in ipairs(hits) do
-		local hit_time = MulDivRound(hit.pos:Dist(start_pt), 1000, speed)
-		if hit_time > t then
-			Sleep(hit_time - t)
-			t = hit_time
+	local context = {
+		attacker = attacker,
+		target = target,
+		dir = dir,
+		target_hit = false,
+		last_unit_hit = false,
+		water_hit = false,
+		fx_target = false,
+	}
+	local last_start_pos = start_pt
+	local last_time = 0
+	for i, hit in ipairs(hits) do
+		local hit_time = MulDivRound(hit.pos:Dist(last_start_pos), 1000, speed)
+		if hit_time > last_time then
+			Sleep(hit_time - last_time)
+			last_time = hit_time
 		end
-		local surf_fx_type = GetObjMaterial(hit.pos, hit.obj)
-		fx_target = surf_fx_type or hit.obj
-		-- temporary, only play Impact FX when unit is still alive
-		-- ideally this should cause the unit to die at the end of the attack, reacting to all precalculated hits meanwhile
-		if hit.water then
-			water_hit = true
+		self:BulletHit(projectile, hit, context)
+		if hit.ricochet and i < #hits then
+			last_start_pos = hit.pos
+			last_time = 0
+			local ricochet_dir = SetLen(hits[i+1].pos - last_start_pos, 4096)
+			local axis, angle = OrientAxisToVector(1, ricochet_dir) -- 1 = +X
+			projectile:SetAxis(axis)
+			projectile:SetAngle(angle)
+			PlayFX("Ricochet", "start", projectile, context.fx_target, last_start_pos, ricochet_dir)
+			local last_pos = hits[#hits].pos
+			projectile:SetPos(last_pos, MulDivRound(last_pos:Dist(last_start_pos), 1000, speed))
 		end
-		local is_unit = IsKindOf(hit.obj, "Unit")
-		if is_unit and not hit.grazing then
-			last_unit_hit = hit.pos
-			if (hit.impact_force or 0) >= const.BulletImpactBig then
-				PlayFX("BulletImpactBigSplatter", "start", projectile, hit.obj, hit.pos, dir)
-			else
-				PlayFX("BulletImpactSmallSplatter", "start", projectile, hit.obj, hit.pos, dir)
-			end			
-		end
-		local impact
-		if hit.vegetation then
-			PlayFX("VegetationImpact", "start", projectile, fx_target, hit.pos, dir)
-		elseif not is_unit or not hit.obj:IsDead() then
-			if not is_unit and last_unit_hit and IsCloser(last_unit_hit, hit.pos, 2 * const.SlabSizeX) and not water_hit then
-				local fx_dir = dir
-				if IsKindOf(hit.obj, "WallSlab") then
-					-- override direction with object's +/-X axis (whichever points in the _same_ direction as 'dir')
-					local normal = Rotate(axis_x, hit.obj:GetAngle())
-					fx_dir = Dot(dir, normal) > 0 and normal or -normal
-				elseif IsKindOfClasses(hit.obj, "FloorSlab", "CeilingSlab") then
-					-- override direction with +/-Z axis (whichever points in the _same_ direction as 'dir')
-					fx_dir = Dot(dir, axis_z) > 0 and axis_z or -axis_z
-				elseif IsValid(hit.obj) and hit.norm then
-					fx_dir = SetLen(Dot(dir, hit.norm) > 0 and hit.norm or -hit.norm, 4096)
-				elseif hit.terrain then
-					fx_dir = SetLen(-terrain.GetSurfaceNormal(hit.pos), guim)
-				end
-				PlayFX("BloodSplatter", "start", projectile, fx_target, hit.pos, fx_dir)
-			elseif not (water_hit and hit.terrain) then
-				if not hit.grazing then
-					if (hit.impact_force or 0) >= const.BulletImpactBig then
-						PlayFX("BulletImpactBig", "start", projectile, fx_target, hit.pos, dir)
-					else
-						PlayFX("BulletImpactSmall", "start", projectile, fx_target, hit.pos, dir)
-					end
-				end
-				impact = true
-			end
-		end
-		if hit.obj and (hit.damage or impact) then
-			self:ApplyHitResults(hit.obj, attacker, hit)
-		end
-		target_hit = target_hit or (target and hit.obj == target)
 	end
-	if IsValid(target) and not target_hit then
+	if IsValid(target) and not context.target_hit then
 		PlayFX("TargetMissed", "start", target)
 	end
 	-- wait the projectile in case of no hits or long flight after the last hit
 	Sleep(Max(0, end_time - GameTime()))
-
-	if fx_target and hits[#hits].pos ~= end_pt then
-		fx_target = false
-	end
-	PlayFX("Spawn", "end", projectile, fx_target, end_pt, dir)
+	PlayFX("Spawn", "end", projectile, false)
 	DoneObject(projectile)
 end
 
@@ -1536,10 +1570,7 @@ function Firearm:CalcBuckshotScatter(attacker, action, attack_pos, target_pos, n
 	return hits
 end
 
-function Firearm:CalcShotVectors(attacker, action_id, target, shot_attack_args, lof_data, dispersion, max_offset, extend, num_hits, num_misses)
-	return Firearm_CalcShotVectors(self, attacker, action_id, target, shot_attack_args, lof_data, dispersion, max_offset, extend, num_hits, num_misses)
-end
-function Firearm_CalcShotVectors(self, attacker, action_id, target, shot_attack_args, lof_data, dispersion, max_offset, extend, num_hits, num_misses)
+function Firearm:CalcShotVectors(attacker, action_id, target, shot_attack_args, lof_data, dispersion, max_offset, extend, num_hits, num_misses, num_grazing)
 	local spot_group, stance, step_pos = shot_attack_args.target_spot_group, shot_attack_args.stance, shot_attack_args.step_pos
 	local target_pos = lof_data.target_pos or (IsValid(target) and target:GetPos())
 	local lof_pos1 = lof_data.lof_pos1
@@ -1648,7 +1679,7 @@ function Firearm_CalcShotVectors(self, attacker, action_id, target, shot_attack_
 					target_hit_data and target_hit_data.spot_group == spot_group
 					and (lof.ally_hits_count or 0) == ally_hits_count
 					and (ally_hits_count == 0 or lof.allyHit == lof_data.allyHit)
-				local trajectory = { lof_pos1 = lof.lof_pos1, attack_pos = lof.attack_pos, target_pos = lof.target_pos, idx = i}
+				local trajectory = { lof_pos1 = lof.lof_pos1, attack_pos = lof.attack_pos, target_pos = lof.target_pos, idx = i, accurate = part_hit, target_hit = target_hit}
 				table.insert(target_hit and shot_hits or shot_misses, trajectory)
 				if part_hit then
 					table.insert(part_hits, trajectory)
@@ -1670,6 +1701,27 @@ function Firearm_CalcShotVectors(self, attacker, action_id, target, shot_attack_
 	while #part_hits > num_hits do
 		local _, hit_idx = table.rand(part_hits, attacker:Random())
 		table.remove(part_hits, hit_idx)
+	end
+
+	if #part_hits == num_hits then
+		local inaccurate = table.ifilter(shot_hits, function(idx, trajectory) return trajectory.inaccurate end)
+		while #part_hits < (num_hits + num_grazing) and #inaccurate > 0 and num_misses > 0 do
+			local trajectory, hit_idx = table.rand(inaccurate, attacker:Random())
+			table.remove(inaccurate , hit_idx)
+			if not table.find(part_hits, "idx", trajectory.idx) then
+				table.insert(part_hits, trajectory)
+				num_misses = num_misses - 1
+			end
+		end
+		
+		while #part_hits < (num_hits + num_grazing) and #shot_hits > 0 and num_misses > 0 do			
+			local trajectory = table.remove(shot_hits) -- walk in reverse order, from furthest to closest to pick the most "inaccurate" lines for grazing
+			if not table.find(part_hits, "idx", trajectory.idx) then
+				trajectory.accurate = false -- mark it for GetActionResults
+				table.insert(part_hits, trajectory)
+				num_misses = num_misses - 1
+			end
+		end
 	end
 
 	while #shot_misses > num_misses  do
@@ -2002,6 +2054,7 @@ function Firearm:GetAttackResults(action, attack_args)
 	local distAttackerToTarget = step_pos3D:Dist(target_pos)
 	local dispersion = self:GetMaxDispersion(distAttackerToTarget)
 	local max_range = shot_attack_args.range
+	local point_blank = not prediction and attacker:IsPointBlankRange(target) -- ignore this on prediction to avoid step_pos (CalcShotVectors isn't used on prediction anyway)
 	if not max_range then
 		max_range = Max(MulDivRound(self.WeaponRange, 150, 100), 20) * const.SlabSizeX
 	end
@@ -2044,11 +2097,13 @@ function Firearm:GetAttackResults(action, attack_args)
 	local sfHit = 0x10000
 	local sfCrit = 0x20000
 	local sfLeading = 0x40000
+	local sfAllowGrazing = 0x80000
 	local sfCthMask = 0xFF
 	local sfRollMask = 0xFF00
 	local sfRollOffset = 8
-	local num_hits, num_misses = 0, 0
+	local num_hits, num_misses, num_grazing = 0, 0, 0
 	local shots_data = {}
+	local graze_threshold = point_blank and 6 or 3
 	
 	for i = 1, num_shots do
 		local shot_miss, shot_crit, shot_cth
@@ -2070,6 +2125,10 @@ function Firearm:GetAttackResults(action, attack_args)
 		data = bor(data, shot_miss and 0 or sfHit)
 		data = bor(data, shot_crit and sfCrit or 0)
 		data = bor(data, (shot_attack_args.multishot or (i == 1)) and sfLeading or 0)
+		if shot_miss and shot_cth > 0 and roll < shot_cth + graze_threshold then
+			data = bor(data, sfAllowGrazing)
+			num_grazing = num_grazing + 1
+		end
 		shots_data[i] = data
 		num_hits = num_hits + (shot_miss and 0 or 1)
 		num_misses = num_misses + (shot_miss and 1 or 0)
@@ -2090,12 +2149,12 @@ function Firearm:GetAttackResults(action, attack_args)
 		end
 		for i = 1, 20 do
 			hit_target_pts, miss_target_pts, anyHitsTarget, disp_origin, disp_dir = self:CalcShotVectors(attacker, action.id, target, 
-				shot_attack_args, lof_data, 20*guic, guim, guim, num_hits, num_misses)
-			if (#hit_target_pts >= num_hits) and (#miss_target_pts >= num_misses) then break end
+				shot_attack_args, lof_data, 20*guic, guim, guim, num_hits, num_misses, num_grazing)
+			if (#hit_target_pts + #miss_target_pts) >= (num_hits + num_misses) then break end
 		end
 		
 		-- use old code as fallback in case all 20 tries have failed (this shouldn't really happen)	
-		if (#hit_target_pts < num_hits) or (#miss_target_pts < num_misses) then
+		if (#hit_target_pts + #miss_target_pts) < (num_hits + num_misses) then
 			--assert(false, "simulated burst distribition precomputation failed, falling back to randomized miss vectors")
 		else
 			-- assign target points to shots based on desired outcome
@@ -2115,8 +2174,29 @@ function Firearm:GetAttackResults(action, attack_args)
 			table.sort(precalc_shots, function(a, b) return a.target_pos:Dist(lowest) < b.target_pos:Dist(lowest) end)--]]
 			for i = 1, num_shots do
 				local shot_miss = band(shots_data[i], sfHit) == 0
-				local target_tbl = shot_miss and miss_target_pts or hit_target_pts
-				local shot_vector = table.remove(target_tbl)
+				local allow_grazing = band(shots_data[i], sfAllowGrazing) ~= 0
+				local shot_vector
+				if shot_miss then
+					if allow_grazing then
+						local idx = table.find(hit_target_pts, "accurate", false)
+						if idx then
+							shot_vector = table.remove(hit_target_pts, idx)
+						end
+					end
+					if not shot_vector then
+						shot_vector = table.remove(miss_target_pts)
+					end
+					if not shot_vector then -- fallback
+						shot_vector = table.remove(hit_target_pts)
+					end
+				else
+					local idx = table.find(hit_target_pts, "accurate", true)
+					shot_vector = table.remove(hit_target_pts, idx)
+					if not shot_vector then -- fallback
+						shot_vector = table.remove(miss_target_pts)
+					end
+				end
+				
 				local shot_target_pos = shot_vector.target_pos
 				local shot_attack_pos = shot_vector.attack_pos
 				local t_offset = shot_target_pos - disp_origin
@@ -2136,10 +2216,11 @@ function Firearm:GetAttackResults(action, attack_args)
 		local precalc_shot = precalc_shots and precalc_shots[i]
 		local shot_data = precalc_shot and precalc_shot.shot_data or shots_data[i]
 		
-		local shot_cth, shot_miss, shot_crit
+		local shot_cth, shot_miss, shot_crit, allow_grazing
 		shot_cth = band(shot_data, sfCthMask)
 		shot_miss = band(shot_data, sfHit) == 0
 		shot_crit = band(shot_data, sfCrit) ~= 0
+		allow_grazing = band(shot_data, sfAllowGrazing) ~= 0
 		roll = shift(band(shot_data, sfRollMask), -sfRollOffset)
 		local leading_shot = band(shots_data[i], sfLeading) ~= 0
 		local dmg_target = (leading_shot and not shot_miss) and target or false
@@ -2155,7 +2236,9 @@ function Firearm:GetAttackResults(action, attack_args)
 			if shot_miss then
 				shot_target = precalc_shot.target_pos
 				miss_target_pos = precalc_shot.target_pos
-				shot_attack_args.ignore_colliders = compile_ignore_colliders(killed_colliders, target_unit)
+				if not allow_grazing then
+					shot_attack_args.ignore_colliders = compile_ignore_colliders(killed_colliders, target_unit)
+				end
 				shot_attack_args.ignore_los = true
 				shot_attack_args.inside_attack_area_check = false
 				shot_attack_args.forced_hit_on_eye_contact = false
@@ -2196,7 +2279,8 @@ function Firearm:GetAttackResults(action, attack_args)
 			attack_data = GetLoFData(attacker, target_dummy, shot_attack_args)
 		end
 		if attack_data then
-			local lof_idx = table.find(attack_data.lof, "target_spot_group", shot_attack_args.target_spot_group)
+			local lof_idx
+			lof_idx = lof_idx or table.find(attack_data.lof, "target_spot_group", shot_attack_args.target_spot_group)
 			hit_data = attack_data.outside_attack_area_lof or attack_data.lof and attack_data.lof[lof_idx or 1]
 		else
 			local lof_idx = table.find(shot_attack_args.lof, "target_spot_group", shot_attack_args.target_spot_group)
@@ -2240,7 +2324,12 @@ function Firearm:GetAttackResults(action, attack_args)
 		if shot_miss and IsValid(target) then
 			for _, hit in ipairs(hit_data.hits) do
 				if hit.obj == target then
-					hit.stray = true
+					if allow_grazing then
+						hit.grazing = true
+						hit.grazed_miss = true
+					else
+						hit.stray = true
+					end
 				end
 			end
 		end
@@ -2331,10 +2420,6 @@ function Firearm:GetAttackResults(action, attack_args)
 
 	attack_results.miss = miss
 	attack_results.crit = crit
-
-	if num_shots > 1 and not prediction then -- don't shuffle in prediction, it is unnecessary and synced random from UI will desync
-		table.shuffle(attack_results.shots, InteractionRand(nil, "ShotOrder", attacker))
-	end
 
 	if num_shots > 0 and IsValid(target) then
 		--[[if miss == target_hit then
@@ -2526,7 +2611,7 @@ function Firearm:FireBullet(attacker, shot, threads, results, attack_args)
 		end
 	end
 	BirdsFlappingAway(visual_obj:GetVisualPos())
-	table.insert(threads, CreateGameTimeThread(self.ProjectileFly, self, attacker, shot.attack_pos, shot.stuck_pos, action_dir, const.Combat.BulletVelocity, shot.hits, attack_args.target))
+	table.insert(threads, CreateGameTimeThread(self.ProjectileFly, self, attacker, shot.attack_pos, shot.stuck_pos, action_dir, const.Combat.BulletVelocity, shot.hits, attack_args.target, attack_args))
 end
 
 function Firearm:FireSpread(results, attack_args)
@@ -2644,7 +2729,32 @@ end
 
 MapVar("g_AttackSpentAPQueue", {})
 
+function QuestTrackAttackedGroups(attack_args, results)
+	local attacker = attack_args.obj
+	local target = attack_args.target
+	
+	if not IsKindOf(attacker, "Unit") then return end
+
+	local hit_units, direct_hit = {}, {}
+	local hits = #results > 0 and results or results.area_hits
+	for _, hit in ipairs(hits) do
+		if not results.no_damage and IsKindOf(hit.obj, "Unit") then
+			table.insert_unique(hit_units, hit.obj)
+			direct_hit[hit.obj] = direct_hit[hit.obj] or not hit.obj.stray or hit.obj.aoe
+		end
+	end
+
+	for _, obj in ipairs(hit_units) do
+		if attacker.team.player_team and direct_hit[obj] then
+			QuestAddAttackedGroups(obj.Groups, obj:IsDead())
+			NetUpdateHash("QuestAddAttackedGroups", obj)
+		end
+	end
+end
+
 function AttackReaction(action, attack_args, results, can_retaliate)
+	QuestTrackAttackedGroups(attack_args, results)
+
 	if attack_args and (attack_args.opportunity_attack and not attack_args.opening_attack) then
 		return
 	end
@@ -2687,8 +2797,7 @@ function AttackReaction(action, attack_args, results, can_retaliate)
 	-- Retaliation (Have a Blast)
 	if can_retaliate and IsKindOf(target, "Unit") and teamPlaying ~= target.team and not results.miss and not results.melee_attack and HasPerk(target, "HaveABlast") and target.stance ~= "Prone" and not target:HasStatusEffect("KnockDown") and target:GetEffectValue("HaveABlast") then
 		-- call Retaliate with a different combat action (find a valid Throw Grenade one)
-		if target:Retaliate(attacker, CharacterEffectDefs.HaveABlast.DisplayName, PerkHaveABlastAttackAndWeapon) then
-		end
+		target:Retaliate(attacker, CharacterEffectDefs.HaveABlast.DisplayName, PerkHaveABlastAttackAndWeapon)
 	end
 	NetUpdateHash("AttackReaction_Progress2")
 	-- Retaliation (damaged units)
@@ -2704,7 +2813,7 @@ function AttackReaction(action, attack_args, results, can_retaliate)
 			local shatterhandTreshold = shatterhand:ResolveValue("hp_loss_percent")
 			local maxHp = unit:GetInitialMaxHitPoints()
 			
-			if hit.damage and hit.damage >= MulDivRound(maxHp, shatterhandTreshold, 100) then
+			if results.unit_damage[unit] and results.unit_damage[unit] >= MulDivRound(maxHp, shatterhandTreshold, 100) then
 				local retaliationCounter = unit:GetStatusEffect("RetaliationCounter")
 				retaliationCounter = retaliationCounter and retaliationCounter.stacks or 0
 				
@@ -2726,11 +2835,12 @@ function AttackReaction(action, attack_args, results, can_retaliate)
 		end
 	end
 	NetUpdateHash("AttackReaction_Progress3")
-	-- track QuestAddAttackedGroups, gather alerted units
+	
+	-- Gather alerted units
 	local alerted, enraged = {}, {}
 	local player_attack = attacker.team and attacker.team.player_team
 	if IsKindOf(target, "Unit") then
-		if not target:IsAware() and not target:IsDead() then
+		if not target:IsAware() then
 			alerted[1] = target
 		end
 		if player_attack then
@@ -2740,12 +2850,11 @@ function AttackReaction(action, attack_args, results, can_retaliate)
 
 	for _, obj in ipairs(hit_units) do
 		if attacker.team.player_team and direct_hit[obj] then
-			QuestAddAttackedGroups(obj.Groups, obj:IsDead())
 			if player_attack and obj ~= target and IsKindOf(obj, "Unit") then
 				table.insert(enraged, obj)
 			end
 		end
-		if not obj:IsDead() and obj ~= target and obj ~= attacker and not obj:HasStatusEffect("Unconscious") then
+		if obj ~= target and obj ~= attacker and not obj:HasStatusEffect("Unconscious") then
 			alerted[#alerted + 1] = obj
 		end
 	end
@@ -2754,6 +2863,9 @@ function AttackReaction(action, attack_args, results, can_retaliate)
 	local enraged = table.ifilter(enraged, function(_, unit) return IsValid(unit) and unit.neutral_retaliate and (unit.team.side == "neutral" or unit.team.side == "enemyNeutral") end)
 	if #enraged > 0 then
 		PropagateAwareness(enraged, nil, results.killed_units)
+	end
+	if #alerted > 0 then
+		PropagateAwareness(alerted, nil, results.killed_units)
 	end
 	for _, unit in ipairs(enraged) do
 		if unit.neutral_retaliate and not unit:IsDead() then -- filter out neutral units without the retaliate flag
@@ -2768,7 +2880,7 @@ function AttackReaction(action, attack_args, results, can_retaliate)
 	-- alert units and reveal attacker
 	if not IsKindOfClasses(results.weapon, "Flare", "TearGasGrenade", "ToxicGasGrenade", "SmokeGrenade", "ThrowableTrapItem") then
 		if not g_Combat then
-			alerted = table.ifilter(alerted, function(idx, unit) return unit:IsOnEnemySide(attacker) end)
+			alerted = table.ifilter(alerted, function(idx, unit) return not unit:IsDead() and unit:IsOnEnemySide(attacker) end)
 		end
 		local surprised, aware = {}, {}
 		if not results.attack_from_stealth then
@@ -2988,14 +3100,17 @@ function Firearm:GetBaseAttack(unit, force)
 	if force then
 		return self.AvailableAttacks and self.AvailableAttacks[1] or "UnarmedAttack"
 	end
-	for _, id in ipairs(self.AvailableAttacks) do
-		local action = CombatActions[id]
-		local target = action.RequireTargets and action:GetDefaultTarget(unit)
-		if action:GetVisibility({unit}, target) ~= "hidden" then
-			return id
+	if self.AvailableAttacks then
+		local units = { unit }
+		for _, id in ipairs(self.AvailableAttacks) do
+			local action = CombatActions[id]
+			local target = action.RequireTargets and action:GetDefaultTarget(unit)
+			if action:GetVisibility(units, target) ~= "hidden" then
+				return id
+			end
 		end
 	end
-	return "UnarmedAttack"	
+	return "UnarmedAttack"
 end
 
 function Firearm:GetOverwatchConeParam(param)
@@ -3571,4 +3686,29 @@ function OnMsg.GatherGameEntities(used_entity)
 		end
 	end)
 	used_entity["UI_WeaponModificationBackground"] = true
+end
+
+function ConvertItemBoolProperty(name, target_name)
+	for id, def in pairs(InventoryItemDefs) do
+		if def:GetPropertyMetadata(name) and def:GetPropertyMetadata(target_name) then
+			local value = def[name]
+			if type(value) ~= "number" then 
+				value = value and 1 or 0
+			end
+			def:SetProperty(target_name, value)
+		end
+	end
+end
+
+function CheckItemBoolProperty()
+	for id, def in pairs(InventoryItemDefs) do
+		local item = PlaceInventoryItem(id)
+		if item:HasMember("LargeItem") and item:HasMember("IsLargeItem") and item.LargeItem ~= item:IsLargeItem() then
+			print(id)
+		elseif item:HasMember("LargeItem") and not item:HasMember("IsLargeItem") then
+			printf("missing method in %s", id)
+		end
+		DoneObject(item)
+	end
+	print("checked")
 end

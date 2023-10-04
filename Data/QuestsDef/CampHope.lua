@@ -61,7 +61,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('GroupIsDead', {
 							Group = "EscapedPatients",
@@ -142,7 +142,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('GroupIsDead', {
 							Group = "EscapedPatients",

@@ -7,8 +7,8 @@ DefineClass.FirstAidKit = {
 
 
 	object_class = "Medicine",
-	Repairable = false,
 	ScrapParts = 1,
+	Repairable = false,
 	Icon = "UI/Icons/Items/first_aid_kit",
 	DisplayName = T(905136649471, --[[InventoryItemCompositeDef FirstAidKit DisplayName]] "First Aid Kit"),
 	DisplayNamePlural = T(941665857371, --[[InventoryItemCompositeDef FirstAidKit DisplayNamePlural]] "First Aid Kits"),

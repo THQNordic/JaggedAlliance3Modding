@@ -7,8 +7,8 @@ DefineClass.GasMask = {
 
 
 	object_class = "Armor",
-	Degradation = 12,
 	ScrapParts = 2,
+	Degradation = 12,
 	Icon = "UI/Icons/Items/gas_mask",
 	DisplayName = T(412060878986, --[[InventoryItemCompositeDef GasMask DisplayName]] "Gas Mask"),
 	DisplayNamePlural = T(598211057804, --[[InventoryItemCompositeDef GasMask DisplayNamePlural]] "Gas Masks"),

@@ -7,16 +7,16 @@ DefineClass.DesertEagle = {
 
 
 	object_class = "Pistol",
+	ScrapParts = 10,
 	RepairCost = 70,
 	Reliability = 20,
-	ScrapParts = 10,
 	Icon = "UI/Icons/Weapons/DesertEagle",
 	DisplayName = T(275314808651, --[[InventoryItemCompositeDef DesertEagle DisplayName]] "Desert Eagle"),
 	DisplayNamePlural = T(975125699386, --[[InventoryItemCompositeDef DesertEagle DisplayNamePlural]] "Desert Eagles"),
 	Description = T(587004777006, --[[InventoryItemCompositeDef DesertEagle Description]] "Everybody knows the Desert Eagle as a .50 caliber hand cannon but the .44 barrel can make it much more practical and affordable to shoot. "),
 	AdditionalHint = T(883485222965, --[[InventoryItemCompositeDef DesertEagle AdditionalHint]] "<bullet_point> High damage\n<bullet_point> Improved armor penetration\n<bullet_point> Shorter range\n<bullet_point> Very noisy"),
 	UnitStat = "Marksmanship",
-	is_valuable = true,
+	Valuable = 1,
 	Cost = 3000,
 	Caliber = "44CAL",
 	Damage = 30,
@@ -25,7 +25,7 @@ DefineClass.DesertEagle = {
 	MagazineSize = 15,
 	PenetrationClass = 2,
 	WeaponRange = 12,
-	PointBlankRange = true,
+	PointBlankBonus = 1,
 	OverwatchAngle = 2160,
 	Entity = "Weapon_DesertEagle",
 	ComponentSlots = {

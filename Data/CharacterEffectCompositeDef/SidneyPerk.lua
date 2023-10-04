@@ -13,7 +13,7 @@ PlaceObj('CharacterEffectCompositeDef', {
 	'Comment', "Sidney - bonus AP until damage taken or miss",
 	'object_class', "Perk",
 	'msg_reactions', {
-		PlaceObj('MsgReactionEffects', {
+		PlaceObj('MsgActorReactionEffects', {
 			Effects = {
 				PlaceObj('ConditionalEffect', {
 					'Effects', {
@@ -26,7 +26,7 @@ PlaceObj('CharacterEffectCompositeDef', {
 			},
 			Event = "CombatStart",
 			Handler = function (self, dynamic_data)
-				CE_ExecReactionEffects(self, "CombatStart")
+				ExecReactionEffects(self, 1, "CombatStart", nil, self, dynamic_data)
 			end,
 		}),
 	},

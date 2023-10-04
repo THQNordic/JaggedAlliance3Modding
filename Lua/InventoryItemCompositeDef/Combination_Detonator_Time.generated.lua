@@ -7,6 +7,7 @@ DefineClass.Combination_Detonator_Time = {
 
 
 	object_class = "MiscItem",
+	ScrapParts = 1,
 	Repairable = false,
 	Icon = "UI/Icons/Items/combination_detonator_time",
 	DisplayName = T(678463828027, --[[InventoryItemCompositeDef Combination_Detonator_Time DisplayName]] "Time Detonator"),

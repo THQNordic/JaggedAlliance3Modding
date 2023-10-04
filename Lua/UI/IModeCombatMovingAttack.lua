@@ -62,6 +62,15 @@ function Targeting_Mobile(dialog, blackboard, command, pt)
 	local goto_pos = dialog.target_pos
 	if goto_pos == blackboard.last_goto and not blackboard.stanceChanged then return end
 	blackboard.last_goto = goto_pos
+	
+	-- Prevent updates while the camera is moving between targets.
+	-- This allows the gamepad to cycle between targets.
+	if GetUIStyleGamepad() then
+		local timeSinceLastSetTarget = dialog.last_set_target_time or 0
+		if RealTime() - timeSinceLastSetTarget < SnapCameraToObjInterpolationTimeDefault then
+			return
+		end
+	end
 
 	local shot_positions, shot_targets, shot_cth, valid_shots = {}, {}, {}, 0
 	local results = dialog.action:GetActionResults(dialog.attacker, {goto_pos = goto_pos, prediction = true})
@@ -132,8 +141,15 @@ function Targeting_Mobile(dialog, blackboard, command, pt)
 		SetAPIndicator(false, "moving-attack")
 	end
 	
-	-- If more than one shot, it isn't clear which one we're inspecting.
-	if valid_shots == 0 or valid_shots > 1 then
+	-- When using gamepad show the target under the cursor.
+	-- This allows cycling between targets with LB/RB
+	if GetUIStyleGamepad() and dialog.potential_target then
+		dialog:SetTarget(dialog.potential_target, true)
+		return
+	end
+	
+	-- If more than one shot (or zero shots), it isn't clear which one we're inspecting.
+	if valid_shots ~= 1 then
 		dialog:SetTarget(false, true)
 	end
 end

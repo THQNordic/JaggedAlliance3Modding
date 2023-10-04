@@ -54,7 +54,7 @@ PlaceObj('BanterDef', {
 				"A2",
 			},
 		}),
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('CheckGameState', {
 					GameState = "Sunset",
@@ -277,7 +277,7 @@ PlaceObj('BanterDef', {
 		}),
 	},
 	conditions = {
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "04_Betrayal",
@@ -549,7 +549,7 @@ PlaceObj('BanterDef', {
 		PlaceObj('CheckGameState', {
 			GameState = "Day",
 		}),
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('CheckGameState', {
 					GameState = "Jungle",
@@ -657,7 +657,7 @@ PlaceObj('BanterDef', {
 		PlaceObj('CheckGameState', {
 			GameState = "Day",
 		}),
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('CheckGameState', {
 					GameState = "Jungle",
@@ -706,7 +706,7 @@ PlaceObj('BanterDef', {
 		PlaceObj('CheckGameState', {
 			GameState = "Night",
 		}),
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('CheckGameState', {
 					GameState = "Jungle",
@@ -760,7 +760,7 @@ PlaceObj('BanterDef', {
 			GameState = "Savanna",
 			Negate = true,
 		}),
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('CheckGameState', {
 					GameState = "Sunset",
@@ -917,7 +917,7 @@ PlaceObj('BanterDef', {
 		}),
 	},
 	conditions = {
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('QuestIsVariableBool', {
 					Condition = "or",
@@ -1177,7 +1177,7 @@ PlaceObj('BanterDef', {
 				return not quest.FlaySpawned and not quest.QuestLead
 			end,
 		}),
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('CheckGameState', {
 					GameState = "Sunset",
@@ -1301,7 +1301,7 @@ PlaceObj('BanterDef', {
 		}),
 	},
 	conditions = {
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('UnitSquadHasMerc', {
 					Name = "Larry",
@@ -1591,7 +1591,7 @@ PlaceObj('BanterDef', {
 		}),
 	},
 	conditions = {
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "04_Betrayal",
@@ -1928,7 +1928,7 @@ PlaceObj('BanterDef', {
 				return not quest.Completed
 			end,
 		}),
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('CheckGameState', {
 					GameState = "Night",
@@ -1985,7 +1985,7 @@ PlaceObj('BanterDef', {
 				return not quest.Completed and not quest.Failed
 			end,
 		}),
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('CheckGameState', {
 					GameState = "Sunset",
@@ -1995,7 +1995,7 @@ PlaceObj('BanterDef', {
 				}),
 			},
 		}),
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('CheckGameState', {
 					GameState = "Jungle",
@@ -2043,7 +2043,7 @@ PlaceObj('BanterDef', {
 				return not quest.Completed and not quest.Failed
 			end,
 		}),
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('CheckGameState', {
 					GameState = "Sunset",
@@ -2239,7 +2239,7 @@ PlaceObj('BanterDef', {
 				return not quest.Completed and not quest.Failed
 			end,
 		}),
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('CheckGameState', {
 					GameState = "Sunset",
@@ -2279,7 +2279,7 @@ PlaceObj('BanterDef', {
 		}),
 	},
 	conditions = {
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('CheckGameState', {
 					GameState = "Sunrise",
@@ -2387,7 +2387,7 @@ PlaceObj('BanterDef', {
 		}),
 	},
 	conditions = {
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('CheckGameState', {
 					GameState = "RainLight",

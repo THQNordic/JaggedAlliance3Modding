@@ -23,7 +23,7 @@ PlaceObj('Conversation', {
 	id = "Major_1",
 	PlaceObj('ConversationPhrase', {
 		Conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('GroupIsDead', {
 						Group = "President",
@@ -213,7 +213,7 @@ PlaceObj('Conversation', {
 	PlaceObj('ConversationPhrase', {
 		AutoRemove = true,
 		Conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('GroupIsDead', {
 						Group = "President",
@@ -344,7 +344,7 @@ PlaceObj('Conversation', {
 	PlaceObj('ConversationPhrase', {
 		AutoRemove = true,
 		Conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('QuestIsVariableBool', {
 						QuestId = "RescueBiff",
@@ -1018,7 +1018,7 @@ PlaceObj('Conversation', {
 			}),
 			PlaceObj('ConditionalEffect', {
 				'Conditions', {
-					PlaceObj('OR', {
+					PlaceObj('CheckOR', {
 						Conditions = {
 							PlaceObj('UnitSquadHasMerc', {
 								Name = "Len",
@@ -1104,7 +1104,7 @@ PlaceObj('Conversation', {
 		AutoRemove = true,
 		Comment = "Len/Gus/Ivan shoots the Major",
 		Conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('UnitSquadHasMerc', {
 						Name = "Len",
@@ -1124,7 +1124,7 @@ PlaceObj('Conversation', {
 			}),
 			PlaceObj('ConditionalEffect', {
 				'Conditions', {
-					PlaceObj('OR', {
+					PlaceObj('CheckOR', {
 						Conditions = {
 							PlaceObj('UnitSquadHasMerc', {
 								Name = "Len",

@@ -1051,7 +1051,7 @@ PlaceObj('Conversation', {
 		PlaceObj('ConversationPhrase', {
 			AutoRemove = true,
 			Conditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('SectorHasIntel', {
 							Negate = true,
@@ -1426,7 +1426,7 @@ PlaceObj('Conversation', {
 					return quest.BrokerGossip
 				end,
 			}),
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('UnitSquadHasItem', {
 						ItemId = "Pamphlets",

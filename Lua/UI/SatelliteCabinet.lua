@@ -250,8 +250,12 @@ function SatelliteToggleActionState()
 	end
 	
 	-- Trying to go into satellite view from another tab or from tactical. In case of tactical require unit
-	if not Selection or not Selection[1] or not Selection[1]:CanBeControlled() then
-		--return "disabled"
+	local hasSelection = Selection and Selection[1]
+	local canControlSelection = hasSelection and Selection[1]:CanBeControlled()
+	local noMercButMyTurn = not hasSelection and IsNetPlayerTurn()
+	
+	if not noMercButMyTurn and not canControlSelection then
+		return "disabled"
 	end
 	
 	return "enabled"

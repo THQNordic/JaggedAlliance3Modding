@@ -17,7 +17,8 @@ config.ScreenshotsWithUI = true
 config.AutosaveAllowed = true
 
 if Platform.developer then
-config.RegisterSavFileHandler = true
+	config.RegisterSavFileHandler = true
+	config.ResaveAllGameMapsKeepsGameLogic = true
 end
 
 if insideHG() then
@@ -66,9 +67,13 @@ config.LightModelUnusedFeatures = {
 }
 
 -- Memory allocation related
-config.ObjectPoolMem    = 144 * 1024        -- in KB
-config.BonesMemory      = 8   * 1024 * 1024 -- in Bytes
-
+if Platform.desktop or Platform.ps5 or Platform.xbox_series_x then
+	config.ObjectPoolMem    = 144 * 1024        -- in KB
+	config.BonesMemory      = 8   * 1024 * 1024 -- in Bytes
+else
+	config.ObjectPoolMem    = 144 * 1024        -- in KB
+	config.BonesMemory      = 6   * 1024 * 1024 -- in Bytes
+end
 config.MemorySavegameSize = 96*1024*1024
 config.MemoryScreenshotSize = 16*1024*1024
 
@@ -265,9 +270,11 @@ config.MapSavedGameFlags = {
 	const.gofTerrainColorization,
 	const.gofDetailClass0,
 	const.gofDetailClass1,
-	const.gofLowerLOD,
+	const.gofForcedLODBit0,
 	const.gofGameSpecific2,
-	const.gofGameSpecific3
+	const.gofGameSpecific3,
+	const.gofForcedLODBit1,
+	const.gofForcedLODBit2
 }
 
 config.MapSavedEnumFlags = {
@@ -356,16 +363,8 @@ const.MaxRoomVoxelSizeZ = 52
 
 const.ControllerUIScale = 100
 
-if Platform.trailer then
-	config.AutoControllerHandling = false
-	config.AutoControllerHandlingType = false
-	if rawget(_G, "SwitchControls") then
-		CreateRealTimeThread(SwitchControls, false)
-	end
-else
-	config.AutoControllerHandling = true
-	config.AutoControllerHandlingType = "auto"
-end
+config.AutoControllerHandling = true
+config.AutoControllerHandlingType = "auto"
 
 config.IdleAimingDelay = 500
 
@@ -373,4 +372,9 @@ config.DebugReplayDesync = true
 
 config.PhotoMode_DisablePhotoFilter = true
 config.PhotoMode_DisableBloomStrength = true
-config.PhotoMode_DisableDOF = true
+hr.EnablePreciseSelection = 1
+--config.PhotoMode_DisableDOF = true
+
+if Platform.ps4 or Platform.xbox_one then
+	config.AutorunLoadingScreenProgressDuration = 80 * 1000
+end

@@ -12,7 +12,9 @@ PlaceObj('XTemplate', {
 			'ActionShortcut', "Escape",
 			'ActionGamepad', "ButtonB",
 			'OnAction', function (self, host, source, ...)
-				host:Close()
+				if not GetLoadingScreenDialog("noAccStorage") then 
+					host:Close()
+				end
 			end,
 		}),
 		PlaceObj('XTemplateAction', {
@@ -131,6 +133,9 @@ PlaceObj('XTemplate', {
 			'ActionId', "idMercControl",
 			'ActionName', T(686499586296, --[[XTemplate IGMainActions ActionName]] "Co-Op Merc Control"),
 			'ActionToolbar', "mainmenu",
+			'ActionState', function (self, host)
+				return CanOpenMercManagement()
+			end,
 			'OnAction', function (self, host, source, ...)
 				host:Close()
 				NetSyncEvent("OpenCoopMercsManagement")
@@ -183,12 +188,14 @@ PlaceObj('XTemplate', {
 			'ActionId', "idPhotoMode",
 			'ActionName', T(207584479877, --[[XTemplate IGMainActions ActionName]] "Photo Mode"),
 			'ActionToolbar', "mainmenu",
+			'ActionState', function (self, host)
+				return CanOpenPhotoMode()
+			end,
 			'OnActionEffect', "mode",
 			'OnActionParam', "PhotoMode",
 			'OnAction', function (self, host, source, ...)
 				PhotoModeDialogOpen()
 			end,
-			'__condition', function (parent, context) return not gv_SatelliteView end,
 		}),
 		PlaceObj('XTemplateAction', {
 			'ActionId', "idCheats",
@@ -207,7 +214,7 @@ PlaceObj('XTemplate', {
 				host:Close()
 				CreateRealTimeThread(CreateXBugReportDlg)
 			end,
-			'__condition', function (parent, context) return not Platform.steamdeck and not Platform.demo end,
+			'__condition', function (parent, context) return not Platform.steamdeck and not Platform.demo and (not Platform.console or Platform.test) end,
 		}),
 		PlaceObj('XTemplateAction', {
 			'comment', "cheat",
@@ -331,6 +338,17 @@ PlaceObj('XTemplate', {
 			'OnAction', function (self, host, source, ...)
 				CloseMenuDialogs()
 				NetSyncCheatIG("KillAllEnemies")
+			end,
+		}),
+		PlaceObj('XTemplateAction', {
+			'comment', "cheat",
+			'ActionId', "idAIDebug",
+			'ActionName', T(747224893329, --[[XTemplate IGMainActions ActionName]] "AI Debug"),
+			'ActionToolbar', "cheats",
+			'ActionToolbarSection', "COMBAT",
+			'OnAction', function (self, host, source, ...)
+				CloseMenuDialogs()
+				CheatOpenAIDebug()
 			end,
 		}),
 		PlaceObj('XTemplateAction', {
@@ -815,6 +833,9 @@ PlaceObj('XTemplate', {
 			'ActionName', T(469439401526, --[[XTemplate IGMainActions ActionName]] "Main Menu"),
 			'ActionToolbar', "mainmenu",
 			'OnAction', function (self, host, source, ...)
+				if GetLoadingScreenDialog("noAccStorage") then
+					return
+				end
 				CreateRealTimeThread(function()
 					if WaitQuestion(host, T(824112417429, "Warning"), T(356287104069, "Exit to the main menu?"), T(689884995409, "Yes"), T(782927325160, "No")) == "ok" then
 						LoadingScreenOpen("idLoadingScreen", "main menu")

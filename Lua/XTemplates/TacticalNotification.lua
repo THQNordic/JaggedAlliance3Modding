@@ -8,6 +8,7 @@ PlaceObj('XTemplate', {
 		'__class', "XDialog",
 		'Id', "idTacticalNotification",
 		'ZOrder', 5,
+		'MarginPolicy', "FitInSafeArea",
 		'Padding', box(0, 20, 0, 0),
 		'HAlign', "center",
 		'VAlign', "top",

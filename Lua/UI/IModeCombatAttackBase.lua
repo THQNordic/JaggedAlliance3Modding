@@ -1,6 +1,8 @@
-local TargetingModeLookup = false
+if FirstLoad then
+	TargetingModeLookup = false
+end
 
-local function lEmptyTargetingFunction(dialog, blackboard, command, pt)
+function EmptyTargetingFunction(dialog, blackboard, command, pt)
 
 end
 
@@ -9,8 +11,8 @@ function OnMsg.ClassesBuilt()
 		["combat_move"] = Targeting_CombatMove,
 		["cone"] = Targeting_AOE_Cone,
 		["parabola aoe"] = Targeting_AOE_ParabolaAoE,
-		["line"] = lEmptyTargetingFunction,
-		["none"] = lEmptyTargetingFunction,
+		["line"] = EmptyTargetingFunction,
+		["none"] = EmptyTargetingFunction,
 		["mobile"] = Targeting_Mobile,
 		["melee"] = Targeting_Melee,
 		["melee-charge"] = Targeting_MeleeCharge,
@@ -271,7 +273,7 @@ function IModeCombatBase:StartMoveAndAttack(attacker, action, target, step_pos, 
 		self.move_step_position = attacker:GetClosestMeleeRangePos(target)
 	end
 	
-	local pos = GetPassSlab(self.move_step_position) or self.move_step_position
+	local pos = self.move_step_position and GetPassSlab(self.move_step_position) or self.move_step_position
 	self:CreateThread("move_and_attack", function()
 		if self.move_step_marker then
 			DoneObject(self.move_step_marker)
@@ -284,7 +286,7 @@ function IModeCombatBase:StartMoveAndAttack(attacker, action, target, step_pos, 
 			NetSyncEvent("MoveAndAttack_Start", attacker, target, action.id)
 		end
 		local attackerArray = {attacker}
-		if attacker:GetDist(pos) > const.SlabSizeX / 2 then
+		if pos and attacker:GetDist(pos) > const.SlabSizeX / 2 then
 			-- special-case for melee attacks: give follow target instead of goto pos
 			if not g_Combat and action.id == "MeleeAttack" and IsValid(target) then
 				CombatActions.Move:Execute(attackerArray, { follow_target = target })
@@ -437,6 +439,12 @@ function IModeCombatBase:SetTarget(target, dontMove, args)
 	if not target then
 		SetActiveBadgeExclusive(false)
 		return
+	end
+	
+	-- Used to prevent targets swapping while the camera is moving
+	-- between targets in IModeCombatMovingAttack when using gamepad
+	if not dontMove then
+		self.last_set_target_time = RealTime()
 	end
 
 	return true

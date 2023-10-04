@@ -350,10 +350,9 @@ function TacticalMap:RegisterIndividualArea(marker, area, mode_3d)
 	self.area_to_marker[area] = marker
 	self.area_to_positions[area] = positions
 	for _, ppos in ipairs(positions) do
-		local x, y, z = point_unpack(ppos)
-		local snap_pos = SnapToPassSlab(x, y, z)
-		if snap_pos then
-			ppos = point_pack(snap_pos)
+		local x, y, z = SnapToPassSlabXYZ(point_unpack(ppos))
+		if x then
+			ppos = point_pack(x, y, z)
 		end
 		self.ppos_to_individual_area[ppos] = bor(self.ppos_to_individual_area[ppos] or 0, area_flag)
 	end

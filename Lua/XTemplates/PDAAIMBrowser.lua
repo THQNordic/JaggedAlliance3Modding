@@ -20,6 +20,12 @@ PlaceObj('XTemplate', {
 				AddPageToBrowserHistory("aim", nil)
 			end,
 		}),
+		PlaceObj('XTemplateFunc', {
+			'name', "Done(self, ...)",
+			'func', function (self, ...)
+				PDAAIMBrowser.Done(self,...)
+			end,
+		}),
 		PlaceObj('XTemplateWindow', {
 			'__condition', function (parent, context) return not netInGame and not gv_SatelliteView end,
 			'__class', "PDACampaignPausingDlg",
@@ -1071,7 +1077,7 @@ PlaceObj('XTemplate', {
 				'ActionId', "idContact",
 				'ActionName', T(284104494351, --[[XTemplate PDAAIMBrowser ActionName]] "Contact"),
 				'ActionToolbar', "ActionBar",
-				'ActionGamepad', "Start",
+				'ActionGamepad', "ButtonX",
 				'ActionButtonTemplate', "PDACommonButtonBlueSnype",
 				'ActionState', function (self, host)
 					local content = host.idContent

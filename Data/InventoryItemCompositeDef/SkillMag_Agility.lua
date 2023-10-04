@@ -11,7 +11,7 @@ PlaceObj('InventoryItemCompositeDef', {
 	'Description', T(372542479188, --[[InventoryItemCompositeDef SkillMag_Agility Description]] '"I\'m almost certain one does not shout <em>Parkour<em>."'),
 	'AdditionalHint', T(643572633528, --[[InventoryItemCompositeDef SkillMag_Agility AdditionalHint]] "<bullet_point> Used through the Item Menu\n<bullet_point> Single use\n<bullet_point> Increases Agility"),
 	'UnitStat', "Agility",
-	'is_valuable', true,
+	'Valuable', 1,
 	'effect_moment', "on_use",
 	'Effects', {
 		PlaceObj('UnitStatBoost', {

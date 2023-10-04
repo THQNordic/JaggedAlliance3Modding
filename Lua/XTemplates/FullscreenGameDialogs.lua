@@ -149,7 +149,6 @@ PlaceObj('XTemplate', {
 										'ActionId', "Close",
 										'ActionName', T(499807098574, --[[XTemplate FullscreenGameDialogs ActionName]] "CLOSE"),
 										'ActionShortcut', "Escape",
-										'ActionGamepad', "Start",
 										'OnAction', function (self, host, source, ...)
 											if host.Mode~="inventory" or not host:GetSubdialog():OnEscape() then
 												SetEnabledMouseViaGamepad(false, "Inventory")

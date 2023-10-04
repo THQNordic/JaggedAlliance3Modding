@@ -7,14 +7,14 @@ DefineClass.DragunovSVD = {
 
 
 	object_class = "SniperRifle",
-	Reliability = 50,
 	ScrapParts = 14,
+	Reliability = 50,
 	Icon = "UI/Icons/Weapons/Dragunov",
 	DisplayName = T(204531102680, --[[InventoryItemCompositeDef DragunovSVD DisplayName]] "Dragunov"),
 	DisplayNamePlural = T(663701954106, --[[InventoryItemCompositeDef DragunovSVD DisplayNamePlural]] "Dragunovs"),
 	Description = T(925638108776, --[[InventoryItemCompositeDef DragunovSVD Description]] "Not what it seems at first glance. On the outside it looks like an AK but actually uses a short stroke gas piston system that reduces the recoil and allows for better follow up shots. It is more of a close support designated marksman's rifle than a sniper one. "),
 	AdditionalHint = T(907655175705, --[[InventoryItemCompositeDef DragunovSVD AdditionalHint]] "<bullet_point> Decreased bonus from Aiming\n<bullet_point> Very noisy\n<bullet_point> Rifle with Burst firing mode"),
-	LargeItem = true,
+	LargeItem = 1,
 	UnitStat = "Marksmanship",
 	Cost = 1750,
 	Caliber = "762WP",

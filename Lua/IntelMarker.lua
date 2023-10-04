@@ -169,9 +169,14 @@ end
 
 function IntelMarker:CheckEnemyPresence()
 	local positions = self:GetAreaPositions("ignore_occupied")
-	for _, u in ipairs(g_Units) do
-		if u.team.side == "enemy1" and not u:IsDead() and table.find(positions, point_pack(SnapToVoxel(u:GetPos()))) then
-			return true
+	local values = positions.values or empty_table
+	for _, team in ipairs(g_Teams) do
+		if team.side == "enemy1" then
+			for _, u in ipairs(team.units) do
+				if not u:IsDead() and values[point_pack(SnapToVoxel(u:GetPosXYZ()))] then
+					return true
+				end
+			end
 		end
 	end
 end
@@ -282,13 +287,16 @@ end
 
 function EnemyIntelMarker:GetNumberOfUnits()
 	local positions = self:GetAreaPositions("ignore_occupied")
-	positions = table.invert(positions)
+	local values = positions.values or empty_table
+	local side = self.IntelSide
 	local count = 0
-	local packed_snapped_upos
-	for _, u in ipairs(g_Units) do
-		packed_snapped_upos = point_pack(SnapToVoxel(u:GetPos()))
-		if u.team.side == self.IntelSide and not u:IsDead() and positions[packed_snapped_upos] then
-			count = count + 1
+	for _, team in ipairs(g_Teams) do
+		if team.side == side then
+			for _, u in ipairs(team.units) do
+				if not u:IsDead() and values[point_pack(SnapToVoxel(u:GetPosXYZ()))] then
+					count = count + 1
+				end
+			end
 		end
 	end
 	return count
@@ -407,6 +415,11 @@ function OnMsg.EnterSector()
 		emplacementIntel.GetIntelText = function()
 			return emplacement:GetTitle()
 		end
+		emplacementIntel.GetDescription = function(self)
+			if emplacement:GetEnumFlags(const.efVisible) == 0 then return end
+			
+			return ImplicitIntelMarker.GetDescription(self)
+		end
 		emplacementIntel:SetPOIPreset("Emplacement")
 		emplacementIntel.DontShowInList = true
 	end
@@ -465,7 +478,7 @@ DefineClass.ImplicitEnemyDefenderIntelMarker = {
 }
 
 function ImplicitEnemyDefenderIntelMarker:GetEnemyCount()
-	local positions = self:GetAreaPositions("ignore_occupied")
+	--local positions = self:GetAreaPositions("ignore_occupied")
 	
 	local bbox = self:GetBBox()
 	bbox = box(
@@ -706,7 +719,7 @@ function UpdateDeploymentUIIntelBadges(forceDelete)
 		local pois = GetDeploymentUIPOIs()
 		for i, poi in ipairs(pois) do
 			local description = (poi.GetDescription and poi:GetDescription() or poi.Description or "")
-			if description ~= "" then
+			if description and description ~= "" then
 				local badge = CreateBadgeFromPreset("DeploymentPOIBadge", poi)
 				if badge.ui then
 					badge.ui:SetRolloverTitle(GetDeploymentPOIName(poi))

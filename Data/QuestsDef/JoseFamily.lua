@@ -148,7 +148,7 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('QuestNote', {
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							Condition = "or",
@@ -188,7 +188,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							Condition = "or",
@@ -214,7 +214,7 @@ PlaceObj('QuestsDef', {
 			Idx = 7,
 			Scouting = true,
 			ShowConditions = {
-				PlaceObj('AND', {
+				PlaceObj('CheckAND', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							QuestId = "JoseFamily",
@@ -260,7 +260,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							Condition = "or",
@@ -386,6 +386,11 @@ PlaceObj('QuestsDef', {
 						return not quest.Completed and not quest.Failed and quest.Given and not quest.JoseRustConversationDone
 					end,
 				}),
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"H3",
+					},
+				}),
 				PlaceObj('SectorIsInConflict', {
 					Negate = true,
 					sector_id = "H3",
@@ -407,6 +412,9 @@ PlaceObj('QuestsDef', {
 			Once = true,
 			ParamId = "TCE_StartSecondConvo",
 			QuestId = "JoseFamily",
+			requiredSectors = {
+				"H3",
+			},
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
@@ -422,6 +430,11 @@ PlaceObj('QuestsDef', {
 						local quest = gv_Quests['JoseFamily'] or QuestGetState('JoseFamily')
 						return not quest.Completed and not quest.Failed and quest.Given and not quest.JoseRustConversationDone
 					end,
+				}),
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"H3",
+					},
 				}),
 				PlaceObj('SectorIsInConflict', {
 					Negate = true,
@@ -453,6 +466,9 @@ PlaceObj('QuestsDef', {
 			Once = true,
 			ParamId = "TCE_BanterSecondConvo",
 			QuestId = "JoseFamily",
+			requiredSectors = {
+				"H3",
+			},
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {

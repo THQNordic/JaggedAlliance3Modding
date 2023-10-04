@@ -2,34 +2,30 @@ DefineClass.AmbientLifeZoneUnit = {
 	zone = false,
 }
 
-function AmbientLifeZoneUnit:GetGroupsMap(group_prefix)
+local function MapGroups(map, groups)
+	for _, group in ipairs(groups) do
+		map[group]  = true
+	end
+end
+
+function AmbientLifeZoneUnit:GetGroupsMap()
 	local groups_map = {}
 	if self.zone then
-		for _, group in ipairs(self.zone.Groups) do
-			if not group_prefix or group:starts_with(group_prefix) then
-				groups_map[group]  = true
-			end
-		end
+		MapGroups(groups_map, self.zone.Groups)
 	end
-	for _, group in ipairs(self.Groups) do
-		if not group_prefix or group:starts_with(group_prefix) then
-			groups_map[group]  = true
-		end
-	end
+	MapGroups(groups_map, self.Groups)
 	
 	return groups_map
 end
 
-function AmbientLifeZoneUnit:GroupsMatch(other, group_prefix, groups_map)
-	groups_map = groups_map or self:GetGroupsMap(group_prefix)
+function AmbientLifeZoneUnit:GroupsMatch(other, groups_map)
+	groups_map = groups_map or self:GetGroupsMap()
 	
 	if not next(groups_map) then return true end
 	
 	for _, group in ipairs(other.Groups) do
-		if not group_prefix or group:starts_with(group_prefix) then
-			if groups_map[group] then
-				return true
-			end
+		if groups_map[group] then
+			return true
 		end
 	end
 end
@@ -351,44 +347,28 @@ local function al_filter_ignorechair(visitable)
 	return not IsKindOf(visitable[1], "AL_SitChair")
 end
 
-local function al_filter_roam(visitable, unit)
-	local marker = visitable[1]
-	if not IsKindOf(marker, "AL_Roam") then
-		return false
-	end
-	if unit.zone then
-		if not unit.zone:CheckZTolerance(marker:GetPos()) then
-			return false
-		end
-		if unit.last_roam then
-			return unit:GetDist(marker) > self.zone.MinRoamDist
-		end
-	end
-	return true
-end
-
 function Unit:AmbientRoutine()
 	local filter
 	
 	if self.carry_flare or self:Random(100) < const.AmbientLife.RoamChance then
 		-- roam filter
-		filter = function(visitable)
+		filter = function(self, visitable)
 			local marker = visitable[1]
 			if not IsKindOf(marker, "AL_Roam") then
 				return false
 			end
 			if self.zone then
-				if not self.zone:CheckZTolerance(marker:GetPos()) then
+				if not self.zone:CheckZTolerance(marker) then
 					return false
 				end
-				if self.last_roam then
-					return self:GetDist(marker) > self.zone.MinRoamDist
+				if self.last_roam and IsCloser(self, marker, self.zone.MinRoamDist) then
+					return false
 				end
 			end
 			return true
 		end
 	elseif self.last_visit and IsKindOf(self.last_visit, "AL_SitChair") then
-		filter = function(visitable)
+		filter = function(self, visitable)
 			return not IsKindOf(visitable[1], "AL_SitChair")
 		end
 	end
@@ -402,11 +382,11 @@ function Unit:AmbientRoutine()
 	else
 		-- fallback to Roam/StandStill
 		local markers = self:GetRoutineAreaMarkers()
-		local area_markers = table.ifilter(markers or empty_table, function(_, marker)
+		local area_markers = table.ifilter(markers, function(_, marker)
 			return marker.AreaWidth * marker.AreaHeight > 0
 		end)
 		if #area_markers > 0 then
-			local marker = table.rand(area_markers, self:Random())
+			local marker = #area_markers == 1 and area_markers[1] or table.rand(area_markers, self:Random())
 			if marker.AreaWidth * marker.AreaHeight > 1 then
 				self:TakeSlabExploration()
 				self:SetCommand("RoamSingle", marker)
@@ -519,7 +499,7 @@ function Unit:IdleRoutine()
 			StoreErrorSource(self.routine_spawner, "AdvanceTo routine should have waypoint marker specified")
 		else
 			local markers = MapGetMarkers(false, self.routine_area)
-			if #markers == 0 then
+			if not markers or #markers == 0 then
 				StoreErrorSource(self.routine_spawner, string.format("Marker group %s referenced in AdvanceTo routine - not found", self.routine_area))
 			else
 				if #markers > 1 then
@@ -546,35 +526,37 @@ function Unit:GetRoamPos(marker)
 	if IsPoint(marker) then
 		return marker
 	end
-
 	assert(IsKindOf(marker, "GridMarker"))
-	local positions = marker:GetAreaPositionsOutsideRepulsors("ignore occupied")
-	if self.zone then
-		positions = self.zone:FilterZTolerance(positions, "unpack")
+	local positions
+	if self.zone == marker then
+		positions = marker:GetAreaPositions("ignore_occupied", "outside_repulse", "skip_tunnels", "z_tolerance")
 	else
-		positions = table.imap(positions, function(packed_pos) return point(point_unpack(packed_pos)) end)
-	end
-	positions = table.ifilter(positions, function(_, pos) return pf.GetTunnel(pos) == nil end)
-	if #positions == 0 then return end
-	
-	local cur_angle = self:GetAngle()
-	local tries = Min(const.AmbientLife.RoamKeepDirTries, #positions)
-	local idx = 1 + self:Random(#positions)
-	local best_pos = positions[idx]
-	table.remove(positions, idx)
-	local best_angle = abs(CalcOrientation(self, best_pos) - cur_angle)
-	for try = 2, Min(tries, #positions) do
-		idx = 1 + self:Random(#positions)
-		local pos = positions[idx]
-		table.remove(positions, idx)
-		local angle = abs(CalcOrientation(self, pos) - cur_angle)
-		local dist = self:GetDist(pos)
-		if angle < best_angle and self:GetDist(pos) >= 5*guim then
-			best_pos, best_angle = pos, angle
+		positions = marker:GetAreaPositions("ignore_occupied", "outside_repulse", "skip_tunnels")
+		if self.zone then
+			positions = self.zone:FilterZTolerance(positions)
 		end
 	end
-		
-	return best_pos
+	local count = #positions
+	if count == 0 then
+		return
+	end
+	local cur_x, cur_y = self:GetPosXYZ()
+	local cur_angle = self:GetOrientationAngle()
+	local tries = Min(const.AmbientLife.RoamKeepDirTries, count)
+	local min_dist = 5 * guim
+	local best_pos, best_angle
+	for i = 1, tries do
+		local idx = 1 + self:Random(count)
+		local packed_pos = positions[idx]
+		local x, y = point_unpack(packed_pos)
+		if i == 1 or not IsCloser2D(cur_x, cur_y, x, y, min_dist) then
+			local angle = abs(CalcOrientation(cur_x, cur_y, 0, x, y, 0) - cur_angle)
+			if i == 1 or angle < best_angle then
+				best_pos, best_angle = packed_pos, angle
+			end
+		end
+	end
+	return point(point_unpack(best_pos))
 end
 
 GameVar("gv_FlareCarriers", 0)
@@ -655,7 +637,7 @@ function Unit:RoamDropFlare()
 end
 
 function Unit:PlayRoamAnimation(marker)
-	if (GameState.Night or GameState.Underground) and gv_FlareCarriers > 0 and self.team.player_enemy and 
+	if gv_FlareCarriers > 0 and (GameState.Night or GameState.Underground) and self.team.player_enemy and 
 		self.species == "Human" and not self.infected and not self.carry_flare 
 		and self:Random(100) < 50 
 	then
@@ -784,14 +766,14 @@ function Unit:CowerRun()
 	local dir = Rotate(pt_right, run_angle)
 	local pos = self:GetPos()
 	local dest = pos + SetLen(dir, const.AmbientLife.CowerRunDist)
-	local slab_pos = SnapToPassSlab(dest)
-	while not slab_pos and (dest - pos):Len2D2() > guim * guim do
+	local slab_x, slab_y, slab_z = SnapToPassSlabXYZ(dest)
+	while not slab_x and not IsCloser2D(dest, pos, guim) do
 		dest = dest - dir
-		slab_pos = SnapToPassSlab(dest)
+		slab_x, slab_y, slab_z = SnapToPassSlabXYZ(dest)
 	end
-	if slab_pos then
+	if slab_x then
 		PlayFX("CowerRun", "start", self, self.gender)
-		self:GotoSlab(dest)
+		self:GotoSlab(point(slab_x, slab_y, slab_z))
 		PlayFX("CowerRun", "end", self, self.gender)
 	end
 	self.cower_cooldown = GameTime() + const.AmbientLife.CowerRunCooldownTime
@@ -857,7 +839,7 @@ function Unit:PlayAnimStyleEndAnim(idle_style)
 end
 
 function Unit:CanCower()
-	return not self.conflict_ignore and self.species == "Human" and not self:IsDead()
+	return (g_Combat or not self.conflict_ignore) and self.species == "Human" and not self:IsDead()
 end
 
 function Unit:Cower(find_cower_spot, timeout, restore_behavior, restore_behavior_params)
@@ -875,14 +857,16 @@ function Unit:Cower(find_cower_spot, timeout, restore_behavior, restore_behavior
 			params[#params + 1] = restore_behavior_params
 		end
 		self:SetBehavior("Cower", params)
+		self:SetCombatBehavior("Cower", params)
 	else
 		local params = {find_cower_spot, timeout}
 		if timeout and not restore_behavior and self.combat_behavior ~= "Cower" then
-			restore_behavior = self.behavior
+			restore_behavior = self.combat_behavior
 			restore_behavior_params = self.combat_behavior_params
 			params[#params + 1] = restore_behavior
 			params[#params + 1] = restore_behavior_params
 		end
+		self:SetBehavior("Cower", params)
 		self:SetCombatBehavior("Cower", params)
 	end
 	self:SetTargetDummy(false)
@@ -922,7 +906,7 @@ function Unit:Cower(find_cower_spot, timeout, restore_behavior, restore_behavior
 	end)
 
 	local start_time = now()
-	while (g_Combat or GameState.Conflict or timeout) and (not timeout or (now() - start_time) < timeout) do
+	while (self:CanCower() or timeout) and (not timeout or (now() - start_time) < timeout) do
 		if find_cower_spot or self:CanChangeCowerSpot() then
 			local visitable = self:GetRandomVisitable("low covers")
 			if visitable then
@@ -1064,7 +1048,7 @@ function GetRouteFromMarkerGroup(marker_group)
 	local markers = MapGetMarkers("Waypoint", marker_group)
 	local route = {}
 	local angle
-	if #markers > 0 then
+	if markers and #markers > 0 then
 		for i = 1, #markers do
 			for j = 1, #markers do
 				if markers[j].ID == tostring(i) then
@@ -1078,15 +1062,17 @@ function GetRouteFromMarkerGroup(marker_group)
 		end
 	else
 		markers = MapGetMarkers(nil, marker_group)
-		local marker = markers[1]
-		for i = 2, #markers do
-			if marker.AreaWidth + marker.AreaHeight < markers[i].AreaWidth + markers[i].AreaHeight then
-				marker = markers[i]
+		if markers and #markers > 0 then
+			local marker = markers[1]
+			for i = 2, #markers do
+				if marker.AreaWidth + marker.AreaHeight < markers[i].AreaWidth + markers[i].AreaHeight then
+					marker = markers[i]
+				end
 			end
-		end
-		if marker then
-			route = marker:GetMarkerCornerPositions()
-			angle = marker:GetAngle()
+			if marker then
+				route = marker:GetMarkerCornerPositions()
+				angle = marker:GetAngle()
+			end
 		end
 	end
 	g_MarkerGroupRoute[marker_group] = route
@@ -1136,7 +1122,7 @@ function Unit:Patrol(marker_group, next_id, loop, end_orient)
 end
 
 function Unit:ExitMap(marker, start_time)
-	if not marker then 
+	if not marker then
 		self:SetBehavior()
 		return 
 	end

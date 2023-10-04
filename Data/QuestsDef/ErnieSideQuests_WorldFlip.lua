@@ -461,6 +461,7 @@ PlaceObj('QuestsDef', {
 					SecondTargetUnit = "Pierre",
 					TargetUnit = "any merc",
 				}),
+				PlaceObj('SectorCheckOwner', {}),
 				PlaceObj('BanterHasPlayed', {
 					Banters = {
 						"FortCorazon02_radio",
@@ -509,6 +510,7 @@ PlaceObj('QuestsDef', {
 						"H4",
 					},
 				}),
+				PlaceObj('SectorCheckOwner', {}),
 			},
 			Effects = {
 				PlaceObj('GroupSetBehaviorRoam', {
@@ -522,6 +524,57 @@ PlaceObj('QuestsDef', {
 			ParamId = "TCE_PostFortressPierreRoam",
 			QuestId = "ErnieSideQuests_WorldFlip",
 			requiredSectors = {
+				"H4",
+			},
+		}),
+		PlaceObj('TriggeredConditionalEvent', {
+			Conditions = {
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"H2",
+						"H4",
+					},
+				}),
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "PierreDefeated",
+					Vars = set({
+	PierreDead = false,
+	PierreJoined = false,
+	PierreReturn = true,
+}),
+					__eval = function ()
+						local quest = gv_Quests['PierreDefeated'] or QuestGetState('PierreDefeated')
+						return not quest.PierreDead and not quest.PierreJoined and quest.PierreReturn
+					end,
+				}),
+			},
+			Effects = {
+				PlaceObj('NpcUnitTakeItem', {
+					ItemId = "Unarmed",
+					TargetUnit = "Pierre",
+				}),
+				PlaceObj('NpcUnitGiveItem', {
+					ItemId = "AK74",
+					TargetUnit = "Pierre",
+				}),
+				PlaceObj('NpcUnitGiveItem', {
+					ItemId = "PierreMachete",
+					TargetUnit = "Pierre",
+				}),
+				PlaceObj('NpcUnitGiveItem', {
+					ItemId = "FragGrenade",
+					TargetUnit = "Pierre",
+				}),
+				PlaceObj('NpcUnitGiveItem', {
+					ItemId = "FragGrenade",
+					TargetUnit = "Pierre",
+				}),
+			},
+			Once = true,
+			ParamId = "TCE_PierreRearm",
+			QuestId = "ErnieSideQuests_WorldFlip",
+			requiredSectors = {
+				"H2",
 				"H4",
 			},
 		}),
@@ -575,6 +628,9 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('QuestVarTCEState', {
 			Name = "TCE_PostFortressPierreRoam",
+		}),
+		PlaceObj('QuestVarTCEState', {
+			Name = "TCE_PierreRearm",
 		}),
 	},
 	group = "Ernie",

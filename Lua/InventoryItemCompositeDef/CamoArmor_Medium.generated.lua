@@ -7,8 +7,8 @@ DefineClass.CamoArmor_Medium = {
 
 
 	object_class = "Armor",
-	Degradation = 6,
 	ScrapParts = 4,
+	Degradation = 6,
 	Icon = "UI/Icons/Items/camo_armor_medium",
 	DisplayName = T(563558859870, --[[InventoryItemCompositeDef CamoArmor_Medium DisplayName]] "Medium Camo Armor"),
 	DisplayNamePlural = T(475212621823, --[[InventoryItemCompositeDef CamoArmor_Medium DisplayNamePlural]] "Medium Camo Armors"),

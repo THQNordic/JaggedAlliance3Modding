@@ -71,7 +71,7 @@ function Guardpost:AttackWithEnemySquad(targetSectorId, promoteToStrong)
 		so.primed_squad = squad_id
 	end
 
-	SendSatelliteSquadOnRoute(squadObj, targetSectorId)
+	SendSatelliteSquadOnRoute(squadObj, targetSectorId, { enemy_guardpost = true })
 	so.last_squad_attacked = primedSquad
 	so.next_spawn_time = false
 	so.primed_squad = false

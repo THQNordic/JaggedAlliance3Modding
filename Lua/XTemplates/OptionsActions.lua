@@ -30,9 +30,6 @@ PlaceObj('XTemplate', {
 					if OptionsCategories[self.ActionId].id == "Keybindings" then
 						host:ResolveId("idMainMenuButtonsContent"):SetMode("keybindings")
 						host:ResolveId("idSubContent"):SetMode("options", {optObj = OptionsCategories[table.find(OptionsCategories, "id", "Keybindings")]})--, actionCatId = "Camera"})
-						--host:ResolveId("idList")[1].idBtnText:SetTextStyle("MMButtonTextSelected")
-						--host:ResolveId("idList")[1].focused = true
-						--host:ResolveId("idList")[1].enabled = false
 					else
 						host:ResolveId("idSubContent"):SetMode("options", {optObj = OptionsCategories[self.ActionId]})
 						
@@ -55,9 +52,13 @@ PlaceObj('XTemplate', {
 					host:ResolveId("idSubMenuTittle"):SetText(self.ActionName)
 					local scrollArea = host:ResolveId("idSubMenu"):ResolveId("idScrollArea")
 					if scrollArea then
-						if not scrollArea:SelectFirstValidItem() then
-							scrollArea:SetSelection(1)
-						end
+						RunWhenXWindowIsReady(scrollArea, function()
+							if scrollArea then
+								if not scrollArea:SelectFirstValidItem() then
+									scrollArea:SetSelection(1)
+								end
+							end
+						end)
 					end
 					host.isMMFocused = OptionsCategories[self.ActionId].id == "Keybindings"
 				end,

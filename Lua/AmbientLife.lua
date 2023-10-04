@@ -102,10 +102,17 @@ function AmbientLifeRepulsor:GetEditorTypeText()
 	return Untranslated("[AL Repulsor]")
 end
 
-function IsInAmbientLifeRepulsionZone(pos)
+function IsInAmbientLifeRepulsionZone(pos_or_obj, is_packed_pos)
 	for _, repulsor in ipairs(g_VisitRepulsors) do
-		if repulsor.apply_pass and repulsor:IsMarkerEnabled() and pos:InBox2D(repulsor:GetAreaBox()) then
-			return true
+		if repulsor.apply_pass and repulsor:IsMarkerEnabled() then
+			local area = repulsor:GetAreaBox()
+			if is_packed_pos then
+				if area:Point2DInside(point_unpack(pos_or_obj)) then
+					return true
+				end
+			elseif area:Point2DInside(pos_or_obj) then
+				return true
+			end
 		end
 	end
 end
@@ -122,8 +129,8 @@ function AmbientLifeRepulsor:RecalcAreaPositions()
 end
 
 function FilterPackedPositionsRepulsionZone(positions)
-	return table.ifilter(positions, function(_, pos)
-		return not IsInAmbientLifeRepulsionZone(point(point_unpack(pos)))
+	return table.ifilter(positions, function(_, packed_pos)
+		return not IsInAmbientLifeRepulsionZone(packed_pos, true)
 	end)
 end
 
@@ -139,6 +146,7 @@ function UpdateRepulsorsPass()
 		g_RebuildRepulsors = false
 		NetUpdateHash("UpdateRepulsorsPass:UpdatePassType")
 		UpdatePassType()
+		MapForEachMarker("GridMarker", nil, GridMarker.ResetRepulseAreaPositions)
 	end
 end
 
@@ -488,17 +496,12 @@ function AmbientLifeMarker:CanVisit(unit, for_perpetual, dont_check_dist)
 			return false
 		end
 	end
-	local x, y, z = self:GetPosXYZ()
-	if IsOccupiedExploration(unit, x, y, z) then
-		if not g_Combat then
-			for i, u in ipairs(g_Units or empty_table) do
-				if u ~= unit then
-					local uX, uY, uZ = u:GetPosXYZ()
-					if x == uX and y == uY and z == uZ then
-						return false
-					end
-				end
-			end
+	if not g_Combat and IsOccupiedExploration(unit, self:GetPosXYZ()) then
+		local occupied_by = MapGetFirst(self, 0, "Unit", function(u, unit)
+			return u ~= unit and select(3, u:GetPosXYZ()) == select(3, unit:GetPosXYZ())
+		end, unit)
+		if occupied_by then
+			return false
 		end
 	end
 
@@ -507,15 +510,19 @@ function AmbientLifeMarker:CanVisit(unit, for_perpetual, dont_check_dist)
 		if not self:MatchConditionsAndGameStates() then
 			return false
 		end
-		local check_ignore_dist = (not dont_check_dist) and ((not unit.zone) or (unit.zone.MinRoamDist >= 0))
-		if (not for_perpetual) and check_ignore_dist and (self:GetDist2D(unit) < const.AmbientLife.VisitIgnoreRange) then
-			return false
+		if not for_perpetual then
+			local check_ignore_dist = not dont_check_dist and (not unit.zone or unit.zone.MinRoamDist >= 0)
+			if check_ignore_dist and IsCloser2D(self, unit, const.AmbientLife.VisitIgnoreRange) then
+				return false
+			end
 		end
 		if not unit.visit_test and not (self.IgnoreGroupsMatch or unit:GroupsMatch(self)) then
 			return false
 		end
-		
-		return IsValidAnim(unit, self.VisitIdle) and unit:GetAnimDuration(self.VisitIdle) > 0
+		if not IsValidAnim(unit, self.VisitIdle) or unit:GetAnimDuration(self.VisitIdle) == 0 then
+			return false
+		end
+		return true
 	end
 end
 
@@ -969,7 +976,7 @@ function AmbientLifeMarker:EditorGetText()
 		end
 	end
 	
-	local avoid_text = IsInAmbientLifeRepulsionZone(self:GetPos()) and "In Repulsion Zone"
+	local avoid_text = IsInAmbientLifeRepulsionZone(self) and "In Repulsion Zone"
 
 	if sup_col_dead or cond_text or avoid_text then
 		local pre_conditions = {}
@@ -1029,10 +1036,9 @@ function AmbientLifeMarker:EditorGetText()
 end
 
 function AmbientLifeMarker:EditorGetTextColor()
-	local pos = self:GetPos()
 	local pre_conditions_ok = 
 		self:IsVisitSupportCollectionAlive() and 
-		not IsInAmbientLifeRepulsionZone(pos)
+		not IsInAmbientLifeRepulsionZone(self)
 	if pre_conditions_ok then
 		local context = {}
 		for i, condition in ipairs(self.Conditions) do
@@ -1112,15 +1118,16 @@ function AmbientLifeMarker:RemoveVisitSupportCollection()
 end
 
 function AmbientLifeMarker:ValidateVisitSupportCollection()
-	if not self.VisitSupportCollection then return end
-	
-	for i = #self.VisitSupportCollection, 1, -1 do
-		local obj = self.VisitSupportCollection[i]
+	local collection = self.VisitSupportCollection
+	if not collection then return end
+
+	for i = #collection, 1, -1 do
+		local obj = collection[i]
 		if not IsValid(obj) or IsKindOf(obj, "AmbientLifeMarker") then
-			table.remove(self.VisitSupportCollection, i)
+			table.remove(collection, i)
 		end
 	end
-	if #self.VisitSupportCollection == 0 then
+	if #collection == 0 then
 		self.VisitSupportCollection = false
 	end
 end
@@ -1152,16 +1159,18 @@ function AmbientLifeMarker:IsInVisitSupportCollection(obj)
 end
 
 function AmbientLifeMarker:VME_CheckImpassable(pt)
-	pt = pt or self:GetPos()
-	if not self:IsPerpetual() and not GetPassSlab(pt) and not self.Teleport then
-		StoreErrorSource(self, "AmbientLifeMarker Goto position is on impassable!")
+	if self:IsPerpetual() or self.Teleport or GetPassSlab(pt or self) then
+		return
 	end
+	StoreErrorSource(self, "AmbientLifeMarker Goto position is on impassable!")
 end
 
 function AmbientLifeMarker:VME_CheckWalkableZ(pt)
-	pt = pt or self:GetPos()
-	local z = pt:z()
-	if z and not self:IsPerpetual() and not self.Teleport and z < GetWalkableZ(pt) then
+	if self:IsPerpetual() or self.Teleport then
+		return
+	end
+	local z = pt and pt:z() or not pt and select(3, self:GetPosXYZ())
+	if z and z < terrain.GetHeight(pt or self) then
 		StoreErrorSource(self, "AmbientLifeMarker Goto position is below walkable Z!")
 	end
 end
@@ -1325,24 +1334,31 @@ end
 
 function GetRandomVisitableForMarker(unit, marker, filter, ...)
 	if not IsValid(marker) or not g_Visitables or #g_Visitables == 0 then return end
-	
+
 	local area = marker:GetAreaBox()
+	local CheckInside = area.Point2DInside
+	local unit_zone = unit.zone
+	local CheckZTolerance = unit_zone and unit_zone.CheckZTolerance
 	local selected_visitable
 	local total = 0
 	for _, visitable in random_ipairs(g_Visitables, "AmbientLife") do
-		local visit_marker = visitable[1]
-		if not visitable.reserved and visit_marker:CanVisit(unit) then
-			local pt = visitable[2] or visit_marker:GetPos()
-			if not unit.zone or unit.zone:CheckZTolerance(pt) then
-				visit_marker:VME_CheckImpassable(pt)
-				if pt:InBox2D(area) and not IsInAmbientLifeRepulsionZone(pt) and (not filter or filter(visitable, ...)) then
-					total = total + 1
-					if not selected_visitable then
-						local pfflags = const.pfmDestlock + const.pfmImpassableSource
-						local has_path, closest_pos = pf.HasPosPath(unit, pt, nil, 0, 0, unit, 0, nil, pfflags)
-						if has_path and closest_pos == pt then
-							selected_visitable = visitable
-						end
+		local visit_marker, pt = visitable[1], visitable[2]
+		local pos_or_marker = pt or visit_marker
+		if not visitable.reserved
+			and CheckInside(area, pos_or_marker)
+			and (not filter or filter(unit, visitable, ...))
+			and (not unit_zone or CheckZTolerance(unit_zone, pos_or_marker))
+			and not IsInAmbientLifeRepulsionZone(pos_or_marker)
+			and visit_marker:CanVisit(unit)
+		then
+			visit_marker:VME_CheckImpassable(pos_or_marker)
+			total = total + 1
+			if not selected_visitable then
+				local pfflags = const.pfmDestlock + const.pfmImpassableSource
+				local has_path, closest_pos = pf.HasPosPath(unit, pos_or_marker, nil, 0, 0, unit, 0, nil, pfflags)
+				if has_path then
+					if pt and closest_pos == pt or not pt and closest_pos:Equal(visit_marker:GetPosXYZ()) then
+						selected_visitable = visitable
 					end
 				end
 			end
@@ -1447,7 +1463,8 @@ DefineClass.AmbientZoneMarker = {
 
 	units = false,
 	persist_units = true,
-	
+	area_outside_repulse = true,
+
 	Random = AmbientLife_Random,
 }
 
@@ -1483,10 +1500,6 @@ function AmbientZoneMarker:SetDynamicData(data)
 		end
 		self.units[idx] = real_units
 	end
-end
-
-function AmbientZoneMarker:GetAreaPositions(ignore_occupied)
-	return self:GetAreaPositionsOutsideRepulsors(ignore_occupied)
 end
 
 function AmbientZoneMarker:CanSpawn()
@@ -1563,34 +1576,37 @@ end
 local GetHeight = terrain.GetHeight
 local insert = table.insert
 
-function AmbientZoneMarker:FilterZTolerance(positions, unpack)
+function AmbientZoneMarker:FilterZTolerance(positions)
 	if not self.AreaLevelZ then return positions end
-	
-	local pos = self:GetPos()
-	local level_z = pos:IsValidZ() and pos:z() or terrain.GetHeight(pos)
+
+	local mx, my, mz = self:GetPosXYZ()
+	local level_z = mz or GetHeight(mx, my)
 	local z_tolerance = self.AreaLevelZ * const.SlabSizeZ
-	
+
 	local filtered = {}
 	for _, packed_pos in ipairs(positions) do
 		local px, py, pz = point_unpack(packed_pos)
-		local z = pz or GetHeight(px, py)
-		if abs(level_z - z) <= z_tolerance then
-			insert(filtered, unpack and point(px, py, pz) or packed_pos)
+		if abs(level_z - (pz or GetHeight(px, py))) <= z_tolerance then
+			insert(filtered, packed_pos)
 		end
 	end
-	
+
 	return filtered
 end
 
-function AmbientZoneMarker:CheckZTolerance(check_pos)
+function AmbientZoneMarker:CheckZTolerance(pos_or_obj)
 	if not self.AreaLevelZ then return true end
-	
-	local pos = self:GetPos()
-	local level_z = pos:IsValidZ() and pos:z() or terrain.GetHeight(pos)
-	local z_tolerance = self.AreaLevelZ * const.SlabSizeZ
-	local check_z = check_pos:IsValidZ() and check_pos:z() or terrain.GetHeight(check_pos)
-	
-	return abs(level_z - check_z) <= z_tolerance
+
+	local level_z = select(3, self:GetPosXYZ()) or GetHeight(self)
+	local check_z
+	if IsPoint(pos_or_obj) then
+		check_z = pos_or_obj:z()
+	else
+		check_z = select(3, pos_or_obj:GetPosXYZ())
+	end
+	check_z = check_z or GetHeight(pos_or_obj)
+
+	return abs(level_z - check_z) <= self.AreaLevelZ * const.SlabSizeZ
 end
 
 function AmbientZoneMarker:Spawn(refill)
@@ -1620,14 +1636,12 @@ function AmbientZoneMarker:Spawn(refill)
 			local available_positions = self:FilterZTolerance(area_positions)
 			local positions_required = Min(def.count - #spawned, #available_positions)
 			local positions = self:GetRandomPositions(positions_required, nil, available_positions, nil, "avoid close pos")
+			local spawn = not refill or self:IsKindOf("AmbientZone_Animal")
 			for _, pos in ipairs(positions) do
-				if pos ~= InvalidPos() then
-					local spawn_pos = (not refill or self:IsKindOf("AmbientZone_Animal")) and pos
-					local unit = self:PlaceSpawnDef(def.unit_def, spawn_pos)
-					table.insert(spawned, unit)
-					if not spawn_pos then
-						table.insert(to_enter_map, {unit = unit, pos = pos})
-					end
+				local unit = self:PlaceSpawnDef(def.unit_def, spawn and pos)
+				insert(spawned, unit)
+				if not spawn then
+					insert(to_enter_map, {unit = unit, pos = pos})
 				end
 			end
 		end
@@ -1673,7 +1687,7 @@ end
 
 function AmbientZoneMarker:RegisterUnits(units)
 	if self.units and #units > 0 then
-		table.insert(self.units, units)
+		insert(self.units, units)
 	end
 end
 
@@ -1686,7 +1700,7 @@ function AmbientZoneMarker:GetExitZones(pos)
 		local pfflags = const.pfmImpassableSource
 		local has_path, closest_pos = pf.HasPosPath(pos, check_pos, pfclass, 0, 0, nil, 0, nil, pfflags)
 		if has_path and closest_pos == check_pos then
-			table.insert(markers_reachable, marker)
+			insert(markers_reachable, marker)
 		end
 	end)
 	return markers, markers_reachable
@@ -1720,7 +1734,7 @@ function AmbientZoneMarker:ReduceUnits(reduction_percents, exit_map)
 	for idx, units_def in ipairs(self.units) do
 		for _, unit in ipairs(units_def) do
 			if IsValid(unit) and not unit:IsDead() then
-				table.insert(units, {unit = unit, idx = idx})
+				insert(units, {unit = unit, idx = idx})
 			end
 		end
 	end
@@ -1765,16 +1779,18 @@ end
 function AmbientZoneMarker:GetRoamMarkers(unit)
 	local roam_markers = {}
 	local area = self:GetAreaBox()
+	local CheckInside = area.Point2DInside
 	for _, visitable in ipairs(g_Visitables) do
 		local marker = visitable[1]
-		if IsKindOf(marker, "AL_Roam") and not visitable.reserved and (not unit or marker:CanVisit(unit)) then
-			local pt = visitable[2] or marker:GetPos()
-			if pt:InBox2D(area) and not IsInAmbientLifeRepulsionZone(pt) then
-				table.insert(roam_markers, visitable)
+		local pos_or_marker = visitable[2] or marker
+		if CheckInside(area, pos_or_marker) then
+			if IsKindOf(marker, "AL_Roam") and not visitable.reserved and (not unit or marker:CanVisit(unit)) then
+				if not IsInAmbientLifeRepulsionZone(pos_or_marker) then
+					insert(roam_markers, visitable)
+				end
 			end
 		end
 	end
-	
 	return roam_markers
 end
 
@@ -1857,11 +1873,11 @@ local function GatherUnits()
 			local behavior = g_Combat and unit.combat_behavior or unit.behavior
 			if not unit.conflict_ignore then
 				local dead = unit:IsDead() or unit.command == "Die"
-				table.insert(dead and neutral_dead or neutral, unit)
+				insert(dead and neutral_dead or neutral, unit)
 			end
 		else
 			if unit:IsDead() or unit.command == "Die" then
-				table.insert(military_dead, unit)
+				insert(military_dead, unit)
 			end
 		end
 	end
@@ -1915,16 +1931,19 @@ end
 function CalmDownCowards()
 	for _, unit in ipairs(g_Units) do
 		if unit.command == "Cower" then
+			unit:SetBehavior()
 			if unit.visit_command then
 				local command, marker = unit.visit_command, unit.visit_marker
 				unit.visit_command, unit.visit_marker = false, false
 				if marker and IsValid(marker[1]) then
 					marker.reserved = unit.handle
 					unit:SetCommand(command, marker)
-					return
+				else
+					unit:SetCommand("Idle")
 				end
+			else
+				unit:SetCommand("Idle")
 			end
-			unit:SetCommand("Idle")
 		end
 	end
 end
@@ -1947,7 +1966,7 @@ function AmbientLifePerpetualMarkersSteal()
 		if not marker.perpetual_unit then
 			marker.steal_activated = false
 			if marker:IsCollectionLeader() and marker:CanSpawn() then
-				table.insert(spawn_markers, marker)
+				insert(spawn_markers, marker)
 			end
 		end
 	end)

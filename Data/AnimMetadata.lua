@@ -18117,7 +18117,12 @@ PlaceObj('AnimMetadata', {
 		}),
 		PlaceObj('AnimMoment', {
 			'Type', "hit",
-			'Time', 579,
+			'Time', 505,
+			'AnimRevision', 53646,
+		}),
+		PlaceObj('AnimMoment', {
+			'Type', "hit",
+			'Time', 860,
 			'AnimRevision', 53646,
 		}),
 		PlaceObj('AnimMoment', {
@@ -18138,6 +18143,10 @@ PlaceObj('AnimMetadata', {
 PlaceObj('AnimMetadata', {
 	Moments = {
 		PlaceObj('AnimMoment', {
+			'Type', "start",
+			'AnimRevision', 64244,
+		}),
+		PlaceObj('AnimMoment', {
 			'Type', "FootLeft",
 			'Time', 407,
 			'AnimRevision', 53646,
@@ -18152,14 +18161,71 @@ PlaceObj('AnimMetadata', {
 			'Time', 1399,
 			'AnimRevision', 53646,
 		}),
-		PlaceObj('AnimMoment', {
-			'Type', "FootRight",
-			'Time', 2215,
-			'AnimRevision', 53646,
-		}),
 	},
 	group = "Female",
 	id = "mk_Standing_Attack_Forward",
+})
+
+PlaceObj('AnimMetadata', {
+	Moments = {
+		PlaceObj('AnimMoment', {
+			'Type', "start",
+			'AnimRevision', 64220,
+		}),
+		PlaceObj('AnimMoment', {
+			'Type', "FootLeft",
+			'Time', 324,
+			'AnimRevision', 64220,
+		}),
+		PlaceObj('AnimMoment', {
+			'Type', "hit",
+			'Time', 455,
+			'AnimRevision', 64220,
+		}),
+		PlaceObj('AnimMoment', {
+			'Type', "FootLeft",
+			'Time', 1214,
+			'AnimRevision', 64220,
+		}),
+	},
+	group = "Female",
+	id = "mk_Standing_Attack_Forward2",
+})
+
+PlaceObj('AnimMetadata', {
+	Moments = {
+		PlaceObj('AnimMoment', {
+			'Type', "start",
+			'AnimRevision', 64251,
+		}),
+		PlaceObj('AnimMoment', {
+			'Type', "FootLeft",
+			'Time', 208,
+			'AnimRevision', 64251,
+		}),
+		PlaceObj('AnimMoment', {
+			'Type', "FootRight",
+			'Time', 230,
+			'AnimRevision', 64251,
+		}),
+		PlaceObj('AnimMoment', {
+			'Type', "hit",
+			'Time', 402,
+			'AnimRevision', 999999998,
+		}),
+		PlaceObj('AnimMoment', {
+			'Type', "FootRight",
+			'Time', 925,
+			'AnimRevision', 64251,
+		}),
+		PlaceObj('AnimMoment', {
+			'Type', "FootLeft",
+			'Time', 1150,
+			'AnimRevision', 64251,
+		}),
+	},
+	group = "Female",
+	id = "mk_Standing_Attack_Forward3",
 })
 
 PlaceObj('AnimMetadata', {
@@ -20303,23 +20369,18 @@ PlaceObj('AnimMetadata', {
 	Moments = {
 		PlaceObj('AnimMoment', {
 			'Type', "FootLeft",
-			'Time', 276,
-			'AnimRevision', 61564,
+			'Time', 347,
+			'AnimRevision', 64350,
 		}),
 		PlaceObj('AnimMoment', {
 			'Type', "hit",
-			'Time', 729,
-			'AnimRevision', 61564,
+			'Time', 464,
+			'AnimRevision', 64350,
 		}),
 		PlaceObj('AnimMoment', {
 			'Type', "FootRight",
-			'Time', 1299,
-			'AnimRevision', 61564,
-		}),
-		PlaceObj('AnimMoment', {
-			'Type', "FootLeft",
-			'Time', 1422,
-			'AnimRevision', 61564,
+			'Time', 1176,
+			'AnimRevision', 64350,
 		}),
 	},
 	group = "Female",
@@ -20329,38 +20390,65 @@ PlaceObj('AnimMetadata', {
 PlaceObj('AnimMetadata', {
 	Moments = {
 		PlaceObj('AnimMoment', {
-			'Type', "FootRight",
-			'Time', 70,
-			'AnimRevision', 61564,
-		}),
-		PlaceObj('AnimMoment', {
 			'Type', "FootLeft",
-			'Time', 245,
-			'AnimRevision', 61564,
-		}),
-		PlaceObj('AnimMoment', {
-			'Type', "FootLeft",
-			'Time', 670,
-			'AnimRevision', 61564,
+			'Time', 440,
+			'AnimRevision', 64350,
 		}),
 		PlaceObj('AnimMoment', {
 			'Type', "hit",
-			'Time', 729,
-			'AnimRevision', 61564,
+			'Time', 538,
+			'AnimRevision', 64350,
 		}),
 		PlaceObj('AnimMoment', {
 			'Type', "FootLeft",
-			'Time', 1539,
-			'AnimRevision', 61564,
+			'Time', 979,
+			'AnimRevision', 64350,
 		}),
 		PlaceObj('AnimMoment', {
 			'Type', "FootRight",
-			'Time', 1582,
-			'AnimRevision', 61564,
+			'Time', 1128,
+			'AnimRevision', 64350,
 		}),
 	},
 	group = "Female",
 	id = "nw_Standing_Attack_Forward2",
+})
+
+PlaceObj('AnimMetadata', {
+	Moments = {
+		PlaceObj('AnimMoment', {
+			'Type', "FootRight",
+			'Time', 133,
+			'AnimRevision', 64350,
+		}),
+		PlaceObj('AnimMoment', {
+			'Type', "FootLeft",
+			'Time', 221,
+			'AnimRevision', 64350,
+		}),
+		PlaceObj('AnimMoment', {
+			'Type', "hit",
+			'Time', 394,
+			'AnimRevision', 64350,
+		}),
+		PlaceObj('AnimMoment', {
+			'Type', "FootRight",
+			'Time', 424,
+			'AnimRevision', 64350,
+		}),
+		PlaceObj('AnimMoment', {
+			'Type', "FootRight",
+			'Time', 1072,
+			'AnimRevision', 64350,
+		}),
+		PlaceObj('AnimMoment', {
+			'Type', "FootLeft",
+			'Time', 1272,
+			'AnimRevision', 64350,
+		}),
+	},
+	group = "Female",
+	id = "nw_Standing_Attack_Forward3",
 })
 
 PlaceObj('AnimMetadata', {
@@ -41787,12 +41875,12 @@ PlaceObj('AnimMetadata', {
 		}),
 		PlaceObj('AnimMoment', {
 			'Type', "hit",
-			'Time', 503,
+			'Time', 483,
 			'AnimRevision', 53262,
 		}),
 		PlaceObj('AnimMoment', {
 			'Type', "hit",
-			'Time', 871,
+			'Time', 842,
 			'AnimRevision', 53262,
 		}),
 		PlaceObj('AnimMoment', {
@@ -41813,17 +41901,74 @@ PlaceObj('AnimMetadata', {
 		}),
 		PlaceObj('AnimMoment', {
 			'Type', "hit",
-			'Time', 682,
-			'AnimRevision', 53262,
+			'Time', 498,
+			'AnimRevision', 64199,
 		}),
 		PlaceObj('AnimMoment', {
 			'Type', "FootRight",
-			'Time', 1045,
-			'AnimRevision', 53262,
+			'Time', 815,
+			'AnimRevision', 64199,
 		}),
 	},
 	group = "Male",
 	id = "mk_Standing_Attack_Forward",
+})
+
+PlaceObj('AnimMetadata', {
+	Moments = {
+		PlaceObj('AnimMoment', {
+			'Type', "start",
+			'AnimRevision', 64220,
+		}),
+		PlaceObj('AnimMoment', {
+			'Type', "FootLeft",
+			'Time', 317,
+			'AnimRevision', 64220,
+		}),
+		PlaceObj('AnimMoment', {
+			'Type', "hit",
+			'Time', 450,
+			'AnimRevision', 64220,
+		}),
+		PlaceObj('AnimMoment', {
+			'Type', "FootRight",
+			'Time', 898,
+			'AnimRevision', 64220,
+		}),
+		PlaceObj('AnimMoment', {
+			'Type', "FootLeft",
+			'Time', 1275,
+			'AnimRevision', 64220,
+		}),
+	},
+	group = "Male",
+	id = "mk_Standing_Attack_Forward2",
+})
+
+PlaceObj('AnimMetadata', {
+	Moments = {
+		PlaceObj('AnimMoment', {
+			'Type', "start",
+			'AnimRevision', 64251,
+		}),
+		PlaceObj('AnimMoment', {
+			'Type', "FootLeft",
+			'Time', 164,
+			'AnimRevision', 64251,
+		}),
+		PlaceObj('AnimMoment', {
+			'Type', "hit",
+			'Time', 471,
+			'AnimRevision', 64286,
+		}),
+		PlaceObj('AnimMoment', {
+			'Type', "FootLeft",
+			'Time', 1337,
+			'AnimRevision', 64286,
+		}),
+	},
+	group = "Male",
+	id = "mk_Standing_Attack_Forward3",
 })
 
 PlaceObj('AnimMetadata', {
@@ -43760,18 +43905,18 @@ PlaceObj('AnimMetadata', {
 	Moments = {
 		PlaceObj('AnimMoment', {
 			'Type', "hit",
-			'Time', 703,
-			'AnimRevision', 57945,
+			'Time', 458,
+			'AnimRevision', 64329,
 		}),
 		PlaceObj('AnimMoment', {
 			'Type', "FootRight",
-			'Time', 1365,
-			'AnimRevision', 57945,
+			'Time', 1149,
+			'AnimRevision', 64329,
 		}),
 		PlaceObj('AnimMoment', {
 			'Type', "FootLeft",
-			'Time', 1451,
-			'AnimRevision', 57945,
+			'Time', 1150,
+			'AnimRevision', 64329,
 		}),
 	},
 	group = "Male",
@@ -43782,22 +43927,54 @@ PlaceObj('AnimMetadata', {
 	Moments = {
 		PlaceObj('AnimMoment', {
 			'Type', "FootLeft",
-			'Time', 201,
-			'AnimRevision', 60342,
-		}),
-		PlaceObj('AnimMoment', {
-			'Type', "FootLeft",
-			'Time', 668,
-			'AnimRevision', 60342,
+			'Time', 436,
+			'AnimRevision', 64329,
 		}),
 		PlaceObj('AnimMoment', {
 			'Type', "hit",
-			'Time', 703,
-			'AnimRevision', 60342,
+			'Time', 529,
+			'AnimRevision', 64329,
+		}),
+		PlaceObj('AnimMoment', {
+			'Type', "FootLeft",
+			'Time', 998,
+			'AnimRevision', 64329,
 		}),
 	},
 	group = "Male",
 	id = "nw_Standing_Attack_Forward2",
+})
+
+PlaceObj('AnimMetadata', {
+	Moments = {
+		PlaceObj('AnimMoment', {
+			'Type', "FootLeft",
+			'Time', 191,
+			'AnimRevision', 999999998,
+		}),
+		PlaceObj('AnimMoment', {
+			'Type', "hit",
+			'Time', 388,
+			'AnimRevision', 999999998,
+		}),
+		PlaceObj('AnimMoment', {
+			'Type', "FootRight",
+			'Time', 408,
+			'AnimRevision', 999999998,
+		}),
+		PlaceObj('AnimMoment', {
+			'Type', "FootRight",
+			'Time', 1076,
+			'AnimRevision', 999999998,
+		}),
+		PlaceObj('AnimMoment', {
+			'Type', "FootLeft",
+			'Time', 1268,
+			'AnimRevision', 999999998,
+		}),
+	},
+	group = "Male",
+	id = "nw_Standing_Attack_Forward3",
 })
 
 PlaceObj('AnimMetadata', {

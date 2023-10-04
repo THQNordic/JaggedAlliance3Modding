@@ -420,7 +420,7 @@ PlaceObj('Conversation', {
 					return not quest.ChimurengaDead and not quest.ChimurengaEnemy and not quest.ChimurengaLeave
 				end,
 			}),
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('UnitSquadHasItem', {
 						ItemId = "Pamphlets",

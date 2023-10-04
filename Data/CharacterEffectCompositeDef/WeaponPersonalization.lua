@@ -23,13 +23,11 @@ PlaceObj('CharacterEffectCompositeDef', {
 	'Comment', "Vicki - item repair with time; Fully modded bonus",
 	'object_class', "Perk",
 	'msg_reactions', {
-		PlaceObj('MsgReaction', {
+		PlaceObj('MsgActorReaction', {
 			Event = "NewHour",
 			Handler = function (self)
-				local reaction_idx = table.find(self.msg_reactions or empty_table, "Event", "NewHour")
-				if not reaction_idx then return end
 				
-				local function exec(self)
+				local function exec(self, reaction_actor)
 				local unit = gv_UnitData.Vicki
 				unit = unit.HireStatus == "Hired" and unit
 				if unit then
@@ -49,25 +47,26 @@ PlaceObj('CharacterEffectCompositeDef', {
 					end
 				end
 				end
-				local id = GetCharacterEffectId(self)
 				
-				if id then
-					local objs = {}
-					for session_id, data in pairs(gv_UnitData) do
-						local obj = g_Units[session_id] or data
-						if obj:HasStatusEffect(id) then
-							objs[session_id] = obj
-						end
-					end
-					for _, obj in sorted_pairs(objs) do
-						exec(self)
-					end
-				else
-					exec(self)
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[1]
+				if not reaction_def or reaction_def.Event ~= "NewHour" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
+					local reaction_actor
+					exec(self, reaction_actor)
 				end
 				
+				
+				local actors = self:GetReactionActors("NewHour", reaction_def, nil)
+				for _, reaction_actor in ipairs(actors) do
+					if self:VerifyReaction("NewHour", reaction_def, reaction_actor, nil) then
+						exec(self, reaction_actor)
+					end
+				end
 			end,
-			HandlerCode = function (self)
+			HandlerCode = function (self, reaction_actor)
 				local unit = gv_UnitData.Vicki
 				unit = unit.HireStatus == "Hired" and unit
 				if unit then
@@ -85,6 +84,70 @@ PlaceObj('CharacterEffectCompositeDef', {
 							item.Condition = item.Condition + conditionPerHour
 						end
 					end
+				end
+			end,
+		}),
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "attacker",
+			Event = "CalcBaseDamage",
+			Handler = function (self, attacker, weapon, target, data)
+				
+				local function exec(self, attacker, weapon, target, data)
+				if IsKindOf(weapon, "Firearm") and weapon:IsFullyModified() then
+					local value = self:ResolveValue("baseDamageBonus")
+					data.base_damage = data.base_damage + value
+					data.breakdown[#data.breakdown + 1] = { name = self.DisplayName, value = value }
+				end
+				end
+				
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[2]
+				if not reaction_def or reaction_def.Event ~= "CalcBaseDamage" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
+					exec(self, attacker, weapon, target, data)
+				end
+				
+				if self:VerifyReaction("CalcBaseDamage", reaction_def, attacker, attacker, weapon, target, data) then
+					exec(self, attacker, weapon, target, data)
+				end
+			end,
+			HandlerCode = function (self, attacker, weapon, target, data)
+				if IsKindOf(weapon, "Firearm") and weapon:IsFullyModified() then
+					local value = self:ResolveValue("baseDamageBonus")
+					data.base_damage = data.base_damage + value
+					data.breakdown[#data.breakdown + 1] = { name = self.DisplayName, value = value }
+				end
+			end,
+		}),
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "attacker",
+			Event = "GatherCritChanceModifications",
+			Handler = function (self, attacker, target, action_id, weapon, data)
+				
+				local function exec(self, attacker, target, action_id, weapon, data)
+				if IsKindOf(data.weapon, "Firearm") and data.weapon:IsFullyModified() then
+					data.crit_chance = data.crit_chance + self:ResolveValue("critChanceBonus")
+				end
+				end
+				
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[3]
+				if not reaction_def or reaction_def.Event ~= "GatherCritChanceModifications" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
+					exec(self, attacker, target, action_id, weapon, data)
+				end
+				
+				if self:VerifyReaction("GatherCritChanceModifications", reaction_def, attacker, attacker, target, action_id, weapon, data) then
+					exec(self, attacker, target, action_id, weapon, data)
+				end
+			end,
+			HandlerCode = function (self, attacker, target, data)
+				if IsKindOf(data.weapon, "Firearm") and data.weapon:IsFullyModified() then
+					data.crit_chance = data.crit_chance + self:ResolveValue("critChanceBonus")
 				end
 			end,
 		}),

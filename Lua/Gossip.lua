@@ -373,3 +373,7 @@ end
 function GossipVR(response_data, unitName)
 	NetGossip("VoiceResponse", "Play", response_data.id, response_data.group, unitName, GetCurrentPlaytime(), Game and Game.CampaignTime)
 end
+
+function OnMsg.GenerateLoot(loot_def, items, result)
+	NetGossip("GenerateLoot", GameTime(), loot_def.id, table.imap(items, "class"), GetCurrentPlaytime(), Game and Game.CampaignTime)
+end

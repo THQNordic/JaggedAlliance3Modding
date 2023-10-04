@@ -739,12 +739,18 @@ PlaceObj('RecipeDef', {
 			'item', "ProximityTNT",
 		}),
 		PlaceObj('RecipeIngredient', {
-			'item', "Combination_Detonator_Remote",
+			'item', "Wirecutter",
 		}),
 	},
 	ResultItems = {
 		PlaceObj('RecipeIngredient', {
-			'item', "RemoteTNT",
+			'item', "TNT",
+		}),
+		PlaceObj('RecipeIngredient', {
+			'item', "Wirecutter",
+		}),
+		PlaceObj('RecipeIngredient', {
+			'item', "Combination_Detonator_Proximity",
 		}),
 	},
 	group = "Explosives",

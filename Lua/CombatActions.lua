@@ -42,17 +42,32 @@ function CombatActionCannotBeStarted(action_id, unit)
 	return false
 end
 
+function NetStartActionCanceled(action_id, unit)
+	if unit and unit.aim_action_id == action_id then
+		NetSyncEvent("Aim", unit)
+	end
+end
+
+function ActionCanceled(action_id, unit)
+	if unit and unit.aim_action_id == action_id then
+		unit:SetAimTarget()
+	end
+end
+
 function NetStartCombatAction(action_id, unit, ap, args, ...)
 	local net_cmd = NetStartCombatActions[action_id]
 	-- action_id ~= "MoveItems": temporary fix for not being able to execute many MoveItems actions one after another
 	if action_id ~= "MoveItems" and net_cmd and net_cmd.unit == unit and net_cmd.ap == ap then
+		NetStartActionCanceled(action_id, unit)
 		return		-- already registered to travel the network, skip it
 	end
 	if g_UnitAwarenessPending then
+		NetStartActionCanceled(action_id, unit)
 		return -- don't start new combat actions while there are units waiting to become aware
 	end
 	
 	if CombatActionCannotBeStarted(action_id, unit) then
+		NetStartActionCanceled(action_id, unit)
 		return
 	end
 	
@@ -60,14 +75,16 @@ function NetStartCombatAction(action_id, unit, ap, args, ...)
 		-- Unit became uncontrollable, it probably died
 		-- This can happen when spamming commands and the unit dies
 		if unit and not unit:CanBeControlled() then
+			NetStartActionCanceled(action_id, unit)
 			return
 		end
-		
 		if not IsNetPlayerTurn() or g_Combat:IsLocalPlayerEndTurn() then
+			NetStartActionCanceled(action_id, unit)
 			return
 		end
 		if unit then
 			if not ap or ap < 0 or not unit:UIHasAP(ap, action_id, args) then
+				NetStartActionCanceled(action_id, unit)
 				return false
 			end
 		end
@@ -113,10 +130,12 @@ end
 
 function NetSyncEvents.StartCombatAction(player_id, action_id, unit, ap, ...)
 	if not g_Combat ~= not ap then
+		ActionCanceled(action_id, unit)
 		return -- combat mode changed
 	end
 	if g_Combat then
 		if not IsNetPlayerTurn(player_id) then
+			ActionCanceled(action_id, unit)
 			return
 		end
 	end
@@ -181,19 +200,7 @@ function RunCombatAction(action_id, unit, ap, ...)
 		end
 		if action.ActivePauseBehavior == "queue" then
 			if IsActivePaused() then
-				if unit.queued_action_id then
-					if action_id ~= unit.queued_action_id then
-						CreateGameTimeThread(function() 
-							-- CombatActionEnd clears this so we need to wait it (through multiple thread schedules/msgs) before setting the new value
-							while unit.queued_action_id do
-								Sleep(0)
-							end
-							unit:SetQueuedAction(action_id)
-						end)
-					end
-				else
-					unit:SetQueuedAction(action_id)
-				end
+				unit:SetQueuedAction(action_id)
 			end
 		elseif action.ActivePauseBehavior == "unpause" then
 			if IsActivePaused() then
@@ -309,6 +316,7 @@ function InterruptPlayerActions(player_id)
 			interrupted = true
 		end
 	end
+	ShowTacticalNotification("actionInterrupted")
 	if interrupted and g_Combat and GetInGameInterfaceMode() ~= "IModeCombatMovement" then
 		SetInGameInterfaceMode("IModeCombatMovement")
 	end
@@ -614,10 +622,7 @@ function CombatActionAttackStart(self, units, args, mode, noChangeAction)
 		
 		-- It is possible for the unit to have been deselected in all our waiting.
 		-- Of for the action to have been disabled.
-		local state = unit.ui_actions[self.id]
-		if self.id == "MarkTarget" or self.id == "MGBurstFire" then
-			state = self:GetUIState(units)
-		end
+		local state = self:GetUIState(units)
 		if not SelectedObj or state ~= "enabled" then
 			return
 		end
@@ -712,8 +717,9 @@ function CombatActionInteractionGetCost(self, unit, args)
 	if args and args.goto_pos ~= false then
 		local pos = args.goto_pos or target and unit:GetInteractionPosWith(target)
 		goto_ap = pos and CombatActions.Move:GetAPCost(unit, { goto_pos = pos })
+		args.ap_cost_breakdown = { move_cost = goto_ap }
 		if not goto_ap or goto_ap < 0 then
-			return -1
+			return -1, 0
 		end
 		--goto_ap = Max(0, goto_ap - Max(0, unit.free_move_ap))
 	end
@@ -939,10 +945,10 @@ end
 function CombatActionsAppendFreeAimDescription(action, unit, descr, ignore_check)
 	if ignore_check or UIAnyEnemyAttackGood() then
 		if GetUIStyleGamepad() then
-			local image_path, scale = GetPlatformSpecificImagePath("ButtonX")
+			local image_path, scale = GetPlatformSpecificImagePath("LeftThumbClick")
 			local image_path2, scale2 = GetPlatformSpecificImagePath("RightTrigger")
 			local imageCombined = Untranslated("<image " .. image_path2 .. ">+<image " .. image_path .. ">")
-			descr = descr .. T{434227846947, "<newline><newline><flavor>[<shortcut>] Free Aim Mode</flavor>", shortcut = imageCombined}
+			descr = descr .. T{714791806470, "<newline><newline><flavor><shortcut> Free Aim Mode</flavor>", shortcut = imageCombined}
 		else
 			local text = GetShortcutButtonT("actionFreeAim")
 			descr = descr .. T{434227846947, "<newline><newline><flavor>[<shortcut>] Free Aim Mode</flavor>", shortcut = text}
@@ -1006,26 +1012,11 @@ end
 
 
 function GetUnitDefaultFiringModeActionFromMetaAction(unit, metaAction, nonUnitDefault)
-	local defaultMode = false
-	local firingModes = {}
-	local metaId = metaAction.id
-	local actionCache = unit.ui_actions or {}
-	local defaultMode = CombatActions[actionCache[metaId .. "default"]]
-
-	ForEachPreset("CombatAction", function(def)
-		if def.FiringModeMember == metaId and actionCache[def.id] ~= nil then
-			firingModes[#firingModes + 1] = def
-		end
-	end)
-
+	local def_id, actions = unit:ResolveDefaultFiringModeAction(metaAction, true)
 	if nonUnitDefault then
-		return defaultMode, firingModes
+		return actions and actions[1], actions
 	end
-	
-	if unit.lastFiringMode and unit.ui_actions[unit.lastFiringMode] == "enabled" and table.find(firingModes, "id", unit.lastFiringMode) then
-		defaultMode = CombatActions[unit.lastFiringMode]
-	end
-	return defaultMode, firingModes
+	return CombatActions[def_id], actions
 end
 
 local dev_shortcuts
@@ -1078,7 +1069,7 @@ function GetUnitWeapons(unit, otherSet)
 	if not unit then return empty_table end
 	
 	local weps = otherSet and GetOtherWeaponSet(unit.current_weapon) or unit.current_weapon
-	local items = unit:GetItemsInSlot(weps)
+	local items = unit:GetItemsInWeaponSlot(weps)
 	if not otherSet then
 		-- Things such as manning an emplacement change the active weapon without
 		-- being equipped through the inventory. If the active weapon returned is
@@ -1129,8 +1120,9 @@ function CombatActionTargetFilters.MGBurstFire(target, units)
 	local overwatch = g_Overwatch[attacker]
 	if overwatch and overwatch.permanent then
 		-- only fire in the cone when set
-		local angle = overwatch.orient or CalcOrientation(attacker:GetPos(), overwatch.target_pos)
-		return CheckLOSRange(target, attacker, overwatch.dist, attacker.stance, overwatch.cone_angle, angle)
+		local angle = overwatch.orient or CalcOrientation(attacker, overwatch.target_pos)
+		local los_any = CheckLOSRange(target, attacker, overwatch.dist, attacker.stance, overwatch.cone_angle, angle)
+		return los_any
 	end	
 	return true
 end

@@ -14,25 +14,15 @@ PlaceObj('Achievement', {
 
 PlaceObj('Achievement', {
 	SortKey = 1000,
-	description = T(810430241463, --[[Achievement BloodRain description (limited to 100 characters on XBOX)]] "Dealt <target> damage to enemies in one turn."),
+	description = T(810430241463, --[[Achievement BloodRain description (limited to 100 characters on XBOX)]] "Dealt 1000 damage to enemies in one turn."),
 	display_name = T(907749527147, --[[Achievement BloodRain display_name]] "Blood Rain"),
 	group = "Combat",
-	how_to = T(431654490364, --[[Achievement BloodRain how_to (limited to 100 characters on XBOX)]] "Deal <target> damage to enemies in one turn."),
+	how_to = T(431654490364, --[[Achievement BloodRain how_to (limited to 100 characters on XBOX)]] "Deal 1000 damage to enemies in one turn."),
 	id = "BloodRain",
 	msg_reactions = {
 		PlaceObj('MsgReaction', {
 			Event = "DamageDone",
 			Handler = function (self, attacker, target, dmg, hit_descr)
-				if GetAchievementFlags(self.id) then return end
-				
-				if IsMerc(attacker) and attacker:IsOnEnemySide(target) and dmg > 0 then
-					gv_Achievements[self.id] = (gv_Achievements[self.id] or 0) + dmg
-					if gv_Achievements[self.id] >= self.target then
-						AchievementUnlock(self.id)
-					end
-				end
-			end,
-			HandlerCode = function (self, attacker, target, dmg, hit_descr)
 				if GetAchievementFlags(self.id) then return end
 				
 				if IsMerc(attacker) and attacker:IsOnEnemySide(target) and dmg > 0 then
@@ -50,22 +40,10 @@ PlaceObj('Achievement', {
 				
 				gv_Achievements[self.id] = 0
 			end,
-			HandlerCode = function (self, teamEnded)
-				if GetAchievementFlags(self.id) then return end
-				
-				gv_Achievements[self.id] = 0
-			end,
 		}),
 		PlaceObj('MsgReaction', {
 			Event = "Attack",
 			Handler = function (self, action, results, attack_args, combat_starting)
-				if GetAchievementFlags(self.id) then return end
-				
-				if not combat_starting and not g_Combat then
-					gv_Achievements[self.id] = 0
-				end
-			end,
-			HandlerCode = function (self, action, results, attack_args, combat_starting)
 				if GetAchievementFlags(self.id) then return end
 				
 				if not combat_starting and not g_Combat then
@@ -83,34 +61,15 @@ PlaceObj('Achievement', {
 PlaceObj('Achievement', {
 	Comment = "current player",
 	SortKey = 1000,
-	description = T(911958725547, --[[Achievement BornKiller description (limited to 100 characters on XBOX)]] "Killed <target> enemies in one turn with a single merc."),
+	description = T(911958725547, --[[Achievement BornKiller description (limited to 100 characters on XBOX)]] "Killed 5 enemies in one turn with a single merc."),
 	display_name = T(365161191013, --[[Achievement BornKiller display_name]] "Born Killer"),
 	group = "Combat",
-	how_to = T(152740288772, --[[Achievement BornKiller how_to (limited to 100 characters on XBOX)]] "Kill <target> enemies in one turn with a single merc."),
+	how_to = T(152740288772, --[[Achievement BornKiller how_to (limited to 100 characters on XBOX)]] "Kill 5 enemies in one turn with a single merc."),
 	id = "BornKiller",
 	msg_reactions = {
 		PlaceObj('MsgReaction', {
 			Event = "OnAttack",
 			Handler = function (self, attacker, action, target, results, attack_args)
-				if GetAchievementFlags(self.id) then return end
-				if g_CageFighting then return end
-				
-				if IsMerc(attacker) and attacker.ControlledBy == netUniqueId then
-					local kills = EnemiesKilled(attacker, results)
-					if kills > 0 then
-						local state = GetAccountCurrentGameAchievementState(self.id) or {}
-						local mercId = attacker.session_id
-						state[mercId] = (state[mercId] or 0) + kills
-						
-						if state[mercId] >= self.target then
-							AchievementUnlock(self.id)
-						end
-						
-						SetAccountCurrentGameAchievementState(self.id, state)
-					end
-				end
-			end,
-			HandlerCode = function (self, attacker, action, target, results, attack_args)
 				if GetAchievementFlags(self.id) then return end
 				if g_CageFighting then return end
 				
@@ -137,22 +96,10 @@ PlaceObj('Achievement', {
 				
 				SetAccountCurrentGameAchievementState(self.id, {})
 			end,
-			HandlerCode = function (self, teamEnded)
-				if GetAchievementFlags(self.id) then return end
-				
-				SetAccountCurrentGameAchievementState(self.id, {})
-			end,
 		}),
 		PlaceObj('MsgReaction', {
 			Event = "Attack",
 			Handler = function (self, action, results, attack_args, combat_starting)
-				if GetAchievementFlags(self.id) then return end
-				
-				if not combat_starting and not g_Combat then
-					SetAccountCurrentGameAchievementState(self.id, {})
-				end
-			end,
-			HandlerCode = function (self, action, results, attack_args, combat_starting)
 				if GetAchievementFlags(self.id) then return end
 				
 				if not combat_starting and not g_Combat then
@@ -184,13 +131,6 @@ PlaceObj('Achievement', {
 					AchievementUnlock(self.id)
 				end
 			end,
-			HandlerCode = function (self, campaignId)
-				if GetAchievementFlags(self.id) then return end
-				
-				if gv_Achievements[self.id] ~= "failed" then
-					AchievementUnlock(self.id)
-				end
-			end,
 		}),
 		PlaceObj('MsgReaction', {
 			Event = "UnitDowned",
@@ -201,24 +141,10 @@ PlaceObj('Achievement', {
 					gv_Achievements[self.id] = "failed"
 				end
 			end,
-			HandlerCode = function (self, unit)
-				if GetAchievementFlags(self.id) then return end
-				
-				if IsMerc(unit) then
-					gv_Achievements[self.id] = "failed"
-				end
-			end,
 		}),
 		PlaceObj('MsgReaction', {
 			Event = "UnitDied",
 			Handler = function (self, unit, killer, results)
-				if GetAchievementFlags(self.id) then return end
-				
-				if IsMerc(unit) then
-					gv_Achievements[self.id] = "failed"
-				end
-			end,
-			HandlerCode = function (self, unit, killer, results)
 				if GetAchievementFlags(self.id) then return end
 				
 				if IsMerc(unit) then
@@ -251,13 +177,6 @@ PlaceObj('Achievement', {
 					gv_Achievements[self.id] = false
 				end
 			end,
-			HandlerCode = function (self, attacker, target, dmg, hit_descr)
-				if GetAchievementFlags(self.id) then return end
-				
-				if IsMerc(target) and hit_descr.prev_hit_points and target.HitPoints < hit_descr.prev_hit_points then
-					gv_Achievements[self.id] = false
-				end
-			end,
 		}),
 		PlaceObj('MsgReaction', {
 			Event = "SectorSideChanged",
@@ -268,27 +187,10 @@ PlaceObj('Achievement', {
 					AchievementUnlock(self.id)
 				end
 			end,
-			HandlerCode = function (self, sectorId, oldSide, newSide)
-				if GetAchievementFlags(self.id) then return end
-				
-				if gv_Achievements[self.id] == sectorId and IsPlayerSide(newSide) then
-					AchievementUnlock(self.id)
-				end
-			end,
 		}),
 		PlaceObj('MsgReaction', {
 			Event = "EnterSector",
 			Handler = function (self, game_start, load_game)
-				if GetAchievementFlags(self.id) then return end
-				
-				if not game_start and not load_game then
-					local sector = gv_Sectors[gv_CurrentSectorId]
-					if sector.Guardpost and not IsPlayerSide(sector.Side) then
-						gv_Achievements[self.id] = gv_CurrentSectorId
-					end
-				end
-			end,
-			HandlerCode = function (self, game_start, load_game)
 				if GetAchievementFlags(self.id) then return end
 				
 				if not game_start and not load_game then
@@ -322,13 +224,6 @@ PlaceObj('Achievement', {
 					gv_Achievements[self.id] = false
 				end
 			end,
-			HandlerCode = function (self, attacker, action, target, results, attack_args)
-				if GetAchievementFlags(self.id) then return end
-				
-				if IsMerc(attacker) and not IsKindOf(results.weapon, "MeleeWeapon") then
-					gv_Achievements[self.id] = false
-				end
-			end,
 		}),
 		PlaceObj('MsgReaction', {
 			Event = "SectorSideChanged",
@@ -339,27 +234,10 @@ PlaceObj('Achievement', {
 					AchievementUnlock(self.id)
 				end
 			end,
-			HandlerCode = function (self, sectorId, oldSide, newSide)
-				if GetAchievementFlags(self.id) then return end
-				
-				if gv_Achievements[self.id] == sectorId and IsPlayerSide(newSide) then
-					AchievementUnlock(self.id)
-				end
-			end,
 		}),
 		PlaceObj('MsgReaction', {
 			Event = "EnterSector",
 			Handler = function (self, game_start, load_game)
-				if GetAchievementFlags(self.id) then return end
-				
-				if not game_start and not load_game then
-					local sector = gv_Sectors[gv_CurrentSectorId]
-					if sector.Guardpost and not IsPlayerSide(sector.Side) then
-						gv_Achievements[self.id] = gv_CurrentSectorId
-					end
-				end
-			end,
-			HandlerCode = function (self, game_start, load_game)
 				if GetAchievementFlags(self.id) then return end
 				
 				if not game_start and not load_game then
@@ -381,10 +259,10 @@ PlaceObj('Achievement', {
 PlaceObj('Achievement', {
 	Comment = "current player",
 	SortKey = 1000,
-	description = T(851738195780, --[[Achievement NaturalSprinter description (limited to 100 characters on XBOX)]] "Moved a merc <target> tiles away in a single turn."),
+	description = T(851738195780, --[[Achievement NaturalSprinter description (limited to 100 characters on XBOX)]] "Moved a merc 35 tiles away in a single turn."),
 	display_name = T(729701469966, --[[Achievement NaturalSprinter display_name]] "Natural Sprinter"),
 	group = "Combat",
-	how_to = T(698490476872, --[[Achievement NaturalSprinter how_to (limited to 100 characters on XBOX)]] "Move a merc <target> tiles away in a single turn."),
+	how_to = T(698490476872, --[[Achievement NaturalSprinter how_to (limited to 100 characters on XBOX)]] "Move a merc 35 tiles away in a single turn."),
 	id = "NaturalSprinter",
 	msg_reactions = {
 		PlaceObj('MsgReaction', {
@@ -394,27 +272,10 @@ PlaceObj('Achievement', {
 				
 				SetAccountCurrentGameAchievementState(self.id, {})
 			end,
-			HandlerCode = function (self, team)
-				if GetAchievementFlags(self.id) then return end
-				
-				SetAccountCurrentGameAchievementState(self.id, {})
-			end,
 		}),
 		PlaceObj('MsgReaction', {
 			Event = "UnitMovementDone",
 			Handler = function (self, unit, action_id, prev_pos)
-				if not g_Combat or not prev_pos or not IsMerc(unit) or unit.ControlledBy ~= netUniqueId then return end
-				
-				local state = GetAccountCurrentGameAchievementState(self.id) or {}
-				state[unit.session_id] = (state[unit.session_id] or 0) + (unit:GetDist(prev_pos) / const.SlabSizeX)
-				
-				if state[unit.session_id] >= self.target then
-					AchievementUnlock(self.id)
-				end
-				
-				SetAccountCurrentGameAchievementState(self.id, state)
-			end,
-			HandlerCode = function (self, unit, action_id, prev_pos)
 				if not g_Combat or not prev_pos or not IsMerc(unit) or unit.ControlledBy ~= netUniqueId then return end
 				
 				local state = GetAccountCurrentGameAchievementState(self.id) or {}
@@ -436,25 +297,15 @@ PlaceObj('Achievement', {
 
 PlaceObj('Achievement', {
 	SortKey = 1000,
-	description = T(164832430302, --[[Achievement Overwatchmen description (limited to 100 characters on XBOX)]] "Made <target> overwatch attacks in one turn."),
+	description = T(164832430302, --[[Achievement Overwatchmen description (limited to 100 characters on XBOX)]] "Made 10 overwatch attacks in one turn."),
 	display_name = T(996243104692, --[[Achievement Overwatchmen display_name]] "Overwatchmen"),
 	group = "Combat",
-	how_to = T(141359912587, --[[Achievement Overwatchmen how_to (limited to 100 characters on XBOX)]] "Make <target> overwatch attacks in one turn."),
+	how_to = T(141359912587, --[[Achievement Overwatchmen how_to (limited to 100 characters on XBOX)]] "Make 10 overwatch attacks in one turn."),
 	id = "Overwatchmen",
 	msg_reactions = {
 		PlaceObj('MsgReaction', {
 			Event = "OnAttack",
 			Handler = function (self, attacker, action, target, results, attack_args)
-				if GetAchievementFlags(self.id) then return end
-				
-				if IsMerc(attacker) and attack_args.opportunity_attack and attack_args.opportunity_attack_type == "Overwatch" then
-					gv_Achievements[self.id] = (gv_Achievements[self.id] or 0) + 1
-					if gv_Achievements[self.id] >= self.target then
-						AchievementUnlock(self.id)
-					end
-				end
-			end,
-			HandlerCode = function (self, attacker, action, target, results, attack_args)
 				if GetAchievementFlags(self.id) then return end
 				
 				if IsMerc(attacker) and attack_args.opportunity_attack and attack_args.opportunity_attack_type == "Overwatch" then
@@ -472,11 +323,6 @@ PlaceObj('Achievement', {
 				
 				gv_Achievements[self.id] = 0
 			end,
-			HandlerCode = function (self, teamEnded)
-				if GetAchievementFlags(self.id) then return end
-				
-				gv_Achievements[self.id] = 0
-			end,
 		}),
 		PlaceObj('MsgReaction', {
 			Event = "CombatEnd",
@@ -485,22 +331,10 @@ PlaceObj('Achievement', {
 				
 				gv_Achievements[self.id] = 0
 			end,
-			HandlerCode = function (self, teamEnded)
-				if GetAchievementFlags(self.id) then return end
-				
-				gv_Achievements[self.id] = 0
-			end,
 		}),
 		PlaceObj('MsgReaction', {
 			Event = "Attack",
 			Handler = function (self, action, results, attack_args, combat_starting, attacker, target)
-				if GetAchievementFlags(self.id) then return end
-				
-				if not combat_starting and not g_Combat then
-					gv_Achievements[self.id] = 0
-				end
-			end,
-			HandlerCode = function (self, action, results, attack_args, combat_starting, attacker, target)
 				if GetAchievementFlags(self.id) then return end
 				
 				if not combat_starting and not g_Combat then
@@ -536,17 +370,6 @@ PlaceObj('Achievement', {
 					end
 				end
 			end,
-			HandlerCode = function (self, attacker, action, target, results, attack_args)
-				if GetAchievementFlags(self.id) then return end
-				
-				if IsMerc(attacker) and not g_Combat then
-					local kills = EnemiesKilled(attacker, results)
-					gv_Achievements[self.id] = (gv_Achievements[self.id] or 0) + kills
-					if gv_Achievements[self.id] >= self.target then
-						AchievementUnlock(self.id)
-					end
-				end
-			end,
 		}),
 		PlaceObj('MsgReaction', {
 			Event = "EnterSector",
@@ -557,22 +380,10 @@ PlaceObj('Achievement', {
 					gv_Achievements[self.id] = 0
 				end
 			end,
-			HandlerCode = function (self, game_start, load_game)
-				if GetAchievementFlags(self.id) then return end
-				
-				if not game_start and not load_game then
-					gv_Achievements[self.id] = 0
-				end
-			end,
 		}),
 		PlaceObj('MsgReaction', {
 			Event = "CombatStart",
 			Handler = function (self, dynamic_data)
-				if GetAchievementFlags(self.id) then return end
-				
-				gv_Achievements[self.id] = 0
-			end,
-			HandlerCode = function (self, dynamic_data)
 				if GetAchievementFlags(self.id) then return end
 				
 				gv_Achievements[self.id] = 0
@@ -621,32 +432,6 @@ PlaceObj('Achievement', {
 					end
 				end
 			end,
-			HandlerCode = function (self, attacker, action, target, results, attack_args)
-				if GetAchievementFlags(self.id) then return end
-				if not g_Combat or not IsKindOf(target, "Unit") then return end
-				
-				if IsMerc(attacker) then
-					local crits = 0
-					if results.shots and #results.shots > 0 then
-						for _, shot in ipairs(results.shots) do
-							for _, hit in ipairs(shot.hits) do
-								if hit.critical and IsKindOf(hit.obj, "Unit") then
-									crits = crits + 1
-								end
-							end
-						end
-					else
-						if results.crit then
-							crits = crits + 1
-						end
-					end
-					
-					gv_Achievements[self.id] = (gv_Achievements[self.id] or 0) + crits
-					if gv_Achievements[self.id] >= self.target then
-						AchievementUnlock(self.id)
-					end
-				end
-			end,
 		}),
 		PlaceObj('MsgReaction', {
 			Event = "TurnEnded",
@@ -655,20 +440,10 @@ PlaceObj('Achievement', {
 				
 				gv_Achievements[self.id] = 0
 			end,
-			HandlerCode = function (self, teamEnded)
-				if GetAchievementFlags(self.id) then return end
-				
-				gv_Achievements[self.id] = 0
-			end,
 		}),
 		PlaceObj('MsgReaction', {
 			Event = "CombatEnd",
 			Handler = function (self, test_combat, combat, anyEnemies)
-				if GetAchievementFlags(self.id) then return end
-				
-				gv_Achievements[self.id] = 0
-			end,
-			HandlerCode = function (self, test_combat, combat, anyEnemies)
 				if GetAchievementFlags(self.id) then return end
 				
 				gv_Achievements[self.id] = 0
@@ -692,26 +467,6 @@ PlaceObj('Achievement', {
 		PlaceObj('MsgReaction', {
 			Event = "SectorSideChanged",
 			Handler = function (self, sectorId, oldSide, newSide)
-				if GetAchievementFlags(self.id) then return end
-				
-				local sector = gv_Sectors[sectorId]
-				if IsPlayerSide(newSide) and sector.Mine then
-					local totalMines = 0
-					local minesControlled = 0
-					for _, s in pairs(gv_Sectors) do
-						if s.Mine then
-							totalMines = totalMines + 1
-							if IsPlayerSide(s.Side) then
-								minesControlled = minesControlled + 1
-							end 
-						end
-					end
-					if minesControlled >= totalMines then
-						AchievementUnlock(self.id)
-					end
-				end
-			end,
-			HandlerCode = function (self, sectorId, oldSide, newSide)
 				if GetAchievementFlags(self.id) then return end
 				
 				local sector = gv_Sectors[sectorId]
@@ -764,22 +519,6 @@ PlaceObj('Achievement', {
 					end
 				end
 			end,
-			HandlerCode = function (self, sectorId, oldSide, newSide)
-				if GetAchievementFlags(self.id) then return end
-				
-				local sector = gv_Sectors[sectorId]
-				if IsPlayerSide(newSide) and sector.Guardpost then
-					local guardpostsControlled = 0
-					for _, s in pairs(gv_Sectors) do
-						if s.Guardpost and IsPlayerSide(s.Side) then
-							guardpostsControlled = guardpostsControlled + 1
-						end
-					end
-					if guardpostsControlled >= self.target then
-						AchievementUnlock(self.id)
-					end
-				end
-			end,
 		}),
 	},
 	ps4_id = 11,
@@ -800,28 +539,6 @@ PlaceObj('Achievement', {
 		PlaceObj('MsgReaction', {
 			Event = "OnAttack",
 			Handler = function (self, attacker, action, target, results, attack_args)
-				if GetAchievementFlags(self.id) then return end
-				
-				if IsMerc(attacker) and attacker.ControlledBy == netUniqueId and results.shots and #results.shots > 0 and results.clear_attacks < #results.shots and EnemiesKilled(attacker, results) > 0 then
-					local wallHit
-					for _, shot in ipairs(results.shots) do
-						for _, hit in ipairs(shot.hits) do
-							if hit.obj and IsKindOf(hit.obj, "WallSlab") then
-								wallHit = true
-								break
-							end
-						end
-						if wallHit then
-							break
-						end
-					end
-				
-					if wallHit then
-						AchievementUnlock(self.id)
-					end
-				end
-			end,
-			HandlerCode = function (self, attacker, action, target, results, attack_args)
 				if GetAchievementFlags(self.id) then return end
 				
 				if IsMerc(attacker) and attacker.ControlledBy == netUniqueId and results.shots and #results.shots > 0 and results.clear_attacks < #results.shots and EnemiesKilled(attacker, results) > 0 then
@@ -884,29 +601,6 @@ PlaceObj('Achievement', {
 					end
 				end
 			end,
-			HandlerCode = function (self, attacker, action, target, results, attack_args)
-				if GetAchievementFlags(self.id) then return end
-				
-				if IsMerc(attacker) and attacker.ControlledBy == netUniqueId then
-					local kills = {}
-					for _, shot in ipairs(results.shots) do
-						for _, hit in ipairs(shot.hits) do
-							if hit.obj and attacker:IsOnEnemySide(hit.obj) and hit.spot_group == "Head" and table.find(results.killed_units or {}, hit.obj) then
-								table.insert_unique(kills, hit.obj.session_id)
-							end
-						end
-					end
-				
-					if #kills > 0 then
-						local state = GetAccountCurrentGameAchievementState(self.id) or 0
-						state = state + #kills
-						if state >= self.target then
-							AchievementUnlock(self.id)
-						end
-						SetAccountCurrentGameAchievementState(self.id, state)
-					end
-				end
-			end,
 		}),
 	},
 	ps4_id = 13,
@@ -927,23 +621,6 @@ PlaceObj('Achievement', {
 		PlaceObj('MsgReaction', {
 			Event = "OnAttack",
 			Handler = function (self, attacker, action, target, results, attack_args)
-				if GetAchievementFlags(self.id) then return end
-				
-				if IsMerc(attacker) and attacker.ControlledBy == netUniqueId and results.weapon and results.weapon.WeaponType then
-					local kills = EnemiesKilled(attacker, results)
-					if kills > 0 then
-						local state = GetAccountCurrentGameAchievementState(self.id) or {}
-						table.insert_unique(state, results.weapon.WeaponType)
-						
-						if #state >= self.target then
-							AchievementUnlock(self.id)
-						end
-						
-						SetAccountCurrentGameAchievementState(self.id, state)
-					end
-				end
-			end,
-			HandlerCode = function (self, attacker, action, target, results, attack_args)
 				if GetAchievementFlags(self.id) then return end
 				
 				if IsMerc(attacker) and attacker.ControlledBy == netUniqueId and results.weapon and results.weapon.WeaponType then
@@ -985,13 +662,6 @@ PlaceObj('Achievement', {
 					AchievementUnlock(self.id)
 				end
 			end,
-			HandlerCode = function (self, sector, bNoVoice, playerAttacking, playerWon, isAutoResolve)
-				if GetAchievementFlags(self.id) then return end
-				
-				if not playerAttacking and playerWon and #GetMilitiaSquads(sector) > 0 and not isAutoResolve then
-					AchievementUnlock(self.id)
-				end
-			end,
 		}),
 	},
 	ps4_id = 15,
@@ -1016,24 +686,10 @@ PlaceObj('Achievement', {
 					AchievementUnlock(self.id)
 				end
 			end,
-			HandlerCode = function (self, unit, item, slotName, pos)
-				if GetAchievementFlags(self.id) then return end
-				
-				if IsMerc(unit) and item.class == "DiamondBriefcase" and item.extra_tag == "dynamic-db" then
-					AchievementUnlock(self.id)
-				end
-			end,
 		}),
 		PlaceObj('MsgReaction', {
 			Event = "CashInItem",
 			Handler = function (self, item)
-				if GetAchievementFlags(self.id) then return end
-				
-				if item.class == "DiamondBriefcase" and item.extra_tag == "dynamic-db" then
-					AchievementUnlock(self.id)
-				end
-			end,
-			HandlerCode = function (self, item)
 				if GetAchievementFlags(self.id) then return end
 				
 				if item.class == "DiamondBriefcase" and item.extra_tag == "dynamic-db" then
@@ -1070,19 +726,6 @@ PlaceObj('Achievement', {
 					end
 				end
 			end,
-			HandlerCode = function (self, attacker, action, target, results, attack_args)
-				if GetAchievementFlags(self.id) then return end
-				
-				if IsMerc(attacker) then
-					local kills = EnemiesKilled(attacker, results)
-					if kills > 0 then
-						gv_Achievements[self.id] = (gv_Achievements[self.id] or 0) + kills
-						if gv_Achievements[self.id] >= self.target then
-							AchievementUnlock(self.id)
-						end
-					end
-				end
-			end,
 		}),
 		PlaceObj('MsgReaction', {
 			Event = "TurnEnded",
@@ -1091,22 +734,10 @@ PlaceObj('Achievement', {
 				
 				gv_Achievements[self.id] = 0
 			end,
-			HandlerCode = function (self, teamEnded)
-				if GetAchievementFlags(self.id) then return end
-				
-				gv_Achievements[self.id] = 0
-			end,
 		}),
 		PlaceObj('MsgReaction', {
 			Event = "Attack",
 			Handler = function (self, action, results, attack_args, combat_starting)
-				if GetAchievementFlags(self.id) then return end
-				
-				if not combat_starting and not g_Combat then
-					gv_Achievements[self.id] = 0
-				end
-			end,
-			HandlerCode = function (self, action, results, attack_args, combat_starting)
 				if GetAchievementFlags(self.id) then return end
 				
 				if not combat_starting and not g_Combat then
@@ -1138,13 +769,6 @@ PlaceObj('Achievement', {
 					AchievementUnlock(self.id)
 				end
 			end,
-			HandlerCode = function (self, mercId, price, days, alreadyHired)
-				if GetAchievementFlags(self.id) then return end
-				local merc = gv_UnitData[mercId]
-				if merc and merc.Tier == "Legendary" then
-					AchievementUnlock(self.id)
-				end
-			end,
 		}),
 	},
 	ps4_id = 18,
@@ -1155,22 +779,15 @@ PlaceObj('Achievement', {
 PlaceObj('Achievement', {
 	Comment = "current player",
 	SortKey = 1000,
-	description = T(842369104667, --[[Achievement ModdingExpert description (limited to 100 characters on XBOX)]] "Installed <target> mods on a single weapon."),
+	description = T(842369104667, --[[Achievement ModdingExpert description (limited to 100 characters on XBOX)]] "Installed 7 mods on a single weapon."),
 	display_name = T(424158225526, --[[Achievement ModdingExpert display_name]] "Modding Expert"),
 	group = "Direction",
-	how_to = T(175006091972, --[[Achievement ModdingExpert how_to (limited to 100 characters on XBOX)]] "Install <target> mods on a single weapon."),
+	how_to = T(175006091972, --[[Achievement ModdingExpert how_to (limited to 100 characters on XBOX)]] "Install 7 mods on a single weapon."),
 	id = "ModdingExpert",
 	msg_reactions = {
 		PlaceObj('MsgReaction', {
-			Event = "WeaponModifiedSuccess",
+			Event = "WeaponModifiedSuccessSync",
 			Handler = function (self, weapon, owner, modAdded, mechanic)
-				if GetAchievementFlags(self.id) then return end
-				
-				if mechanic.ControlledBy == netUniqueId and IsKindOf(weapon, "FirearmBase") and weapon:GetNumAttachedComponents() >= self.target then
-					AchievementUnlock(self.id)
-				end
-			end,
-			HandlerCode = function (self, weapon, owner, modAdded, mechanic)
 				if GetAchievementFlags(self.id) then return end
 				
 				if mechanic.ControlledBy == netUniqueId and IsKindOf(weapon, "FirearmBase") and weapon:GetNumAttachedComponents() >= self.target then
@@ -1202,13 +819,6 @@ PlaceObj('Achievement', {
 					AchievementUnlock(self.id)
 				end
 			end,
-			HandlerCode = function (self, mercId, price, days, alreadyHired)
-				if GetAchievementFlags(self.id) then return end
-				
-				if IsImpUnit(gv_UnitData[mercId]) then
-					AchievementUnlock(self.id)
-				end
-			end,
 		}),
 	},
 	ps4_id = 20,
@@ -1231,11 +841,6 @@ PlaceObj('Achievement', {
 				
 				AchievementUnlock(self.id)
 			end,
-			HandlerCode = function (self, sectorId)
-				if GetAchievementFlags(self.id) then return end
-				
-				AchievementUnlock(self.id)
-			end,
 		}),
 	},
 	ps4_id = 21,
@@ -1254,13 +859,6 @@ PlaceObj('Achievement', {
 		PlaceObj('MsgReaction', {
 			Event = "UnitLeveledUp",
 			Handler = function (self, unit)
-				if GetAchievementFlags(self.id) then return end
-				
-				if unit:GetLevel() >= 10 then
-					AchievementUnlock(self.id)
-				end
-			end,
-			HandlerCode = function (self, unit)
 				if GetAchievementFlags(self.id) then return end
 				
 				if unit:GetLevel() >= 10 then
@@ -1290,19 +888,7 @@ PlaceObj('Achievement', {
 				
 				if IsMerc(attacker) and attacker.ControlledBy == netUniqueId then
 					for _, unit in ipairs(killedUnits) do
-						if attacker:IsOnEnemySide(unit) and (attacker:GetDist(unit) / const.Scale.voxelSizeX) >= self.target then
-							AchievementUnlock(self.id)
-							break
-						end
-					end
-				end
-			end,
-			HandlerCode = function (self, attacker, killedUnits)
-				if GetAchievementFlags(self.id) then return end
-				
-				if IsMerc(attacker) and attacker.ControlledBy == netUniqueId then
-					for _, unit in ipairs(killedUnits) do
-						if attacker:IsOnEnemySide(unit) and (attacker:GetDist(unit) / const.Scale.voxelSizeX) >= self.target then
+						if IsValid(unit) and attacker:IsOnEnemySide(unit) and (attacker:GetDist(unit) / const.Scale.voxelSizeX) >= self.target then
 							AchievementUnlock(self.id)
 							break
 						end
@@ -1331,13 +917,6 @@ PlaceObj('Achievement', {
 		PlaceObj('MsgReaction', {
 			Event = "MercHireStatusChanged",
 			Handler = function (self, unitData, oldStatus, newStatus)
-				if GetAchievementFlags(self.id) then return end
-				
-				if unitData.session_id == "Spike" and newStatus == "Hired" then
-					AchievementUnlock(self.id)
-				end
-			end,
-			HandlerCode = function (self, unitData, oldStatus, newStatus)
 				if GetAchievementFlags(self.id) then return end
 				
 				if unitData.session_id == "Spike" and newStatus == "Hired" then
@@ -1387,30 +966,6 @@ PlaceObj('Achievement', {
 					end
 				end
 			end,
-			HandlerCode = function (self, attacker, action, target, results, attack_args)
-				if GetAchievementFlags(self.id) then return end
-				
-				if IsMerc(attacker) and attacker.ControlledBy == netUniqueId and results.shots and #results.shots > 0 then
-					for _, shot in ipairs(results.shots) do
-						local killedEnemy
-						local hitMerc
-						for _, hit in ipairs(shot.hits) do
-							if hit.obj and IsMerc(hit.obj) then
-								hitMerc = true
-							end
-							
-							if hit.obj and hit.enemy_hit and hit.damage and hit.prev_hit_points and hit.damage >= hit.prev_hit_points then
-								killedEnemy = true
-							end
-						end
-						
-						if killedEnemy and hitMerc then
-							AchievementUnlock(self.id)
-							return
-						end
-					end
-				end
-			end,
 		}),
 	},
 	ps4_id = 25,
@@ -1436,13 +991,6 @@ PlaceObj('Achievement', {
 					AchievementUnlock(self.id)
 				end
 			end,
-			HandlerCode = function (self, questId, varId, prevVal, newVal)
-				if GetAchievementFlags(self.id) then return end
-				
-				if questId == "Landsbach" and varId == "AllFightersBeaten" and newVal == true then
-					AchievementUnlock(self.id)
-				end
-			end,
 		}),
 	},
 	ps4_id = 26,
@@ -1462,18 +1010,6 @@ PlaceObj('Achievement', {
 		PlaceObj('MsgReaction', {
 			Event = "PhraseExecuted",
 			Handler = function (self, phraseId)
-				if GetAchievementFlags(self.id) then return end
-				
-				local phrase = GetPhrase(phraseId)
-				if phrase then
-					local psycho = CheckExecutedPhraseForPsycho(phrase) and 1 or 0
-					gv_Achievements[self.id] = (gv_Achievements[self.id] or 0) + psycho
-					if (gv_Achievements[self.id] or 0) >= self.target then
-						AchievementUnlock(self.id)
-					end
-				end
-			end,
-			HandlerCode = function (self, phraseId)
 				if GetAchievementFlags(self.id) then return end
 				
 				local phrase = GetPhrase(phraseId)
@@ -1511,13 +1047,6 @@ PlaceObj('Achievement', {
 					AchievementUnlock(self.id)
 				end
 			end,
-			HandlerCode = function (self, unitData, oldStatus, newStatus)
-				if GetAchievementFlags(self.id) then return end
-				
-				if unitData.session_id == "Gus" and newStatus == "Hired" then
-					AchievementUnlock(self.id)
-				end
-			end,
 		}),
 	},
 	ps4_grade = "silver",
@@ -1539,13 +1068,6 @@ PlaceObj('Achievement', {
 		PlaceObj('MsgReaction', {
 			Event = "OperationChanged",
 			Handler = function (self, unit, oldOperation, newOperation, prevProfession, interrupted)
-				if GetAchievementFlags(self.id) then return end
-				
-				if oldOperation.id == "AddictionTreatment" and not interrupted then
-					AchievementUnlock(self.id)
-				end
-			end,
-			HandlerCode = function (self, unit, oldOperation, newOperation, prevProfession, interrupted)
 				if GetAchievementFlags(self.id) then return end
 				
 				if oldOperation.id == "AddictionTreatment" and not interrupted then
@@ -1600,54 +1122,10 @@ PlaceObj('Achievement', {
 					AchievementUnlock(self.id)
 				end
 			end,
-			HandlerCode = function (self, questId, varId, prevVal, newVal)
-				if GetAchievementFlags(self.id) then return end
-				
-				-- "Hire Graaf as a mine foreman"
-				if questId == "DiamondRed" and varId == "GraafForeman" and newVal == true then
-					gv_Achievements[self.id] = (gv_Achievements[self.id] or 0) + 1
-				end
-				
-				-- "kill Lurch and take his shotgun"
-				if questId == "AyeMom" and varId == "GunTaken" and newVal == true then
-					local lurch =  gv_UnitData.NPC_Lurch
-					if lurch and lurch:IsDead() then
-						gv_Achievements[self.id] = (gv_Achievements[self.id] or 0) + 1
-					end
-				end
-				
-				-- "Meet Bastien in Refugee Camp and make him give you money"
-				if questId == "RefugeeBlues" and varId == "BastienShare" and newVal == true then
-					gv_Achievements[self.id] = (gv_Achievements[self.id] or 0) + 1
-				end
-				
-				-- "Be Boss Blaubert's partner"
-				if questId == "Luigi" and varId == "BossPartnership" and newVal == true then
-					gv_Achievements[self.id] = (gv_Achievements[self.id] or 0) + 1
-				end
-				
-				if (gv_Achievements[self.id] or 0) >= self.target then
-					AchievementUnlock(self.id)
-				end
-			end,
 		}),
 		PlaceObj('MsgReaction', {
 			Event = "SectorSideChanged",
 			Handler = function (self, sectorId, oldSide, newSide)
-				if GetAchievementFlags(self.id) then return end
-				
-				-- "Take over Maquis mine by force"
-				if sectorId == "C7_Underground" and IsPlayerSide(newSide) then
-					if GetQuestVar("PantagruelRebels", "MaquieEnemies") then
-						gv_Achievements[self.id] = (gv_Achievements[self.id] or 0) + 1
-					end
-				end
-				
-				if (gv_Achievements[self.id] or 0) >= self.target then
-					AchievementUnlock(self.id)
-				end
-			end,
-			HandlerCode = function (self, sectorId, oldSide, newSide)
 				if GetAchievementFlags(self.id) then return end
 				
 				-- "Take over Maquis mine by force"
@@ -1688,13 +1166,6 @@ PlaceObj('Achievement', {
 					AchievementUnlock(self.id)
 				end
 			end,
-			HandlerCode = function (self, attacker, action, target, results, attack_args)
-				if GetAchievementFlags(self.id) then return end
-				
-				if IsMerc(attacker) and attacker.ControlledBy == netUniqueId and results.shots and #results.shots == 1 and EnemiesKilled(attacker, results) >= 2 then
-					AchievementUnlock(self.id)
-				end
-			end,
 		}),
 	},
 	ps4_id = 31,
@@ -1715,18 +1186,6 @@ PlaceObj('Achievement', {
 		PlaceObj('MsgReaction', {
 			Event = "OnAttack",
 			Handler = function (self, attacker, action, target, results, attack_args)
-				if GetAchievementFlags(self.id) then return end
-				
-				if IsMerc(attacker) and attacker.ControlledBy == netUniqueId then
-					for _, hitData in ipairs(results) do
-						local obj = hitData.obj
-						if IsKindOf(obj, "Animal_Hen") and obj:IsDead() then
-							AchievementUnlock(self.id)
-						end
-					end
-				end
-			end,
-			HandlerCode = function (self, attacker, action, target, results, attack_args)
 				if GetAchievementFlags(self.id) then return end
 				
 				if IsMerc(attacker) and attacker.ControlledBy == netUniqueId then
@@ -1763,13 +1222,6 @@ PlaceObj('Achievement', {
 					AchievementUnlock(self.id)
 				end
 			end,
-			HandlerCode = function (self, questId, varId, prevVal, newVal)
-				if GetAchievementFlags(self.id) then return end
-				
-				if questId == "Landsbach" and varId == "GetRidOfDiesel" and newVal == true then
-					AchievementUnlock(self.id)
-				end
-			end,
 		}),
 	},
 	ps4_grade = "silver",
@@ -1796,13 +1248,6 @@ PlaceObj('Achievement', {
 					AchievementUnlock(self.id)
 				end
 			end,
-			HandlerCode = function (self, unit, item, slotName, pos)
-				if GetAchievementFlags(self.id) then return end
-				
-				if IsMerc(unit) and item.class == "TheGreenDiamond" then
-					AchievementUnlock(self.id)
-				end
-			end,
 		}),
 	},
 	ps4_id = 34,
@@ -1821,13 +1266,6 @@ PlaceObj('Achievement', {
 		PlaceObj('MsgReaction', {
 			Event = "QuestParamChanged",
 			Handler = function (self, questId, varId, prevVal, newVal)
-				if GetAchievementFlags(self.id) then return end
-				
-				if questId == "PantagruelDramas" and varId == "YoungHearts" and newVal == true then
-					AchievementUnlock(self.id)
-				end
-			end,
-			HandlerCode = function (self, questId, varId, prevVal, newVal)
 				if GetAchievementFlags(self.id) then return end
 				
 				if questId == "PantagruelDramas" and varId == "YoungHearts" and newVal == true then
@@ -1859,13 +1297,6 @@ PlaceObj('Achievement', {
 					AchievementUnlock(self.id)
 				end
 			end,
-			HandlerCode = function (self, questId, varId, prevVal, newVal)
-				if GetAchievementFlags(self.id) then return end
-				
-				if questId == "05_TakeDownCorazon" and varId == "Evidence" and newVal >= GetQuestVar(questId, "EvidenceRequired") then
-					AchievementUnlock(self.id)
-				end
-			end,
 		}),
 	},
 	ps4_id = 36,
@@ -1885,13 +1316,6 @@ PlaceObj('Achievement', {
 		PlaceObj('MsgReaction', {
 			Event = "QuestParamChanged",
 			Handler = function (self, questId, varId, prevVal, newVal)
-				if GetAchievementFlags(self.id) then return end
-				
-				if questId == "04_Betrayal" and varId == "Completed" and newVal == true then
-					AchievementUnlock(self.id)
-				end
-			end,
-			HandlerCode = function (self, questId, varId, prevVal, newVal)
 				if GetAchievementFlags(self.id) then return end
 				
 				if questId == "04_Betrayal" and varId == "Completed" and newVal == true then
@@ -1923,13 +1347,6 @@ PlaceObj('Achievement', {
 					AchievementUnlock(self.id)
 				end
 			end,
-			HandlerCode = function (self, questId, varId, prevVal, newVal)
-				if GetAchievementFlags(self.id) then return end
-				
-				if questId == "Ted" and varId == "Completed" and newVal == true then
-					AchievementUnlock(self.id)
-				end
-			end,
 		}),
 	},
 	ps4_id = 38,
@@ -1955,13 +1372,6 @@ PlaceObj('Achievement', {
 					AchievementUnlock(self.id)
 				end
 			end,
-			HandlerCode = function (self, questId, varId, prevVal, newVal)
-				if GetAchievementFlags(self.id) then return end
-				
-				if questId == "TheTwelveChairs" and varId == "FoundNecklace" and newVal == true then
-					AchievementUnlock(self.id)
-				end
-			end,
 		}),
 	},
 	ps4_id = 39,
@@ -1981,13 +1391,6 @@ PlaceObj('Achievement', {
 		PlaceObj('MsgReaction', {
 			Event = "QuestParamChanged",
 			Handler = function (self, questId, varId, prevVal, newVal)
-				if GetAchievementFlags(self.id) then return end
-				
-				if questId == "Sanatorium" and varId == "SamplesGiven" and newVal == true then
-					AchievementUnlock(self.id)
-				end
-			end,
-			HandlerCode = function (self, questId, varId, prevVal, newVal)
 				if GetAchievementFlags(self.id) then return end
 				
 				if questId == "Sanatorium" and varId == "SamplesGiven" and newVal == true then
@@ -2020,13 +1423,6 @@ PlaceObj('Achievement', {
 					AchievementUnlock(self.id)
 				end
 			end,
-			HandlerCode = function (self, questId, varId, prevVal, newVal)
-				if GetAchievementFlags(self.id) then return end
-				
-				if questId == "TreasureHunting" and varId == "foundcirclestreasure" and newVal == true then
-					AchievementUnlock(self.id)
-				end
-			end,
 		}),
 	},
 	ps4_grade = "silver",
@@ -2053,13 +1449,6 @@ PlaceObj('Achievement', {
 					AchievementUnlock(self.id)
 				end
 			end,
-			HandlerCode = function (self, campaignId)
-				if GetAchievementFlags(self.id) then return end
-				
-				if gv_Achievements[self.id] ~= "failed" then
-					AchievementUnlock(self.id)
-				end
-			end,
 		}),
 		PlaceObj('MsgReaction', {
 			Event = "MercHired",
@@ -2070,24 +1459,10 @@ PlaceObj('Achievement', {
 					gv_Achievements[self.id] = "failed"
 				end
 			end,
-			HandlerCode = function (self, mercId, price, days, alreadyHired)
-				if GetAchievementFlags(self.id) then return end
-				
-				if #GetHiredMercIds() > 2 then
-					gv_Achievements[self.id] = "failed"
-				end
-			end,
 		}),
 		PlaceObj('MsgReaction', {
 			Event = "UnitJoinedAsMerc",
 			Handler = function (self, mercId, price, days, alreadyHired)
-				if GetAchievementFlags(self.id) then return end
-				
-				if #GetHiredMercIds() > 2 then
-					gv_Achievements[self.id] = "failed"
-				end
-			end,
-			HandlerCode = function (self, mercId, price, days, alreadyHired)
 				if GetAchievementFlags(self.id) then return end
 				
 				if #GetHiredMercIds() > 2 then
@@ -2120,24 +1495,10 @@ PlaceObj('Achievement', {
 					AchievementUnlock(self.id)
 				end
 			end,
-			HandlerCode = function (self, mercId, price, days, alreadyHired)
-				if GetAchievementFlags(self.id) then return end
-				
-				if #GetHiredMercIds() >= self.target then
-					AchievementUnlock(self.id)
-				end
-			end,
 		}),
 		PlaceObj('MsgReaction', {
 			Event = "UnitJoinedAsMerc",
 			Handler = function (self, mercId, price, days, alreadyHired)
-				if GetAchievementFlags(self.id) then return end
-				
-				if #GetHiredMercIds() >= self.target then
-					AchievementUnlock(self.id)
-				end
-			end,
-			HandlerCode = function (self, mercId, price, days, alreadyHired)
 				if GetAchievementFlags(self.id) then return end
 				
 				if #GetHiredMercIds() >= self.target then
@@ -2169,24 +1530,10 @@ PlaceObj('Achievement', {
 					AchievementUnlock(self.id)
 				end
 			end,
-			HandlerCode = function (self, campaignId)
-				if GetAchievementFlags(self.id) then return end
-				
-				if Game.game_difficulty == "VeryHard" and IsGameRuleActive("DeadIsDead") and IsGameRuleActive("Ironman") and IsGameRuleActive("LethalWeapons") and not IsGameRuleActive("ForgivingMode") and gv_Achievements[self.id] ~= "failed" then
-					AchievementUnlock(self.id)
-				end
-			end,
 		}),
 		PlaceObj('MsgReaction', {
 			Event = "ChangeGameRule",
 			Handler = function (self, rule, value)
-				if GetAchievementFlags(self.id) then return end
-				
-				if rule == "ForgivingMode" and value then
-					gv_Achievements[self.id] = "failed"
-				end
-			end,
-			HandlerCode = function (self, rule, value)
 				if GetAchievementFlags(self.id) then return end
 				
 				if rule == "ForgivingMode" and value then
@@ -2203,24 +1550,10 @@ PlaceObj('Achievement', {
 					gv_Achievements[self.id] = "failed"
 				end
 			end,
-			HandlerCode = function (self)
-				if GetAchievementFlags(self.id) then return end
-				
-				if Game.game_difficulty ~= "VeryHard" then
-					gv_Achievements[self.id] = "failed"
-				end
-			end,
 		}),
 		PlaceObj('MsgReaction', {
 			Event = "NewGame",
 			Handler = function (self, game)
-				if GetAchievementFlags(self.id) then return end
-				
-				if IsGameRuleActive("ForgivingMode") and Game.game_difficulty ~= "VeryHard" then
-					gv_Achievements[self.id] = "failed"
-				end
-			end,
-			HandlerCode = function (self, game)
 				if GetAchievementFlags(self.id) then return end
 				
 				if IsGameRuleActive("ForgivingMode") and Game.game_difficulty ~= "VeryHard" then
@@ -2238,30 +1571,15 @@ PlaceObj('Achievement', {
 
 PlaceObj('Achievement', {
 	SortKey = 1000,
-	description = T(719266083045, --[[Achievement JustAFleshWound description (limited to 100 characters on XBOX)]] "Taken <target> damage in a single turn without any merc dying or getting downed."),
+	description = T(719266083045, --[[Achievement JustAFleshWound description (limited to 100 characters on XBOX)]] "Taken 300 damage in a single turn without any merc dying or getting downed."),
 	display_name = T(434853556936, --[[Achievement JustAFleshWound display_name]] "Just A Flesh Wound"),
 	group = "Retention",
-	how_to = T(657003907968, --[[Achievement JustAFleshWound how_to (limited to 100 characters on XBOX)]] "Take <target> damage in a single turn without any merc dying or getting downed."),
+	how_to = T(657003907968, --[[Achievement JustAFleshWound how_to (limited to 100 characters on XBOX)]] "Take 300 damage in a single turn without any merc dying or getting downed."),
 	id = "JustAFleshWound",
 	msg_reactions = {
 		PlaceObj('MsgReaction', {
 			Event = "DamageDone",
 			Handler = function (self, attacker, target, dmg, hit_descr)
-				if GetAchievementFlags(self.id) then return end
-				
-				if IsMerc(target) and dmg > 0 then
-					gv_Achievements[self.id] = (gv_Achievements[self.id] or 0) + dmg
-					
-					if target.HitPoints == 0 then
-						gv_Achievements[self.id] = 0
-					end
-					
-					if gv_Achievements[self.id] >= self.target then
-						AchievementUnlock(self.id)
-					end
-				end
-			end,
-			HandlerCode = function (self, attacker, target, dmg, hit_descr)
 				if GetAchievementFlags(self.id) then return end
 				
 				if IsMerc(target) and dmg > 0 then
@@ -2286,24 +1604,10 @@ PlaceObj('Achievement', {
 					gv_Achievements[self.id] = 0
 				end
 			end,
-			HandlerCode = function (self, unit, killer, results)
-				if GetAchievementFlags(self.id) then return end
-				
-				if IsMerc(unit) then
-					gv_Achievements[self.id] = 0
-				end
-			end,
 		}),
 		PlaceObj('MsgReaction', {
 			Event = "UnitDowned",
 			Handler = function (self, unit, killer, results)
-				if GetAchievementFlags(self.id) then return end
-				
-				if IsMerc(unit) then
-					gv_Achievements[self.id] = 0
-				end
-			end,
-			HandlerCode = function (self, unit, killer, results)
 				if GetAchievementFlags(self.id) then return end
 				
 				if IsMerc(unit) then
@@ -2318,22 +1622,10 @@ PlaceObj('Achievement', {
 				
 				gv_Achievements[self.id] = 0
 			end,
-			HandlerCode = function (self, teamEnded)
-				if GetAchievementFlags(self.id) then return end
-				
-				gv_Achievements[self.id] = 0
-			end,
 		}),
 		PlaceObj('MsgReaction', {
 			Event = "Attack",
 			Handler = function (self, action, results, attack_args, combat_starting)
-				if GetAchievementFlags(self.id) then return end
-				
-				if not combat_starting and not g_Combat then
-					gv_Achievements[self.id] = 0
-				end
-			end,
-			HandlerCode = function (self, action, results, attack_args, combat_starting)
 				if GetAchievementFlags(self.id) then return end
 				
 				if not combat_starting and not g_Combat then
@@ -2372,20 +1664,6 @@ PlaceObj('Achievement', {
 					AchievementUnlock(self.id)
 				end
 			end,
-			HandlerCode = function (self, cityId, change)
-				if GetAchievementFlags(self.id) then return end
-				
-				local highLoyaltyCities = 0
-				for _, city in pairs(gv_Cities) do
-					if city.Loyalty >= 75 then
-						highLoyaltyCities= highLoyaltyCities + 1
-					end
-				end
-				
-				if highLoyaltyCities >= 5 then
-					AchievementUnlock(self.id)
-				end
-			end,
 		}),
 	},
 	ps4_id = 46,
@@ -2410,13 +1688,6 @@ PlaceObj('Achievement', {
 					AchievementUnlock(self.id)
 				end
 			end,
-			HandlerCode = function (self, campaignId)
-				if GetAchievementFlags(self.id) then return end
-				
-				if gv_Achievements[self.id] ~= "failed" then
-					AchievementUnlock(self.id)
-				end
-			end,
 		}),
 		PlaceObj('MsgReaction', {
 			Event = "MercHired",
@@ -2427,24 +1698,10 @@ PlaceObj('Achievement', {
 					gv_Achievements[self.id] = "failed"
 				end
 			end,
-			HandlerCode = function (self, mercId, price, days, alreadyHired)
-				if GetAchievementFlags(self.id) then return end
-				
-				if #GetHiredMercIds() > 1 then
-					gv_Achievements[self.id] = "failed"
-				end
-			end,
 		}),
 		PlaceObj('MsgReaction', {
 			Event = "UnitJoinedAsMerc",
 			Handler = function (self, mercId, price, days, alreadyHired)
-				if GetAchievementFlags(self.id) then return end
-				
-				if #GetHiredMercIds() > 1 then
-					gv_Achievements[self.id] = "failed"
-				end
-			end,
-			HandlerCode = function (self, mercId, price, days, alreadyHired)
 				if GetAchievementFlags(self.id) then return end
 				
 				if #GetHiredMercIds() > 1 then
@@ -2471,13 +1728,6 @@ PlaceObj('Achievement', {
 		PlaceObj('MsgReaction', {
 			Event = "CampaignEnd",
 			Handler = function (self, campaignId)
-				if GetAchievementFlags(self.id) then return end
-				
-				if gv_CiviliansKilled <= 0 then
-					AchievementUnlock(self.id)
-				end
-			end,
-			HandlerCode = function (self, campaignId)
 				if GetAchievementFlags(self.id) then return end
 				
 				if gv_CiviliansKilled <= 0 then
@@ -2519,22 +1769,6 @@ PlaceObj('Achievement', {
 					end
 				end
 			end,
-			HandlerCode = function (self, sectorId, oldSide, newSide)
-				if GetAchievementFlags(self.id) then return end
-				
-				if IsPlayerSide(newSide) then
-					local controlled = 0
-					for _, s in pairs(gv_Sectors) do
-						if IsPlayerSide(s.Side) then
-							controlled = controlled + 1
-						end
-					end
-				
-					if controlled >= self.target then
-						AchievementUnlock(self.id)
-					end
-				end
-			end,
 		}),
 	},
 	ps4_id = 49,
@@ -2560,20 +1794,13 @@ PlaceObj('Achievement', {
 					AchievementUnlock(self.id)
 				end
 			end,
-			HandlerCode = function (self, campaignId)
-				if GetAchievementFlags(self.id) then return end
-				-- target is in days
-				if DivRound(Game.CampaignTime - Game.CampaignTimeStart, const.Scale.day) <= self.target then
-					AchievementUnlock(self.id)
-				end
-			end,
 		}),
 	},
 	ps4_grade = "gold",
 	ps4_id = 50,
 	ps5_grade = "gold",
 	ps5_id = 50,
-	target = 26,
+	target = 27,
 	xbox_id = 14,
 })
 

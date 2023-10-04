@@ -4,6 +4,13 @@ DefineClass.SquadManagementDragAndDrop = {
 	dragged_merc_squad_wnd = false,
 }
 
+function CanOpenMercManagement()
+	if gv_SatelliteView then return "disabled" end
+	if GetDialog("ConversationDialog") then return "disabled" end
+	if GetDialog("ModifyWeaponDlg") then return "disabled" end
+	return "enabled"
+end
+
 function SquadManagementDragAndDrop:GetSelectedMerc(pt)
 	for i, w in ipairs(self.idSquadsList) do
 		if w:MouseInWindow(pt) then
@@ -73,7 +80,7 @@ end
 
 function SquadManagementDragAndDrop:StartDrag(drag_win, pt)
 	XDragAndDropControl.StartDrag(self, drag_win, pt)
-	drag_win:SetParent(self) -- We want PDA effects to apply to this window.
+	drag_win:SetParent(GetDialog("PDADialogSatellite") or terminal.desktop)
 end
 
 function SquadManagementDragAndDrop:UpdateDrag(drag_win, pt)

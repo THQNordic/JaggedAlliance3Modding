@@ -52,6 +52,7 @@ PlaceObj('MsgDef', {
 })
 
 PlaceObj('MsgDef', {
+	Params = "campaign_id",
 	group = "Zulu - Campaign",
 	id = "CampaignStarted",
 })
@@ -107,6 +108,14 @@ PlaceObj('MsgDef', {
 	SingleActor = true,
 	group = "Zulu - Combat",
 	id = "Attack",
+})
+
+PlaceObj('MsgDef', {
+	Actor = "attacker",
+	Params = "attacker, weapon, target, data",
+	SingleActor = true,
+	group = "Zulu - Combat",
+	id = "CalcBaseDamage",
 })
 
 PlaceObj('MsgDef', {
@@ -258,11 +267,27 @@ PlaceObj('MsgDef', {
 })
 
 PlaceObj('MsgDef', {
-	Actor = "target",
-	Params = "attacker, target, attack_args, hit_descr, mod_data",
+	Actor = "attacker",
+	Params = "attacker, cth_id, action_id, target, weapon1, weapon2, data",
 	SingleActor = true,
 	group = "Zulu - Combat",
-	id = "GatherTargetDamageModifications",
+	id = "GatherCTHModifications",
+})
+
+PlaceObj('MsgDef', {
+	Actor = "attacker",
+	Params = "attacker, target, action_id, weapon, data",
+	SingleActor = true,
+	group = "Zulu - Combat",
+	id = "GatherCritChanceModifications",
+})
+
+PlaceObj('MsgDef', {
+	Actor = "attacker",
+	Params = "attacker, target, action_id, weapon, attack_args, hit_descr, mod_data",
+	SingleActor = true,
+	group = "Zulu - Combat",
+	id = "GatherDamageModifications",
 })
 
 PlaceObj('MsgDef', {
@@ -439,29 +464,17 @@ PlaceObj('MsgDef', {
 })
 
 PlaceObj('MsgDef', {
-	Actor = "attacker",
-	Params = "attacker, cth_id, data",
-	SingleActor = true,
-	group = "Zulu - Inventory",
-	id = "GatherCTHModifications",
-})
-
-PlaceObj('MsgDef', {
-	Actor = "attacker",
-	Params = "attacker, target, attack_args, hit_descr, mod_data",
-	SingleActor = true,
-	group = "Zulu - Inventory",
-	id = "GatherDamageModifications",
-})
-
-PlaceObj('MsgDef', {
+	Actor = "unit",
 	Params = "unit, item, amount",
+	SingleActor = true,
 	group = "Zulu - Inventory",
 	id = "InventoryAddItem",
 })
 
 PlaceObj('MsgDef', {
+	Actor = "obj",
 	Params = "obj",
+	SingleActor = true,
 	group = "Zulu - Inventory",
 	id = "InventoryChange",
 })
@@ -908,7 +921,9 @@ PlaceObj('MsgDef', {
 })
 
 PlaceObj('MsgDef', {
+	Actor = "unit",
 	Params = "unit",
+	SingleActor = true,
 	group = "Zulu - Unit",
 	id = "Idle",
 })
@@ -936,15 +951,6 @@ PlaceObj('MsgDef', {
 	SingleActor = true,
 	group = "Zulu - Unit",
 	id = "OnAttack",
-})
-
-PlaceObj('MsgDef', {
-	Actor = "target",
-	Description = "When an attack is executed. (After OnAttack)",
-	Params = "attacker, action, target, results, attack_args",
-	SingleActor = true,
-	group = "Zulu - Unit",
-	id = "OnAttacked",
 })
 
 PlaceObj('MsgDef', {
@@ -990,7 +996,9 @@ PlaceObj('MsgDef', {
 })
 
 PlaceObj('MsgDef', {
+	Actor = "unit",
 	Params = "unit, weapon, fired, jammed",
+	SingleActor = true,
 	group = "Zulu - Unit",
 	id = "OutOfAmmo",
 })
@@ -1002,14 +1010,18 @@ PlaceObj('MsgDef', {
 })
 
 PlaceObj('MsgDef', {
+	Actor = "unit",
 	Params = "unit",
+	SingleActor = true,
 	group = "Zulu - Unit",
 	id = "OverwatchChanged",
 })
 
 PlaceObj('MsgDef', {
+	Actor = "unit",
 	Description = "When a unit learns new perks.",
 	Params = "unit, perkIds",
+	SingleActor = true,
 	group = "Zulu - Unit",
 	id = "PerksLearned",
 })
@@ -1030,8 +1042,10 @@ PlaceObj('MsgDef', {
 })
 
 PlaceObj('MsgDef', {
+	Actor = "obj",
 	Description = "When a unit's stat is increased.",
 	Params = "obj, stat, amount, reason",
+	SingleActor = true,
 	group = "Zulu - Unit",
 	id = "StatIncreased",
 })
@@ -1055,8 +1069,10 @@ PlaceObj('MsgDef', {
 })
 
 PlaceObj('MsgDef', {
+	Actor = "unit",
 	Description = "When a unit's total AP has changed.",
 	Params = "unit, action_id, change",
+	SingleActor = true,
 	group = "Zulu - Unit",
 	id = "UnitAPChanged",
 })
@@ -1076,7 +1092,9 @@ PlaceObj('MsgDef', {
 })
 
 PlaceObj('MsgDef', {
+	Actor = "unit",
 	Params = "unit",
+	SingleActor = true,
 	group = "Zulu - Unit",
 	id = "UnitAwarenessChanged",
 })
@@ -1141,8 +1159,10 @@ PlaceObj('MsgDef', {
 })
 
 PlaceObj('MsgDef', {
+	Actor = "unit",
 	Description = "When a unit dies.",
 	Params = "unit, killer, results",
+	SingleActor = true,
 	group = "Zulu - Unit",
 	id = "UnitDied",
 })
@@ -1156,8 +1176,10 @@ PlaceObj('MsgDef', {
 })
 
 PlaceObj('MsgDef', {
+	Actor = "unit",
 	Description = "When a unit is downed.",
 	Params = "unit",
+	SingleActor = true,
 	group = "Zulu - Unit",
 	id = "UnitDowned",
 })
@@ -1172,26 +1194,34 @@ PlaceObj('MsgDef', {
 })
 
 PlaceObj('MsgDef', {
+	Actor = "unit",
 	Params = "unit",
+	SingleActor = true,
 	group = "Zulu - Unit",
 	id = "UnitEnterCombat",
 })
 
 PlaceObj('MsgDef', {
+	Actor = "unit",
 	Params = "unit",
+	SingleActor = true,
 	group = "Zulu - Unit",
 	id = "UnitGoTo",
 })
 
 PlaceObj('MsgDef', {
+	Actor = "unit",
 	Params = "unit",
+	SingleActor = true,
 	group = "Zulu - Unit",
 	id = "UnitGoToStart",
 })
 
 PlaceObj('MsgDef', {
+	Actor = "unit",
 	Description = "When a unit joins the squad as a playable merc through other means than hiring from the browser.",
 	Params = "unit",
+	SingleActor = true,
 	group = "Zulu - Unit",
 	id = "UnitJoinedAsMerc",
 })
@@ -1203,21 +1233,27 @@ PlaceObj('MsgDef', {
 })
 
 PlaceObj('MsgDef', {
+	Actor = "unit",
 	Params = "unit",
+	SingleActor = true,
 	group = "Zulu - Unit",
 	id = "UnitLeveledUp",
 })
 
 PlaceObj('MsgDef', {
+	Actor = "unit",
 	Description = "When a unit ends a move.",
 	Params = "unit, action_id, prev_pos",
+	SingleActor = true,
 	group = "Zulu - Unit",
 	id = "UnitMovementDone",
 })
 
 PlaceObj('MsgDef', {
+	Actor = "unit",
 	Description = "When a unit begins a move.",
 	Params = "unit",
+	SingleActor = true,
 	group = "Zulu - Unit",
 	id = "UnitMovementStart",
 })
@@ -1233,13 +1269,17 @@ PlaceObj('MsgDef', {
 })
 
 PlaceObj('MsgDef', {
+	Actor = "unit",
 	Params = "unit",
+	SingleActor = true,
 	group = "Zulu - Unit",
 	id = "UnitRetreat",
 })
 
 PlaceObj('MsgDef', {
+	Actor = "unit",
 	Params = "unit",
+	SingleActor = true,
 	group = "Zulu - Unit",
 	id = "UnitSetIdleSuspicious",
 })
@@ -1251,19 +1291,25 @@ PlaceObj('MsgDef', {
 })
 
 PlaceObj('MsgDef', {
+	Actor = "unit",
 	Params = "unit",
+	SingleActor = true,
 	group = "Zulu - Unit",
 	id = "UnitStanceChanged",
 })
 
 PlaceObj('MsgDef', {
+	Actor = "unit",
 	Params = "unit",
+	SingleActor = true,
 	group = "Zulu - Unit",
 	id = "UnitStealthChanged",
 })
 
 PlaceObj('MsgDef', {
+	Actor = "unit",
 	Params = "unit",
+	SingleActor = true,
 	group = "Zulu - Unit",
 	id = "UnitSwappedWeapon",
 })

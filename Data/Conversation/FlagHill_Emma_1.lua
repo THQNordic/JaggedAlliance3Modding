@@ -240,12 +240,8 @@ PlaceObj('Conversation', {
 			Align = "right",
 			AutoRemove = true,
 			Conditions = {
-				PlaceObj('OR', {
-					Conditions = {
-						PlaceObj('UnitSquadHasMerc', {
-							HasPerk = "Scoundrel",
-						}),
-					},
+				PlaceObj('UnitSquadHasMerc', {
+					HasPerk = "Scoundrel",
 				}),
 			},
 			Effects = {
@@ -298,13 +294,9 @@ PlaceObj('Conversation', {
 			Align = "right",
 			AutoRemove = true,
 			Conditions = {
-				PlaceObj('AND', {
-					Conditions = {
-						PlaceObj('UnitSquadHasMerc', {
-							HasPerk = "Scoundrel",
-							Negate = true,
-						}),
-					},
+				PlaceObj('UnitSquadHasMerc', {
+					HasPerk = "Scoundrel",
+					Negate = true,
 				}),
 			},
 			Effects = {
@@ -908,7 +900,7 @@ PlaceObj('Conversation', {
 				Interjections = {
 					PlaceObj('ConversationInterjection', {
 						Conditions = {
-							PlaceObj('OR', {
+							PlaceObj('CheckOR', {
 								Conditions = {
 									PlaceObj('UnitSquadHasMerc', {
 										Name = "Livewire",

@@ -77,7 +77,7 @@ local KeepAimIKCommands = {
 
 DefineClass.Unit = {
 	__parents = { "Movable", "CombatObject", "UnitProperties", "UnitInventory", "StatusEffectObject",
-		"GameDynamicSpawnObject", "AppearanceObject", "Interactable", "StepObject", "SyncObject",
+		"GameDynamicSpawnObject", "AppearanceObject", "Interactable", "StepObject", "SyncObject", "ComponentSound",
 		"SpawnFXObject", "HittableObject", "ComponentCustomData", "CombatTaskOwner", "AmbientLifeZoneUnit",
 	},
 	
@@ -125,7 +125,7 @@ DefineClass.Unit = {
 		{id = "anim2BlendTime"},
 	},
 	
-	flags = { efUnit = true, cofComponentSound = true, cofComponentColorizationMaterial = true, gofUnitLighting = true, gofOnRoof = false, gofAdjustZ = true },
+	flags = { efUnit = true, cofComponentColorizationMaterial = true, gofUnitLighting = true, gofOnRoof = false, gofAdjustZ = true },
 	pfclass = 3,
 	pfflags = const.pfmDestlockSmart + const.pfmCollisionAvoidance + const.pfmImpassableSource + const.pfmVoxelAligned + const.pfmOrient,
 	pfclass_overwritten = false,
@@ -264,6 +264,7 @@ DefineClass.Unit = {
 	death_explosion_played = false,
 	death_fx_object = false,
 	interacting_unit = false,
+	killed_stance = false,
 
 	combat_badge = false,
 	ui_badge = false,
@@ -284,6 +285,7 @@ DefineClass.Unit = {
 	
 	visible = true,
 	interactable_highlight_ctr = false,
+	highlight_collection = false,
 	
 	-- general (out-of-combat) behaviors
 	behavior = false, -- command to set
@@ -542,9 +544,9 @@ function Unit:SetDynamicData(data)
 	self.unitdatadef_id = data.unitdatadef_id or data.template_name
 
 	self.spawner = HandleToObject[data.spawner]
-	if self.spawner then
+--[[	if self.spawner then
 		self.spawner.object = self
-	end
+	end]]
 	self.target_dummy = HandleToObject[data.target_dummy]
 
 	-- these are needed to be restored before calling EnterMap command of AL
@@ -732,10 +734,6 @@ function Unit:SetQueuedAction(id)
 		end
 		self.queued_action_pos = false
 	end	
-end
-
-function OnMsg.CombatActionEnd(unit)
-	unit:SetQueuedAction()
 end
 
 function Unit:AddAdditionalGroups()
@@ -1152,7 +1150,6 @@ function Unit:ReviveOnHealth(hp)
 	self.HitPoints = hp or self.MaxHitPoints
 	self:RemoveStatusEffect("Bleeding")
 	self:NetUpdateHash("Revive", self.HitPoints)
-	self:SetHierarchyGameFlags(const.gofUnitLighting)
 	self:ClearHierarchyGameFlags(const.gofOnRoof)
 	if self.behavior == "Dead" or self.behavior == "VillainDefeat" then
 		self:SetBehavior()
@@ -1196,7 +1193,7 @@ function Unit:DropLoot(container)
 		if not dropped then
 			DoneObject(item)
 		elseif slot == "InventoryDead" then
-			droped_items = droped_items + (item.LargeItem and 2 or 1)
+			droped_items = droped_items + (item:IsLargeItem() and 2 or 1)
 		end 
 	end)
 	if droped_items > 0 then
@@ -1564,6 +1561,7 @@ function Unit:Die(skip_anim)
 	self.time_of_death = Game.CampaignTime
 	self.throw_died_message = true
 	self.pending_aware_state = nil
+	self.killed_stance = self.stance
 
 	Msg("UnitDieStart", self, attacker)
 	Msg("UnitDiedOnSector", self, gv_CurrentSectorId)
@@ -1602,7 +1600,6 @@ function Unit:Die(skip_anim)
 	end
 
 	self:SetPos(self:GetVisualPos())
-	self:ClearHierarchyGameFlags(const.gofUnitLighting)
 	self:SetHierarchyGameFlags(const.gofOnRoof) --hide with roofs and walls if too close to one
 	self:ClearPath()
 	self:ClearEnumFlags(const.efResting)
@@ -1892,7 +1889,6 @@ function Unit:Dead(anim, angle)
 	end
 	
 	-- some Die command code is repeated here for the cases when the Die command was skipped (load a game)
-	self:ClearHierarchyGameFlags(const.gofUnitLighting)
 	self:SetHierarchyGameFlags(const.gofOnRoof) --hide with roofs and walls if too close to one
 	self:ClearPath()
 	self:ClearEnumFlags(const.efResting)
@@ -2186,7 +2182,7 @@ function Unit:AddStatusEffect(effect, ...)
 	if effect == "Bleeding" and self:IsDead() then
 		return
 	end
-	if effect == "Tired" or effect == "Exhausted" then
+	if effect == "Tired" or effect == "Exhausted" and not g_Combat then
 		PlayVoiceResponse(self, effect)
 	end
 	return StatusEffectObject.AddStatusEffect(self, effect, ...)
@@ -2689,11 +2685,7 @@ function Unit:OnEndTurn()
 	SetCombatActionState(self, false)
 	
 	-- add attacks from remaining AP to permanent overwatch
-	local overwatch = g_Overwatch[self]
-	if overwatch and overwatch.permanent then
-		overwatch.num_attacks = self:GetNumMGInterruptAttacks()
-		self:UpdateOverwatchVisual(overwatch)
-	end
+	self:UpdateNumOverwatchAttacks()
 	
 	Msg("UnitEndTurn", self)
 	for i = #self.StatusEffects, 1, -1 do
@@ -2889,12 +2881,11 @@ local function CheckInterruptCombatGotoPos(x, y, z, unit, ignore_pos)
 	if not CanOccupy(unit, x, y, z) then
 		return false
 	end
-	local pos = point(x, y, z)
-	if ignore_pos and pos == ignore_pos then
+	if ignore_pos and ignore_pos:Equal(x, y, z) then
 		return false
 	end
-	local cost = unit.combat_path_obj:GetAP(pos)
-	if not cost or cost >= unit.combat_path_obj:GetAP(unit.combat_path[1]) then
+	local cost = unit.combat_path_obj:GetAP(point_pack(x, y, z))
+	if not cost or cost >= (unit.combat_path_obj:GetAP(unit.combat_path[1]) or 0) then
 		return false
 	end
 	return true
@@ -2951,7 +2942,7 @@ function Unit:GetInterruptCombatPath()
 end
 
 function Unit:CombatGotoInterrupt(new_pos, restore_ap_only)
-	if not self.combat_path or not self.combat_path_obj then
+	if not self.combat_path or not self.combat_path_obj or self:IsDead() then
 		return
 	end
 	local prev_pos = self.combat_path[1]
@@ -3079,19 +3070,20 @@ function Unit:CombatGoto(action_id, cost_ap, pos, interrupt_path, forced_run, st
 	local path = self.combat_path
 	local pfclass = self:GetPfClass() + 1
 	local tunnel_mask = pathfind[pfclass].tunnel_mask
+	local GetTunnel = pf.GetTunnel
 	local run_dist = 0
-	local p = self:GetPos()
+	local px, py, pz = self:GetPosXYZ()
 	for i = #path, 1, -1 do
-		if terrain.GetPassType(p) == pathfind_water_pass_type_idx then
+		if terrain.GetPassType(px, py, pz) == pathfind_water_pass_type_idx then
 			break
 		end
-		local p2 = point(point_unpack(path[i]))
-		local tunnel = pf.GetTunnel(p, p2, tunnel_mask)
-		if tunnel and not tunnel:CanSprintThrough(self, p, p2) then
+		local px2, py2, pz2 = point_unpack(path[i])
+		local tunnel = GetTunnel(px, py, pz, px2, py2, pz2, tunnel_mask)
+		if tunnel and not tunnel:CanSprintThrough() then
 			break
 		end
-		run_dist = run_dist + p:Dist2D(p2)
-		p = p2
+		run_dist = run_dist + GetLen(px - px2, py - py2, pz and pz2 and pz - pz2 or 0)
+		px, py, pz = px2, py2, pz2
 	end
 
 	local move_anim_type
@@ -3102,18 +3094,16 @@ function Unit:CombatGoto(action_id, cost_ap, pos, interrupt_path, forced_run, st
 	end
 
 	local has_closed_door = false
-	local p = self:GetPos()
+	local px, py, pz = self:GetPosXYZ()
+	local closed_door_mask = const.TunnelMaskClosedDoor
 	for i = #path, 1, -1 do
-		local p2 = point(point_unpack(path[i]))
-		local tunnel = pf.GetTunnel(p, p2)
+		local px2, py2, pz2 = point_unpack(path[i])
+		local tunnel = GetTunnel(px, py, pz, px2, py2, pz2, closed_door_mask)
 		if tunnel then
-			local tunnel_type = tunnel.tunnel_type
-			if tunnel_type == const.TunnelTypeDoor or tunnel_type == const.TunnelTypeDoorBlocked then
-				has_closed_door = true
-				break
-			end
+			has_closed_door = true
+			break
 		end
-		p = p2
+		px, py, pz = px2, py2, pz2
 	end
 
 	self:SetIK("AimIK", false)
@@ -3126,6 +3116,15 @@ function Unit:CombatGoto(action_id, cost_ap, pos, interrupt_path, forced_run, st
 		end
 	end
 
+	local known_traps
+	local all_move_interrupts = self:CheckProvokeOpportunityAttacks("move", goto_dummies, true, "all")
+	for i, t in ipairs(all_move_interrupts) do
+		if t[1] == "trap" then
+			known_traps = known_traps or {}
+			table.insert(known_traps, t[2])
+		end
+	end
+
 	local provoke_idx, provoke_pos, interrupts
 	local UpdateProvokePos = function(init)
 		if provoke_idx then
@@ -3135,23 +3134,29 @@ function Unit:CombatGoto(action_id, cost_ap, pos, interrupt_path, forced_run, st
 		elseif not init then
 			return
 		end
-		interrupts, provoke_idx = self:CheckProvokeOpportunityAttacks("move", goto_dummies)
+		interrupts, provoke_idx = self:CheckProvokeOpportunityAttacks("move", goto_dummies, nil, nil, nil, known_traps)
 		provoke_pos = provoke_idx and goto_dummies[provoke_idx].pos
 		if provoke_pos then
 			-- add the provoke point in the path if not present
-			local insert_idx = goto_dummies[provoke_idx].insert_idx
-			if insert_idx then
-				table.insert(self.combat_path, insert_idx, point_pack(provoke_pos))
-				-- inserting in the combat_path invalidates the insert_idx of dummies so we need to update it
-				for _, dummy in ipairs(goto_dummies) do
-					if dummy.insert_idx then
-						if dummy.insert_before_pos == "limit" then
-							dummy.insert_idx = #self.combat_path + 1
-						elseif dummy.insert_before_pos then
-							dummy.insert_idx = table.find(self.combat_path, dummy.insert_before_pos) -- can be nil if the pos was already reached and deleted from the path
-						end
+			local insert_idx
+			local insert_marker = goto_dummies[provoke_idx].insert_before_pos
+			if insert_marker == "limit" then
+				insert_idx = #self.combat_path + 1
+			else
+				local pp = point_pack(provoke_pos)
+				for i, ppos in ipairs(self.combat_path) do
+					if ppos == pp then
+						insert_idx = false
+						break
+					elseif insert_marker == ppos then
+						insert_idx = i
+						break
 					end
 				end
+			end
+			
+			if insert_idx then
+				table.insert(self.combat_path, insert_idx, point_pack(provoke_pos))
 			end
 			return
 		end
@@ -3304,7 +3309,7 @@ function Unit:CombatGoto(action_id, cost_ap, pos, interrupt_path, forced_run, st
 				PlayFX("RunStop", "end", self, surface_fx_type, surface_pos)
 			end
 		else
-			local tunnel = pf.GetTunnel(cur_pos, next_pos, tunnel_mask)
+			local tunnel = GetTunnel(cur_pos, next_pos, tunnel_mask)
 			if tunnel then
 				local can_use_tunnel
 				can_use_tunnel, quick_play = self:InteractTunnel(tunnel, quick_play)
@@ -3314,7 +3319,7 @@ function Unit:CombatGoto(action_id, cost_ap, pos, interrupt_path, forced_run, st
 				end
 				if not IsValid(tunnel) then
 					-- the open door erased the tunnel
-					tunnel = pf.GetTunnel(cur_pos, next_pos, tunnel_mask)
+					tunnel = GetTunnel(cur_pos, next_pos, tunnel_mask)
 				end
 				if tunnel then
 					self:TraverseTunnel(tunnel, cur_pos, next_pos, false, quick_play)
@@ -3744,6 +3749,10 @@ function Unit:CalcMoveSpeedModifier()
 	if self:HasStatusEffect("Hidden") then 
 		modifier = MulDivRound(modifier, 700, 1000)
 	end
+	local command_move_speed_modifier = self:GetCommandParam("move_speed_modifier")
+	if command_move_speed_modifier then
+		modifier = MulDivRound(modifier, command_move_speed_modifier, 1000)
+	end
 	return modifier
 end
 
@@ -3795,7 +3804,10 @@ end
 
 function Unit:StartMoving()
 	self.is_moving = true
-	PlaceUnitWindModifierTrail(self)
+	local team = self.team
+	if not (team and team.neutral and EngineOptions.ObjectDetail == "Low") then
+		PlaceUnitWindModifierTrail(self)
+	end
 end
 
 function Unit:StopMoving()
@@ -3855,6 +3867,8 @@ function GetTunnelExitCollisionAvoidPos(pos1, pos2)
 	return point(x2, y2, z2)
 end
 
+MapVar("__unit_step_target_dummies", {{phase = 0}})
+
 function Unit:TraverseTunnel(tunnel, pos1, pos2, collision_avoidance, quick_play, use_stop_anim)
 	local tunnel_entrance = tunnel:GetEntrance()
 	local tunnel_exit = tunnel:GetExit()
@@ -3891,9 +3905,11 @@ function Unit:TraverseTunnel(tunnel, pos1, pos2, collision_avoidance, quick_play
 		end
 	end
 	local interrupts
-	if not self.combat_path then
-		local target_dummy = { obj = self, anim = self:GetWaitAnim(), phase = 0, pos = self:GetPos(), angle = CalcOrientation(self, pos2) }
-		interrupts = self:CheckProvokeOpportunityAttacks("move", {target_dummy})
+	if not self.combat_path and self.team and self.team.side ~= "neutral" then
+		local target_dummy = __unit_step_target_dummies[1]
+		target_dummy.obj = self
+		target_dummy.anim = self:GetWaitAnim()
+		interrupts = self:CheckProvokeOpportunityAttacks("move", __unit_step_target_dummies)
 		if interrupts then
 			self:ProvokeOpportunityAttacksWarning("move", interrupts)
 		end
@@ -4451,9 +4467,11 @@ function Unit:Step(...)
 	self:UpdateMoveSpeed()
 	local status = AnimMomentHook.Step(self, ...)
 	if status > 0 then
-		if not self.combat_path then
-			local target_dummy = { obj = self, anim = self:GetWaitAnim(), phase = 0, pos = self:GetPos(), angle = self:GetAngle() }
-			local interrupts = self:CheckProvokeOpportunityAttacks("move", {target_dummy})
+		if not self.combat_path and self.team and self.team.side ~= "neutral" then
+			local target_dummy = __unit_step_target_dummies[1]
+			target_dummy.obj = self
+			target_dummy.anim = self:GetWaitAnim()
+			local interrupts = self:CheckProvokeOpportunityAttacks("move", __unit_step_target_dummies)
 			self:ProvokeOpportunityAttacksWarning("move", interrupts)
 			self:ProvokeOpportunityAttacks("move", target_dummy) -- traps
 		end
@@ -4578,9 +4596,6 @@ end
 
 function Unit:EndInterruptableMovement()
 	self.interruptable = false
-	--piggie back on this method because its called before all actions,
-	--rebuild ui_actions so combat actions picked are sync;
-	self:RecalcUIActions() 
 end
 
 function Unit:IsEnemyPresent()
@@ -4713,7 +4728,7 @@ function Unit:ExitCombat()
 	end
 	
 	self.ActionPoints = self:GetMaxActionPoints() -- reset AP so the units has all their actions available to initiate combat
-	
+
 	if self:IsDowned() then
 		self:SetCommand("DownedRally")
 	elseif not self:IsDead() then
@@ -4881,7 +4896,7 @@ function Unit:Idle()
 		if self.stance == "Prone" and self:GetValidStance("Prone") ~= "Prone" then
 			self:DoChangeStance("Crouch")
 		end
-		if g_Combat and self:CanCower() and self.team.side == "neutral" and not g_Combat:ShouldEndCombat() then
+		if g_Combat and self:CanCower() and (self.team.side == "neutral" or self:HasStatusEffect("ForceCower")) and not g_Combat:ShouldEndCombat() then
 			self:SetCommand("Cower")
 		end
 	end
@@ -5679,8 +5694,9 @@ function Unit:GetSightRadius(other, base_sight, step_pos)
 	if IsIlluminated(other, nil, nil, step_pos) then
 		night_time = false
 	end
+	local distracted = self:HasStatusEffect("Distracted") and (not IsKindOf(other, "Unit") or (self.team ~= other.team))
 	
-	if self:HasStatusEffect("Distracted") or self:HasStatusEffect("Blinded") then
+	if distracted or self:HasStatusEffect("Blinded") then
 		return MulDivRound(sight, const.Combat.SightModMinValue, 100) * const.SlabSizeX, hidden, night_time
 	elseif self:HasStatusEffect("Suspicious") then
 		modifier = modifier + (self:GetEffectValue("suspicious_sight_mod") or 0)
@@ -5891,6 +5907,14 @@ function Unit:GetHitStance()
 end
 
 function Unit:CanStealth(stance)
+	if not self.team or self.team.side == "neutral"
+		or not self:IsValidPos()
+		or self:IsDead()
+		or self:IsDowned()
+		or self.command == "ExitCombat" and not self:HasStatusEffect("Hidden")
+	then
+		return false
+	end
 	stance = stance or self.stance
 	local is_stealthy_stance
 	if self.species == "Human" then
@@ -5900,6 +5924,9 @@ function Unit:CanStealth(stance)
 		end
 	elseif self.species == "Crocodile" then
 		is_stealthy_stance = true
+	end
+	if not is_stealthy_stance then
+		return false
 	end
 	
 	-- in combat allow Spotted units to remain Hidden for the duration of the effect
@@ -5913,14 +5940,7 @@ function Unit:CanStealth(stance)
 			visual_contact = visual_contact or HasVisibilityTo(enemy, self)
 		end
 	end
-	
-	if visual_contact or 
-		not is_stealthy_stance or 
-		self:IsDead() or self:IsDowned() or 
-		(self.command == "ExitCombat" and not self:HasStatusEffect("Hidden")) or 
-		not self:IsValidPos() or 
-		self.team.side == "neutral" 
-	then
+	if visual_contact then
 		return false
 	end
 	if effects.BandagingDowned or effects.Revealed or effects.StationedMachineGun or effects.ManningEmplacement then
@@ -6010,19 +6030,18 @@ function OnMsg.UnitStealthChanged(obj)
 end
 
 function Unit:UpdateHidden()
-	if self.species ~= "Human" then
-		if self:CanStealth() then
-			if not self:HasStatusEffect("Hidden") then
-				self:AddStatusEffect("Hidden")
-				PlayVoiceResponse(self, "BecomeHidden")
-			end
-		else
+	if self:HasStatusEffect("Hidden") then
+		if not self:CanStealth() then
 			self:RemoveStatusEffect("Hidden")
+			self:UpdateFXClass()
 		end
-	elseif not self:CanStealth() then
-		self:RemoveStatusEffect("Hidden")
+	elseif self.species ~= "Human" then
+		if self:CanStealth() then
+			self:AddStatusEffect("Hidden")
+			PlayVoiceResponse(self, "BecomeHidden")
+			self:UpdateFXClass()
+		end
 	end
-	self:UpdateFXClass()
 end
 
 -- used to control the fx actor class of the unit based on his Hidden status and self.visible
@@ -6045,26 +6064,25 @@ function OnMsg.GetCustomFXInheritActorRules(rules)
 	rules[#rules + 1] = "Unit"
 end
 
+local function UpdateHiddenUnits()
+	for _, team in ipairs(g_Teams) do
+		if team.side ~= "neutral" then
+			for _, unit in ipairs(team.units) do
+				unit:UpdateHidden()
+			end
+		end
+	end
+end
+
 function OnMsg.UnitMovementDone(obj)
 	if GameState.sync_loading then return end
 	obj:RemoveStatusEffect("Focused")
-	for _, unit in ipairs(g_Units) do
-		unit:UpdateHidden()
-	end
-	NetUpdateHash("UnitMovement", obj, obj:GetPos())
+	UpdateHiddenUnits()
+	NetUpdateHash("UnitMovement", obj, obj:GetPosXYZ())
 end
 
-function OnMsg.SyncLoadingDone()
-	for _, unit in ipairs(g_Units) do
-		unit:UpdateHidden()
-	end
-end
-
-function OnMsg.ExplorationStart()
-	for _, unit in ipairs(g_Units) do
-		unit:UpdateHidden()
-	end
-end
+OnMsg.SyncLoadingDone = UpdateHiddenUnits
+OnMsg.ExplorationStart = UpdateHiddenUnits
 
 function Unit:GotoChangeStance(stance)
 	if not stance or self.stance == stance then
@@ -6089,7 +6107,7 @@ end
 
 function Unit:DoChangeStance(stance)
 	assert(self.species == "Human" or stance == "")
-	self.stance = stance
+	self.stance = HasPerk(self, "ZombiePerk") and "Standing" or stance
 	self.aim_results = false
 	self.aim_attack_args = false
 	ObjModified(self)
@@ -6399,7 +6417,7 @@ function Unit:CanAttack(target, weapon, action, aim, goto_pos, skip_ap_check, is
 	if action.ActionType ~= "Melee Attack" and action.ActionType ~= "Ranged Attack" then 
 		return false
 	end
-	local args = { target = target, goto_pos = goto_pos, aim = aim, ap_cost_breakdown = {} }
+	local args
 	if action then
 		if action.ActionType == "Melee Attack" and target == self then
 			return false, AttackDisableReasons.InvalidSelfTarget
@@ -6426,6 +6444,7 @@ function Unit:CanAttack(target, weapon, action, aim, goto_pos, skip_ap_check, is
 					--local cpath = GetCombatPath(self)
 					--local ap = cpath and cpath:GetAP(attack_pos)
 					--if not ap or action:GetAPCost(self, args) > self.ActionPoints - ap then
+					args = args or { target = target, goto_pos = goto_pos, aim = aim, ap_cost_breakdown = {} }
 					local cost = action:GetAPCost(self, args)
 					if cost < 0 or cost > self.ActionPoints then
 						return false, reason
@@ -6441,7 +6460,6 @@ function Unit:CanAttack(target, weapon, action, aim, goto_pos, skip_ap_check, is
 		if action.id == "UnarmedAttack" or action.id == "ExplodingPalm" or (action.id == "Brutalize" and not weapon) or action.id == "MarkTarget" then
 			weapon = self:GetActiveWeapons("UnarmedWeapon")
 		end
-		local cooldown_turn = self:GetEffectExpirationTurn(action.id, "cooldown")
 		if action.group == "SignatureAbilities" then
 			local recharge = self:GetSignatureRecharge(action.id)
 			if recharge then
@@ -6451,10 +6469,14 @@ function Unit:CanAttack(target, weapon, action, aim, goto_pos, skip_ap_check, is
 				return false, AttackDisableReasons.SignatureRecharge
 			end
 		end
-		if g_Combat and cooldown_turn >= g_Combat.current_turn then
+		if g_Combat and self:GetEffectExpirationTurn(action.id, "cooldown") >= g_Combat.current_turn then
 			return false, AttackDisableReasons.Cooldown
-		elseif not skip_ap_check and not self:HasAP(action:GetAPCost(self, args), action.id, args) then
-			return false, GetUnitNoApReason(self)
+		elseif not skip_ap_check and (g_Combat or g_StartingCombat or g_TestingSaveLoadSystem) then
+			args = args or { target = target, goto_pos = goto_pos, aim = aim, ap_cost_breakdown = {} }
+			local cost = action:GetAPCost(self, args)
+			if not self:HasAP(cost, action.id, args) then
+				return false, GetUnitNoApReason(self)
+			end
 		end
 		if action.id == "OnMyTarget" then
 			return true
@@ -6492,6 +6514,7 @@ function Unit:CanAttack(target, weapon, action, aim, goto_pos, skip_ap_check, is
 				end
 			end
 
+			args = args or { target = target, goto_pos = goto_pos, aim = aim, ap_cost_breakdown = {} }
 			local results = action:GetActionResults(self, args)
 			if not results.trajectory or #results.trajectory == 0 then
 				return false, AttackDisableReasons.NoFireArc
@@ -6537,6 +6560,10 @@ function Unit:CanAttack(target, weapon, action, aim, goto_pos, skip_ap_check, is
 
 	if not target and action.RequireTargets then
 		return false, AttackDisableReasons.NoTarget
+	end
+	
+	if not targetIsUnit and action.id == "Brutalize" then
+		return false, AttackDisableReasons.InvalidTarget
 	end
 
 	if not targetIsUnit and not targetIsTrap and not freeAimMeleeTarget then
@@ -6594,9 +6621,10 @@ function Unit:GatherCTHModifications(id, value, data)
 	data.mod_mul = 100
 	data.mod_add = 0
 	data.base_chance = value
+	data.enabled = true
 
-	Msg("GatherCTHModifications", self, id, data)
-	value = MulDivRound(value + data.mod_add, data.mod_mul, 100)
+	Msg("GatherCTHModifications", self, id, data.action.id, data.target, data.weapon1, data.weapon2, data)
+	value = data.enabled and MulDivRound(value + data.mod_add, data.mod_mul, 100) or 0
 	return value
 end
 
@@ -6740,7 +6768,7 @@ function Unit:CalcChanceToHit(target, action, args, chance_only)
 		local nameOverride = mod_data.display_name
 		local metaText = #mod_data.meta_text > 0 and mod_data.meta_text
 		base = base + value
-		if modifiers then
+		if mod_data.enabled and modifiers then
 			table.insert(modifiers, 
 			{ 
 				name = nameOverride or mod.display_name,
@@ -6762,7 +6790,7 @@ function Unit:CalcChanceToHit(target, action, args, chance_only)
 		end
 		if value and value ~= 0 then
 			base = base + value
-			if modifiers then
+			if mod_data.enabled and modifiers then
 				table.insert(modifiers, 
 				{ 
 					name = mod_data.display_name,
@@ -6770,6 +6798,40 @@ function Unit:CalcChanceToHit(target, action, args, chance_only)
 					id = effect.id,
 					metaText = mod_data.meta_text
 				})
+			end
+		end
+	end
+	
+	-- process weaponcomponenteffects
+	mod_data.weapon1 = nil
+	mod_data.weapon2 = nil
+	local weapons = {weapon1, weapon2}
+	for _, weapon in ipairs(weapons) do
+		if IsKindOf(weapon, "Firearm") then		
+			for slot_id, component_id in sorted_pairs(weapon.components) do
+				local def = WeaponComponents[component_id]
+				local effects = def and def.ModificationEffects or empty_table
+				if next(effects) ~= nil then
+					mod_data.weapon1 = weapon
+					mod_data.display_name = def.DisplayName
+					mod_data.meta_text = nil
+					local value = self:GatherCTHModifications(component_id, 0, mod_data)
+					if args and not args.prediction then
+						NetUpdateHash("CalcChanceToHit_Component_Mods", weapon.id, component_id, value)
+					end
+					if value and value ~= 0 then
+						base = base + value
+						if mod_data.enabled and modifiers then
+							table.insert(modifiers, 
+							{ 
+								name = mod_data.display_name,
+								value = value,
+								id = component_id,
+								metaText = mod_data.meta_text
+							})
+						end
+					end
+				end
 			end
 		end
 	end
@@ -6888,64 +6950,36 @@ function Unit:CalcCritChance(weapon, target, aim, attack_pos, target_spot_group,
 	if IsKindOf(target, "Unit") and not target:IsArmorPiercedBy(weapon, aim, target_spot_group, action) then
 		return 0
 	end
-	
-	if action and action.id == "TheGrim" then
-		return 100
-	end
-	
-	if (IsKindOf(target, "Unit") and target:HasStatusEffect("Marked")) or (HasPerk(self,"BloodScent") and IsKindOf(weapon, "MeleeWeapon")) then
-		return 100
-	end
-	
-	if IsKindOf(target, "Unit") and target:HasStatusEffect("Bleeding") and IsKindOf(weapon, "GutHookKnife") then
-		return 100
-	end
-	
 	local critChance = self:GetBaseCrit(weapon)
-	if HasPerk(self, "VitalPrecision") and aim == weapon.MaxAimActions then
-		critChance = critChance + CharacterEffectDefs.VitalPrecision:ResolveValue("Crit Bonus")
-	end
+	aim = aim or 0
+	local data = {
+		crit_chance = critChance,
+		action_id = action and action.id,
+		weapon = weapon,
+		aim = aim,
+		crit_per_aim = const.Combat.AimCritBonus,
+		target_spot_group = target_spot_group,
+		guaranteed_crit = false,
+		guaranteed_noncrit = false,
+	}
+	
+	Msg("GatherCritChanceModifications", self, target, action and action.id, weapon, data)
+	
+	if data.guaranteed_noncrit then return 0 end
+	if data.guaranteed_crit then return 100 end
 
-	if HasPerk(self, "SecondStoryMan") and IsKindOf(target, "Unit") then
-		local highGroundMod = Presets.ChanceToHitModifier.Default.GroundDifference
-		local applied = highGroundMod:CalcValue(self, target, nil, nil, weapon, nil, nil, nil, nil, self:GetPos(), target:GetPos())
-		if applied then
-			critChance = critChance + CharacterEffectDefs.SecondStoryMan:ResolveValue("critChance")
-		end
-	end
-	
-	if HasPerk(self, "InstantAutopsy") and self:IsPointBlankRange(target) then
-		critChance = critChance + CharacterEffectDefs.InstantAutopsy:ResolveValue("crit_bonus")
-	end
-	
-	if HasPerk(self, "WeaponPersonalization") and IsKindOf(weapon, "Firearm") and weapon:IsFullyModified() then
-		critChance = critChance + CharacterEffectDefs.WeaponPersonalization:ResolveValue("critChanceBonus")
-	end
+	local critChance = data.crit_chance + aim * data.crit_per_aim
 
 	local extra = GetComponentEffectValue(weapon, "CritBonusSameTarget", "bonus_crit")
 	if self:GetLastAttack() == target and extra then
 		critChance = critChance + extra
 	end
-
 	local extraAimed = IsFullyAimedAttack(aim) and GetComponentEffectValue(weapon, "CritBonusWhenFullyAimed", "bonus_crit")
 	if extraAimed then
 		critChance = critChance + extraAimed
 	end
 
-	local crit_per_aim = const.Combat.AimCritBonus
-	if HasPerk(self, "Deadeye") then
-		crit_per_aim = crit_per_aim + CharacterEffectDefs.Deadeye:ResolveValue("crit_per_aim")
-	end
-
-	return critChance + (aim or 0) * crit_per_aim
-end
-
-function Unit:GetCritDamageMod()
-	local value = const.Weapons.CriticalDamage
-	if HasPerk(self, "ColdHeart") then
-		value = value + CharacterEffectDefs.ColdHeart:ResolveValue("crit_bonus")
-	end
-	return value
+	return Clamp(critChance, 0, 100)
 end
 
 function TFormat.AimAPCost()
@@ -7060,7 +7094,7 @@ function Unit:PrepareToAttack(attack_args, attack_results)
 	if not self.visible then
 		local targetIsUnit = attack_args.target and IsKindOf(attack_args.target, "Unit") and attack_args.target
 		if targetIsUnit and targetIsUnit.visible then
-			SnapCameraToObj(targetIsUnit, "force", GetFloorOfPos(SnapToPassSlab(targetIsUnit:GetVisualPos())))
+			SnapCameraToObj(targetIsUnit, "force", GetFloorOfPos(SnapToPassSlab(targetIsUnit:GetVisualPosXYZ())))
 		else
 			return
 		end
@@ -7417,38 +7451,9 @@ function Unit:GetBaseDamage(weapon, target, breakdown)
 	weapon = weapon or self:GetActiveWeapons()
 	local mod = 100
 	local base_damage = 0
-	
-	if self:HasStatusEffect("Focused") then
-		local focusedMod = CharacterEffectDefs.Focused:ResolveValue("bonus_damage")
-		mod = mod + focusedMod
-		if breakdown then breakdown[#breakdown + 1] = { name = CharacterEffectDefs.Focused.DisplayName, value = focusedMod } end
-	end
-	
-	if HasPerk(self, "Berserker") then
-		local woundedEffect = self:GetStatusEffect("Wounded")
-		if woundedEffect and woundedEffect.stacks > 0 then
-			local stackCap = CharacterEffectDefs.Berserker:ResolveValue("stackCap")
-			local damagePerStack = CharacterEffectDefs.Berserker:ResolveValue("damageBonus")
-			local stacks = Min(woundedEffect.stacks, stackCap)
-			local berserkerMod = damagePerStack*stacks
 			
-			mod = mod + berserkerMod
-			if breakdown then breakdown[#breakdown + 1] = { name = CharacterEffectDefs.Berserker.DisplayName, value = berserkerMod } end
-			
-			if (self.side ~= "enemy1" or self.side ~= "enemy2") and g_Combat and not table.find(g_Combat.berserkVRsPerRole, self.role) then
-				PlayVoiceResponse(self, "AIBerserkerPerk")
-				table.insert(g_Combat.berserkVRsPerRole, self.role)
-			end
-		end
-	end
-	
 	if IsKindOf(weapon, "Firearm") then
 		base_damage = weapon.Damage
-		if HasPerk(self, "WeaponPersonalization") and weapon:IsFullyModified() then
-			local baseDamageBonus = CharacterEffectDefs.WeaponPersonalization:ResolveValue("baseDamageBonus")
-			base_damage = base_damage + baseDamageBonus
-			if breakdown then breakdown[#breakdown + 1] = { name = CharacterEffectDefs.WeaponPersonalization.DisplayName, value = baseDamageBonus } end
-		end
 		if IsValidTarget(target) and self:GetDist(target) <= weapon.WeaponRange * const.SlabSizeX / 2  then
 			local damageIncrease = GetComponentEffectValue(weapon, "HalfRangeDmgIncrease", "base_dmg_bonus")
 			if damageIncrease then
@@ -7466,7 +7471,9 @@ function Unit:GetBaseDamage(weapon, target, breakdown)
 		base_damage = weapon.BaseDamage
 	end
 	
-	return MulDivRound(base_damage, mod, 100)
+	local data = { base_damage = base_damage, modifier = mod, breakdown = breakdown or {} }
+	Msg("CalcBaseDamage", self, weapon, target, data)
+	return MulDivRound(data.base_damage, data.modifier, 100)
 end
 
 function Unit:GodMode(mode, state)
@@ -7597,7 +7604,7 @@ function Unit:OnGearChanged(isLoad)
 	self.using_cumbersome = false
 	NetUpdateHash("CumbersomeReset", self)
 	self:ForEachItem(false, function(item, slot)
-		if slot ~= "Inventory" and item.Cumbersome then
+		if slot ~= "Inventory" and item:IsCumbersome() then
 			self.using_cumbersome = true
 			NetUpdateHash("CumbersomeSet", self)
 		end
@@ -7623,7 +7630,7 @@ function Unit:CanUseIroncladPerk()
 	if canUse then
 		local weapons = self:GetHandheldItems()
 		for _, weapon in ipairs(weapons) do
-			if weapon.Cumbersome then
+			if weapon:IsCumbersome() then
 				canUse = false
 				break
 			end
@@ -7634,22 +7641,11 @@ function Unit:CanUseIroncladPerk()
 end
 
 local function is_attack_available(unit, action, sync)
-	local weapon1, weapon2 = action:GetAttackWeapons(unit)
-	local shots1 = action and IsKindOf(weapon1, "Firearm") and weapon1:GetAutofireShots(action)
-	local shots2 = action and IsKindOf(weapon2, "Firearm") and weapon2:GetAutofireShots(action)
-	local can_use1 = weapon1 and unit:CanUseWeapon(weapon1, shots1)
-	local can_use2 = weapon2 and unit:CanUseWeapon(weapon2, shots2)
+	local can_use = action:GetUIState({unit}) == "enabled"
 	if sync then
-		NetUpdateHash("is_attack_available", unit, action.id, weapon1 and weapon1.class, weapon1 and weapon1.id, can_use1, 
-			weapon2 and weapon2.class, weapon2 and weapon2.id, can_use2)
+		NetUpdateHash("is_attack_available", unit, action.id, can_use)
 	end
-	if weapon1 and not can_use1 then
-		return false
-	end
-	if weapon2 and not can_use2 then
-		return false
-	end
-	return true
+	return can_use
 end
 
 function Unit:GetDefaultAttackAction(force_ranged, force_ungrouped, weapon, sync, ignore_stealth)
@@ -7695,34 +7691,89 @@ function Unit:GetDefaultAttackAction(force_ranged, force_ungrouped, weapon, sync
 	end
 	
 	local firingMode = action and action.FiringModeMember
-	if firingMode and self.ui_actions and self.ui_actions[firingMode] == "enabled" then
+	if firingMode and CombatActions[firingMode]:GetUIState({self}) == "enabled" then
 		if not force_ungrouped then
 			if sync then NetUpdateHash("GetDefaultAttackAction", self, firingMode) end
 			return CombatActions[firingMode]
 		end
-		for id, state in sorted_pairs(self.ui_actions) do
-			if type(id) == "string" then
-				local ca = CombatActions[id]
-				if ca and ca.FiringModeMember == firingMode and is_attack_available(self, ca, sync) then
-					if sync then	NetUpdateHash("GetDefaultAttackAction", self, ca.id) end
-					return ca
-				end
-			end
+		local action_id = self:ResolveDefaultFiringModeAction(CombatActions[firingMode], false, sync)
+		if action_id then
+			return CombatActions[action_id]
 		end
 	end
 	if sync then	NetUpdateHash("GetDefaultAttackAction", self, action.id) end
 	return action
 end
 
+function Unit:ResolveDefaultFiringModeAction(firingMode, ui, sync)
+	local actions = {}
+	local hidden = self:HasStatusEffect("Hidden")
+	local def_id
+	
+	local weapon = firingMode:GetAttackWeapons(self)
+	local attack_ids
+	if IsKindOf(weapon, "Firearm") then
+		attack_ids = table.icopy(weapon.AvailableAttacks)
+	else
+		attack_ids = {}
+		for id, action in pairs(CombatActions) do
+			if action.FiringModeMember == firingMode.id then
+				attack_ids[#attack_ids + 1] = action.id
+			end
+		end
+	end
+	
+	-- special casea
+	if firingMode.id == "AttackDual" then
+		table.insert_unique(attack_ids, "LeftHandShot")
+		table.insert_unique(attack_ids, "RightHandShot")
+	elseif firingMode.id == "Attack" and weapon:HasComponent("EnableFullAuto") then
+		table.insert_unique(attack_ids, "AutoFire")
+	end
+	
+	local available = {}
+	for _, id in ipairs(attack_ids) do
+		local action = CombatActions[id]
+		if action.FiringModeMember == firingMode.id then			
+			actions[#actions + 1] = action
+			available[id] = is_attack_available(self, action, sync)
+			if hidden and id == "SingleShot" then
+				def_id = id
+			elseif ui and self.lastFiringMode and id == self.lastFiringMode and available[id] and self:HasAP(action:GetAPCost(self), id) then
+				def_id = def_id or id
+			end
+		end		
+	end
+	table.sort(actions, function(a, b)
+		return a.SortKey < b.SortKey
+	end)
+	if def_id then
+		return def_id, actions
+	end
+	def_id = actions[1] and actions[1].id
+	for _, ca in ipairs(actions) do
+		if available[ca.id] then
+			if not ui or self:HasAP(ca:GetAPCost(self), ca.id) then
+				return ca.id, actions
+			end
+		end
+	end
+	return def_id, actions
+end
+
 local function ResetIdleLookAt(unit)
 	if not g_Combat then
 		return
 	end
-	for _, u in ipairs(g_Units) do
-		if u.command == "Idle" and u.target_dummy and u:IsAware() then
-			local pos = GetPassSlab(u.target_dummy) or u.target_dummy:GetPos()
-			if u:SetTargetDummyFromPos(pos, nil, false) then
-				u:SetCommand("Idle")
+	for _, team in ipairs(g_Teams) do
+		if team.side ~= "neutral" then
+			for _, u in ipairs(team.units) do
+				if u.command == "Idle" and u.target_dummy and u:IsAware() then
+					local pos = GetPassSlab(u.target_dummy) or u.target_dummy:GetPos()
+					if u:SetTargetDummyFromPos(pos, nil, false) then
+						u:SetCommand("Idle")
+					end
+				end
 			end
 		end
 	end
@@ -7747,6 +7798,9 @@ OnMsg.CombatObjectDied = ResetIdleLookAt
 function OnMsg.EnterSector()
 	for _, unit in ipairs(g_Units) do
 		UpdateIndoors(unit)
+		if HasPerk(unit, "ZombiePerk") then
+			unit.stance = "Standing"
+		end
 	end
 end
 
@@ -7974,7 +8028,7 @@ function Unit:GetBaseAimLevelRange(action, target)
 			end
 			
 			local startedCombat = g_Combat and g_Combat.current_turn == 1 and IsKindOf(g_AttackSpentAPQueue[1], "Unit") and g_AttackSpentAPQueue[1].session_id == self.session_id
-			local firstShotBoost = not self.performed_action_this_turn and not startedCombat and 
+			local firstShotBoost = not self.performed_action_this_turn and not startedCombat and not IsOverwatchAction(action.id) and
 										GetComponentEffectValue(actionWep, "FirstShotIncreasedAim", "min_aim")
 			if firstShotBoost then
 				max = Max(max, firstShotBoost)
@@ -8255,6 +8309,7 @@ function OnMsg.CombatEnd(combat)
 			if not ExitCombatUninterruptable[unit.command] then
 				if overwatch and overwatch.permanent then
 					-- only check for reload
+					unit:UpdateNumOverwatchAttacks()
 					CreateGameTimeThread(Unit.AutoReload, unit)
 				else
 					unit:InterruptCommand("ExitCombat")
@@ -8332,10 +8387,14 @@ function Unit:IsSurrounded(unitReplace)
 	local enemy_pos = {}
 	local angle = 120*60
 	local cosa = MulDivRound(cos(angle), guim*guim, 4096)
-	
-	for _, u in ipairs(g_Units) do
-		if u:CanSurround(self, unitReplace and unitReplace[u]) then
-			enemy_pos[#enemy_pos + 1] = unitReplace and unitReplace[u] or u:GetPos()
+
+	for _, team in ipairs(g_Teams) do
+		if team.side ~= "neutral" then
+			for _, u in ipairs(team.units) do
+				if u:CanSurround(self, unitReplace and unitReplace[u]) then
+					enemy_pos[#enemy_pos + 1] = unitReplace and unitReplace[u] or u:GetPos()
+				end
+			end
 		end
 	end
 	if #enemy_pos < 2 then
@@ -8439,7 +8498,7 @@ function Unit:IsArmored(target_spot_group)
 	end)
 	
 	local iconName = false
-	if armorFound then
+	if armorFound and armorFound.PenetrationClass > 1 then
 		local classId = PenetrationClassIds[armorFound.PenetrationClass]
 		iconName = classId:lower() .. "_armor"
 	end
@@ -8935,7 +8994,7 @@ function DummyUnit:SetUnitLighting(value)
 	else
 		self:ClearHierarchyGameFlags(const.gofUnitLighting)
 	end
-	RecreateRenderObjects()
+	self:DestroyRenderObj()
 end
 
 function DummyUnit:GetUnitLighting(value)
@@ -9277,7 +9336,9 @@ function SortUnitsMap(units_map)
 
 	local positions = {}
 	for unit, data in pairs(units_map) do
-		positions[#positions + 1] = {id = unit.session_id, unit =  unit, data = data}		
+		if IsValid(unit) then
+			positions[#positions + 1] = {id = unit.session_id, unit = unit, data = data}		
+		end
 	end
 	table.sortby(positions, "id")
 	return positions

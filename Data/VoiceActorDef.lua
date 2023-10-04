@@ -9,6 +9,12 @@ PlaceObj('VoiceActorDef', {
 PlaceObj('VoiceActorDef', {
 	VoiceId = "Generic Thug male voice",
 	group = "Default",
+	id = "AbuserMain",
+})
+
+PlaceObj('VoiceActorDef', {
+	VoiceId = "Generic Thug male voice",
+	group = "Default",
 	id = "AbuserOutskirts_Main",
 })
 
@@ -16,6 +22,12 @@ PlaceObj('VoiceActorDef', {
 	VoiceId = "Generic Thug male voice",
 	group = "Default",
 	id = "AbuserPoacher_Main",
+})
+
+PlaceObj('VoiceActorDef', {
+	VoiceId = "Generic Thug male voice 2",
+	group = "Default",
+	id = "AbuserSidekick",
 })
 
 PlaceObj('VoiceActorDef', {
@@ -85,9 +97,21 @@ PlaceObj('VoiceActorDef', {
 })
 
 PlaceObj('VoiceActorDef', {
+	VoiceId = "Generic Soldier male voice B",
+	group = "Default",
+	id = "AdonisActor3",
+})
+
+PlaceObj('VoiceActorDef', {
 	VoiceId = "AdonisAssault",
 	group = "Default",
 	id = "AdonisAssault",
+})
+
+PlaceObj('VoiceActorDef', {
+	VoiceId = "Generic Soldier male voice B",
+	group = "Default",
+	id = "AdonisGasMask",
 })
 
 PlaceObj('VoiceActorDef', {
@@ -100,6 +124,18 @@ PlaceObj('VoiceActorDef', {
 	VoiceId = "Generic Soldier male voice 2",
 	group = "Default",
 	id = "AdonisMale_2",
+})
+
+PlaceObj('VoiceActorDef', {
+	VoiceId = "Generic Soldier male voice B",
+	group = "Default",
+	id = "AdonisPanicked1",
+})
+
+PlaceObj('VoiceActorDef', {
+	VoiceId = "Generic Soldier male voice 2",
+	group = "Default",
+	id = "AdonisPanicked2",
 })
 
 PlaceObj('VoiceActorDef', {
@@ -160,6 +196,12 @@ PlaceObj('VoiceActorDef', {
 	VoiceId = "Bounce",
 	group = "Default",
 	id = "BounceAlly",
+})
+
+PlaceObj('VoiceActorDef', {
+	VoiceId = "Bounce",
+	group = "Default",
+	id = "BounceDiesel",
 })
 
 PlaceObj('VoiceActorDef', {
@@ -250,6 +292,24 @@ PlaceObj('VoiceActorDef', {
 	VoiceId = "Generic male voice",
 	group = "Default",
 	id = "DiamondRedMiner",
+})
+
+PlaceObj('VoiceActorDef', {
+	VoiceId = "Generic male voice",
+	group = "Default",
+	id = "DoctorMale",
+})
+
+PlaceObj('VoiceActorDef', {
+	VoiceId = "Generic male voice",
+	group = "Default",
+	id = "DoctorMale_1",
+})
+
+PlaceObj('VoiceActorDef', {
+	VoiceId = "Generic male voice",
+	group = "Default",
+	id = "DoctorMale_2",
 })
 
 PlaceObj('VoiceActorDef', {
@@ -357,6 +417,12 @@ PlaceObj('VoiceActorDef', {
 PlaceObj('VoiceActorDef', {
 	VoiceId = "Generic Thug male voice",
 	group = "Default",
+	id = "Jailbird",
+})
+
+PlaceObj('VoiceActorDef', {
+	VoiceId = "Generic Thug male voice",
+	group = "Default",
 	id = "KnifeVendor",
 })
 
@@ -364,6 +430,18 @@ PlaceObj('VoiceActorDef', {
 	VoiceId = "Larry",
 	group = "Default",
 	id = "LarryNPC",
+})
+
+PlaceObj('VoiceActorDef', {
+	VoiceId = "Generic female voice",
+	group = "Default",
+	id = "LeDomasActorFemale",
+})
+
+PlaceObj('VoiceActorDef', {
+	VoiceId = "Generic male voice",
+	group = "Default",
+	id = "LeDomasActorMale",
 })
 
 PlaceObj('VoiceActorDef', {
@@ -541,7 +619,19 @@ PlaceObj('VoiceActorDef', {
 })
 
 PlaceObj('VoiceActorDef', {
-	VoiceId = "Generic Male Voice 3",
+	VoiceId = "Generic Soldier male voice 2",
+	group = "Default",
+	id = "LegionSmoker1",
+})
+
+PlaceObj('VoiceActorDef', {
+	VoiceId = "Generic Soldier male voice B",
+	group = "Default",
+	id = "LegionSmoker2",
+})
+
+PlaceObj('VoiceActorDef', {
+	VoiceId = "Generic male Voice 3",
 	group = "Default",
 	id = "MagazineVendor",
 })
@@ -597,7 +687,19 @@ PlaceObj('VoiceActorDef', {
 PlaceObj('VoiceActorDef', {
 	VoiceId = "Generic Soldier male voice A",
 	group = "Default",
+	id = "MilitiaRookieActor",
+})
+
+PlaceObj('VoiceActorDef', {
+	VoiceId = "Generic Soldier male voice A",
+	group = "Default",
 	id = "MilitiaVeteran",
+})
+
+PlaceObj('VoiceActorDef', {
+	VoiceId = "Generic Soldier male voice A",
+	group = "Default",
+	id = "MilitiaVeteranActor",
 })
 
 PlaceObj('VoiceActorDef', {
@@ -646,6 +748,12 @@ PlaceObj('VoiceActorDef', {
 	VoiceId = "Generic Thug male voice",
 	group = "Default",
 	id = "NightClubThug",
+})
+
+PlaceObj('VoiceActorDef', {
+	VoiceId = "Generic female voice",
+	group = "Default",
+	id = "NurseFemale",
 })
 
 PlaceObj('VoiceActorDef', {
@@ -700,6 +808,12 @@ PlaceObj('VoiceActorDef', {
 	VoiceId = "Generic male voice",
 	group = "Default",
 	id = "QueueDoctor",
+})
+
+PlaceObj('VoiceActorDef', {
+	VoiceId = "Generic male voice",
+	group = "Default",
+	id = "QueueDoctor2",
 })
 
 PlaceObj('VoiceActorDef', {
@@ -897,6 +1011,12 @@ PlaceObj('VoiceActorDef', {
 PlaceObj('VoiceActorDef', {
 	VoiceId = "Generic Thug male voice",
 	group = "Default",
+	id = "ThugForeman",
+})
+
+PlaceObj('VoiceActorDef', {
+	VoiceId = "Generic Thug male voice",
+	group = "Default",
 	id = "ThugGoon",
 })
 
@@ -964,6 +1084,18 @@ PlaceObj('VoiceActorDef', {
 	VoiceId = "DrLEnfer",
 	group = "Default",
 	id = "TwinManorsDrLEnfer",
+})
+
+PlaceObj('VoiceActorDef', {
+	VoiceId = "Generic female voice 2",
+	group = "Default",
+	id = "VanTasselActorFemale",
+})
+
+PlaceObj('VoiceActorDef', {
+	VoiceId = "Generic male voice 2",
+	group = "Default",
+	id = "VanTasselActorMale",
 })
 
 PlaceObj('VoiceActorDef', {

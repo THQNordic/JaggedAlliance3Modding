@@ -444,7 +444,7 @@ PlaceObj('Conversation', {
 		Align = "right",
 		Comment = "find a solution",
 		Conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('UnitSquadHasMerc', {
 						HasPerk = "Psycho",
@@ -480,7 +480,7 @@ PlaceObj('Conversation', {
 			Align = "right",
 			AutoRemove = true,
 			Conditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('UnitSquadHasMerc', {
 							HasPerk = "Negotiator",

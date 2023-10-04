@@ -126,12 +126,8 @@ DefineClass.Raider = {
 				}),
 			},
 			'Conditions', {
-				PlaceObj('AND', {
-					Conditions = {
-						PlaceObj('UnitHireStatus', {
-							TargetUnit = "Raven",
-						}),
-					},
+				PlaceObj('UnitHireStatus', {
+					TargetUnit = "Raven",
 				}),
 			},
 			'chanceToRoll', 100,
@@ -143,7 +139,7 @@ DefineClass.Raider = {
 				}),
 			},
 			'Conditions', {
-				PlaceObj('AND', {
+				PlaceObj('CheckAND', {
 					Conditions = {
 						PlaceObj('UnitHireStatus', {
 							Status = "Hired",
@@ -181,7 +177,7 @@ DefineClass.Raider = {
 				}),
 			},
 			'Conditions', {
-				PlaceObj('AND', {
+				PlaceObj('CheckAND', {
 					Conditions = {
 						PlaceObj('UnitHireStatus', {
 							Status = "Hired",

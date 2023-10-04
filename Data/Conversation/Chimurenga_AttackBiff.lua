@@ -135,7 +135,7 @@ PlaceObj('Conversation', {
 		Align = "right",
 		Comment = "Biff is reluctant he should give his green diamond to Chimurenga",
 		Conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('UnitSquadHasMerc', {
 						HasStat = "Wisdom",

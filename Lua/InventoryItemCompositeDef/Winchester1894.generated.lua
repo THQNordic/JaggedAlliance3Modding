@@ -7,14 +7,14 @@ DefineClass.Winchester1894 = {
 
 
 	object_class = "SniperRifle",
-	Reliability = 95,
 	ScrapParts = 8,
+	Reliability = 95,
 	Icon = "UI/Icons/Weapons/Winchester",
 	DisplayName = T(107436643972, --[[InventoryItemCompositeDef Winchester1894 DisplayName]] "Winchester 1894"),
 	DisplayNamePlural = T(439968849416, --[[InventoryItemCompositeDef Winchester1894 DisplayNamePlural]] "Winchester 1894s"),
 	Description = T(359190905644, --[[InventoryItemCompositeDef Winchester1894 Description]] 'One of the guns that "won the West". The magazine tube holds more ammo than your standard bolt action rifle. How this one got in this part of the world is anyone\'s guess.'),
 	AdditionalHint = T(765189854993, --[[InventoryItemCompositeDef Winchester1894 AdditionalHint]] "<bullet_point> High Crit chance\n<bullet_point> Low attack costs\n<bullet_point> Shorter range"),
-	LargeItem = true,
+	LargeItem = 1,
 	UnitStat = "Marksmanship",
 	Cost = 1250,
 	Caliber = "44CAL",

@@ -7,8 +7,8 @@ DefineClass.Crowbar = {
 
 
 	object_class = "CrowbarBase",
-	Repairable = false,
 	ScrapParts = 2,
+	Repairable = false,
 	Icon = "UI/Icons/Items/crowbar",
 	DisplayName = T(851337385387, --[[InventoryItemCompositeDef Crowbar DisplayName]] "Crowbar"),
 	DisplayNamePlural = T(855121960280, --[[InventoryItemCompositeDef Crowbar DisplayNamePlural]] "Crowbars"),

@@ -854,6 +854,22 @@ PlaceObj('XTemplate', {
 										self:SetupStyle(rollover)
 									end,
 								}),
+								PlaceObj('XTemplateCode', {
+									'comment', "OnMsg.StatusEffectAdded/Removed",
+									'run', function (self, parent, context)
+										function OnMsg.StatusEffectAdded(unit, status, stacks, reason)
+											if status ~= "Hidden" then return end
+											if parent.context ~= unit then return end
+											HUDMercClass.SetupStyle(parent)
+										end
+										
+										function OnMsg.StatusEffectRemoved(unit, status, stacks, reason)
+											if status ~= "Hidden" then return end
+											if parent.context ~= unit then return end
+											HUDMercClass.SetupStyle(parent)
+										end
+									end,
+								}),
 								PlaceObj('XTemplateWindow', {
 									'__parent', function (parent, context) return parent.idPortraitBG end,
 									'Id', "idStatHighlight",
@@ -1133,6 +1149,22 @@ PlaceObj('XTemplate', {
 										end
 										
 										return "UI/Cursors/Hand.tga"
+									end,
+								}),
+								PlaceObj('XTemplateCode', {
+									'comment', "OnMsg.StatusEffectAdded/Removed",
+									'run', function (self, parent, context)
+										function OnMsg.StatusEffectAdded(unit, status, stacks, reasons)
+											if status ~= "Hidden" then return end
+											if parent.context ~= unit then return end
+											HUDMercClass.SetupStyle(parent)
+										end
+										
+										function OnMsg.StatusEffectRemoved(unit, status, stacks, reason)
+											if status ~= "Hidden" then return end
+											if parent.context ~= unit then return end
+											HUDMercClass.SetupStyle(parent)
+										end
 									end,
 								}),
 								PlaceObj('XTemplateWindow', {

@@ -121,7 +121,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							QuestId = "Hermit",
@@ -157,7 +157,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							QuestId = "Hermit",
@@ -294,7 +294,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							QuestId = "Hermit",
@@ -355,7 +355,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							QuestId = "Hermit",

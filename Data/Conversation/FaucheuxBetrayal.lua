@@ -620,31 +620,23 @@ PlaceObj('Conversation', {
 				Interjections = {
 					PlaceObj('ConversationInterjection', {
 						Conditions = {
-							PlaceObj('OR', {
+							PlaceObj('CheckOR', {
 								Conditions = {
-									PlaceObj('OR', {
-										Conditions = {
-											PlaceObj('QuestIsVariableBool', {
-												QuestId = "RescueBiff",
-												Vars = set( "MERC_Crimes" ),
-												__eval = function ()
-													local quest = gv_Quests['RescueBiff'] or QuestGetState('RescueBiff')
-													return quest.MERC_Crimes
-												end,
-											}),
-										},
+									PlaceObj('QuestIsVariableBool', {
+										QuestId = "RescueBiff",
+										Vars = set( "MERC_Crimes" ),
+										__eval = function ()
+											local quest = gv_Quests['RescueBiff'] or QuestGetState('RescueBiff')
+											return quest.MERC_Crimes
+										end,
 									}),
-									PlaceObj('OR', {
-										Conditions = {
-											PlaceObj('QuestIsVariableBool', {
-												QuestId = "PantagruelDramas",
-												Vars = set( "MentionLie" ),
-												__eval = function ()
-													local quest = gv_Quests['PantagruelDramas'] or QuestGetState('PantagruelDramas')
-													return quest.MentionLie
-												end,
-											}),
-										},
+									PlaceObj('QuestIsVariableBool', {
+										QuestId = "PantagruelDramas",
+										Vars = set( "MentionLie" ),
+										__eval = function ()
+											local quest = gv_Quests['PantagruelDramas'] or QuestGetState('PantagruelDramas')
+											return quest.MentionLie
+										end,
 									}),
 								},
 							}),
@@ -658,31 +650,23 @@ PlaceObj('Conversation', {
 					}),
 					PlaceObj('ConversationInterjection', {
 						Conditions = {
-							PlaceObj('OR', {
+							PlaceObj('CheckOR', {
 								Conditions = {
-									PlaceObj('OR', {
-										Conditions = {
-											PlaceObj('QuestIsVariableBool', {
-												QuestId = "RescueBiff",
-												Vars = set( "MERC_Crimes" ),
-												__eval = function ()
-													local quest = gv_Quests['RescueBiff'] or QuestGetState('RescueBiff')
-													return quest.MERC_Crimes
-												end,
-											}),
-										},
+									PlaceObj('QuestIsVariableBool', {
+										QuestId = "RescueBiff",
+										Vars = set( "MERC_Crimes" ),
+										__eval = function ()
+											local quest = gv_Quests['RescueBiff'] or QuestGetState('RescueBiff')
+											return quest.MERC_Crimes
+										end,
 									}),
-									PlaceObj('OR', {
-										Conditions = {
-											PlaceObj('QuestIsVariableBool', {
-												QuestId = "PantagruelDramas",
-												Vars = set( "MentionLie" ),
-												__eval = function ()
-													local quest = gv_Quests['PantagruelDramas'] or QuestGetState('PantagruelDramas')
-													return quest.MentionLie
-												end,
-											}),
-										},
+									PlaceObj('QuestIsVariableBool', {
+										QuestId = "PantagruelDramas",
+										Vars = set( "MentionLie" ),
+										__eval = function ()
+											local quest = gv_Quests['PantagruelDramas'] or QuestGetState('PantagruelDramas')
+											return quest.MentionLie
+										end,
 									}),
 								},
 							}),
@@ -696,31 +680,23 @@ PlaceObj('Conversation', {
 					}),
 					PlaceObj('ConversationInterjection', {
 						Conditions = {
-							PlaceObj('OR', {
+							PlaceObj('CheckOR', {
 								Conditions = {
-									PlaceObj('OR', {
-										Conditions = {
-											PlaceObj('QuestIsVariableBool', {
-												QuestId = "RescueBiff",
-												Vars = set( "MERC_Crimes" ),
-												__eval = function ()
-													local quest = gv_Quests['RescueBiff'] or QuestGetState('RescueBiff')
-													return quest.MERC_Crimes
-												end,
-											}),
-										},
+									PlaceObj('QuestIsVariableBool', {
+										QuestId = "RescueBiff",
+										Vars = set( "MERC_Crimes" ),
+										__eval = function ()
+											local quest = gv_Quests['RescueBiff'] or QuestGetState('RescueBiff')
+											return quest.MERC_Crimes
+										end,
 									}),
-									PlaceObj('OR', {
-										Conditions = {
-											PlaceObj('QuestIsVariableBool', {
-												QuestId = "PantagruelDramas",
-												Vars = set( "MentionLie" ),
-												__eval = function ()
-													local quest = gv_Quests['PantagruelDramas'] or QuestGetState('PantagruelDramas')
-													return quest.MentionLie
-												end,
-											}),
-										},
+									PlaceObj('QuestIsVariableBool', {
+										QuestId = "PantagruelDramas",
+										Vars = set( "MentionLie" ),
+										__eval = function ()
+											local quest = gv_Quests['PantagruelDramas'] or QuestGetState('PantagruelDramas')
+											return quest.MentionLie
+										end,
 									}),
 								},
 							}),

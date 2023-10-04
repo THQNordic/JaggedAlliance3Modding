@@ -7,7 +7,7 @@ SetpiecePrgs.DowntownFirstEnter_RebelActor2 = function(seed, state, MainActor, T
 	prgdbg(li, 1, 1) sprocall(SetpieceSetStance.Exec, SetpieceSetStance, state, rand, true, "", MainActor, "Standing", "Current Weapon", true)
 	prgdbg(li, 1, 2) sprocall(SetpieceSleep.Exec, SetpieceSleep, state, rand, true, "", 1200)
 	local _, RebelActor2_GoTo
-	prgdbg(li, 1, 3) _, RebelActor2_GoTo = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "PantagruelFirstEnter_SynPoint", MainActor, "RebelActor2_GoTo", true, true, false, "", false, false, "")
+	prgdbg(li, 1, 3) _, RebelActor2_GoTo = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "PantagruelFirstEnter_SynPoint", MainActor, "RebelActor2_GoTo", true, true, false, "", false, false, "", 1000)
 	prgdbg(li, 1, 4) sprocall(SetpieceWaitCheckpoint.Exec, SetpieceWaitCheckpoint, state, rand, "PantagruelFirstEnter_SynPoint")
 	prgdbg(li, 1, 5) sprocall(SetpieceSetStance.Exec, SetpieceSetStance, state, rand, true, "", MainActor, "Crouch", "Current Weapon", true)
 	prgdbg(li, 1, 6) sprocall(SetpieceSleep.Exec, SetpieceSleep, state, rand, true, "", 1200)

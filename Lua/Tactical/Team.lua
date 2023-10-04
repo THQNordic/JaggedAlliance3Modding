@@ -203,21 +203,13 @@ function AddToGlobalUnits(unit)
 	g_Units[unit.session_id] = unit
 end
 
-function GetAllPlayerUnitsOnMap(aliveOnly)
+function GetAllPlayerUnitsOnMap()
 	local team = table.find_value(g_Teams, "side", "player1")
-	if not team then return false end
-	if aliveOnly then
-		local units = table.ifilter(team.units, function(i, unit) 
-			return not unit:IsDead()
-		end)
-		return units
-	else
-		return team.units
-	end
+	return team and team.units
 end
 
-function GetAllPlayerUnitsOnMapSessionId(aliveOnly)
-	local units = GetAllPlayerUnitsOnMap(aliveOnly)
+function GetAllPlayerUnitsOnMapSessionId()
+	local units = GetAllPlayerUnitsOnMap()
 	return table.map(units, "session_id")
 end
 

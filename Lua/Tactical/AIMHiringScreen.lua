@@ -1247,6 +1247,14 @@ function SetPDAMessangerVisibleIfUp(val)
 	end
 end
 
+function OnMsg.NetPlayerLeft()
+	local pda = GetDialog("PDADialog") 
+	local dlg = pda and pda:ResolveId("idPDAMessenger")
+	if dlg and NetIsHost() then
+		dlg:Close()
+	end
+end
+
 function PDAMessengerClass:SetupUIForChat(hide)
 	if self.window_state == "destroying" then return end
 	local buttons = self.conversation_input
@@ -2126,6 +2134,7 @@ function NetEvents.MercOpenChat(mercId, opened_by)
 	assert(merc, mercId)
 	local msger = XTemplateSpawn("PDAMessenger", popupHost, merc)
 	msger:SetChildrenHandleMouse(opened_by == netUniqueId)
+	msger:SetId("idPDAMessenger")
 	msger:Open()
 end
 

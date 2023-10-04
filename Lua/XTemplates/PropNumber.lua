@@ -10,17 +10,13 @@ PlaceObj('XTemplate', {
 		'RolloverAnchor', "right",
 		'RolloverOffset', box(20, -5, 0, 0),
 		'OnLayoutComplete', function (self)
-			if GetUIStyleGamepad() then
-				self.RolloverOnFocus = true
-			end
+			self.RolloverOnFocus = GetUIStyleGamepad()
 			SetupOptionRollover(self, self.context[1], self.context.prop_meta)
 		end,
 		'LayoutMethod', "HList",
+		'RolloverOnFocus', true,
 		'MouseCursor', "CommonAssets/UI/HandCursor.tga",
 	}, {
-		PlaceObj('XTemplateProperty', {
-			'id', "isSelectedForEdit",
-		}),
 		PlaceObj('XTemplateWindow', {
 			'__condition', function (parent, context) return not GetDialog("PDADialog") and not g_SatelliteUI end,
 			'__class', "XBlurRect",
@@ -163,7 +159,7 @@ PlaceObj('XTemplate', {
 					local prop_meta = self.context.prop_meta
 					if (shortcut == "LeftThumbLeft" or shortcut == "LeftThumbRight") and prop_meta.dpad_only then return end
 					local obj = ResolvePropObj(self.context)
-					local value = obj[prop_meta.id]
+					local value = obj[prop_meta.id] or obj:GetDefaultPropertyValue(prop_meta.id)
 					local step = self.idSlider.StepSize
 					local minValue = self.idSlider.Min
 					local maxValue = self.idSlider.Max
@@ -190,9 +186,6 @@ PlaceObj('XTemplate', {
 			'name', "SetSelected(self, selected)",
 			'func', function (self, selected)
 				self:SetFocus(selected)
-				if not selected then
-					self.isSelectedForEdit = false
-				end
 			end,
 		}),
 		PlaceObj('XTemplateFunc', {

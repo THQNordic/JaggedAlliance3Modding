@@ -8,7 +8,7 @@ DefineClass.ShockAndAwe = {
 
 	object_class = "Perk",
 	msg_reactions = {
-		PlaceObj('MsgReactionEffects', {
+		PlaceObj('MsgActorReactionEffects', {
 			Effects = {
 				PlaceObj('ConditionalEffect', {
 					'Effects', {
@@ -20,24 +20,21 @@ DefineClass.ShockAndAwe = {
 							end,
 							FuncCode = 'if IsKindOf(obj, "Unit") then\n	obj.team.morale = Max(1, obj.team.morale)\nend',
 							SaveAsText = false,
-							param_bindings = false,
 						}),
 					},
 				}),
 			},
 			Event = "EnterSector",
 			Handler = function (self, game_start, load_game)
-				CE_ExecReactionEffects(self, "EnterSector")
+				ExecReactionEffects(self, 1, "EnterSector", nil, self, game_start, load_game)
 			end,
-			param_bindings = false,
 		}),
-		PlaceObj('MsgReaction', {
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "attacker",
 			Event = "GatherDamageModifications",
-			Handler = function (self, attacker, target, attack_args, hit_descr, mod_data)
-				local reaction_idx = table.find(self.msg_reactions or empty_table, "Event", "GatherDamageModifications")
-				if not reaction_idx then return end
+			Handler = function (self, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data)
 				
-				local function exec(self, attacker, target, attack_args, hit_descr, mod_data)
+				local function exec(self, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data)
 				if not IsKindOf(attacker, "Unit") or not attacker.team or attacker.team.morale <= 0 then
 					return
 				end
@@ -45,16 +42,19 @@ DefineClass.ShockAndAwe = {
 				mod_data.base_damage = MulDivRound(mod_data.base_damage, 100 + damageBonus, 100)
 				mod_data.breakdown[#mod_data.breakdown + 1] = { name = self.DisplayName, value = damageBonus }
 				end
-				local id = GetCharacterEffectId(self)
 				
-				if id then
-					if IsKindOf(attacker, "StatusEffectObject") and attacker:HasStatusEffect(id) then
-						exec(self, attacker, target, attack_args, hit_descr, mod_data)
-					end
-				else
-					exec(self, attacker, target, attack_args, hit_descr, mod_data)
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[2]
+				if not reaction_def or reaction_def.Event ~= "GatherDamageModifications" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
+					exec(self, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data)
 				end
 				
+				if self:VerifyReaction("GatherDamageModifications", reaction_def, attacker, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data) then
+					exec(self, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data)
+				end
 			end,
 			HandlerCode = function (self, attacker, target, attack_args, hit_descr, mod_data)
 				if not IsKindOf(attacker, "Unit") or not attacker.team or attacker.team.morale <= 0 then
@@ -64,7 +64,6 @@ DefineClass.ShockAndAwe = {
 				mod_data.base_damage = MulDivRound(mod_data.base_damage, 100 + damageBonus, 100)
 				mod_data.breakdown[#mod_data.breakdown + 1] = { name = self.DisplayName, value = damageBonus }
 			end,
-			param_bindings = false,
 		}),
 	},
 	DisplayName = T(366436791486, --[[CharacterEffectCompositeDef ShockAndAwe DisplayName]] "Shock and Awe"),

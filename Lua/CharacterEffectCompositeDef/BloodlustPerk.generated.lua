@@ -8,36 +8,36 @@ DefineClass.BloodlustPerk = {
 
 	object_class = "Perk",
 	msg_reactions = {
-		PlaceObj('MsgReaction', {
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "unit",
 			Event = "UnitBeginTurn",
 			Handler = function (self, unit)
-				local reaction_idx = table.find(self.msg_reactions or empty_table, "Event", "UnitBeginTurn")
-				if not reaction_idx then return end
 				
 				local function exec(self, unit)
 				unit:SetEffectValue("bloodlust_last_target", nil)
 				end
-				local id = GetCharacterEffectId(self)
 				
-				if id then
-					if IsKindOf(unit, "StatusEffectObject") and unit:HasStatusEffect(id) then
-						exec(self, unit)
-					end
-				else
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[1]
+				if not reaction_def or reaction_def.Event ~= "UnitBeginTurn" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
 					exec(self, unit)
 				end
 				
+				if self:VerifyReaction("UnitBeginTurn", reaction_def, unit, unit) then
+					exec(self, unit)
+				end
 			end,
 			HandlerCode = function (self, unit)
 				unit:SetEffectValue("bloodlust_last_target", nil)
 			end,
-			param_bindings = false,
 		}),
-		PlaceObj('MsgReaction', {
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "attacker",
 			Event = "OnAttack",
 			Handler = function (self, attacker, action, target, results, attack_args)
-				local reaction_idx = table.find(self.msg_reactions or empty_table, "Event", "OnAttack")
-				if not reaction_idx then return end
 				
 				local function exec(self, attacker, action, target, results, attack_args)
 				if action.ActionType ~= "Melee Attack" or not IsValid(target) or not IsKindOf(target, "Unit") then
@@ -46,16 +46,19 @@ DefineClass.BloodlustPerk = {
 				end
 				attacker:SetEffectValue("bloodlust_last_target", target.handle)
 				end
-				local id = GetCharacterEffectId(self)
 				
-				if id then
-					if IsKindOf(attacker, "StatusEffectObject") and attacker:HasStatusEffect(id) then
-						exec(self, attacker, action, target, results, attack_args)
-					end
-				else
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[2]
+				if not reaction_def or reaction_def.Event ~= "OnAttack" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
 					exec(self, attacker, action, target, results, attack_args)
 				end
 				
+				if self:VerifyReaction("OnAttack", reaction_def, attacker, attacker, action, target, results, attack_args) then
+					exec(self, attacker, action, target, results, attack_args)
+				end
 			end,
 			HandlerCode = function (self, attacker, action, target, results, attack_args)
 				if action.ActionType ~= "Melee Attack" or not IsValid(target) or not IsKindOf(target, "Unit") then
@@ -64,15 +67,13 @@ DefineClass.BloodlustPerk = {
 				end
 				attacker:SetEffectValue("bloodlust_last_target", target.handle)
 			end,
-			param_bindings = false,
 		}),
-		PlaceObj('MsgReaction', {
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "attacker",
 			Event = "GatherDamageModifications",
-			Handler = function (self, attacker, target, attack_args, hit_descr, mod_data)
-				local reaction_idx = table.find(self.msg_reactions or empty_table, "Event", "GatherDamageModifications")
-				if not reaction_idx then return end
+			Handler = function (self, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data)
 				
-				local function exec(self, attacker, target, attack_args, hit_descr, mod_data)
+				local function exec(self, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data)
 				local last_target = attacker:GetEffectValue("bloodlust_last_target")
 				local action = CombatActions[mod_data.action_id or false]
 				if action and action.ActionType == "Melee Attack" and last_target and IsKindOf(target, "Unit") and target.handle ~= last_target then
@@ -81,16 +82,19 @@ DefineClass.BloodlustPerk = {
 					mod_data.breakdown[#mod_data.breakdown + 1] = { name = self.DisplayName, value = bonus }
 				end
 				end
-				local id = GetCharacterEffectId(self)
 				
-				if id then
-					if IsKindOf(attacker, "StatusEffectObject") and attacker:HasStatusEffect(id) then
-						exec(self, attacker, target, attack_args, hit_descr, mod_data)
-					end
-				else
-					exec(self, attacker, target, attack_args, hit_descr, mod_data)
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[3]
+				if not reaction_def or reaction_def.Event ~= "GatherDamageModifications" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
+					exec(self, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data)
 				end
 				
+				if self:VerifyReaction("GatherDamageModifications", reaction_def, attacker, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data) then
+					exec(self, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data)
+				end
 			end,
 			HandlerCode = function (self, attacker, target, attack_args, hit_descr, mod_data)
 				local last_target = attacker:GetEffectValue("bloodlust_last_target")
@@ -101,7 +105,6 @@ DefineClass.BloodlustPerk = {
 					mod_data.breakdown[#mod_data.breakdown + 1] = { name = self.DisplayName, value = bonus }
 				end
 			end,
-			param_bindings = false,
 		}),
 	},
 	DisplayName = T(700118302261, --[[CharacterEffectCompositeDef BloodlustPerk DisplayName]] "Killing Spree"),

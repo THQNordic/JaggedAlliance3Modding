@@ -506,7 +506,7 @@ PlaceObj('BanterDef', {
 				"I18",
 			},
 		}),
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('CheckGameState', {
 					GameState = "Sunrise",
@@ -566,7 +566,7 @@ PlaceObj('BanterDef', {
 				"I18",
 			},
 		}),
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('CheckGameState', {
 					GameState = "Sunset",
@@ -777,7 +777,7 @@ PlaceObj('BanterDef', {
 				"I18",
 			},
 		}),
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('CheckGameState', {
 					GameState = "Sunset",

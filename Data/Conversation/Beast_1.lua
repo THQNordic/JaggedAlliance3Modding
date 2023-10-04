@@ -304,7 +304,7 @@ PlaceObj('Conversation', {
 			AutoRemove = true,
 			Comment = 'compliment; possible response to "Are you not afraid of the Beast?"',
 			Conditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('UnitSquadHasMerc', {
 							Name = "Len",
@@ -387,7 +387,7 @@ PlaceObj('Conversation', {
 			AutoRemove = true,
 			Comment = 'not met, killed the bad guys together; \nresponse to "Are you not afraid of the Beast?"',
 			Conditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('UnitSquadHasMerc', {
 							Name = "Flay",

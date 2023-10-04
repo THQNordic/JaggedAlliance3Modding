@@ -10,6 +10,6 @@ DefineClass.GoldenWatch = {
 	Icon = "UI/Icons/Items/watch",
 	DisplayName = T(424339741886, --[[InventoryItemCompositeDef GoldenWatch DisplayName]] "Golden Watch"),
 	Description = T(815681556557, --[[InventoryItemCompositeDef GoldenWatch Description]] "Heinrich's golden watch."),
-	is_valuable = true,
+	Valuable = 1,
 }
 

@@ -83,6 +83,27 @@ PlaceObj('BanterDef', {
 PlaceObj('BanterDef', {
 	Lines = {
 		PlaceObj('BanterLine', {
+			'Character', "Bounce",
+			'Text', T(295069151050, --[[BanterDef Landsbach_Bounce04 Text section:Banters_Local_Landsbach/Landsbach_Bounce04 voice:Bounce]] "Chill, cuz. It'll be good for both of us."),
+		}),
+	},
+	conditions = {
+		PlaceObj('QuestIsVariableBool', {
+			QuestId = "Landsbach",
+			Vars = set( "BounceBattle", "BouncePartners", "Completed" ),
+			__eval = function ()
+				local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
+				return quest.BounceBattle and quest.BouncePartners and quest.Completed
+			end,
+		}),
+	},
+	group = "Banters_Local_Landsbach",
+	id = "Landsbach_Bounce04",
+})
+
+PlaceObj('BanterDef', {
+	Lines = {
+		PlaceObj('BanterLine', {
 			'Character', "Doorknob",
 			'Text', T(361843697770, --[[BanterDef Landsbach_Doorknob01 Text section:Banters_Local_Landsbach/Landsbach_Doorknob01 voice:Doorknob]] "I said this club is members only. Get lost."),
 			'playOnce', true,
@@ -678,9 +699,9 @@ PlaceObj('BanterDef', {
 		}),
 	},
 	conditions = {
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
-				PlaceObj('AND', {
+				PlaceObj('CheckAND', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							QuestId = "Landsbach",
@@ -1223,7 +1244,7 @@ PlaceObj('BanterDef', {
 				"Landsbach_Travis02",
 			},
 		}),
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('GuardpostObjectiveDone', {
 					GuardpostObjective = "FridayNightPoker",
@@ -1254,7 +1275,7 @@ PlaceObj('BanterDef', {
 		}),
 	},
 	conditions = {
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('GuardpostObjectiveDone', {
 					GuardpostObjective = "FridayNightPoker",
@@ -1284,7 +1305,7 @@ PlaceObj('BanterDef', {
 				"Landsbach_Travis02",
 			},
 		}),
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('GuardpostObjectiveDone', {
 					GuardpostObjective = "FridayNightPoker",
@@ -1314,7 +1335,7 @@ PlaceObj('BanterDef', {
 				"Landsbach_Travis03",
 			},
 		}),
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('GuardpostObjectiveDone', {
 					GuardpostObjective = "FridayNightPoker",
@@ -1362,7 +1383,7 @@ PlaceObj('BanterDef', {
 				"Landsbach_Travis02",
 			},
 		}),
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('GuardpostObjectiveDone', {
 					GuardpostObjective = "FridayNightPoker",
@@ -1392,7 +1413,7 @@ PlaceObj('BanterDef', {
 				"Landsbach_Travis03",
 			},
 		}),
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('GuardpostObjectiveDone', {
 					GuardpostObjective = "FridayNightPoker",
@@ -1422,7 +1443,7 @@ PlaceObj('BanterDef', {
 				"Landsbach_Travis03",
 			},
 		}),
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('GuardpostObjectiveDone', {
 					GuardpostObjective = "FridayNightPoker",
@@ -1470,7 +1491,7 @@ PlaceObj('BanterDef', {
 				"Landsbach_Travis03",
 			},
 		}),
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('GuardpostObjectiveDone', {
 					GuardpostObjective = "FridayNightPoker",
@@ -2021,5 +2042,10 @@ PlaceObj('BanterDef', {
 	disabledInConflict = true,
 	group = "Banters_Local_Landsbach",
 	id = "Landsbach_VillagersMale11",
+})
+
+PlaceObj('BanterDef', {
+	group = "Banters_Local_Landsbach",
+	id = "NewBanterDef",
 })
 

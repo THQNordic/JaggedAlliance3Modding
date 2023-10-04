@@ -1,7 +1,7 @@
 if not FirstLoad then return end
 
 hr.TrimParticles = 1
-hr.MaxVisHeight = 100
+hr.MaxVisHeight = 25
 
 hr.EnablePostProcRadialBlur = 0
 hr.EnablePostProcDistanceBlur = 0
@@ -11,7 +11,7 @@ hr.EnablePostProcAA = 1
 hr.Shadowmap = 1
 
 hr.ShadowPCFSize = 3
-hr.ShadowCSMCascades = 4
+hr.ShadowCSMCascades = (Platform.ps4 or Platform.xbox_one and not Platform.xbox_one_x) and 3 or 4
 hr.ShadowCSMRangeMinimum = 30
 hr.ShadowCSMRangeMultiplier = 200
 hr.ShadowSDSMEnable = true
@@ -123,6 +123,10 @@ const.MovieCorrectionGamma = 1700
 
 hr.ShadowSDSMReadbackLatency=1
 
+if Platform.xbox then
+	hr.EnableShaderCompilation = 0
+end
+
 InsertProceduralMeshShaders({
 	-- Define project specific mesh shaders.
 	{ shaderid = "RangeContours.fx", defines = {"RANGE_CONTOUR"}, name = "range_contour", topology = const.ptTriangleList, cull_mode = const.cullModeNone,
@@ -174,3 +178,31 @@ InsertProceduralMeshShaders({
 -- Hair Parameters initial values for testing purposes
 hr.HairRoughness = 100
 hr.HairMetallic = 50
+
+function LimitTextureMips()
+	local resources = {
+		"UI/SatelliteView/SatView.dds"
+	}
+	local folders = {
+		"UI/Mercs/",
+		"UI/Enemies/",
+		"UI/NPCs/",
+	}
+	for _,folder in ipairs(folders) do
+		local err, files = AsyncListFiles(folder, "*", "")
+		for _,file in ipairs(files) do
+			resources[#resources+1] = file
+		end
+	end
+
+	for _,res in ipairs(resources) do
+		local updated = ResourceManager.SetMetadataField(ResourceManager.GetResourceID(res), "MinLevel", 1)
+		assert(updated)
+	end
+end
+
+function OnMsg.Start()
+	if Platform.ps4 and not Platform.ps4_pro or Platform.xbox_one and not Platform.xbox_one_x then
+		LimitTextureMips()
+	end
+end

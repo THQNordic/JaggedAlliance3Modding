@@ -4,11 +4,10 @@ PlaceObj('XTemplate', {
 	group = "Comic",
 	id = "Intro",
 	PlaceObj('XTemplateWindow', {
-		'__class', "XDialog",
+		'__class', "ZuluModalDialog",
 		'ZOrder', 10,
 		'Background', RGBA(0, 0, 0, 255),
 		'FadeOutTime', 200,
-		'HandleMouse', true,
 	}, {
 		PlaceObj('XTemplateLayer', {
 			'layer', "XPauseLayer",
@@ -63,9 +62,9 @@ PlaceObj('XTemplate', {
 			end,
 		}),
 		PlaceObj('XTemplateFunc', {
-			'name', "Open",
+			'name', "Open(self, ...)",
 			'func', function (self, ...)
-				XDialog.Open(self, ...)
+				ZuluModalDialog.Open(self, ...)
 				IntroOnOpen(self)
 				rawset(self, "openedAt", RealTime())
 				
@@ -74,7 +73,6 @@ PlaceObj('XTemplate', {
 				else
 					self.idSkipHint:SetText(T(696052205292, "<style SkipHint>Escape: Skip</style>"))
 				end
-				self:SetModal()
 			end,
 		}),
 		PlaceObj('XTemplateFunc', {
@@ -84,7 +82,7 @@ PlaceObj('XTemplate', {
 				for voice, handle in pairs(playing_sounds) do
 					StopSound(handle)
 				end
-				return  XDialog.Close(self, ...)
+				return  ZuluModalDialog.Close(self, ...)
 			end,
 		}),
 		PlaceObj('XTemplateWindow', {
@@ -124,6 +122,7 @@ PlaceObj('XTemplate', {
 				'__class', "XText",
 				'Id', "idSkipHint",
 				'Margins', box(0, 0, 50, 40),
+				'MarginPolicy', "FitInSafeArea",
 				'HAlign', "right",
 				'VAlign', "bottom",
 				'Visible', false,

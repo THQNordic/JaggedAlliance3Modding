@@ -509,7 +509,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('GroupIsDead', {
 							Group = "FamiliesCombat",
@@ -629,6 +629,11 @@ PlaceObj('QuestsDef', {
 	TCEs = {
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"L18",
+					},
+				}),
 				PlaceObj('UnitIsAroundOtherUnit', {
 					Distance = 7,
 					SecondTargetUnit = "Abraham",
@@ -660,6 +665,9 @@ PlaceObj('QuestsDef', {
 			Once = true,
 			ParamId = "TCE_ApproachMurderScene",
 			QuestId = "TwinManors",
+			requiredSectors = {
+				"L18",
+			},
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
@@ -728,7 +736,7 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							QuestId = "TwinManors",
@@ -991,6 +999,11 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"L18",
+					},
+				}),
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "TwinManors",
 					Vars = set( "FamilyGathering" ),
@@ -1042,6 +1055,9 @@ PlaceObj('QuestsDef', {
 			Once = true,
 			ParamId = "TCE_FamilyGathered",
 			QuestId = "TwinManors",
+			requiredSectors = {
+				"L18",
+			},
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
@@ -1059,8 +1075,12 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			Effects = {
-				PlaceObj('PlaySetpiece', {
-					setpiece = "TwinManors_FamiliesCombatFFA",
+				PlaceObj('PlayBanterEffect', {
+					Banters = {
+						"TwinManorsFinale_FamiliesCombatFFA",
+					},
+					searchInMap = true,
+					searchInMarker = false,
 				}),
 				PlaceObj('UnitSetConflictIgnore', {
 					ConflictIgnore = false,
@@ -1138,8 +1158,12 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			Effects = {
-				PlaceObj('PlaySetpiece', {
-					setpiece = "TwinManors_FamiliesCombatPlayer",
+				PlaceObj('PlayBanterEffect', {
+					Banters = {
+						"TwinManorsFinale_FamiliesCombatPlayer",
+					},
+					searchInMap = true,
+					searchInMarker = false,
 				}),
 				PlaceObj('UnitSetConflictIgnore', {
 					ConflictIgnore = false,
@@ -1234,14 +1258,10 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
-				PlaceObj('GroupIsDead', {
-					Group = "FamiliesCombat",
-				}),
-				PlaceObj('GroupIsDead', {
-					Group = "Abraham",
-				}),
-				PlaceObj('GroupIsDead', {
-					Group = "Caroline",
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"L18",
+					},
 				}),
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "TwinManors",
@@ -1254,10 +1274,23 @@ PlaceObj('QuestsDef', {
 						return not quest.Completed and not quest.Failed
 					end,
 				}),
-				PlaceObj('PlayerIsInSectors', {
-					Sectors = {
-						"L18",
-					},
+				PlaceObj('QuestIsVariableBool', {
+					Condition = "or",
+					QuestId = "TwinManors",
+					Vars = set( "FamiliesCombat", "FamiliesCombatFFA", "FamiliesCombatPlayer" ),
+					__eval = function ()
+						local quest = gv_Quests['TwinManors'] or QuestGetState('TwinManors')
+						return quest.FamiliesCombat or quest.FamiliesCombatFFA or quest.FamiliesCombatPlayer
+					end,
+				}),
+				PlaceObj('GroupIsDead', {
+					Group = "FamiliesCombat",
+				}),
+				PlaceObj('GroupIsDead', {
+					Group = "Abraham",
+				}),
+				PlaceObj('GroupIsDead', {
+					Group = "Caroline",
 				}),
 			},
 			Effects = {

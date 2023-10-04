@@ -8,11 +8,10 @@ DefineClass.StressManagement = {
 
 	object_class = "Perk",
 	msg_reactions = {
-		PlaceObj('MsgReaction', {
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "obj",
 			Event = "StatusEffectAdded",
 			Handler = function (self, obj, id, stacks)
-				local reaction_idx = table.find(self.msg_reactions or empty_table, "Event", "StatusEffectAdded")
-				if not reaction_idx then return end
 				
 				local function exec(self, obj, id, stacks)
 				if HasPerk(obj, self.id) and CharacterEffectDefs[id].type == "Debuff" and not obj:HasStatusEffect("StressManagementCounter") then
@@ -20,9 +19,19 @@ DefineClass.StressManagement = {
 					obj:AddStatusEffect("StressManagementCounter")
 				end
 				end
-				local _id = GetCharacterEffectId(self)
-				if _id == id then exec(self, obj, id, stacks) end
 				
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[1]
+				if not reaction_def or reaction_def.Event ~= "StatusEffectAdded" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
+					exec(self, obj, id, stacks)
+				end
+				
+				if self:VerifyReaction("StatusEffectAdded", reaction_def, obj, obj, id, stacks) then
+					exec(self, obj, id, stacks)
+				end
 			end,
 			HandlerCode = function (self, obj, id, stacks)
 				if HasPerk(obj, self.id) and CharacterEffectDefs[id].type == "Debuff" and not obj:HasStatusEffect("StressManagementCounter") then
@@ -30,7 +39,6 @@ DefineClass.StressManagement = {
 					obj:AddStatusEffect("StressManagementCounter")
 				end
 			end,
-			param_bindings = false,
 		}),
 	},
 	DisplayName = T(578724057231, --[[CharacterEffectCompositeDef StressManagement DisplayName]] "Stress Management"),

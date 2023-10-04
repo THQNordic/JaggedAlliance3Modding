@@ -36,10 +36,10 @@ SetpiecePrgs.FaucheuxLeave = function(seed, state, TriggerUnits)
 	prgdbg(li, 1, 21) sprocall(SetpieceAnimation.Exec, SetpieceAnimation, state, rand, false, "", Faucheux, "FL_Faucheux_03", true, "civ_WalkNormal_Neutral_Base", 1000, 0, range(1, 1), 0, false, true, false, "")
 	prgdbg(li, 1, 22) sprocall(SetpieceSleep.Exec, SetpieceSleep, state, rand, true, "", 800)
 	local _, SP_FaucheuxLeave_Soldier02_01
-	prgdbg(li, 1, 23) _, SP_FaucheuxLeave_Soldier02_01 = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Soldier02, "SP_FaucheuxLeave_Soldier02_01", true, false, false, "", false, false, "")
+	prgdbg(li, 1, 23) _, SP_FaucheuxLeave_Soldier02_01 = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Soldier02, "SP_FaucheuxLeave_Soldier02_01", true, false, false, "", false, false, "", 1000)
 	prgdbg(li, 1, 24) sprocall(SetpieceSleep.Exec, SetpieceSleep, state, rand, true, "", 200)
 	local _, SP_FaucheuxLeave_Soldier01_01
-	prgdbg(li, 1, 25) _, SP_FaucheuxLeave_Soldier01_01 = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Soldier01, "SP_FaucheuxLeave_Soldier01_01", true, false, false, "", false, false, "")
+	prgdbg(li, 1, 25) _, SP_FaucheuxLeave_Soldier01_01 = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Soldier01, "SP_FaucheuxLeave_Soldier01_01", true, false, false, "", false, false, "", 1000)
 	prgdbg(li, 1, 26) sprocall(SetpieceFadeOut.Exec, SetpieceFadeOut, state, rand, true, "", 1000)
 	prgdbg(li, 1, 27) sprocall(SetpieceCamera.Exec, SetpieceCamera, state, rand, false, "", "Max", "", "", "linear", 0, false, false, point(170362, 130391, 10363), point(172041, 132745, 11170), false, false, 4200, 2000, false, 0, 0, 0, 0, 0, 0, "Default", 100)
 	local _, FL_Faucheux_02
@@ -48,16 +48,16 @@ SetpiecePrgs.FaucheuxLeave = function(seed, state, TriggerUnits)
 	prgdbg(li, 1, 29) _, FL_Soldier01_02 = sprocall(SetpieceTeleport.Exec, SetpieceTeleport, state, Soldier01, "FL_Soldier01_02", true)
 	local _, FL_Soldier02_02
 	prgdbg(li, 1, 30) _, FL_Soldier02_02 = sprocall(SetpieceTeleport.Exec, SetpieceTeleport, state, Soldier02, "FL_Soldier02_02", true)
-	prgdbg(li, 1, 31) sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Faucheux, "SP_FaucheuxLeave_02", true, false, false, "", false, false, "")
+	prgdbg(li, 1, 31) sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Faucheux, "SP_FaucheuxLeave_02", true, false, false, "", false, false, "", 1000)
 	local _, SP_FaucheuxLeave_Soldier01_03
-	prgdbg(li, 1, 32) _, SP_FaucheuxLeave_Soldier01_03 = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Soldier01, "SP_FaucheuxLeave_Soldier01_03", true, false, false, "", false, false, "")
+	prgdbg(li, 1, 32) _, SP_FaucheuxLeave_Soldier01_03 = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Soldier01, "SP_FaucheuxLeave_Soldier01_03", true, false, false, "", false, false, "", 1000)
 	local _, SP_FaucheuxLeave_Soldier02_03
-	prgdbg(li, 1, 33) _, SP_FaucheuxLeave_Soldier02_03 = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Soldier02, "SP_FaucheuxLeave_Soldier02_03", true, false, false, "", false, false, "")
+	prgdbg(li, 1, 33) _, SP_FaucheuxLeave_Soldier02_03 = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Soldier02, "SP_FaucheuxLeave_Soldier02_03", true, false, false, "", false, false, "", 1000)
 	prgdbg(li, 1, 34) sprocall(SetpieceSleep.Exec, SetpieceSleep, state, rand, true, "", 1200)
 	prgdbg(li, 1, 35) sprocall(SetpieceFadeIn.Exec, SetpieceFadeIn, state, rand, true, "", 0, 1500)
 	prgdbg(li, 1, 36) sprocall(SetpieceSleep.Exec, SetpieceSleep, state, rand, true, "", 1000)
 	local _, SP_FaucheuxLeave_Soldier02_04
-	prgdbg(li, 1, 37) _, SP_FaucheuxLeave_Soldier02_04 = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Soldier02, "SP_FaucheuxLeave_Soldier02_04", true, false, false, "", false, false, "")
+	prgdbg(li, 1, 37) _, SP_FaucheuxLeave_Soldier02_04 = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Soldier02, "SP_FaucheuxLeave_Soldier02_04", true, false, false, "", false, false, "", 1000)
 	prgdbg(li, 1, 38) sprocall(SetpieceSleep.Exec, SetpieceSleep, state, rand, true, "", 700)
 	prgdbg(li, 1, 39) sprocall(SetpieceFadeOut.Exec, SetpieceFadeOut, state, rand, true, "", 1000)
 	prgdbg(li, 1, 40) sprocall(SetpieceDespawn.Exec, SetpieceDespawn, Faucheux)

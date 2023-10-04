@@ -13,11 +13,10 @@ PlaceObj('CharacterEffectCompositeDef', {
 	},
 	'object_class', "Perk",
 	'msg_reactions', {
-		PlaceObj('MsgReaction', {
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "healer",
 			Event = "OnBandage",
 			Handler = function (self, healer, target, healAmount)
-				local reaction_idx = table.find(self.msg_reactions or empty_table, "Event", "OnBandage")
-				if not reaction_idx then return end
 				
 				local function exec(self, healer, target, healAmount)
 				local tempHp = MulDivRound(healer.Medical, self:ResolveValue("medicalPercent"), 100)
@@ -27,16 +26,19 @@ PlaceObj('CharacterEffectCompositeDef', {
 					target:ApplyTempHitPoints(tempHp)
 				end
 				end
-				local id = GetCharacterEffectId(self)
 				
-				if id then
-					if IsKindOf(healer, "StatusEffectObject") and healer:HasStatusEffect(id) then
-						exec(self, healer, target, healAmount)
-					end
-				else
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[1]
+				if not reaction_def or reaction_def.Event ~= "OnBandage" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
 					exec(self, healer, target, healAmount)
 				end
 				
+				if self:VerifyReaction("OnBandage", reaction_def, healer, healer, target, healAmount) then
+					exec(self, healer, target, healAmount)
+				end
 			end,
 			HandlerCode = function (self, healer, target, healAmount)
 				local tempHp = MulDivRound(healer.Medical, self:ResolveValue("medicalPercent"), 100)

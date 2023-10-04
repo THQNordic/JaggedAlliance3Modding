@@ -26,12 +26,20 @@ function NetSyncEvents.ZuluGameLoaded(file_name)
 	Msg("ZuluGameLoaded", file_name)
 end
 
-function SaveLoadObject:DoLoadgame(name, metadata)
+function SaveLoadObject:DoLoadgame(name, metadata) -- In Zulu metadata is passed as well
+	return LoadGame(name, { save_as_last = true }, metadata)
+end
+
+local oldLoadGame = LoadGame
+function LoadGame(name, params, metadata)
+	params = params or empty_table
+	metadata = metadata or empty_table
+	
 	WaitSaveGameDone()
 	CancelAutosaveRequests()
 	local id, reason, tip, metadata = GetLoadingScreenParamsFromMetadata(metadata)
 	SectorLoadingScreenOpen(id, reason, tip, metadata)
-	local err = LoadGame(name)
+	local err = oldLoadGame(name, params)
 	if not err and Game then
 		Game.isDev = metadata.isDev
 		NetSyncEvent("ZuluGameLoaded", name)
@@ -88,6 +96,9 @@ function GatherGameMetadata()
 	metadata.sector = next(gv_Sectors) and gv_CurrentSectorId and _InternalTranslate(GetSectorId(gv_Sectors[gv_CurrentSectorId]))
 	metadata.gameid = Game and Game.id
 	metadata.playthrough_name = Game and Game.playthrough_name
+	if Platform.console and IsInMultiplayerGame() and not NetIsHost() then
+		metadata.playthrough_name = GenerateMultiplayerGuestCampaignName()
+	end
 	metadata.satellite = gv_SatelliteView
 	metadata.save_game_state = SaveState or (g_Combat and "Turn" or "Exploration")
 	metadata.turn_phase = TurnPhase or (g_Combat and g_Combat.current_turn)
@@ -415,13 +426,6 @@ function GetSaveGamesGrouped(saveObject, filter, newSave)
 	if not saveObject or not saveObject.items then return empty_table end
 	local matched = saveObject.items
 	
-	--do not show in prod saves that are incompatible
-	if not Platform.developer then
-		matched = table.ifilter(matched, function (idx, save)
-			return (save.metadata.lua_revision or 0) >= config.SupportedSavegameLuaRevision
-		end)
-	end
-	
 	if (filter or "") ~= "" then
 		matched = table.ifilter(matched, function(idx, save)
 			local savemeta = save.metadata
@@ -706,7 +710,7 @@ function SaveLoadObject:Save(item, name)
 			if item then
 				if WaitQuestion(parent,
 					T(824112417429, "Warning"),
-					T{883071764117, "Are you sure you want to overwrite <savename>?", savename = '"' .. Untranslated(item.text or item.displayname) .. '"'},
+					T{883071764117, "Are you sure you want to overwrite <savename>?", savename = '"' .. Untranslated(item.displayname or item.text) .. '"'},
 					T(689884995409, "Yes"),
 					T(782927325160, "No")) == "ok" then
 					overwrite = true
@@ -942,7 +946,7 @@ function SaveLoadObject:Delete(dlg, list)
 	if item then
 		local savename = item.metadata.savename
 		CreateRealTimeThread(function(dlg, item, savename)
-			if WaitQuestion(dlg.desktop, T(824112417429, "Warning"), T{912614823850, "Are you sure you want to delete the savegame <savename>?", savename = '"' .. Untranslated(SavenameToName(item.savename)) .. '"'}, T(689884995409, "Yes"), T(782927325160, "No")) == "ok" then
+			if WaitQuestion(dlg.desktop, T(824112417429, "Warning"), T{912614823850, "Are you sure you want to delete the savegame <savename>?", savename = '"' .. Untranslated(item.displayname or item.text) .. '"'}, T(689884995409, "Yes"), T(782927325160, "No")) == "ok" then
 				LoadingScreenOpen("idDeleteScreen", "delete savegame")
 				local err = DeleteGame(savename)
 				if not err then
@@ -1043,7 +1047,7 @@ function XDesktop:OnFileDrop(filename)
 			Savegame.Unmount()
 			local error, mount_point = (Savegame._PlatformMountToMemory or Savegame._PlatformLoadToMemory)(filename)
 			local err, metadata = LoadMetadata(mount_point)
-			SaveLoadObject.DoLoadgame(nil, filename, metadata)
+			LoadGame(filename, false, metadata)
 		end)
 	end
 end
@@ -1070,8 +1074,20 @@ function SavegameSessionDataFixups.DeadMercsDeleted(data, metadata, lua_ver)
 	end)
 end
 
+function SavegameSectorDataFixups.CameraOverviewFix(data, lua_revision)
+	if lua_revision < 341330 then
+		--SetCamera(ptCamera, ptCameraLookAt, camType, zoom, properties, fovX, time)
+		if gv_SaveCamera then
+			local ptCamera, ptCameraLookAt, camType, zoom, properties, fovX, time = unpack_params(gv_SaveCamera)
+			properties = properties or {}
+			properties.overview = properties.overview or false
+			gv_SaveCamera = pack_params(ptCamera, ptCameraLookAt, camType, zoom, properties, fovX, time)
+		end
+	end
+end
+
 function OverwriteSaveQuestion(saveObj)
-	local newName = g_SelectedSave.newSaveName
+	local newName = g_SelectedSave.newSaveName or SavenameToName(g_SelectedSave.savename)
 	if g_SelectedSave.newSave then
 		saveObj:DoSavegame(newName)
 		WaitMsg("MPSaveGameDone")	
@@ -1153,6 +1169,11 @@ function LoadMetadataCallback(folder, params)
 			return err
 		end
 	end
+	
+	if metadata.campaign and not CampaignPresets[metadata.campaign] then
+		return "missing campaign"
+	end
+	
 	if metadata.dlcs then
 		local missing_dlc_shown = false
 		for _, dlc in ipairs(metadata.dlcs) do
@@ -1298,6 +1319,7 @@ function SaveLoadObject:Load(dlg, item, skipAreYouSure)
 					-- parent might have been destroyed
 					parent = GetPreGameMainMenu() or GetInGameMainMenu() or (dlg and dlg.parent) or terminal.desktop
 					if GetUIStyleGamepad() then
+						if not parent or not parent:ResolveId("idSubMenu") or not parent:ResolveId("idSubMenu"):ResolveId("idScrollArea") then return end
 						parent:ResolveId("idSubMenu"):ResolveId("idScrollArea"):SelectFirstValidItem()--fix focus with gamepad after the error
 					end
 					return

@@ -787,3 +787,9 @@ function CheatSpawnEnemySquad(sector_id, enemy_squad_id)
 		units, nil, nil, enemy_squad_id
 	)
 end
+
+function CheatOpenAIDebug()
+	if g_Combat and not netInGame then
+		SetInGameInterfaceMode("IModeAIDebug")
+	end
+end

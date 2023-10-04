@@ -15,13 +15,6 @@ PlaceObj('MercTrackedStat', {
 					SetTrackedStat(unit, self.id, value)
 				end
 			end,
-			HandlerCode = function (self, taskId, unit, success)
-				if success then
-					local value = GetTrackedStat(unit, self.id) or 0
-					value = value + 1
-					SetTrackedStat(unit, self.id, value)
-				end
-			end,
 		}),
 	},
 	name = T(257329580092, --[[MercTrackedStat CombatTasksCompleted name]] "Combat Tasks Completed"),
@@ -45,28 +38,10 @@ PlaceObj('MercTrackedStat', {
 					SetTrackedStat(merc, self.id, 1)
 				end
 			end,
-			HandlerCode = function (self, mercId, price, days)
-				local merc = gv_UnitData[mercId]
-				local value = GetTrackedStat(merc, self.id)
-				if not value or value == 0 then
-					SetTrackedStat(merc, self.id, 1)
-				end
-			end,
 		}),
 		PlaceObj('MsgReaction', {
 			Event = "NewDay",
 			Handler = function (self)
-				local squads = GetPlayerMercSquads()
-				for i, squad in ipairs(squads) do
-					for i, id in ipairs(squad.units) do
-						local unit = gv_UnitData[id]
-						local value = GetTrackedStat(unit, self.id) or 0
-						value = value + 1
-						SetTrackedStat(unit, self.id, value)
-					end
-				end
-			end,
-			HandlerCode = function (self)
 				local squads = GetPlayerMercSquads()
 				for i, squad in ipairs(squads) do
 					for i, id in ipairs(squad.units) do
@@ -99,12 +74,6 @@ PlaceObj('MercTrackedStat', {
 				value = value + price
 				SetTrackedStat(merc, self.id, value)
 			end,
-			HandlerCode = function (self, mercId, price, days)
-				local merc = gv_UnitData[mercId]
-				local value = GetTrackedStat(merc, self.id) or 0
-				value = value + price
-				SetTrackedStat(merc, self.id, value)
-			end,
 		}),
 	},
 	name = T(841796250636, --[[MercTrackedStat TotalHiringFee name]] "Total Hiring Fee"),
@@ -118,13 +87,6 @@ PlaceObj('MercTrackedStat', {
 		PlaceObj('MsgReaction', {
 			Event = "OnAttack",
 			Handler = function (self, attacker, action, target, results, attack_args)
-				if IsMerc(attacker) and results.killed_units then
-					local value = GetTrackedStat(attacker, self.id) or 0
-					value = value + EnemiesKilled(attacker, results)
-					SetTrackedStat(attacker, self.id, value)
-				end
-			end,
-			HandlerCode = function (self, attacker, action, target, results, attack_args)
 				if IsMerc(attacker) and results.killed_units then
 					local value = GetTrackedStat(attacker, self.id) or 0
 					value = value + EnemiesKilled(attacker, results)
@@ -158,21 +120,6 @@ PlaceObj('MercTrackedStat', {
 					end
 				end
 			end,
-			HandlerCode = function (self, attacker, action, target, results, attack_args)
-				if IsMerc(attacker) and results.killed_units then
-					local npcKills = 0
-					for _, unit in ipairs(results.killed_units) do
-						if IsNPC(unit) and unit.team.side == "neutral" and not unit.immortal then
-							npcKills = npcKills + 1
-						end
-					end
-					if npcKills > 0 then
-						local value = GetTrackedStat(attacker, self.id) or 0
-						value = value + npcKills
-						SetTrackedStat(attacker, self.id, value)
-					end
-				end
-			end,
 		}),
 	},
 	name = T(243871965950, --[[MercTrackedStat CivilianCasualties name]] "Civilian Casualties"),
@@ -186,13 +133,6 @@ PlaceObj('MercTrackedStat', {
 		PlaceObj('MsgReaction', {
 			Event = "OnAttack",
 			Handler = function (self, attacker, action, target, results, attack_args)
-				if IsMerc(attacker) and results.killed_units and IsKindOfClasses(results.weapon, "Grenade", "HeavyWeapon", "Ordnance") then
-					local value = GetTrackedStat(attacker, self.id) or 0
-					value = value + EnemiesKilled(attacker, results)
-					SetTrackedStat(attacker, self.id, value)
-				end
-			end,
-			HandlerCode = function (self, attacker, action, target, results, attack_args)
 				if IsMerc(attacker) and results.killed_units and IsKindOfClasses(results.weapon, "Grenade", "HeavyWeapon", "Ordnance") then
 					local value = GetTrackedStat(attacker, self.id) or 0
 					value = value + EnemiesKilled(attacker, results)
@@ -218,13 +158,6 @@ PlaceObj('MercTrackedStat', {
 					SetTrackedStat(killer, self.id, value)
 				end
 			end,
-			HandlerCode = function (self, unit, killer, results)
-				if IsMerc(killer) and results.glory_kill then
-					local value = GetTrackedStat(killer, self.id) or 0
-					value = value + 1
-					SetTrackedStat(killer, self.id, value)
-				end
-			end,
 		}),
 	},
 	name = T(712660486858, --[[MercTrackedStat GloryKills name]] "Glory Kills"),
@@ -244,13 +177,6 @@ PlaceObj('MercTrackedStat', {
 					SetTrackedStat(attacker, self.id, value)
 				end
 			end,
-			HandlerCode = function (self, attacker, action, target, results, attack_args)
-				if IsMerc(attacker) and results.killed_units and results.melee_attack then
-					local value = GetTrackedStat(attacker, self.id) or 0
-					value = value + EnemiesKilled(attacker, results)
-					SetTrackedStat(attacker, self.id, value)
-				end
-			end,
 		}),
 	},
 	name = T(978619086191, --[[MercTrackedStat MeleeKills name]] "Melee Kills"),
@@ -264,13 +190,6 @@ PlaceObj('MercTrackedStat', {
 		PlaceObj('MsgReaction', {
 			Event = "OnAttack",
 			Handler = function (self, attacker, action, target, results, attack_args)
-				if IsMerc(attacker) and results.killed_units and results.stealth_attack then
-					local value = GetTrackedStat(attacker, self.id) or 0
-					value = value + EnemiesKilled(attacker, results)
-					SetTrackedStat(attacker, self.id, value)
-				end
-			end,
-			HandlerCode = function (self, attacker, action, target, results, attack_args)
 				if IsMerc(attacker) and results.killed_units and results.stealth_attack then
 					local value = GetTrackedStat(attacker, self.id) or 0
 					value = value + EnemiesKilled(attacker, results)
@@ -309,36 +228,10 @@ PlaceObj('MercTrackedStat', {
 					end
 				end
 			end,
-			HandlerCode = function (self, attacker, action, target, results, attack_args)
-				if IsMerc(attacker) and results.killed_units and #results.killed_units > 0 then
-					local state = GetTrackedStat(attacker, self.id) or {}
-					for _, unit in ipairs(results.killed_units) do
-						if attacker:IsOnEnemySide(unit) then
-							local newToughness = unit:GetToughness() 
-							if not state.toughness or not state.nameId or newToughness > state.toughness then
-								state.toughness = newToughness
-								state.nameId = TGetID(unit.Name)
-								SetTrackedStat(attacker, self.id, state)
-							end
-						end
-					end
-				end
-			end,
 		}),
 		PlaceObj('MsgReaction', {
 			Event = "VillainDefeated",
 			Handler = function (self, villain, attacker)
-				if IsMerc(attacker) then
-					local state = GetTrackedStat(attacker, self.id) or {}
-					local newToughness = villain:GetToughness() 
-					if not state.toughness or not state.nameId or newToughness > state.toughness then
-						state.toughness = newToughness
-						state.nameId = TGetID(villain.Name)
-						SetTrackedStat(attacker, self.id, state)
-					end
-				end
-			end,
-			HandlerCode = function (self, villain, attacker)
 				if IsMerc(attacker) then
 					local state = GetTrackedStat(attacker, self.id) or {}
 					local newToughness = villain:GetToughness() 
@@ -362,13 +255,6 @@ PlaceObj('MercTrackedStat', {
 		PlaceObj('MsgReaction', {
 			Event = "OnBandage",
 			Handler = function (self, healer, target, healAmount)
-				if IsMerc(healer) then
-					local value = GetTrackedStat(healer, self.id) or 0
-					value = value + 1
-					SetTrackedStat(healer, self.id, value)
-				end
-			end,
-			HandlerCode = function (self, healer, target, healAmount)
 				if IsMerc(healer) then
 					local value = GetTrackedStat(healer, self.id) or 0
 					value = value + 1
@@ -407,21 +293,6 @@ PlaceObj('MercTrackedStat', {
 					end
 				end
 			end,
-			HandlerCode = function (self, unit)
-				-- Acumulate time spent
-				if IsMerc(unit) then
-					if unit.Operation == "RAndR" or unit.Operation == "Idle" then
-						local state = GetTrackedStat(unit, self.id) or {}
-						if not state.trackTime then
-							state.trackTime = Game.CampaignTime
-						else
-							state.timeSpent = (state.timeSpent or 0) + (Game.CampaignTime - state.trackTime)
-							state.trackTime = Game.CampaignTime
-						end
-						SetTrackedStat(unit, self.id, state)
-					end
-				end
-			end,
 		}),
 	},
 	name = T(451904114488, --[[MercTrackedStat RestingDays name]] "Resting Days"),
@@ -435,13 +306,6 @@ PlaceObj('MercTrackedStat', {
 		PlaceObj('MsgReaction', {
 			Event = "StatusEffectAdded",
 			Handler = function (self, obj, id, stacks)
-				if IsMerc(obj) and id == "Wounded" then
-					local value = GetTrackedStat(obj, self.id) or 0
-					value = value + 1
-					SetTrackedStat(obj, self.id, value)
-				end
-			end,
-			HandlerCode = function (self, obj, id, stacks)
 				if IsMerc(obj) and id == "Wounded" then
 					local value = GetTrackedStat(obj, self.id) or 0
 					value = value + 1
@@ -469,15 +333,6 @@ PlaceObj('MercTrackedStat', {
 					end
 				end
 			end,
-			HandlerCode = function (self, unit, oldOperation, newOperation)
-				if IsMerc(unit) then
-					if oldOperation and oldOperation.id ~= "Idle" and oldOperation.id ~= "Traveling" and oldOperation.id ~= "Arriving" then
-						local value = GetTrackedStat(unit, self.id) or 0
-						value = value + 1
-						SetTrackedStat(unit, self.id, value)
-					end
-				end
-			end,
 		}),
 	},
 	name = T(954750259029, --[[MercTrackedStat ActivitiesCompleted name]] "Operations Completed"),
@@ -491,16 +346,6 @@ PlaceObj('MercTrackedStat', {
 		PlaceObj('MsgReaction', {
 			Event = "SectorSideChanged",
 			Handler = function (self, sectorId, oldSide, newSide)
-				if newSide == "player1" or newSide == "player2" then
-					local units = GetPlayerSectorUnits(sectorId)
-					for i, unit in ipairs(units) do
-						local value = GetTrackedStat(unit, self.id) or 0
-						value = value + 1
-						SetTrackedStat(unit, self.id, value)
-					end
-				end
-			end,
-			HandlerCode = function (self, sectorId, oldSide, newSide)
 				if newSide == "player1" or newSide == "player2" then
 					local units = GetPlayerSectorUnits(sectorId)
 					for i, unit in ipairs(units) do
@@ -539,40 +384,6 @@ PlaceObj('MercTrackedStat', {
 		PlaceObj('MsgReaction', {
 			Event = "OnAttack",
 			Handler = function (self, attacker, action, target, results, attack_args)
-				if IsMerc(attacker) and not attack_args.free_aim and target then
-					local hitsTotal = GetTrackedStat(attacker, "Hits") or 0
-					local missesTotal = GetTrackedStat(attacker, "Misses") or 0
-					local hits = 0
-					local misses = 0
-					
-					if IsKindOf(results.weapon, "MeleeWeapon") then
-						if results.miss then
-							misses = misses + 1 
-						else
-							hits = hits + 1 
-						end
-					else
-						for _, shot in ipairs(results.shots) do
-							if shot.target_hit then
-								hits = hits + 1
-							else
-								misses = misses + 1
-							end
-						end
-					end
-					
-					hitsTotal = hitsTotal + hits
-					missesTotal = missesTotal + misses
-					SetTrackedStat(attacker, "Hits", hitsTotal)
-					SetTrackedStat(attacker, "Misses", missesTotal)
-					
-					-- accuracy
-					local total = hitsTotal + missesTotal
-					local accuracy = total > 0 and MulDivRound(hitsTotal, 100, total) or 0
-					SetTrackedStat(attacker, "AverageAccuracy", accuracy)
-				end
-			end,
-			HandlerCode = function (self, attacker, action, target, results, attack_args)
 				if IsMerc(attacker) and not attack_args.free_aim and target then
 					local hitsTotal = GetTrackedStat(attacker, "Hits") or 0
 					local missesTotal = GetTrackedStat(attacker, "Misses") or 0
@@ -645,17 +456,6 @@ PlaceObj('MercTrackedStat', {
 					SetTrackedStat(attacker, self.id, value)
 				end
 			end,
-			HandlerCode = function (self, attacker, action, target, results, attack_args)
-				if IsMerc(attacker) and not results.miss then
-					local value = GetTrackedStat(attacker, self.id) or 0
-					for _, hit in ipairs(results) do
-						if hit.spot_group and hit.spot_group == "Head" then
-							value = value + 1
-						end
-					end
-					SetTrackedStat(attacker, self.id, value)
-				end
-			end,
 		}),
 	},
 	name = T(462899494146, --[[MercTrackedStat Headshots name]] "Headshots"),
@@ -669,17 +469,6 @@ PlaceObj('MercTrackedStat', {
 		PlaceObj('MsgReaction', {
 			Event = "OnAttack",
 			Handler = function (self, attacker, action, target, results, attack_args)
-				if IsMerc(attacker) and not results.miss then
-					local value = GetTrackedStat(attacker, self.id) or 0
-					for _, hit in ipairs(results) do
-						if hit.critical then
-								value = value + 1
-						end
-					end
-					SetTrackedStat(attacker, self.id, value)
-				end
-			end,
-			HandlerCode = function (self, attacker, action, target, results, attack_args)
 				if IsMerc(attacker) and not results.miss then
 					local value = GetTrackedStat(attacker, self.id) or 0
 					for _, hit in ipairs(results) do
@@ -715,14 +504,6 @@ PlaceObj('MercTrackedStat', {
 		PlaceObj('MsgReaction', {
 			Event = "OnAttack",
 			Handler = function (self, attacker, action, target, results, attack_args)
-				if IsMerc(attacker) and results.weapon then
-					local state = GetTrackedStat(attacker, self.id) or {}
-					local weaponUses = state[results.weapon.class] or 0
-					state[results.weapon.class] = weaponUses + 1
-					SetTrackedStat(attacker, self.id, state)
-				end
-			end,
-			HandlerCode = function (self, attacker, action, target, results, attack_args)
 				if IsMerc(attacker) and results.weapon then
 					local state = GetTrackedStat(attacker, self.id) or {}
 					local weaponUses = state[results.weapon.class] or 0

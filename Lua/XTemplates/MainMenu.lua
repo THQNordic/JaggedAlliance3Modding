@@ -22,6 +22,7 @@ PlaceObj('XTemplate', {
 				"InGameInterface",
 				"FullscreenGameDialogs",
 				"PDADialogSatellite",
+				"ConversationDialog",
 			},
 		}),
 		PlaceObj('XTemplateFunc', {
@@ -220,6 +221,28 @@ PlaceObj('XTemplate', {
 											child.enabled = false
 										end
 										
+										if action.ActionId == "idContinue" then
+											local loadingImg = XTemplateSpawn("XImage", child)	
+											loadingImg:SetImage("UI/Hud/radar")
+											loadingImg:SetColumns(24)
+											loadingImg:SetImageScale(point(425, 425))
+											loadingImg:SetAnimate(true)
+											loadingImg:SetHAlign("right")
+											loadingImg:SetMargins(box(0, 0, 15, 0))
+											loadingImg:SetId("idLoadingAnim")
+											loadingImg:SetVisible(false)
+											
+											local dialog = GetDialog("PreGameMenu")
+											if dialog then
+												loadingImg:CreateThread("watchdog", function()
+													while loadingImg.window_state == "open" do
+														loadingImg:SetVisible(not not dialog:GetThread("PreGameMenu"))
+														Sleep(5)
+													end
+												end)
+											end
+										end
+										
 										child.idBtnText:SetText(action.ActionName)
 										child:SetOnPressParam(action.ActionId)
 									end,
@@ -281,6 +304,7 @@ PlaceObj('XTemplate', {
 									end,
 								}),
 								PlaceObj('XTemplateForEach', {
+									'condition', function (parent, context, item, i) return item:Condition() end,
 									'run_after', function (child, context, item, i, n, last)
 										child.idBtnText:SetText(item.Name)
 										child:SetOnPressEffect("")
@@ -318,6 +342,7 @@ PlaceObj('XTemplate', {
 									}),
 								PlaceObj('XTemplateTemplate', {
 									'comment', "join by code",
+									'__condition', function (parent, context) return not Platform.console end,
 									'__template', "MainMenuButton",
 									'OnLayoutComplete', function (self)
 										self:SetTransparency(self.enabled or self.focused and 0 or 178)
@@ -571,7 +596,7 @@ PlaceObj('XTemplate', {
 				'UseClipBox', false,
 			}, {
 				PlaceObj('XTemplateMode', {
-					'comment', "empty",
+					'comment', "Controller Layout",
 					'mode', "empty",
 				}, {
 					PlaceObj('XTemplateWindow', {
@@ -579,17 +604,28 @@ PlaceObj('XTemplate', {
 						'__context', function (parent, context) return "GamepadUIStyleChanged" end,
 						'__condition', function (parent, context) return Game and not gv_SatelliteView end,
 						'__class', "XContentTemplate",
-						'Margins', box(40, 0, 0, 40),
+						'Margins', box(40, -180, 0, 40),
 						'MaxWidth', 1300,
 						'MaxHeight', 800,
 						'LayoutMethod', "VList",
-						'LayoutVSpacing', 80,
+						'LayoutVSpacing', 40,
 					}, {
 						PlaceObj('XTemplateWindow', {
+							'comment', "pad",
+							'__class', "XFrame",
+							'Margins', box(0, -100, 0, 0),
+							'Dock', "box",
+							'Transparency', 124,
+							'Image', "UI/Common/conversation_pad",
+							'FrameBox', box(50, 50, 50, 50),
+							'SqueezeX', false,
+							'SqueezeY', false,
+						}),
+						PlaceObj('XTemplateWindow', {
 							'__class', "XText",
-							'Margins', box(450, 0, 0, 0),
+							'HAlign', "center",
 							'Clip', false,
-							'TextStyle', "HUDHeaderBigLight",
+							'TextStyle', "ControllerLayoutHeading",
 							'Translate', true,
 							'Text', T(753225534189, --[[XTemplate MainMenu Text]] "Tactical view"),
 						}),
@@ -599,29 +635,30 @@ PlaceObj('XTemplate', {
 						}, {
 							PlaceObj('XTemplateWindow', {
 								'comment', "options/start",
-								'Margins', box(400, 0, 0, 0),
+								'Margins', box(50, 0, 0, 0),
+								'HAlign', "center",
 								'LayoutMethod', "HList",
 								'LayoutHSpacing', 40,
 							}, {
 								PlaceObj('XTemplateWindow', {
-									'comment', "Options",
+									'comment', "Start",
+									'__condition', function (parent, context) return not ShouldShowPS4Images() and not ShouldShowPS5Images() end,
 									'__class', "XText",
+									'Margins', box(80, 0, 0, 0),
 									'Clip', false,
 									'TextStyle', "GamepadLayout",
 									'Translate', true,
-									'Text', T(744455209593, --[[XTemplate MainMenu Text]] "<Back> Pause"),
-									'TextHAlign', "center",
-									'TextVAlign', "center",
+									'Text', T(518730280957, --[[XTemplate MainMenu Text]] "<Start> Main Menu"),
 								}),
 								PlaceObj('XTemplateWindow', {
 									'comment', "Start",
+									'__condition', function (parent, context) return ShouldShowPS4Images() or ShouldShowPS5Images() end,
 									'__class', "XText",
+									'Margins', box(220, 0, 0, 0),
 									'Clip', false,
 									'TextStyle', "GamepadLayout",
 									'Translate', true,
-									'Text', T(518730280957, --[[XTemplate MainMenu Text]] "<Start> Options"),
-									'TextHAlign', "center",
-									'TextVAlign', "center",
+									'Text', T(357078832824, --[[XTemplate MainMenu Text]] "<Start> Main Menu"),
 								}),
 								}),
 							PlaceObj('XTemplateWindow', {
@@ -636,58 +673,97 @@ PlaceObj('XTemplate', {
 									PlaceObj('XTemplateWindow', {
 										'comment', "LT",
 										'__class', "XText",
-										'Margins', box(0, -20, 0, 0),
+										'Margins', box(0, -10, 0, 0),
 										'VAlign', "bottom",
-										'MaxWidth', 200,
+										'MaxWidth', 260,
 										'Clip', false,
 										'TextStyle', "GamepadLayout",
 										'Translate', true,
-										'Text', T(519456784806, --[[XTemplate MainMenu Text]] "<LeftTrigger> Additional controls"),
+										'Text', T(519456784806, --[[XTemplate MainMenu Text]] "Additional controls <LeftTrigger>"),
 										'TextHAlign', "right",
 									}),
 									PlaceObj('XTemplateWindow', {
 										'comment', "LB",
 										'__class', "XText",
-										'Margins', box(0, 10, 0, 0),
-										'MaxWidth', 200,
+										'Margins', box(0, 32, 0, 0),
+										'MaxWidth', 260,
 										'Clip', false,
 										'TextStyle', "GamepadLayout",
 										'Translate', true,
-										'Text', T(359384522440, --[[XTemplate MainMenu Text]] "<LB> Previous Merc\n<LeftTrigger><LB> Previous Squad"),
+										'Text', T(359384522440, --[[XTemplate MainMenu Text]] "Previous Merc <LB>"),
 										'TextHAlign', "right",
 									}),
 									PlaceObj('XTemplateWindow', {
 										'comment', "LStick",
+										'__condition', function (parent, context) return not ShouldShowPS4Images() and not ShouldShowPS5Images() end,
 										'__class', "XText",
-										'Margins', box(0, 10, 0, 0),
-										'MaxWidth', 200,
+										'Margins', box(0, 60, 0, 0),
+										'MaxWidth', 280,
 										'Clip', false,
 										'TextStyle', "GamepadLayout",
 										'Translate', true,
-										'Text', T(119210733437, --[[XTemplate MainMenu Text]] "<LS>Pan Camera\n<LSPress> Highlight interactables"),
+										'Text', T(119210733437, --[[XTemplate MainMenu Text]] "Pan Camera <LS>\nHighlight interactables <LSPress>"),
 										'TextHAlign', "right",
 									}),
 									PlaceObj('XTemplateWindow', {
+										'comment', "DPad - horizontal",
+										'__condition', function (parent, context) return ShouldShowPS4Images() or ShouldShowPS5Images() end,
+										'__class', "XText",
+										'Margins', box(0, 60, 0, 0),
+										'MaxWidth', 260,
+										'Clip', false,
+										'TextStyle', "GamepadLayout",
+										'Translate', true,
+										'Text', T(103620747963, --[[XTemplate MainMenu Text]] "Action bar <DPadLeft>/<DPadRight>"),
+										'TextHAlign', "right",
+									}),
+									PlaceObj('XTemplateWindow', {
+										'comment', "Dpad - vertical",
+										'__condition', function (parent, context) return ShouldShowPS4Images() or ShouldShowPS5Images() end,
+										'__class', "XText",
+										'MaxWidth', 260,
+										'Clip', false,
+										'TextStyle', "GamepadLayout",
+										'Translate', true,
+										'Text', T(369676538457, --[[XTemplate MainMenu Text]] "Active Pause <DPadDown>"),
+										'TextHAlign', "right",
+									}),
+									PlaceObj('XTemplateWindow', {
+										'Margins', box(0, 58, 0, 0),
 										'LayoutMethod', "VList",
 									}, {
 										PlaceObj('XTemplateWindow', {
-											'comment', "Dpad - vertical",
+											'comment', "LStick",
+											'__condition', function (parent, context) return ShouldShowPS4Images() or ShouldShowPS5Images() end,
 											'__class', "XText",
-											'Margins', box(0, 10, 0, 0),
-											'MaxWidth', 260,
+											'MaxWidth', 280,
 											'Clip', false,
 											'TextStyle', "GamepadLayout",
 											'Translate', true,
-											'Text', T(692343358662, --[[XTemplate MainMenu Text]] "<DPadUp> Stance up\n<DPadDown> Stance down"),
+											'Text', T(503096929966, --[[XTemplate MainMenu Text]] "Pan Camera <LS>\nHighlight interactables <LSPress>"),
+											'TextHAlign', "right",
 										}),
 										PlaceObj('XTemplateWindow', {
 											'comment', "DPad - horizontal",
+											'__condition', function (parent, context) return not ShouldShowPS4Images() and not ShouldShowPS5Images() end,
 											'__class', "XText",
 											'MaxWidth', 260,
 											'Clip', false,
 											'TextStyle', "GamepadLayout",
 											'Translate', true,
-											'Text', T(572466954049, --[[XTemplate MainMenu Text]] "<DPadLeft>/<DPadRight> Action bar"),
+											'Text', T(572466954049, --[[XTemplate MainMenu Text]] "Action bar <DPadLeft>/<DPadRight>"),
+											'TextHAlign', "right",
+										}),
+										PlaceObj('XTemplateWindow', {
+											'comment', "Dpad - vertical",
+											'__condition', function (parent, context) return not ShouldShowPS4Images() and not ShouldShowPS5Images() end,
+											'__class', "XText",
+											'MaxWidth', 260,
+											'Clip', false,
+											'TextStyle', "GamepadLayout",
+											'Translate', true,
+											'Text', T(692343358662, --[[XTemplate MainMenu Text]] "Active Pause <DPadDown>"),
+											'TextHAlign', "right",
 										}),
 										}),
 									}),
@@ -710,8 +786,8 @@ PlaceObj('XTemplate', {
 									PlaceObj('XTemplateWindow', {
 										'comment', "RT",
 										'__class', "XText",
-										'VAlign', "bottom",
-										'MaxWidth', 200,
+										'Margins', box(0, -10, 0, 0),
+										'MaxWidth', 260,
 										'Clip', false,
 										'TextStyle', "GamepadLayout",
 										'Translate', true,
@@ -720,15 +796,16 @@ PlaceObj('XTemplate', {
 									PlaceObj('XTemplateWindow', {
 										'comment', "RB",
 										'__class', "XText",
-										'Margins', box(0, 20, 0, 0),
-										'MaxWidth', 200,
+										'Margins', box(0, 32, 0, 0),
+										'MaxWidth', 260,
 										'Clip', false,
 										'TextStyle', "GamepadLayout",
 										'Translate', true,
-										'Text', T(839730744023, --[[XTemplate MainMenu Text]] "<RB> Next Merc\n<RightTrigger><RB> Next Squad"),
+										'Text', T(839730744023, --[[XTemplate MainMenu Text]] "<RB> Next Merc"),
 									}),
 									PlaceObj('XTemplateWindow', {
 										'comment', "buttons",
+										'Margins', box(0, 10, 0, 0),
 										'LayoutMethod', "HList",
 										'LayoutHSpacing', 10,
 									}, {
@@ -738,51 +815,48 @@ PlaceObj('XTemplate', {
 											PlaceObj('XTemplateWindow', {
 												'comment', "A",
 												'__class', "XText",
+												'Padding', box(2, 10, 2, 2),
 												'MaxWidth', 260,
 												'Clip', false,
 												'TextStyle', "GamepadLayout",
 												'Translate', true,
-												'Text', T(658573901328, --[[XTemplate MainMenu Text]] "<ButtonA> Move/Loot/Interact\n<ButtonA>(Hold) Move squad"),
+												'Text', T(658573901328, --[[XTemplate MainMenu Text]] "<ButtonA> Move/Loot/Interact\n<ButtonA> (Hold) Move squad"),
 											}),
 											PlaceObj('XTemplateWindow', {
 												'comment', "B",
 												'__class', "XText",
-												'Margins', box(0, 10, 0, 0),
+												'Padding', box(2, 5, 2, 2),
 												'MaxWidth', 260,
 												'Clip', false,
 												'TextStyle', "GamepadLayout",
 												'Translate', true,
 												'Text', T(614069851832, --[[XTemplate MainMenu Text]] "<ButtonB> Close action bar"),
 											}),
-											}),
-										PlaceObj('XTemplateWindow', {
-											'LayoutMethod', "VList",
-										}, {
 											PlaceObj('XTemplateWindow', {
 												'comment', "X",
 												'__class', "XText",
+												'Padding', box(2, 10, 2, 2),
 												'MaxWidth', 260,
 												'Clip', false,
 												'TextStyle', "GamepadLayout",
 												'Translate', true,
-												'Text', T(655311941538, --[[XTemplate MainMenu Text]] "<ButtonX> Select all / single"),
+												'Text', T(473455239785, --[[XTemplate MainMenu Text]] "<ButtonX> Select all / single"),
 											}),
 											PlaceObj('XTemplateWindow', {
 												'comment', "Y",
 												'__class', "XText",
-												'Margins', box(0, 10, 0, 0),
 												'MaxWidth', 260,
 												'Clip', false,
 												'TextStyle', "GamepadLayout",
 												'Translate', true,
-												'Text', T(570712236932, --[[XTemplate MainMenu Text]] "<ButtonY> Command menu"),
+												'Text', T(672699305424, --[[XTemplate MainMenu Text]] "<ButtonY> Command menu"),
 											}),
 											}),
 										}),
 									PlaceObj('XTemplateWindow', {
 										'comment', "RStick",
 										'__class', "XText",
-										'Margins', box(0, 20, 0, 0),
+										'Margins', box(0, 10, 0, 0),
 										'MaxWidth', 200,
 										'Clip', false,
 										'TextStyle', "GamepadLayout",
@@ -793,7 +867,8 @@ PlaceObj('XTemplate', {
 								}),
 							}),
 						PlaceObj('XTemplateWindow', {
-							'HAlign', "left",
+							'comment', "Additional Controls",
+							'HAlign', "center",
 							'VAlign', "top",
 							'LayoutMethod', "VList",
 							'LayoutVSpacing', 15,
@@ -801,9 +876,8 @@ PlaceObj('XTemplate', {
 							PlaceObj('XTemplateWindow', {
 								'__class', "XText",
 								'HAlign', "center",
-								'VAlign', "top",
 								'Clip', false,
-								'TextStyle', "GamepadHint",
+								'TextStyle', "ControllerLayoutHeading",
 								'Translate', true,
 								'Text', T(166317216542, --[[XTemplate MainMenu Text]] "Additional Controls"),
 							}),
@@ -812,61 +886,177 @@ PlaceObj('XTemplate', {
 								'LayoutMethod', "HList",
 							}, {
 								PlaceObj('XTemplateWindow', {
-									'comment', "LT+AB",
-									'__class', "XText",
-									'MaxWidth', 260,
-									'Clip', false,
-									'TextStyle', "GamepadLayout",
-									'Translate', true,
-									'Text', T(263592825179, --[[XTemplate MainMenu Text]] "<LeftTrigger><ButtonA> Overview mode\n<LeftTrigger><ButtonB> Retreat"),
-								}),
+									'LayoutMethod', "VList",
+								}, {
+									PlaceObj('XTemplateWindow', {
+										'comment', "LT+A",
+										'__class', "XText",
+										'MaxWidth', 300,
+										'Clip', false,
+										'TextStyle', "GamepadLayout",
+										'Translate', true,
+										'Text', T(263592825179, --[[XTemplate MainMenu Text]] "<ShortcutName('actionCamOverview')> Overview mode"),
+									}),
+									PlaceObj('XTemplateWindow', {
+										'comment', "LT+B",
+										'__class', "XText",
+										'MaxWidth', 300,
+										'Clip', false,
+										'TextStyle', "GamepadLayout",
+										'Translate', true,
+										'Text', T(953780376056, --[[XTemplate MainMenu Text]] "<ShortcutName('actionToggleSatellite')> Sat View"),
+									}),
+									PlaceObj('XTemplateWindow', {
+										'comment', "LT+X",
+										'__class', "XText",
+										'MaxWidth', 300,
+										'Clip', false,
+										'TextStyle', "GamepadLayout",
+										'Translate', true,
+										'Text', T(389547923508, --[[XTemplate MainMenu Text]] "<ShortcutName('actionOpenCharacter')> Character Screen"),
+									}),
+									PlaceObj('XTemplateWindow', {
+										'comment', "LT+Y",
+										'__class', "XText",
+										'MaxWidth', 300,
+										'Clip', false,
+										'TextStyle', "GamepadLayout",
+										'Translate', true,
+										'Text', T(865661361027, --[[XTemplate MainMenu Text]] "<ShortcutName('idInventory')> Inventory"),
+									}),
+									}),
 								PlaceObj('XTemplateWindow', {
-									'comment', "LT+XY",
-									'__class', "XText",
-									'MaxWidth', 260,
-									'Clip', false,
-									'TextStyle', "GamepadLayout",
-									'Translate', true,
-									'Text', T(101355868586, --[[XTemplate MainMenu Text]] "<LeftTrigger><ButtonX> Character Screen\n<LeftTrigger><ButtonY> Inventory"),
-								}),
+									'LayoutMethod', "VList",
+								}, {
+									PlaceObj('XTemplateWindow', {
+										'comment', "LT+LB/RB",
+										'__class', "XText",
+										'Margins', box(20, 0, 0, 0),
+										'MaxWidth', 300,
+										'Clip', false,
+										'TextStyle', "GamepadLayout",
+										'Translate', true,
+										'Text', T(849305965254, --[[XTemplate MainMenu Text]] "<ShortcutName('actionPrevSquad')> /<ShortcutName('actionNextSquad')> Previous/Next Squad "),
+										'WordWrap', false,
+									}),
+									PlaceObj('XTemplateWindow', {
+										'comment', "LT+DPadUp/Down",
+										'__class', "XText",
+										'Margins', box(20, 0, 0, 0),
+										'MaxWidth', 300,
+										'Clip', false,
+										'TextStyle', "GamepadLayout",
+										'Translate', true,
+										'Text', T(723527866131, --[[XTemplate MainMenu Text]] "<ShortcutName('GamepadCheckMercUp')> /<ShortcutName('GamepadCheckMercDown')> Previous/Next merc info"),
+										'WordWrap', false,
+									}),
+									PlaceObj('XTemplateWindow', {
+										'comment', "LT+RS",
+										'__class', "XText",
+										'Margins', box(20, 0, 0, 0),
+										'MaxWidth', 300,
+										'Clip', false,
+										'TextStyle', "GamepadLayout",
+										'Translate', true,
+										'Text', T(174940371609, --[[XTemplate MainMenu Text]] "<ShortcutName('actionCamFloorUp')> /<ShortcutName('actionCamFloorDown')> Change floor"),
+										'WordWrap', false,
+									}),
+									PlaceObj('XTemplateWindow', {
+										'comment', "LT+RS",
+										'__class', "XText",
+										'Margins', box(20, 0, 0, 0),
+										'MaxWidth', 300,
+										'Clip', false,
+										'TextStyle', "GamepadLayout",
+										'Translate', true,
+										'Text', T(598093572457, --[[XTemplate MainMenu Text]] "<ShortcutName('GamepadPing')> Ping (Multiplayer only)"),
+										'WordWrap', false,
+									}),
+									}),
 								PlaceObj('XTemplateWindow', {
-									'comment', "LT+Dpad",
-									'__class', "XText",
-									'MaxWidth', 260,
-									'Clip', false,
-									'TextStyle', "GamepadLayout",
-									'Translate', true,
-									'Text', T(849305965254, --[[XTemplate MainMenu Text]] "<LeftTrigger><DPadLeft> Reload\n<LeftTrigger><DPadRight> Switch weapon"),
-								}),
+									'LayoutMethod', "VList",
+								}, {
+									PlaceObj('XTemplateWindow', {
+										'comment', "RT+A",
+										'__class', "XText",
+										'Margins', box(120, 0, 0, 0),
+										'MaxWidth', 300,
+										'Clip', false,
+										'TextStyle', "GamepadLayout",
+										'Translate', true,
+										'Text', T(332714811279, --[[XTemplate MainMenu Text]] "<ShortcutName('GamepadTargetingNext')> Attack"),
+									}),
+									PlaceObj('XTemplateWindow', {
+										'comment', "RT+B",
+										'__class', "XText",
+										'Margins', box(120, 0, 0, 0),
+										'MaxWidth', 300,
+										'Clip', false,
+										'TextStyle', "GamepadLayout",
+										'Translate', true,
+										'Text', T(946986397852, --[[XTemplate MainMenu Text]] "<ShortcutButton('EndTurn')> End Turn"),
+									}),
+									PlaceObj('XTemplateWindow', {
+										'comment', "RT+X",
+										'__class', "XText",
+										'Margins', box(120, 0, 0, 0),
+										'MaxWidth', 300,
+										'Clip', false,
+										'TextStyle', "GamepadLayout",
+										'Translate', true,
+										'Text', T(135287300595, --[[XTemplate MainMenu Text]] "<ShortcutName('GamepadQuickAction')> Hide/Reveal"),
+									}),
+									PlaceObj('XTemplateWindow', {
+										'comment', "RT+Y",
+										'__class', "XText",
+										'Margins', box(120, 0, 0, 0),
+										'MaxWidth', 300,
+										'Clip', false,
+										'TextStyle', "GamepadLayout",
+										'Translate', true,
+										'Text', T(799350658859, --[[XTemplate MainMenu Text]] "<ShortcutName('GamepadAimTakeCoverOrOverwatch')> Overwatch"),
+									}),
+									}),
 								PlaceObj('XTemplateWindow', {
-									'comment', "RT+AB",
-									'__class', "XText",
-									'Margins', box(60, 0, 0, 0),
-									'MaxWidth', 260,
-									'Clip', false,
-									'TextStyle', "GamepadLayout",
-									'Translate', true,
-									'Text', T(332714811279, --[[XTemplate MainMenu Text]] "<RightTrigger><ButtonA> Attack\n<RightTrigger><ButtonB> End Turn"),
-								}),
-								PlaceObj('XTemplateWindow', {
-									'comment', "RT+XY",
-									'__class', "XText",
-									'MaxWidth', 260,
-									'Clip', false,
-									'TextStyle', "GamepadLayout",
-									'Translate', true,
-									'Text', T(892108842732, --[[XTemplate MainMenu Text]] "<RightTrigger><ButtonX> Hide/Reveal\n<RightTrigger><ButtonY> Overwatch"),
-								}),
-								PlaceObj('XTemplateWindow', {
-									'comment', "RT+Dpad",
-									'__condition', function (parent, context) return true end,
-									'__class', "XText",
-									'MaxWidth', 260,
-									'Clip', false,
-									'TextStyle', "GamepadLayout",
-									'Translate', true,
-									'Text', T(540295544985, --[[XTemplate MainMenu Text]] "<RightTrigger><DPadUp> Previous merc info\n<RightTrigger><DPadDown> Next merc info\n"),
-								}),
+									'LayoutMethod', "VList",
+								}, {
+									PlaceObj('XTemplateWindow', {
+										'comment', "RT+DPadUp/Down",
+										'__condition', function (parent, context) return true end,
+										'__class', "XText",
+										'Margins', box(20, 0, 0, 0),
+										'MaxWidth', 300,
+										'Clip', false,
+										'TextStyle', "GamepadLayout",
+										'Translate', true,
+										'Text', T(540295544985, --[[XTemplate MainMenu Text]] "<ShortcutName('ChangeStanceUpGamepad')> / <ShortcutName('ChangeStanceDownGamepad')> Change stance"),
+										'WordWrap', false,
+									}),
+									PlaceObj('XTemplateWindow', {
+										'comment', "RT+DPadLeft",
+										'__condition', function (parent, context) return true end,
+										'__class', "XText",
+										'Margins', box(20, 0, 0, 0),
+										'MaxWidth', 300,
+										'Clip', false,
+										'TextStyle', "GamepadLayout",
+										'Translate', true,
+										'Text', T(980999234769, --[[XTemplate MainMenu Text]] "<ShortcutName('Reload')> Reload"),
+										'WordWrap', false,
+									}),
+									PlaceObj('XTemplateWindow', {
+										'comment', "RT+DPadRight",
+										'__condition', function (parent, context) return true end,
+										'__class', "XText",
+										'Margins', box(20, 0, 0, 0),
+										'MaxWidth', 300,
+										'Clip', false,
+										'TextStyle', "GamepadLayout",
+										'Translate', true,
+										'Text', T(159145495990, --[[XTemplate MainMenu Text]] "<ShortcutName('GamepadChangeWeapons')> Switch weapon"),
+										'WordWrap', false,
+									}),
+									}),
 								}),
 							}),
 						PlaceObj('XTemplateWindow', {
@@ -885,17 +1075,17 @@ PlaceObj('XTemplate', {
 						'__context', function (parent, context) return "GamepadUIStyleChanged" end,
 						'__condition', function (parent, context) return Game and gv_SatelliteView end,
 						'__class', "XContentTemplate",
-						'Margins', box(40, 0, 0, 40),
+						'Margins', box(40, -180, 0, 40),
 						'MaxWidth', 1300,
 						'MaxHeight', 800,
 						'LayoutMethod', "VList",
-						'LayoutVSpacing', 80,
+						'LayoutVSpacing', 40,
 					}, {
 						PlaceObj('XTemplateWindow', {
 							'__class', "XText",
-							'Margins', box(450, 0, 0, 0),
+							'HAlign', "center",
 							'Clip', false,
-							'TextStyle', "HUDHeaderBigLight",
+							'TextStyle', "ControllerLayoutHeading",
 							'Translate', true,
 							'Text', T(475789913184, --[[XTemplate MainMenu Text]] "Satellite view"),
 						}),
@@ -905,29 +1095,57 @@ PlaceObj('XTemplate', {
 						}, {
 							PlaceObj('XTemplateWindow', {
 								'comment', "options/start",
-								'Margins', box(400, 0, 0, 0),
+								'HAlign', "center",
 								'LayoutMethod', "HList",
 								'LayoutHSpacing', 40,
 							}, {
 								PlaceObj('XTemplateWindow', {
-									'comment', "Options",
+									'comment', "Start",
+									'__condition', function (parent, context) return not ShouldShowPS4Images() and not ShouldShowPS5Images() end,
 									'__class', "XText",
+									'Margins', box(190, 0, 0, 0),
 									'Clip', false,
 									'TextStyle', "GamepadLayout",
 									'Translate', true,
-									'Text', T(970722086358, --[[XTemplate MainMenu Text]] "<Back> Pause"),
-									'TextHAlign', "center",
-									'TextVAlign', "center",
+									'Text', T(789525601622, --[[XTemplate MainMenu Text]] "<Start> Main Menu"),
 								}),
 								PlaceObj('XTemplateWindow', {
+									'__condition', function (parent, context) return ShouldShowPS4Images() or ShouldShowPS5Images() end,
+									'Margins', box(80, 0, 0, 0),
+									'HAlign', "right",
+									'LayoutMethod', "VList",
+								}, {
+									PlaceObj('XTemplateWindow', {
+										'comment', "TouchPad (PS5 only)",
+										'__class', "XText",
+										'Padding', box(2, 5, 2, 2),
+										'HAlign', "right",
+										'Clip', false,
+										'TextStyle', "GamepadLayout",
+										'Translate', true,
+										'Text', T(497594694836, --[[XTemplate MainMenu Text]] "Move cursor <Back>"),
+									}),
+									PlaceObj('XTemplateWindow', {
+										'comment', "TouchPad Press (PS5 only)",
+										'__class', "XText",
+										'Padding', box(2, 10, 2, 2),
+										'HAlign', "right",
+										'Clip', false,
+										'TextStyle', "GamepadLayout",
+										'Translate', true,
+										'Text', T(814507885095, --[[XTemplate MainMenu Text]] "Travel (Press)<Back>"),
+									}),
+									}),
+								PlaceObj('XTemplateWindow', {
 									'comment', "Start",
+									'__condition', function (parent, context) return ShouldShowPS4Images() or ShouldShowPS5Images() end,
 									'__class', "XText",
+									'Margins', box(30, 30, 0, 0),
+									'HAlign', "left",
 									'Clip', false,
 									'TextStyle', "GamepadLayout",
 									'Translate', true,
-									'Text', T(940035402595, --[[XTemplate MainMenu Text]] "<Start> Options"),
-									'TextHAlign', "center",
-									'TextVAlign', "center",
+									'Text', T(499815647051, --[[XTemplate MainMenu Text]] "<Start> Main Menu"),
 								}),
 								}),
 							PlaceObj('XTemplateWindow', {
@@ -942,58 +1160,90 @@ PlaceObj('XTemplate', {
 									PlaceObj('XTemplateWindow', {
 										'comment', "LT",
 										'__class', "XText",
-										'Margins', box(0, -20, 0, 0),
+										'Margins', box(0, -10, 0, 0),
 										'VAlign', "bottom",
-										'MaxWidth', 200,
+										'MaxWidth', 260,
 										'Clip', false,
 										'TextStyle', "GamepadLayout",
 										'Translate', true,
-										'Text', T(441764927615, --[[XTemplate MainMenu Text]] "<LeftTrigger> Additional controls"),
-										'TextHAlign', "right",
-									}),
-									PlaceObj('XTemplateWindow', {
-										'comment', "LB",
-										'__class', "XText",
-										'Margins', box(0, 10, 0, 0),
-										'MaxWidth', 200,
-										'Clip', false,
-										'TextStyle', "GamepadLayout",
-										'Translate', true,
-										'Text', T(816593694014, --[[XTemplate MainMenu Text]] "<LB> Previous Merc\n<LeftTrigger><LB> Previous Squad"),
+										'Text', T(441764927615, --[[XTemplate MainMenu Text]] "Additional controls <LeftTrigger>"),
 										'TextHAlign', "right",
 									}),
 									PlaceObj('XTemplateWindow', {
 										'comment', "LStick",
+										'__condition', function (parent, context) return not ShouldShowPS4Images() and not ShouldShowPS5Images() and not GetAccountStorageOptionValue("InvertPDAThumbs") end,
 										'__class', "XText",
-										'Margins', box(0, 10, 0, 0),
-										'MaxWidth', 200,
+										'Margins', box(0, 155, 0, 0),
+										'MaxWidth', 260,
 										'Clip', false,
 										'TextStyle', "GamepadLayout",
 										'Translate', true,
-										'Text', T(250787273814, --[[XTemplate MainMenu Text]] "<LS>Move cursor"),
+										'Text', T(250787273814, --[[XTemplate MainMenu Text]] "Move cursor <LS>"),
 										'TextHAlign', "right",
 									}),
 									PlaceObj('XTemplateWindow', {
+										'comment', "LStick reversed",
+										'__condition', function (parent, context) return not ShouldShowPS4Images() and not ShouldShowPS5Images() and GetAccountStorageOptionValue("InvertPDAThumbs") end,
+										'__class', "XText",
+										'Margins', box(0, 155, 0, 0),
+										'MaxWidth', 260,
+										'Clip', false,
+										'TextStyle', "GamepadLayout",
+										'Translate', true,
+										'Text', T(729439151533, --[[XTemplate MainMenu Text]] "Scroll map <LS>"),
+										'TextHAlign', "right",
+									}),
+									PlaceObj('XTemplateWindow', {
+										'comment', "Dpad - vertical",
+										'__condition', function (parent, context) return ShouldShowPS4Images() or ShouldShowPS5Images() end,
+										'__class', "XText",
+										'Margins', box(0, 160, 0, 0),
+										'MaxWidth', 260,
+										'Clip', false,
+										'TextStyle', "GamepadLayout",
+										'Translate', true,
+										'Text', T(566444255916, --[[XTemplate MainMenu Text]] "Pause <DPadDown>"),
+										'TextHAlign', "right",
+									}),
+									PlaceObj('XTemplateWindow', {
+										'Margins', box(0, 56, 0, 0),
 										'LayoutMethod', "VList",
 									}, {
 										PlaceObj('XTemplateWindow', {
 											'comment', "Dpad - vertical",
+											'__condition', function (parent, context) return not ShouldShowPS4Images() and not ShouldShowPS5Images() end,
 											'__class', "XText",
-											'Margins', box(0, 10, 0, 0),
+											'Margins', box(0, 50, 0, 0),
 											'MaxWidth', 260,
 											'Clip', false,
 											'TextStyle', "GamepadLayout",
 											'Translate', true,
-											'Text', T(177217658162, --[[XTemplate MainMenu Text]] "<DPadUp> Zoom in\n<DPadDown> Zoom out"),
+											'Text', T(177217658162, --[[XTemplate MainMenu Text]] "Pause <DPadDown>"),
+											'TextHAlign', "right",
 										}),
 										PlaceObj('XTemplateWindow', {
-											'comment', "DPad - additional",
+											'comment', "LStick",
+											'__condition', function (parent, context) return ShouldShowPS4Images() or ShouldShowPS5Images() and not GetAccountStorageOptionValue("InvertPDAThumbs") end,
 											'__class', "XText",
+											'Margins', box(0, 45, 0, 0),
 											'MaxWidth', 260,
 											'Clip', false,
 											'TextStyle', "GamepadLayout",
 											'Translate', true,
-											'Text', T(930080237721, --[[XTemplate MainMenu Text]] "<LeftTrigger><DPadUp> Max zoom in\n<LeftTrigger><DPadDown> Max zoom out"),
+											'Text', T(275338045394, --[[XTemplate MainMenu Text]] "Move cursor <LS>"),
+											'TextHAlign', "right",
+										}),
+										PlaceObj('XTemplateWindow', {
+											'comment', "LStick reversed",
+											'__condition', function (parent, context) return ShouldShowPS4Images() or ShouldShowPS5Images() and GetAccountStorageOptionValue("InvertPDAThumbs") end,
+											'__class', "XText",
+											'Margins', box(0, 45, 0, 0),
+											'MaxWidth', 260,
+											'Clip', false,
+											'TextStyle', "GamepadLayout",
+											'Translate', true,
+											'Text', T(343441613358, --[[XTemplate MainMenu Text]] "Scroll map <LS>"),
+											'TextHAlign', "right",
 										}),
 										}),
 									}),
@@ -1014,27 +1264,26 @@ PlaceObj('XTemplate', {
 									'LayoutVSpacing', 10,
 								}, {
 									PlaceObj('XTemplateWindow', {
-										'comment', "RT",
+										'comment', "Blank",
 										'__class', "XText",
-										'VAlign', "bottom",
-										'MaxWidth', 200,
+										'MaxWidth', 260,
 										'Clip', false,
 										'TextStyle', "GamepadLayout",
 										'Translate', true,
-										'Text', T(621635151256, --[[XTemplate MainMenu Text]] "<RightTrigger> Additional controls"),
 									}),
 									PlaceObj('XTemplateWindow', {
 										'comment', "RB",
 										'__class', "XText",
-										'Margins', box(0, 20, 0, 0),
-										'MaxWidth', 200,
+										'Margins', box(0, 32, 0, 0),
+										'MaxWidth', 260,
 										'Clip', false,
 										'TextStyle', "GamepadLayout",
 										'Translate', true,
-										'Text', T(917870781857, --[[XTemplate MainMenu Text]] "<RB> Next Merc\n<RightTrigger><RB> Next Squad"),
+										'Text', T(604545864087, --[[XTemplate MainMenu Text]] "<RB> Operations"),
 									}),
 									PlaceObj('XTemplateWindow', {
 										'comment', "buttons",
+										'Margins', box(0, 20, 0, 0),
 										'LayoutMethod', "HList",
 										'LayoutHSpacing', 10,
 									}, {
@@ -1048,22 +1297,17 @@ PlaceObj('XTemplate', {
 												'Clip', false,
 												'TextStyle', "GamepadLayout",
 												'Translate', true,
-												'Text', T(803845779735, --[[XTemplate MainMenu Text]] "<ButtonA> Travel\n"),
+												'Text', T(803845779735, --[[XTemplate MainMenu Text]] "<ButtonA> Travel"),
 											}),
 											PlaceObj('XTemplateWindow', {
 												'comment', "B",
 												'__class', "XText",
-												'Margins', box(0, 10, 0, 0),
 												'MaxWidth', 260,
 												'Clip', false,
 												'TextStyle', "GamepadLayout",
 												'Translate', true,
 												'Text', T(463271958214, --[[XTemplate MainMenu Text]] "<ButtonB> Close sector menu"),
 											}),
-											}),
-										PlaceObj('XTemplateWindow', {
-											'LayoutMethod', "VList",
-										}, {
 											PlaceObj('XTemplateWindow', {
 												'comment', "X",
 												'__class', "XText",
@@ -1071,47 +1315,117 @@ PlaceObj('XTemplate', {
 												'Clip', false,
 												'TextStyle', "GamepadLayout",
 												'Translate', true,
-												'Text', T(333110685753, --[[XTemplate MainMenu Text]] "<ButtonX> Sector menu"),
-											}),
-											PlaceObj('XTemplateWindow', {
-												'comment', "X - Additional",
-												'__class', "XText",
-												'MaxWidth', 260,
-												'Clip', false,
-												'TextStyle', "GamepadLayout",
-												'Translate', true,
-												'Text', T(729282089606, --[[XTemplate MainMenu Text]] "<LeftTrigger><ButtonX> Character screen"),
+												'Text', T(746769570024, --[[XTemplate MainMenu Text]] "<ButtonX> Sector menu"),
 											}),
 											PlaceObj('XTemplateWindow', {
 												'comment', "Y",
 												'__class', "XText",
-												'Margins', box(0, 10, 0, 0),
 												'MaxWidth', 260,
 												'Clip', false,
 												'TextStyle', "GamepadLayout",
 												'Translate', true,
-												'Text', T(184229816956, --[[XTemplate MainMenu Text]] "<ButtonY> Command menu"),
-											}),
-											PlaceObj('XTemplateWindow', {
-												'comment', "Y - Additional",
-												'__class', "XText",
-												'MaxWidth', 260,
-												'Clip', false,
-												'TextStyle', "GamepadLayout",
-												'Translate', true,
-												'Text', T(464630100135, --[[XTemplate MainMenu Text]] "<LeftTrigger><ButtonY> Inventory"),
+												'Text', T(715782000860, --[[XTemplate MainMenu Text]] "<ButtonY> Command menu"),
 											}),
 											}),
 										}),
 									PlaceObj('XTemplateWindow', {
 										'comment', "RStick",
+										'__condition', function (parent, context) return not GetAccountStorageOptionValue("InvertPDAThumbs") end,
 										'__class', "XText",
-										'Margins', box(0, 20, 0, 0),
-										'MaxWidth', 200,
+										'Margins', box(0, 50, 0, 0),
+										'MaxWidth', 260,
 										'Clip', false,
 										'TextStyle', "GamepadLayout",
 										'Translate', true,
 										'Text', T(679046912569, --[[XTemplate MainMenu Text]] "<RS> Scroll map"),
+									}),
+									PlaceObj('XTemplateWindow', {
+										'comment', "RStick reversed",
+										'__condition', function (parent, context) return GetAccountStorageOptionValue("InvertPDAThumbs") end,
+										'__class', "XText",
+										'Margins', box(0, 50, 0, 0),
+										'MaxWidth', 260,
+										'Clip', false,
+										'TextStyle', "GamepadLayout",
+										'Translate', true,
+										'Text', T(305862562058, --[[XTemplate MainMenu Text]] "<RS> Move cursor"),
+									}),
+									}),
+								}),
+							}),
+						PlaceObj('XTemplateWindow', {
+							'comment', "Additional Controls",
+							'HAlign', "center",
+							'VAlign', "top",
+							'LayoutMethod', "VList",
+							'LayoutVSpacing', 15,
+						}, {
+							PlaceObj('XTemplateWindow', {
+								'__class', "XText",
+								'HAlign', "center",
+								'Clip', false,
+								'TextStyle', "ControllerLayoutHeading",
+								'Translate', true,
+								'Text', T(535063870439, --[[XTemplate MainMenu Text]] "Additional Controls"),
+							}),
+							PlaceObj('XTemplateWindow', {
+								'VAlign', "top",
+								'LayoutMethod', "HList",
+								'LayoutHSpacing', 30,
+							}, {
+								PlaceObj('XTemplateWindow', {
+									'LayoutMethod', "VList",
+								}, {
+									PlaceObj('XTemplateWindow', {
+										'comment', "LT+B",
+										'__class', "XText",
+										'MaxWidth', 260,
+										'Clip', false,
+										'TextStyle', "GamepadLayout",
+										'Translate', true,
+										'Text', T(440619780286, --[[XTemplate MainMenu Text]] "<ShortcutName('actionToggleSatellite')> Tactical View"),
+									}),
+									PlaceObj('XTemplateWindow', {
+										'comment', "LT+X",
+										'__class', "XText",
+										'MaxWidth', 260,
+										'Clip', false,
+										'TextStyle', "GamepadLayout",
+										'Translate', true,
+										'Text', T(641714203236, --[[XTemplate MainMenu Text]] "<ShortcutName('actionOpenCharacter')> Character Screen"),
+									}),
+									PlaceObj('XTemplateWindow', {
+										'comment', "LT+Y",
+										'__class', "XText",
+										'MaxWidth', 260,
+										'Clip', false,
+										'TextStyle', "GamepadLayout",
+										'Translate', true,
+										'Text', T(614988956490, --[[XTemplate MainMenu Text]] "<ShortcutName('idInventory')> Inventory"),
+									}),
+									}),
+								PlaceObj('XTemplateWindow', {
+									'LayoutMethod', "VList",
+								}, {
+									PlaceObj('XTemplateWindow', {
+										'comment', "LT+LB/RB",
+										'__class', "XText",
+										'MaxWidth', 260,
+										'Clip', false,
+										'TextStyle', "GamepadLayout",
+										'Translate', true,
+										'Text', T(600047381110, --[[XTemplate MainMenu Text]] "<ShortcutName('actionPrevSquad')> /<ShortcutName('actionNextSquad')> Previous/Next Squad "),
+										'WordWrap', false,
+									}),
+									PlaceObj('XTemplateWindow', {
+										'comment', "LT+DPadUp/Down",
+										'__class', "XText",
+										'MaxWidth', 260,
+										'Clip', false,
+										'TextStyle', "GamepadLayout",
+										'Translate', true,
+										'Text', T(606823513799, --[[XTemplate MainMenu Text]] "<ShortcutName('GamepadSatZoomIn')> /<ShortcutName('GamepadSatZoomOut')> Zoom in/out"),
+										'WordWrap', false,
 									}),
 									}),
 								}),
@@ -1135,34 +1449,30 @@ PlaceObj('XTemplate', {
 						'Id', "idMultiplayer",
 						'VAlign', "top",
 						'MinWidth', 615,
-						'MinHeight', 800,
+						'MinHeight', 600,
 						'MaxWidth', 615,
-						'MaxHeight', 800,
 					}, {
+						PlaceObj('XTemplateTemplate', {
+							'__condition', function (parent, context) return context and next(context.available_games) end,
+							'__template', "NewGameCategory",
+							'Id', "idFilterName",
+							'Margins', box(3, 0, 0, 0),
+							'Dock', "top",
+						}),
 						PlaceObj('XTemplateWindow', {
 							'comment', "list of games",
 							'__class', "XContentTemplate",
 							'IdNode', false,
-							'Dock', "top",
+							'LayoutMethod', "HList",
 						}, {
 							PlaceObj('XTemplateWindow', {
 								'__class', "SnappingScrollArea",
 								'Id', "idScrollArea",
-								'Dock', "left",
-								'MinWidth', 600,
-								'MinHeight', 720,
-								'MaxWidth', 600,
-								'MaxHeight', 720,
 								'VScroll', "idScroll",
 								'GamepadInitialSelection', true,
 								'KeepSelectionOnRespawn', true,
 								'RightThumbScroll', true,
 							}, {
-								PlaceObj('XTemplateTemplate', {
-									'__condition', function (parent, context) return context and next(context.available_games) end,
-									'__template', "NewGameCategory",
-									'Id', "idFilterName",
-								}),
 								PlaceObj('XTemplateForEach', {
 									'comment', "games",
 									'array', function (parent, context) return context and context.available_games or {} end,
@@ -1171,7 +1481,9 @@ PlaceObj('XTemplate', {
 										local game_info = item[6]
 										local preset = CampaignPresets[game_info.campaign]
 										child.idCampaignName:SetText(preset and preset.DisplayName or "")
-										child.idMods:SetText(#game_info.mods)
+										if child.idMods then
+											child.idMods:SetText(#game_info.mods)
+										end
 										child.idDay:SetText(T{891751038444, "Day <cur_day>",cur_day = game_info.day})
 										child.item = item
 									end,
@@ -1195,8 +1507,7 @@ PlaceObj('XTemplate', {
 							PlaceObj('XTemplateWindow', {
 								'__class', "XZuluScroll",
 								'Id', "idScroll",
-								'Margins', box(0, 10, 8, 15),
-								'Dock', "right",
+								'Margins', box(0, 10, 8, 10),
 								'HAlign', "right",
 								'MouseCursor', "UI/Cursors/Hand.tga",
 								'Target', "idScrollArea",
@@ -1275,14 +1586,6 @@ PlaceObj('XTemplate', {
 							'HAlign', "center",
 							'VAlign', "center",
 							'MinWidth', 500,
-							'OnLayoutComplete', function (self)
-								if self:ResolveId("idjoin") then
-									local games = GetDialog(self):ResolveId("idSubMenu"):ResolveId("idScrollArea")
-									games = GetUIStyleGamepad() and games
-									self:ResolveId("idjoin"):SetEnabled(games and #games > 1)
-									ObjModified("action-button-mm")
-								end
-							end,
 							'LayoutHSpacing', 50,
 							'Background', RGBA(255, 255, 255, 0),
 							'Toolbar', "ActionBar",
@@ -1298,6 +1601,14 @@ PlaceObj('XTemplate', {
 									parent:SetMinWidth(self.MinWidth)
 								end,
 							}),
+							PlaceObj('XTemplateWindow', {
+								'comment', "gamepad observer",
+								'__context', function (parent, context) return "GamepadUIStyleChanged" end,
+								'__class', "XContextWindow",
+								'OnContextUpdate', function (self, context, ...)
+									ObjModified("action-button-mm")
+								end,
+							}),
 							}),
 						}),
 					}),
@@ -1309,22 +1620,17 @@ PlaceObj('XTemplate', {
 						'Id', "idMultiplayer",
 						'VAlign', "top",
 						'MinWidth', 615,
-						'MinHeight', 800,
 						'MaxWidth', 615,
-						'MaxHeight', 800,
 					}, {
 						PlaceObj('XTemplateWindow', {
 							'comment', "list",
 							'__class', "XContextWindow",
 							'Dock', "top",
+							'LayoutMethod', "HList",
 						}, {
 							PlaceObj('XTemplateWindow', {
 								'__class', "SnappingScrollArea",
 								'Id', "idScrollArea",
-								'Dock', "left",
-								'MinWidth', 600,
-								'MaxWidth', 600,
-								'MaxHeight', 590,
 								'OnLayoutComplete', function (self)
 									SnappingScrollArea.OnLayoutComplete(self)
 									if GetUIStyleGamepad() then
@@ -1362,7 +1668,7 @@ PlaceObj('XTemplate', {
 												name:SetText(Game.playthrough_name or "Hot Diamonds")
 											else
 												if not NewGameObj.campaign_name or NewGameObj.campaign_name == "" then
-															name:SetText(GetCampaignNameTranslated())
+													name:SetText(GetCampaignNameTranslated())
 												else
 													name:SetText(NewGameObj.campaign_name)
 												end
@@ -1518,6 +1824,7 @@ PlaceObj('XTemplate', {
 								}),
 								PlaceObj('XTemplateTemplate', {
 									'comment', "join code",
+									'__condition', function (parent, context) return not Platform.console end,
 									'__template', "NewGameJoinCode",
 									'IdNode', false,
 								}),
@@ -1639,8 +1946,7 @@ PlaceObj('XTemplate', {
 							PlaceObj('XTemplateWindow', {
 								'__class', "XZuluScroll",
 								'Id', "idScroll",
-								'Margins', box(0, 10, 8, 15),
-								'Dock', "right",
+								'Margins', box(0, 10, 8, 10),
 								'HAlign', "right",
 								'MouseCursor', "UI/Cursors/Hand.tga",
 								'Target', "idScrollArea",
@@ -1655,6 +1961,22 @@ PlaceObj('XTemplate', {
 						'Margins', box(0, 0, 0, 20),
 						'Dock', "bottom",
 					}, {
+						PlaceObj('XTemplateAction', {
+							'ActionId', "back",
+							'ActionName', T(351426544644, --[[XTemplate MainMenu ActionName]] "Back"),
+							'ActionToolbar', "ActionBar",
+							'ActionShortcut', "Escape",
+							'ActionGamepad', "ButtonB",
+							'OnAction', function (self, host, source, ...)
+								if not Game then
+									MultiplayerLobbySetUI("multiplayer")
+								else
+									MultiplayerLobbySetUI("empty")
+								end
+							end,
+							'FXPress', "MainMenuButtonClick",
+							'FXPressDisabled', "activityAssignSelectDisabled",
+						}),
 						PlaceObj('XTemplateAction', {
 							'ActionId', "startNewGame",
 							'ActionName', T(137021205855, --[[XTemplate MainMenu ActionName]] "START GAME"),
@@ -1696,6 +2018,7 @@ PlaceObj('XTemplate', {
 							'ZOrder', 0,
 							'HAlign', "center",
 							'VAlign', "center",
+							'MinWidth', 500,
 							'Background', RGBA(255, 255, 255, 0),
 							'Toolbar', "ActionBar",
 							'Show', "text",
@@ -1715,6 +2038,14 @@ PlaceObj('XTemplate', {
 									parent:SetMinWidth(self.MinWidth)
 								end,
 							}),
+							PlaceObj('XTemplateWindow', {
+								'comment', "gamepad observer",
+								'__context', function (parent, context) return "GamepadUIStyleChanged" end,
+								'__class', "XContextWindow",
+								'OnContextUpdate', function (self, context, ...)
+									ObjModified("action-button-mm")
+								end,
+							}),
 							}),
 						}),
 					}),
@@ -1726,9 +2057,7 @@ PlaceObj('XTemplate', {
 						'Id', "idMultiplayer",
 						'VAlign', "top",
 						'MinWidth', 615,
-						'MinHeight', 800,
 						'MaxWidth', 615,
-						'MaxHeight', 800,
 					}, {
 						PlaceObj('XTemplateWindow', {
 							'comment', "buttons",
@@ -1742,14 +2071,11 @@ PlaceObj('XTemplate', {
 							'comment', "list",
 							'__class', "XContextWindow",
 							'Dock', "top",
+							'LayoutMethod', "HList",
 						}, {
 							PlaceObj('XTemplateWindow', {
 								'__class', "SnappingScrollArea",
 								'Id', "idScrollArea",
-								'Dock', "left",
-								'MinWidth', 600,
-								'MaxWidth', 600,
-								'MaxHeight', 590,
 								'OnLayoutComplete', function (self)
 									SnappingScrollArea.OnLayoutComplete(self)
 									if GetUIStyleGamepad() then
@@ -1783,7 +2109,7 @@ PlaceObj('XTemplate', {
 										'OnContextUpdate', function (self, context, ...)
 											local name = self.idName
 											name:SetTranslate(false)
-											if not NewGameObj.campaign_name or NewGameObj.campaign_name == "" then
+											if not NewGameObj or not NewGameObj.campaign_name or NewGameObj.campaign_name == "" then
 												name:SetText(GetCampaignNameTranslated())
 											else
 												name:SetText(NewGameObj.campaign_name)
@@ -1901,8 +2227,7 @@ PlaceObj('XTemplate', {
 							PlaceObj('XTemplateWindow', {
 								'__class', "XZuluScroll",
 								'Id', "idScroll",
-								'Margins', box(0, 10, 8, 15),
-								'Dock', "right",
+								'Margins', box(0, 10, 8, 10),
 								'HAlign', "right",
 								'MouseCursor', "UI/Cursors/Hand.tga",
 								'Target', "idScrollArea",
@@ -1917,16 +2242,15 @@ PlaceObj('XTemplate', {
 				}, {
 					PlaceObj('XTemplateWindow', {
 						'Id', "idOptCont",
-						'VAlign', "top",
+						'Margins', box(0, 0, 0, 80),
 						'MinWidth', 615,
-						'MinHeight', 800,
 						'MaxWidth', 615,
-						'MaxHeight', 800,
 					}, {
 						PlaceObj('XTemplateWindow', {
 							'comment', "list of options",
 							'Id', "idOptionsListCont",
 							'Dock', "top",
+							'LayoutMethod', "HList",
 						}, {
 							PlaceObj('XTemplateWindow', {
 								'__context', function (parent, context)
@@ -1948,10 +2272,6 @@ PlaceObj('XTemplate', {
 								end,
 								'__class', "SnappingScrollArea",
 								'Id', "idScrollArea",
-								'Dock', "left",
-								'MinWidth', 600,
-								'MaxWidth', 600,
-								'MaxHeight', 590,
 								'VScroll', "idScroll",
 								'KeepSelectionOnRespawn', true,
 								'RightThumbScroll', true,
@@ -2067,8 +2387,7 @@ PlaceObj('XTemplate', {
 							PlaceObj('XTemplateWindow', {
 								'__class', "XZuluScroll",
 								'Id', "idScroll",
-								'Margins', box(0, 10, 8, 15),
-								'Dock', "right",
+								'Margins', box(0, 10, 8, 10),
 								'HAlign', "right",
 								'MouseCursor', "UI/Cursors/Hand.tga",
 								'Target', "idScrollArea",
@@ -2117,7 +2436,7 @@ PlaceObj('XTemplate', {
 								ObjModified("action-button-mm")
 							end,
 							'FXPress', "MainMenuButtonClick",
-							'__condition', function (parent, context) return GetDialogModeParam(parent)["optObj"].id == "Video" end,
+							'__condition', function (parent, context) return GetDialogModeParam(parent)["optObj"].id == "Video" and not Platform.console end,
 						}),
 						PlaceObj('XTemplateAction', {
 							'ActionId', "resetToDefaults",
@@ -2244,6 +2563,14 @@ PlaceObj('XTemplate', {
 									parent:SetMinWidth(self.MinWidth)
 								end,
 							}),
+							PlaceObj('XTemplateWindow', {
+								'comment', "gamepad observer",
+								'__context', function (parent, context) return "GamepadUIStyleChanged" end,
+								'__class', "XContextWindow",
+								'OnContextUpdate', function (self, context, ...)
+									ObjModified("action-button-mm")
+								end,
+							}),
 							}),
 						}),
 					PlaceObj('XTemplateWindow', {
@@ -2268,14 +2595,13 @@ PlaceObj('XTemplate', {
 						'Id', "idNewGameCont",
 						'VAlign', "top",
 						'MinWidth', 615,
-						'MinHeight', 800,
 						'MaxWidth', 615,
-						'MaxHeight', 800,
 					}, {
 						PlaceObj('XTemplateWindow', {
 							'comment', "list of options",
 							'Id', "idNewGameListCont",
 							'Dock', "top",
+							'LayoutMethod', "HList",
 						}, {
 							PlaceObj('XTemplateWindow', {
 								'__context', function (parent, context)
@@ -2285,10 +2611,6 @@ PlaceObj('XTemplate', {
 								'__class', "SnappingScrollArea",
 								'Id', "idScrollArea",
 								'IdNode', false,
-								'Dock', "left",
-								'MinWidth', 600,
-								'MaxWidth', 600,
-								'MaxHeight', 590,
 								'HandleKeyboard', false,
 								'VScroll', "idScroll",
 								'GamepadInitialSelection', true,
@@ -2521,8 +2843,7 @@ PlaceObj('XTemplate', {
 							PlaceObj('XTemplateWindow', {
 								'__class', "XZuluScroll",
 								'Id', "idScroll",
-								'Margins', box(0, 10, 0, 15),
-								'Dock', "right",
+								'Margins', box(0, 10, 0, 10),
 								'HAlign', "right",
 								'UniformRowHeight', true,
 								'MouseCursor', "UI/Cursors/Hand.tga",
@@ -2583,7 +2904,8 @@ PlaceObj('XTemplate', {
 									if not NewGameObj.campaign_name or NewGameObj.campaign_name == "" then
 										NewGameObj.campaign_name = GetCampaignNameTranslated()
 									end
-									StartCampaign("HotDiamonds", NewGameObj)
+									local abort = StartCampaign("HotDiamonds", NewGameObj)
+									if abort then return end
 									CloseMenuDialogs()
 								end)
 							end,
@@ -2606,7 +2928,11 @@ PlaceObj('XTemplate', {
 										ogText = textButton.Text
 									end
 									local newShortcut = GetShortcutButtonT(button[4].action)
-									textButton:SetText(T{828903919196, "<style PDAIMPCounter>[<shortcut>]</style> <text>", text = ogText, shortcut = newShortcut or ""})
+									if GetUIStyleGamepad() then 
+										textButton:SetText(T{893255535468, "<style PDAIMPCounter><shortcut></style> <text>", text = ogText, shortcut = newShortcut or ""})
+									else
+										textButton:SetText(T{828903919196, "<style PDAIMPCounter>[<shortcut>]</style> <text>", text = ogText, shortcut = newShortcut or ""})
+									end
 								end
 							end,
 							'Background', RGBA(255, 255, 255, 0),
@@ -2628,6 +2954,14 @@ PlaceObj('XTemplate', {
 									parent:SetMinWidth(self.MinWidth)
 								end,
 							}),
+							PlaceObj('XTemplateWindow', {
+								'comment', "gamepad observer",
+								'__context', function (parent, context) return "GamepadUIStyleChanged" end,
+								'__class', "XContextWindow",
+								'OnContextUpdate', function (self, context, ...)
+									ObjModified("action-button-mm")
+								end,
+							}),
 							}),
 						}),
 					}),
@@ -2638,9 +2972,7 @@ PlaceObj('XTemplate', {
 						'Id', "idLoadGameContent",
 						'VAlign', "top",
 						'MinWidth', 615,
-						'MinHeight', 800,
 						'MaxWidth', 615,
-						'MaxHeight', 800,
 					}, {
 						PlaceObj('XTemplateWindow', {
 							'comment', "list of options",
@@ -2714,14 +3046,23 @@ PlaceObj('XTemplate', {
 								}),
 								}),
 							PlaceObj('XTemplateWindow', {
+								'__class', "XZuluScroll",
+								'Id', "idScroll",
+								'Margins', box(0, 10, 0, 10),
+								'Dock', "right",
+								'HAlign', "right",
+								'UniformRowHeight', true,
+								'MouseCursor', "UI/Cursors/Hand.tga",
+								'Target', "idScrollArea",
+								'SnapToItems', true,
+								'AutoHide', true,
+							}),
+							PlaceObj('XTemplateWindow', {
 								'__context', function (parent, context) return "searchsaves" end,
 								'__class', "SnappingScrollArea",
 								'Id', "idScrollArea",
 								'IdNode', false,
 								'Dock', "left",
-								'MinWidth', 600,
-								'MaxWidth', 600,
-								'MaxHeight', 600,
 								'HandleKeyboard', false,
 								'VScroll', "idScroll",
 								'RightThumbScroll', true,
@@ -2786,22 +3127,20 @@ PlaceObj('XTemplate', {
 											'comment', "save of playthrough",
 											'__template', "SaveEntry",
 											'IdNode', false,
-										}),
+										}, {
+											PlaceObj('XTemplateFunc', {
+												'name', "SetSelected(self, selected)",
+												'func', function (self, selected)
+													self:SetSelected_func(selected)
+													if selected and GetUIStyleGamepad() then 
+														self:OnMouseButtonDown()
+													end
+												end,
+											}),
+											}),
 										}),
 									}),
 								}),
-							PlaceObj('XTemplateWindow', {
-								'__class', "XZuluScroll",
-								'Id', "idScroll",
-								'Margins', box(0, 10, 0, 30),
-								'Dock', "right",
-								'HAlign', "right",
-								'UniformRowHeight', true,
-								'MouseCursor', "UI/Cursors/Hand.tga",
-								'Target', "idScrollArea",
-								'SnapToItems', true,
-								'AutoHide', true,
-							}),
 							}),
 						PlaceObj('XTemplateFunc', {
 							'name', "OnDelete",
@@ -2868,6 +3207,50 @@ PlaceObj('XTemplate', {
 							'FXPress', "MainMenuButtonClick",
 							'FXPressDisabled', "activityAssignSelectDisabled",
 						}),
+						PlaceObj('XTemplateGroup', {
+							'__condition', function (parent, context) return not Platform.goldmaster and Platform.console end,
+						}, {
+							PlaceObj('XTemplateWindow', {
+								'Margins', box(0, 0, 0, 35),
+								'Dock', "bottom",
+								'HAlign', "left",
+								'VAlign', "center",
+								'LayoutMethod', "VList",
+							}, {
+								PlaceObj('XTemplateWindow', {
+									'__class', "XText",
+									'TextStyle', "MMNewGameName",
+									'Translate', true,
+									'Text', T(804266482948, --[[XTemplate MainMenu Text]] "<ImportButtonText()>"),
+								}),
+								PlaceObj('XTemplateWindow', {
+									'__class', "XText",
+									'TextStyle', "MMNewGameName",
+									'Translate', true,
+									'Text', T(135749865929, --[[XTemplate MainMenu Text]] "<ExportButtonText()>"),
+								}),
+								}),
+							PlaceObj('XTemplateAction', {
+								'ActionId', "importSave",
+								'ActionName', T(529028281543, --[[XTemplate MainMenu ActionName]] "IMPORT"),
+								'ActionToolbar', "ActionBar",
+								'ActionGamepad', "LeftThumbClick",
+								'OnAction', function (self, host, source, ...)
+									SavegameImportHelper(self.host.desktop)
+								end,
+								'__condition', function (parent, context) return Platform.developer and Platform.console end,
+							}),
+							PlaceObj('XTemplateAction', {
+								'ActionId', "exportSave",
+								'ActionName', T(567890554007, --[[XTemplate MainMenu ActionName]] "EXPORT"),
+								'ActionToolbar', "ActionBar",
+								'ActionGamepad', "RightThumbClick",
+								'OnAction', function (self, host, source, ...)
+									SavegameExportHelper(g_SelectedSave.savename)
+								end,
+								'__condition', function (parent, context) return Platform.developer and Platform.console end,
+							}),
+							}),
 						PlaceObj('XTemplateWindow', {
 							'__class', "XZuluToolBarList",
 							'Id', "idToolBar",
@@ -2894,6 +3277,14 @@ PlaceObj('XTemplate', {
 									parent:SetMinWidth(self.MinWidth)
 								end,
 							}),
+							PlaceObj('XTemplateWindow', {
+								'comment', "gamepad observer",
+								'__context', function (parent, context) return "GamepadUIStyleChanged" end,
+								'__class', "XContextWindow",
+								'OnContextUpdate', function (self, context, ...)
+									ObjModified("action-button-mm")
+								end,
+							}),
 							}),
 						}),
 					}),
@@ -2904,9 +3295,7 @@ PlaceObj('XTemplate', {
 						'Id', "idInstalledModsContent",
 						'VAlign', "top",
 						'MinWidth', 615,
-						'MinHeight', 800,
 						'MaxWidth', 615,
-						'MaxHeight', 800,
 					}, {
 						PlaceObj('XTemplateWindow', {
 							'Id', "idInstalledModsActionsCont",
@@ -2944,6 +3333,7 @@ PlaceObj('XTemplate', {
 							'comment', "list of installed mods",
 							'Id', "idLoadGameListCont",
 							'Dock', "top",
+							'LayoutMethod', "HList",
 						}, {
 							PlaceObj('XTemplateWindow', {
 								'__context', function (parent, context)
@@ -2953,15 +3343,10 @@ PlaceObj('XTemplate', {
 								'__class', "SnappingScrollArea",
 								'Id', "idScrollArea",
 								'IdNode', false,
-								'Dock', "left",
-								'MinWidth', 600,
-								'MaxWidth', 600,
-								'MaxHeight', 600,
 								'HandleKeyboard', false,
 								'VScroll', "idScroll",
 								'GamepadInitialSelection', true,
 								'KeepSelectionOnRespawn', true,
-								'RightThumbScroll', true,
 							}, {
 								PlaceObj('XTemplateForEach', {
 									'comment', "mod",
@@ -2981,7 +3366,6 @@ PlaceObj('XTemplate', {
 								'__class', "XZuluScroll",
 								'Id', "idScroll",
 								'Margins', box(0, 10, 0, 30),
-								'Dock', "right",
 								'HAlign', "right",
 								'UniformRowHeight', true,
 								'MouseCursor', "UI/Cursors/Hand.tga",
@@ -3006,9 +3390,7 @@ PlaceObj('XTemplate', {
 						'Id', "idLoadGameContent",
 						'VAlign', "top",
 						'MinWidth', 615,
-						'MinHeight', 800,
 						'MaxWidth', 615,
-						'MaxHeight', 800,
 					}, {
 						PlaceObj('XTemplateWindow', {
 							'comment', "list of options",
@@ -3016,13 +3398,22 @@ PlaceObj('XTemplate', {
 							'Dock', "top",
 						}, {
 							PlaceObj('XTemplateWindow', {
+								'__class', "XZuluScroll",
+								'Id', "idScroll",
+								'Margins', box(0, 10, 0, 30),
+								'Dock', "right",
+								'HAlign', "right",
+								'UniformRowHeight', true,
+								'MouseCursor', "UI/Cursors/Hand.tga",
+								'Target', "idScrollArea",
+								'SnapToItems', true,
+								'AutoHide', true,
+							}),
+							PlaceObj('XTemplateWindow', {
 								'__class', "SnappingScrollArea",
 								'Id', "idScrollArea",
 								'IdNode', false,
 								'Dock', "left",
-								'MinWidth', 600,
-								'MaxWidth', 600,
-								'MaxHeight', 600,
 								'VScroll', "idScroll",
 								'RightThumbScroll', true,
 							}, {
@@ -3041,18 +3432,6 @@ PlaceObj('XTemplate', {
 									}),
 									}),
 								}),
-							PlaceObj('XTemplateWindow', {
-								'__class', "XZuluScroll",
-								'Id', "idScroll",
-								'Margins', box(0, 10, 0, 30),
-								'Dock', "right",
-								'HAlign', "right",
-								'UniformRowHeight', true,
-								'MouseCursor', "UI/Cursors/Hand.tga",
-								'Target', "idScrollArea",
-								'SnapToItems', true,
-								'AutoHide', true,
-							}),
 							}),
 						PlaceObj('XTemplateFunc', {
 							'name', "OnDelete",
@@ -3077,9 +3456,7 @@ PlaceObj('XTemplate', {
 						'Id', "idLoadGameContent",
 						'VAlign', "top",
 						'MinWidth', 615,
-						'MinHeight', 800,
 						'MaxWidth', 615,
-						'MaxHeight', 800,
 					}, {
 						PlaceObj('XTemplateWindow', {
 							'comment', "list of options",
@@ -3087,13 +3464,22 @@ PlaceObj('XTemplate', {
 							'Dock', "top",
 						}, {
 							PlaceObj('XTemplateWindow', {
+								'__class', "XZuluScroll",
+								'Id', "idScroll",
+								'Margins', box(0, 10, 0, 10),
+								'Dock', "right",
+								'HAlign', "right",
+								'UniformRowHeight', true,
+								'MouseCursor', "UI/Cursors/Hand.tga",
+								'Target', "idScrollArea",
+								'SnapToItems', true,
+								'AutoHide', true,
+							}),
+							PlaceObj('XTemplateWindow', {
 								'__class', "SnappingScrollArea",
 								'Id', "idScrollArea",
 								'IdNode', false,
 								'Dock', "left",
-								'MinWidth', 600,
-								'MaxWidth', 600,
-								'MaxHeight', 600,
 								'HandleKeyboard', false,
 								'VScroll', "idScroll",
 								'RightThumbScroll', true,
@@ -3208,24 +3594,15 @@ PlaceObj('XTemplate', {
 												'name', "SetSelected(self, selected)",
 												'func', function (self, selected)
 													self.idSaveEntry:SetSelected(selected)
+													if selected and GetUIStyleGamepad() then 
+														self.idSaveEntry:OnMouseButtonDown()
+													end
 												end,
 											}),
 											}),
 										}),
 									}),
 								}),
-							PlaceObj('XTemplateWindow', {
-								'__class', "XZuluScroll",
-								'Id', "idScroll",
-								'Margins', box(0, 10, 0, 25),
-								'Dock', "right",
-								'HAlign', "right",
-								'UniformRowHeight', true,
-								'MouseCursor', "UI/Cursors/Hand.tga",
-								'Target', "idScrollArea",
-								'SnapToItems', true,
-								'AutoHide', true,
-							}),
 							}),
 						PlaceObj('XTemplateFunc', {
 							'name', "OnDelete",
@@ -3320,6 +3697,14 @@ PlaceObj('XTemplate', {
 									parent:SetMinWidth(self.MinWidth)
 								end,
 							}),
+							PlaceObj('XTemplateWindow', {
+								'comment', "gamepad observer",
+								'__context', function (parent, context) return "GamepadUIStyleChanged" end,
+								'__class', "XContextWindow",
+								'OnContextUpdate', function (self, context, ...)
+									ObjModified("action-button-mm")
+								end,
+							}),
 							}),
 						}),
 					}),
@@ -3358,6 +3743,8 @@ PlaceObj('XTemplate', {
 				'Id', "idControllerSupport",
 				'ContextUpdateOnOpen', true,
 				'OnContextUpdate', function (self, context, ...)
+					local mm = GetDialog("InGameMenu") or GetDialog("PreGameMenu")
+					
 					local subMenu = self.parent and self.parent:ResolveId("idSubMenu")
 					local mainMenuButtons = self.parent and self.parent:ResolveId("idList")
 					local scrollArea = subMenu and subMenu:ResolveId("idScrollArea")
@@ -3365,10 +3752,20 @@ PlaceObj('XTemplate', {
 						scrollArea:SetHandleKeyboard(true)
 						if not next(scrollArea.selection) then
 							mainMenuButtons:SelectFirstValidItem()
+							mm.isMMFocused = true
+						else
+							local selIdx = scrollArea.selection 
+							selIdx = selIdx and selIdx[1]
+							local selWin = scrollArea[selIdx]
+							if selWin then
+								selWin:SetSelected(true)
+							end
+							mm.isMMFocused = false
 						end
 					else
 						mainMenuButtons:SetFocus(true)
 						if scrollArea then scrollArea:SetHandleKeyboard(false) end
+						mm.isMMFocused = true
 					end
 				end,
 			}),
@@ -3772,6 +4169,7 @@ PlaceObj('XTemplate', {
 											}),
 											}),
 										PlaceObj('XTemplateWindow', {
+											'__condition', function (parent, context) return not Platform.console end,
 											'Id', "idSaveMods",
 										}, {
 											PlaceObj('XTemplateWindow', {
@@ -4144,6 +4542,27 @@ PlaceObj('XTemplate', {
 			'Translate', true,
 			'Text', T(203986632743, --[[XTemplate MainMenu Text]] "Version <u(ver)><opt(build, ' - ', '')>"),
 		}),
+		PlaceObj('XTemplateWindow', {
+			'__class', "XLayer",
+			'MarginPolicy', "FitInSafeArea",
+			'Dock', "box",
+		}, {
+			PlaceObj('XTemplateWindow', {
+				'__context', function (parent, context) return "GamerTag" end,
+				'__condition', function (parent, context) return Platform.xbox end,
+				'__class', "XText",
+				'Margins', box(0, 20, 0, 0),
+				'Padding', box(0, 0, 0, 0),
+				'HAlign', "center",
+				'VAlign', "top",
+				'TextStyle', "MMNewGameName",
+				'ContextUpdateOnOpen', true,
+				'OnContextUpdate', function (self, context, ...)
+					self:SetText(Xbox.GetGamertag())
+					XText.OnContextUpdate(self, context, ...)
+				end,
+			}),
+			}),
 		PlaceObj('XTemplateFunc', {
 			'name', "Open",
 			'func', function (self, ...)

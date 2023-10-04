@@ -12,7 +12,6 @@ PlaceObj('XTemplate', {
 		'MaxWidth', 537,
 		'UseClipBox', false,
 		'Visible', false,
-		'flip_vertically', false,
 	}, {
 		PlaceObj('XTemplateWindow', {
 			'Id', "idContent",

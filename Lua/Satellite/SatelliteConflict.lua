@@ -509,6 +509,10 @@ function ResolveConflict(sector, bNoVoice, isAutoResolve, isRetreat)
 			assert(false) -- Auto resolve is causing another auto resolve, infinite loop!
 			table.remove_value(g_ConflictSectors, sector.Id)
 			sector.conflict = false
+			
+			if not AnyNonWaitingConflict() then
+				ResumeCampaignTime("SatelliteConflict")	
+			end
 			return
 		end
 
@@ -1202,6 +1206,9 @@ function ApplyAutoResolveOutcome(sector, playerOutcome)
 			local unit = gv_UnitData[id]
 			local damage = 0
 			
+			-- When the unit appears twice in a squad (due to another bug), this will error.
+			if not unit then goto continue end
+			
 			if not playerWins then -- all militia die if the player loses;
 				damage = unit.HitPoints
 			else
@@ -1234,6 +1241,8 @@ function ApplyAutoResolveOutcome(sector, playerOutcome)
 					end, items)
 				end
 			end
+			
+			::continue::
 		end
 	end
 	
@@ -1355,18 +1364,16 @@ local function RecalcNames(sector, oldAllySquads)
 		for id, unitId in ipairs(squadUnits) do
 			if not gv_UnitData[unitId] then
 				table.remove(squad.units, table.find(squad.units, unitId))
-				squad.units.templateNames[unitId] = nil
 			end
 		end
 	end
-	local allySquads = GetGroupedSquads(sector.Id, true, true, false, "no_retreating")
+	local allySquads = GetGroupedSquads(sector.Id, true, false, "no_retreating")
 	
 	for i, s in ipairs(allySquads) do
 		for i, u in ipairs(s.units) do
 			local unitData = gv_UnitData[u]
-			local squad, idx = table.find_value(oldAllySquads, "UniqueId", s.UniqueId)
-			if squad and not squad.units.templateNames[u] then
-				oldAllySquads[idx].units.templateNames[u] = unitData.class
+			local squad = table.find_value(oldAllySquads, "UniqueId", s.UniqueId)
+			if squad and not table.find(squad.units, unitData.session_id) then
 				table.insert(squad.units, unitData.session_id)
 			end
 		end
@@ -1375,36 +1382,37 @@ local function RecalcNames(sector, oldAllySquads)
 	return oldAllySquads
 end
 
+function lCopySquadsBeforeAutoResolve(squadList)
+	local newList = {}
+	for i, s in ipairs(squadList) do
+		local copy = {
+			units = table.copy(s.units),
+			Name = s.Name,
+			CurrentSector = s.CurrentSector,
+			UniqueId = s.UniqueId,
+			image = s.image,
+			Retreat = s.Retreat,
+			militia = s.militia
+		}
+		newList[#newList + 1] = copy
+	end
+	return newList
+end
+
 function AutoResolveConflict(sector)
 	local player_outcome = GetAutoResolveOutcome(sector)
 	local player_wins = IsOutcomeWin(player_outcome)
 	
 	--save the needed data for the auto-resolve screen
 	--todo: maybe GetAutoResolveOutcome should return squads
-	local allySquads = GetGroupedSquads(sector.Id, "includeMilitia", "merge-joining", not "get_enemies", "no_retreating", "exclude_travelling")
-	local enemySquads = GetGroupedSquads(sector.Id, not "includeMilitia", not "merge-joining", "get_enemies", "no_retreating", "exclude_travelling")
+	local allySquads = GetGroupedSquads(sector.Id, "includeMilitia", not "get_enemies", "no_retreating", "exclude_travelling")
+	local enemySquads = GetGroupedSquads(sector.Id, not "includeMilitia", "get_enemies", "no_retreating", "exclude_travelling")
 	enemySquads = enemySquads or {}
 	
-	local templateNames = {}
-	for i, s in ipairs(allySquads) do
-		for i, u in ipairs(s.units) do
-			local unitData = gv_UnitData[u]
-			
-			templateNames[u] = unitData.class
-		end
-		s.units.templateNames = templateNames
-		s.ref = false
-		templateNames = {}
-	end
-	
-	for i, s in ipairs(enemySquads) do
-		for i, u in ipairs(s.units) do
-			templateNames[u] = gv_UnitData[u].class
-		end
-		s.units.templateNames = templateNames
-		s.ref = false
-		templateNames = {}
-	end
+	-- Auto resolve will cause units to be ejected from the squads,
+	-- so we need to copy the data.
+	allySquads = lCopySquadsBeforeAutoResolve(allySquads)
+	enemySquads = lCopySquadsBeforeAutoResolve(enemySquads)
 	
 	local loot = ApplyAutoResolveOutcome(sector, player_outcome)
 
@@ -1454,7 +1462,7 @@ function AutoResolveConflict(sector)
 		ResumeCampaignTime("UI")
 	end
 
-	--recalc squads to handle promoted militia
+	-- recalc squads to handle promoted militia
 	allySquads = RecalcNames(sector, allySquads)
 	
 	OpenSatelliteConflictDlg(
@@ -1777,7 +1785,7 @@ end
 function OnMsg.ConflictEnd(sector, _, playerAttacked, playerWon, autoResolve, isRetreat, startedFromMap)
 	-- If you win in a conflict in a sector adjacent to a city sector that you own
 	-- you get loyalty for that city.
-	local allySquads = GetGroupedSquads(sector.Id, true, true, false, "no_retreating", "non_travelling")
+	local allySquads = GetGroupedSquads(sector.Id, true, false, "no_retreating", "non_travelling")
 	if playerWon then
 		if (not playerAttacked and not startedFromMap) or not sector.conflictLoyaltyGained then
 			local city = GetLoyaltyCityNearby(sector)
@@ -1804,7 +1812,7 @@ function OnMsg.ConflictEnd(sector, _, playerAttacked, playerWon, autoResolve, is
 			sector.autoresolve_disabled = false
 		end
 		
-		-- Cancel units that have retreated separate from their own squad. (219850)
+		-- Cancel units that have retreated, now that we've won. (219850)
 		for i, squad in ipairs(allySquads) do
 			for i, uId in ipairs(squad.units) do
 				local ud = gv_UnitData[uId]
@@ -1861,7 +1869,7 @@ function OpenSatelliteConflictDlg(context, openedBy)
 end
 
 function OnMsg.UnitDieStart(unit, attacker)
-	if unit:IsCivilian() and unit.Affiliation == "Civilian" and attacker then
+	if unit:IsCivilian() and unit.Affiliation == "Civilian" and attacker and (attacker.team.player_team or attacker.team.player_enemy) then
 		CivilianDeathPenalty()
 	end
 end
@@ -1983,13 +1991,47 @@ function GetSatelliteConflictWarnings(squads)
 	return woundedCount, tiredCount
 end
 
+function OnMsg.StartSatelliteGameplay()
+	if ZuluAppliedSessionDataFixups.RemoveInvalidConflicts and not
+		ZuluAppliedSessionDataFixups.RemoveInvalidConflicts_2 then
+		if CampaignPauseReasons.SatelliteConflict and not AnyNonWaitingConflict() then
+			ResumeCampaignTime("SatelliteConflict")
+		end
+		ZuluAppliedSessionDataFixups.RemoveInvalidConflicts_2 = true
+	end
+end
+
 function SavegameSessionDataFixups.RemoveInvalidConflicts(data)
+	-- Manually get squads in the sector as the data is not filled in yet at this point.
+	-- Uses same logic as AddSquadToSectorList
+	local function lSquadsInSector(sector)
+		local ally, enemy, militia = {}, {}, {}
+		
+		local squads = GetGameVarFromSession(data, "gv_Squads")
+		for _, squad in sorted_pairs(squads) do
+			if squad.CurrentSector == sector.Id then
+				if (squad.Side == "player1" or squad.Side == "ally") then
+					if not squad.militia then
+						ally[#ally + 1] = squad
+					else	
+						militia[#militia + 1] = squad
+					end
+				else
+					enemy[#enemy + 1] = squad
+				end
+			end
+		end
+		
+		return ally, enemy, militia
+	end
+	
 	local sectors = GetGameVarFromSession(data, "gv_Sectors")
 	local anyConflict
-	
+
 	for id, sector in pairs(sectors) do
 		if sector.conflict then
-			if not next(sector.ally_squads) and (not next(sector.ally_and_militia_squads) or not next(sector.enemy_squads)) then
+			local ally, enemy, militia = lSquadsInSector(sector)
+			if not next(ally) and (not next(militia) or not next(enemy)) then
 				sector.conflict = false
 			else
 				anyConflict = true

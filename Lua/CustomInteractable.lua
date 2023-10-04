@@ -95,8 +95,9 @@ function CustomInteractable:Execute(units, ...)
 end
 
 function CustomInteractable:GetInteractionCombatAction(unit)
-	local trapAction = BoobyTrappable.GetInteractionCombatAction(self, unit)
-	return trapAction or Presets.CombatAction.Interactions.Interact_CustomInteractable
+	local trapAction, icon = BoobyTrappable.GetInteractionCombatAction(self, unit)
+	if trapAction then return trapAction, icon end
+	return Presets.CombatAction.Interactions.Interact_CustomInteractable
 end
 
 local lconversionTable = {
@@ -218,8 +219,8 @@ function RangeGrantMarker:RunDiscoverability(unit)
 		if not baseClassRun then return false end
 	end
 
-	local visuals = ResolveInteractableVisualObjects(self)
-	if visuals and #visuals == 0 then return false end -- No visuals, or destroyed visuals
+	local visual = ResolveInteractableVisualObjects(self, nil, nil, "findFirst")
+	if not visual then return false end -- No visuals, or destroyed visuals
 	return true
 end
 

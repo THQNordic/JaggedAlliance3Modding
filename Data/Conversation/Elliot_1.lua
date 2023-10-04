@@ -270,7 +270,7 @@ PlaceObj('Conversation', {
 	}),
 	PlaceObj('ConversationPhrase', {
 		Conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('QuestIsVariableBool', {
 						QuestId = "Elliot",
@@ -432,7 +432,7 @@ PlaceObj('Conversation', {
 					return not quest.ElliotExposed
 				end,
 			}),
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('UnitSquadHasMerc', {
 						HasPerk = "Scoundrel",
@@ -914,7 +914,7 @@ PlaceObj('Conversation', {
 	PlaceObj('ConversationPhrase', {
 		Align = "right",
 		Conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('QuestIsVariableBool', {
 						QuestId = "Elliot",
@@ -1195,7 +1195,7 @@ PlaceObj('Conversation', {
 						return quest.ElliotExposed
 					end,
 				}),
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('UnitSquadHasMerc', {
 							HasPerk = "Scoundrel",

@@ -12,6 +12,46 @@ PlaceObj('CharacterEffectCompositeDef', {
 	},
 	'Comment', "Magic - high ground bonus",
 	'object_class', "Perk",
+	'msg_reactions', {
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "attacker",
+			Event = "GatherCritChanceModifications",
+			Handler = function (self, attacker, target, action_id, weapon, data)
+				
+				local function exec(self, attacker, target, action_id, weapon, data)
+				if not IsKindOf(target, "Unit") then return end
+				
+				local highGroundMod = Presets.ChanceToHitModifier.Default.GroundDifference
+				local applied = highGroundMod:CalcValue(attacker, target, nil, nil, data.weapon, nil, nil, nil, nil, attacker:GetPos(), target:GetPos())
+				if applied then
+					data.crit_chance = data.crit_chance + self:ResolveValue("critChance")
+				end
+				end
+				
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[1]
+				if not reaction_def or reaction_def.Event ~= "GatherCritChanceModifications" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
+					exec(self, attacker, target, action_id, weapon, data)
+				end
+				
+				if self:VerifyReaction("GatherCritChanceModifications", reaction_def, attacker, attacker, target, action_id, weapon, data) then
+					exec(self, attacker, target, action_id, weapon, data)
+				end
+			end,
+			HandlerCode = function (self, attacker, target, data)
+				if not IsKindOf(target, "Unit") then return end
+				
+				local highGroundMod = Presets.ChanceToHitModifier.Default.GroundDifference
+				local applied = highGroundMod:CalcValue(attacker, target, nil, nil, data.weapon, nil, nil, nil, nil, attacker:GetPos(), target:GetPos())
+				if applied then
+					data.crit_chance = data.crit_chance + self:ResolveValue("critChance")
+				end
+			end,
+		}),
+	},
 	'DisplayName', T(137075691811, --[[CharacterEffectCompositeDef SecondStoryMan DisplayName]] "Second Story Man"),
 	'Description', T(679765786004, --[[CharacterEffectCompositeDef SecondStoryMan Description]] "Gains <em><percent(critChance)></em> <GameTerm('Crit')> <em>Chance</em> with attacks from <em>high ground</em>."),
 	'Icon', "UI/Icons/Perks/SecondStoryMan",

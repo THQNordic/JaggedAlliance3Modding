@@ -881,7 +881,7 @@ PlaceObj('Conversation', {
 		Align = "right",
 		AutoRemove = true,
 		Conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('QuestIsVariableBool', {
 						QuestId = "Larry",

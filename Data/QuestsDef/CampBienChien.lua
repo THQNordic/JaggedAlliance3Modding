@@ -10,6 +10,11 @@ PlaceObj('QuestsDef', {
 	TCEs = {
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"F19",
+					},
+				}),
 				PlaceObj('SectorIsInConflict', {}),
 				PlaceObj('CombatIsActive', {
 					Negate = true,
@@ -23,11 +28,6 @@ PlaceObj('QuestsDef', {
 						local quest = gv_Quests['CampBienChien'] or QuestGetState('CampBienChien')
 						return not quest.TCE_KingChickenConversation
 					end,
-				}),
-				PlaceObj('PlayerIsInSectors', {
-					Sectors = {
-						"F19",
-					},
 				}),
 			},
 			Effects = {
@@ -107,13 +107,18 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"F19",
+					},
+				}),
+				PlaceObj('CombatIsActive', {
+					Negate = true,
+				}),
 				PlaceObj('UnitIsAroundOtherUnit', {
 					Distance = 4,
 					SecondTargetUnit = "any merc",
 					TargetUnit = "KingChicken",
-				}),
-				PlaceObj('CombatIsActive', {
-					Negate = true,
 				}),
 			},
 			Effects = {
@@ -132,6 +137,9 @@ PlaceObj('QuestsDef', {
 			Once = true,
 			ParamId = "TCE_KingChickenConversation",
 			QuestId = "CampBienChien",
+			requiredSectors = {
+				"F19",
+			},
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {

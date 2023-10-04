@@ -24,28 +24,76 @@ local dirty_relations = false  --heh
 
 function RecalcDiplomacy()
 	dirty_relations = false
-	for _, unit in ipairs(g_Units) do
-		local allies, enemies, all_enemies = {}, {}, {}
-		if unit.team then
-			local aware = unit:IsAware()
-			for _, other in ipairs(g_Units) do
-				if unit ~= other and other.team then
-					if band(unit.team.enemy_mask, other.team.team_mask) ~= 0 then
-						all_enemies[#all_enemies + 1] = other
-						if aware and HasVisibilityTo(unit.team, other) then
-							enemies[#enemies + 1] = other
+	local unit_Enemies = {}
+	local unit_AllEnemies = {}
+	local unit_Allies = {}
+
+	for idx1, team in ipairs(g_Teams) do
+		local team_units = team.units
+		if #team_units > 0 then
+			local team_visibility = g_Visibility[team]
+			local team_enemy_mask = team.enemy_mask
+			local team_ally_mask = team.ally_mask
+			for idx2, team2 in ipairs(g_Teams) do
+				local team2_units = team2.units
+				if #team2_units > 0 then
+					if band(team_enemy_mask, team2.team_mask) ~= 0 then
+						-- all the units of the team have the same enemies. we provide them the same tables
+						local all_enemies = unit_AllEnemies[team_units[1]]
+						if all_enemies then
+							table.iappend(all_enemies, team2_units)
+						else
+							all_enemies = table.icopy(team2_units)
+							for i, unit in ipairs(team_units) do
+								unit_AllEnemies[unit] = all_enemies
+							end
 						end
-					end
-					if band(unit.team.ally_mask, other.team.team_mask) ~= 0 then
-						allies[#allies + 1] = other
+						if team_visibility and #team_visibility > 0 then
+							for i, unit in ipairs(team_units) do
+								if unit:IsAware() then
+									local enemies = unit_Enemies[unit]
+									for j, other in ipairs(team2_units) do
+										if team_visibility[other] then
+											enemies = enemies or {}
+											table.insert(enemies, other)
+										end
+									end
+									if enemies and not unit_Enemies[unit] then
+										unit_Enemies[unit] = enemies
+										for j = i + 1, #team_units do
+											local unit2 = team_units[j]
+											if unit2:IsAware() then
+												unit_Enemies[unit2] = enemies
+											end
+										end
+									end
+									break
+								end
+							end
+						end
+					elseif band(team_ally_mask, team2.team_mask) ~= 0 then
+						for i, unit in ipairs(team_units) do
+							local allies = unit_Allies[unit]
+							local start_idx = 0
+							if allies then
+								start_idx = #allies
+								table.iappend(allies, team2_units)
+							else
+								allies = table.icopy(team2_units)
+								unit_Allies[unit] = allies
+							end
+							if team == team2 then
+								table.remove(allies, start_idx + i) -- remove unit
+							end
+						end
 					end
 				end
 			end
 		end
-		g_UnitEnemies[unit] = enemies
-		g_UnitAllEnemies[unit] = all_enemies
-		g_UnitAllies[unit] = allies
 	end
+	g_UnitEnemies = unit_Enemies
+	g_UnitAllEnemies = unit_AllEnemies
+	g_UnitAllies = unit_Allies
 
 	Msg("UnitRelationsUpdated")
 end
@@ -69,29 +117,30 @@ end
 
 function GetEnemies(unit)
 	OnGetRelations()
-	return g_UnitEnemies[unit] or {}
+	return g_UnitEnemies[unit] or empty_table
 end
 
 function GetAllEnemyUnits(unit)
 	OnGetRelations()
-	return g_UnitAllEnemies[unit] or {}
+	return g_UnitAllEnemies[unit] or empty_table
 end
 
 function GetAllAlliedUnits(unit)
 	OnGetRelations()
-	return g_UnitAllies[unit] or {}
+	return g_UnitAllies[unit] or empty_table
 end
 
 function GetNearestEnemy(unit, ignore_awareness)
 	local enemies = ignore_awareness and GetAllEnemyUnits(unit) or GetEnemies(unit)
-	local nearest, dist
+	local nearest
 	for _, enemy in ipairs(enemies) do
-		local d = unit:GetDist(enemy)
-		if not nearest or (dist > d) then
-			nearest, dist = enemy, d
+		if not nearest or IsCloser(unit, enemy, nearest) then
+			nearest = enemy
 		end
 	end
-	return nearest, dist
+	if nearest then
+		return nearest, unit:GetDist(nearest)
+	end
 end
 
 function UpdateTeamDiplomacy()

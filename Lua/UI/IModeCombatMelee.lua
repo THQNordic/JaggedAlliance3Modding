@@ -57,8 +57,12 @@ function MeleeTargetingUpdateMovementAvatar(dialog, blackboard, attack_pos)
 	local attacker = dialog.attacker
 	if blackboard.movement_avatar then
 		attack_pos = attack_pos or (dialog.target_pos and target ~= attacker) and dialog.target_pos
-		if attack_pos and attacker:GetPos() ~= attack_pos then
-			blackboard.movement_avatar:SetPos(attack_pos)
+		if attack_pos then
+			if attacker:GetPos() ~= attack_pos then
+				blackboard.movement_avatar:SetPos(attack_pos)
+			elseif attack_pos ~= blackboard.movement_avatar:GetPos() then
+				blackboard.movement_avatar:SetPos(point20)
+			end
 		end
 		if IsValid(target) and target ~= attacker then
 			-- orient by target and use the "enabled" color
@@ -174,7 +178,7 @@ function Targeting_Melee(dialog, blackboard, command, pt)
 		if attack_pos then
 			local target = dialog.target
 			if IsValid(target) and not IsKindOf(target.traverse_tunnel, "SlabTunnelLadder") then
-				tiles = GetMeleeTiles(attacker, target, SnapToPassSlab(target:GetVisualPos()))
+				tiles = GetMeleeTiles(attacker, target, SnapToPassSlab(target:GetVisualPosXYZ()))
 			end
 		end
 		if not attack_pos or not table.find(tiles, attack_pos) then
@@ -478,7 +482,7 @@ function IModeCombatMelee:Confirm(from_crosshair)
 			end
 		elseif unit == self.target and self.crosshair.visible then
 			self.crosshair:Attack()
-		elseif self:GetMouseTarget(terminal.GetMousePos()) ~= self.crosshair then
+		elseif not GetUIStyleGamepad() and self:GetMouseTarget(terminal.GetMousePos()) ~= self.crosshair then
 			CreateRealTimeThread(RestoreDefaultMode, SelectedObj)
 		end
 		return "break"

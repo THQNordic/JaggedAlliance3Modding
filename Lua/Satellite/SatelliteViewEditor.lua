@@ -5,7 +5,7 @@ if FirstLoad then
 end
 
 function GetSatelliteSectorsGridBox(campaign)
-	local grid_sz_x, grid_sz_y = campaign.sector_columns*campaign.sector_size:x(), campaign.sector_rows*campaign.sector_size:y()
+	local grid_sz_x, grid_sz_y = campaign.sector_columns*campaign.sector_size:x(), (campaign.sector_rows - campaign.sector_rowsstart + 1)*campaign.sector_size:y()
 	local x, y = CabinetSectorsCenter:xy()
 	return box(x - grid_sz_x/2, y - grid_sz_y/2, x + grid_sz_x/2, y + grid_sz_y/2)
 end

@@ -174,23 +174,30 @@ PlaceObj('XTemplate', {
 							posInList = list:GetItemAt(pos)
 						end
 						self.parent.parent.focused_item = posInList
-						local canBeEdited = editField.context.metadata.gameid == Game.id
-						if canBeEdited then
-							editField:SetText(SavenameToName(editField.context.savename))
-							editField:SetVisible(true)
-							editField:SetFocus(true)
-							editField:SelectAll()
-							self:SetVisible(false)
-							CreateRealTimeThread(function()
-								Sleep(5)
+						local canBeModified = editField.context.metadata.gameid == Game.id
+						local isEditing = canBeModified and (not GetUIStyleGamepad() or button == "L")
+						if canBeModified then
+							GetDialog(self):ResolveId("idSubSubContent"):SetVisible(true)
+							if isEditing then
+								editField:SetText(SavenameToName(editField.context.savename))
+								editField:SetVisible(true)
+								editField:SetFocus(true) 
+								editField:SelectAll()
+								self:SetVisible(false)
+								CreateRealTimeThread(function()
+									Sleep(5)
 								GetDialog(self).parent:SetHandleMouse(true)
-							end)
-							g_CurrentlyEditingName = true
+								end)
+								g_CurrentlyEditingName = true
+							else
+								g_CurrentlyEditingName = false
+							end
 							ObjModified("NewSelectedSave")
 							ObjModified("action-button-mm")
 							GetDialog(self):ResolveId("idSubSubContent"):SetMode("save", editField.context)
 							ShowSavegameDescription(editField.context, GetDialog(self):ResolveId("idSubSubContent"))
 						else
+							GetDialog(self):ResolveId("idSubSubContent"):SetVisible(false)
 							g_CurrentlyEditingName = false
 							ObjModified("NewSelectedSave")
 							ObjModified("action-button-mm")
@@ -206,7 +213,7 @@ PlaceObj('XTemplate', {
 								entry:ResolveId("idNewSave").context.savename = oldSavename
 							end
 						end
-						if canBeEdited and GetUIStyleGamepad() then
+						if isEditing and GetUIStyleGamepad() then
 							editField:OpenControllerTextInput()
 						elseif GetUIStyleGamepad() then
 							self:SetFocus(true)
@@ -255,6 +262,12 @@ PlaceObj('XTemplate', {
 		PlaceObj('XTemplateFunc', {
 			'name', "SetSelected(self, selected)",
 			'func', function (self, selected)
+				self:SetSelected_func(selected) -- needed to SetSelected outside
+			end,
+		}),
+		PlaceObj('XTemplateFunc', {
+			'name', "SetSelected_func(self, selected)",
+			'func', function (self, selected)
 				if GetUIStyleGamepad() then
 					self:SetFocus(selected)
 					self.idImgBcgrSelected:SetVisible(g_SelectedSave == self.context)
@@ -273,7 +286,7 @@ PlaceObj('XTemplate', {
 				if not (selected or g_SelectedSave == self.context) then
 					local saveEntryEdit = self.parent and self.parent:ResolveId("idNewSave")
 					if not saveEntryEdit then return end
-					local oldSavename = self.context.newSave and _InternalTranslate(T(914064246115, "NEW SAVE")) or SavenameToName(self.context.savename)
+					local oldSavename = self.context.newSave and _InternalTranslate(T(914064246115, "NEW SAVE")) or SavenameToName(self.context.metadata.displayname or self.context.metadata.savename)
 					saveEntryEdit.context.savename = SavenameToName(self.context.savename)
 					self.idName:SetText(oldSavename)
 				end

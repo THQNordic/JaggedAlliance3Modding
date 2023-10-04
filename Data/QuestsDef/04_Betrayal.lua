@@ -444,7 +444,7 @@ PlaceObj('QuestsDef', {
 						return not quest.BetrayalStartCombat and quest.Given
 					end,
 				}),
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							QuestId = "_GroupsAttacked",
@@ -454,7 +454,7 @@ PlaceObj('QuestsDef', {
 								return quest.Betrayal_EnemyAll
 							end,
 						}),
-						PlaceObj('AND', {
+						PlaceObj('CheckAND', {
 							Conditions = {
 								PlaceObj('SectorIsInConflict', {}),
 								PlaceObj('PlayerIsPlayerTurn', {}),
@@ -1292,27 +1292,6 @@ PlaceObj('QuestsDef', {
 					'Conditions', {
 						PlaceObj('QuestIsVariableBool', {
 							Condition = "or",
-							QuestId = "RescueHerMan",
-							Vars = set({
-	Completed = false,
-}),
-							__eval = function ()
-								local quest = gv_Quests['RescueHerMan'] or QuestGetState('RescueHerMan')
-								return not quest.Completed
-							end,
-						}),
-					},
-					'Effects', {
-						PlaceObj('QuestSetVariableBool', {
-							Prop = "Failed",
-							QuestId = "RescueHerMan",
-						}),
-					},
-				}),
-				PlaceObj('ConditionalEffect', {
-					'Conditions', {
-						PlaceObj('QuestIsVariableBool', {
-							Condition = "or",
 							QuestId = "DiamondRed",
 							Vars = set({
 	Completed = false,
@@ -1391,6 +1370,11 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"I1",
+					},
+				}),
 				PlaceObj('UnitIsOnMap', {
 					TargetUnit = "AmbushWave",
 				}),
@@ -1403,6 +1387,9 @@ PlaceObj('QuestsDef', {
 			Once = true,
 			ParamId = "TCE_FlagHillAmbushAware",
 			QuestId = "04_Betrayal",
+			requiredSectors = {
+				"I1",
+			},
 		}),
 	},
 	Variables = {

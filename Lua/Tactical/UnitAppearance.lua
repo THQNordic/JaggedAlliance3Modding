@@ -1432,35 +1432,13 @@ function OnMsg.RunCombatAction(action_id, unit)
 	end
 end
 
-local turn_on_fx_components = {
-	Flashlight = true,
-	FlashlightDot = true,
-	LaserDot = true,
-	UVDot = true,
-	
-	Flashlight_aa12 = true,
-	FlashlightDot_aa12 = true,
-	LaserDot_aa12 = true,
-	UVDot_aa12 = true,
-
-	Flashlight_PSG_M1 = true,
-	FlashlightDot_PSG_M1 = true,
-	LaserDot_PSG_M1 = true,
-	UVDot_PSG_M1 = true,
-	
-	Flashlight_Anaconda = true,
-	FlashlightDot_Anaconda = true,
-	LaserDot_Anaconda = true,
-	UVDot_Anaconda = true,
-}
-
 local function playTurnOnFx(unit, weapon)
 	local visual = weapon and weapon.visual_obj
 	if not visual then return end
 	
 	for slot, component_id in sorted_pairs(weapon.components) do
-		if turn_on_fx_components[component_id or ""] then
-			local component = WeaponComponents[component_id]
+		local component = WeaponComponents[component_id]
+		if component and component.EnableAimFX then
 			local fx_actor
 			for _, descr in ipairs(component and component.Visuals) do
 				if descr:Match(weapon.class) then

@@ -22,7 +22,7 @@ DefineClass.ShipmentSquadPreset = {
 }
 
 DefineModItemPreset("ShipmentSquadPreset", {
-	EditorName = "Shipment Squad Preset",
+	EditorName = "Shipment squad preset",
 	EditorSubmenu = "Satellite",
 })
 
@@ -49,9 +49,9 @@ end
 local lMaxStaticSquads = 3
 local lMinDynamicSquadRouteLength = 10
 local lMaxDynamicSquads = 2
-local lDynamicSquadDayCooldown = 6
-local lDynamicSquadDayChanceToSpawn = 3 -- Is accumulated every day the squad doesn't spawn.
-DynamicSquadSpawnChanceOnScout = 20
+local lDynamicSquadDayCooldown = 3
+local lDynamicSquadDayChanceToSpawn = 7 -- Is accumulated every day the squad doesn't spawn.
+DynamicSquadSpawnChanceOnScout = 25
 
 -- Spawns static diamond shipment squads at the start of the campaign on
 -- random sectors
@@ -193,7 +193,11 @@ function GetAllShipmentItems()
 	end
 	return items
 end
-local lShipmentItemsCache = GetAllShipmentItems()
+
+local lShipmentItemsCache
+function OnMsg.DataLoaded()
+	lShipmentItemsCache = GetAllShipmentItems()
+end
 
 function HasAnyShipmentItem(unit)
 	local hasBriefcase, shipmentPresetId = false, false
@@ -284,10 +288,13 @@ function SpawnDynamicDBSquad(overrideSourceDest, srcOrDstSectorFilter)
 	
 	-- Remove bottom worst
 	table.sort(weights, function(a, b) return a[1] > b[1] end)
-	local halfWeights = #weights / 2
-	table.iclear(weights, halfWeights)
+	if #weights > 4 then
+		local halfWeights = #weights / 2
+		table.iclear(weights, halfWeights)
+	end
 
 	local randomRoute = GetWeightedRandom(weights, xxhash(Game.id, Game.CampaignTime, gv_NextSquadUniqueId))
+	if not randomRoute then return end
 	
 	local presetId = PickShipmentPreset() or "DiamondShipment"
 	local preset = ShipmentPresets[presetId]

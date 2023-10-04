@@ -98,11 +98,13 @@ PlaceObj('BanterDef', {
 		PlaceObj('QuestIsVariableBool', {
 			QuestId = "TreasureHunting",
 			Vars = set({
+	Completed = false,
+	Failed = false,
 	chickendead = false,
 }),
 			__eval = function ()
 				local quest = gv_Quests['TreasureHunting'] or QuestGetState('TreasureHunting')
-				return not quest.chickendead
+				return not quest.Completed and not quest.Failed and not quest.chickendead
 			end,
 		}),
 	},
@@ -130,7 +132,7 @@ PlaceObj('BanterDef', {
 				return not quest.chickendead
 			end,
 		}),
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('BanterHasPlayed', {
 					Banters = {
@@ -468,7 +470,7 @@ PlaceObj('BanterDef', {
 				return quest.VeinardMet and not quest.chickendead
 			end,
 		}),
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('PlayerIsInSectors', {
 					Negate = true,
@@ -476,7 +478,7 @@ PlaceObj('BanterDef', {
 						"C3",
 					},
 				}),
-				PlaceObj('AND', {
+				PlaceObj('CheckAND', {
 					Conditions = {
 						PlaceObj('BanterHasPlayed', {
 							Banters = {
@@ -489,6 +491,15 @@ PlaceObj('BanterDef', {
 							},
 						}),
 					},
+				}),
+				PlaceObj('QuestIsVariableBool', {
+					Condition = "or",
+					QuestId = "TreasureHunting",
+					Vars = set( "Completed", "Failed" ),
+					__eval = function ()
+						local quest = gv_Quests['TreasureHunting'] or QuestGetState('TreasureHunting')
+						return quest.Completed or quest.Failed
+					end,
 				}),
 			},
 		}),
@@ -536,13 +547,15 @@ PlaceObj('BanterDef', {
 		PlaceObj('QuestIsVariableBool', {
 			QuestId = "TreasureHunting",
 			Vars = set({
+	Completed = false,
+	Failed = false,
 	VeinardChickenOverheard = false,
 	VeinardMet = true,
 	chickendead = false,
 }),
 			__eval = function ()
 				local quest = gv_Quests['TreasureHunting'] or QuestGetState('TreasureHunting')
-				return not quest.VeinardChickenOverheard and quest.VeinardMet and not quest.chickendead
+				return not quest.Completed and not quest.Failed and not quest.VeinardChickenOverheard and quest.VeinardMet and not quest.chickendead
 			end,
 		}),
 		PlaceObj('BanterHasPlayed', {
@@ -820,11 +833,13 @@ PlaceObj('BanterDef', {
 		PlaceObj('QuestIsVariableBool', {
 			QuestId = "TreasureHunting",
 			Vars = set({
+	Completed = false,
+	Failed = false,
 	chickendead = false,
 }),
 			__eval = function ()
 				local quest = gv_Quests['TreasureHunting'] or QuestGetState('TreasureHunting')
-				return not quest.chickendead
+				return not quest.Completed and not quest.Failed and not quest.chickendead
 			end,
 		}),
 	},
@@ -842,7 +857,7 @@ PlaceObj('BanterDef', {
 		}),
 	},
 	conditions = {
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('BanterHasPlayed', {
 					Banters = {
@@ -1067,12 +1082,14 @@ PlaceObj('BanterDef', {
 		PlaceObj('QuestIsVariableBool', {
 			QuestId = "TreasureHunting",
 			Vars = set({
+	Completed = false,
+	Failed = false,
 	VeinardMet = true,
 	chickendead = false,
 }),
 			__eval = function ()
 				local quest = gv_Quests['TreasureHunting'] or QuestGetState('TreasureHunting')
-				return quest.VeinardMet and not quest.chickendead
+				return not quest.Completed and not quest.Failed and quest.VeinardMet and not quest.chickendead
 			end,
 		}),
 	},

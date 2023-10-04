@@ -12,13 +12,11 @@ PlaceObj('CharacterEffectCompositeDef', {
 	'Comment', "Grunty - free shot at battle start",
 	'object_class', "Perk",
 	'msg_reactions', {
-		PlaceObj('MsgReaction', {
+		PlaceObj('MsgActorReaction', {
 			Event = "CombatStarting",
 			Handler = function (self, dynamic_data)
-				local reaction_idx = table.find(self.msg_reactions or empty_table, "Event", "CombatStarting")
-				if not reaction_idx then return end
 				
-				local function exec(self, dynamic_data)
+				local function exec(self, reaction_actor, dynamic_data)
 				if not dynamic_data then
 					local unit = g_Units.Grunty
 					if unit then
@@ -35,25 +33,26 @@ PlaceObj('CharacterEffectCompositeDef', {
 					end
 				end
 				end
-				local id = GetCharacterEffectId(self)
 				
-				if id then
-					local objs = {}
-					for session_id, data in pairs(gv_UnitData) do
-						local obj = g_Units[session_id] or data
-						if obj:HasStatusEffect(id) then
-							objs[session_id] = obj
-						end
-					end
-					for _, obj in sorted_pairs(objs) do
-						exec(self, dynamic_data)
-					end
-				else
-					exec(self, dynamic_data)
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[1]
+				if not reaction_def or reaction_def.Event ~= "CombatStarting" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
+					local reaction_actor
+					exec(self, reaction_actor, dynamic_data)
 				end
 				
+				
+				local actors = self:GetReactionActors("CombatStarting", reaction_def, dynamic_data)
+				for _, reaction_actor in ipairs(actors) do
+					if self:VerifyReaction("CombatStarting", reaction_def, reaction_actor, dynamic_data) then
+						exec(self, reaction_actor, dynamic_data)
+					end
+				end
 			end,
-			HandlerCode = function (self, dynamic_data)
+			HandlerCode = function (self, reaction_actor, dynamic_data)
 				if not dynamic_data then
 					local unit = g_Units.Grunty
 					if unit then

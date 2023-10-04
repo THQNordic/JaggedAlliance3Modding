@@ -5,38 +5,37 @@ PlaceObj('CharacterEffectCompositeDef', {
 	'Id', "GritAfterRally",
 	'object_class', "CharacterEffect",
 	'msg_reactions', {
-		PlaceObj('MsgReaction', {
+		PlaceObj('MsgActorReaction', {
 			Event = "OnDownedRally",
 			Handler = function (self, healer, target)
-				local reaction_idx = table.find(self.msg_reactions or empty_table, "Event", "OnDownedRally")
-				if not reaction_idx then return end
 				
-				local function exec(self, healer, target)
+				local function exec(self, reaction_actor, healer, target)
 				local effect = target:GetStatusEffect(self.id)
 				if effect and effect.stacks > 0 then
 					target:ApplyTempHitPoints(effect.stacks)
 					target:RemoveStatusEffect(self.id, "all")
 				end
 				end
-				local id = GetCharacterEffectId(self)
 				
-				if id then
-					local objs = {}
-					for session_id, data in pairs(gv_UnitData) do
-						local obj = g_Units[session_id] or data
-						if obj:HasStatusEffect(id) then
-							objs[session_id] = obj
-						end
-					end
-					for _, obj in sorted_pairs(objs) do
-						exec(self, healer, target)
-					end
-				else
-					exec(self, healer, target)
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[1]
+				if not reaction_def or reaction_def.Event ~= "OnDownedRally" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
+					local reaction_actor
+					exec(self, reaction_actor, healer, target)
 				end
 				
+				
+				local actors = self:GetReactionActors("OnDownedRally", reaction_def, healer, target)
+				for _, reaction_actor in ipairs(actors) do
+					if self:VerifyReaction("OnDownedRally", reaction_def, reaction_actor, healer, target) then
+						exec(self, reaction_actor, healer, target)
+					end
+				end
 			end,
-			HandlerCode = function (self, healer, target)
+			HandlerCode = function (self, reaction_actor, healer, target)
 				local effect = target:GetStatusEffect(self.id)
 				if effect and effect.stacks > 0 then
 					target:ApplyTempHitPoints(effect.stacks)

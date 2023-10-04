@@ -12,7 +12,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('CheckIsPersistentUnitDead', {
 							per_ses_id = "NPC_CaptainPierrot",

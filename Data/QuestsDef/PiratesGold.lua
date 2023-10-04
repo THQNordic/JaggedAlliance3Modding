@@ -17,7 +17,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							Condition = "or",
@@ -62,7 +62,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							Condition = "or",
@@ -318,18 +318,18 @@ PlaceObj('QuestsDef', {
 			Conditions = {
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "PiratesGold",
-					Vars = set( "MercInArea1", "MercInArea2", "MercInArea3" ),
-					__eval = function ()
-						local quest = gv_Quests['PiratesGold'] or QuestGetState('PiratesGold')
-						return quest.MercInArea1 and quest.MercInArea2 and quest.MercInArea3
-					end,
-				}),
-				PlaceObj('QuestIsVariableBool', {
-					QuestId = "PiratesGold",
 					Vars = set( "WritingsFound" ),
 					__eval = function ()
 						local quest = gv_Quests['PiratesGold'] or QuestGetState('PiratesGold')
 						return quest.WritingsFound
+					end,
+				}),
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "PiratesGold",
+					Vars = set( "MercInArea1", "MercInArea2", "MercInArea3" ),
+					__eval = function ()
+						local quest = gv_Quests['PiratesGold'] or QuestGetState('PiratesGold')
+						return quest.MercInArea1 and quest.MercInArea2 and quest.MercInArea3
 					end,
 				}),
 			},
@@ -381,6 +381,11 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"I10",
+					},
+				}),
 				PlaceObj('UnitIsOnMap', {
 					TargetUnit = "Weirdo",
 				}),
@@ -393,6 +398,9 @@ PlaceObj('QuestsDef', {
 			Once = true,
 			ParamId = "TCE_WeirdoSpawned",
 			QuestId = "PiratesGold",
+			requiredSectors = {
+				"I10",
+			},
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
@@ -472,7 +480,12 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
-				PlaceObj('OR', {
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"H8",
+					},
+				}),
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('UnitHasInteraction', {
 							'TargetUnit', "any merc",
@@ -504,6 +517,9 @@ PlaceObj('QuestsDef', {
 			Once = true,
 			ParamId = "TCE_Complete",
 			QuestId = "PiratesGold",
+			requiredSectors = {
+				"H8",
+			},
 		}),
 	},
 	Variables = {

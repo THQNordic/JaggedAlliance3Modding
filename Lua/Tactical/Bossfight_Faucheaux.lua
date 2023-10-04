@@ -220,10 +220,11 @@ function BossfightFaucheaux:AssignToNextArea(path, cur_area)
 		-- assign to next area
 		local next_area_idx = Min(area_idx + 1, #path)
 		local area = path[next_area_idx]
-		--if area == "Control_Zone_OpenCorridor2" then
---			area = "Control_Zone_FinalDest"
-		--end
-		g_TacticalMap:AssignUnit(self.boss, path[next_area_idx], "reset")
+		g_TacticalMap:AssignUnit(self.boss, area, "reset", g_TacticalMap.PriorityHigh)
+		if area == "ControlZone_OpenCorridor2" then
+			g_TacticalMap:AssignUnit(self.boss, "ControlZone_OpenCorridor1", nil, g_TacticalMap.PriorityMedium)
+		end		
+		g_TacticalMap:AssignUnit(self.boss, cur_area, nil, g_TacticalMap.PriorityLow)
 	else
 		-- fallback: assign to the nearest area (dist to marker)
 		local area, min_dist

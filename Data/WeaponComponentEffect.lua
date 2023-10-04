@@ -126,6 +126,39 @@ PlaceObj('WeaponComponentEffect', {
 	Description = T(685278635335, --[[WeaponComponentEffect IgnoreInTheDark Description]] "Illuminates enemies and the wielder"),
 	group = "ChanceToHit",
 	id = "IgnoreInTheDark",
+	msg_reactions = {
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "weapon1",
+			Event = "GatherCTHModifications",
+			Handler = function (self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
+				
+				local function exec(self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
+				if cth_id == "Darkness" then
+					data.enabled = false
+				end
+				end
+				
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[1]
+				if not reaction_def or reaction_def.Event ~= "GatherCTHModifications" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
+					exec(self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
+				end
+				
+				if self:VerifyReaction("GatherCTHModifications", reaction_def, weapon1, attacker, cth_id, action_id, target, weapon1, weapon2, data) then
+					exec(self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
+				end
+			end,
+			HandlerCode = function (self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
+				if cth_id == "Darkness" then
+					data.enabled = false
+				end
+			end,
+			helpActor = "weapon1",
+		}),
+	},
 })
 
 PlaceObj('WeaponComponentEffect', {
@@ -133,6 +166,39 @@ PlaceObj('WeaponComponentEffect', {
 	Description = T(214871818675, --[[WeaponComponentEffect IgnoreInTheDarkWhenFullyAimed Description]] "Illuminates enemies when at 3+ Aim levels"),
 	group = "ChanceToHit",
 	id = "IgnoreInTheDarkWhenFullyAimed",
+	msg_reactions = {
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "weapon1",
+			Event = "GatherCTHModifications",
+			Handler = function (self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
+				
+				local function exec(self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
+				if cth_id == "Darkness" and IsFullyAimedAttack(data.aim) then
+					data.enabled = false
+				end
+				end
+				
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[1]
+				if not reaction_def or reaction_def.Event ~= "GatherCTHModifications" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
+					exec(self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
+				end
+				
+				if self:VerifyReaction("GatherCTHModifications", reaction_def, weapon1, attacker, cth_id, action_id, target, weapon1, weapon2, data) then
+					exec(self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
+				end
+			end,
+			HandlerCode = function (self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
+				if cth_id == "Darkness" and IsFullyAimedAttack(data.aim) then
+					data.enabled = false
+				end
+			end,
+			helpActor = "weapon1",
+		}),
+	},
 })
 
 PlaceObj('WeaponComponentEffect', {
@@ -272,7 +338,7 @@ PlaceObj('WeaponComponentEffect', {
 
 PlaceObj('WeaponComponentEffect', {
 	Comment = "In GetBaseAimLevelRange",
-	Description = T(253317074008, --[[WeaponComponentEffect FirstShotIncreasedAim Description]] "If your first action is an attack, it counts as being Aimed 3 times"),
+	Description = T(253317074008, --[[WeaponComponentEffect FirstShotIncreasedAim Description]] "If your first action is a non-Overwatch attack, it counts as being Aimed 3 times"),
 	Parameters = {
 		PlaceObj('PresetParamNumber', {
 			'Name', "min_aim",
@@ -310,6 +376,39 @@ PlaceObj('WeaponComponentEffect', {
 	Description = T(224153052823, --[[WeaponComponentEffect IgnoreLightOfSightWhenFullyAimed Description]] "No line of sight Accuracy penalties when at 3+ Aim levels"),
 	group = "Other",
 	id = "IgnoreLightOfSightWhenFullyAimed",
+	msg_reactions = {
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "weapon1",
+			Event = "GatherCTHModifications",
+			Handler = function (self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
+				
+				local function exec(self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
+				if cth_id == "NoLineOfSight" and IsFullyAimedAttack(data.aim) then
+					data.enabled = false
+				end
+				end
+				
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[1]
+				if not reaction_def or reaction_def.Event ~= "GatherCTHModifications" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
+					exec(self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
+				end
+				
+				if self:VerifyReaction("GatherCTHModifications", reaction_def, weapon1, attacker, cth_id, action_id, target, weapon1, weapon2, data) then
+					exec(self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
+				end
+			end,
+			HandlerCode = function (self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
+				if cth_id == "NoLineOfSight" and IsFullyAimedAttack(data.aim) then
+					data.enabled = false
+				end
+			end,
+			helpActor = "weapon1",
+		}),
+	},
 })
 
 PlaceObj('WeaponComponentEffect', {
@@ -327,10 +426,42 @@ PlaceObj('WeaponComponentEffect', {
 })
 
 PlaceObj('WeaponComponentEffect', {
-	Comment = "In PrecalcDamageAndStatusEffects",
 	Description = T(598088149530, --[[WeaponComponentEffect MarkWhenFullyAimed Description]] "Inflicts <em>Marked</em> when at 3+ Aim levels"),
 	group = "Other",
 	id = "MarkWhenFullyAimed",
+	msg_reactions = {
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "attacker",
+			Event = "GatherDamageModifications",
+			Handler = function (self, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data)
+				
+				local function exec(self, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data)
+				if IsFullyAimedAttack(attack_args) then
+					table.insert(mod_data.effects, "Marked")
+				end
+				end
+				
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[1]
+				if not reaction_def or reaction_def.Event ~= "GatherDamageModifications" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
+					exec(self, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data)
+				end
+				
+				if self:VerifyReaction("GatherDamageModifications", reaction_def, attacker, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data) then
+					exec(self, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data)
+				end
+			end,
+			HandlerCode = function (self, attacker, target, attack_args, hit_descr, mod_data)
+				if IsFullyAimedAttack(attack_args) then
+					table.insert(mod_data.effects, "Marked")
+				end
+			end,
+			helpActor = "attacker",
+		}),
+	},
 })
 
 PlaceObj('WeaponComponentEffect', {

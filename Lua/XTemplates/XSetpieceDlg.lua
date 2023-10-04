@@ -12,6 +12,7 @@ PlaceObj('XTemplate', {
 			'__class', "XText",
 			'Id', "idSkipHint",
 			'Margins', box(0, 0, 50, 40),
+			'MarginPolicy', "FitInSafeArea",
 			'HAlign', "right",
 			'VAlign', "bottom",
 			'Visible', false,

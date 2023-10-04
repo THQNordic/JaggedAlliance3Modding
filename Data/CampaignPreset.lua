@@ -4095,6 +4095,16 @@ PlaceObj('CampaignPreset', {
 							end,
 						}),
 						PlaceObj('QuestIsVariableBool', {
+							QuestId = "PierreDefeated",
+							Vars = set({
+	PierreJoined = false,
+}),
+							__eval = function ()
+								local quest = gv_Quests['PierreDefeated'] or QuestGetState('PierreDefeated')
+								return not quest.PierreJoined
+							end,
+						}),
+						PlaceObj('QuestIsVariableBool', {
 							QuestId = "02_LiberateErnie",
 							Vars = set( "Completed" ),
 							__eval = function ()
@@ -6518,9 +6528,12 @@ PlaceObj('CampaignPreset', {
 	id = "HotDiamonds",
 	map_file = "UI/SatelliteView/SatView",
 	map_size = point(9966, 5704),
+	sector_bottomright = "L20",
 	sector_columns = 20,
 	sector_rows = 12,
+	sector_rowsstart = 1,
 	sector_size = point(356, 356),
+	sector_topleft = "A1",
 	sectors_offset = point(1420, 710),
 	starting_day = 3,
 	starting_hour = 14,

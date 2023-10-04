@@ -33,7 +33,7 @@ PlaceObj('GameStateDef', {
 
 PlaceObj('GameStateDef', {
 	AutoSet = {
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('CheckGameState', {
 					GameState = "Night",
@@ -52,7 +52,7 @@ PlaceObj('GameStateDef', {
 
 PlaceObj('GameStateDef', {
 	AutoSet = {
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('CheckGameState', {
 					GameState = "RainHeavy",
@@ -71,12 +71,8 @@ PlaceObj('GameStateDef', {
 
 PlaceObj('GameStateDef', {
 	AutoSet = {
-		PlaceObj('OR', {
-			Conditions = {
-				PlaceObj('CheckGameState', {
-					GameState = "FireStorm",
-				}),
-			},
+		PlaceObj('CheckGameState', {
+			GameState = "FireStorm",
 		}),
 	},
 	SortKey = 4000,

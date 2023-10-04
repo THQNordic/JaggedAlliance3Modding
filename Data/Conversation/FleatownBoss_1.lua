@@ -79,23 +79,11 @@ PlaceObj('Conversation', {
 		Conditions = {
 			PlaceObj('QuestIsVariableBool', {
 				QuestId = "Smiley",
-				Vars = set( "Completed" ),
+				Vars = set( "Completed", "Mollie_stay" ),
 				__eval = function ()
 					local quest = gv_Quests['Smiley'] or QuestGetState('Smiley')
-					return quest.Completed
+					return quest.Completed and quest.Mollie_stay
 				end,
-			}),
-			PlaceObj('QuestIsVariableBool', {
-				QuestId = "Smiley",
-				Vars = set( "Mollie_stay" ),
-				__eval = function ()
-					local quest = gv_Quests['Smiley'] or QuestGetState('Smiley')
-					return quest.Mollie_stay
-				end,
-			}),
-			PlaceObj('UnitIsOnMap', {
-				Negate = true,
-				TargetUnit = "Luigi",
 			}),
 		},
 		Effects = {
@@ -176,15 +164,19 @@ PlaceObj('Conversation', {
 		PlaceObj('ConversationPhrase', {
 			Align = "right",
 			AutoRemove = true,
+			Comment = "Luigi not started",
 			Conditions = {
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "Luigi",
 					Vars = set({
+	Completed = false,
+	LuigiDead = false,
+	LuigiSaved = false,
 	MentionFavor = false,
 }),
 					__eval = function ()
 						local quest = gv_Quests['Luigi'] or QuestGetState('Luigi')
-						return not quest.MentionFavor
+						return not quest.Completed and not quest.LuigiDead and not quest.LuigiSaved and not quest.MentionFavor
 					end,
 				}),
 			},
@@ -210,40 +202,21 @@ PlaceObj('Conversation', {
 		PlaceObj('ConversationPhrase', {
 			Align = "right",
 			AutoRemove = true,
+			Comment = "Luigi not started but mentioned",
 			Conditions = {
-				PlaceObj('QuestIsVariableBool', {
-					QuestId = "Luigi",
-					Vars = set( "MentionFavor" ),
-					__eval = function ()
-						local quest = gv_Quests['Luigi'] or QuestGetState('Luigi')
-						return quest.MentionFavor
-					end,
-				}),
-				PlaceObj('QuestIsVariableBool', {
-					QuestId = "Luigi",
-					Vars = set({
-	Given = false,
-}),
-					__eval = function ()
-						local quest = gv_Quests['Luigi'] or QuestGetState('Luigi')
-						return not quest.Given
-					end,
-				}),
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "Luigi",
 					Vars = set({
 	Completed = false,
+	Given = false,
+	LuigiDead = false,
+	LuigiSaved = false,
+	MentionFavor = true,
 }),
 					__eval = function ()
 						local quest = gv_Quests['Luigi'] or QuestGetState('Luigi')
-						return not quest.Completed
+						return not quest.Completed and not quest.Given and not quest.LuigiDead and not quest.LuigiSaved and quest.MentionFavor
 					end,
-				}),
-			},
-			Effects = {
-				PlaceObj('QuestSetVariableBool', {
-					Prop = "MentionFavor",
-					QuestId = "Luigi",
 				}),
 			},
 			GoTo = "<root>",
@@ -262,40 +235,20 @@ PlaceObj('Conversation', {
 		PlaceObj('ConversationPhrase', {
 			Align = "right",
 			AutoRemove = true,
+			Comment = "Luigi done or in progress",
 			Conditions = {
 				PlaceObj('QuestIsVariableBool', {
+					Condition = "or",
 					QuestId = "Luigi",
-					Vars = set( "MentionFavor" ),
+					Vars = set( "Completed", "Given" ),
 					__eval = function ()
 						local quest = gv_Quests['Luigi'] or QuestGetState('Luigi')
-						return quest.MentionFavor
+						return quest.Completed or quest.Given
 					end,
 				}),
-				PlaceObj('OR', {
-					Conditions = {
-						PlaceObj('QuestIsVariableBool', {
-							QuestId = "Luigi",
-							Vars = set( "Given" ),
-							__eval = function ()
-								local quest = gv_Quests['Luigi'] or QuestGetState('Luigi')
-								return quest.Given
-							end,
-						}),
-						PlaceObj('QuestIsVariableBool', {
-							QuestId = "Luigi",
-							Vars = set( "Completed" ),
-							__eval = function ()
-								local quest = gv_Quests['Luigi'] or QuestGetState('Luigi')
-								return quest.Completed
-							end,
-						}),
-					},
-				}),
-			},
-			Effects = {
-				PlaceObj('QuestSetVariableBool', {
-					Prop = "MentionFavor",
-					QuestId = "Luigi",
+				PlaceObj('UnitIsOnMap', {
+					Negate = true,
+					TargetUnit = "Luigi",
 				}),
 			},
 			GoTo = "<root>",
@@ -334,19 +287,25 @@ PlaceObj('Conversation', {
 		PlaceObj('ConversationPhrase', {
 			Align = "right",
 			AutoRemove = true,
-			Comment = "Luigi present",
+			Comment = "Luigi present now",
 			Conditions = {
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "Luigi",
-					Vars = set( "LuigiSaved" ),
+					Vars = set({
+	Completed = false,
+	LuigiDead = false,
+	LuigiSaved = true,
+	SupportBlaubert = false,
+	SupportLuigi = false,
+	SupportNoOne = false,
+}),
 					__eval = function ()
 						local quest = gv_Quests['Luigi'] or QuestGetState('Luigi')
-						return quest.LuigiSaved
+						return not quest.Completed and not quest.LuigiDead and quest.LuigiSaved and not quest.SupportBlaubert and not quest.SupportLuigi and not quest.SupportNoOne
 					end,
 				}),
-				PlaceObj('CheckIsPersistentUnitDead', {
-					Negate = true,
-					per_ses_id = "NPC_Luigi",
+				PlaceObj('UnitIsOnMap', {
+					TargetUnit = "Luigi",
 				}),
 			},
 			GoTo = "LuigiConfrontation",
@@ -371,10 +330,21 @@ PlaceObj('Conversation', {
 		PlaceObj('ConversationPhrase', {
 			Align = "right",
 			AutoRemove = true,
-			Comment = "Luigi killed",
+			Comment = "Luigi killed in prison",
 			Conditions = {
-				PlaceObj('CheckIsPersistentUnitDead', {
-					per_ses_id = "NPC_Luigi",
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "Luigi",
+					Vars = set({
+	Completed = false,
+	LuigiDead = true,
+	SupportBlaubert = false,
+	SupportLuigi = false,
+	SupportNoOne = false,
+}),
+					__eval = function ()
+						local quest = gv_Quests['Luigi'] or QuestGetState('Luigi')
+						return not quest.Completed and quest.LuigiDead and not quest.SupportBlaubert and not quest.SupportLuigi and not quest.SupportNoOne
+					end,
 				}),
 			},
 			GoTo = "LuigiDead",
@@ -393,17 +363,20 @@ PlaceObj('Conversation', {
 		}),
 		PlaceObj('ConversationPhrase', {
 			Align = "right",
+			AutoRemove = true,
+			Comment = "Luigi not started",
 			Conditions = {
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "Luigi",
 					Vars = set({
 	Completed = false,
+	LuigiDead = false,
 	LuigiSaved = false,
 	MentionFavor = false,
 }),
 					__eval = function ()
 						local quest = gv_Quests['Luigi'] or QuestGetState('Luigi')
-						return not quest.Completed and not quest.LuigiSaved and not quest.MentionFavor
+						return not quest.Completed and not quest.LuigiDead and not quest.LuigiSaved and not quest.MentionFavor
 					end,
 				}),
 			},
@@ -433,6 +406,8 @@ PlaceObj('Conversation', {
 			PlaceObj('QuestIsVariableBool', {
 				QuestId = "Luigi",
 				Vars = set({
+	Completed = false,
+	LuigiDead = false,
 	LuigiSaved = true,
 	SupportBlaubert = false,
 	SupportLuigi = false,
@@ -440,7 +415,7 @@ PlaceObj('Conversation', {
 }),
 				__eval = function ()
 					local quest = gv_Quests['Luigi'] or QuestGetState('Luigi')
-					return quest.LuigiSaved and not quest.SupportBlaubert and not quest.SupportLuigi and not quest.SupportNoOne
+					return not quest.Completed and not quest.LuigiDead and quest.LuigiSaved and not quest.SupportBlaubert and not quest.SupportLuigi and not quest.SupportNoOne
 				end,
 			}),
 			PlaceObj('UnitIsOnMap', {
@@ -467,14 +442,16 @@ PlaceObj('Conversation', {
 		Conditions = {
 			PlaceObj('QuestIsVariableBool', {
 				QuestId = "Luigi",
-				Vars = set( "LuigiSaved", "SupportBlaubert" ),
+				Vars = set({
+	Completed = false,
+	LuigiDead = true,
+	LuigiSaved = true,
+	SupportBlaubert = true,
+}),
 				__eval = function ()
 					local quest = gv_Quests['Luigi'] or QuestGetState('Luigi')
-					return quest.LuigiSaved and quest.SupportBlaubert
+					return not quest.Completed and quest.LuigiDead and quest.LuigiSaved and quest.SupportBlaubert
 				end,
-			}),
-			PlaceObj('CheckIsPersistentUnitDead', {
-				per_ses_id = "NPC_Luigi",
 			}),
 		},
 		Effects = {
@@ -701,17 +678,16 @@ PlaceObj('Conversation', {
 			PlaceObj('QuestIsVariableBool', {
 				QuestId = "Luigi",
 				Vars = set({
+	Completed = false,
+	LuigiDead = true,
 	SupportBlaubert = false,
 	SupportLuigi = false,
 	SupportNoOne = false,
 }),
 				__eval = function ()
 					local quest = gv_Quests['Luigi'] or QuestGetState('Luigi')
-					return not quest.SupportBlaubert and not quest.SupportLuigi and not quest.SupportNoOne
+					return not quest.Completed and quest.LuigiDead and not quest.SupportBlaubert and not quest.SupportLuigi and not quest.SupportNoOne
 				end,
-			}),
-			PlaceObj('CheckIsPersistentUnitDead', {
-				per_ses_id = "NPC_Luigi",
 			}),
 			PlaceObj('UnitIsOnMap', {
 				Negate = true,
@@ -772,11 +748,17 @@ PlaceObj('Conversation', {
 				QuestId = "Luigi",
 				Vars = set({
 	BossInvited = true,
+	Completed = false,
+	LuigiDead = false,
+	LuigiSaved = false,
 	MentionFavor = false,
+	SupportBlaubert = false,
+	SupportLuigi = false,
+	SupportNoOne = false,
 }),
 				__eval = function ()
 					local quest = gv_Quests['Luigi'] or QuestGetState('Luigi')
-					return quest.BossInvited and not quest.MentionFavor
+					return quest.BossInvited and not quest.Completed and not quest.LuigiDead and not quest.LuigiSaved and not quest.MentionFavor and not quest.SupportBlaubert and not quest.SupportLuigi and not quest.SupportNoOne
 				end,
 			}),
 			PlaceObj('VillainIsDefeated', {
@@ -1255,7 +1237,7 @@ PlaceObj('Conversation', {
 	}),
 	PlaceObj('ConversationPhrase', {
 		Conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('QuestIsVariableBool', {
 						Condition = "or",
@@ -1455,9 +1437,10 @@ PlaceObj('Conversation', {
 				Conversation = "FleatownBoss_1",
 				PhraseId = "TheGoodPlace",
 			}),
-		},
-		GiveQuests = {
-			"Luigi",
+			PlaceObj('QuestSetVariableBool', {
+				Prop = "Given",
+				QuestId = "Luigi",
+			}),
 		},
 		Keyword = "What kind of favor you want?",
 		KeywordT = T(715222905999, --[[Conversation FleatownBoss_1 KeywordT]] "What kind of favor you want?"),
@@ -1525,6 +1508,7 @@ PlaceObj('Conversation', {
 			PlaceObj('QuestIsVariableBool', {
 				QuestId = "Luigi",
 				Vars = set({
+	Given = true,
 	JackhammerExecution = false,
 	JackhammerPrisoner = false,
 	JackhammerRelease = false,
@@ -1534,7 +1518,7 @@ PlaceObj('Conversation', {
 }),
 				__eval = function ()
 					local quest = gv_Quests['Luigi'] or QuestGetState('Luigi')
-					return not quest.JackhammerExecution and not quest.JackhammerPrisoner and not quest.JackhammerRelease and not quest.LuigiSaved and quest.MentionFavor and not quest.PrisonGiven
+					return quest.Given and not quest.JackhammerExecution and not quest.JackhammerPrisoner and not quest.JackhammerRelease and not quest.LuigiSaved and quest.MentionFavor and not quest.PrisonGiven
 				end,
 			}),
 		},
@@ -1544,7 +1528,6 @@ PlaceObj('Conversation', {
 				QuestId = "Luigi",
 			}),
 		},
-		Enabled = false,
 		Keyword = "The Good Place?",
 		KeywordT = T(923073609127, --[[Conversation FleatownBoss_1 KeywordT]] "The Good Place?"),
 		Lines = {

@@ -167,7 +167,7 @@ function MultiplayerFillGames(ui, filterType)
 		local game_info = game[INFO]
 		if game_info and game[ADDRESS] ~= netGameAddress and game[VISIBLE] == "public" and game[PLAYERS] < game[MAX_PLAYERS] and game[PLAYERS] > 0 then
 			local hostId = game_info.host_id
-			if hostId and hostId ~= netAccountId then -- Sometimes stuff messes up and your hosted game from the past is shown.
+			if (hostId and hostId ~= netAccountId) then -- Sometimes stuff messes up and your hosted game from the past is shown.
 				table.insert(filtered, game) --filtering happens in the swarm
 			end
 		end
@@ -302,27 +302,33 @@ function ShowMPLobbyError(context, err)
 	--print("error", context, err)
 	
 	local parent = GetDialog("PDADialog") and GetDialog("PDADialog"):ResolveId("idDisplayPopupHost") or terminal.desktop
-	local msg
+	local msg = false
+	local context_string = ""
+	local error_string = ""
+	
 	if context == "join" then
-		msg = CreateMessageBox(parent, T(634182240966, "Error"), T{858607081078, "Could not join game. Reason: <MPError(err)>", err = err}, T(325411474155, "OK"))
+		context_string = T(858607081078, "Could not join game.")
 	elseif context == "invite" then
-		msg = CreateMessageBox(parent, T(634182240966, "Error"), T{192164122130, "Could not invite player. Reason: <MPError(err)>", err = err}, T(325411474155, "OK"))
+		context_string = T(192164122130, "Could not invite player.")
 	elseif context == "platform-invite" then
-		msg = CreateMessageBox(parent, T(634182240966, "Error"), T{960708199674, "(design)Could not open invitation dialog.", err = err}, T(325411474155, "OK"))
+		context_string = T(960708199674, "Could not open the invitation dialog.")
 	elseif context == "connect" then
-		msg = CreateMessageBox(parent, T(634182240966, "Error"), T{918383291777, "Could not connect to the server! Reason: <MPError(err)>", err = err}, T(325411474155, "OK"))
+		context_string = T(918383291777, "Could not connect to the server!")
 	elseif context == "disconnected" then
 		if not netInGame then return false end
-		msg = CreateMessageBox(parent, T(634182240966, "Error"), T{789332217909, "Lost connection to multiplayer server.", err = err}, T(325411474155, "OK"))
+		context_string = T(789332217909, "Lost connection to multiplayer server.")
 	elseif context == "disconnect-after-leave-game" then
-		msg = CreateMessageBox(parent, T(634182240966, "Error"), T{763400292415, "Lost connection to multiplayer server. Reason: <MPError(err)>", err = err}, T(325411474155, "OK"))
+		context_string = T(789332217909, "Lost connection to multiplayer server.")
 	elseif context == "busy" then
-		msg = CreateMessageBox(parent, T(634182240966, "Error"), T(493609285611, "Player is busy."), T(325411474155, "OK"))
+		context_string = T(493609285611, "Player is busy.")
 	elseif context == "mods" then
 		msg = CreateMessageBox(parent, T(634182240966, "Error"), T{349914917388, "<ModsError(err)>", err = err}, T(325411474155, "OK"))
+		err = nil
 	else
-		msg = CreateMessageBox(parent, T(634182240966, "Error"), T{141784216225, "Error: <MPError(err)>", err = err}, T(325411474155, "OK"))
+		context_string = T(141784216225, "Error.")
 	end
+	if err then error_string = Untranslated{"<MPError(err)>", err = err} end
+	msg = msg or CreateMessageBox(parent, T(634182240966, "Error"), context_string .. error_string, T(325411474155, "OK"))
 	msg.obj = "mp-error"
 	return msg
 end
@@ -332,6 +338,8 @@ local NetworkErrorsT = {
 	["game full"] = T(366423230585, "Game is full"),
 	["not found"] = T(506175657595, "Game not found"),
 	["disconnected"] = T(321476715550, "Disconnected from server"),
+	["host left"] = T(582246748693, "Game host left the game"),
+	["player left"] = T(614992240157, "Other player left the game"),
 	["rejected"] = T(513425499490, "Rejected"),
 	["game not found"] = T(506175657595, "Game not found"),
 	["restricted"] = T(766750482132, "Account restricted"),
@@ -339,6 +347,8 @@ local NetworkErrorsT = {
 	["steam-auth"] = T(481937697290, "Authentication failed"),
 	["gog-auth"] = T(481937697290, "Authentication failed"),
 	["epic-auth"] = T(481937697290, "Authentication failed"),
+	["psn-auth"] = T(481937697290, "Authentication failed"),
+	["xbox-auth"] = T(481937697290, "Authentication failed"),
 	["unknown-auth"] = T(481937697290, "Authentication failed"),
 	["no account"] = T(481937697290, "Authentication failed"),
 	["invalid code"] = T(138404081301, "Invalid code"),
@@ -347,11 +357,29 @@ local NetworkErrorsT = {
 	["invalid id"] = T(542223789460, "Invalid ID"),
 	["incomplete game data"] = T(991087359493, "Incomplete game data"),
 	["host not found"] = T(966517041398, "Host not found"),
+	["already in game"] = T(492980200583, "Already in the game"),
+	["game suspended"] = T(424413358716, "Game was suspended"),
+	["xbox-services"] = T(113030388315, "Failed to reach Xbox Live services"),
+	["xbox-mp-restricted"] = T(669934767175, "This account has restricted access to multiplayer"),
+	["psn-signout"] = T(148770111050, "Signed out of PlayStation™Network"),
+	["psn-id"] = T(949097051569, "Account for PlayStation™Network not found"),
+	["psn-premium"] = T(819059531838, "Account for PlayStation™Network restricted from multiplayer"),
+	["psn-create-player-session"] = T(530265215972, "Failed to create game session"),
+	["psn-join-player-session"] = T(597091536965, "Failed to join the game session"),
+	["psn-player-session-deleted"] = T(991318913065, "The game session was deleted."),
+	["psn-player-session-kicked"] = T(760970143468, "You were removed from the game session."),
+	["psn-availability"] = T(302254849087, "Network features are not available."),
+	["psn-communication-restricted"] = T(302254849087, "Network features are not available."),
 }
 
 function TFormat.MPError(ctx, err)
-	local translatedT = NetworkErrorsT[err]
-	return translatedT or Untranslated(err)
+	local translatedT = NetworkErrorsT[err] and NetworkErrorsT[err] or IsT(err) and err
+	if not translatedT and (not Platform.console) and err ~= "" then translatedT = Untranslated(err) end
+	if translatedT then 
+		return "\n" .. T{531841872242, "Reason: <err>", err = translatedT}
+	else
+		return ""
+	end
 end
 
 function TFormat.ModsError(ctx, err)
@@ -410,7 +438,10 @@ function MultiplayerLobbySetUI(mode, param) -- todo: check if param actually doe
 	
 	if mode ~= "empty" and not netInGame then
 		local err = PlatformCheckMultiplayerRequirements()
-		if err then return ShowMPLobbyError("connect", err) end
+		if err then 
+			ShowMPLobbyError("connect", err) 
+			return
+		end
 	end
 	
 	-- Try to connect to the server first
@@ -477,6 +508,16 @@ function UIHostGame()
 	dlg:SetDrawOnTop(true)
 	local visible_to = dlg:Wait()
 	if not visible_to then
+		local ui = GetMultiplayerLobbyDialog()
+		local gamesList = ui and ui:ResolveId("idSubMenu") and ui:ResolveId("idSubMenu"):ResolveId("idScrollArea")
+		if gamesList then
+			gamesList:SelectFirstValidItem()
+		else
+			local mmButtons = ui:ResolveId("idMainMenuButtonsContent"):ResolveId("idList")
+			if mmButtons then
+				mmButtons:SelectFirstValidItem()
+			end
+		end
 		return
 	end
 	
@@ -531,7 +572,7 @@ function OnMsg.NetPlayerJoin(info)
 	end
 	
 	CreateRealTimeThread(function()
-		local err = NetCall("rfnPlayerMessage", playerId, "lobby-info", {start_info = NewGameObj, host_ready = context and context.host_ready, no_menu =  not ui})
+		local err = NetCall("rfnPlayerMessage", playerId, "lobby-info", {start_info = NewGameObj, host_ready = context and context.host_ready, no_menu =  not ui or not not Game})
 		if err then
 			ShowMPLobbyError(false, err)
 			return
@@ -558,11 +599,17 @@ function OnMsg.ChangeMap()
 end
 
 function OnMsg.NetDisconnect(reason)
-	if reason == "ui_closed" or reason == "analytics" then return end
-	local msg = ShowMPLobbyError("disconnect-after-leave-game", reason)
-	MultiplayerLobbySetUI("empty")
-	if was_client then
-		CreateRealTimeThread(function()
+	CreateRealTimeThread(function()
+		if GameState.loading_savegame then
+			WaitGameState({loading_savegame = false})
+		end
+		if GameState.loading then -- loading screen
+			WaitGameState({loading = false})
+		end
+		if reason == "ui_closed" or reason == "analytics" then return end
+		local msg = ShowMPLobbyError("disconnect-after-leave-game", reason)
+		MultiplayerLobbySetUI("empty")
+		if was_client then
 			if msg then
 				WaitMsg(msg)
 			end
@@ -570,11 +617,16 @@ function OnMsg.NetDisconnect(reason)
 			if not GetDialog("PreGameMenu") then
 				OpenPreGameMainMenu()
 			end
-		end)
-	end
+		end
+	end)
+end
+
+if FirstLoad then 
+	g_ForceLeaveGameDialog = false
 end
 
 function OnGuestForceLeaveGame(reason)
+	assert(not g_ForceLeaveGameDialog)
 	if not CanYield() then
 		CreateRealTimeThread(OnGuestForceLeaveGame, reason)
 		return
@@ -586,15 +638,20 @@ function OnGuestForceLeaveGame(reason)
 	
 	WaitLoadingScreenClose()
 	
-	local msg = CreateMessageBox(nil, T(320834678984, "Disconnected from multiplayer"), reason)
-	WaitMsg(msg)
+	if reason then
+		g_ForceLeaveGameDialog = ShowMPLobbyError("disconnect-after-leave-game", reason)
+		g_ForceLeaveGameDialog:Wait()
+		g_ForceLeaveGameDialog = false
+	end
 	MultiplayerLobbySetUI("empty")
 	if not GetDialog("PreGameMenu") then
 		OpenPreGameMainMenu()
 	end
+	Msg("ForceLeaveGameEnd")
 end
 
 function NotifyPlayerLeft(player, reason)
+	assert(not g_ForceLeaveGameDialog)
 	if not CanYield() then
 		CreateRealTimeThread(NotifyPlayerLeft, player, reason)
 		return
@@ -614,10 +671,12 @@ function NotifyPlayerLeft(player, reason)
 		NetLeaveGame("host left")
 		
 		if not GetDialog("PreGameMenu") then
-			local msg = CreateMessageBox(nil, T(687826475879, "Co-Op Lobby"), T{707106868307, "Game host - <u(name)> left the game. Returning to main menu.", name = player.name}, T(325411474155, "OK"), leave_notify_obj)
-			msg:Wait()
+			g_ForceLeaveGameDialog = CreateMessageBox(nil, T(687826475879, "Co-Op Lobby"), T{707106868307, "Game host - <u(name)> left the game. Returning to main menu.", name = player.name}, T(325411474155, "OK"), leave_notify_obj)
+			g_ForceLeaveGameDialog:Wait()
+			g_ForceLeaveGameDialog = false
 		
 			OpenPreGameMainMenu()
+			Msg("ForceLeaveGameEnd")
 			return
 		else
 			CreateMessageBox(nil, T(687826475879, "Co-Op Lobby"), T{372566450268, "Game host - <u(name)> left the lobby.", name = player.name}, T(325411474155, "OK"), leave_notify_obj)
@@ -649,6 +708,29 @@ OnMsg.NetPlayerLeft = NotifyPlayerLeft
 local function lReceiveLobbyInfo(name, player_id, msg, other)
 	if not netInGame then return end
 	NewGameObj = table.copy(other.start_info, "deep")
+	if Platform.console and IsInMultiplayerGame() and not NetIsHost() then
+		NewGameObj.campaign_name = GenerateMultiplayerGuestCampaignName()
+	end
+	
+	-- CancelOptions creates its own thread, unlike CancelDisplayOptions; we need to wait for the options menu to be fully closed before we try to setup the multiplayer lobby
+	local dlg = GetDialog("PreGameMenu")
+	if dlg then
+		local mode = dlg:GetMode()
+		if mode == "Options" then
+			dlg:ResolveId("idSubMenuTittle"):SetText(T(""))
+			local currentOpened = GetDialogModeParam(dlg:ResolveId("idSubContent"))
+			if currentOpened then
+				if currentOpened["optObj"].id == "Display" then
+					CancelDisplayOptions(dlg:ResolveId("idSubMenu"), "clear")
+				else
+					local thread = CancelOptions(dlg:ResolveId("idSubMenu"), "clear")
+					while GetThreadStatus(thread) do
+						Sleep(1)
+					end
+				end
+			end
+		end
+	end
 	
 	if other.no_menu then return end
 	
@@ -705,8 +787,9 @@ end
 
 function ExecCoopStartGame()
 	g_FirstNetStart = true
-	StartCampaign(GetCurrentCampaignPreset(), NewGameObj)
+	local abort = StartCampaign(NewGameObj and NewGameObj.campaignId, NewGameObj)
 	g_FirstNetStart = false
+	if abort then return end
 	StartHostedGame("CoOp", GatherSessionData():str())
 end
 
@@ -726,20 +809,33 @@ function UIStartGame()
 	ExecCoopStartGame()
 end
 
+if FirstLoad then
+	StartingGameDialog = false
+end
+
 function OnMsg.NetPlayerMessage(name, player_name, player_id, msg)
 	if not msg then return end
 	if msg ~= "starting_game" then return end
 
 	-- Create a message box without buttons to display to the guest while the host is loading.
-	local msg = CreateUnclickableMessagePrompt(T(687826475879, "Co-Op Lobby"), T(953960332662, "Starting game..."))
-	msg:CreateThread("check-for-loading", function()
-		while msg.window_state ~= "destroying" do
+	StartingGameDialog = CreateMessageBox(nil, T(687826475879, "Co-Op Lobby"), T(953960332662, "Starting game..."), T(967444875712, "Cancel"))
+	StartingGameDialog:CreateThread("check-for-loading", function()
+		while StartingGameDialog.window_state ~= "destroying" do
 			local anyLoadingScreen = GetLoadingScreenDialog()
 			if anyLoadingScreen or GameState.gameplay then
-				msg:Close()
+				StartingGameDialog:Close()
+				StartingGameDialog = false
 				return
 			end
 			WaitMsg("GameStateChanged", 100)
+		end
+	end)
+	CreateRealTimeThread(function()
+		local result = StartingGameDialog:Wait()
+		if result == "ok" then
+			NetLeaveGame("cancelled")
+			MultiplayerLobbySetUI("multiplayer")
+			CreateMessageBox(nil, T(965287931398, "Game cancelled"), T(984272003134, "You have left the game session."))
 		end
 	end)
 end
@@ -842,6 +938,11 @@ function UIReceiveInvite(name, host_id, game_id, gameType, gameName)
 		return
 	end
 	
+	if g_ForceLeaveGameDialog then
+		g_ForceLeaveGameDialog:Close()
+		WaitMsg("ForceLeaveGameEndEnd")
+	end
+	
 	-- If already joining a game, then cancel the invite as busy.
 	if FindMessageBoxOfType("joining-game") then
 		NetCall("rfnPlayerMessage", host_id, "cancel_invite_busy", game_id)
@@ -850,7 +951,7 @@ function UIReceiveInvite(name, host_id, game_id, gameType, gameName)
 
 	CloseInvites() -- Ensure only a single invite on screen
 
-	if not g_dbgFasterNetJoin and Game then
+	if not g_dbgFasterNetJoin and (Game or g_DisclaimerSplashScreen) then
 		local gameTypePreset = MultiplayerGameTypes[gameType]
 		local gameTypeName = gameTypePreset and gameTypePreset.Name or Untranslated(gameType)
 
@@ -871,7 +972,10 @@ function UIReceiveInvite(name, host_id, game_id, gameType, gameName)
 		end
 	end
 
-	if Game then
+	if Game or g_DisclaimerSplashScreen then
+		if g_DisclaimerSplashScreen then
+			g_DisclaimerSplashScreen:Close("net join")
+		end
 		OpenPreGameMainMenu()
 	end
 
@@ -1013,6 +1117,48 @@ function WaitSavableState()
 	end
 end
 
+if FirstLoad and Platform.playstation then
+	function AddPlayerToJoinableList(player_id)
+		if Platform.playstation and netGameInfo.visible_to == "private" then
+			local err, psn_id = NetGetPSNID(player_id)
+			if err then
+				playstation_print("Failed to get player psn_id")
+				return err
+				-- return NetSend("rfnPlayerMessage", player_id, "request_rejected", gameId, gameName)
+			end
+			
+			local err = PSNAddJoinableSpecifiedUserToPlayerSession(netGameInfo.psn_session_id, psn_id)
+			if err then
+				playstation_print("Failed to add player to PSN's joinable specified user list")
+				return err
+				-- return NetSend("rfnPlayerMessage", player_id, "request_rejected", gameId, gameName)
+			end
+			return
+		end
+		return
+	end
+	
+	function RemovePlayerFromJoinableList(player_id)
+		if Platform.playstation and netGameInfo.visible_to == "private" then
+			local err, psn_id = NetGetPSNID(player_id)
+			if err then
+				playstation_print("Failed to get player psn_id")
+				return err
+				-- return NetSend("rfnPlayerMessage", player_id, "request_rejected", gameId, gameName)
+			end
+			
+			local err = PSNRemoveJoinableSpecifiedUserToPlayerSession(netGameInfo.psn_session_id, psn_id)
+			if err then
+				playstation_print("Failed to add player to PSN's joinable specified user list")
+				return err
+				-- return NetSend("rfnPlayerMessage", player_id, "request_rejected", gameId, gameName)
+			end
+			return
+		end
+		return
+	end
+end
+
 function HandleJoinRequestMessageProc(someTableIdk, player_name, player_id, msg, gameId, gameName)
 	assert(CanYield())
 	if ChangingMap then
@@ -1028,7 +1174,14 @@ function HandleJoinRequestMessageProc(someTableIdk, player_name, player_id, msg,
 		WaitNextFrame()
 	end
 
-	if msg == "request_join" and Game and not g_dbgFasterNetJoin then
+	local hasAddedPlayerToJoinableList = false	
+	if msg == "request_join" and (Game or GameState.loading) and not g_dbgFasterNetJoin then
+		if Platform.playstation and netGameInfo.visible_to == "private" then
+			local err = AddPlayerToJoinableList(player_id)
+			if err then return NetSend("rfnPlayerMessage", player_id, "request_rejected", gameId, gameName) end
+			hasAddedPlayerToJoinableList = true
+		end
+		
 		local res = WaitQuestion(terminal.desktop,
 			T(687826475879, "Co-Op Lobby"),
 			T{242614432594, "<u(name)> would like to join your game. Play together?", name = player_name},
@@ -1044,11 +1197,18 @@ function HandleJoinRequestMessageProc(someTableIdk, player_name, player_id, msg,
 		WaitSavableState()
 
 		if res == "cancel" then
+			if Platform.playstation then RemovePlayerFromJoinableList(player_id) end
 			return NetCall("rfnPlayerMessage", player_id, "request_rejected")
 		end
 	end
 	
 	if msg == "request_join" then
+		if Platform.playstation and netGameInfo.visible_to == "private" then
+			if not hasAddedPlayerToJoinableList then
+				local err = AddPlayerToJoinableList(player_id)
+				if err then return NetSend("rfnPlayerMessage", player_id, "request_rejected", gameId, gameName) end
+			end
+		end
 		return NetSend("rfnPlayerMessage", player_id, "request_approved", gameId, gameName)
 	end
 	
@@ -1102,6 +1262,11 @@ function HandleJoinRequestMessageProc(someTableIdk, player_name, player_id, msg,
 		
 		if next(missingMods) or next(unusedMods) then
 			return {missingMods, unusedMods}, "mods"
+		end
+		
+		local campaignId = info.campaign
+		if campaignId and not CampaignPresets[campaignId] then
+			return T{783069802257, "Campaign <em><u(id)></em> missing", id = info.campaign} , "join"
 		end
 		
 		local err = PlatformCheckMultiplayerRequirements()
@@ -1246,7 +1411,10 @@ function OnMsg.NetGameLeft()
 	ObjModified("coop button")
 end
 
-function OnMsg.NetPlayerLeft()
+function OnMsg.NetPlayerLeft(player)
+	if StartingGameDialog and (StartingGameDialog.window_state == "open" or StartingGameDialog.window_state == "closing") then
+		StartingGameDialog:Close()
+	end
 	ObjModified("coop button")
 end
 
@@ -1385,7 +1553,7 @@ function OnMsg.GameDesynced(desync_path, desync_data)
 			CreateRealTimeThread(function()
 				CloseBlockingDialogs()
 				WaitSavableState()
-			CoOpSendSave()
+				CoOpSendSave()
 			end)
 		elseif result == 3 then
 			ReportDesync()

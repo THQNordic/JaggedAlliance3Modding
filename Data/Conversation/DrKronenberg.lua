@@ -197,7 +197,7 @@ PlaceObj('Conversation', {
 									return quest.SanatoriumTreatment
 								end,
 							}),
-							PlaceObj('OR', {
+							PlaceObj('CheckOR', {
 								Conditions = {
 									PlaceObj('UnitSquadHasMerc', {
 										Name = "Larry",
@@ -299,7 +299,7 @@ PlaceObj('Conversation', {
 									return quest.SanatoriumTreatment
 								end,
 							}),
-							PlaceObj('OR', {
+							PlaceObj('CheckOR', {
 								Conditions = {
 									PlaceObj('UnitSquadHasMerc', {
 										Name = "Larry",
@@ -406,7 +406,7 @@ PlaceObj('Conversation', {
 									return quest.SanatoriumTreatment
 								end,
 							}),
-							PlaceObj('OR', {
+							PlaceObj('CheckOR', {
 								Conditions = {
 									PlaceObj('UnitSquadHasMerc', {
 										Name = "Larry",
@@ -990,7 +990,7 @@ PlaceObj('Conversation', {
 				Interjections = {
 					PlaceObj('ConversationInterjection', {
 						Conditions = {
-							PlaceObj('OR', {
+							PlaceObj('CheckOR', {
 								Conditions = {
 									PlaceObj('UnitSquadHasMerc', {
 										Name = "Shadow",
@@ -2186,7 +2186,7 @@ PlaceObj('Conversation', {
 									return quest.SanatoriumTreatment
 								end,
 							}),
-							PlaceObj('OR', {
+							PlaceObj('CheckOR', {
 								Conditions = {
 									PlaceObj('UnitSquadHasMerc', {
 										Name = "Larry",

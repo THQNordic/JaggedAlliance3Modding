@@ -71,20 +71,22 @@ function HeavyWeapon:GetAttackResults(action, attack_args)
 			lof_data = attack_args.lof[lof_idx or 1]
 		end
 		-- trajectory from lof (shot origin -> first hit/target_pos)
-		local hits = lof_data and lof_data.hits or empty_table
-		local hit_pos
-		if #hits > 0 then
-			hit_pos = hits[1].pos
-		else
-			hit_pos = target_pos
+		if lof_data then
+			local hits = lof_data.hits or empty_table
+			local hit_pos
+			if #hits > 0 then
+				hit_pos = hits[1].pos
+			else
+				hit_pos = target_pos
+			end
+			hit_pos = attack_args.explosion_pos or hit_pos
+			local dist = lof_data.attack_pos:Dist(hit_pos)
+			local time = MulDivRound(dist, 1000, const.Combat.RocketVelocity)
+			trajectory = {
+				{ pos = lof_data.attack_pos, t = 0 },
+				{ pos = hit_pos, t = time },
+			}
 		end
-		hit_pos = attack_args.explosion_pos or hit_pos
-		local dist = lof_data.attack_pos:Dist(hit_pos)
-		local time = MulDivRound(dist, 1000, const.Combat.RocketVelocity)
-		trajectory = {
-			{ pos = lof_data.attack_pos, t = 0 },
-			{ pos = hit_pos, t = time },
-		}
 	elseif self.trajectory_type == "parabola" then
 		attack_args.can_bounce = ordnance and ordnance.CanBounce
 		trajectory = Grenade:GetTrajectory(attack_args, nil, target_pos)
@@ -190,6 +192,7 @@ function HeavyWeapon:GetAreaAttackParams(action_id, attacker, target_pos, step_p
 		min_range = ordnance and ordnance.AreaOfEffect or 0,
 		max_range = ordnance and ordnance.AreaOfEffect or 0,
 		center_range = ordnance and ordnance.CenterAreaOfEffect or 0,
+		aoe_type = ordnance and ordnance.aoeType or nil,
 		damage_mod = 100,
 		attribute_bonus = 0,
 		can_be_damaged_by_attack = true,

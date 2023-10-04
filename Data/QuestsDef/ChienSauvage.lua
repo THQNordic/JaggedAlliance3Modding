@@ -149,6 +149,11 @@ PlaceObj('QuestsDef', {
 	TCEs = {
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"E16",
+					},
+				}),
 				PlaceObj('UnitIsAroundOtherUnit', {
 					DisableContextModification = true,
 					Distance = 8,
@@ -204,6 +209,9 @@ PlaceObj('QuestsDef', {
 			Once = true,
 			ParamId = "TCE_PetaApproachBanters",
 			QuestId = "ChienSauvage",
+			requiredSectors = {
+				"E16",
+			},
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
@@ -320,6 +328,11 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"E16",
+					},
+				}),
 				PlaceObj('UnitCanGoToPos', {
 					PositionMarker = "MainHyenasDoor",
 					TargetUnit = "Peta",
@@ -362,9 +375,17 @@ PlaceObj('QuestsDef', {
 			Once = true,
 			ParamId = "TCE_PetaReleased",
 			QuestId = "ChienSauvage",
+			requiredSectors = {
+				"E16",
+			},
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"E16",
+					},
+				}),
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "ChienSauvage",
 					Vars = set( "PetaReleased" ),
@@ -400,9 +421,17 @@ PlaceObj('QuestsDef', {
 			Once = true,
 			ParamId = "TCE_PetaLetHyenasOut",
 			QuestId = "ChienSauvage",
+			requiredSectors = {
+				"E16",
+			},
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"E16",
+					},
+				}),
 				PlaceObj('UnitCanGoToPos', {
 					PositionMarker = "HyenasFreeRoamZone",
 					TargetUnit = "MainHyenas",
@@ -422,9 +451,17 @@ PlaceObj('QuestsDef', {
 			Once = true,
 			ParamId = "TCE_MainHyenasAggressive",
 			QuestId = "ChienSauvage",
+			requiredSectors = {
+				"E16",
+			},
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"E16",
+					},
+				}),
 				PlaceObj('GroupIsDead', {
 					Group = "LegionChienSauvage",
 				}),
@@ -438,9 +475,17 @@ PlaceObj('QuestsDef', {
 			Once = true,
 			ParamId = "TCE_ClearLegion",
 			QuestId = "ChienSauvage",
+			requiredSectors = {
+				"E16",
+			},
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"E16",
+					},
+				}),
 				PlaceObj('GroupIsDead', {
 					Group = "MainHyenas",
 				}),
@@ -454,9 +499,17 @@ PlaceObj('QuestsDef', {
 			Once = true,
 			ParamId = "TCE_HyenasDead",
 			QuestId = "ChienSauvage",
+			requiredSectors = {
+				"E16",
+			},
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"E16",
+					},
+				}),
 				PlaceObj('UnitIsAroundOtherUnit', {
 					Distance = 12,
 					SecondTargetUnit = "Peta",
@@ -492,13 +545,12 @@ PlaceObj('QuestsDef', {
 			Once = true,
 			ParamId = "TCE_PetaLeave",
 			QuestId = "ChienSauvage",
+			requiredSectors = {
+				"E16",
+			},
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
-				PlaceObj('CheckIsPersistentUnitDead', {
-					Negate = true,
-					per_ses_id = "NPC_Peta",
-				}),
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "ChienSauvage",
 					Vars = set( "PetaLeft" ),
@@ -509,6 +561,10 @@ PlaceObj('QuestsDef', {
 				}),
 				PlaceObj('SectorCheckOwner', {
 					sector_id = "E16",
+				}),
+				PlaceObj('CheckIsPersistentUnitDead', {
+					Negate = true,
+					per_ses_id = "NPC_Peta",
 				}),
 			},
 			Effects = {

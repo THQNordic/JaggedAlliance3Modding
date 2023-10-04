@@ -144,6 +144,26 @@ function SpawnPartyAttachedDamageTakenNotification(merc_id, damageAmount)
 	t:AnimateDamageTaken(damageAmount)
 end
 
+function GetPartyUI()
+	local partyUI
+	local inv_dlg = GetMercInventoryDlg()
+	local pda = GetDialog("PDADialogSatellite")
+	local pda_as_parent = pda and pda.idApplicationContent[1]
+	if inv_dlg then
+		partyUI = inv_dlg
+	elseif g_SatelliteUI then
+		partyUI = pda_as_parent
+	else
+		partyUI = GetInGameInterfaceModeDlg()
+	end
+	partyUI = partyUI and partyUI:ResolveId("idParty")
+	partyUI = partyUI and partyUI:ResolveId("idPartyContainer")
+	partyUI = partyUI and partyUI:ResolveId("idParty")
+	partyUI = partyUI and partyUI:ResolveId("idContainer")
+	
+	return partyUI
+end
+
 function SpawnPartyAttachedTalkingHeadNotification(merc_id)
 	if not merc_id then return false end
 	

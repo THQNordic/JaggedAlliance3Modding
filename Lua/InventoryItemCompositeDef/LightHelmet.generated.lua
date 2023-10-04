@@ -7,8 +7,8 @@ DefineClass.LightHelmet = {
 
 
 	object_class = "Armor",
-	Degradation = 8,
 	ScrapParts = 2,
+	Degradation = 8,
 	Icon = "UI/Icons/Items/light_helmet",
 	DisplayName = T(513659519711, --[[InventoryItemCompositeDef LightHelmet DisplayName]] "Light Helmet"),
 	DisplayNamePlural = T(319467048749, --[[InventoryItemCompositeDef LightHelmet DisplayNamePlural]] "Light Helmets"),

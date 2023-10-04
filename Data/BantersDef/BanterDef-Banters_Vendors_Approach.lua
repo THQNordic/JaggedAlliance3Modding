@@ -104,7 +104,7 @@ PlaceObj('BanterDef', {
 		}),
 	},
 	conditions = {
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('QuestHasTimerPassed', {
 					QuestId = "VendorTracker",
@@ -130,7 +130,7 @@ PlaceObj('BanterDef', {
 		}),
 	},
 	conditions = {
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('QuestHasTimerPassed', {
 					QuestId = "VendorTracker",
@@ -272,7 +272,7 @@ PlaceObj('BanterDef', {
 		}),
 	},
 	conditions = {
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('QuestHasTimerPassed', {
 					QuestId = "VendorTracker",
@@ -312,7 +312,7 @@ PlaceObj('BanterDef', {
 		}),
 	},
 	conditions = {
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('QuestHasTimerPassed', {
 					QuestId = "VendorTracker",
@@ -352,7 +352,7 @@ PlaceObj('BanterDef', {
 		}),
 	},
 	conditions = {
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('QuestHasTimerPassed', {
 					QuestId = "VendorTracker",
@@ -386,7 +386,7 @@ PlaceObj('BanterDef', {
 		}),
 	},
 	conditions = {
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('QuestHasTimerPassed', {
 					QuestId = "VendorTracker",

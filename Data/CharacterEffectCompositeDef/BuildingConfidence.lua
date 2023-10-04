@@ -18,72 +18,72 @@ PlaceObj('CharacterEffectCompositeDef', {
 	'Comment', "MD - Inspired and + Morale after multiple turns",
 	'object_class', "Perk",
 	'msg_reactions', {
-		PlaceObj('MsgReaction', {
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "attacker",
 			Event = "OnAttack",
 			Handler = function (self, attacker, action, target, results, attack_args)
-				local reaction_idx = table.find(self.msg_reactions or empty_table, "Event", "OnAttack")
-				if not reaction_idx then return end
 				
 				local function exec(self, attacker, action, target, results, attack_args)
 				attacker:SetEffectValue("attackedThisCombat", true)
 				end
-				local id = GetCharacterEffectId(self)
 				
-				if id then
-					if IsKindOf(attacker, "StatusEffectObject") and attacker:HasStatusEffect(id) then
-						exec(self, attacker, action, target, results, attack_args)
-					end
-				else
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[1]
+				if not reaction_def or reaction_def.Event ~= "OnAttack" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
 					exec(self, attacker, action, target, results, attack_args)
 				end
 				
+				if self:VerifyReaction("OnAttack", reaction_def, attacker, attacker, action, target, results, attack_args) then
+					exec(self, attacker, action, target, results, attack_args)
+				end
 			end,
 			HandlerCode = function (self, attacker, action, target, results, attack_args)
 				attacker:SetEffectValue("attackedThisCombat", true)
 			end,
 		}),
-		PlaceObj('MsgReaction', {
+		PlaceObj('MsgActorReaction', {
 			Event = "CombatEnd",
 			Handler = function (self, test_combat, combat, anyEnemies)
-				local reaction_idx = table.find(self.msg_reactions or empty_table, "Event", "CombatEnd")
-				if not reaction_idx then return end
 				
-				local function exec(self, test_combat, combat, anyEnemies)
+				local function exec(self, reaction_actor, test_combat, combat, anyEnemies)
 				local unit = g_Units.MD
 				if unit then
 					unit:SetEffectValue("attackedThisCombat", false)
 				end
 				end
-				local id = GetCharacterEffectId(self)
 				
-				if id then
-					local objs = {}
-					for session_id, data in pairs(gv_UnitData) do
-						local obj = g_Units[session_id] or data
-						if obj:HasStatusEffect(id) then
-							objs[session_id] = obj
-						end
-					end
-					for _, obj in sorted_pairs(objs) do
-						exec(self, test_combat, combat, anyEnemies)
-					end
-				else
-					exec(self, test_combat, combat, anyEnemies)
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[2]
+				if not reaction_def or reaction_def.Event ~= "CombatEnd" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
+					local reaction_actor
+					exec(self, reaction_actor, test_combat, combat, anyEnemies)
 				end
 				
+				
+				local actors = self:GetReactionActors("CombatEnd", reaction_def, test_combat, combat, anyEnemies)
+				for _, reaction_actor in ipairs(actors) do
+					if self:VerifyReaction("CombatEnd", reaction_def, reaction_actor, test_combat, combat, anyEnemies) then
+						exec(self, reaction_actor, test_combat, combat, anyEnemies)
+					end
+				end
 			end,
-			HandlerCode = function (self, test_combat, combat, anyEnemies)
+			HandlerCode = function (self, reaction_actor, test_combat, combat, anyEnemies)
 				local unit = g_Units.MD
 				if unit then
 					unit:SetEffectValue("attackedThisCombat", false)
 				end
 			end,
 		}),
-		PlaceObj('MsgReaction', {
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "unit",
 			Event = "UnitBeginTurn",
 			Handler = function (self, unit)
-				local reaction_idx = table.find(self.msg_reactions or empty_table, "Event", "UnitBeginTurn")
-				if not reaction_idx then return end
 				
 				local function exec(self, unit)
 				if g_Combat then
@@ -98,16 +98,19 @@ PlaceObj('CharacterEffectCompositeDef', {
 					end
 				end
 				end
-				local id = GetCharacterEffectId(self)
 				
-				if id then
-					if IsKindOf(unit, "StatusEffectObject") and unit:HasStatusEffect(id) then
-						exec(self, unit)
-					end
-				else
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[3]
+				if not reaction_def or reaction_def.Event ~= "UnitBeginTurn" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
 					exec(self, unit)
 				end
 				
+				if self:VerifyReaction("UnitBeginTurn", reaction_def, unit, unit) then
+					exec(self, unit)
+				end
 			end,
 			HandlerCode = function (self, unit)
 				if g_Combat then

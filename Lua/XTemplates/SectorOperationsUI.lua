@@ -233,6 +233,12 @@ PlaceObj('XTemplate', {
 											dlg:Close()
 										end
 										
+										for i=#host, 1,-1 do
+											if host[i].Id=="idStatsPopup" then
+												host[i]:Close()
+												break
+											end
+										end
 										local effect = self.OnActionEffect
 										local param = self.OnActionParam
 										CreateRealTimeThread(function()--if effect == "back" and host then
@@ -355,6 +361,25 @@ PlaceObj('XTemplate', {
 							endValue = 255
 						}
 					end)
+				end,
+			}),
+			}),
+		PlaceObj('XTemplateWindow', {
+			'__class', "VirtualCursorManager",
+			'Reason', "Browser",
+		}, {
+			PlaceObj('XTemplateFunc', {
+				'name', "Open",
+				'func', function (self, ...)
+					VirtualCursorManager.Open(self,...)
+					SetDisableMouseRightClickReason(true, "Operations")
+				end,
+			}),
+			PlaceObj('XTemplateFunc', {
+				'name', "Done(self, ...)",
+				'func', function (self, ...)
+					VirtualCursorManager.Done(self,...)
+					SetDisableMouseRightClickReason(false, "Operations")
 				end,
 			}),
 			}),

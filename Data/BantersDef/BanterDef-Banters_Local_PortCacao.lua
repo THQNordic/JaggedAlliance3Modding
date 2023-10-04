@@ -1723,7 +1723,7 @@ PlaceObj('BanterDef', {
 		PlaceObj('SectorCheckCity', {
 			city = "PortDiancie",
 		}),
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('CheckGameState', {
 					GameState = "Day",
@@ -1873,7 +1873,7 @@ PlaceObj('BanterDef', {
 		PlaceObj('SectorCheckCity', {
 			city = "PortDiancie",
 		}),
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('CheckGameState', {
 					GameState = "Sunrise",

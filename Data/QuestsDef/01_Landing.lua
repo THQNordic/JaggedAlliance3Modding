@@ -21,7 +21,7 @@ PlaceObj('QuestsDef', {
 		LastNoteIdx = 6,
 		PlaceObj('QuestNote', {
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('PlayerIsInSectors', {
 							Sectors = {

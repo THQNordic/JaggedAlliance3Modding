@@ -18,6 +18,7 @@ PlaceObj('XTemplate', {
 				PlaceObj('XTemplateWindow', {
 					'__class', "XImage",
 					'Image', "UI/Comics/Outro/Scene_00",
+					'ImageFit', "smallest",
 				}),
 				}),
 			PlaceObj('XTemplateVoice', {
@@ -51,6 +52,7 @@ PlaceObj('XTemplate', {
 					PlaceObj('XTemplateWindow', {
 						'__class', "XImage",
 						'Image', "UI/Comics/Outro/Art_01",
+						'ImageFit', "smallest",
 					}),
 					}),
 				PlaceObj('XTemplateVoice', {
@@ -93,6 +95,7 @@ PlaceObj('XTemplate', {
 						PlaceObj('XTemplateWindow', {
 							'__class', "XImage",
 							'Image', "UI/Comics/Outro/Art_02",
+							'ImageFit', "smallest",
 						}),
 						}),
 					PlaceObj('XTemplateVoice', {
@@ -146,6 +149,7 @@ PlaceObj('XTemplate', {
 						PlaceObj('XTemplateWindow', {
 							'__class', "XImage",
 							'Image', "UI/Comics/Outro/Art_02",
+							'ImageFit', "smallest",
 						}),
 						}),
 					PlaceObj('XTemplateVoice', {
@@ -199,6 +203,7 @@ PlaceObj('XTemplate', {
 						PlaceObj('XTemplateWindow', {
 							'__class', "XImage",
 							'Image', "UI/Comics/Outro/Art_02",
+							'ImageFit', "smallest",
 						}),
 						}),
 					PlaceObj('XTemplateVoice', {
@@ -254,6 +259,7 @@ PlaceObj('XTemplate', {
 						PlaceObj('XTemplateWindow', {
 							'__class', "XImage",
 							'Image', "UI/Comics/Outro/Art_03",
+							'ImageFit', "smallest",
 						}),
 						}),
 					PlaceObj('XTemplateVoice', {
@@ -304,6 +310,7 @@ PlaceObj('XTemplate', {
 						PlaceObj('XTemplateWindow', {
 							'__class', "XImage",
 							'Image', "UI/Comics/Outro/Art_03",
+							'ImageFit', "smallest",
 						}),
 						}),
 					PlaceObj('XTemplateVoice', {
@@ -354,6 +361,7 @@ PlaceObj('XTemplate', {
 						PlaceObj('XTemplateWindow', {
 							'__class', "XImage",
 							'Image', "UI/Comics/Outro/Art_07",
+							'ImageFit', "smallest",
 						}),
 						}),
 					PlaceObj('XTemplateVoice', {
@@ -409,6 +417,7 @@ PlaceObj('XTemplate', {
 						PlaceObj('XTemplateWindow', {
 							'__class', "XImage",
 							'Image', "UI/Comics/Outro/Art_04",
+							'ImageFit', "smallest",
 						}),
 						}),
 					PlaceObj('XTemplateVoice', {
@@ -448,6 +457,7 @@ PlaceObj('XTemplate', {
 						PlaceObj('XTemplateWindow', {
 							'__class', "XImage",
 							'Image', "UI/Comics/Outro/Art_05",
+							'ImageFit', "smallest",
 						}),
 						}),
 					PlaceObj('XTemplateVoice', {
@@ -496,6 +506,7 @@ PlaceObj('XTemplate', {
 						PlaceObj('XTemplateWindow', {
 							'__class', "XImage",
 							'Image', "UI/Comics/Outro/Art_06",
+							'ImageFit', "smallest",
 						}),
 						}),
 					PlaceObj('XTemplateVoice', {
@@ -544,6 +555,7 @@ PlaceObj('XTemplate', {
 						PlaceObj('XTemplateWindow', {
 							'__class', "XImage",
 							'Image', "UI/Comics/Outro/Art_06",
+							'ImageFit', "smallest",
 						}),
 						}),
 					PlaceObj('XTemplateVoice', {
@@ -600,6 +612,7 @@ PlaceObj('XTemplate', {
 						PlaceObj('XTemplateWindow', {
 							'__class', "XImage",
 							'Image', "UI/Comics/Outro/Art_06",
+							'ImageFit', "smallest",
 						}),
 						}),
 					PlaceObj('XTemplateVoice', {
@@ -650,6 +663,7 @@ PlaceObj('XTemplate', {
 						PlaceObj('XTemplateWindow', {
 							'__class', "XImage",
 							'Image', "UI/Comics/Outro/Art_07",
+							'ImageFit', "smallest",
 						}),
 						}),
 					PlaceObj('XTemplateVoice', {
@@ -705,6 +719,7 @@ PlaceObj('XTemplate', {
 						PlaceObj('XTemplateWindow', {
 							'__class', "XImage",
 							'Image', "UI/Comics/Outro/Art_07",
+							'ImageFit', "smallest",
 						}),
 						}),
 					PlaceObj('XTemplateVoice', {
@@ -750,6 +765,7 @@ PlaceObj('XTemplate', {
 					PlaceObj('XTemplateWindow', {
 						'__class', "XImage",
 						'Image', "UI/Comics/Outro/Art_08",
+						'ImageFit', "smallest",
 					}),
 					}),
 				PlaceObj('XTemplateVoice', {
@@ -797,6 +813,7 @@ PlaceObj('XTemplate', {
 						PlaceObj('XTemplateWindow', {
 							'__class', "XImage",
 							'Image', "UI/Comics/Outro/Art_09",
+							'ImageFit', "smallest",
 						}),
 						}),
 					PlaceObj('XTemplateVoice', {
@@ -850,6 +867,7 @@ PlaceObj('XTemplate', {
 						PlaceObj('XTemplateWindow', {
 							'__class', "XImage",
 							'Image', "UI/Comics/Outro/Art_10",
+							'ImageFit', "smallest",
 						}),
 						}),
 					PlaceObj('XTemplateVoice', {
@@ -905,6 +923,7 @@ PlaceObj('XTemplate', {
 						PlaceObj('XTemplateWindow', {
 							'__class', "XImage",
 							'Image', "UI/Comics/Outro/Art_11",
+							'ImageFit', "smallest",
 						}),
 						}),
 					PlaceObj('XTemplateVoice', {
@@ -954,6 +973,7 @@ PlaceObj('XTemplate', {
 						PlaceObj('XTemplateWindow', {
 							'__class', "XImage",
 							'Image', "UI/Comics/Outro/Art_10",
+							'ImageFit', "smallest",
 						}),
 						}),
 					PlaceObj('XTemplateVoice', {
@@ -1003,6 +1023,7 @@ PlaceObj('XTemplate', {
 						PlaceObj('XTemplateWindow', {
 							'__class', "XImage",
 							'Image', "UI/Comics/Outro/Art_10",
+							'ImageFit', "smallest",
 						}),
 						}),
 					PlaceObj('XTemplateVoice', {
@@ -1056,6 +1077,7 @@ PlaceObj('XTemplate', {
 						PlaceObj('XTemplateWindow', {
 							'__class', "XImage",
 							'Image', "UI/Comics/Outro/Art_12",
+							'ImageFit', "smallest",
 						}),
 						}),
 					PlaceObj('XTemplateVoice', {
@@ -1096,6 +1118,7 @@ PlaceObj('XTemplate', {
 						PlaceObj('XTemplateWindow', {
 							'__class', "XImage",
 							'Image', "UI/Comics/Outro/Art_13",
+							'ImageFit', "smallest",
 						}),
 						}),
 					PlaceObj('XTemplateVoice', {
@@ -1138,6 +1161,7 @@ PlaceObj('XTemplate', {
 					PlaceObj('XTemplateWindow', {
 						'__class', "XImage",
 						'Image', "UI/Comics/Outro/Art_13",
+						'ImageFit', "smallest",
 					}),
 					}),
 				PlaceObj('XTemplateVoice', {
@@ -1182,6 +1206,7 @@ PlaceObj('XTemplate', {
 					PlaceObj('XTemplateWindow', {
 						'__class', "XImage",
 						'Image', "UI/Comics/Outro/Art_22",
+						'ImageFit', "smallest",
 					}),
 					}),
 				PlaceObj('XTemplateVoice', {
@@ -1219,6 +1244,7 @@ PlaceObj('XTemplate', {
 					PlaceObj('XTemplateWindow', {
 						'__class', "XImage",
 						'Image', "UI/Comics/Outro/Art_21",
+						'ImageFit', "smallest",
 					}),
 					}),
 				PlaceObj('XTemplateVoice', {
@@ -1271,6 +1297,7 @@ PlaceObj('XTemplate', {
 						PlaceObj('XTemplateWindow', {
 							'__class', "XImage",
 							'Image', "UI/Comics/Outro/Art_14",
+							'ImageFit', "smallest",
 						}),
 						}),
 					PlaceObj('XTemplateVoice', {
@@ -1311,6 +1338,7 @@ PlaceObj('XTemplate', {
 						PlaceObj('XTemplateWindow', {
 							'__class', "XImage",
 							'Image', "UI/Comics/Outro/Art_15",
+							'ImageFit', "smallest",
 						}),
 						}),
 					PlaceObj('XTemplateVoice', {
@@ -1353,6 +1381,7 @@ PlaceObj('XTemplate', {
 					PlaceObj('XTemplateWindow', {
 						'__class', "XImage",
 						'Image', "UI/Comics/Outro/Art_23",
+						'ImageFit', "smallest",
 					}),
 					}),
 				PlaceObj('XTemplateVoice', {
@@ -1392,6 +1421,7 @@ PlaceObj('XTemplate', {
 					PlaceObj('XTemplateWindow', {
 						'__class', "XImage",
 						'Image', "UI/Comics/Outro/Art_16",
+						'ImageFit', "smallest",
 					}),
 					}),
 				PlaceObj('XTemplateVoice', {
@@ -1436,6 +1466,7 @@ PlaceObj('XTemplate', {
 					PlaceObj('XTemplateWindow', {
 						'__class', "XImage",
 						'Image', "UI/Comics/Outro/Art_16",
+						'ImageFit', "smallest",
 					}),
 					}),
 				PlaceObj('XTemplateVoice', {
@@ -1475,6 +1506,7 @@ PlaceObj('XTemplate', {
 					PlaceObj('XTemplateWindow', {
 						'__class', "XImage",
 						'Image', "UI/Comics/Outro/Art_16",
+						'ImageFit', "smallest",
 					}),
 					}),
 				PlaceObj('XTemplateVoice', {
@@ -1518,6 +1550,7 @@ PlaceObj('XTemplate', {
 					PlaceObj('XTemplateWindow', {
 						'__class', "XImage",
 						'Image', "UI/Comics/Outro/Art_16",
+						'ImageFit', "smallest",
 					}),
 					}),
 				PlaceObj('XTemplateVoice', {
@@ -1552,6 +1585,7 @@ PlaceObj('XTemplate', {
 					PlaceObj('XTemplateWindow', {
 						'__class', "XImage",
 						'Image', "UI/Comics/Outro/Art_17",
+						'ImageFit', "smallest",
 					}),
 					}),
 				PlaceObj('XTemplateVoice', {
@@ -1596,6 +1630,7 @@ PlaceObj('XTemplate', {
 					PlaceObj('XTemplateWindow', {
 						'__class', "XImage",
 						'Image', "UI/Comics/Outro/Art_18",
+						'ImageFit', "smallest",
 					}),
 					}),
 				PlaceObj('XTemplateVoice', {
@@ -1643,6 +1678,7 @@ PlaceObj('XTemplate', {
 					PlaceObj('XTemplateWindow', {
 						'__class', "XImage",
 						'Image', "UI/Comics/Outro/Art_19",
+						'ImageFit', "smallest",
 					}),
 					}),
 				PlaceObj('XTemplateVoice', {

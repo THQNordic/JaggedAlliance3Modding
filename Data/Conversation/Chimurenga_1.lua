@@ -3099,7 +3099,7 @@ PlaceObj('Conversation', {
 					return quest.MamanFeelings or quest.MaquisPamphletsOffer
 				end,
 			}),
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('QuestIsVariableBool', {
 						Condition = "or",

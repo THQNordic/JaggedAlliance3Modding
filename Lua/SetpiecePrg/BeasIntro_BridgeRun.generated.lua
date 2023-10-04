@@ -9,5 +9,5 @@ SetpiecePrgs.BeasIntro_BridgeRun = function(seed, state, TriggerUnits)
 	prgdbg(li, 1, 2) sprocall(SetpieceSetStance.Exec, SetpieceSetStance, state, rand, true, "", TriggerUnits, "Crouch", "Current Weapon", true)
 	prgdbg(li, 1, 3) sprocall(SetpieceSleep.Exec, SetpieceSleep, state, rand, true, "", 6800)
 	local _, SP_BeastGoTo
-	prgdbg(li, 1, 4) _, SP_BeastGoTo = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", TriggerUnits, "SP_BeastGoTo", true, true, false, "Crouch", false, false, "")
+	prgdbg(li, 1, 4) _, SP_BeastGoTo = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", TriggerUnits, "SP_BeastGoTo", true, true, false, "Crouch", false, false, "", 1000)
 end

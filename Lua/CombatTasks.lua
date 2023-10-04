@@ -160,9 +160,9 @@ function FinishCombatTasks()
 end
 
 function OnMsg.UnitDieStart(unit)
-	if CountAnyEnemies("skipAnimals") <= 0 and #GetCombatTasksInSector() > 0 then
+	if CountAnyEnemies() <= 0 and #GetCombatTasksInSector() > 0 then
 		CreateGameTimeThread(function()
-			WaitMsg("OnAttacked", 5000)
+			WaitMsg("OnAttack", 5000)
 			FinishCombatTasks()
 		end)
 	end

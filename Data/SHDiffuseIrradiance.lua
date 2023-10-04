@@ -449,3 +449,15 @@ PlaceObj('SHDiffuseIrradiance', {
 	sh9_coefficients = "iD71PeEFdD7jgGc+pXL4O4c9IDwW7qs6RGdFvSXtAL4Jnoi9K+DKO2fVTzx+Y3c8UmLAOhvLzjqe\nNso6orTVO/C9ZzxAZI48o7LiO3PUkjxaKxs8T8BOuxUynLvwycW7J+QhvOGrmbw+/XS8",
 })
 
+PlaceObj('SHDiffuseIrradiance', {
+	id = "Wet_Underground_Lab_NeutralExterior",
+	save_in = "",
+	sh9_coefficients = "AAD+fwAA/n8AAPx/AAD+fwAA/n8AAPx/AAD+fwAA/n8AAPx/AAD+fwAA/n8AAPx/AAD+fwAA/n8A\nAPx/AAD+fwAA/n8AAPx/AAD+fwAA/n8AAPx/AAD+fwAA/n8AAPx/AAD+fwAA/n8AAPx/",
+})
+
+PlaceObj('SHDiffuseIrradiance', {
+	id = "Wet_Underground_Lab_NeutralInterior",
+	save_in = "",
+	sh9_coefficients = "AAD+fwAA/n8AAPx/AAD+fwAA/n8AAPx/AAD+fwAA/n8AAPx/AAD+fwAA/n8AAPx/AAD+fwAA/n8A\nAPx/AAD+fwAA/n8AAPx/AAD+fwAA/n8AAPx/AAD+fwAA/n8AAPx/AAD+fwAA/n8AAPx/",
+})
+

@@ -588,4 +588,5 @@ PDABrowserSites = {
  ["PDABrowserSunCola"] = { bookmark = T(516946075367, "Sun Cola"), url = T(778233108116, "http://sun-cola.org")},
  ["PDABrowserAskThieves"] = { bookmark = T(902853605126, "Ask Thieves"), url = T(807500069540, "http://askthieves.com")},
  ["PDABrowserMortuary"] = { bookmark = T(654541389501, "Mortuary"), url = T(546080830407, "http://mcguillicuttysmortuary.com")},
+ ["PDABrowserBobbyRay"] = { bookmark = T(478086245074, "Bobby Ray's"), url = T(342060842701, "http://www.bobbyraysgunsandthings.net")}
 }

@@ -7,8 +7,8 @@ DefineClass.LightHelmet_WeavePadding = {
 
 
 	object_class = "Armor",
-	Degradation = 8,
 	ScrapParts = 2,
+	Degradation = 8,
 	Icon = "UI/Icons/Items/light_helmet",
 	SubIcon = "UI/Icons/Items/padded",
 	DisplayName = T(596025389397, --[[InventoryItemCompositeDef LightHelmet_WeavePadding DisplayName]] "Light Helmet"),

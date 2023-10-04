@@ -8,32 +8,63 @@ DefineClass.Focused = {
 
 	object_class = "CharacterEffect",
 	msg_reactions = {
-		PlaceObj('MsgReaction', {
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "unit",
 			Event = "UnitEndTurn",
 			Handler = function (self, unit)
-				local reaction_idx = table.find(self.msg_reactions or empty_table, "Event", "UnitEndTurn")
-				if not reaction_idx then return end
 				
 				local function exec(self, unit)
 				local grit = self:ResolveValue("gritGain")
 				unit:ApplyTempHitPoints(grit)
 				end
-				local id = GetCharacterEffectId(self)
 				
-				if id then
-					if IsKindOf(unit, "StatusEffectObject") and unit:HasStatusEffect(id) then
-						exec(self, unit)
-					end
-				else
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[1]
+				if not reaction_def or reaction_def.Event ~= "UnitEndTurn" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
 					exec(self, unit)
 				end
 				
+				if self:VerifyReaction("UnitEndTurn", reaction_def, unit, unit) then
+					exec(self, unit)
+				end
 			end,
 			HandlerCode = function (self, unit)
 				local grit = self:ResolveValue("gritGain")
 				unit:ApplyTempHitPoints(grit)
 			end,
-			param_bindings = false,
+		}),
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "attacker",
+			Event = "CalcBaseDamage",
+			Handler = function (self, attacker, weapon, target, data)
+				
+				local function exec(self, attacker, weapon, target, data)
+				local bonus = self:ResolveValue("bonus_damage")
+				data.modifier = data.modifier + bonus
+				data.breakdown[#data.breakdown + 1] = { name = self.DisplayName, value = bonus }
+				end
+				
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[2]
+				if not reaction_def or reaction_def.Event ~= "CalcBaseDamage" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
+					exec(self, attacker, weapon, target, data)
+				end
+				
+				if self:VerifyReaction("CalcBaseDamage", reaction_def, attacker, attacker, weapon, target, data) then
+					exec(self, attacker, weapon, target, data)
+				end
+			end,
+			HandlerCode = function (self, attacker, weapon, target, data)
+				local bonus = self:ResolveValue("bonus_damage")
+				data.modifier = data.modifier + bonus
+				data.breakdown[#data.breakdown + 1] = { name = self.DisplayName, value = bonus }
+			end,
 		}),
 	},
 	DisplayName = T(559363279892, --[[CharacterEffectCompositeDef Focused DisplayName]] "Focused"),

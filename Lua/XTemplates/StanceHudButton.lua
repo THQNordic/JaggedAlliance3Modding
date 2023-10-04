@@ -51,7 +51,18 @@ PlaceObj('XTemplate', {
 			if GetUIStyleGamepad() then
 				local up = GetPlatformSpecificImageTag("DPadUp", 650)
 				local down = GetPlatformSpecificImageTag("DPadDown", 650)
-				self.idStanceIcon:SetText(T{568035005601, "<up>-<down>", up = up, down = down})
+				
+				local triggerShortcut = T(995172733108, "<RightTrigger>")
+				if GetAccountStorageOptionValue("GamepadSwapTriggers") then
+					triggerShortcut = T(663346381387, "<LeftTrigger>")
+				end
+				
+				self.idStanceIcon:SetText(
+					T{568035005601, "<triggerShortcut><up><down>",
+						triggerShortcut = triggerShortcut,
+						up = up,
+						down = down
+				})
 				return
 			end
 			

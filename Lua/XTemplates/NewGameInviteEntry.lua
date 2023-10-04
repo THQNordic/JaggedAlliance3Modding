@@ -8,9 +8,7 @@ PlaceObj('XTemplate', {
 		'__class', "XButton",
 		'RolloverTemplate', "RolloverGeneric",
 		'RolloverAnchor', "right",
-		'RolloverText', T(547798869083, --[[XTemplate NewGameInviteEntry RolloverText]] "<rolloverDescription>"),
 		'RolloverOffset', box(25, 0, 0, 0),
-		'RolloverTitle', T(482689432957, --[[XTemplate NewGameInviteEntry RolloverTitle]] "<rolloverTitle>"),
 		'UIEffectModifierId', "MainMenuMainBar",
 		'MinHeight', 64,
 		'MaxHeight', 64,
@@ -25,6 +23,34 @@ PlaceObj('XTemplate', {
 		'RolloverBackground', RGBA(255, 255, 255, 0),
 		'PressedBackground', RGBA(255, 255, 255, 0),
 	}, {
+		PlaceObj('XTemplateFunc', {
+			'name', "Open",
+			'func', function (self, ...)
+				XButton.Open(self, ...)
+				self:SetupGamerCardTooltip()
+			end,
+		}),
+		PlaceObj('XTemplateFunc', {
+			'name', "SetupGamerCardTooltip",
+			'func', function (self, ...)
+				local entryIndex = self.Id == "idPlayer1" and 1 or 2
+				if (not Platform.xbox) or #netGamePlayers < 2 or entryIndex == netUniqueId then
+					self:SetRolloverTitle(nil)
+					self:SetRolloverText(nil)
+				else
+					self:SetRolloverTitle(T(333935821245, "Open Gamer Card"))
+					self:SetRolloverText(T{622712774708, "Press <GamepadShortcutName('ButtonA')> to open <gamertag>'s GamerCard.", gamertag = Untranslated(self:GetName()[1])})
+				end
+			end,
+		}),
+		PlaceObj('XTemplateWindow', {
+			'comment', "gamepad change observer",
+			'__context', function (parent, context) return "GamepadUIStyleChanged" end,
+			'__class', "XContextWindow",
+			'OnContextUpdate', function (self, context, ...)
+				self.parent:SetupGamerCardTooltip()
+			end,
+		}),
 		PlaceObj('XTemplateWindow', {
 			'__class', "XBlurRect",
 			'Margins', box(0, 5, 0, 5),
@@ -140,6 +166,20 @@ PlaceObj('XTemplate', {
 						self.parent:SetFocus(true)
 					end
 					
+					local entryIndex = self.Id == "idPlayer1" and 1 or 2
+					if Platform.xbox and #netGamePlayers >= 2 and entryIndex ~= netUniqueId then
+						PlayFX("MainMenuButtonClick", "start")
+						CreateRealTimeThread(function()
+							local err, xuid = NetGetXUID(netGamePlayers[entryIndex].account_id)
+							if err or not xuid then
+								xbox_print("Failed to get XUID for Player " .. tostring(entryIndex) .. " from swarm")
+								return
+							end
+							OpenGamerCard(tonumber(xuid))
+							return
+						end)
+					end
+					
 					if self.Id == "idPlayer1" then
 						if not Game and NetIsHost() then
 							PlayFX("MainMenuButtonClick", "start")
@@ -159,10 +199,18 @@ PlaceObj('XTemplate', {
 								local ui = GetMultiplayerLobbyDialog()
 								if netGameInfo and netGameInfo.steam_lobby then
 									SteamActivateGameOverlayToInvite(tonumber(netGameInfo.steam_lobby))
+								elseif Platform.xbox then
+									XboxCreatePlayerInvitationDialog()
+								elseif netGameInfo and netGameInfo.psn_session_id then
+									if Platform.playstation then
+										PlayStationCreatePlayerInvitationDialog(netGameInfo.psn_session_id)
+									else
+										ShowMPLobbyError("platform-invite", "Pending console invitation dialog implementation")
+									end
 								elseif Platform.developer then
-									ShowMPLobbyError(false, Untranslated("Could not open invite overlay. You need to be playing from steam to use this functionality."))
+									ShowMPLobbyError("platform-invite", "You need to be playing from steam to use this functionality.")
 								else
-									ShowMPLobbyError(false, T(290418254503, "Could not open invite overlay."))
+									ShowMPLobbyError("platform-invite")
 								end
 							elseif inviteSent == "invited" and context.invited_player_id then
 								PlayFX("MainMenuButtonClick", "start")

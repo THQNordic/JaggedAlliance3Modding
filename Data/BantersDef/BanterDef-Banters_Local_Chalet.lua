@@ -18,7 +18,7 @@ PlaceObj('BanterDef', {
 				return not quest.BorassusPlanted
 			end,
 		}),
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "PaixDisease",
@@ -786,7 +786,7 @@ PlaceObj('BanterDef', {
 		}),
 	},
 	conditions = {
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "PaixDisease",
@@ -964,7 +964,7 @@ PlaceObj('BanterDef', {
 		}),
 	},
 	conditions = {
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('QuestIsVariableBool', {
 					Condition = "or",
@@ -1049,7 +1049,7 @@ PlaceObj('BanterDef', {
 	},
 	Once = true,
 	conditions = {
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "PaixDisease",
@@ -1082,7 +1082,7 @@ PlaceObj('BanterDef', {
 		}),
 	},
 	conditions = {
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "PaixDisease",

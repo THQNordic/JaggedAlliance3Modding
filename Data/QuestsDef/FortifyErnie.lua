@@ -25,7 +25,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			CompletionConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							Condition = "or",
@@ -62,7 +62,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							Condition = "or",
@@ -105,7 +105,16 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('QuestIsVariableBool', {
+					Condition = "or",
+					QuestId = "FortifyErnie",
+					Vars = set( "MachineGun_Declined", "MachineGun_Done" ),
+					__eval = function ()
+						local quest = gv_Quests['FortifyErnie'] or QuestGetState('FortifyErnie')
+						return quest.MachineGun_Declined or quest.MachineGun_Done
+					end,
+				}),
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							Condition = "or",
@@ -115,23 +124,6 @@ PlaceObj('QuestsDef', {
 								local quest = gv_Quests['FortifyErnie'] or QuestGetState('FortifyErnie')
 								return quest.MachineGun_Declined or quest.MachineGun_Done
 							end,
-						}),
-					},
-				}),
-				PlaceObj('OR', {
-					Conditions = {
-						PlaceObj('OR', {
-							Conditions = {
-								PlaceObj('QuestIsVariableBool', {
-									Condition = "or",
-									QuestId = "FortifyErnie",
-									Vars = set( "MachineGun_Declined", "MachineGun_Done" ),
-									__eval = function ()
-										local quest = gv_Quests['FortifyErnie'] or QuestGetState('FortifyErnie')
-										return quest.MachineGun_Declined or quest.MachineGun_Done
-									end,
-								}),
-							},
 						}),
 						PlaceObj('QuestIsVariableBool', {
 							QuestId = "04_Betrayal",
@@ -150,10 +142,11 @@ PlaceObj('QuestsDef', {
 					QuestId = "FortifyErnie",
 					Vars = {
 						MachineGun_Found = true,
+						MachineGun_Given = true,
 					},
 					__eval = function ()
 						local quest = gv_Quests['FortifyErnie'] or QuestGetState('FortifyErnie')
-						return quest.MachineGun_Found
+						return quest.MachineGun_Found and quest.MachineGun_Given
 					end,
 				}),
 			},

@@ -7,14 +7,14 @@ DefineClass.RPK74 = {
 
 
 	object_class = "MachineGun",
-	Reliability = 95,
 	ScrapParts = 16,
+	Reliability = 95,
 	Icon = "UI/Icons/Weapons/RPK74",
 	DisplayName = T(688635998250, --[[InventoryItemCompositeDef RPK74 DisplayName]] "RPK-74"),
 	DisplayNamePlural = T(964051223218, --[[InventoryItemCompositeDef RPK74 DisplayNamePlural]] "RPK-74s"),
 	Description = T(153237405615, --[[InventoryItemCompositeDef RPK74 Description]] "Built upon the AK platform with a thicker barrel and other small changes to allow for better sustained fire capability. This general purpose machine gun is meant to be a squad force multiplier with easy operation, integration, and ammo compatibility with other AK weapons."),
 	AdditionalHint = T(598337892627, --[[InventoryItemCompositeDef RPK74 AdditionalHint]] "<bullet_point> Slower Condition loss"),
-	LargeItem = true,
+	LargeItem = 1,
 	UnitStat = "Marksmanship",
 	Cost = 1800,
 	Caliber = "762WP",

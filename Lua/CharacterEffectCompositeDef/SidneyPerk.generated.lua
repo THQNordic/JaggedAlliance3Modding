@@ -8,23 +8,21 @@ DefineClass.SidneyPerk = {
 
 	object_class = "Perk",
 	msg_reactions = {
-		PlaceObj('MsgReactionEffects', {
+		PlaceObj('MsgActorReactionEffects', {
 			Effects = {
 				PlaceObj('ConditionalEffect', {
 					'Effects', {
 						PlaceObj('UnitAddStatusEffect', {
 							Status = "SidneyPerkBuff",
 							TargetUnit = "current unit",
-							param_bindings = false,
 						}),
 					},
 				}),
 			},
 			Event = "CombatStart",
 			Handler = function (self, dynamic_data)
-				CE_ExecReactionEffects(self, "CombatStart")
+				ExecReactionEffects(self, 1, "CombatStart", nil, self, dynamic_data)
 			end,
-			param_bindings = false,
 		}),
 	},
 	DisplayName = T(883237005145, --[[CharacterEffectCompositeDef SidneyPerk DisplayName]] "Smug Operator"),

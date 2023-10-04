@@ -631,6 +631,14 @@ TFormat.CampaignTime = function(context_obj, value)
 	return FormatCampaignTime(value)
 end
 
+TFormat.ForgivingModeText = function(context_obj)
+	if Platform.ps5 or Platform.ps4 or g_TestUIPlatform == "ps4" or g_TestUIPlatform == "ps5" then
+		return T(284695860080, --[[GameRuleDef ForgivingMode Playstation description]] 'Lowers the impact of attrition and makes it easier to recover from bad situations (faster healing and repair, better income).<newline><newline><flavor>You cannot unlock the "Ironman" trophy while Forgiving mode is enabled.</flavor><newline><newline><flavor>You can change this option at any time during gameplay.</flavor>')
+	end
+	
+	return T(823257619450, --[[GameRuleDef ForgivingMode description]] 'Lowers the impact of attrition and makes it easier to recover from bad situations (faster healing and repair, better income).<newline><newline><flavor>You cannot unlock the "Ironman" achievement while Forgiving mode is enabled.</flavor><newline><newline><flavor>You can change this option at any time during gameplay.</flavor>')
+end
+
 table.insert(BlacklistedDialogClasses, "TacticalNotification")
 table.insert(BlacklistedDialogClasses, "Intro")
 
@@ -1302,7 +1310,7 @@ function GetSquadsEnroute(sector, side)
 	return enroute
 end
 
-function GetGroupedSquads(sector, includeMilitia, merge_joining, get_enemies, skip_retreat, exclude_travelling)
+function GetGroupedSquads(sector, includeMilitia, get_enemies, skip_retreat, exclude_travelling)
 	local squads = {}
 	local joiningSquads = {}
 	local satSquads = {}
@@ -1315,32 +1323,15 @@ function GetGroupedSquads(sector, includeMilitia, merge_joining, get_enemies, sk
 	
 	for i, s in ipairs(satSquads) do
 		if skip_retreat and s.Retreat then goto continue end
-		
-		-- Copy the squad so the joining squads temporary mercs don't modify the real one.
-		-- Also used by the conflict UI.
-		local copy = {
-			units = table.copy(s.units),
-			Name = s.Name,
-			CurrentSector = s.CurrentSector,
-			UniqueId = s.UniqueId,
-			ref = s,
-			image = s.image,
-			Retreat = s.Retreat,
-			militia = s.militia
-		}
 	
-		if not s.joining_squad then
-			squads[#squads + 1] = copy
-		else
-			joiningSquads[#joiningSquads + 1] = copy
-		end
+		squads[#squads + 1] = s
 		
 		::continue::
 	end
 	
 	-- Add joining squads to squads, or as seperate squads
-	for i, s in ipairs(joiningSquads) do
-		if merge_joining then
+	--[[for i, s in ipairs(joiningSquads) do
+		if not merge_joining then
 			squads[#squads + 1] = s
 		else
 			local targetSquadIdx = table.find(squads, "UniqueId", s.joining_squad)
@@ -1352,7 +1343,7 @@ function GetGroupedSquads(sector, includeMilitia, merge_joining, get_enemies, sk
 				end
 			end
 		end
-	end
+	end]]
 	
 	table.sort(squads, function (a, b)
 		return a.UniqueId < b.UniqueId
@@ -1813,6 +1804,25 @@ function TFormat.ShortcutButton(ctx, arg1, arg2)
 	return GetShortcutButtonT(arg1) or ""
 end
 
+function TFormat.GamepadShortcutName(context_obj, shortcut)
+	if not shortcut or shortcut == "" then
+		return T(879415238341, "<negative>Unassigned</negative>")
+	end
+	local buttons = SplitShortcut(shortcut)
+	for i, button in ipairs(buttons) do
+		if GetAccountStorageOptionValue("GamepadSwapTriggers") then
+			if button == "LeftTrigger" then
+				button = "RightTrigger"
+			elseif button == "RightTrigger" then
+				button = "LeftTrigger"
+			end
+		end
+	
+		buttons[i] = const.TagLookupTable[button] or GetPlatformSpecificImageTag(button) or "?"
+	end
+	return Untranslated(table.concat(buttons))
+end
+
 local lDisplayKeyOverrides = {
 	["Escape"] = T(939588806542, "ESC"),
 	["Enter"] =  T(122085236350, "ENT"),
@@ -1840,6 +1850,17 @@ function GetShortcutButtonT(action)
 		
 		local buttons = SplitShortcut(shortcutGamepad)
 		for i, button in ipairs(buttons) do
+			if GetAccountStorageOptionValue("GamepadSwapTriggers") then
+				if button == "LeftTrigger" then
+					button = "RightTrigger"
+				elseif button == "RightTrigger" then
+					button = "LeftTrigger"
+				end
+			end
+			buttons[i] = button
+		end
+		
+		for i, button in ipairs(buttons) do
 			button = const.ShortenedButtonNames[button] or button
 			buttons[i] = TLookupTag("<"..button..">") or "?"
 		end
@@ -1862,7 +1883,7 @@ end
 if FirstLoad then
 	g_ZuluMessagePopup = false
 	NewGameObj = false
-	NewGameObjOriginal = {difficulty = "Normal", game_rules = {}, settings = { HintsEnabled = true }, campaign_name = ""}
+	NewGameObjOriginal = {difficulty = "Normal", game_rules = {}, settings = { HintsEnabled = true }, campaign_name = "", campaignId = "HotDiamonds"}
 	
 	MouseButtonImagesInText = {
 		-- Add zulu specific images
@@ -2173,6 +2194,32 @@ DefineClass.CantAttackFloatingText = {
 	stagger_spawn = false,
 	exclusive_discard = true
 }
+
+function CheckImpossibleAttack(unit, action, args)
+	if HasCombatActionInProgress(unit) and not unit.interruptable then 
+		return false 
+	end
+	
+	args = args or {}
+	local state, err = action:GetUIState({unit}, args)
+
+	local weapon = action:GetAttackWeapons(unit)
+	local canAttack, reason = unit:CanAttack(
+		args.target,
+		weapon, action,
+		args and args.aim,
+		args and args.goto_pos,
+		nil,
+		args.free_aim
+	)
+	reason = reason or not canAttack and T(138935217566, "Action not possible")
+	
+	if state == "enabled" then
+		return canAttack and "enabled" or "disabled", reason
+	end
+	
+	return state, err
+end
 
 function CheckAndReportImpossibleAttack(unit, action, args)
 	if HasCombatActionInProgress(unit) and not unit.interruptable then 
@@ -2720,7 +2767,7 @@ function TFormat.MercClass(context_obj)
 end
 
 if FirstLoad then
-g_RolloverShowMoreInfo = true
+g_RolloverShowMoreInfo = false
 g_RolloverShowMoreInfoFakeRollover = false
 end
 
@@ -3104,7 +3151,9 @@ function CloseOptionsChoiceSubmenu(ui)
 	local dialog = GetDialog(ui):ResolveId("idSubSubContent")
 	local choiceProp = GetDialogModeParam(dialog)
 	if choiceProp then
-		choiceProp.idImgBcgrSelected:SetVisible(false)
+		if choiceProp.idImgBcgrSelected then 
+			choiceProp.idImgBcgrSelected:SetVisible(false)
+		end
 		choiceProp.isExpanded = false
 	end
 	dialog:SetMode("empty")
@@ -3422,11 +3471,262 @@ function XTextButtonZulu:OnSetRollover(rollover)
 	end
 end
 
+function GetInvertPDAThumbsShortcut(shortcut)
+	local shrct = shortcut
+	if GetAccountStorageOptionValue("InvertPDAThumbs") then
+		local leftIdx = table.find(XInput.LeftThumbDirectionButtons, shrct)
+		local rightIdx = table.find(XInput.RightThumbDirectionButtons, shrct)
+		if leftIdx then
+			shrct = XInput.RightThumbDirectionButtons[leftIdx]
+		elseif rightIdx then
+			shrct = XInput.LeftThumbDirectionButtons[rightIdx]
+		end
+	end
+	return shrct
+end	
+
 local commonActionHostOnShortcut = XActionsHost.OnShortcut
 function XActionsHost:OnShortcut(shortcut, source, ...)	
 	if shortcut == "+TouchPadClick" then shortcut = "+Back"
 	elseif shortcut == "TouchPadClick" then shortcut = "Back"
 	elseif shortcut == "-TouchPadClick" then shortcut = "-Back" end
 
+	shortcut = GetInvertPDAThumbsShortcut(shortcut)
+	
 	return commonActionHostOnShortcut(self, shortcut, source, ...)
+end
+
+local commonIsCtrlButtonPressed = XInput.IsCtrlButtonPressed
+function XInput.IsCtrlButtonPressed(id, shortcut, ...)
+	if GetAccountStorageOptionValue("GamepadSwapTriggers") then
+		if shortcut == "LeftTrigger" then
+			shortcut = "RightTrigger"
+		elseif shortcut == "RightTrigger" then
+			shortcut = "LeftTrigger"
+		end
+	end
+	return commonIsCtrlButtonPressed(id, shortcut, ...)
+end
+
+local commonXInputShortcut = XInputShortcut
+function XInputShortcut(button, controller_id)
+	if not GetAccountStorageOptionValue("GamepadSwapTriggers") then
+		return commonXInputShortcut(button, controller_id)
+	end
+	
+	if button == "LeftTrigger" then
+		button = "RightTrigger"
+	elseif button == "RightTrigger" then
+		button = "LeftTrigger"
+	end
+	return commonXInputShortcut(button, controller_id)
+end
+
+local commonGetPlatformSpecificImageName = GetPlatformSpecificImageName
+function GetPlatformSpecificImageName(button, ...)
+	if GetAccountStorageOptionValue("GamepadSwapTriggers") then
+		if button == "LeftTrigger" then
+			button = "RightTrigger"
+		elseif button == "RightTrigger" then
+			button = "LeftTrigger"
+		end
+	end
+	return commonGetPlatformSpecificImageName(button, ...)
+end
+
+local commonGetPlatformSpecificImagePath = GetPlatformSpecificImagePath
+function GetPlatformSpecificImagePath(button, ...)
+	if GetAccountStorageOptionValue("GamepadSwapTriggers") then
+		if button == "LeftTrigger" then
+			button = "RightTrigger"
+		elseif button == "RightTrigger" then
+			button = "LeftTrigger"
+		end
+	end
+	return commonGetPlatformSpecificImagePath(button, ...)
+end
+
+local commonGetPlatformSpecificImageTag = GetPlatformSpecificImageTag
+function GetPlatformSpecificImageTag(button, ...)
+	if GetAccountStorageOptionValue("GamepadSwapTriggers") then
+		if button == "LeftTrigger" then
+			button = "RightTrigger"
+		elseif button == "RightTrigger" then
+			button = "LeftTrigger"
+		end
+	end
+	return commonGetPlatformSpecificImageTag(button, ...)
+end
+
+if FirstLoad then
+CheckForConflictingBinding_Checked = false
+end
+
+function OnMsg.AccountStorageLoaded()
+	CheckForConflictingBinding_Checked = false
+end
+
+function OnMsg.ShortcutsReloaded()
+	if not CheckForConflictingBinding_Checked then
+		CheckForConflictingBinding()
+		CheckForConflictingBinding_Checked = true
+	end
+end
+
+function CheckForConflictingBinding()
+	if not Platform.desktop then return end
+
+	local optionsObj = OptionsObj or OptionsCreateAndLoad()
+	local optionEntries = optionsObj:GetProperties()
+	local bindings = table.ifilter(optionEntries, function(_, o) return o.category == "Keybindings" end)
+
+	local conflicts = {}
+	for _, binding1 in ipairs(bindings) do
+		local shortcutsFor1 = optionsObj[binding1.id] or empty_table
+	
+		for _, binding2 in ipairs(bindings) do
+			if binding1 == binding2 then goto continue end
+			if binding1.id == binding2.id then goto continue end
+			
+			-- Check if using the same shortcut.
+			local shortcutsFor2 = optionsObj[binding2.id] or empty_table
+			local conflictingShortcut = false
+			for _, sh1 in ipairs(shortcutsFor1) do
+				for _, sh2 in ipairs(shortcutsFor2) do
+					conflictingShortcut = sh1 == sh2
+					if conflictingShortcut then break end
+				end
+			end
+				
+			if not conflictingShortcut then goto continue end
+			if not EnabledInModes(binding1.mode, binding2.mode) then goto continue end
+			
+			-- Collect conflicting bindings.
+			-- (there are actions with duplicate ids sp we use ids)
+			local binding1Id = binding1.id
+			local binding2Id = binding2.id
+			
+			local existInReverse = conflicts[binding2Id]
+			if existInReverse and table.find(existInReverse, binding1Id) then goto continue end
+			
+			local conflictListForMe = conflicts[binding1Id] or {}
+			conflicts[binding1Id] = conflictListForMe
+			if table.find(conflictListForMe, binding2Id) then goto continue end
+			conflictListForMe[#conflictListForMe + 1] = binding2Id
+			
+			::continue::
+		end
+	end
+	
+	local unboundShortcuts = {}
+	for con, conList in pairs(conflicts) do
+		local data1 = table.ifilter(bindings, function(_, o) return o.id == con end)
+		local defs1 = {}
+		for i, d in ipairs(data1) do
+			table.iappend(defs1, d.default)
+		end
+		local shortcutsFor1 = optionsObj[con] or empty_table
+	
+		for i, con2 in ipairs(conList) do
+			-- Find which one of the two is the default binding (if any)
+			local data2 = table.ifilter(bindings, function(_, o) return o.id == con2 end)
+			local defs2 = {}
+			for i, d in ipairs(data2) do
+				table.iappend(defs2, d.default)
+			end
+			local shortcutsFor2 = optionsObj[con2] or empty_table
+			
+			local defaultIs1, defaultIs2 = false, false
+			for _, sh1 in ipairs(shortcutsFor1) do
+				for _, sh2 in ipairs(shortcutsFor2) do
+					if sh1 == sh2 then
+						defaultIs1 = not not table.find(defs1, sh1)
+						defaultIs2 = not not table.find(defs2, sh2)
+						break
+					end
+				end
+			end
+			
+			if (defaultIs1 and not defaultIs2) or (defaultIs2 and not defaultIs1) then
+				if defaultIs1 then
+					unboundShortcuts[#unboundShortcuts + 1] = con
+					optionsObj:SetProperty(con, {""})
+				else
+					unboundShortcuts[#unboundShortcuts + 1] = con2
+					optionsObj:SetProperty(con2, {""})
+				end
+			end
+		end
+	end
+	
+	local unboundActionsDisplayNames = {}
+	for i, sh in ipairs(unboundShortcuts) do
+		local binding = table.find_value(bindings, "id", sh)
+		unboundActionsDisplayNames[#unboundActionsDisplayNames + 1] = binding.name
+	end
+	
+	if #unboundActionsDisplayNames > 0 then
+		optionsObj:SaveToTables()
+		ReloadShortcuts()
+	
+		local popupText = T{515533608396, "A game update has added new key bindings that conflict with your personalized bindings. The new key bindings have been removed.<newline>To assign buttons to these new actions go to the Keybindings section in the Options menu and look for the following: <newline><newline><actions>",
+			actions = table.concat(unboundActionsDisplayNames, ", ")
+		}
+		CreateMessageBox(terminal.desktop, T(498221418682, "Information"), popupText)
+	end
+end
+
+if FirstLoad then
+ui_TimeSinceTurnStarted = false
+ui_SuppressNextEndTurnAnimation = false
+ui_EndTurnAnimationDuration = 500
+
+ui_FastForwardButtonAnimationStarted = false
+ui_FastForwardButtonShown = false
+ui_FastForwardButtonSlideDownAfter = 3000
+end
+
+function OnMsg.TurnStart(team)
+	if ui_SuppressNextEndTurnAnimation then
+		ui_SuppressNextEndTurnAnimation = false
+		return
+	end
+
+	local teamData = g_Teams[team]
+	if teamData and teamData.player_team then
+		ui_TimeSinceTurnStarted = GetPreciseTicks()
+		ui_FastForwardButtonAnimationStarted = false
+	elseif not ui_FastForwardButtonAnimationStarted then -- Reset animation on player turn only.
+		ui_FastForwardButtonAnimationStarted = GetPreciseTicks()
+	end
+	ObjModified("EndTurnAnimation")
+end
+
+function OnMsg.RepositionEnd()
+	ui_TimeSinceTurnStarted = GetPreciseTicks()
+	ObjModified("EndTurnAnimation")
+	ui_SuppressNextEndTurnAnimation = true
+end
+
+function HasEndTurnAnimationPassed() -- pepega
+	if not ui_TimeSinceTurnStarted then return true end
+	--if ui_FastForwardButtonAnimationStarted then return false end
+	if GetPreciseTicks() - ui_TimeSinceTurnStarted > ui_EndTurnAnimationDuration then return true end
+	return false
+end
+
+function ShowInGameMenuBlurRect()
+	if GetDialog("PDADialog") then return false end
+	if GetDialog("PDADialogSatellite") then return false end
+	if GetDialog("ConversationDialog") then return false end
+	if GetDialog("FullscreenGameDialogs") then return false end
+	return true
+end
+
+function EndTurnAnimationOnLayoutComplete(interp, window)
+	local dlg = GetDialog(window)
+	local bottom = dlg.box:maxy()
+	local distanceToBottomFromMe = bottom - window.box:miny()
+	
+	interp.targetRect = sizebox(0, distanceToBottomFromMe, 1000, 1000)
 end

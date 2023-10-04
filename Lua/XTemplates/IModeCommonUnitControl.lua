@@ -157,12 +157,9 @@ PlaceObj('XTemplate', {
 						'__context', function (parent, context) return "GamepadUIStyleChanged" end,
 						'__class', "XContextWindow",
 						'IdNode', true,
-						'Padding', box(8, 6, 8, 6),
-						'HAlign', "left",
 						'VAlign', "bottom",
 						'UseClipBox', false,
 						'Visible', false,
-						'Background', RGBA(32, 35, 47, 200),
 						'ContextUpdateOnOpen', true,
 						'OnContextUpdate', function (self, context, ...)
 							self:DeleteThread("listener")
@@ -219,10 +216,12 @@ PlaceObj('XTemplate', {
 						PlaceObj('XTemplateWindow', {
 							'comment', "LT text",
 							'Id', "idLeftTriggerGamepadHint",
+							'Padding', box(8, 6, 8, 6),
+							'HAlign', "left",
 							'VAlign', "bottom",
 							'LayoutMethod', "VList",
 							'LayoutVSpacing', -5,
-							'FoldWhenHidden', true,
+							'Background', RGBA(32, 35, 47, 200),
 						}, {
 							PlaceObj('XTemplateWindow', {
 								'comment', "Prev/Next Squad",
@@ -236,7 +235,18 @@ PlaceObj('XTemplate', {
 								'Translate', true,
 								'Text', T(657654851208, --[[XTemplate IModeCommonUnitControl Text]] "<ShortcutName('actionPrevSquad')>/<ShortcutName('actionNextSquad')> Previous/Next Squad"),
 								'WordWrap', false,
-							}),
+							}, {
+								PlaceObj('XTemplateWindow', {
+									'comment', "state observer",
+									'__context', function (parent, context) return "hud_squads" end,
+									'__class', "XContextWindow",
+									'ContextUpdateOnOpen', true,
+									'OnContextUpdate', function (self, context, ...)
+										local squadCount = #(GetSquadsOnMap() or empty_table)
+										self.parent:SetTransparency(squadCount <= 1 and 125 or 0)
+									end,
+								}),
+								}),
 							PlaceObj('XTemplateWindow', {
 								'comment', "Overview",
 								'__class', "XText",
@@ -248,6 +258,19 @@ PlaceObj('XTemplate', {
 								'TextStyle', "GamepadHint",
 								'Translate', true,
 								'Text', T(472881540356, --[[XTemplate IModeCommonUnitControl Text]] "<ShortcutName('actionCamOverview')> Overview mode"),
+								'WordWrap', false,
+							}),
+							PlaceObj('XTemplateWindow', {
+								'comment', "SatView",
+								'__class', "XText",
+								'HAlign', "left",
+								'VAlign', "bottom",
+								'Clip', false,
+								'UseClipBox', false,
+								'FoldWhenHidden', true,
+								'TextStyle', "GamepadHint",
+								'Translate', true,
+								'Text', T(732253925897, --[[XTemplate IModeCommonUnitControl Text]] "<ShortcutName('actionToggleSatellite')> Sat View"),
 								'WordWrap', false,
 							}),
 							PlaceObj('XTemplateWindow', {
@@ -277,6 +300,19 @@ PlaceObj('XTemplate', {
 								'WordWrap', false,
 							}),
 							PlaceObj('XTemplateWindow', {
+								'comment', "Merc rollover up/down",
+								'__class', "XText",
+								'HAlign', "left",
+								'VAlign', "bottom",
+								'Clip', false,
+								'UseClipBox', false,
+								'FoldWhenHidden', true,
+								'TextStyle', "GamepadHint",
+								'Translate', true,
+								'Text', T(831912426844, --[[XTemplate IModeCommonUnitControl Text]] "<ShortcutName('GamepadCheckMercUp')> /<ShortcutName('GamepadCheckMercDown')> Previous/Next merc info"),
+								'WordWrap', false,
+							}),
+							PlaceObj('XTemplateWindow', {
 								'comment', "Floor Up/Down",
 								'__class', "XText",
 								'HAlign', "left",
@@ -293,10 +329,12 @@ PlaceObj('XTemplate', {
 						PlaceObj('XTemplateWindow', {
 							'comment', "RT text",
 							'Id', "idRightTriggerGamepadHint",
+							'Padding', box(8, 6, 8, 6),
+							'HAlign', "left",
 							'VAlign', "bottom",
 							'LayoutMethod', "VList",
 							'LayoutVSpacing', -5,
-							'FoldWhenHidden', true,
+							'Background', RGBA(32, 35, 47, 200),
 						}, {
 							PlaceObj('XTemplateWindow', {
 								'comment', "Attack",
@@ -310,46 +348,18 @@ PlaceObj('XTemplate', {
 								'Translate', true,
 								'Text', T(966322975426, --[[XTemplate IModeCommonUnitControl Text]] "<ShortcutName('GamepadTargetingNext')> Attack"),
 								'WordWrap', false,
-							}),
-							PlaceObj('XTemplateWindow', {
-								'comment', "Overwatch",
-								'__class', "XText",
-								'HAlign', "left",
-								'VAlign', "top",
-								'Clip', false,
-								'UseClipBox', false,
-								'FoldWhenHidden', true,
-								'TextStyle', "GamepadHint",
-								'Translate', true,
-								'Text', T(218324926284, --[[XTemplate IModeCommonUnitControl Text]] "<ShortcutName('GamepadAimTakeCoverOrOverwatch')> Overwatch"),
-								'WordWrap', false,
-							}),
-							PlaceObj('XTemplateWindow', {
-								'comment', "Reload",
-								'__class', "XText",
-								'HAlign', "left",
-								'VAlign', "bottom",
-								'Clip', false,
-								'UseClipBox', false,
-								'FoldWhenHidden', true,
-								'TextStyle', "GamepadHint",
-								'Translate', true,
-								'Text', T(892577672818, --[[XTemplate IModeCommonUnitControl Text]] "<ShortcutName('Reload')> Reload"),
-								'WordWrap', false,
-							}),
-							PlaceObj('XTemplateWindow', {
-								'comment', "Switch Weapon",
-								'__class', "XText",
-								'HAlign', "left",
-								'VAlign', "bottom",
-								'Clip', false,
-								'UseClipBox', false,
-								'FoldWhenHidden', true,
-								'TextStyle', "GamepadHint",
-								'Translate', true,
-								'Text', T(247187751629, --[[XTemplate IModeCommonUnitControl Text]] "<ShortcutName('GamepadChangeWeapons')> Switch Weapon"),
-								'WordWrap', false,
-							}),
+							}, {
+								PlaceObj('XTemplateWindow', {
+									'comment', "state observer",
+									'__context', function (parent, context) return "combat_bar" end,
+									'__class', "XContextWindow",
+									'ContextUpdateOnOpen', true,
+									'OnContextUpdate', function (self, context, ...)
+										local state = GetShortcutActionState("GamepadTargetingNext")
+										self.parent:SetTransparency(state ~= "enabled" and 125 or 0)
+									end,
+								}),
+								}),
 							PlaceObj('XTemplateWindow', {
 								'comment', "Hide/Reveal",
 								'__class', "XText",
@@ -362,13 +372,160 @@ PlaceObj('XTemplate', {
 								'Translate', true,
 								'Text', T(510337751650, --[[XTemplate IModeCommonUnitControl Text]] "<ShortcutName('GamepadQuickAction')> Hide/Reveal"),
 								'WordWrap', false,
-							}),
+							}, {
+								PlaceObj('XTemplateWindow', {
+									'comment', "state observer",
+									'__context', function (parent, context) return "combat_bar" end,
+									'__class', "XContextWindow",
+									'ContextUpdateOnOpen', true,
+									'OnContextUpdate', function (self, context, ...)
+										local state = GetShortcutActionState("toggleHide")
+										self.parent:SetTransparency(state ~= "enabled" and 125 or 0)
+									end,
+								}),
+								}),
+							PlaceObj('XTemplateWindow', {
+								'comment', "Overwatch",
+								'__class', "XText",
+								'HAlign', "left",
+								'VAlign', "top",
+								'Clip', false,
+								'UseClipBox', false,
+								'FoldWhenHidden', true,
+								'TextStyle', "GamepadHint",
+								'Translate', true,
+								'Text', T(218324926284, --[[XTemplate IModeCommonUnitControl Text]] "<ShortcutName('GamepadAimTakeCoverOrOverwatch')> Overwatch"),
+								'WordWrap', false,
+							}, {
+								PlaceObj('XTemplateWindow', {
+									'comment', "state observer",
+									'__context', function (parent, context) return "combat_bar" end,
+									'__class', "XContextWindow",
+									'ContextUpdateOnOpen', true,
+									'OnContextUpdate', function (self, context, ...)
+										local state = GetShortcutActionState("actionRedirectOverwatch")
+										self.parent:SetTransparency(state ~= "enabled" and 125 or 0)
+									end,
+								}),
+								}),
+							PlaceObj('XTemplateWindow', {
+								'comment', "Change stance",
+								'__class', "XText",
+								'HAlign', "left",
+								'VAlign', "top",
+								'Clip', false,
+								'UseClipBox', false,
+								'FoldWhenHidden', true,
+								'TextStyle', "GamepadHint",
+								'Translate', true,
+								'Text', T(405428034583, --[[XTemplate IModeCommonUnitControl Text]] "<ShortcutName('ChangeStanceUpGamepad')> / <ShortcutName('ChangeStanceDownGamepad')> Change stance"),
+								'WordWrap', false,
+							}, {
+								PlaceObj('XTemplateWindow', {
+									'comment', "state observer",
+									'__context', function (parent, context) return "combat_bar" end,
+									'__class', "XContextWindow",
+									'ContextUpdateOnOpen', true,
+									'OnContextUpdate', function (self, context, ...)
+										local unit = Selection and Selection[1]
+										if not unit then return end
+										
+										local anyEnabled = false
+										for i, s in ipairs(StancesList) do
+											local combatAction = CombatActions["Stance" .. s]
+											if combatAction then
+												local state = combatAction:GetUIState(Selection)
+												if state == "enabled" then
+													anyEnabled = true
+													break
+												end
+											end
+										end
+										
+										self.parent:SetTransparency(not anyEnabled and 125 or 0)
+									end,
+								}),
+								}),
+							PlaceObj('XTemplateWindow', {
+								'comment', "Reload",
+								'__class', "XText",
+								'HAlign', "left",
+								'VAlign', "bottom",
+								'Clip', false,
+								'UseClipBox', false,
+								'FoldWhenHidden', true,
+								'TextStyle', "GamepadHint",
+								'Translate', true,
+								'Text', T(892577672818, --[[XTemplate IModeCommonUnitControl Text]] "<ShortcutName('Reload')> Reload"),
+								'WordWrap', false,
+							}, {
+								PlaceObj('XTemplateWindow', {
+									'comment', "state observer",
+									'__context', function (parent, context) return "combat_bar" end,
+									'__class', "XContextWindow",
+									'ContextUpdateOnOpen', true,
+									'OnContextUpdate', function (self, context, ...)
+										local unit = Selection and Selection[1]
+										if not unit then return end
+										local w1, w2, weaponList = unit:GetActiveWeapons()
+										
+										local anyEnabled = false
+										for i, w in ipairs(weaponList) do
+											local state = GetQuickReloadWeaponAndAmmo(false, w)
+											if state then
+												anyEnabled = true
+												break
+											end
+										end
+										anyEnabled = anyEnabled and  CombatActions.Reload:GetVisibility({unit}) == "enabled"
+										
+										self.parent:SetTransparency(not anyEnabled and 125 or 0)
+									end,
+								}, {
+									PlaceObj('XTemplateWindow', {
+										'comment', "reload observer",
+										'__context', function (parent, context) return "WeaponReloaded" end,
+										'__class', "XContextWindow",
+										'OnContextUpdate', function (self, context, ...)
+											self.parent:OnContextUpdate()
+										end,
+									}),
+									}),
+								}),
+							PlaceObj('XTemplateWindow', {
+								'comment', "Switch Weapon",
+								'__class', "XText",
+								'HAlign', "left",
+								'VAlign', "bottom",
+								'Clip', false,
+								'UseClipBox', false,
+								'FoldWhenHidden', true,
+								'TextStyle', "GamepadHint",
+								'Translate', true,
+								'Text', T(247187751629, --[[XTemplate IModeCommonUnitControl Text]] "<ShortcutName('GamepadChangeWeapons')> Switch Weapon"),
+								'WordWrap', false,
+							}, {
+								PlaceObj('XTemplateWindow', {
+									'comment', "state observer",
+									'__context', function (parent, context) return "combat_bar" end,
+									'__class', "XContextWindow",
+									'ContextUpdateOnOpen', true,
+									'OnContextUpdate', function (self, context, ...)
+										local combatAction = CombatActions.ChangeWeapon
+										local state = combatAction:GetUIState(Selection)
+										self.parent:SetTransparency(state ~= "enabled" and 125 or 0)
+									end,
+								}),
+								}),
 							}),
 						PlaceObj('XTemplateWindow', {
 							'Id', "idNormalGamepadHint",
+							'Padding', box(8, 6, 8, 6),
+							'HAlign', "left",
 							'VAlign', "bottom",
 							'LayoutMethod', "VList",
 							'LayoutVSpacing', -5,
+							'Background', RGBA(32, 35, 47, 200),
 						}, {
 							PlaceObj('XTemplateWindow', {
 								'comment', "Prev/Next Merc",
@@ -1085,16 +1242,6 @@ PlaceObj('XTemplate', {
 									HUDButton.Open(self)
 								end,
 							}),
-							PlaceObj('XTemplateAction', {
-								'ActionId', "actionRedeploy",
-								'ActionGamepad', "LeftTrigger-RightTrigger-DPadDown",
-								'ActionState', function (self, host)
-									return gv_Redeployment and "enabled" or "hidden"
-								end,
-								'OnAction', function (self, host, source, ...)
-									NetSyncEvent("StartRedeployDeployment")
-								end,
-							}),
 							PlaceObj('XTemplateWindow', {
 								'comment', "controller hint",
 								'__context', function (parent, context) return "GamepadUIStyleChanged" end,
@@ -1109,7 +1256,7 @@ PlaceObj('XTemplate', {
 									XText.OnContextUpdate(self, context, ...)
 								end,
 								'Translate', true,
-								'Text', T(134620124480, --[[XTemplate IModeCommonUnitControl Text]] "<LeftTrigger>+<RightTrigger>+<DPadDown>"),
+								'Text', T(134620124480, --[[XTemplate IModeCommonUnitControl Text]] "<ShortcutButton('actionRedeploy')>"),
 							}),
 							}),
 						}),

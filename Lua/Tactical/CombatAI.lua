@@ -1,6 +1,21 @@
 const.AIDecisionThreshold = 80 -- targets/locations up to this percent of max scored target/location can be selected
 const.AIPointBlankTargetMod = 50 -- targets in point-blank range get +50% score
 
+const.AIFallbackWeight_OpenDoor = 100
+const.AIFallbackWeight_ClosedDoor = 40
+const.AIFallbackWeight_Window = 70
+
+const.AIAvoidFireWeigth = -200
+const.AIAvoidGasWeigth = -200
+const.AIAvoidBombardEdge = 100 -- % of score retained at the border of the zone
+const.AIAvoidBombardCenter = 30 -- % of score retained at the center of the zone
+
+const.AIFriendlyFire_MaxRange = 10 * const.SlabSizeX	-- max range to ally for it to be considered in danger
+const.AIFriendlyFire_LOFWidth = 100*guic 					-- max distance from an ally to the line between position and target considered in danger
+const.AIFriendlyFire_LOFConeNear = 100*guic 				-- same as above for cone attacks (near side of the cone, positioned at attacker)
+const.AIFriendlyFire_LOFConeFar = 300*guic 				-- same as above for cone attacks (far side of the cone, positioned at AIFriendlyFire_MaxRange)
+const.AIFriendlyFire_ScoreMod = 50							-- % of damage score evaluation remanining when an ally is in danger
+
 local function CanReload(unit, weapon)
 	if not IsKindOf(weapon, "Firearm") then
 		return false
@@ -367,16 +382,18 @@ function AIPlayAttacks(unit, context, dbg_action, force_or_skip_action)
 				revert = not AIPlaceFallbackOverwatch(unit, context)
 			end
 			if revert then
-				-- we're stuck somewhere and unable to move or act, revert back to being Unaware			
-				table.insert(g_UnawareQueue, unit)
+				-- we're stuck somewhere and unable to move or act, revert back to being Unaware (only if no sight of any enemies)
+				local sight = false
+				for _, enemy in ipairs(context.enemies) do
+					sight = sight or HasVisibilityTo(unit, enemy)
+				end
+				if not sight then
+					table.insert(g_UnawareQueue, unit)
+				end
 			end
 		end
 	end
 end
-
-local AIFallbackWeight_OpenDoor = 100
-local AIFallbackWeight_ClosedDoor = 40
-local AIFallbackWeight_Window = 70
 
 function AIPlaceFallbackOverwatch(unit, context)
 	if not IsKindOf(context.weapon, "Firearm") then
@@ -393,11 +410,11 @@ function AIPlaceFallbackOverwatch(unit, context)
 		-- indoors - overwatch against an open door/window or a closed one if none of them are opened
 		local targets = {}
 		room:ForEachSpawnedDoor(function(obj)
-			local w = (obj.pass_through_state == "open" or obj.pass_through_state == "broken") and AIFallbackWeight_OpenDoor or AIFallbackWeight_ClosedDoor
+			local w = (obj.pass_through_state == "open" or obj.pass_through_state == "broken") and const.AIFallbackWeight_OpenDoor or const.AIFallbackWeight_ClosedDoor
 			targets[#targets + 1] = { obj = obj, weight = w }
 		end)
 		room:ForEachSpawnedWindow(function(obj) 
-			targets[#targets + 1] = { obj = obj, weight = AIFallbackWeight_Window }
+			targets[#targets + 1] = { obj = obj, weight = const.AIFallbackWeight_Window }
 		end)
 		
 		if #targets > 0 then
@@ -660,7 +677,7 @@ function AIFindDestinations(unit, context)
 
 	-- preprocess destinations to find those where we need to change stance at the dest to take cover
 	local low = const.CoverLow
-	local high = const.CoverHigh
+	--local high = const.CoverHigh
 	for i, dest in ipairs(destinations) do
 		local x, y, z, stance_idx = stance_pos_unpack(dest)
 		if stance_idx ~= crouch_idx then
@@ -846,28 +863,107 @@ function AIUpdateDestLosCache(unit, context)
 	--local tStart = GetPreciseTicks()
 	--ic("AIUpdateDestLosCache start", #units)
 	local sight = unit:GetSightRadius()
-	local dests = context.all_destinations
-	local losCallCount = 0
-	NetUpdateHash("AIUpdateDestLosCache_Start", GameTime(), sight, #dests, hashParamTable(dests), #context.enemies, hashParamTable(context.enemy_pack_pos_stance))
-	for _, dest in ipairs(dests) do
-		if g_AIDestEnemyLOSCache[dest] == nil then
-			-- CheckLOS, store the result
-			for _, enemy in ipairs(context.enemies) do
-				local enemy_ppos = context.enemy_pack_pos_stance[enemy]
-				local los_any = CheckLOS(dest, enemy_ppos, sight)
-				losCallCount = losCallCount + 1
-				if los_any then
-					g_AIDestEnemyLOSCache[dest] = true
-					break
-				end
-			end
-			g_AIDestEnemyLOSCache[dest] = g_AIDestEnemyLOSCache[dest] or false
-		end
-		if losCallCount >= 55 and GetInGameInterfaceMode() ~= "IModeAIDebug" then
-			losCallCount = 0
-			Sleep(10) --yield
+	local all_destinations = context.all_destinations
+	local enemies = context.enemies
+	if #enemies == 0 then return end
+	NetUpdateHash("AIUpdateDestLosCache_Start", GameTime(), sight, #all_destinations, hashParamTable(all_destinations), #enemies, hashParamTable(context.enemy_pack_pos_stance))
+
+	local dests
+	local los_cache = g_AIDestEnemyLOSCache
+	for _, dest in ipairs(all_destinations) do
+		if los_cache[dest] == nil then
+			if not dests then dests = {} end
+			dests[#dests + 1] = dest
+			los_cache[dest] = false
 		end
 	end
+	if dests then
+		local max_los_checks = 100
+		local targets = {}
+		local srcs = {}
+		local enemies_count = #enemies
+		local next_dest_idx = 1
+		local start_dest_idx = 1
+		local cur_enemy = 1
+		while true do
+			local ppos = context.enemy_pack_pos_stance[enemies[cur_enemy]]
+			local count = #targets
+			local last_dest_idx = Min(#dests, next_dest_idx + max_los_checks - count - 1)
+			for i = next_dest_idx, last_dest_idx do
+				count = count + 1
+				targets[count] = ppos
+				srcs[count] = dests[i]
+			end
+			next_dest_idx = last_dest_idx + 1
+			if next_dest_idx > #dests then
+				next_dest_idx = 1
+				cur_enemy = cur_enemy + 1
+			end
+			if count >= max_los_checks or cur_enemy > enemies_count then
+				local los_any, los_data = CheckLOS(targets, srcs, sight)
+				if los_any then
+					local visible_dests = 0
+					for i, value in ipairs(los_data) do
+						if value then
+							local dest = srcs[i]
+							if not los_cache[dest] then
+								los_cache[dest] = true
+								visible_dests = visible_dests + 1
+							end
+						end
+					end
+					if visible_dests >= #dests then
+						break
+					end
+					if cur_enemy < enemies_count or cur_enemy == enemies_count and next_dest_idx == 1 then
+						-- There will be more LOS checks. Remove visible destinations from dests list to not cast more lines from there
+						if #targets >= #dests then
+							for i = #dests, 1, -1 do
+								if los_cache[dests[i]] then
+									table.remove(dests, i)
+									if i < next_dest_idx then next_dest_idx = next_dest_idx - 1 end
+								end
+							end
+						elseif start_dest_idx <= last_dest_idx then
+							for i = last_dest_idx, start_dest_idx, -1 do
+								if los_cache[dests[i]] then
+									table.remove(dests, i)
+									if i < next_dest_idx then next_dest_idx = next_dest_idx - 1 end
+								end
+							end
+						else
+							for i = #dests, start_dest_idx, -1 do
+								if los_cache[dests[i]] then
+									table.remove(dests, i)
+									if i < next_dest_idx then next_dest_idx = next_dest_idx - 1 end
+								end
+							end
+							for i = last_dest_idx, 1, -1 do
+								if los_cache[dests[i]] then
+									table.remove(dests, i)
+									if i < next_dest_idx then next_dest_idx = next_dest_idx - 1 end
+								end
+							end
+						end
+						if #dests == 0 then
+							assert(#dests > 0)
+							break
+						end
+					end
+				end
+				if cur_enemy > enemies_count then
+					break
+				end
+				start_dest_idx = next_dest_idx
+				table.iclear(targets)
+				table.iclear(srcs)
+				if GetInGameInterfaceMode() ~= "IModeAIDebug" then
+					Sleep(10) --yield
+				end
+			end
+		end
+	end
+
 	NetUpdateHash("AIUpdateDestLosCache_End", GameTime())
 	--printf("AIUpdateDestLosCache: %d ms for %s", GetPreciseTicks() - tStart, unit.unitdatadef_id)
 end
@@ -1013,6 +1109,15 @@ function AIBuildArchetypePaths(unit, pos, context)
 			table.insert_unique(destinations, dest)
 		end
 	end
+	
+	-- filter out destinations someone already called dibs for
+	local occupied = {}
+	for _, u in ipairs(context.allies) do
+		if u ~= unit and u.ai_context then
+			occupied[u.ai_context.ai_destination or false] = true
+		end
+	end	
+	destinations = table.ifilter(destinations, function(_, dest) return not occupied[dest] end)
 
 	paths[goto_stance] = move_path
 	paths[move_stance_idx] = move_path
@@ -1021,11 +1126,6 @@ function AIBuildArchetypePaths(unit, pos, context)
 
 	return destinations, paths, dest_ap, dest_path, voxel_to_dest, move_path.closest_free_pos
 end
-
-local AIAvoidFireWeigth = -200
-local AIAvoidGasWeigth = -200
-local AIAvoidBombardEdge = 100 -- % of score retained at the border of the zone
-local AIAvoidBombardCenter = 30 -- % of score retained at the center of the zone
 
 function AIScoreDest(context, policies, dest, grid_voxel, base_score, visual_voxels, score_details)
 	local score = 0
@@ -1037,16 +1137,16 @@ function AIScoreDest(context, policies, dest, grid_voxel, base_score, visual_vox
 
 	local voxels, head = context.unit:GetVisualVoxels(point_pack(x, y, z), StancesList[stance_idx], visual_voxels)
 	if AreVoxelsInFireRange(voxels) then
-		score = AIAvoidFireWeigth
+		score = const.AIAvoidFireWeigth
 		if score_details then
 			score_details[#score_details + 1] = "ADJACENT FIRE"
-			score_details[#score_details + 1] = AIAvoidFireWeigth
+			score_details[#score_details + 1] = const.AIAvoidFireWeigth
 		end
 	elseif g_SmokeObjs[head] then
-		score = AIAvoidFireWeigth
+		score = const.AIAvoidFireWeigth
 		if score_details then
 			score_details[#score_details + 1] = "GASSED AREA"
-			score_details[#score_details + 1] = AIAvoidGasWeigth
+			score_details[#score_details + 1] = const.AIAvoidGasWeigth
 		end
 	end
 	
@@ -1071,7 +1171,7 @@ function AIScoreDest(context, policies, dest, grid_voxel, base_score, visual_vox
 		local dist = zone:GetDist(x, y, z)
 		local radius = zone.radius * const.SlabSizeX
 		if dist <= radius then
-			local mod = MulDivRound(dist, AIAvoidBombardEdge, radius) + MulDivRound(radius - dist, AIAvoidBombardCenter, radius)
+			local mod = MulDivRound(dist, const.AIAvoidBombardEdge, radius) + MulDivRound(radius - dist, const.AIAvoidBombardCenter, radius)
 			local loss = MulDivRound(score, 100 - mod, 100)
 			if score_details and loss > 0 then
 				score_details[#score_details + 1] = "BOMBARD ZONE"
@@ -1230,7 +1330,7 @@ function AIFindOptimalLocation(context, dest_score_details)
 		
 		context.best_dest_path = pf.GetPosPath(unit, pf_dests)
 		if #(context.best_dest_path or empty_table) > 0 then
-			local voxel = point_pack(SnapToPassSlab(context.best_dest_path[1]))
+			local voxel = point_pack(SnapToPassSlabXYZ(context.best_dest_path[1]))
 			local dest = context.voxel_to_dest[voxel]
 			if not dest then
 				-- try non-snapped
@@ -1287,18 +1387,12 @@ end
 
 --MapVar("g_AIDamageScoreLog", {})
 
-local AIFriendlyFire_MaxRange = 10 * const.SlabSizeX	-- max range to ally for it to be considered in danger
-local AIFriendlyFire_LOFWidth = 100*guic 					-- max distance from an ally to the line between position and target considered in danger
-local AIFriendlyFire_LOFConeNear = 100*guic 				-- same as above for cone attacks (near side of the cone, positioned at attacker)
-local AIFriendlyFire_LOFConeFar = 300*guic 				-- same as above for cone attacks (far side of the cone, positioned at AIFriendlyFire_MaxRange)
-local AIFriendlyFire_ScoreMod = 50							-- % of damage score evaluation remanining when an ally is in danger
-
 function AIAllyInDanger(allies, ally_pos, pos, target, dist_near, dist_far)
 	local target_pos = target:GetPos()
 	local v = target:GetPos() - pos
-	local d = AIFriendlyFire_MaxRange
+	local d = const.AIFriendlyFire_MaxRange
 	for _, ally in ipairs(allies) do
-		if ally:GetDist2D(pos) <= AIFriendlyFire_MaxRange then
+		if ally:GetDist2D(pos) <= const.AIFriendlyFire_MaxRange then
 			local ally_pos = ally_pos and ally_pos[ally] or ally:GetPos()
 			local dist, x, y, z = DistSegmentToPt2D(pos, target_pos, ally_pos)
 			local nearest = point(x, y, z)
@@ -1507,12 +1601,12 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
 						local ally_in_danger = attack_data and (attack_data.best_ally_hits_count or 0) > 0
 												
 						if action and action.AimType == "cone" then
-							ally_in_danger = ally_in_danger or AIAllyInDanger(context.allies, context.ally_pos, attacker_pos, target, AIFriendlyFire_LOFConeNear, AIFriendlyFire_LOFConeFar)
+							ally_in_danger = ally_in_danger or AIAllyInDanger(context.allies, context.ally_pos, attacker_pos, target, const.AIFriendlyFire_LOFConeNear, const.AIFriendlyFire_LOFConeFar)
 						else
-							ally_in_danger = ally_in_danger or AIAllyInDanger(context.allies, context.ally_pos, attacker_pos, target, AIFriendlyFire_LOFWidth, AIFriendlyFire_LOFWidth)
+							ally_in_danger = ally_in_danger or AIAllyInDanger(context.allies, context.ally_pos, attacker_pos, target, const.AIFriendlyFire_LOFWidth, const.AIFriendlyFire_LOFWidth)
 						end
 						if ally_in_danger then
-							mod = MulDivRound(mod, AIFriendlyFire_ScoreMod, 100)
+							mod = MulDivRound(mod, const.AIFriendlyFire_ScoreMod, 100)
 						end
 						
 						mod = MulDivRound(mod, target_score_mod[k], 100)
@@ -1957,7 +2051,8 @@ function AIPrecalcConeTargetZones(context, action_id, additional_target_pt, stan
 	local attack_pos = context.unit_pos
 	local units = table.copy(context.enemies)
 	table.iappend(units, GetAllAlliedUnits(unit))
-	local los_any, los_targets = CheckLOS(units, unit, unit:GetSightRadius(), stance)
+	local unit_sight = unit:GetSightRadius()
+	local los_any, los_targets = CheckLOS(units, unit, unit_sight, stance)
 	
 	for zi, pt in ipairs(target_pts) do		
 		local dir = pt - attack_pos
@@ -1972,10 +2067,15 @@ function AIPrecalcConeTargetZones(context, action_id, additional_target_pt, stan
 			}
 			zones[#zones + 1] = zone
 			
-			for i, target_unit in ipairs(units) do
-				if target_unit ~= unit and los_targets[i] and IsValidTarget(target_unit) and IsPointInsidePoly2D(target_unit:GetPos(), zone.poly) then
-					zone.units[#zone.units + 1] = target_unit
-					table.insert_unique(targets, target_unit)
+			if los_any then
+				for i, los in ipairs(los_targets) do
+					if los then
+						local target_unit = units[i]
+						if target_unit ~= unit and IsValidTarget(target_unit) and IsPointInsidePoly2D(target_unit:GetPos(), zone.poly) then
+							zone.units[#zone.units + 1] = target_unit
+							table.insert_unique(targets, target_unit)
+						end
+					end
 				end
 			end
 		end
@@ -1990,7 +2090,7 @@ function AIPrecalcConeTargetZones(context, action_id, additional_target_pt, stan
 	end
 	
 	-- filter LOS targets
-	local max_distance = Min(unit:GetSightRadius(), weapon:GetMaxRange())
+	local max_distance = Min(unit_sight, weapon:GetMaxRange())
 	local los_any, los_targets = CheckLOS(targets, unit, max_distance)
 	if not los_any then
 		for _, zone in ipairs(zones) do
@@ -1999,7 +2099,7 @@ function AIPrecalcConeTargetZones(context, action_id, additional_target_pt, stan
 		return zones
 	end
 	for i = #targets, 1, -1 do
-		if not los_targets[i] then
+		if not los_any or not los_targets[i] then
 			for _, zone in ipairs(zones) do
 				table.remove_value(zone.units, targets[i])
 			end
@@ -2240,10 +2340,6 @@ function AIGetNextPhaseUnits(units, max)
 	return best_units
 end
 
-const.MeleeVisibilityHeight_Standing = 120*guic
-const.MeleeVisibilityHeight_Crouch = 100*guic
-const.MeleeVisibilityHeight_Prone = 70*guic
-
 function IsMeleeRangeTarget(attacker, attack_pos, attack_stance, target, target_pos, target_stance, attacker_face_angle)
 	if IsSittingUnit(target) then
 		target_pos = target_pos or target.last_visit:GetPos()
@@ -2300,14 +2396,16 @@ function AIReloadWeapons(unit)
 			if #ammos > 0 then
 				ammo = ammos[1]
 				ammo.Amount = Max(ammo.Amount, firearm.MagazineSize)
-				unit:ReloadWeapon(firearm, ammo)
+				unit:ReloadWeapon(firearm, ammo, "delay fx", "ai")
+				CreateFloatingText(unit, T(160472488023, "Reload"))
 				ObjModified(unit)
 			else
 				ammos = GetAmmosWithCaliber(firearm.Caliber, "sorted")
 				if #ammos > 0 then
 					ammo = PlaceInventoryItem(ammos[1].id)
 					ammo.Amount = firearm.MagazineSize
-					unit:ReloadWeapon(firearm, ammo)
+					unit:ReloadWeapon(firearm, ammo, "delay fx", "ai")
+					CreateFloatingText(unit, T(160472488023, "Reload"))
 					DoneObject(ammo)
 					ObjModified(unit)
 				end
@@ -2315,7 +2413,8 @@ function AIReloadWeapons(unit)
 		elseif firearm.ammo.Amount < Max(1, firearm.MagazineSize / 2) then
 			local ammo = firearm.ammo
 			ammo.Amount = firearm.MagazineSize
-			unit:ReloadWeapon(firearm, ammo)
+			unit:ReloadWeapon(firearm, ammo, "delay fx", "ai")
+			CreateFloatingText(unit, T(160472488023, "Reload"))
 			ObjModified(unit)
 		end
 	end
@@ -2515,7 +2614,7 @@ function AIBiasMarker:GetAIBias(unit, dest)
 end
 
 function InitAIBiasMarkers()
-	g_BiasMarkers = g_BiasMarkers or MapGetMarkers("GridMarker", nil, function(m) return IsKindOf(m, "AIBiasMarker") end)
+	g_BiasMarkers = g_BiasMarkers or MapGetMarkers("GridMarker", nil, function(m) return IsKindOf(m, "AIBiasMarker") end) or false
 	for _, marker in ipairs(g_BiasMarkers) do
 		local apply_grous = {}
 		g_BiasMarkers[marker] = apply_grous

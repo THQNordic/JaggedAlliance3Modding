@@ -10,7 +10,7 @@ PlaceObj('InventoryItemCompositeDef', {
 	'DisplayNamePlural', T(240149537921, --[[InventoryItemCompositeDef WeaponShipment DisplayNamePlural]] "Weapon Shipments"),
 	'Description', T(668450550818, --[[InventoryItemCompositeDef WeaponShipment Description]] "A shipment of weapons and ammo recovered from the enemy."),
 	'AdditionalHint', T(561475317234, --[[InventoryItemCompositeDef WeaponShipment AdditionalHint]] "<bullet_point> <GameColorD>Can be opened to receive the items</GameColorD>"),
-	'is_valuable', true,
+	'Valuable', 1,
 	'loot_def', "WeaponShipment",
 })
 

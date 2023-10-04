@@ -1,5 +1,5 @@
 DefineClass.InventoryItem = {
-	__parents = {"ZuluModifiable", "InventoryItemProperties"},
+	__parents = {"ZuluModifiable", "InventoryItemProperties", "ScrapableItem"},
 	properties = {
 		{ id = "id", editor = "number", default = false},
 	},
@@ -247,11 +247,6 @@ function InventoryStack:GetRolloverTitle()
 	end
 end	
 
-function InventoryStack:GetScrapParts()
-	local parts = InventoryItem.GetScrapParts(self)
-	return parts * self.Amount
-end
-
 function InventoryStack:IsMaxCondition()
 	return true
 end
@@ -292,7 +287,7 @@ end
 
 -- CompositeDef code
 DefineClass.InventoryItemCompositeDef = {
-	__parents = { "CompositeDef" },
+	__parents = { "CompositeDef", "MsgActorReactionsPreset" },
 	
 	-- Composite def
 	ObjectBaseClass = "InventoryItem",
@@ -428,7 +423,7 @@ function InventoryItem:GetItemUIIcon()--
 		icon = self.Icon 
 	else--placeholders
 		if self:IsKindOfClasses("Firearm","MeleeWeapon") then
-			icon = (self.LargeItem and "UI/Icons/Weapons/weapon_placeholder.tga" or "UI/Icons/Weapons/pistol_placeholder.tga")
+			icon = (self:IsLargeItem() and "UI/Icons/Weapons/weapon_placeholder.tga" or "UI/Icons/Weapons/pistol_placeholder.tga")
 		elseif self:IsKindOfClasses("Armor") then	
 			icon = "UI/Icons/Items/vest_placeholder.tga"
 		else
@@ -849,15 +844,6 @@ function Inventory:GetItemInSlot(slot_name, base_class, left, top)
 	return false
 end
 
-function Inventory:GetItemsInSlot(slot_name)
-	local items = {}
-	self:ForEachItemInSlot(slot_name, function(item, _, x)
-		items[x] = item
-	end)
-	table.compact(items) -- Items will be sorted by x
-	return items
-end
-
 function Inventory:GetItemSlot(item)
 	for _, slot_data in ipairs(self.inventory_slots) do
 		local slot_name = slot_data.slot_name
@@ -953,7 +939,7 @@ function Inventory:CanAddItem(slot_name, item, left, top, local_changes)
 		-- check stack items
 		local currentitem = self:GetItemInSlot(slot_name,false, left, top)
 		if currentitem == item then
-			if item.LargeItem then
+			if item:IsLargeItem() then
 				--could be the other slot and it could be out of bounds
 				if not self:IsEmptyPosition(slot_name, item, left, top, nil, local_changes) then
 					return false, "full or smaller position"
@@ -1231,8 +1217,7 @@ end
 function SectorOperationItems_GetItemsQueue(sector_id, operation_id)
 	local queue = {}
 	if IsCraftOperation(operation_id) then
-		local qu = GetCraftOperationListsIds(operation_id)
-		queue = gv_Sectors[sector_id][qu]or {}
+		queue = GetCraftOperationQueueTable(gv_Sectors[sector_id], operation_id) or {}
 	end
 	return queue
 end
@@ -1279,7 +1264,7 @@ function SectorOperationItems_GetAllItems(sector_id, operation_id)
 		if next(sector.sector_repair_items) then return sector.sector_repair_items end
 		return SectorOperationFillItemsToRepair(sector_id, mercs)
 	end
-	if operation_id=="CraftAmmo" or operation_id=="CraftExplosives" then
+	if IsCraftOperationId(operation_id) then
 		return SectorOperationFillItemsToCraft(sector_id, operation_id, mercs[1])
 	end
 end
@@ -1299,7 +1284,7 @@ function SectorOperationRepairItems_FillMostDamagedItems(sector_id)
 		idx = idx+1
 		local item = all[idx]
 		local itm = SectorOperationRepairItems_GetItemFromData(item)
-		local item_width = itm and itm.LargeItem and 2 or 1
+		local item_width = itm and itm:IsLargeItem() and 2 or 1
 		width = width + item_width
 		if width>9 then
 			idx = idx-1			
@@ -1315,7 +1300,7 @@ function SectorOperationRepairItems_FillMostDamagedItems(sector_id)
 		if rem and rem>0 then
 			local item = all[i]
 			local itm = SectorOperationRepairItems_GetItemFromData(item)
-			local item_width = itm and itm.LargeItem and 2 or 1
+			local item_width = itm and itm:IsLargeItem() and 2 or 1
 			if item_width<=rem then
 				queued[#queued+1] = item
 				rem = rem - item_width
@@ -1496,7 +1481,26 @@ function SectorOperationFillItemsToRepair(sector_id, mercs, check_only)
 		return true
 	end	
 	
-	-- other squads bags
+	-- other squads bags -  weapons
+	for _,unit in ipairs(all_sector_mercs) do
+		local slot = GetContainerInventorySlotName(unit)
+		unit:ForEachItemInSlot(slot, "ItemWithCondition", function(item, slot_name, left, top,all_to_repair,chek_only_var)
+			if not item:IsMaxCondition() and item.Repairable and item:IsWeapon() then
+				if check_only then 
+					chek_only_var.var_bool =  true
+					return "break" 
+				end
+				if not table.find(all_to_repair, "id", item.id) and not table.find(queue, "id", item.id)  then
+					table.insert(all_to_repair,{ unit = unit.session_id, id = item.id, slot = slot, pos_left = left, pos_top = top})
+				end
+			end
+		end,all_to_repair,chek_only_var)
+	end
+
+	if chek_only_var.var_bool then
+		return true
+	end	
+-- other squads bags -  armors
 	for _,unit in ipairs(all_sector_mercs) do
 		local slot = GetContainerInventorySlotName(unit)
 		unit:ForEachItemInSlot(slot, "ItemWithCondition", function(item, slot_name, left, top,all_to_repair,chek_only_var)
@@ -1571,14 +1575,17 @@ if FirstLoad then
 end
 
 function SectorOperationFillItemsToCraft(sector_id, operation_id, merc)
+	if not IsCraftOperationId(operation_id) then
+		return
+	end	
 	local id = "g_Recipes"..operation_id
 
-	if _G[id] then
+	if rawget(_G,id) then
 		SectorOperationValidateItemsToCraft(sector_id, operation_id, merc )	
 		return _G[id]
 	end
 	
-	_G[id] = {}	
+	rawset(_G, id, {})	
 	local res_items = SectorOperation_CalcCraftResources(sector_id, operation_id)
 	local all_to_craft = _G[id] or {}
 	local mercs = merc and gv_Squads[merc.Squad].units
@@ -1587,7 +1594,7 @@ function SectorOperationFillItemsToCraft(sector_id, operation_id, merc)
 		local is_ammocraft = recipe.group=="Ammo" and operation_id=="CraftAmmo" 
 		local is_explosivescraft =  recipe.group=="Explosives" and operation_id=="CraftExplosives"
 		
-		if is_ammocraft or is_explosivescraft then
+		if recipe.CraftOperationId==operation_id  or is_ammocraft or is_explosivescraft then
 			local hidden = false
 			if recipe.RequiredCrafter and merc and merc.session_id~=recipe.RequiredCrafter then
 				hidden = true
@@ -2087,7 +2094,9 @@ local function SquadBagAction(srcInventory, srcSlotName, itemId, squadId, action
 			end
 		end
 	elseif actionName == "scrap" then
-		ScrapItem(srcInventory, srcSlotName, item, squadBag, squadId)
+		ScrapItem(srcInventory, srcSlotName, item, 1, squadBag, squadId)
+	elseif actionName == "scrapall" then
+		ScrapItem(srcInventory, srcSlotName, item, false, squadBag, squadId)
 	elseif actionName == "salvage" then	
 		SalvageItem(srcInventory, srcSlotName, item, squadBag)
 	elseif actionName == "refill" then	
@@ -2095,7 +2104,7 @@ local function SquadBagAction(srcInventory, srcSlotName, itemId, squadId, action
 	elseif actionName == "cashin" then
 		CashInItem(srcInventory, srcSlotName, item, 1)
 	elseif actionName == "cashstack" or actionName == "cashstack-nolog" then
-		CashInItem(srcInventory, srcSlotName, item, nil, actionName == "cashstack-nolog")
+		CashInItem(srcInventory, srcSlotName, item, false, actionName == "cashstack-nolog")
 	elseif actionName == "unpack" then
 		UnpackItem(srcInventory, srcSlotName, item, 1)
 	end
@@ -2473,8 +2482,13 @@ function InventoryItemEffectMoments()
 	return g_InventoryItemEffectMoments
 end
 
-function ScrapItem(inventory, slot_name, item, squadBag, squadId)
-	local partsAmount = item:AmountOfScrapPartsFromItem()
+function ScrapItem(inventory, slot_name, item, amount, squadBag, squadId)
+	local is_stack = IsKindOf(item, "InventoryStack")
+	if is_stack then
+		amount = amount and Min(amount, item.Amount) or item.Amount
+	end	
+	amount = amount or 1
+	local partsAmount = item:AmountOfScrapPartsFromItem() * amount
 	local additional 
 	if IsKindOf(item, "Firearm") then
 		additional = item:GetSpecialScrapItems()
@@ -2489,12 +2503,12 @@ function ScrapItem(inventory, slot_name, item, squadBag, squadId)
 		if rand<max_mech then
 			local res_idx = 1 + rnd_unit:Random(#additional)
 			local res = additional[res_idx]
-			local item = PlaceInventoryItem(res.restype)
-			if IsKindOf(item, "InventoryStack") then
-				item.Amount = res.amount
+			local res_item = PlaceInventoryItem(res.restype)
+			if IsKindOf(res_item, "InventoryStack") then
+				res_item.Amount = res.amount
 			end
 			local add_slot_name = GetContainerInventorySlotName(inventory)
-			inventory:AddItem(add_slot_name, item)
+			inventory:AddItem(add_slot_name, res_item)
 		end
 	end
 	
@@ -2506,9 +2520,15 @@ function ScrapItem(inventory, slot_name, item, squadBag, squadId)
 		parts.Amount = partsAmount	
 		squadBag:AddAndStackItem(parts)
 	end
+		
+	if is_stack then
+		item.Amount = Max(0, item.Amount - amount)
+	end
 	
-	local removedItem, pos = inventory:RemoveItem(slot_name, item)
-	DoneObject(removedItem)
+	if not is_stack or item.Amount==0 then
+		local removedItem, pos = inventory:RemoveItem(slot_name, item)
+		DoneObject(removedItem)
+	end
 	
 	if IsKindOf(inventory, "Unit") and slot_name == inventory.current_weapon and inventory:IsIdleCommand() then
 		inventory:SetCommand("Idle")
@@ -2576,9 +2596,8 @@ function CashInItem(inventory, slot_name, item, amount, dontLog)
 	local money = item.Cost
 	local to_remove
 	if IsKindOf(item, "InventoryStack") then
-		amount = amount or item.Amount
-		amount = Min(amount, item.Amount)
-		money = money*(amount)
+		amount = amount and Min(amount, item.Amount) or item.Amount
+		money = money * amount
 		item.Amount = item.Amount - amount
 		to_remove = item.Amount==0
 	else
@@ -2606,17 +2625,21 @@ function UnpackItem(inventory, slot_name, item, amount)
 		CombatLog("debug", Untranslated("Unpack item: no loot set"))
 		return
 	end
-	if not IsKindOfClasses(inventory, "Unit", "UnitData") then
+	if not IsKindOfClasses(inventory, "Unit", "UnitData", "SectorStash") then
 		CombatLog("debug", Untranslated("Unpack item: unpacking from weird container"))
 		return
 	end
 	
 	local putItemsHere = false
 	if gv_SatelliteView then
-		local squad = inventory.Squad
-		squad = squad and gv_Squads[squad]
-		local sectorId = squad.CurrentSector
-		putItemsHere = GetSectorInventory(sectorId)
+		if IsKindOf(inventory, "SectorStash") then
+			putItemsHere = inventory
+		else -- UnitData (hopefully)
+			local squad = inventory.Squad
+			squad = squad and gv_Squads[squad]
+			local sectorId = squad.CurrentSector
+			putItemsHere = GetSectorInventory(sectorId)
+		end
 	else
 		putItemsHere = GetDropContainer(inventory)
 	end
@@ -2804,7 +2827,7 @@ function NetSyncEvents.InventoryTakeAllNet(playerId, net_units, net_containers)
 									PlayFX("TakeAllFail", "start", unit)
 								end
 							end
-							if new_amount == "inventory full" and not item.LargeItem then
+							if new_amount == "inventory full" and not item:IsLargeItem() then
 								unit_done[unit] = true
 							end
 						else
@@ -2890,7 +2913,7 @@ function NetSyncEvents.TakeLootFromAutoResolveNet(executingNetId, netUnits, netI
 					local args = {item = item, dest_container = unit, dest_slot = "Inventory", src_container = src_container, src_container_slot_name = src_container_slot_name, sync_call = true}
 					result, new_amount = MoveItem(args)
 					if result then
-						if new_amount == "inventory full" and not item.LargeItem then
+						if new_amount == "inventory full" and not item:IsLargeItem() then
 							unit_done[unit] = true
 						end
 					else
@@ -3002,9 +3025,12 @@ function InvContextMenuEquippable(context)
 	if not context or not context.item then return false end
 	if context.item.locked then return false end
 	if not InvContextMenuFilter(context) then return false end
+	if not gv_SatelliteView and not InventoryIsValidGiveDistance(context.context, context.unit)then
+		return false
+	end	
 	
 	return context.item:IsKindOfClasses("Grenade", "QuickSlotItem", "Armor") or -- Equippable
 		not context.item:IsKindOfClasses("InventoryStack", "ToolItem", "Medicine", -- Equippable by omission lol
-												 "Valuables", "QuestItem", "ConditionAndRepair",
+												 "Valuables", "ValuableItemContainer", "QuestItem", "ConditionAndRepair",
 												 "MiscItem", "TrapDetonator", "ValuablesStack")
 end

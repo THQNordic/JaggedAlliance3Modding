@@ -220,6 +220,24 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "Ted",
+					Vars = set( "TedSpawn" ),
+					__eval = function ()
+						local quest = gv_Quests['Ted'] or QuestGetState('Ted')
+						return quest.TedSpawn
+					end,
+				}),
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"L19",
+						"K19",
+						"K18",
+						"K17",
+						"J20",
+						"J19",
+					},
+				}),
 				PlaceObj('UnitIsAroundOtherUnit', {
 					Distance = 3,
 					SecondTargetUnit = "any merc",
@@ -238,6 +256,14 @@ PlaceObj('QuestsDef', {
 			Once = true,
 			ParamId = "TCE_TedApproached",
 			QuestId = "Ted",
+			requiredSectors = {
+				"L19",
+				"K19",
+				"K18",
+				"K17",
+				"J20",
+				"J19",
+			},
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {

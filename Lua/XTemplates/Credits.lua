@@ -104,6 +104,17 @@ PlaceObj('XTemplate', {
 			'Image', "UI/Common/cr_background",
 			'ImageFit', "stretch",
 		}),
+		PlaceObj('XTemplateFunc', {
+			'name', "OnShortcut(self, shortcut, source, ...)",
+			'func', function (self, shortcut, source, ...)
+				if shortcut == "MouseL" or shortcut == "Space" or shortcut == "ButtonA" or shortcut == "+ButtonA" or
+					shortcut == "MouseR" or shortcut == "Escape" or shortcut == "ButtonB" or shortcut == "+ButtonB" then
+					return XDialog.OnShortcut(self, shortcut, source, ...)
+				else
+					return "break"
+				end
+			end,
+		}),
 		PlaceObj('XTemplateWindow', {
 			'comment', "logo",
 			'__class', "XImage",
@@ -117,6 +128,7 @@ PlaceObj('XTemplate', {
 		PlaceObj('XTemplateWindow', {
 			'__parent', function (parent, context) return GetDialog(parent) end,
 			'__class', "XCreditsWindow",
+			'Id', "idCreditsWindow",
 			'HAlign', "center",
 			'MinWidth', 500,
 			'MinHeight', 500,
@@ -179,11 +191,26 @@ PlaceObj('XTemplate', {
 			'ActionName', T(572452323663, --[[XTemplate Credits ActionName]] "EXIT"),
 			'ActionToolbar', "ActionBarCenter",
 			'ActionShortcut', "Escape",
+			'ActionShortcut2', "MouseR",
 			'ActionGamepad', "ButtonB",
 			'OnActionEffect', "back",
 			'OnAction', function (self, host, source, ...)
 				CloseDialog(host)
 				--host:SetMode("")
+			end,
+			'FXMouseIn', "buttonRollover",
+			'FXPress', "buttonPressGeneric",
+			'FXPressDisabled', "IactDisabled",
+		}),
+		PlaceObj('XTemplateAction', {
+			'ActionId', "Pause",
+			'ActionShortcut', "Space",
+			'ActionShortcut2', "MouseL",
+			'ActionGamepad', "ButtonA",
+			'OnActionEffect', "back",
+			'OnAction', function (self, host, source, ...)
+				local credWin = host:ResolveId("idCreditsWindow")
+				if credWin then credWin.paused = not credWin.paused end
 			end,
 			'FXMouseIn', "buttonRollover",
 			'FXPress', "buttonPressGeneric",

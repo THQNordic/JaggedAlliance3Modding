@@ -131,26 +131,38 @@ function PushUnitAlert(trigger_type, ...)
 			return not u.dummy and u.team.side ~= "neutral" and not u:IsIncapacitated() and not u:IsAware()
 		end)
 		local los_any, los_targets = CheckLOS(units, actor)
-		for i, unit in ipairs(units) do
-			local sight = unit:GetSightRadius(actor)
-			if los_targets[i] and unit:GetDist(actor) <= sight and unit:SetPendingAwareState("surprised", T{Presets.AwareReasons.Default.arSawDying.display_name, enemy = unit.Name}) then
-				dbg_awareness_log("  ", unit, " is surprised")
-				surprised = surprised + 1
+		if los_any then
+			for i, los_value in ipairs(los_targets) do
+				if los_value then
+					local unit = units[i]
+					local sight = unit:GetSightRadius(actor)
+					if IsCloser(unit, actor, sight + 1) then
+						if unit:SetPendingAwareState("surprised", T{Presets.AwareReasons.Default.arSawDying.display_name, enemy = unit.Name}) then
+							dbg_awareness_log("  ", unit, " is surprised")
+							surprised = surprised + 1
+						end
+					end
+				end
 			end
 		end
 	elseif trigger_type == "dead body" then
 		local actor = select(1, ...)
 		local units = select(2, ...)
 		local los_any, los_targets = CheckLOS(units, actor)
-		for i, unit in ipairs(units) do
-			if not unit.seen_bodies[actor] then
-				local sight = unit:GetSightRadius(actor)
-				local aware_state = g_Combat and "surprised" or "suspicious"
-				if los_targets[i] and unit:GetDist(actor) <= sight and unit:SetPendingAwareState(aware_state) then
-					unit.suspicious_body_seen = actor:GetHandle()
-					unit.seen_bodies[actor] = true
-					dbg_awareness_log("  ", unit, " is suspicious")
-					suspicious = suspicious + 1
+		if los_any then
+			for i, los_value in ipairs(los_targets) do
+				if los_value then
+					local unit = units[i]
+					local sight = unit:GetSightRadius(actor)
+					if IsCloser(unit, actor, sight + 1) and not unit.seen_bodies[actor] then
+						local aware_state = g_Combat and "surprised" or "suspicious"
+						if unit:SetPendingAwareState(aware_state) then
+							unit.suspicious_body_seen = actor:GetHandle()
+							unit.seen_bodies[actor] = true
+							dbg_awareness_log("  ", unit, " is suspicious")
+							suspicious = suspicious + 1
+						end
+					end
 				end
 			end
 		end
@@ -221,13 +233,20 @@ function PushUnitAlert(trigger_type, ...)
 		local units = table.ifilter(g_Units, function(idx, unit) return not unit:IsAware("pending") and (not attacker or unit:IsOnEnemySide(attacker)) end)
 	
 		local los_any, los_targets = CheckLOS(units, obj)
-		for i, unit in ipairs(units) do
-			local sight = unit:GetSightRadius(obj)
-			if los_targets and los_targets[i] and unit:GetDist(obj) <= sight and unit:SetPendingAwareState("surprised", T{Presets.AwareReasons.Default.arThrownObject.display_name, enemy = unit.Name}) then
-				dbg_awareness_log("  ", unit, " is surprised")
-				surprised = surprised + 1
+		if los_any then
+			for i, los_value in ipairs(los_targets) do
+				if los_value then
+					local unit = units[i]
+					local sight = unit:GetSightRadius(obj)
+					if IsCloser(unit, obj, sight + 1) then
+						if unit:SetPendingAwareState("surprised", T{Presets.AwareReasons.Default.arThrownObject.display_name, enemy = unit.Name}) then
+							dbg_awareness_log("  ", unit, " is surprised")
+							surprised = surprised + 1
+						end
+					end
+				end
 			end
-		end		
+		end
 	elseif trigger_type == "script" then --should this be included in the aware_reason
 		local units = select(1, ...) -- units to become suspicious/aware
 		local state = select(2, ...)
@@ -310,13 +329,14 @@ function PropagateAwareness(alerted_units, roles, killed_units)
 	local i = 1	
 	while i <= #alerted_units do
 		local unit = alerted_units[i]
-		local sight = unit:GetSightRadius() -- since we only care about seeing allies, there's no need to check for sight against them, base value will suffice
-		if not unit:IsDead() or (killed_units and table.find(killed_units, unit)) then
-			local upos = GetPackedPosAndStance(unit)
+		local killed = killed_units and table.find(killed_units, unit)
+		if not unit:IsDead() or killed then
+			local upos = GetPackedPosAndStance(unit, killed and unit.killed_stance)
 			local allies = GetAllAlliedUnits(unit)
 			for _, ally in ipairs(allies) do
 				if IsValidTarget(ally) and (ally.team.side == "neutral" or (not ally:IsAware() and ally.pending_aware_state ~= "aware")) then
 					local apos = GetPackedPosAndStance(ally)
+					local sight = ally:GetSightRadius(unit)
 					if apos and upos and (stance_pos_dist(upos, apos) <= sight) and stance_pos_visibility(upos, apos) then
 						table.insert_unique(alerted_units, ally)
 						if roles then
@@ -578,6 +598,8 @@ function AlertPendingUnits(sync_code)
 	end			
 end
 
+MapGameTimeRepeat("AlertPendingUnits", 100, AlertPendingUnits)
+
 function OnMsg.VisibilityUpdate()
 	if not g_Combat then return end -- out of combat this is handled by UpdateSuspicion
 	
@@ -660,7 +682,7 @@ MapGameTimeRepeat("DeadAwarenessPulseTick", 500, function()
 end)
 
 function Unit:SetPendingAwareState(state, reason, alerter)
-	NetUpdateHash("SetPendingAwareState", state, reason, alerter, self.pending_aware_state, self:IsAware())
+	NetUpdateHash("SetPendingAwareState", state, alerter, self.pending_aware_state, self:IsAware())
 	if self.dummy or self.team.side == "neutral" or self:IsDead() or self:IsAware() then return end
 	
 	if reason and (not self.aware_reason or table.find(Presets.AwareReasons.Default, "display_name", reason[1]) > table.find(Presets.AwareReasons.Default, "display_name", self.aware_reason[1])) then
@@ -789,7 +811,7 @@ function Unit:ClaimRepositionMarker()
 			CanOccupy(unit, x, y, z) and 
 			marker:IsMarkerEnabled()
 	end, self)
-	if #rep_markers == 0 then
+	if not rep_markers or #rep_markers == 0 then
 		return
 	end
 	local idx = 1 + self:Random(#rep_markers)

@@ -7,8 +7,8 @@ DefineClass.GutHookKnife = {
 
 
 	object_class = "MeleeWeapon",
-	Reliability = 50,
 	ScrapParts = 2,
+	Reliability = 50,
 	Icon = "UI/Icons/Weapons/GutHookKnife",
 	DisplayName = T(271517940366, --[[InventoryItemCompositeDef GutHookKnife DisplayName]] "Gut Hook Knife"),
 	DisplayNamePlural = T(947457047925, --[[InventoryItemCompositeDef GutHookKnife DisplayNamePlural]] "Gut Hook Knives"),

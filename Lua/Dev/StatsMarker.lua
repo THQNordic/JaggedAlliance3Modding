@@ -106,7 +106,7 @@ end
 
 function OnMsg.GameEnterEditor()
 	if not g_StatsMarkers then
-		g_StatsMarkers = MapGetMarkers("Stats")
+		g_StatsMarkers = MapGetMarkers("Stats") or false
 	end
 	if not g_StatsMarkersThread then
 		g_StatsMarkersThread = CreateRealTimeThread(function()

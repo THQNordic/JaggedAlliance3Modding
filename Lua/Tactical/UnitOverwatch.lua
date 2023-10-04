@@ -56,7 +56,7 @@ function Unit:UpdateOverwatchVisual(overwatch)
 					range = overwatch.dist,
 					step_positions = step_positions,
 					step_objs = step_objs,
-					los_values = los_values,
+					los_values = los_values or empty_table,
 				}
 				self.prepared_attack_obj = MortarAOEVisuals:new({
 					material_prefix = "EyesOnTheBack",
@@ -99,7 +99,7 @@ local function CalcEarlyOverwatchEntry(unit, action_id, weapon, args, attack_dat
 		dist = distance,
 		min_distance_2d = aoe_params.min_distance_2d,
 		dir = SetLen(target_pos - step_pos, guim),
-		aim = Min((args.aim_ap or 0) / const.Scale.AP, weapon.MaxAimActions),
+		aim = args.aim or 0,
 		action_id = weapon:GetBaseAttack(unit),
 		origin_action_id = action_id,
 		triggered_by = args.triggered_by,
@@ -226,7 +226,7 @@ function Unit:OverwatchAction(action_id, cost_ap, args)
 		dist = distance,
 		min_distance_2d = aoe_params.min_distance_2d,
 		dir = SetLen(target_pos - step_pos, guim),
-		aim = Min((args.aim_ap or 0) / const.Scale.AP, weapon.MaxAimActions),
+		aim = args.aim or 0,
 		action_id = self:GetDefaultAttackAction("ranged", "ungrouped", nil, true, "ignore").id,
 		origin_action_id = action_id,
 		triggered_by = args.triggered_by,
@@ -238,24 +238,7 @@ function Unit:OverwatchAction(action_id, cost_ap, args)
 	}
 	
 	self:UpdateOverwatchVisual()
-
-	local enemies = table.ifilter(GetAllEnemyUnits(self), function(_, enemy) return enemy:GetDist(step_pos) <= distance end)
-	if #enemies > 0 then
-		local maxvalue, los_values = CheckLOS(enemies, step_pos, distance, stance, cone_angle, target_angle, false)
-
-		-- reveal & mark enemies in the area
-		for i, los in ipairs(los_values) do
-			if los then
-				if enemies[i]:HasStatusEffect("Hidden") then
-					CombatLog("short", T{353305209140, "<LogName> was revealed by enemy overwatch", enemies[i]})
-					enemies[i]:RemoveStatusEffect("Hidden")
-				end
-				if HasPerk(self, "Spotter") then
-					enemies[i]:AddStatusEffect("Marked")
-				end
-			end
-		end
-	end
+	self:OnOverwatchPlaced()
 		
 	if action_id ~= "MGSetup" and action_id ~= "MGRotate" then
 		self.ActionPoints = 0	
@@ -270,6 +253,43 @@ function Unit:OverwatchAction(action_id, cost_ap, args)
 	end
 
 	self:SetCommand("PreparedAttackIdle")
+end
+
+function Unit:OnOverwatchPlaced()
+	local overwatch = g_Overwatch[self]
+	if not overwatch then return end
+	
+	local step_pos = overwatch.pos
+	local distance = overwatch.dist
+	local stance = overwatch.stance
+	local cone_angle = overwatch.cone_angle
+	local target_angle = overwatch.angle
+	
+	local enemies = table.ifilter(GetAllEnemyUnits(self), function(_, enemy) return enemy:GetDist(step_pos) <= distance end)
+	if #enemies > 0 then
+		local maxvalue, los_values = CheckLOS(enemies, step_pos, distance, stance, cone_angle, target_angle, false)
+
+		-- reveal & mark enemies in the area
+		for i, los in ipairs(los_values) do
+			if los then
+				if enemies[i]:HasStatusEffect("Hidden") then
+					CombatLog("short", T{353305209140, "<LogName> was revealed by enemy overwatch", enemies[i]})
+					enemies[i]:RemoveStatusEffect("Hidden")
+				end
+				if g_Combat and HasPerk(self, "Spotter") then
+					enemies[i]:AddStatusEffect("Marked")
+				end
+			end
+		end
+	end
+end
+
+function OnMsg.CombatStart(dynamic_data)
+	if not dynamic_data then
+		for _, unit in ipairs(g_Units) do
+			unit:OnOverwatchPlaced()
+		end
+	end
 end
 
 function Unit:GetOverwatchAttacksAndAim(action, args, unit_ap)
@@ -291,7 +311,8 @@ function Unit:GetOverwatchAttacksAndAim(action, args, unit_ap)
 		attacks = attacks + CharacterEffectDefs.OverwatchExpert:ResolveValue("bonusAttacks")
 	end
 
-	local aim = 0
+	local minAim, maxAim = self:GetBaseAimLevelRange(action)
+	local aim = minAim or 0
 	local extraAttackBonus = GetComponentEffectValue(weapon, "ExtraOverwatchShots", "extra_attacks")
 	if extraAttackBonus then
 		attacks = attacks + extraAttackBonus
@@ -984,270 +1005,335 @@ local function GetNearbyPathfindingPath(unit)
 	return path
 end
 
-function Unit:CheckProvokeOpportunityAttacks(trigger_type, target_dummies, visible_only, return_result, trigger_attack_type)
-	-- return by default the interrupts of the very first dummy
-	if IsSetpiecePlaying() or not self.team or self.team.side == "neutral" then
-		return
+local function AddInterrupt(target_dummies, interrupts, return_result, idx, provoke_attack, obj, attack_args, keep_dummy, interrupt_pos)
+	--if visible_only and not HasVisibilityTo(self.team, obj) then return end
+	assert(return_result ~= "any")
+	if return_result ~= "all" then
+		if idx < #target_dummies and not keep_dummy then
+			for k = 1, #target_dummies - idx do
+				table.remove(target_dummies)
+			end
+			table.iclear(interrupts)
+		end
 	end
-	if g_StartingCombat then -- units moving to their combat positions should not provoke opportunity attacks, only their combat movement
+	table.insert(interrupts, {provoke_attack, obj, attack_args, target_dummies[idx], interrupt_pos})
+end
+
+local _interrupts_traps
+
+local function CheckProvokeOpportunityAttacks_Trap(self, target_dummies, interrupts, return_result, visible_only, known_traps)
+	local idx = 1
+	local posx, posy, posz
+	_interrupts_traps = nil
+
+	while idx <= #target_dummies do
+		local dummy = target_dummies[idx]
+		local prev_x, prev_y = posx, posy
+		if IsValid(dummy) then
+			if dummy:IsValidPos() then
+				posx, posy, posz = dummy:GetPosXYZ()
+			end
+		else
+			if dummy.pos then
+				posx, posy, posz = dummy.pos:xyz()
+			else
+				local dummy_obj = dummy.obj or self
+				if dummy_obj and dummy_obj:IsValidPos() then
+					posx, posy, posz = dummy_obj:GetPosXYZ()
+				end
+			end
+		end
+		if posx then
+			MapForEach(posx, posy, MaxTrapTriggerRadius * const.SlabSizeX, "Landmine", function(obj, idx, posx, posy, posz, self, target_dummies, interrupts, return_result, visible_only, known_traps)
+				if obj:IsDead() then
+					return
+				end
+				-- This isn't necessary for MaxTrapTriggerRadius above since we don't know where pos is relative to
+				-- the center of a voxel, and in the worst case we'll just cut it off here.
+				local radius = obj:GetTriggerDistance()
+				if radius <= 0 then
+					return
+				end
+				local dist = obj:GetDist2D(posx, posy)
+				if dist >= radius then
+					if prev_x and (prev_x ~= posx or prev_y ~= posy) and IsCloser2D(posx, posy, prev_x, prev_y, radius) then
+						dist = DistPtToSegment2D(point(prev_x, prev_y), point(posx, posy), obj:GetPos())
+					end
+					if dist >= radius + const.SlabSizeX * 3 / 4 then
+						return
+					end
+				end
+				local z = select(3, obj:GetPosXYZ()) or terrain.GetHeight(obj)
+				if abs(z - (posz or terrain.GetHeight(posx, posy))) > const.SlabSizeZ then
+					return
+				end
+				local passed_type
+				local passed_idx = table.find(self.passed_interrupts, 2, obj)
+				if passed_idx then
+					passed_type = self.passed_interrupts[passed_idx][1]
+					if passed_type == "trap" then
+						return
+					end
+				end
+				local side = self.team and self.team.side
+				local seen = obj:SeenByTeam(side)
+				if visible_only and not seen then
+					return
+				end
+				if seen and not self.combat_path and not (side == "player1" or side == "player2" or side == "ally") then
+					return
+				end
+				if dist < radius then
+					if return_result == "any" then
+						_interrupts_traps = true
+						return "break"
+					end
+					AddInterrupt(target_dummies, interrupts, return_result, idx, "trap", obj)
+				else
+					-- exploration_interrupt
+					if return_result ~= "any" and not self.combat_path and not self.goto_interrupted then
+						local vx, vy, vz = SnapToVoxel(posx, posy, posz)
+						local ox, oy = obj:GetPosXYZ()
+						local d = radius + const.SlabSizeX
+						if ox >= vx - d and oy >= vy - d and ox < vx + d and oy < vy + d then
+							local nearbyPath = GetNearbyPathfindingPath(self)
+							local pt_interrupt
+							for k = 2, #nearbyPath do
+								local dist, x, y, z = DistSegmentToPt2D(nearbyPath[k-1], nearbyPath[k]:x(), nearbyPath[k]:y(), 0, obj)
+								if dist < radius then
+									local interrupt_pt = GetPassSlab(x, y, z)
+									if not interrupt_pt or IsCloser2D(obj, interrupt_pt, radius) then
+										interrupt_pt = GetPassSlab(nearbyPath[k-1])
+									end
+									_interrupts_traps = true
+									AddInterrupt(target_dummies, interrupts, return_result, idx, "trap_approach", obj, nil, nil, interrupt_pt)
+									break
+								end
+							end
+						end
+					end
+				end
+				if return_result ~= "any" and self.combat_path and not seen and not passed_type and idx > 1 and (not known_traps or not known_traps[obj]) then
+					for i = idx, 1, -1 do
+						local dummy = target_dummies[i]
+						local interrupt_x, interrupt_y, interrupt_z = SnapToPassSlabXYZ(dummy.pos or dummy.obj)
+						if interrupt_x and not IsCloser(obj, interrupt_x, interrupt_y, interrupt_z or const.InvalidZ, radius) then
+							_interrupts_traps = true
+							AddInterrupt(target_dummies, interrupts, return_result, i, "trap_interrupt", obj)
+							break
+						end
+					end
+				end
+			end, idx, posx, posy, posz, self, target_dummies, interrupts, return_result, visible_only, known_traps)
+			if return_result == "any" and _interrupts_traps then
+				return true
+			end
+		end
+		idx = idx + 1
+	end
+	if _interrupts_traps then
+		return true
+	end
+end
+
+local function CheckProvokeOpportunityAttacks_MeleeInterruptsMovement(self, target_dummies, interrupts, return_result)
+	local has_interrupt
+	for i, team in ipairs(g_Teams) do
+		if team:IsEnemySide(self.team) then
+			for _, attacker in ipairs(team.units) do
+				if attacker:CanUseMeleeTraining() and not table.find(self.passed_interrupts, 2, attacker) then
+					local idx_melee_atk
+					for idx, dummy in ipairs(target_dummies) do
+						local can_melee_attack
+						if IsValid(dummy) then
+							local target = IsKindOf(dummy, "TargetDummy") and dummy.obj or dummy
+							can_melee_attack = IsMeleeRangeTarget(attacker, nil, attacker.stance, target, nil, dummy.stance)
+						else
+							can_melee_attack = IsMeleeRangeTarget(attacker, nil, attacker.stance, dummy.obj, dummy.pos, dummy.stance)
+						end
+						if can_melee_attack then
+							idx_melee_atk = idx
+						elseif idx_melee_atk == idx - 1 then
+							if return_result == "any" then
+								return true
+							end
+							AddInterrupt(target_dummies, interrupts, return_result, idx_melee_atk, "melee", attacker)
+							has_interrupt = true
+							break
+						end
+					end
+				end
+			end
+		end
+	end
+	return has_interrupt
+end
+
+local function CheckProvokeOpportunityAttacks_MeleeInterruptsRangedAttacks(self, target_dummies, interrupts, return_result)
+	local has_interrupt
+	for i, team in ipairs(g_Teams) do
+		if team:IsEnemySide(self.team) then
+			for _, attacker in ipairs(team.units) do
+				if attacker:CanUseMeleeTraining() and not table.find(self.passed_interrupts, 2, attacker) then
+					for idx, dummy in ipairs(target_dummies) do
+						local can_melee_attack
+						if IsValid(dummy) then
+							local target = IsKindOf(dummy, "TargetDummy") and dummy.obj or dummy
+							can_melee_attack = IsMeleeRangeTarget(attacker, nil, attacker.stance, target, nil, dummy.stance)
+						else
+							can_melee_attack = IsMeleeRangeTarget(attacker, nil, attacker.stance, dummy.obj, dummy.pos, dummy.stance)
+						end
+						if can_melee_attack then
+							if return_result == "any" then
+								return true
+							end
+							AddInterrupt(target_dummies, interrupts, return_result, idx, "melee", attacker)
+							has_interrupt = true
+							break
+						end
+					end
+				end
+			end
+		end
+	end
+	return has_interrupt
+end
+
+local function CheckProvokeOpportunityAttacks_Overwatch(self, target_dummies, interrupts, visible_only, return_result)
+	local overwatch_interrupt, fail_interrupt
+	local attackers = SortUnitsMap(g_Overwatch)
+	for _, data in ipairs(attackers) do
+		local attacker = data.unit
+		if attacker:IsOnEnemySide(self) and
+			(g_Combat or (attacker.team.player_enemy and attacker:HasStatusEffect("ManningEmplacement"))) and
+			(not visible_only or HasVisibilityTo(self.team, attacker)) and
+			not table.find(self.passed_interrupts, 2, attacker)
+		then
+			local conditions = {}
+			local idx, attack_args = attacker:OverwatchCheck(self, target_dummies, conditions, not visible_only)
+			if idx then
+				if return_result == "any" then
+					return true
+				end
+				if fail_interrupt then
+					table.remove(interrupts, fail_interrupt)
+					fail_interrupt = nil
+				end
+				AddInterrupt(target_dummies, interrupts, return_result, idx, "overwatch", attacker, attack_args)
+				overwatch_interrupt = #interrupts
+			elseif not overwatch_interrupt and not fail_interrupt then
+				-- check if there's a non-zero condition (in area) and add a provisional "interrupt" to indicate a failed trigger if no real trigger happens
+				local trigger_condition
+				for i, cond in ipairs(conditions) do
+					if cond ~= 0 then
+						trigger_condition = cond
+						idx = i
+						break
+					end
+				end
+				if trigger_condition then
+					if return_result == "any" then
+						return true
+					end
+					AddInterrupt(target_dummies, interrupts, return_result, idx, "failoverwatch", attacker, trigger_condition, "keep")
+					fail_interrupt = #interrupts
+				end
+			end
+		end
+	end
+	if overwatch_interrupt or fail_interrupt then
+		return true
+	end
+end
+
+MapVar("__provoke_opportunity_attacks_target_dummies", {})
+MapVar("__provoke_opportunity_attacks_interrupts", {})
+
+function Unit:CheckProvokeOpportunityAttacks(trigger_type, target_dummies_all, visible_only, return_result, trigger_attack_type, known_traps)
+	-- return by default the interrupts of the very first dummy
+	if not self.team or self.team.side == "neutral" then
+		return
+	elseif IsSetpiecePlaying() then
+		return
+	elseif g_StartingCombat then -- units moving to their combat positions should not provoke opportunity attacks, only their combat movement
 		-- todo: check interactions with traps/mines
 		return
-	end
-	
-	if self.opportunity_attack then
+	elseif self.opportunity_attack then
 		return -- already in opportunity attack (melee interrupt, pindown, overwatch, retaliate)
-	end
-	if #target_dummies == 0 then
+	elseif #target_dummies_all == 0 then
 		return
 	end	
-	
+
 	local hardblow
-	if self.move_attack_action_id and trigger_type == "move" then
+	if trigger_type == "move" and self.move_attack_action_id then
 		local action = CombatActions[self.move_attack_action_id]
 		if action and action.ActionType == "Melee Attack" and HasPerk(self, "HardBlow") then
 			hardblow = true
 		end
 	end
 
-	local interrupts = {}
-	target_dummies = table.icopy(target_dummies)
-
-	local AddInterrupt = function(idx, provoke_attack, obj, attack_args, keep_dummy, interrupt_pos)
-		if visible_only and not HasVisibilityTo(self.team, obj) then return end
-		if return_result ~= "all" then
-			if idx < #target_dummies and not keep_dummy then
-				for k = 1, #target_dummies - idx do
-					table.remove(target_dummies)
-				end
-				table.iclear(interrupts)
-			end
-		end
-		table.insert(interrupts, {provoke_attack, obj, attack_args, target_dummies[idx], interrupt_pos})
+	table.iclear(__provoke_opportunity_attacks_interrupts)
+	table.iclear(__provoke_opportunity_attacks_target_dummies)
+	for i, dummy in ipairs(target_dummies_all) do
+		__provoke_opportunity_attacks_target_dummies[i] = dummy
 	end
-
-	-- pindown
---[[	if next(g_Pindown) then
-		if trigger_type == "attack interrupt" or trigger_type == "move" then
-			local attackers = SortUnitsMap(g_Pindown)
-			for _, data in ipairs(attackers) do
-				local attacker, descr = data.unit, data.data
-				if descr.target == self then
-					if CheckLOS(self, attacker, attacker:GetSightRadius()) then
-						AddInterrupt(1, "pindown", attacker)
-					else
-						attacker:InterruptPreparedAttack()
-					end
-				end
-			end
-		end
-	end--]]
+	local target_dummies = __provoke_opportunity_attacks_target_dummies
+	local interrupts = __provoke_opportunity_attacks_interrupts
 
 	-- traps
 	if trigger_type == "move" then
-		local idx = 1
-		local pos
-		while idx <= #target_dummies do
-			local dummy = target_dummies[idx]
-			local dummy_obj = IsValid(dummy) and dummy or dummy.obj or self
-			local prev_pos = pos
-			pos = IsValid(dummy) and dummy:GetPos() or dummy.pos or dummy_obj:GetPos()
-			if not pos:IsValid() then
-				pos = nil
+		if CheckProvokeOpportunityAttacks_Trap(self, target_dummies, interrupts, return_result, visible_only, known_traps) then
+			if return_result == "any" then
+				return true
 			end
-			if pos then
-				if not pos:IsValidZ() then
-					pos = pos:SetTerrainZ()
-				end
-				local segment_dist = prev_pos and pos:Dist2D(prev_pos) or 0
-				MapForEach(pos, MaxTrapTriggerRadius * const.SlabSizeX, "Landmine", function(obj)
-					if obj:IsDead() then
-						return
-					end
-
-					-- This isn't necessary for MaxTrapTriggerRadius above since we don't know where pos is relative to
-					-- the center of a voxel, and in the worst case we'll just cut it off here.
-					local radius = obj:GetTriggerDistance()
-					if radius <= 0 then
-						return
-					end
-					local dist = obj:GetDist2D(pos)
-					if dist >= radius then
-						if segment_dist > 0 and dist + segment_dist < radius then
-							dist = DistPtToSegment2D(prev_pos, pos, obj:GetPos())
-						end
-						if dist >= radius + const.SlabSizeX * 3 / 4 then
-							return
-						end
-					end
-					local z = select(3, obj:GetPosXYZ()) or terrain.GetHeight(obj)
-					if abs(z - pos:z()) > const.SlabSizeZ then
-						return
-					end
-					local passed_type
-					local passed_idx = table.find(self.passed_interrupts, 2, obj)
-					if passed_idx then
-						passed_type = self.passed_interrupts[passed_idx][1]
-						if passed_type == "trap" then
-							return
-						end
-					end
-					local side = self.team and self.team.side
-					local seen = obj:SeenByTeam(side)
-					if visible_only and not seen then
-						return
-					end
-					if seen and not self.combat_path and not (side == "player1" or side == "player2" or side == "ally") then
-						return
-					end
-					-- exploration_interrupt
-					if dist >= radius then
-						if not self.combat_path and not self.goto_interrupted then
-							local vx, vy, vz = SnapToVoxel(pos:xyz())
-							local d = const.SlabSizeX
-							local bbox = box(vx - d - radius, vy - d - radius, vx + d + radius, vy + d + radius)
-							if bbox:Point2DInside(obj:GetPosXYZ()) then
-								local nearbyPath = GetNearbyPathfindingPath(self)
-								local pt_interrupt
-								for k = 2, #nearbyPath do
-									local dist, x, y, z = DistSegmentToPt2D(nearbyPath[k-1], nearbyPath[k]:x(), nearbyPath[k]:y(), 0, obj)
-									if dist < radius then
-										local interrupt_pt = GetPassSlab(point(x, y, z))
-										if not interrupt_pt or IsCloser2D(obj, interrupt_pt, radius) then
-											interrupt_pt = GetPassSlab(nearbyPath[k-1])
-										end
-										AddInterrupt(idx, "trap_approach", obj, nil, nil, interrupt_pt)
-										break
-									end
-								end
-							end
-						end
-						return
-					end
-					AddInterrupt(idx, "trap", obj)
-					if return_result == "any" then
-						return "break"
-					end
-					if not seen and not passed_type and idx > 1 then
-						for i = idx - 1, 1, -1 do
-							local interrupt_pos = SnapToPassSlab(target_dummies[idx - 1].pos)
-							if interrupt_pos and not IsCloser(obj, interrupt_pos, radius) then
-								AddInterrupt(i, "trap_interrupt", obj)
-								break
-							end
-						end
-					end
-				end)
-				if #interrupts > 0 and return_result == "any" then
-					return interrupts, #interrupts
-				end
-			end
-			idx = idx + 1
 		end
 	end
-
 	-- melee interrupts (movement)
-	if g_Combat and trigger_type == "move" and not hardblow then
-		for _, attacker in ipairs(g_Units) do
-			if attacker:CanUseMeleeTraining() and attacker:IsOnEnemySide(self) and not table.find(self.passed_interrupts, 2, attacker) then
-				local idx_melee_atk
-				for idx, dummy in ipairs(target_dummies) do
-					local can_melee_attack
-					if IsValid(dummy) then
-						local target = IsKindOf(dummy, "TargetDummy") and dummy.obj or dummy
-						can_melee_attack = IsMeleeRangeTarget(attacker, nil, attacker.stance, target, nil, dummy.stance)
-					else
-						can_melee_attack = IsMeleeRangeTarget(attacker, nil, attacker.stance, dummy.obj, dummy.pos, dummy.stance)
-					end
-					if can_melee_attack then
-						idx_melee_atk = idx
-					elseif idx_melee_atk == idx - 1 then
-						if return_result == "any" then
-							return true
-						end
-						AddInterrupt(idx_melee_atk, "melee", attacker)
-						break
-					end
-				end
+	if trigger_type == "move" and g_Combat and not hardblow then
+		if CheckProvokeOpportunityAttacks_MeleeInterruptsMovement(self, target_dummies, interrupts, return_result) then
+			if return_result == "any" then
+				return true
 			end
 		end
 	end
-		
 	-- melee interrupts (ranged attacks;)
-	local melee_trigger = (trigger_type == "attack interrupt" and trigger_attack_type ~= "melee") or
+	if g_Combat and not hardblow then
+		local melee_trigger =
+			(trigger_type == "attack interrupt" and trigger_attack_type ~= "melee") or
 			(trigger_type == "attack reaction" and trigger_attack_type == "melee")
-	if g_Combat and melee_trigger and not hardblow then
-		for _, attacker in ipairs(g_Units) do
-			if attacker:CanUseMeleeTraining() and attacker:IsOnEnemySide(self) and not table.find(self.passed_interrupts, 2, attacker) then
-				for idx, dummy in ipairs(target_dummies) do
-					local can_melee_attack
-					if IsValid(dummy) then
-						local target = IsKindOf(dummy, "TargetDummy") and dummy.obj or dummy
-						can_melee_attack = IsMeleeRangeTarget(attacker, nil, attacker.stance, target, nil, dummy.stance)
-					else
-						can_melee_attack = IsMeleeRangeTarget(attacker, nil, attacker.stance, dummy.obj, dummy.pos, dummy.stance)
-					end
-					if can_melee_attack then
-						if return_result == "any" then
-							return true
-						end
-						AddInterrupt(idx, "melee", attacker)
-						break
-					end
+		if melee_trigger then
+			if CheckProvokeOpportunityAttacks_MeleeInterruptsRangedAttacks(self, target_dummies, interrupts, return_result) then
+				if return_result == "any" then
+					return true
 				end
 			end
 		end
 	end
-
 	-- overwatch
 	if next(g_Overwatch) and not hardblow then
 		if trigger_type == "attack interrupt" or trigger_type == "move" and not HasPerk(self, "LightStep") then
-			local overwatch_interrupt, fail_interrupt
-			local attackers = SortUnitsMap(g_Overwatch)
-			for _, data in ipairs(attackers) do
-				local attacker = data.unit
-				if attacker:IsOnEnemySide(self) and
-					(g_Combat or (attacker.team.player_enemy and attacker:HasStatusEffect("ManningEmplacement"))) and
-					(not visible_only or HasVisibilityTo(self.team, attacker)) and
-					not table.find(self.passed_interrupts, 2, attacker)
-				then
-					local conditions = {}
-					local idx, attack_args = attacker:OverwatchCheck(self, target_dummies, conditions, not visible_only)
-					if idx then
-						if return_result == "any" then
-							return true
-						end
-						if fail_interrupt then
-							table.remove(interrupts, fail_interrupt)
-							fail_interrupt = nil
-						end
-						AddInterrupt(idx, "overwatch", attacker, attack_args)
-						overwatch_interrupt = #interrupts
-					elseif not overwatch_interrupt and not fail_interrupt then
-						-- check if there's a non-zero condition (in area) and add a provisional "interrupt" to indicate a failed trigger if no real trigger happens
-						local trigger_condition
-						for i, cond in ipairs(conditions) do
-							if cond ~= 0 then
-								trigger_condition = cond
-								idx = i
-								break
-							end
-						end
-						if trigger_condition then
-							if return_result == "any" then
-								return true
-							end
-							AddInterrupt(idx, "failoverwatch", attacker, trigger_condition, "keep")
-							fail_interrupt = #interrupts
-						end
-					end
+			if CheckProvokeOpportunityAttacks_Overwatch(self, target_dummies, interrupts, visible_only, return_result) then
+				if return_result == "any" then
+					return true
 				end
 			end
 		end
 	end
-
-	if #interrupts > 0 then
-		return interrupts, #target_dummies
+	if #interrupts == 0 then
+		return
 	end
+	-- move warnings last
+	for i = #interrupts - 1, 1, -1 do
+		local data = interrupts[i]
+		local provoke_attack = data[1]
+		if provoke_attack == "trap_interrupt" or provoke_attack == "trap_approach" then
+			table.remove(interrupts, i)
+			table.insert(interrupts, data)
+		end
+	end
+	local provoke_idx = #target_dummies
+	__provoke_opportunity_attacks_interrupts = {}
+	return interrupts, provoke_idx
 end
 
 function Unit:FinishOpportunityAttack_Pindown()
@@ -1623,6 +1709,22 @@ function Unit:GetNumMGInterruptAttacks(skip_check)
 	
 	return const.Combat.MGFreeInterruptAttacks + ap / ap_cost
 end
+
+function Unit:UpdateNumOverwatchAttacks()
+	local overwatch = g_Overwatch[self]
+	if overwatch and overwatch.permanent then
+		local num = self:GetNumMGInterruptAttacks()
+		if num ~= overwatch.num_attacks then
+			overwatch.num_attacks = num
+			self:UpdateOverwatchVisual(overwatch)
+		end
+	end
+end
+
+function OnMsg.UnitAPChanged(unit)
+	unit:UpdateNumOverwatchAttacks()
+end
+
 
 local function TimeToNextMoment(obj, moment)
 	local t = obj:TimeToMoment(1, moment)

@@ -83,37 +83,37 @@ SetpiecePrgs.Landsbach_BounceAttack = function(seed, state, TriggerUnits)
 	prgdbg(li, 1, 56) sprocall(SetpieceWaitCheckpoint.Exec, SetpieceWaitCheckpoint, state, rand, "1st Scene")
 	prgdbg(li, 1, 57) sprocall(SetpieceCamera.Exec, SetpieceCamera, state, rand, false, "", "Max", "", "harmonic", "linear", 8000, false, false, point(139911, 160134, 10462), point(135205, 158569, 11095), point(142396, 160422, 10047), point(137602, 159187, 10745), 4200, 2000, false, 0, 0, 0, 0, 0, 0, "Show all", 100)
 	local _, SmileyRunOut
-	prgdbg(li, 1, 58) _, SmileyRunOut = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Bounce, "Bounce_Go_To_01", true, false, false, "Crouch", false, false, "")
+	prgdbg(li, 1, 58) _, SmileyRunOut = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Bounce, "Bounce_Go_To_01", true, false, false, "Crouch", false, false, "", 1000)
 	local _
-	prgdbg(li, 1, 59) _, SmileyRunOut = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Doorknob, "Doorknob_Go_To_01", true, false, false, "Crouch", false, false, "")
+	prgdbg(li, 1, 59) _, SmileyRunOut = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Doorknob, "Doorknob_Go_To_01", true, false, false, "Crouch", false, false, "", 1000)
 	local _
-	prgdbg(li, 1, 60) _, SmileyRunOut = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", NightClubThug1, "NightClubThug1_Go_To_01", true, false, false, "Crouch", false, false, "")
+	prgdbg(li, 1, 60) _, SmileyRunOut = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", NightClubThug1, "NightClubThug1_Go_To_01", true, false, false, "Crouch", false, false, "", 1000)
 	local _
-	prgdbg(li, 1, 61) _, SmileyRunOut = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", NightClubThug2, "NightClubThug2_Go_To_01", true, false, false, "Crouch", false, false, "")
+	prgdbg(li, 1, 61) _, SmileyRunOut = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", NightClubThug2, "NightClubThug2_Go_To_01", true, false, false, "Crouch", false, false, "", 1000)
 	local _
-	prgdbg(li, 1, 62) _, SmileyRunOut = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", NightClubThug3, "NightClubThug3_Go_To_01", true, false, false, "Crouch", false, false, "")
+	prgdbg(li, 1, 62) _, SmileyRunOut = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", NightClubThug3, "NightClubThug3_Go_To_01", true, false, false, "Crouch", false, false, "", 1000)
 	local _
-	prgdbg(li, 1, 63) _, SmileyRunOut = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", NightClubThug4, "NightClubThug4_Go_To_01", true, false, false, "Crouch", false, false, "")
+	prgdbg(li, 1, 63) _, SmileyRunOut = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", NightClubThug4, "NightClubThug4_Go_To_01", true, false, false, "Crouch", false, false, "", 1000)
 	local _
-	prgdbg(li, 1, 64) _, SmileyRunOut = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", NightClubThug5, "NightClubThug5_Go_To_01", true, false, false, "Crouch", false, false, "")
+	prgdbg(li, 1, 64) _, SmileyRunOut = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", NightClubThug5, "NightClubThug5_Go_To_01", true, false, false, "Crouch", false, false, "", 1000)
 	local _
-	prgdbg(li, 1, 65) _, SmileyRunOut = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", NightClubThug6, "NightClubThug6_Go_To_01", true, false, false, "Crouch", false, false, "")
+	prgdbg(li, 1, 65) _, SmileyRunOut = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", NightClubThug6, "NightClubThug6_Go_To_01", true, false, false, "Crouch", false, false, "", 1000)
 	local _
-	prgdbg(li, 1, 66) _, SmileyRunOut = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", NightClubThug7, "NightClubThug7_Go_To_01", true, false, false, "Crouch", false, false, "")
+	prgdbg(li, 1, 66) _, SmileyRunOut = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", NightClubThug7, "NightClubThug7_Go_To_01", true, false, false, "Crouch", false, false, "", 1000)
 	local _
-	prgdbg(li, 1, 67) _, SmileyRunOut = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", NightClubThug8, "NightClubThug8_Go_To_01", true, false, false, "Crouch", false, false, "")
+	prgdbg(li, 1, 67) _, SmileyRunOut = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", NightClubThug8, "NightClubThug8_Go_To_01", true, false, false, "Crouch", false, false, "", 1000)
 	local _
-	prgdbg(li, 1, 68) _, SmileyRunOut = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Merc1, "Merc1_Go_To_01", true, false, false, "Crouch", false, false, "")
+	prgdbg(li, 1, 68) _, SmileyRunOut = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Merc1, "Merc1_Go_To_01", true, false, false, "Crouch", false, false, "", 1000)
 	local _
-	prgdbg(li, 1, 69) _, SmileyRunOut = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Merc2, "Merc2_Go_To_01", true, false, false, "Crouch", false, false, "")
+	prgdbg(li, 1, 69) _, SmileyRunOut = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Merc2, "Merc2_Go_To_01", true, false, false, "Crouch", false, false, "", 1000)
 	local _
-	prgdbg(li, 1, 70) _, SmileyRunOut = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Merc3, "Merc3_Go_To_01", true, false, false, "Crouch", false, false, "")
+	prgdbg(li, 1, 70) _, SmileyRunOut = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Merc3, "Merc3_Go_To_01", true, false, false, "Crouch", false, false, "", 1000)
 	local _
-	prgdbg(li, 1, 71) _, SmileyRunOut = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Merc4, "Merc4_Go_To_01", true, false, false, "Crouch", false, false, "")
+	prgdbg(li, 1, 71) _, SmileyRunOut = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Merc4, "Merc4_Go_To_01", true, false, false, "Crouch", false, false, "", 1000)
 	local _
-	prgdbg(li, 1, 72) _, SmileyRunOut = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Merc5, "Merc5_Go_To_01", true, false, false, "Crouch", false, false, "")
+	prgdbg(li, 1, 72) _, SmileyRunOut = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Merc5, "Merc5_Go_To_01", true, false, false, "Crouch", false, false, "", 1000)
 	local _
-	prgdbg(li, 1, 73) _, SmileyRunOut = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Merc6, "Merc6_Go_To_01", true, false, false, "Crouch", false, false, "")
+	prgdbg(li, 1, 73) _, SmileyRunOut = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Merc6, "Merc6_Go_To_01", true, false, false, "Crouch", false, false, "", 1000)
 	prgdbg(li, 1, 74) sprocall(SetpieceSleep.Exec, SetpieceSleep, state, rand, true, "", 8000)
 	prgdbg(li, 1, 75) sprocall(SetpieceCamera.Exec, SetpieceCamera, state, rand, false, "2nd Scene", "Max", "", "harmonic", "linear", 11500, false, false, point(184448, 165707, 12987), point(187168, 169452, 14879), point(187919, 163346, 12670), point(190638, 167090, 14562), 4200, 2000, false, 0, 0, 0, 0, 0, 0, "Show all", 100)
 	prgdbg(li, 1, 76) sprocall(PrgPlayEffect.Exec, PrgPlayEffect, state, rand, false, "2nd Scene", {PlaceObj('PlayBanterEffect', {Banters = {"Landsbach_Bounce03",},searchInMap = true,searchInMarker = false,}),})

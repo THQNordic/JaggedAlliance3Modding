@@ -287,6 +287,28 @@ function filter
 : optional object filter function.
 
 
+## FlightFindClosestAbove
+
+Search for a landing position around a center location. A landing position is a passable position exactly at the flight height.
+
+
+int **FlightFindClosestAbove**(grid, clip, pos, max_dist, min_dist, filter, ...)
+grid grid
+: flight map.
+
+box clip
+: flight area.
+
+point pos
+: center location.
+
+int pfclass
+: pf class to check for passability.
+
+function filter
+: filter to check position with args (x, y, z, h).
+
+
 ## FlightFindLanding
 
 Search for a landing position around a center location. A landing position is a passable position exactly at the flight height.
@@ -724,6 +746,74 @@ One is the interactable and the rest are considered visuals.
 object **ResolveInteractableObject**(obj)
 obj
 : An object in the collection.
+
+
+## ResolvePos
+
+Returns a position from different argument variants
+
+
+point **ResolvePos**(point pt)
+
+point **ResolvePos**(object obj)
+
+point **ResolvePos**(int x, int y [, int z])
+_returns_ point
+: position
+
+
+## ResolvePosXYZ
+
+Returns the coordinates of a position from different argument variants
+
+
+int, int, int **ResolvePosXYZ**(point pt)
+
+int, int, int **ResolvePosXYZ**(object obj)
+
+int, int, int **ResolvePosXYZ**(int x, int y [, int z])
+_returns_ int
+: x coordinate
+
+_returns_ int
+: x coordinate
+
+_returns_ int
+: z coordinate, only returned if valid
+
+
+## ResolveVisualPos
+
+Returns a visual position from different argument variants
+
+
+point **ResolveVisualPos**(point pt)
+
+point **ResolveVisualPos**(object obj)
+
+point **ResolveVisualPos**(int x, int y [, int z])
+_returns_ point
+: position
+
+
+## ResolveVisualPosXYZ
+
+Returns the coordinates of a visual position from different argument variants
+
+
+int, int, int **ResolveVisualPosXYZ**(point pt)
+
+int, int, int **ResolveVisualPosXYZ**(object obj)
+
+int, int, int **ResolveVisualPosXYZ**(int x, int y [, int z])
+_returns_ int
+: x coordinate
+
+_returns_ int
+: x coordinate
+
+_returns_ int
+: z coordinate, only returned if valid
 
 
 ## ResumeProcessing

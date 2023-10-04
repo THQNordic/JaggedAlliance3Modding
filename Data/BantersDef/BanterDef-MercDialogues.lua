@@ -887,7 +887,7 @@ PlaceObj('BanterDef', {
 	},
 	Once = true,
 	conditions = {
-		PlaceObj('AND', {
+		PlaceObj('CheckAND', {
 			Conditions = {
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "05_TakeDownMajor",
@@ -1121,7 +1121,7 @@ PlaceObj('BanterDef', {
 	},
 	Once = true,
 	conditions = {
-		PlaceObj('AND', {
+		PlaceObj('CheckAND', {
 			Conditions = {
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "05_TakeDownMajor",

@@ -334,6 +334,14 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"D5",
+						"D6",
+						"D7",
+						"E7",
+					},
+				}),
 				PlaceObj('UnitIsAroundOtherUnit', {
 					Distance = 10,
 					SecondTargetUnit = "any merc",
@@ -353,6 +361,12 @@ PlaceObj('QuestsDef', {
 			Once = true,
 			ParamId = "TCE_PlayBanter",
 			QuestId = "PantagruelLostAndFound",
+			requiredSectors = {
+				"D5",
+				"D6",
+				"D7",
+				"E7",
+			},
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {

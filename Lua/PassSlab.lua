@@ -18,19 +18,43 @@ CursorPosFilter = function(o)
 	return not IsKindOf(o, "CursorPosIgnoreObject")
 end
 
+MapVar("LastCursorPos", false)
+MapVar("CursorPosFrameNo", false)
+MapVar("LastWalkableCursorPos", false)
+MapVar("WalkableCursorPosFrameNo", false)
+
 function GetCursorPos(walkable)
+	local n = GetRenderFrame()
+	if walkable then
+		if n == WalkableCursorPosFrameNo then
+			return LastWalkableCursorPos
+		end
+	else
+		if n == CursorPosFrameNo then
+			return LastCursorPos
+		end
+	end
 	local src = camera.GetEye()
 	local dest = GetUIStyleGamepad() and GetTerrainGamepadCursor() or GetTerrainCursor()
 	local closest_obj, closest_pos = GetClosestRayObj(src, dest, walkable and flags_walkable or flags_enum, flags_game_ignore, CursorPosFilter, mask_all, flags_collision_mask)
-	return (closest_pos and not IsKindOf(closest_obj, "TerrainCollision")) and closest_pos or dest
+	local pos = (closest_pos and not IsKindOf(closest_obj, "TerrainCollision")) and closest_pos or dest
+	if walkable then
+		LastWalkableCursorPos = pos
+		WalkableCursorPosFrameNo = n
+	else
+		LastCursorPos = pos
+		CursorPosFrameNo = n
+	end
+	return pos
 end
 
 function GetCursorPassSlab()
 	return GetPassSlab(GetCursorPos())
 end
 
-function GetPackedPosAndStance(unit)
-	local stance_idx = StancesList[unit.stance]
+function GetPackedPosAndStance(unit, stance)
+	stance = stance or unit.stance
+	local stance_idx = StancesList[stance]
 	local x, y, z = GetPassSlabXYZ(unit.target_dummy or unit)
 	if x then
 		return stance_pos_pack(x, y, z, stance_idx)

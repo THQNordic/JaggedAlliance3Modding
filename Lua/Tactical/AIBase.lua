@@ -141,11 +141,10 @@ function AIAltArchetypeOnAllyDeath(unit, alt_archetype, count)
 	local dead = 0
 	count = count or 1
 	
-	for _, other in ipairs(g_Units) do
-		if other.team == unit.team and other:IsDead() then
-			dead = dead + 1
-		end
+	for _, other in ipairs(unit.team and unit.team.units) do
+		dead = dead + 1
 	end
+	
 	if dead >= last_dead + count then
 		unit:SetEffectValue("aa_num_team_dead", dead)
 		archetype = alt_archetype
@@ -157,9 +156,16 @@ function AIAltArchetypeOnNoEnemyDeath(unit, alt_archetype)
 	local archetype = unit.archetype
 	local last_dead = unit:GetEffectValue("aa_num_dead_enemies") or 0
 	local dead = 0
-	for _, other in ipairs(g_Units) do
-		if unit:IsOnEnemySide(other) and other:IsDead() then
-			dead = dead + 1
+	local unit_team = unit.team
+	if unit_team then
+		for _, team in ipairs(g_Teams) do
+			if unit_team:IsEnemySide(team) then
+				for _, other in ipairs(team.units) do
+					if other:IsDead() then
+						dead = dead + 1
+					end
+				end
+			end
 		end
 	end
 	unit:SetEffectValue("aa_num_dead_enemies", dead)

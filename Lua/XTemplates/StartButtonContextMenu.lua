@@ -846,7 +846,7 @@ PlaceObj('XTemplate', {
 					local ctx = self.idContent.context -- Dialog opened in
 					self:Close()
 					if ctx ~= GetDialog("FullscreenGameDialogs") then
-						InvokeShortcutAction(self, "actionInGameMainMenu")
+						--InvokeShortcutAction(self, "actionInGameMainMenu")
 					end
 					return "break"
 				end

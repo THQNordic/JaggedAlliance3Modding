@@ -404,9 +404,17 @@ function IsCampaignMap(map_name)
 end
 
 local function SingleplayerPauseCampaignTime(pause, reason)
-	if gv_SatelliteView and not IsInMultiplayerGame() then
-		_SetCampaignSpeed(pause and 0 or Game.CampaignTimeFactor, reason)
+	if not Game then return end
+	
+	-- In multiplayer allow sp unpause only (and it needs to go through an event)
+	if IsInMultiplayerGame() then
+		if not pause then
+			SetCampaignSpeed(pause and 0 or Game.CampaignTimeFactor, reason)
+		end
+		return
 	end
+
+	_SetCampaignSpeed(pause and 0 or (Game and Game.CampaignTimeFactor), reason)
 end
 
 function OnMsg.BugReportStart()
@@ -489,6 +497,13 @@ local function GameDataToLuaValue(data, env)
 	return nil, data
 end
 
+function GenerateMultiplayerGuestCampaignName()
+	assert(netGamePlayers and table.count(netGamePlayers) > 1)
+	local campaign = Game and Game.Campaign or rawget(_G, "DefaultCampaign") or "HotDiamonds"
+	assert(CampaignPresets[campaign])
+	return _InternalTranslate(CampaignPresets[campaign].DisplayName)
+end
+
 function LoadGameSessionData(data, metadata)
 	collectgarbage("stop")
 	SkipAnySetpieces()
@@ -530,6 +545,9 @@ function LoadGameSessionData(data, metadata)
 			end
 		end
 		Game = data.game
+		if Platform.console and IsInMultiplayerGame() and not NetIsHost() then
+			Game.playthrough_name = GenerateMultiplayerGuestCampaignName()
+		end
 		Game.Campaign = Game.Campaign or DefaultCampaign
 		-- !!! backwards compatibility before rev 277827
 		if not IsKindOf(Game, "GameSettings") then
@@ -697,13 +715,20 @@ end
 
 DefaultCampaign = "HotDiamonds"
 
+if FirstLoad then
+	g_DisclaimerSplashScreen = false
+end
 function StartCampaign(campaign_id, new_game_params)
 	local campaign = CampaignPresets[campaign_id or false] or GetCurrentCampaignPreset()
 	if campaign.DisclaimerOnStart then
 		local duration = ReadDurationFromText(_InternalTranslate(campaign.DisclaimerOnStart))
-		local dlg = SplashText(campaign.DisclaimerOnStart, "DisclaimerOnStart", 600, 1500, duration)
-		dlg:SetMouseCursor("UI/Cursors/Hand.tga")
-		dlg:Wait()		
+		g_DisclaimerSplashScreen = SplashText(campaign.DisclaimerOnStart, "DisclaimerOnStart", 600, 1500, duration)
+		g_DisclaimerSplashScreen:SetMouseCursor("UI/Cursors/Hand.tga")
+		local res = g_DisclaimerSplashScreen:Wait()
+		g_DisclaimerSplashScreen = false
+		if res then
+			return "abort"
+		end
 	end
 	LoadingScreenOpen("idLoadingScreen", "new game")
 	ClearItemIdData()
@@ -1428,34 +1453,14 @@ function lGetGameStartTypes()
 			id = "Campaign",
 			Name = T(831335436250, "NEW GAME"),
 			func = function()
-				EditorDeactivate()
-				local IGmain = GetDialog("InGameMenu")
-				if IGmain then
-					CloseDialog("InGameMenu")
-				end
-				local dlg = GetDialog("PreGameMenu")
-				if not dlg then
-					CreateRealTimeThread(function()
-						ResetGameSession()
-						local dlg = OpenDialog("PreGameMenu")
-						dlg:SetMode("NewGame")
-						dlg:ResolveId("idSubMenuTittle"):SetText(T(831335436250, "NEW GAME"))
-						dlg:ResolveId("idSubContent"):SetMode("newgame")
-						Msg("PreGameMenuOpen")
-					end)
-				elseif dlg.Mode ~= "NewGame" then
-					dlg:SetMode("NewGame")
-					dlg:ResolveId("idSubMenuTittle"):SetText(T(831335436250, "NEW GAME"))
-					dlg:ResolveId("idSubContent"):SetMode("newgame")
-				end
-			end
+				StartNewGame()
+			end,
 		},
 		{
 			id = "QuickStart",
 			Name = T(419695626381, "QUICK START"),
 			func = function()
-				EditorDeactivate()
-				CreateRealTimeThread(QuickStartCampaign, "HotDiamonds", { difficulty = "Normal" })
+				StartQuickStartGame()
 			end
 		}
 	}
@@ -1463,14 +1468,45 @@ function lGetGameStartTypes()
 	return types
 end
 
+function StartNewGame()
+	EditorDeactivate()
+	local IGmain = GetDialog("InGameMenu")
+	if IGmain then
+		CloseDialog("InGameMenu")
+	end
+	local dlg = GetDialog("PreGameMenu")
+	if not dlg then
+		CreateRealTimeThread(function()
+			ResetGameSession()
+			local dlg = OpenDialog("PreGameMenu")
+			dlg:SetMode("NewGame")
+			dlg:ResolveId("idSubMenuTittle"):SetText(T(831335436250, "NEW GAME"))
+			dlg:ResolveId("idSubContent"):SetMode("newgame")
+			Msg("PreGameMenuOpen")
+		end)
+	elseif dlg.Mode ~= "NewGame" then
+		dlg:SetMode("NewGame")
+		dlg:ResolveId("idSubMenuTittle"):SetText(T(831335436250, "NEW GAME"))
+		dlg:ResolveId("idSubContent"):SetMode("newgame")
+	end
+end
+
+function StartQuickStartGame()
+	EditorDeactivate()
+	CreateRealTimeThread(QuickStartCampaign, "HotDiamonds", { difficulty = "Normal" })
+end
+
 GameStartTypes = lGetGameStartTypes()
 
-function ApplyNewGameOptions(newGameObj) 
+function ApplyNewGameOptions(newGameObj)
 	if newGameObj then
+		if Platform.console and IsInMultiplayerGame() and not NetIsHost() then
+			newGameObj.campaign_name = GenerateMultiplayerGuestCampaignName() -- haven't seen a need for this (it is overwritten on LoadGame), but better safe than sorry
+		end
+		
 		OptionsObj = OptionsObj or OptionsCreateAndLoad()
 		Game.playthrough_name = newGameObj.campaign_name
 		Game.testModGame = newGameObj.testModGame
-	
 		if newGameObj["difficulty"] then
 			Game.game_difficulty = newGameObj["difficulty"]
 			OptionsObj["Difficulty"] = newGameObj["difficulty"]

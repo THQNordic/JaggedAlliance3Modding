@@ -7,8 +7,8 @@ DefineClass.UZI = {
 
 
 	object_class = "SubmachineGun",
-	Reliability = 75,
 	ScrapParts = 6,
+	Reliability = 75,
 	Icon = "UI/Icons/Weapons/UZI",
 	DisplayName = T(412998767677, --[[InventoryItemCompositeDef UZI DisplayName]] "UZI"),
 	DisplayNamePlural = T(516476240554, --[[InventoryItemCompositeDef UZI DisplayNamePlural]] "UZIs"),
@@ -19,7 +19,7 @@ DefineClass.UZI = {
 	Caliber = "9mm",
 	Damage = 15,
 	MagazineSize = 30,
-	PointBlankRange = true,
+	PointBlankBonus = 1,
 	OverwatchAngle = 1440,
 	Noise = 10,
 	Entity = "Weapon_Uzi",

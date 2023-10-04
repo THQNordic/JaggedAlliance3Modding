@@ -12,6 +12,9 @@ PlaceObj('XTemplate', {
 			'ActionGamepad', "ButtonB",
 			'OnActionEffect', "back",
 			'OnAction', function (self, host, source, ...)
+				if GetLoadingScreenDialog("noAccStorage") then
+					return
+				end
 				if not GetUIStyleGamepad() or host.isMMFocused then 
 					CreateRealTimeThread(function(self, host, source)
 						if source and source.class == "XButton" then
@@ -31,6 +34,14 @@ PlaceObj('XTemplate', {
 					list:SetFocus(true)
 					list:SelectFirstValidItem()
 					host.isMMFocused = true
+					g_SelectedMod = false
+					local installedModsList = subMenu and subMenu:ResolveId("idScrollArea")
+					for _, btn in ipairs(installedModsList) do
+						if IsKindOf(btn and btn.context, "ModUIEntry") then
+							btn:SetSelected(false)
+						end
+					end
+					host:ResolveId("idSubSubContent"):SetMode("empty")
 				end
 			end,
 			'FXPress', "MainMenuButtonClick",
@@ -80,7 +91,7 @@ PlaceObj('XTemplate', {
 				end, self, host, source)
 			end,
 			'FXPress', "MainMenuButtonClick",
-			'__condition', function (parent, context) return not Platform.steamdeck end,
+			'__condition', function (parent, context) return not Platform.steamdeck and not Platform.console end,
 		}),
 		}),
 })

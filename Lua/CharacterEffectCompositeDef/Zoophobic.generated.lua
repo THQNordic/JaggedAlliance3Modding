@@ -8,11 +8,10 @@ DefineClass.Zoophobic = {
 
 	object_class = "Perk",
 	msg_reactions = {
-		PlaceObj('MsgReaction', {
-			Event = "OnAttacked",
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "target",
+			Event = "OnAttack",
 			Handler = function (self, attacker, action, target, results, attack_args)
-				local reaction_idx = table.find(self.msg_reactions or empty_table, "Event", "OnAttacked")
-				if not reaction_idx then return end
 				
 				local function exec(self, attacker, action, target, results, attack_args)
 				if attacker.species ~= "Human" and not results.miss and not target:HasStatusEffect("ZoophobiaChecked") then
@@ -20,16 +19,19 @@ DefineClass.Zoophobic = {
 					target:AddStatusEffect("ZoophobiaChecked")
 				end
 				end
-				local id = GetCharacterEffectId(self)
 				
-				if id then
-					if IsKindOf(target, "StatusEffectObject") and target:HasStatusEffect(id) then
-						exec(self, attacker, action, target, results, attack_args)
-					end
-				else
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[1]
+				if not reaction_def or reaction_def.Event ~= "OnAttack" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
 					exec(self, attacker, action, target, results, attack_args)
 				end
 				
+				if self:VerifyReaction("OnAttack", reaction_def, target, attacker, action, target, results, attack_args) then
+					exec(self, attacker, action, target, results, attack_args)
+				end
 			end,
 			HandlerCode = function (self, attacker, action, target, results, attack_args)
 				if attacker.species ~= "Human" and not results.miss and not target:HasStatusEffect("ZoophobiaChecked") then
@@ -37,7 +39,7 @@ DefineClass.Zoophobic = {
 					target:AddStatusEffect("ZoophobiaChecked")
 				end
 			end,
-			param_bindings = false,
+			helpActor = "target",
 		}),
 	},
 	DisplayName = T(619689762390, --[[CharacterEffectCompositeDef Zoophobic DisplayName]] "Zoophobic"),

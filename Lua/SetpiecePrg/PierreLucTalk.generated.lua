@@ -23,7 +23,7 @@ SetpiecePrgs.PierreLucTalk = function(seed, state, TriggerUnits)
 	prgdbg(li, 1, 14) sprocall(SetpieceTeleport.Exec, SetpieceTeleport, state, Luc_02, "LucTalk_Cry", true)
 	prgdbg(li, 1, 15) sprocall(SetpieceAnimation.Exec, SetpieceAnimation, state, rand, false, "", Luc_02, "", true, "civ_Ambient_SadCrying", 1000, 0, range(1, 1), 0, false, true, false, "")
 	local _, Despawn
-	prgdbg(li, 1, 16) _, Despawn = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Pierre_02, "Despawn", true, false, false, "", false, false, "")
+	prgdbg(li, 1, 16) _, Despawn = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Pierre_02, "Despawn", true, false, false, "", false, false, "", 1000)
 	prgdbg(li, 1, 17) sprocall(SetpieceFadeIn.Exec, SetpieceFadeIn, state, rand, true, "", 300, 700)
 	prgdbg(li, 1, 18) sprocall(SetpieceSleep.Exec, SetpieceSleep, state, rand, true, "", 4000)
 	prgdbg(li, 1, 19) sprocall(SetpieceFadeOut.Exec, SetpieceFadeOut, state, rand, true, "", 700)

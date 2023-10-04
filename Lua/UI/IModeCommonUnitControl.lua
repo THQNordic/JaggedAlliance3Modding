@@ -55,6 +55,7 @@ DefineClass.IModeCommonUnitControl = {
 	potential_interactable = false,
 	potential_interactable_action = false,
 	potential_target_is_enemy = false,
+	potential_target_via_voxel = false,
 	action_targets = false,
 	show_world_ui = false,
 	
@@ -447,7 +448,7 @@ function IModeCommonUnitControl:NextUnit(team, force, ignore_snap, prev)
 		local unit = units[j]
 		-- A hole in the team.units array? Happens on some saves for a short while because teams aren't initialized.
 		if not unit then return end
-		if self:UnitAvailableForNextUnitSelection(unit) then
+		if self:UnitAvailableForNextUnitSelection(unit, force) then
 			SelectObj(unit)
 			if not ignore_snap then
 				SnapCameraToObj(unit, "player-input")
@@ -543,10 +544,17 @@ function UIInteractWith(unit, target)
 	CombatActions.Interact:Execute({ unit }, { target = target })
 end
 
+function OnMsg.NewMapLoaded()
+	local radius, surf = CalcMapMaxObjRadius(const.efSelectable, 0)
+	SetMapMaxObjRadius(radius, surf)
+end
+
 local lInteractablePriorityList = { ["Unit"] = 1 }
 function IModeCommonUnitControl:GetInteractableUnderCursor()
 	local interactables = { }
-	
+	local UIStyleGamepad = GetUIStyleGamepad()
+	local cursor_pos = UIStyleGamepad and GetCursorPos() or GetTerrainCursor()
+
 	-- Try precise selection first. 
 	local solid = PreciseCursorObjAreaClosestOfType(false, lInteractablePriorityList)
 	local obj = solid or SelectFromTerrainPoint(GetTerrainCursor())
@@ -556,7 +564,7 @@ function IModeCommonUnitControl:GetInteractableUnderCursor()
 	elseif interactable then
 		table.insert(interactables, interactable)
 	-- Note: don't do it on gamepad as GetTerrainCursorObjSel is actually pretty heavy
-	elseif not GetUIStyleGamepad() then
+	elseif not UIStyleGamepad then
 		local obj = GetTerrainCursorObjSel()
 		if obj and obj:IsKindOf("Decal") then
 			obj = ResolveInteractableObject(obj)
@@ -565,63 +573,72 @@ function IModeCommonUnitControl:GetInteractableUnderCursor()
 			end
 		end
 	end
-		
+
 	-- Do a simpler check for gamepad as it doesnt have the pinpoint precision of a mouse.
-	if GetUIStyleGamepad() then
+	if UIStyleGamepad then
 		local resolvedObjectsGamepad = {}
 		self.potential_interactable_gamepad_resolved = resolvedObjectsGamepad
 
-		local intWeights = {}
-		for i, int in ipairs(interactables) do -- Mark precise selection as closest
-			intWeights[int] = 0
-		end
-		
-		local cursorPos = GetCursorPos()
-		
 		-- Extra precision: skip interactables further away than the closest voxel center.
-		local snappedPassSlab = SnapToPassSlab(cursorPos)
-		local passSlabDistToCursor = snappedPassSlab and snappedPassSlab:Dist(cursorPos) or 99999999
-		
-		local vAround = GetVoxelBBox(cursorPos, 0.5, "with_z", "dont_snap")
-		MapForEach(vAround, "CObject", const.efSelectable + const.efVisible, function(obj)
+		local passX, passY, passZ = SnapToPassSlabXYZ(cursor_pos)
+		local passSlabDistToCursor = passX and cursor_pos:Dist(passX, passY, passZ) or 99999999
+
+		local vAround = GetVoxelBBox(cursor_pos, 0.5, "with_z", "dont_snap")
+		MapForEach(vAround, "CObject", const.efSelectable + const.efVisible, function(obj, resolvedObjectsGamepad, vAround, cursor_pos, passSlabDistToCursor)
 			-- We need to recheck bounds as mapget is 2D
-			if not vAround:PointInside(obj:GetPosXYZ()) then return end
-			
-			local distToObj = obj:GetDist(cursorPos)
-			if distToObj > passSlabDistToCursor then return end
-			
+			if not vAround:PointInside(obj:GetPosXYZ()) then
+				return
+			end
+			if not IsCloser(obj, cursor_pos, passSlabDistToCursor + 1) then
+				return
+			end
 			local int, all = ResolveInteractableObject(obj)
 			if all and #all > 0 then
-				table.iappend(interactables, all)
 				for i, int in ipairs(all) do
-					resolvedObjectsGamepad[int] = obj
-					intWeights[int] = distToObj
+					if resolvedObjectsGamepad[int] then
+						if IsCloser(cursor_pos, obj, resolvedObjectsGamepad[int]) then
+							resolvedObjectsGamepad[int] = obj
+						end
+					else
+						table.insert(resolvedObjectsGamepad, int)
+						resolvedObjectsGamepad[int] = obj
+					end
 				end
 			elseif int then
-				interactables[#interactables + 1] = int
-				resolvedObjectsGamepad[int] = obj
-				intWeights[int] = distToObj
+				if resolvedObjectsGamepad[int] then
+					if IsCloser(cursor_pos, obj, resolvedObjectsGamepad[int]) then
+						resolvedObjectsGamepad[int] = obj
+					end
+				else
+					table.insert(resolvedObjectsGamepad, int)
+					resolvedObjectsGamepad[int] = obj
+				end
 			end
-		end)
+		end, resolvedObjectsGamepad, vAround, cursor_pos, passSlabDistToCursor)
 
-		-- Sort interactables by distance from cursor pos
-		table.sort(interactables, function(a, b)
-			local weightA = intWeights[a] or 0
-			local weightB = intWeights[b] or 0
-			
-			return weightA < weightB
-		end)
+		if next(resolvedObjectsGamepad) then
+			-- Sort interactables by distance from cursor pos
+			if #resolvedObjectsGamepad > 1 then
+				table.sort(resolvedObjectsGamepad, function(a, b)
+					return IsCloser(cursor_pos, resolvedObjectsGamepad[a], resolvedObjectsGamepad[b])
+				end)
+			end
+			table.iappend(interactables, resolvedObjectsGamepad)
+		end
+	else
+		-- not gamepad
+		self.potential_interactable_gamepad_resolved = false
 	end
 
 	-- Cursor pos ray
-	local cursor_pos = GetUIStyleGamepad() and GetCursorPos() or GetTerrainCursor()
 	local camera_pos = camera.GetEye()
 	local rayObj, pt, normal = GetClosestVisibleRayObj(camera_pos, cursor_pos)
 	if rayObj and not IsKindOf(rayObj, "TerrainCollision") then
 		local interactable, all = ResolveInteractableObject(rayObj)
 		if all and #all > 0 then -- Ray collision takes precedence
-			table.iappend(all, interactables)
-			interactables = all
+			for i, int in ipairs(all) do
+				table.insert(interactables, i, int)
+			end
 		elseif interactable then
 			table.insert(interactables, 1, interactable)
 		end
@@ -638,25 +655,32 @@ function IModeCommonUnitControl:GetInteractableUnderCursor()
 			end
 		end, camera_pos, cursor_pos, interactables)
 	--end
-
-	local checked = {}
-	for i, target in ipairs(interactables) do
+	if #interactables == 0 then
+		return
+	end
+	-- Return first valid
+	local unit = UIFindInteractWith(interactables[1])
+	if unit then
+		return interactables[1], unit
+	end
+	if #interactables > 1 then
 		-- It's possible for an interactable to have been captured
 		-- by multiple of the collision methods above.
-		if checked[target] then goto continue end
-		checked[target] = true
-		
-		local unit = UIFindInteractWith(target)
-		-- Return first valid
-		if unit then
-			return target, unit
+		local checked = { [interactables[1]] = true }
+		for i = 2,  #interactables do
+			local target = interactables[i]
+			if not checked[target] then
+				local unit = UIFindInteractWith(target)
+				if unit then
+					return target, unit
+				end
+				checked[target] = true
+			end
 		end
-		
-		::continue::
 	end
 end
 
-function IModeCommonUnitControl:UpdateInteractablesHighlight(noNew)
+function IModeCommonUnitControl:UpdateInteractablesHighlight(noNew, force)
 	-- nothing can be interacted with, when no units are selected
 	if not next(Selection) or not self.show_world_ui then
 		noNew = true
@@ -670,8 +694,17 @@ function IModeCommonUnitControl:UpdateInteractablesHighlight(noNew)
 		
 		-- Dont allow potential target and interactable at the same time.
 		if self.potential_target and self.potential_target ~= intensely_highlighted and not GetUIStyleGamepad() then
-			-- Special exception for objects spawned through combat skills such as landmines
-			if not IsKindOf(intensely_highlighted, "GameDynamicSpawnObject") then
+			local unitOverrideInteractable = false
+			
+			-- Picked via precise selection
+			unitOverrideInteractable = not self.potential_target_via_voxel
+			
+			-- Objects spawned through combat skills always have priority.
+			if IsKindOf(intensely_highlighted, "GameDynamicSpawnObject") then
+				unitOverrideInteractable = false
+			end
+
+			if unitOverrideInteractable then
 				intensely_highlighted = false
 			end
 		end
@@ -694,7 +727,7 @@ function IModeCommonUnitControl:UpdateInteractablesHighlight(noNew)
 		end
 	end
 
-	if fx_interactable ~= self.fx_interactable then
+	if fx_interactable ~= self.fx_interactable or force then
 		if IsValid(self.fx_interactable) then
 			self.fx_interactable:HighlightIntensely(false, "cursor")
 		end
@@ -900,44 +933,53 @@ local function lShouldBeHighlightedEnemy(u)
 	return SelectedObj and IsKindOf(u, "Unit") and not u:IsDead() and u:IsOnEnemySide(SelectedObj)
 end
 
-local function lGetHigherLowerTunnelPositions(p1, p2, highestPoint, lowestPoint)
-	if not p1:IsValidZ() then p1 = p1:SetTerrainZ() end
-	if not p2:IsValidZ() then p2 = p2:SetTerrainZ() end
-	
-	if not highestPoint or p1:z() > highestPoint:z() then highestPoint = p1 end
-	if not highestPoint or p2:z() > highestPoint:z() then highestPoint = p2 end
-	
-	if not lowestPoint or p1:z() < lowestPoint:z() then lowestPoint = p1 end
-	if not lowestPoint or p2:z() < lowestPoint:z() then lowestPoint = p2 end
-	
-	return highestPoint, lowestPoint
+local _highestPointX, _highestPointY, _highestPointZ
+local _lowestPointX, _lowestPointY, _lowestPointZ
+
+local function lGetHigherLowerTunnelPositions(x, y, z)
+	if not z then
+		z = terrain.GetHeight(x, y)
+	end
+	if not _highestPointZ or z > _highestPointZ then
+		_highestPointX = x
+		_highestPointY = y
+		_highestPointZ = z
+	end
+	if not _lowestPointZ or z < _lowestPointZ then
+		_lowestPointX = x
+		_lowestPointY = y
+		_lowestPointZ = z
+	end
 end
 
 function IModeCommonUnitControl:FloorChangeTooltipLogic(deleteOnly)
-	local cursorPos = SnapToVoxel(GetCursorPos())
-	local px, py, pz = cursorPos:xyz()
+	if deleteOnly then
+		SetAPIndicator(false, "floor-change", false, "appending", true)
+		return
+	end
 
-	local highestPoint = false
-	local lowestPoint = false
+	_highestPointX, _highestPointY, _highestPointZ = nil, nil, nil
+	_lowestPointX, _lowestPointY, _lowestPointZ = nil, nil, nil
+
+	local px, py, pz = SnapToVoxel(GetCursorPos():xyz())
 	ForEachPassSlabStep(px, py, pz, const.TunnelTypeLadder, function(x, y, z, tunnel)
 		if not tunnel then return end
-		local p1 = tunnel:GetPos()
-		local p2 = tunnel.end_point
-		highestPoint, lowestPoint = lGetHigherLowerTunnelPositions(p1, p2, highestPoint, lowestPoint)
+		lGetHigherLowerTunnelPositions(tunnel:GetPosXYZ())
+		lGetHigherLowerTunnelPositions(tunnel.end_point:xyz())
 	end)
-	
+
 	local eye = camera.GetEye()
-	local obj = MapGetFirst(eye, cursorPos, guim, "Ladder")
+	local obj = MapGetFirst(eye, point(px, py, pz), guim, "Ladder")
 	if obj then
-		local p1, p2 = obj:GetTunnelPositions()
-		if p1 and p2 then
-			highestPoint, lowestPoint = lGetHigherLowerTunnelPositions(p1, p2, highestPoint, lowestPoint)
+		local x1, y1, z1, x2, y2, z2 = obj:GetTunnelPositions()
+		if x1 then
+			lGetHigherLowerTunnelPositions(x1, y1, z1)
+			lGetHigherLowerTunnelPositions(x2, y2, z2)
 		end
 	end
-	
-	local floor = cameraTac.GetFloor()
-	local highestPointFloor = highestPoint and GetFloorOfPos(highestPoint)
-	local lowestPointFloor = lowestPoint and GetFloorOfPos(lowestPoint)
+
+	local highestPointFloor = _highestPointX and GetFloorOfPos(point(_highestPointX, _highestPointY, _highestPointZ))
+	local lowestPointFloor = _lowestPointX and GetFloorOfPos(point(_lowestPointX, _lowestPointY, _lowestPointZ))
 
 	local dest = GetUIStyleGamepad() and GetTerrainGamepadCursor() or GetTerrainCursor()
 	local roofPlaneSlab = GetClosestRayObj(eye, dest, const.efVisible, 0, function(obj)
@@ -948,7 +990,8 @@ function IModeCommonUnitControl:FloorChangeTooltipLogic(deleteOnly)
 	end
 
 	local text = false
-	if not deleteOnly and highestPointFloor ~= lowestPointFloor then
+	if highestPointFloor ~= lowestPointFloor then
+		local floor = cameraTac.GetFloor()
 		if highestPointFloor and highestPointFloor > floor then
 			text = T(399501620165, "(<ShortcutButton('actionCamFloorUp')>) Floor Up")
 		end
@@ -956,9 +999,11 @@ function IModeCommonUnitControl:FloorChangeTooltipLogic(deleteOnly)
 			text = T(509798634721, "(<ShortcutButton('actionCamFloorDown')>) Floor Down")
 		end
 	end
-	
-	local delete = not text or deleteOnly
-	SetAPIndicator(not delete and 0, "floor-change", text, "appending", true)
+	if text then
+		SetAPIndicator(0, "floor-change", text, "appending", true)
+	else
+		SetAPIndicator(false, "floor-change", false, "appending", true)
+	end
 end
 
 local no_extreme_range_indicator = {
@@ -987,8 +1032,8 @@ function ShouldUseMarkTarget(attacker, target)
 	end
 
 	local voxels = GetMeleeRangePositions(attacker)
-	local pos = target:GetPos()
-	local ppos = point_pack(SnapToPassSlab(pos) or pos)			
+	local x, y, z = SnapToPassSlabXYZ(target)
+	local ppos = x and point_pack(x, y, z) or point_pack(target:GetPosXYZ())
 	if not table.find(voxels, ppos) and CombatActions.MarkTarget:GetUIState({attacker}) == "enabled" then
 		return true
 	end
@@ -1020,7 +1065,8 @@ function IModeCommonUnitControl:UpdateTarget(pos)
 	-- If the cursor is over a badge (or UI which has highlit a badge), we treat it as if it is over the object.
 	local enemy_pos
 	local mouse_obj = pos and self:GetUnitUnderMouse()
-	local freeAimMode = not self.crosshair and (IsKindOf(self, "IModeCombatFreeAim") or IsKindOf(self, "IModeCombatAreaAim"))
+	local freeAimDlg = IsKindOf(self, "IModeCombatFreeAim")
+	local freeAimMode = not self.crosshair and (freeAimDlg or IsKindOf(self, "IModeCombatAreaAim"))
 	freeAimMode = freeAimMode or self.crosshair and self.crosshair.context.free_aim
 	
 	local mouseUIFocus = self.desktop.last_mouse_target
@@ -1040,13 +1086,16 @@ function IModeCommonUnitControl:UpdateTarget(pos)
 			self.potential_target = mouse_obj
 			self.target_pos = mouse_obj:GetPos()
 			self.potential_target_is_enemy = lShouldBeHighlightedEnemy(mouse_obj)
+			self.potential_target_via_voxel = false
 		else
 			self.potential_target = false
+			self.potential_target_via_voxel = false
 		end
 	elseif pos then
 		local pass_pos = GetPassSlab(pos)
 		self.potential_target = false
 		self.potential_target_is_enemy = false
+		self.potential_target_via_voxel = false
 		self.penalty = 0
 		if pass_pos then
 			self.target_pos = pass_pos
@@ -1054,6 +1103,7 @@ function IModeCommonUnitControl:UpdateTarget(pos)
 			if unit and not unit:IsDead() then
 				self.potential_target = unit
 				self.potential_target_is_enemy = lShouldBeHighlightedEnemy(unit)
+				self.potential_target_via_voxel = true
 			end
 		end
 	end
@@ -1122,12 +1172,38 @@ function IModeCommonUnitControl:UpdateTarget(pos)
 				if self.action and self.action.id == "Overwatch" then
 					SetAPIndicator(apCost > 0 and apCost or false, "attack")
 				else
-					SetAPIndicator(apCost > 0 and apCost or false, "attack", T(333335408841, "Free Aim"))
+					local freeAimApIndicatorText = T(333335408841, "Free Aim")
+					if freeAimDlg then
+						if self.current_firing_mode then
+							local firingModeText = false
+							local shortcuts = GetShortcuts("gamepadActionFreeAimToggle")
+							
+							-- We need to calculate the gamepad shortcut separately in order 
+							-- to scale it to the same size as other AP indicator icons.
+							if GetUIStyleGamepad() then
+								local gamepadShortcut = shortcuts and shortcuts[3] or ""
+								gamepadShortcut = "<" .. gamepadShortcut .. "Small>"
+								firingModeText = T{521088736897, "<gamepadShortcut> Mode: <ActionName>",
+									gamepadShortcut = T{gamepadShortcut},
+									ActionName = self.current_firing_mode.DisplayName
+								}
+							else
+								firingModeText = T{537856925216, "[<ShortcutName('gamepadActionFreeAimToggle')>] Mode: <ActionName>",
+									ActionName = self.current_firing_mode.DisplayName
+								}
+							end
+						
+							freeAimApIndicatorText = freeAimApIndicatorText .. T(226690869750, "<newline>") .. firingModeText
+						end
+					end
+				
+					SetAPIndicator(apCost > 0 and apCost or false, "attack", freeAimApIndicatorText)
 					if action.ActionType == "Melee Attack" then
+						local invalidBrutalizeTarget = action.id == "Brutalize" and (not IsKindOf(freeAttackTarget, "Unit") or (IsKindOf(freeAttackTarget, "Unit") and freeAttackTarget:IsDead()))
 						if not freeAttackTarget then
 							SetAPIndicator(1, "attack", T(316692410666, "No Target"), "appending")
 							self.penalty = 0
-						elseif freeAttackTarget == SelectedObj then
+						elseif freeAttackTarget == SelectedObj or invalidBrutalizeTarget then
 							SetAPIndicator(1, "attack", T(638642719736, "Invalid Target"), "appending")
 							self.penalty = 0
 						end
@@ -1752,7 +1828,7 @@ local function lUpdateStealthVignette()
 	if Selection and #Selection > 0 then
 		for i=1, #Selection do
 			local u = Selection[i]
-			hidden = hidden or u:HasStatusEffect("Hidden")
+			hidden = hidden or (IsKindOf(u, "StatusEffectObject") and u:HasStatusEffect("Hidden"))
 			prone = prone or u.stance == "Prone"
 		end
 	end
@@ -1955,7 +2031,7 @@ function OnMsg.GameOptionsChanged()
 end
 
 local lHideCombatBarAfter = 200
-local lCombatBarAnimation = 150
+ui_CombatBarAnimationDuration = 150
 function ApplyCombatBarHidingAnimation(self, show, instantClose)
 	if UICombatBarShowLast == show then return end
 	UICombatBarShowLast = show
@@ -1995,7 +2071,7 @@ function ApplyCombatBarHidingAnimation(self, show, instantClose)
 		local mod = {
 			id = "combat_bar_hiding",
 			type = const.intRect,
-			duration = lCombatBarAnimation,
+			duration = ui_CombatBarAnimationDuration,
 			originalRect = b,
 			targetRect = sizebox(b:minx(), UIL.GetScreenSize():y(), b:sizex(), b:sizey()),
 		}
@@ -2004,7 +2080,7 @@ function ApplyCombatBarHidingAnimation(self, show, instantClose)
 		end
 		self:AddInterpolation(mod)
 	end)
-	return show and lCombatBarAnimation or closeTime
+	return show and ui_CombatBarAnimationDuration or closeTime
 end
 
 function ToggleTargetIconsTransparency(bar, show)
@@ -2033,7 +2109,7 @@ function ToggleAllUnitsSelectionInSquad(selectAllOnly)
 	-- selection handling; changing from last selected to whole squad;
 	local team = GetFilteredCurrentTeam()
 	if WholeTeamSelected() and not selectAllOnly then
-		if #gv_LastPartialSquadSelection > 0 and gv_LastPartialSquadSelection[1].Squad == team.units[1].Squad then
+		if IsValid(gv_LastPartialSquadSelection[1]) and gv_LastPartialSquadSelection[1].Squad == team.units[1].Squad then
 			igi:SelectUnits(gv_LastPartialSquadSelection)
 		else
 			igi:SelectUnits({team.units[1]})

@@ -137,7 +137,7 @@ PlaceObj('QuestsDef', {
 						return quest.FleatownSyndicate
 					end,
 				}),
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							Condition = "or",
@@ -196,25 +196,21 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckAND', {
 					Conditions = {
-						PlaceObj('AND', {
-							Conditions = {
-								PlaceObj('QuestIsVariableBool', {
-									Condition = "or",
-									QuestId = "CorazonCaptureMine",
-									Vars = set( "RefugeeWorkers" ),
-									__eval = function ()
-										local quest = gv_Quests['CorazonCaptureMine'] or QuestGetState('CorazonCaptureMine')
-										return quest.RefugeeWorkers
-									end,
-								}),
-								PlaceObj('CityHasLoyalty', {
-									Amount = 50,
-									City = "RefugeeCamp",
-									Condition = ">=",
-								}),
-							},
+						PlaceObj('QuestIsVariableBool', {
+							Condition = "or",
+							QuestId = "CorazonCaptureMine",
+							Vars = set( "RefugeeWorkers" ),
+							__eval = function ()
+								local quest = gv_Quests['CorazonCaptureMine'] or QuestGetState('CorazonCaptureMine')
+								return quest.RefugeeWorkers
+							end,
+						}),
+						PlaceObj('CityHasLoyalty', {
+							Amount = 50,
+							City = "RefugeeCamp",
+							Condition = ">=",
 						}),
 					},
 				}),
@@ -300,25 +296,21 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckAND', {
 					Conditions = {
-						PlaceObj('AND', {
-							Conditions = {
-								PlaceObj('QuestIsVariableBool', {
-									Condition = "or",
-									QuestId = "CorazonCaptureMine",
-									Vars = set( "FleatownSyndicate" ),
-									__eval = function ()
-										local quest = gv_Quests['CorazonCaptureMine'] or QuestGetState('CorazonCaptureMine')
-										return quest.FleatownSyndicate
-									end,
-								}),
-								PlaceObj('CityHasLoyalty', {
-									Amount = 50,
-									City = "Fleatown",
-									Condition = ">=",
-								}),
-							},
+						PlaceObj('QuestIsVariableBool', {
+							Condition = "or",
+							QuestId = "CorazonCaptureMine",
+							Vars = set( "FleatownSyndicate" ),
+							__eval = function ()
+								local quest = gv_Quests['CorazonCaptureMine'] or QuestGetState('CorazonCaptureMine')
+								return quest.FleatownSyndicate
+							end,
+						}),
+						PlaceObj('CityHasLoyalty', {
+							Amount = 50,
+							City = "Fleatown",
+							Condition = ">=",
 						}),
 					},
 				}),

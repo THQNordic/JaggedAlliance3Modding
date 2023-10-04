@@ -133,7 +133,7 @@ PlaceObj('XTemplate', {
 					if crosshair and crosshair.cached_results then
 						local actionResults = crosshair.cached_results[action.id]
 						attackResult = actionResults and actionResults.attackResultCalc[g_DefaultShotBodyPart]
-						if attackResult then
+						if attackResult and not attackResult.obstructed then
 							damage = attackResult.calculated_target_damage or 0
 							aoeDamage = attackResult.calculated_target_aoeDamage or 0
 							
@@ -170,8 +170,20 @@ PlaceObj('XTemplate', {
 						local w1Damage = params and params.wep1_damage or perShot
 						local w2Damage = params and params.wep2_damage or perShot
 						if attackResult then -- use prediction from crosshair if possible 
-							w1Damage = attackResult[1] and attackResult[1].damage or w1Damage
-							w2Damage = attackResult[2] and attackResult[2].damage or w2Damage
+							local idx_attack1 = table.find(attackResult.attacks or empty_table, "weapon", wep)
+							local idx_attack2 = table.find(attackResult.attacks or empty_table, "weapon", wep2)
+							local w1attack = idx_attack1 and attackResult.attacks[idx_attack1]
+							local w2attack = idx_attack2 and attackResult.attacks[idx_attack2]
+							if w1attack and not w1attack.obstructed then
+								w1Damage = w1attack.total_damage
+							else
+								w1Damage = attackResult[1] and attackResult[1].damage or w1Damage
+							end
+							if w2attack and not w2attack.obstructed then
+								w2Damage = w2attack.total_damage
+							else
+								w2Damage = attackResult[2] and attackResult[2].damage or w2Damage
+							end
 						end
 						local w1Shots = 1
 						local w2Shots = 1

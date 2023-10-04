@@ -248,6 +248,8 @@ function PDAEmailsClass:SelectEmail(receivedEmail)
 
 	if receivedEmail then
 		NetSyncEvent("MarkEmailAsRead", receivedEmail.uniqueId, true)
+	else
+		ObjModified(gv_ReceivedEmails)
 	end
 	self.selectedEmail = receivedEmail
 	
@@ -311,7 +313,7 @@ function OpenEmail(openNewest)
 	dlg:CloseAction()
 end
 
-function SavegameSessionDataFixups.RebuildEmailUniqueIds(data)
+function SavegameSessionDataFixups.RebuildEmailUniqueIds2(data)
 	local emails = GetGameVarFromSession(data, "gv_ReceivedEmails")
 	for i, email in ipairs(emails) do
 		email.uniqueId = i

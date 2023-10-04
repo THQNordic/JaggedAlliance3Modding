@@ -332,7 +332,7 @@ PlaceObj('BanterDef', {
 		PlaceObj('SectorCheckCity', {
 			city = "RefugeeCamp",
 		}),
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "FaithHealing",
@@ -477,7 +477,7 @@ PlaceObj('BanterDef', {
 		}),
 	},
 	conditions = {
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('SectorCheckCity', {
 					city = "RefugeeCamp",

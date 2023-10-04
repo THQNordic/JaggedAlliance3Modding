@@ -34,12 +34,12 @@ SetpiecePrgs.FortressBasement_FirstEnter = function(seed, state, TriggerUnits)
 	local _, SP_Corazone_TP
 	prgdbg(li, 1, 21) _, SP_Corazone_TP = sprocall(SetpieceTeleport.Exec, SetpieceTeleport, state, Corazone, "SP_Corazone_TP", true)
 	local _, SP_CorazoneGoTo
-	prgdbg(li, 1, 22) _, SP_CorazoneGoTo = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Corazone, "SP_CorazoneGoTo", true, true, false, "Standing", true, false, "")
+	prgdbg(li, 1, 22) _, SP_CorazoneGoTo = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Corazone, "SP_CorazoneGoTo", true, true, false, "Standing", true, false, "", 1000)
 	prgdbg(li, 1, 23) sprocall(SetpieceSleep.Exec, SetpieceSleep, state, rand, true, "", 400)
 	local _, SP_Guard1GoTo
-	prgdbg(li, 1, 24) _, SP_Guard1GoTo = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Guard1, "SP_Guard1GoTo", true, true, false, "Standing", false, false, "")
+	prgdbg(li, 1, 24) _, SP_Guard1GoTo = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Guard1, "SP_Guard1GoTo", true, true, false, "Standing", false, false, "", 1000)
 	local _, SP_Guard2GoTo
-	prgdbg(li, 1, 25) _, SP_Guard2GoTo = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Guard2, "SP_Guard2GoTo", true, true, false, "", false, false, "")
+	prgdbg(li, 1, 25) _, SP_Guard2GoTo = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Guard2, "SP_Guard2GoTo", true, true, false, "", false, false, "", 1000)
 	prgdbg(li, 1, 26) sprocall(SetpieceSleep.Exec, SetpieceSleep, state, rand, true, "", 600)
 	prgdbg(li, 1, 27) sprocall(SetpieceFadeIn.Exec, SetpieceFadeIn, state, rand, true, "", 0, 1500)
 	prgdbg(li, 1, 28) sprocall(SetpieceSleep.Exec, SetpieceSleep, state, rand, true, "", 200)

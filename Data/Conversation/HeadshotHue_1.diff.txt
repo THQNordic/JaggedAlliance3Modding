@@ -32,7 +32,7 @@ I don't like you tryin' to play me like that. Price just went up.
 [Keyword: Greeting]
 	HeadshotHue: What's up? Ain't never seen you here before. You like to <em>gamble</em>? I bet you love it. They call me <em>Headshot Hue</em>. You can call me Headshot, or Hue. Just don't call me Headhole. That shit ain't funny.
 [Keyword: Greeting]
-	HeadshotHue: Hey, hey, look who it is! Still afraid of a little bet?
+	HeadshotHue: Hey, hey, look who it is! Still afraid of a little <em>bet</em>?
 [Keyword: Greeting]
 	HeadshotHue: S'up gangstahs? I been thinking about changing my persona. Gonna start introducing myself as the Russian Roulette world champion! he-he.
 [Keyword: Greeting]
@@ -47,7 +47,7 @@ I don't like you tryin' to play me like that. Price just went up.
 		HeadshotHue: It's the straight dope!
 		MD: The odds of surviving something like that are astronomical... Fascinating.
 		Omryn: Such a thing is possible with chickens. Perhaps you are part chicken.
-	HeadshotHue: You don't believe me, do you? Come on, bet some money and I'll show you!
+	HeadshotHue: You don't believe me, do you? Come on, bet some <em>money</em> and I'll show you!
 	[Keyword: No way, show us!]
 	[Keyword: Okay, show us]
 	[Keyword: Redirect]

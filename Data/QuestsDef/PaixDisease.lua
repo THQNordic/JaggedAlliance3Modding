@@ -492,7 +492,7 @@ PlaceObj('QuestsDef', {
 		PlaceObj('QuestNote', {
 			Badges = {
 				PlaceObj('QuestBadgePlacement', {
-					BadgeUnit = "Wanda",
+					BadgeUnit = "HogLady",
 					Sector = "F13",
 				}),
 			},
@@ -907,7 +907,7 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('CheckIsPersistentUnitDead', {
 							per_ses_id = "NPC_Wanda",

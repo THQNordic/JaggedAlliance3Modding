@@ -116,9 +116,9 @@ end
 
 function Unit:GetInteractionPos(unit)
 	if not IsValid(self) then return false end
-	local pass_interact_pos = SnapToPassSlab(self)
-	if pass_interact_pos and (not unit or unit:GetDist(pass_interact_pos) == 0) or (g_Combat and self:IsDead()) then
-		return pass_interact_pos
+	local x, y, z = SnapToPassSlabXYZ(self)
+	if x and (not unit or unit:GetDist(x, y, z) == 0) or (g_Combat and self:IsDead()) then
+		return point(x, y, z)
 	end
 
 	local closestMeleePos = unit and unit:GetClosestMeleeRangePos(self, false, "interaction")
@@ -188,6 +188,8 @@ local function lSyncCheck(id, sync, ...)
 	end
 end
 
+local can_interact_unit_list = {}
+
 function Unit:CanInteractWith(target, action_id, skip_cost, from_ui, sync)
 	lSyncCheck(0, sync, target, action_id, skip_cost, from_ui)
 	if not IsKindOf(target, "Interactable") then
@@ -200,25 +202,30 @@ function Unit:CanInteractWith(target, action_id, skip_cost, from_ui, sync)
 		return false
 	end
 
-	if IsKindOf(target, "SlabWallWindow") and not target:ShouldShowUnitInteraction() then
-		lSyncCheck(3, sync, target, action_id, skip_cost, from_ui)
-		return false
+	if IsKindOf(target, "SlabWallWindow") then
+		if not target:ShouldShowUnitInteraction() then
+			lSyncCheck(3, sync, target, action_id, skip_cost, from_ui)
+			return false
+		end
 	end
 
-	local visuals = ResolveInteractableVisualObjects(target)
-	if #visuals == 0 then 
+	local visual = ResolveInteractableVisualObjects(target, nil, nil, "findFirst")
+	if not visual then 
 		lSyncCheck(4, sync, target, action_id, skip_cost, from_ui)
 		return false 
 	end
 
-	if action_id == "Interact_CustomInteractable" and IsKindOf(target, "CustomInteractable") and (from_ui or target:GetUIState({self}) == "enabled") then
-		lSyncCheck(5, sync, target, action_id, skip_cost, from_ui)
-		return true
+	if action_id == "Interact_CustomInteractable" and IsKindOf(target, "CustomInteractable") then
+		can_interact_unit_list[1] = self
+		if from_ui or target:GetUIState(can_interact_unit_list) == "enabled" then
+			lSyncCheck(5, sync, target, action_id, skip_cost, from_ui)
+			return true
+		end
 	end
 
 	-- These door interactions are additional actions that do not override Open/Close
 	local combat_action
-	if IsKindOf(target, "Lockpickable") and table.find(LockpickableActionIds, action_id) then
+	if action_id and IsKindOf(target, "Lockpickable") and table.find(LockpickableActionIds, action_id) then
 		combat_action = CombatActions[action_id]
 	else
 		combat_action = target:GetInteractionCombatAction(self)
@@ -228,32 +235,46 @@ function Unit:CanInteractWith(target, action_id, skip_cost, from_ui, sync)
 		return false
 	end
 
-	local goto_ap = 0
 	-- special-case Interact_Attack for units using emplacements that prevent their movement
 	if combat_action.id == "Interact_Attack" and self:HasStatusEffect("ManningEmplacement") then
-		if not CombatActionTargetFilters.MGBurstFire(target, {self}) then
+		can_interact_unit_list[1] = self
+		if not CombatActionTargetFilters.MGBurstFire(target, can_interact_unit_list) then
 			return false
 		end
 	elseif g_Combat and not skip_cost then
-		local pos = target and self:GetInteractionPosWith(target)
-		goto_ap = pos and CombatActions.Move:GetAPCost(self, { goto_pos = pos })
-		if not goto_ap or goto_ap < 0 then
+		if not target or self:HasStatusEffect("StationedMachineGun") or self:HasStatusEffect("ManningEmplacement") then
+			return false
+		end
+		local has_path
+		local combatPath = GetCombatPath(self)
+		local paths_ap = combatPath.paths_ap
+		local positions = target:GetInteractionPos(self)
+		if IsPoint(positions) then
+			if paths_ap[point_pack(positions)] then
+				has_path = true
+			end
+		else
+			for i, pos in ipairs(positions) do
+				if paths_ap[point_pack(pos)] then
+					has_path = true
+					break
+				end
+			end
+		end
+		if not has_path then
 			return false
 		end
 	end
 
 	if not from_ui then
-		local state, reason = combat_action:GetUIState({self}, {
-			target = target,
-			skip_cost = skip_cost,
-			goto_ap = goto_ap
-		})
+		can_interact_unit_list[1] = self
+		local state, reason = combat_action:GetUIState(can_interact_unit_list, {target = target, skip_cost = skip_cost, goto_ap = 0})
 		if state ~= "enabled" then
 			lSyncCheck(7, sync, target, action_id, skip_cost, from_ui)
 			return false, reason
 		end
 	end
-	
+
 	lSyncCheck(8, sync, target, action_id, skip_cost, from_ui)
 	return true, combat_action
 end
@@ -612,7 +633,7 @@ function Unit:InteractWith(action_id, cost_ap, pos, goto_ap, target, from_ui)
 	self:PopAndCallDestructor()
 
 	local dlg = GetInGameInterfaceModeDlg()
-	if IsKindOf(dlg, "IModeCommonUnitControl") then dlg:UpdateInteractablesHighlight() end
+	if IsKindOf(dlg, "IModeCommonUnitControl") then dlg:UpdateInteractablesHighlight(false, "force") end
 end
 
 function Unit:PlayInteractionBanter(no_rotation)
@@ -843,7 +864,7 @@ function Unit:OverheardConversationHeadTo(point, face_point, marker)
 		end
 	end)
 	self:ChangeStance(nil, nil, "Standing")
-	if self:GotoSlab(point) ~= pfFinished then
+	if point ~= self:GetPos() and self:GotoSlab(point) ~= pfFinished then
 		self:PopAndCallDestructor()
 	end
 	if self.carry_flare then

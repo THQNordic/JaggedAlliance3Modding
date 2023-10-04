@@ -6,7 +6,7 @@ PlaceObj('XTemplate', {
 	id = "SectorOperationCraftResTableUI",
 	PlaceObj('XTemplateWindow', {
 		'comment', "table",
-		'__condition', function (parent, context) return context.operation and (context.operation.id=="CraftAmmo" or context.operation.id=="CraftExplosives") end,
+		'__condition', function (parent, context) return context.operation and IsCraftOperationId(context.operation.id) end,
 		'__class', "XContentTemplate",
 		'Id', "idStatsTable",
 		'Margins', box(0, 10, 0, 10),

@@ -49,7 +49,7 @@ PlaceObj('Conversation', {
 	PlaceObj('ConversationPhrase', {
 		AutoRemove = true,
 		Conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('QuestIsVariableBool', {
 						QuestId = "RescueHerMan",
@@ -349,7 +349,7 @@ PlaceObj('Conversation', {
 		PlaceObj('ConversationPhrase', {
 			Align = "right",
 			Conditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('UnitSquadHasMerc', {
 							HasPerk = "Scoundrel",
@@ -514,7 +514,7 @@ PlaceObj('Conversation', {
 	}),
 	PlaceObj('ConversationPhrase', {
 		Conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('QuestIsVariableBool', {
 						QuestId = "RescueHerMan",
@@ -1068,7 +1068,7 @@ PlaceObj('Conversation', {
 		Align = "right",
 		AutoRemove = true,
 		Conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('QuestIsVariableBool', {
 						QuestId = "RescueHerMan",
@@ -1078,7 +1078,7 @@ PlaceObj('Conversation', {
 							return quest.HangLuc
 						end,
 					}),
-					PlaceObj('AND', {
+					PlaceObj('CheckAND', {
 						Conditions = {
 							PlaceObj('UnitSquadHasMerc', {
 								HasPerk = "Negotiator",
@@ -1226,14 +1226,14 @@ PlaceObj('Conversation', {
 		Align = "right",
 		AutoRemove = true,
 		Conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('QuestIsVariableNum', {
 						Amount = 50,
 						Prop = "GoodImpression",
 						QuestId = "PierreDefeated",
 					}),
-					PlaceObj('AND', {
+					PlaceObj('CheckAND', {
 						Conditions = {
 							PlaceObj('UnitSquadHasMerc', {
 								HasPerk = "Negotiator",
@@ -1655,7 +1655,7 @@ PlaceObj('Conversation', {
 	}),
 	PlaceObj('ConversationPhrase', {
 		Conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('QuestIsVariableBool', {
 						QuestId = "RescueHerMan",

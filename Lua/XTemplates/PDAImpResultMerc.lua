@@ -568,7 +568,7 @@ PlaceObj('XTemplate', {
 										'OnPress', function (self, gamepad)
 											local slider = self:ResolveId("node").idSlider
 											local value = slider:GetScroll()
-											slider:ScrollTo(Max(value-1,1))
+											slider:ScrollTo(Max(value-1,0))
 										end,
 										'FlipX', true,
 										'CenterImage', "UI/PDA/T_Icon_Play",

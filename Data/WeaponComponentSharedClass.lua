@@ -9,6 +9,7 @@ PlaceObj('WeaponComponent', {
 	},
 	Cost = 20,
 	DisplayName = T(638946230736, --[[WeaponComponent FlashlightDot_aa12 DisplayName]] "Tactical Device"),
+	EnableAimFX = true,
 	Icon = "UI/Icons/Upgrades/side_laserlight",
 	ModificationDifficulty = 10,
 	ModificationEffects = {
@@ -52,6 +53,7 @@ PlaceObj('WeaponComponent', {
 PlaceObj('WeaponComponent', {
 	Cost = 10,
 	DisplayName = T(676630739482, --[[WeaponComponent Flashlight_aa12 DisplayName]] "Flashlight"),
+	EnableAimFX = true,
 	Icon = "UI/Icons/Upgrades/side_light",
 	ModificationDifficulty = -25,
 	ModificationEffects = {
@@ -83,6 +85,7 @@ PlaceObj('WeaponComponent', {
 	},
 	Cost = 10,
 	DisplayName = T(427210220552, --[[WeaponComponent LaserDot_aa12 DisplayName]] "Red Dot"),
+	EnableAimFX = true,
 	Icon = "UI/Icons/Upgrades/side_laser",
 	ModificationDifficulty = 10,
 	ModificationEffects = {
@@ -114,6 +117,7 @@ PlaceObj('WeaponComponent', {
 	},
 	Cost = 10,
 	DisplayName = T(739522307124, --[[WeaponComponent UVDot_aa12 DisplayName]] "UV Dot"),
+	EnableAimFX = true,
 	Icon = "UI/Icons/Upgrades/side_laser",
 	ModificationDifficulty = 10,
 	ModificationEffects = {
@@ -717,6 +721,7 @@ PlaceObj('WeaponComponent', {
 	},
 	Cost = 20,
 	DisplayName = T(646651177477, --[[WeaponComponent FlashlightDot_Anaconda DisplayName]] "Tactical Device"),
+	EnableAimFX = true,
 	Icon = "UI/Icons/Upgrades/side_laserlight",
 	ModificationDifficulty = 10,
 	ModificationEffects = {
@@ -751,6 +756,7 @@ PlaceObj('WeaponComponent', {
 PlaceObj('WeaponComponent', {
 	Cost = 10,
 	DisplayName = T(968729166053, --[[WeaponComponent Flashlight_Anaconda DisplayName]] "Flashlight"),
+	EnableAimFX = true,
 	Icon = "UI/Icons/Upgrades/side_light",
 	ModificationDifficulty = -25,
 	ModificationEffects = {
@@ -811,6 +817,7 @@ PlaceObj('WeaponComponent', {
 	},
 	Cost = 10,
 	DisplayName = T(405161321170, --[[WeaponComponent LaserDot_Anaconda DisplayName]] "Red Dot"),
+	EnableAimFX = true,
 	Icon = "UI/Icons/Upgrades/side_laser",
 	ModificationDifficulty = 10,
 	ModificationEffects = {
@@ -878,6 +885,7 @@ PlaceObj('WeaponComponent', {
 	},
 	Cost = 10,
 	DisplayName = T(506806756026, --[[WeaponComponent UVDot_Anaconda DisplayName]] "UV Dot"),
+	EnableAimFX = true,
 	Icon = "UI/Icons/Upgrades/side_laser",
 	ModificationDifficulty = 10,
 	ModificationEffects = {
@@ -3860,7 +3868,7 @@ PlaceObj('WeaponComponent', {
 		PlaceObj('WeaponComponentVisual', {
 			ApplyTo = "FNFAL",
 			Entity = "WeaponAttA_Suppressor762",
-			Icon = "UI/Icons/Upgrades/556_suppressor",
+			Icon = "UI/Icons/Upgrades/762_suppressor",
 			Slot = "Muzzle",
 		}),
 		PlaceObj('WeaponComponentVisual', {
@@ -3955,6 +3963,7 @@ PlaceObj('WeaponComponent', {
 	},
 	Cost = 20,
 	DisplayName = T(875731475724, --[[WeaponComponent FlashlightDot_PSG_M1 DisplayName]] "Tactical Device"),
+	EnableAimFX = true,
 	Icon = "UI/Icons/Upgrades/side_laserlight",
 	ModificationDifficulty = 10,
 	ModificationEffects = {
@@ -3983,6 +3992,7 @@ PlaceObj('WeaponComponent', {
 PlaceObj('WeaponComponent', {
 	Cost = 10,
 	DisplayName = T(963698128407, --[[WeaponComponent Flashlight_PSG_M1 DisplayName]] "Flashlight"),
+	EnableAimFX = true,
 	Icon = "UI/Icons/Upgrades/side_light",
 	ModificationDifficulty = -25,
 	ModificationEffects = {
@@ -4009,6 +4019,7 @@ PlaceObj('WeaponComponent', {
 	},
 	Cost = 10,
 	DisplayName = T(841174949604, --[[WeaponComponent LaserDot_PSG_M1 DisplayName]] "Red Dot"),
+	EnableAimFX = true,
 	Icon = "UI/Icons/Upgrades/side_laser",
 	ModificationDifficulty = 10,
 	ModificationEffects = {
@@ -4063,6 +4074,7 @@ PlaceObj('WeaponComponent', {
 	},
 	Cost = 10,
 	DisplayName = T(524417680473, --[[WeaponComponent UVDot_PSG_M1 DisplayName]] "UV Dot"),
+	EnableAimFX = true,
 	Icon = "UI/Icons/Upgrades/side_laser",
 	ModificationDifficulty = 10,
 	ModificationEffects = {
@@ -5191,6 +5203,7 @@ PlaceObj('WeaponComponent', {
 PlaceObj('WeaponComponent', {
 	Cost = 10,
 	DisplayName = T(500461275609, --[[WeaponComponent Flashlight DisplayName]] "Flashlight"),
+	EnableAimFX = true,
 	Icon = "UI/Icons/Upgrades/side_light",
 	ModificationDifficulty = -25,
 	ModificationEffects = {
@@ -5362,6 +5375,7 @@ PlaceObj('WeaponComponent', {
 	},
 	Cost = 20,
 	DisplayName = T(599763053072, --[[WeaponComponent FlashlightDot DisplayName]] "Tactical Device"),
+	EnableAimFX = true,
 	Icon = "UI/Icons/Upgrades/side_laserlight",
 	ModificationDifficulty = 10,
 	ModificationEffects = {
@@ -5551,6 +5565,7 @@ PlaceObj('WeaponComponent', {
 	},
 	Cost = 10,
 	DisplayName = T(394807232613, --[[WeaponComponent LaserDot DisplayName]] "Red Dot"),
+	EnableAimFX = true,
 	Icon = "UI/Icons/Upgrades/side_laser",
 	ModificationDifficulty = 10,
 	ModificationEffects = {
@@ -5722,6 +5737,7 @@ PlaceObj('WeaponComponent', {
 	},
 	Cost = 10,
 	DisplayName = T(199081852714, --[[WeaponComponent UVDot DisplayName]] "UV Dot"),
+	EnableAimFX = true,
 	Icon = "UI/Icons/Upgrades/side_laser",
 	ModificationDifficulty = 10,
 	ModificationEffects = {

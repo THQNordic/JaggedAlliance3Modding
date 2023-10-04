@@ -13,7 +13,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							Condition = "or",
@@ -39,7 +39,7 @@ PlaceObj('QuestsDef', {
 			Idx = 4,
 			Scouting = true,
 			ShowConditions = {
-				PlaceObj('AND', {
+				PlaceObj('CheckAND', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							QuestId = "DiamondRed",
@@ -75,7 +75,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							Condition = "or",

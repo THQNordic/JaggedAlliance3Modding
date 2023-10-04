@@ -12,6 +12,38 @@ PlaceObj('CharacterEffectCompositeDef', {
 		}),
 	},
 	'object_class', "Perk",
+	'msg_reactions', {
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "attacker",
+			Event = "GatherCritChanceModifications",
+			Handler = function (self, attacker, target, action_id, weapon, data)
+				
+				local function exec(self, attacker, target, action_id, weapon, data)
+				if attacker:IsPointBlankRange(target) then
+					data.crit_chance = data.crit_chance + self:ResolveValue("crit_bonus")
+				end
+				end
+				
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[1]
+				if not reaction_def or reaction_def.Event ~= "GatherCritChanceModifications" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
+					exec(self, attacker, target, action_id, weapon, data)
+				end
+				
+				if self:VerifyReaction("GatherCritChanceModifications", reaction_def, attacker, attacker, target, action_id, weapon, data) then
+					exec(self, attacker, target, action_id, weapon, data)
+				end
+			end,
+			HandlerCode = function (self, attacker, target, data)
+				if attacker:IsPointBlankRange(target) then
+					data.crit_chance = data.crit_chance + self:ResolveValue("crit_bonus")
+				end
+			end,
+		}),
+	},
 	'DisplayName', T(949686340874, --[[CharacterEffectCompositeDef InstantAutopsy DisplayName]] "Shock Assault"),
 	'Description', T(925081303703, --[[CharacterEffectCompositeDef InstantAutopsy Description]] "Gain <em><percent(crit_bonus)></em> extra <GameTerm('Crit')> chance with melee weapons and firearms in <GameTerm('PointBlankRange')>."),
 	'Icon', "UI/Icons/Perks/InstantAutopsy",

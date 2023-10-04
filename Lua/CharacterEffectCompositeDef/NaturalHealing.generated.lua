@@ -8,33 +8,39 @@ DefineClass.NaturalHealing = {
 
 	object_class = "Perk",
 	msg_reactions = {
-		PlaceObj('MsgReaction', {
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "obj",
 			Event = "StatusEffectAdded",
 			Handler = function (self, obj, id, stacks)
-				local reaction_idx = table.find(self.msg_reactions or empty_table, "Event", "StatusEffectAdded")
-				if not reaction_idx then return end
 				
 				local function exec(self, obj, id, stacks)
 				local effect = obj:GetStatusEffect(self.id)
 				effect:SetParameter("nextProductionTime", Game.CampaignTime + effect:ResolveValue("hoursToProduce") * const.Scale.h)
 				end
-				local _id = GetCharacterEffectId(self)
-				if _id == id then exec(self, obj, id, stacks) end
 				
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[1]
+				if not reaction_def or reaction_def.Event ~= "StatusEffectAdded" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
+					exec(self, obj, id, stacks)
+				end
+				
+				if self:VerifyReaction("StatusEffectAdded", reaction_def, obj, obj, id, stacks) then
+					exec(self, obj, id, stacks)
+				end
 			end,
 			HandlerCode = function (self, obj, id, stacks)
 				local effect = obj:GetStatusEffect(self.id)
 				effect:SetParameter("nextProductionTime", Game.CampaignTime + effect:ResolveValue("hoursToProduce") * const.Scale.h)
 			end,
-			param_bindings = false,
 		}),
-		PlaceObj('MsgReaction', {
+		PlaceObj('MsgActorReaction', {
 			Event = "NewHour",
 			Handler = function (self)
-				local reaction_idx = table.find(self.msg_reactions or empty_table, "Event", "NewHour")
-				if not reaction_idx then return end
 				
-				local function exec(self)
+				local function exec(self, reaction_actor)
 				local unit =  gv_UnitData.Thor
 				unit = unit.HireStatus == "Hired" and unit
 				
@@ -79,25 +85,26 @@ DefineClass.NaturalHealing = {
 					end
 				end
 				end
-				local id = GetCharacterEffectId(self)
 				
-				if id then
-					local objs = {}
-					for session_id, data in pairs(gv_UnitData) do
-						local obj = g_Units[session_id] or data
-						if obj:HasStatusEffect(id) then
-							objs[session_id] = obj
-						end
-					end
-					for _, obj in sorted_pairs(objs) do
-						exec(self)
-					end
-				else
-					exec(self)
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[2]
+				if not reaction_def or reaction_def.Event ~= "NewHour" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
+					local reaction_actor
+					exec(self, reaction_actor)
 				end
 				
+				
+				local actors = self:GetReactionActors("NewHour", reaction_def, nil)
+				for _, reaction_actor in ipairs(actors) do
+					if self:VerifyReaction("NewHour", reaction_def, reaction_actor, nil) then
+						exec(self, reaction_actor)
+					end
+				end
 			end,
-			HandlerCode = function (self)
+			HandlerCode = function (self, reaction_actor)
 				local unit =  gv_UnitData.Thor
 				unit = unit.HireStatus == "Hired" and unit
 				
@@ -142,7 +149,6 @@ DefineClass.NaturalHealing = {
 					end
 				end
 			end,
-			param_bindings = false,
 		}),
 	},
 	DisplayName = T(328966753815, --[[CharacterEffectCompositeDef NaturalHealing DisplayName]] "Nature's Bounty"),

@@ -18,7 +18,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('VillainIsDefeated', {
 							Group = "FleatownBoss",
@@ -73,7 +73,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							QuestId = "Luigi",
@@ -174,7 +174,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							QuestId = "Luigi",
@@ -285,7 +285,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							QuestId = "Luigi",
@@ -541,7 +541,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							QuestId = "Smiley",
@@ -1015,6 +1015,11 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"L6_Underground",
+					},
+				}),
 				PlaceObj('UnitCanGoToPos', {
 					PositionMarker = "OutsideOfCell",
 					TargetUnit = "Luigi",
@@ -1037,6 +1042,9 @@ PlaceObj('QuestsDef', {
 			Once = true,
 			ParamId = "TCE_LuigiDoor",
 			QuestId = "Luigi",
+			requiredSectors = {
+				"L6_Underground",
+			},
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
@@ -1281,18 +1289,14 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
-				PlaceObj('OR', {
-					Conditions = {
-						PlaceObj('QuestIsVariableBool', {
-							Condition = "or",
-							QuestId = "Luigi",
-							Vars = set( "BossPartnership", "BossReward", "LuigiRewardGiven" ),
-							__eval = function ()
-								local quest = gv_Quests['Luigi'] or QuestGetState('Luigi')
-								return quest.BossPartnership or quest.BossReward or quest.LuigiRewardGiven
-							end,
-						}),
-					},
+				PlaceObj('QuestIsVariableBool', {
+					Condition = "or",
+					QuestId = "Luigi",
+					Vars = set( "BossPartnership", "BossReward", "LuigiRewardGiven" ),
+					__eval = function ()
+						local quest = gv_Quests['Luigi'] or QuestGetState('Luigi')
+						return quest.BossPartnership or quest.BossReward or quest.LuigiRewardGiven
+					end,
 				}),
 				PlaceObj('SectorIsInConflict', {
 					Negate = true,
@@ -1318,21 +1322,17 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
-						PlaceObj('AND', {
-							Conditions = {
-								PlaceObj('QuestIsVariableBool', {
-									QuestId = "Luigi",
-									Vars = set( "LuigiDead", "SupportLuigi" ),
-									__eval = function ()
-										local quest = gv_Quests['Luigi'] or QuestGetState('Luigi')
-										return quest.LuigiDead and quest.SupportLuigi
-									end,
-								}),
-							},
+						PlaceObj('QuestIsVariableBool', {
+							QuestId = "Luigi",
+							Vars = set( "LuigiDead", "SupportLuigi" ),
+							__eval = function ()
+								local quest = gv_Quests['Luigi'] or QuestGetState('Luigi')
+								return quest.LuigiDead and quest.SupportLuigi
+							end,
 						}),
-						PlaceObj('AND', {
+						PlaceObj('CheckAND', {
 							Conditions = {
 								PlaceObj('QuestIsVariableBool', {
 									QuestId = "Luigi",
@@ -1360,7 +1360,7 @@ PlaceObj('QuestsDef', {
 								return quest.SupportNoOne
 							end,
 						}),
-						PlaceObj('AND', {
+						PlaceObj('CheckAND', {
 							Conditions = {
 								PlaceObj('QuestIsVariableBool', {
 									QuestId = "Luigi",
@@ -1535,17 +1535,17 @@ PlaceObj('QuestsDef', {
 						return quest.JackhammerPrisoner
 					end,
 				}),
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"L6_Underground",
+					},
+				}),
 				PlaceObj('CheckIsPersistentUnitDead', {
 					Negate = true,
 					per_ses_id = "NPC_Jackhammer",
 				}),
 				PlaceObj('UnitIsOnMap', {
 					TargetUnit = "Jackhammer",
-				}),
-				PlaceObj('PlayerIsInSectors', {
-					Sectors = {
-						"L6_Underground",
-					},
 				}),
 			},
 			Effects = {

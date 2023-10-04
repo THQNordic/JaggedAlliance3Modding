@@ -535,10 +535,11 @@ function UpdateMarkerAreaEffects()
 end
 
 function UpdateBorderAreaMarkerVisibility(cursor_pos)
-	local voxel_cursor_x, voxel_cursor_y, voxel_cursor_z = WorldToVoxel(cursor_pos)
 	local m = GetBorderAreaMarker()
-	if not m then return end
-	
+	if not m then
+		return
+	end
+	local voxel_cursor_x, voxel_cursor_y = WorldToVoxel(cursor_pos)
 	local mw_x, mw_y = WorldToVoxel(m)
 	local left = mw_x - m.AreaWidth/2
 	local right = left + m.AreaWidth
@@ -546,23 +547,31 @@ function UpdateBorderAreaMarkerVisibility(cursor_pos)
 	local down = up + m.AreaHeight
 	local voxel_range = 12
 	if not m.contour_polyline then
-		if voxel_cursor_x - voxel_range <= left or  voxel_cursor_x + voxel_range >= right or voxel_cursor_y - voxel_range <= up or voxel_cursor_y + voxel_range >= down then
+		if voxel_cursor_x - voxel_range <= left or
+			voxel_cursor_x + voxel_range >= right or
+			voxel_cursor_y - voxel_range <= up or
+			voxel_cursor_y + voxel_range >= down
+		then
 			m:UpdateHideReason("area_visiblity", false)
 		end
 	else
-		local is_inside = voxel_cursor_x >= left and voxel_cursor_x < right and voxel_cursor_y >= up and voxel_cursor_y < down
+		local is_inside =
+			voxel_cursor_x >= left and
+			voxel_cursor_x < right and
+			voxel_cursor_y >= up and
+			voxel_cursor_y < down
 		local material = m.contour_polyline[1].CRMaterial
 		material:SetIsInside(is_inside, "notimereset")
-		local markerPos = m:GetPos()
-		if not markerPos:IsValidZ() then
-			markerPos = markerPos:SetZ(terrain.GetHeight(markerPos))
-		end
 		material.dirty = true
 		material.ZOffset = 0 --cameraTac.GetFloor() * hr.CameraTacFloorHeight -- markerPos:z()
 		for key, value in ipairs(m.contour_polyline) do
 			value:SetCRMaterial(material)
 		end
-		if voxel_cursor_x - voxel_range > left and  voxel_cursor_x + voxel_range < right and voxel_cursor_y - voxel_range > up and voxel_cursor_y + voxel_range < down then
+		if voxel_cursor_x - voxel_range > left and
+			voxel_cursor_x + voxel_range < right and
+			voxel_cursor_y - voxel_range > up and
+			voxel_cursor_y + voxel_range < down
+		then
 			m:UpdateHideReason("area_visiblity", true)
 		end
 	end

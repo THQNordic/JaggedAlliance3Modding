@@ -13,6 +13,9 @@ function CalcLOFSegmentBulletDamage(segment_hit_data, attack_args)
 	if segment_hit_data.hits then
 		segment_hit_data.record_breakdown = false
 		segment_hit_data.weapon:BulletCalcDamage(segment_hit_data)
+		if not attack_args.prediction then
+			AddBulletRicochetHits(segment_hit_data, attack_args)
+		end
 		-- recheck if target is actually hit
 		for _, hit in ipairs(segment_hit_data.hits) do
 			if hit.is_target then
@@ -53,6 +56,52 @@ local function CalcLOFBulletDamage(attack_data, attack_args)
 		if attack_data[k] == nil then
 			attack_data[k] = v
 		end
+	end
+end
+
+function AddBulletRicochetHits(segment_hit_data, attack_args)
+	local hits = segment_hit_data.hits
+	local last_hit = hits[#hits]
+	local stuck_pos = segment_hit_data.stuck_pos or segment_hit_data.lof_pos2
+	if not last_hit or last_hit.pos ~= stuck_pos or not last_hit.norm then
+		return
+	end
+	local surf_fx_type = GetObjMaterial(last_hit.pos, last_hit.obj)
+	if not surf_fx_type and IsKindOf(hit.obj, "FXObject") then
+		surf_fx_type = hit.obj.fx_actor_class or hit.obj.class
+	end
+	if not BulletRicochetMaterials[surf_fx_type] then
+		return
+	end
+	local lof_args = table.copy(attack_args)
+	local ricochet_start_pos = last_hit.pos
+	local norm = last_hit.norm
+	local dir = segment_hit_data.lof_pos2 - segment_hit_data.lof_pos1
+	local ricochet_dir = dir - MulDivRound(norm, 2 * Dot(dir, norm), Dot(norm, norm))
+	local ricochet_end_pos = ricochet_start_pos + SetLen(ricochet_dir, const.RicochetDistance)
+	lof_args.attack_pos = ricochet_start_pos + SetLen(ricochet_dir, guic) -- get away from the collision
+	lof_args.target_pos = ricochet_end_pos
+	lof_args.fire_relative_point_attack = false
+	lof_args.clamp_to_target = true
+	lof_args.extend_shot_start_to_attacker = false
+	lof_args.can_hit_attacker = true
+	lof_args.ignore_los = true
+	lof_args.inside_attack_area_check = false
+	lof_args.forced_hit_on_eye_contact = false
+	lof_args.penetration_class = -1 -- stuck on the first hit
+	lof_args.max_penetration_range = -1
+	lof_args.can_use_covers = false
+	lof_args.emplacement_weapon = false
+	lof_args.ricochet = true
+	local attack_data = CheckLOF(ricochet_end_pos, lof_args)
+	local lof = attack_data.lof and attack_data.lof[1]
+	local ricochet_hit = lof and lof.hits and lof.hits[1]
+	table.insert(hits, ricochet_hit or { pos = ricochet_end_pos })
+	last_hit.ricochet = true
+	segment_hit_data.ricochet_pos = hits[#hits].pos
+	if ricochet_hit then
+		ricochet_hit.stray = true
+		segment_hit_data.weapon:BulletCalcDamage(segment_hit_data, #hits)
 	end
 end
 
@@ -257,7 +306,7 @@ end
 function GetTargetsToShowAboveActionBarSorted(attacker, igi)
 	local targets = GetTargetsToShowAboveActionBar(attacker, igi)
 	local unitOrder = g_unitOrder[attacker] or empty_table
-	table.sort(targets, function(a, b)
+	table.stable_sort(targets, function(a, b)
 		local orderA = unitOrder[a] or 0
 		local orderB = unitOrder[b] or 0
 		return orderA < orderB
@@ -288,7 +337,7 @@ function PrecalcLOFUI(unit, action, pos, cacheTable)
 	end
 	defaultAction = defaultAction or unit:GetDefaultAttackAction("ranged") or unit:GetDefaultAttackAction() or action
 	if defaultAction.group == "FiringModeMetaAction" then
-		defaultAction = GetUnitDefaultFiringModeActionFromMetaAction(unit, defaultAction, true)
+		defaultAction = GetUnitDefaultFiringModeActionFromMetaAction(unit, defaultAction)
 	end
 
 	local unitWeapon = defaultAction:GetAttackWeapons(unit)
@@ -454,9 +503,9 @@ function OnMsg.TargetDummiesChanged(unit)
 	if not SelectedObj then return end
 	if g_Combat and not g_Combat.combat_started then return end -- Everyone repositions while combat is starting.
 	local weapon = SelectedObj:GetActiveWeapons()
-	local range = AIGetWeaponCheckRange(SelectedObj, weapon, SelectedObj:GetDefaultAttackAction())
-	if not range then return end
-	if SelectedObj:GetDist(unit) > range then return end
+	local action = SelectedObj:GetDefaultAttackAction()
+	local range = AIGetWeaponCheckRange(SelectedObj, weapon, action)
+	if not range or not IsCloser(SelectedObj, unit, range + 1) then return end
 	PrecalcUIIfNeeded(SelectedObj)
 end
 
@@ -1000,9 +1049,8 @@ end
 function UpdateEnemyUIOrderForUnit(unit)
 	local unitOrder = {}
 	for i, otherU in ipairs(g_Units) do
-		local unitPos = SnapToPassSlab(otherU) or otherU
-		local dist = unit:GetDist(unitPos)
-		
+		local x, y, z = SnapToPassSlabXYZ(otherU)
+		local dist = x and unit:GetDist(x, y, z) or unit:GetDist(otherU)
 		-- Enemies with good attacks are prioritized
 		if UIIsEnemyAttackGood(otherU) then dist = -(max_int-dist) end
 		unitOrder[otherU] = dist

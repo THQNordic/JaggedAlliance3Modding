@@ -6,5 +6,7 @@ PlaceObj('CharacterEffectCompositeDef', {
 	'object_class', "StatusEffect",
 	'DisplayName', T(790366855692, --[[CharacterEffectCompositeDef ZoophobiaChecked DisplayName]] "Zoophobia Checked"),
 	'RemoveOnEndCombat', true,
+	'RemoveOnSatViewTravel', true,
+	'RemoveOnCampaignTimeAdvance', true,
 })
 

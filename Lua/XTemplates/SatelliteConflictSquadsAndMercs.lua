@@ -129,7 +129,7 @@ PlaceObj('XTemplate', {
 				PlaceObj('XTemplateForEach', {
 					'comment', "Mercs in the Current Team",
 					'array', function (parent, context) return GetDialog(parent).context.autoResolve and table.find_value(GetDialog(parent).context.allySquads, "UniqueId", context.UniqueId).units or context.units end,
-					'__context', function (parent, context, item, i, n) return gv_UnitData[item] or UnitDataDefs[context.units.templateNames[item]] end,
+					'__context', function (parent, context, item, i, n) return gv_UnitData[item] end,
 					'run_after', function (child, context, item, i, n, last)
 						local i = i-1
 						child:SetGridX(i%3 + 1)

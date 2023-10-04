@@ -22,20 +22,29 @@ PlaceObj('CharacterEffectCompositeDef', {
 	'Comment', "reduced ap at start of turn, take damage at end turn; cth penalty",
 	'object_class', "StatusEffect",
 	'msg_reactions', {
-		PlaceObj('MsgReaction', {
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "obj",
 			Event = "StatusEffectAdded",
 			Handler = function (self, obj, id, stacks)
-				local reaction_idx = table.find(self.msg_reactions or empty_table, "Event", "StatusEffectAdded")
-				if not reaction_idx then return end
 				
 				local function exec(self, obj, id, stacks)
 				if g_Teams[g_CurrentTeam] == obj.team and not obj:HasStatusEffect("BeingBandaged") then
 					obj:ConsumeAP(-self:ResolveValue("APLoss") * const.Scale.AP)
 				end
 				end
-				local _id = GetCharacterEffectId(self)
-				if _id == id then exec(self, obj, id, stacks) end
 				
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[1]
+				if not reaction_def or reaction_def.Event ~= "StatusEffectAdded" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
+					exec(self, obj, id, stacks)
+				end
+				
+				if self:VerifyReaction("StatusEffectAdded", reaction_def, obj, obj, id, stacks) then
+					exec(self, obj, id, stacks)
+				end
 			end,
 			HandlerCode = function (self, obj, id, stacks)
 				if g_Teams[g_CurrentTeam] == obj.team and not obj:HasStatusEffect("BeingBandaged") then
@@ -43,20 +52,29 @@ PlaceObj('CharacterEffectCompositeDef', {
 				end
 			end,
 		}),
-		PlaceObj('MsgReaction', {
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "obj",
 			Event = "StatusEffectRemoved",
 			Handler = function (self, obj, id, stacks, reason)
-				local reaction_idx = table.find(self.msg_reactions or empty_table, "Event", "StatusEffectRemoved")
-				if not reaction_idx then return end
 				
 				local function exec(self, obj, id, stacks, reason)
 				if g_Combat and not obj:HasStatusEffect("BeingBandaged") then
 					obj:ConsumeAP(self:ResolveValue("APLoss") * const.Scale.AP)
 				end
 				end
-				local _id = GetCharacterEffectId(self)
-				if _id == id then exec(self, obj, id, stacks, reason) end
 				
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[2]
+				if not reaction_def or reaction_def.Event ~= "StatusEffectRemoved" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
+					exec(self, obj, id, stacks, reason)
+				end
+				
+				if self:VerifyReaction("StatusEffectRemoved", reaction_def, obj, obj, id, stacks, reason) then
+					exec(self, obj, id, stacks, reason)
+				end
 			end,
 			HandlerCode = function (self, obj, id, stacks, reason)
 				if g_Combat and not obj:HasStatusEffect("BeingBandaged") then
@@ -64,11 +82,10 @@ PlaceObj('CharacterEffectCompositeDef', {
 				end
 			end,
 		}),
-		PlaceObj('MsgReaction', {
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "unit",
 			Event = "UnitEndTurn",
 			Handler = function (self, unit)
-				local reaction_idx = table.find(self.msg_reactions or empty_table, "Event", "UnitEndTurn")
-				if not reaction_idx then return end
 				
 				local function exec(self, unit)
 				if not IsInCombat() then return end
@@ -83,16 +100,19 @@ PlaceObj('CharacterEffectCompositeDef', {
 				local log_msg = T{729241506274, "<name> bleeds for <em><num> damage</em>", name = unit:GetLogName(), num = value}
 				unit:TakeDirectDamage(value, has_visibility and floating_text or false, "short", log_msg)
 				end
-				local id = GetCharacterEffectId(self)
 				
-				if id then
-					if IsKindOf(unit, "StatusEffectObject") and unit:HasStatusEffect(id) then
-						exec(self, unit)
-					end
-				else
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[3]
+				if not reaction_def or reaction_def.Event ~= "UnitEndTurn" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
 					exec(self, unit)
 				end
 				
+				if self:VerifyReaction("UnitEndTurn", reaction_def, unit, unit) then
+					exec(self, unit)
+				end
 			end,
 			HandlerCode = function (self, unit)
 				if not IsInCombat() then return end
@@ -108,33 +128,66 @@ PlaceObj('CharacterEffectCompositeDef', {
 				unit:TakeDirectDamage(value, has_visibility and floating_text or false, "short", log_msg)
 			end,
 		}),
-		PlaceObj('MsgReaction', {
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "attacker",
 			Event = "GatherCTHModifications",
-			Handler = function (self, attacker, cth_id, data)
-				local reaction_idx = table.find(self.msg_reactions or empty_table, "Event", "GatherCTHModifications")
-				if not reaction_idx then return end
+			Handler = function (self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
 				
-				local function exec(self, attacker, cth_id, data)
+				local function exec(self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
 				if cth_id == self.id then
 					data.mod_add = data.mod_add + self:ResolveValue("cth_penalty")
 				end
 				end
-				local id = GetCharacterEffectId(self)
 				
-				if id then
-					if IsKindOf(attacker, "StatusEffectObject") and attacker:HasStatusEffect(id) then
-						exec(self, attacker, cth_id, data)
-					end
-				else
-					exec(self, attacker, cth_id, data)
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[4]
+				if not reaction_def or reaction_def.Event ~= "GatherCTHModifications" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
+					exec(self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
 				end
 				
+				if self:VerifyReaction("GatherCTHModifications", reaction_def, attacker, attacker, cth_id, action_id, target, weapon1, weapon2, data) then
+					exec(self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
+				end
 			end,
 			HandlerCode = function (self, attacker, cth_id, data)
 				if cth_id == self.id then
 					data.mod_add = data.mod_add + self:ResolveValue("cth_penalty")
 				end
 			end,
+		}),
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "target",
+			Event = "GatherCritChanceModifications",
+			Handler = function (self, attacker, target, action_id, weapon, data)
+				
+				local function exec(self, attacker, target, action_id, weapon, data)
+				if IsKindOf(data.weapon, "GutHookKnife") then
+					data.guaranteed_crit = true
+				end
+				end
+				
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[5]
+				if not reaction_def or reaction_def.Event ~= "GatherCritChanceModifications" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
+					exec(self, attacker, target, action_id, weapon, data)
+				end
+				
+				if self:VerifyReaction("GatherCritChanceModifications", reaction_def, target, attacker, target, action_id, weapon, data) then
+					exec(self, attacker, target, action_id, weapon, data)
+				end
+			end,
+			HandlerCode = function (self, attacker, target, data)
+				if IsKindOf(data.weapon, "GutHookKnife") then
+					data.guaranteed_crit = true
+				end
+			end,
+			helpActor = "target",
 		}),
 	},
 	'DisplayName', T(779855732255, --[[CharacterEffectCompositeDef Bleeding DisplayName]] "Bleeding"),

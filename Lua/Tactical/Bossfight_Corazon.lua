@@ -185,10 +185,9 @@ function BossfightCorazon:RegisterLogicMarker(name, area_flag, markers)
 	local marker = markers[idx]
 	local positions = marker:GetAreaPositions(true)
 	for _, ppos in ipairs(positions) do
-		local x, y, z = point_unpack(ppos)
-		local snap_pos = SnapToPassSlab(x, y, z)
-		if snap_pos then
-			ppos = point_pack(snap_pos)
+		local x, y, z = SnapToPassSlabXYZ(point_unpack(ppos))
+		if x then
+			ppos = point_pack(x, y, z)
 		end
 		self.ppos_to_logic_markers[ppos] = bor(self.ppos_to_logic_markers[ppos] or 0, area_flag)
 	end	
@@ -200,10 +199,9 @@ function BossfightCorazon:RegisterFightArea(area, marker)
 	self.area_to_marker[area] = marker
 	self.area_to_positions[area] = positions
 	for _, ppos in ipairs(positions) do
-		local x, y, z = point_unpack(ppos)
-		local snap_pos = SnapToPassSlab(x, y, z)
-		if snap_pos then
-			ppos = point_pack(snap_pos)
+		local x, y, z = SnapToPassSlabXYZ(point_unpack(ppos))
+		if x then
+			ppos = point_pack(x, y, z)
 		end
 		self.ppos_to_area[ppos] = area
 	end
@@ -462,31 +460,43 @@ function BossfightCorazon:UpdateUnitArchetypes()
 		end
 	end
 	
+	local use_tactics = boss.HitPoints > boss:GetInitialMaxHitPoints() / 2
 	for _, unit in ipairs(g_Units) do
-		if unit ~= g_Units.NPC_Corazon and unit.team.player_enemy and not unit:IsDead() then			
-			local unit_area = self:GetUnitArea(unit)
-			unit.archetype = "Corazon_GuardArea" -- base archetype for the enemies in the fight
-			
-			-- left side area special roles (intercept)
-			if self.interceptors[unit] then
-				-- assign them to all intercept zones in hallway except those behind
-				if unit_area == self.assigned_area[unit] then
-					self.assigned_marker_area[unit] = nil -- already where they need to be
-				else
-					local mask = 0
-					for i = areaHallwayCount, 1, -1 do
-						mask = bor(mask, shift(1, i-1))					
-						if unit_area == areaHallwayBase + i then
-							break
+		if unit.team == boss.team then
+			unit:RemoveStatusEffect("Unaware") -- all enemies are always aware in this fight
+		end
+		if unit ~= g_Units.NPC_Corazon and unit.team.player_enemy and not unit:IsDead() then
+			if use_tactics then
+				local unit_area = self:GetUnitArea(unit)
+				unit.archetype = "Corazon_GuardArea" -- base archetype for the enemies in the fight
+				
+				-- left side area special roles (intercept)
+				if self.interceptors[unit] then
+					-- assign them to all intercept zones in hallway except those behind
+					if unit_area == self.assigned_area[unit] then
+						self.assigned_marker_area[unit] = nil -- already where they need to be
+					else
+						local mask = 0
+						for i = areaHallwayCount, 1, -1 do
+							mask = bor(mask, shift(1, i-1))					
+							if unit_area == areaHallwayBase + i then
+								break
+							end
 						end
+						self.assigned_marker_area[unit] = mask -- assigned to all marker areas ahead
 					end
-					self.assigned_marker_area[unit] = mask -- assigned to all marker areas ahead
 				end
-			end
-			
-			-- right side special roles
-			if band(self.assigned_marker_area[unit] or 0, bor(areaRightShootAndScoot, areaRightTrapFlank)) ~= 0 then
-				unit.archetype = "Corazon_ShootAndScoot"
+				
+				-- right side special roles
+				if band(self.assigned_marker_area[unit] or 0, bor(areaRightShootAndScoot, areaRightTrapFlank)) ~= 0 then
+					unit.archetype = "Corazon_ShootAndScoot"
+				end
+			else
+				local def_id = unit.unitdatadef_id or false
+				local classdef = g_Classes[def_id]
+				if classdef then
+					unit.archetype = classdef.archetype
+				end
 			end
 		end
 	end

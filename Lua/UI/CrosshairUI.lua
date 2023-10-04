@@ -45,6 +45,8 @@ function CrosshairUI:Init()
 end
 
 function CrosshairUI:Open(...)
+	if not self.context then return end -- Closed in Init/UpdateAim
+
 	-- We can set the default part as the selected now that the UI has spawned.
 	self:SetSelectedPart(self.targetPart)
 	self:UpdateAim()
@@ -388,6 +390,10 @@ end
 
 function CrosshairUI:UpdateAim()
 	local pContext = self.context
+	if not pContext then
+		return
+	end
+	
 	local attacker = pContext.attacker
 	local action = self.show_data_for_action or pContext.action
 	local target = pContext.target
@@ -410,7 +416,7 @@ function CrosshairUI:UpdateAim()
 		args.aim = self.aim
 		
 		-- make sure the attacker has the AP for the aiming
-		while self.aim > 0 and not attacker:HasAP(action:GetAPCost(attacker, args)) do
+		while self.aim > 0 and action:GetUIState({ attacker }, args) ~= "enabled" do
 			self.aim = self.aim - 1
 			args.aim = self.aim
 		end
@@ -991,13 +997,23 @@ function CrosshairUI:CycleFiringModes()
 	local id = self.context.action and self.context.action.id
 	local firing_modes = self.context.firingModes or empty_table
 	
-	local idx = table.find(firing_modes, "id", id) or 0
-	idx = idx + 1
-	if idx > #firing_modes then
-		idx = 1
-	end
-	if firing_modes[idx] then
-		self:ChangeAction(firing_modes[idx])
+	local attacker = self.context.attacker
+	local curTargetIdx = table.find(firing_modes, "id", id) or 0
+	for i = 1, #firing_modes do
+		curTargetIdx = curTargetIdx + 1
+		if curTargetIdx > #firing_modes then
+			curTargetIdx = 1
+		end
+		
+		local action = firing_modes[curTargetIdx]
+		
+		local actionEnabled = attacker.ui_actions[action.id]
+		actionEnabled = actionEnabled == "enabled"
+		
+		if actionEnabled then
+			self:ChangeAction(action)
+			break
+		end
 	end
 end
 
@@ -1046,6 +1062,47 @@ function CrosshairUI:SetLayoutSpace(space_x, space_y, space_width, space_height)
 	local width = Min(self.measure_width, space_width)
 	local height = Min(self.measure_height, space_height)
 	self:SetBox(x, y, width, height)
+end
+
+function CrosshairUI:SetVisible(visible, ...)
+	XContextWindow.SetVisible(self, visible, ...)
+	if visible then
+		self:MoveInCurrentGamepadList(0)
+	end
+end
+
+function CrosshairUI:MoveInCurrentGamepadList(direction)
+	local crosshair = self
+	local list = crosshair.crosshair_gamepad_list
+	if list == "body_parts" then
+		local selectedPart = crosshair.targetPart
+		local slot = selectedPart and selectedPart.id
+		local buttonIdx = crosshair.idButtonsContainer
+		buttonIdx = table.find(buttonIdx, "context", selectedPart)
+		if not buttonIdx then return "break" end
+		
+		buttonIdx = buttonIdx + direction
+		local buttonNext = crosshair.idButtonsContainer[buttonIdx]
+		if not buttonNext or not buttonNext.visible then return "break" end
+		
+		crosshair:SetSelectedPart(buttonNext.context)
+	elseif list == "firing_modes" and crosshair.idFireModeContainer then
+		local selectedFiringMode = crosshair.context.action
+		local buttonIdx = false
+		for i, b in ipairs(crosshair.idFireModeContainer) do
+			if b.context.action == selectedFiringMode then
+				buttonIdx = i
+			end
+		end
+		if not buttonIdx then return "break" end
+		
+		buttonIdx = buttonIdx + direction
+		local buttonNext = crosshair.idFireModeContainer[buttonIdx]
+		if not buttonNext or not buttonNext.visible or not buttonNext.enabled then return "break" end
+		if not buttonNext.context.action then return "break" end
+		
+		crosshair:ChangeAction(buttonNext.context.action)
+	end
 end
 
 function OnMsg.UnitSwappedWeapon(unit)
@@ -1147,7 +1204,7 @@ function GetCrosshairAttackStatusEffects(crosshairCtx, weapon, bodyPartId, actio
 			else
 				name = T{733545694003, "<DisplayName>", hitObj}
 			end
-		else -- AOE
+		elseif attackResultTable.hit_objs then -- AOE
 			for i, hitObj in ipairs(attackResultTable.hit_objs) do
 				if IsKindOf(hitObj, "Unit") and not attacker:IsOnEnemySide(hitObj) then
 					if name then
@@ -1160,10 +1217,10 @@ function GetCrosshairAttackStatusEffects(crosshairCtx, weapon, bodyPartId, actio
 					else
 						name = T{733545694003, "<DisplayName>", hitObj}
 					end
-				else
-					name = T(451028806650, "Unknown Ally")
 				end
 			end
+		else
+			name = T(451028806650, "Unknown Ally")
 		end
 		
 		local text = false
@@ -1223,7 +1280,7 @@ function GetCrosshairAttackStatusEffects(crosshairCtx, weapon, bodyPartId, actio
 	if targetHasBodyParts then
 		local armorPart, armorIcon, iconPath = target:IsArmored(bodyPartId)
 		local armorPierced, ignored = target:IsArmorPiercedBy(weapon, attackResultTable.aim, bodyPartId, action)
-		if armorPart then
+		if armorPart and armorIcon then
 			local icon = iconPath .. (armorPierced and "ignored_" or "") .. armorIcon
 			
 			local className = armorPierced and (ignored and "ArmoredIgnored" or "ArmoredPierced") or "Armored"

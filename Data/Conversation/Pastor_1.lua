@@ -1012,7 +1012,7 @@ PlaceObj('Conversation', {
 		PlaceObj('ConversationPhrase', {
 			AutoRemove = true,
 			Conditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('UnitSquadHasMerc', {
 							HasPerk = "Scoundrel",

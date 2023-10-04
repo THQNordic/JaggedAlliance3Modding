@@ -20,7 +20,7 @@ function CreateSatelliteSectors()
 		return
 	end
 	local sectors = {}
-	for col = 1, campaign.sector_columns do
+	for col = campaign.sector_rowsstart, campaign.sector_columns do
 		for row = 1, campaign.sector_rows do
 			local sector = PlaceObject("SatelliteSector")
 			sector:SetId(sector_pack(row, col))
@@ -372,6 +372,10 @@ function NetSyncEvents.SatelliteCampaignTimeAdvance(time, old_time, step)
 		local lastGameTime = GameTime()
 	
 		WaitAllOtherThreads()
+		
+		assert(Game)
+		if not Game then return end
+		
 		while Game.CampaignTime < time and not IsCampaignPaused() do
 			local ot = Game.CampaignTime
 			Game.CampaignTime = Game.CampaignTime + const.Scale.min
@@ -766,7 +770,7 @@ function NetSyncEvents.ProcessMilitiaTrainingPopupResults(result, event_id, sect
 			for i, session_id in ipairs(mercs) do
 				NetSyncEvents.MercSetOperation(session_id, "MilitiaTraining", "Trainer", i == 1 and cost, i,  false)
 			end
-			NetSyncEvents.LogOperationStart("MilitiaTraining", sector.Id)
+			NetSyncEvents.LogOperationStart("MilitiaTraining", sector.Id, "log")
 			NetSyncEvents.StartOperation(sector.Id, "MilitiaTraining", start_time, sector.training_stat)
 		end
 	end
@@ -861,7 +865,7 @@ function SavegameSessionDataFixups.FixMercCreatedVariable(data, meta)
 	local merc_id = data.gvars.g_ImpTest.final.merc_template.id
 	for _, squad in pairs(data.gvars.gv_Squads) do
 		if squad.Side == "player1" or squad.Side == "player2" then
-			for _, unit_id in pairs(squad.units) do
+			for _, unit_id in ipairs(squad.units) do
 				if unit_id == merc_id then
 					data.gvars.g_ImpTest.final.created = true 
 					return 
@@ -1419,7 +1423,7 @@ end
 function GenerateUndergroundMarker(exitZoneInteractable, placedMarker)
 	local direction = exitZoneInteractable.Groups[1]
 	local markersInThisDirection = MapGetMarkers("Entrance", direction, function(marker) return marker ~= placedMarker end)
-	if #markersInThisDirection > 0 then
+	if markersInThisDirection and #markersInThisDirection > 0 then
 		return
 	end
 
@@ -1446,7 +1450,7 @@ function GenerateEntranceMarker(exitZoneInteractable, placedMarker)
 	local entranceMarkerPos = exitZoneInteractable:GetPos()
 
 	local markersInThisDirection = MapGetMarkers("Entrance", direction, function(marker) return marker ~= placedMarker end)
-	if #markersInThisDirection > 0 then
+	if markersInThisDirection and #markersInThisDirection > 0 then
 		return
 	end
 
@@ -1511,7 +1515,9 @@ function GenerateEntranceMarker(exitZoneInteractable, placedMarker)
 	end
 end
 
-function SpawnSquads(squad_ids, spawn_mode, spawn_markers, force_test_map, remove_dead)
+function SpawnSquads(squad_ids, spawn_mode, spawn_markers, force_test_map, enter_sector)
+	local remove_dead = not not enter_sector
+
 	g_GroupedSquadUnits = {}
 	local squads_to_spawn = {}
 	local map_combat_units = MapGet("map", "Unit") or empty_table
@@ -1523,11 +1529,19 @@ function SpawnSquads(squad_ids, spawn_mode, spawn_markers, force_test_map, remov
 		local delete_obj
 		if not obj.spawner or obj.Squad then -- don't remove spawner units, except those who joined a squad
 			-- unit was on this map once and either died here (which why they have no squad), or their squad isnt here anymore.
-			local squad_units = table.find(squad_ids, obj.Squad) and gv_Squads[obj.Squad] and gv_Squads[obj.Squad].units or empty_table
+			local squad = gv_Squads[obj.Squad]
+			local squad_units = table.find(squad_ids, obj.Squad) and squad and squad.units or empty_table
 			local missing = (remove_dead or not obj:IsDead()) and not table.find(squad_units, session_id)
 			
 			-- unit was on this map once and has returned after having been somewhere else, it needs to be respawned (lUpdateSquadCurrentSector)
 			local should_respawn = gv_UnitData[session_id] and not gv_UnitData[session_id].already_spawned_on_map
+			
+			-- Enemies will always redeploy (211594) to simulate time passing,
+			-- if they are part of a squad.
+			if enter_sector and squad and squad.Side == "enemy1" then
+				should_respawn = true
+			end
+			
 			delete_obj = missing or should_respawn
 		elseif remove_dead and obj.spawner and obj:IsDead() and not obj:IsPersistentDead() then
 			if obj:HasPassedTimeAfterDeath(const.Satellite.RemoveDeadBodiesAfter) then
@@ -1875,7 +1889,7 @@ function EnterSector(sector_id, spawn_mode, spawn_markers, save_sector, force_te
 			end			
 		end
 		UpdateSpawnersLocal()
-		SpawnSquads(squad_ids, spawn_mode, spawn_markers, force_test_map, "remove_dead")
+		SpawnSquads(squad_ids, spawn_mode, spawn_markers, force_test_map, "enter_sector")
 	end
 	
 	SetupTeamsFromMap()

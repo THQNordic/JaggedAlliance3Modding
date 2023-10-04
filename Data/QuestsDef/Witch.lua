@@ -518,7 +518,7 @@ PlaceObj('QuestsDef', {
 			Effects = {
 				PlaceObj('ConditionalEffect', {
 					'Conditions', {
-						PlaceObj('OR', {
+						PlaceObj('CheckOR', {
 							Conditions = {
 								PlaceObj('QuestIsVariableBool', {
 									QuestId = "Witch",

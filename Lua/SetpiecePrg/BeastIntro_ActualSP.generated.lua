@@ -51,7 +51,7 @@ SetpiecePrgs.BeastIntro_ActualSP = function(seed, state, TriggerUnits)
 	local _
 	prgdbg(li, 1, 37) _, SP_BeastPort = sprocall(SetpieceTeleport.Exec, SetpieceTeleport, state, Beast, "SP_BeastPort", true)
 	local _, SP_BeastGoTo
-	prgdbg(li, 1, 38) _, SP_BeastGoTo = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Beast, "SP_BeastGoTo", true, false, false, "Crouch", false, false, "")
+	prgdbg(li, 1, 38) _, SP_BeastGoTo = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Beast, "SP_BeastGoTo", true, false, false, "Crouch", false, false, "", 1000)
 	prgdbg(li, 1, 39) sprocall(SetpieceCamera.Exec, SetpieceCamera, state, rand, true, "", "Max", "", "", "linear", 5000, false, false, point(96253, 155761, 21379), point(93229, 159211, 23367), false, false, 4200, 2000, false, 0, 0, 0, 0, 0, 0, "Show all", 100)
 	prgdbg(li, 1, 40) sprocall(SetpieceFadeOut.Exec, SetpieceFadeOut, state, rand, true, "", 2200)
 	prgdbg(li, 1, 41) sprocall(SetpieceSleep.Exec, SetpieceSleep, state, rand, true, "", 5)

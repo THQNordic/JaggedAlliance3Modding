@@ -95,7 +95,7 @@ PlaceObj('XTemplate', {
 				PlaceObj('XTemplateWindow', {
 					'__class', "XText",
 					'Id', "idText",
-					'Margins', box(13, 0, 13, 9),
+					'Padding', box(15, 2, 15, 11),
 					'Dock', "top",
 					'MaxWidth', 280,
 					'TextStyle', "PDARolloverTutorialText",

@@ -48508,26 +48508,6 @@ PlaceObj('ActionFXSound', {
 
 PlaceObj('ActionFXSound', {
 	Action = "Spawn",
-	Actor = "FlareOnGround",
-	AttachToObj = true,
-	Delay = 100,
-	EndRules = {
-		PlaceObj('ActionFXEndRule', {
-			'EndAction', "Spawn",
-			'EndMoment', "end",
-		}),
-	},
-	FadeIn = 500,
-	FadeOut = 500,
-	GameTime = true,
-	Moment = "start",
-	Sound = "GrenadeFlareStick_burning",
-	group = "Utility - Grenade - FlareStick SFX",
-	id = "kirslAig",
-})
-
-PlaceObj('ActionFXSound', {
-	Action = "Spawn",
 	Actor = "FlareStick",
 	Delay = 100,
 	GameTime = true,
@@ -48556,6 +48536,26 @@ PlaceObj('ActionFXSound', {
 	Sound = "GrenadeFlareStick_burning",
 	group = "Utility - Grenade - FlareStick SFX",
 	id = "8825156428384590884",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "Spawn",
+	Actor = "FlareStick_OnGround",
+	AttachToObj = true,
+	Delay = 100,
+	EndRules = {
+		PlaceObj('ActionFXEndRule', {
+			'EndAction', "Spawn",
+			'EndMoment', "end",
+		}),
+	},
+	FadeIn = 500,
+	FadeOut = 500,
+	GameTime = true,
+	Moment = "start",
+	Sound = "GrenadeFlareStick_burning",
+	group = "Utility - Grenade - FlareStick SFX",
+	id = "kirslAig",
 })
 
 PlaceObj('ActionFXSound', {

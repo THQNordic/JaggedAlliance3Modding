@@ -289,7 +289,7 @@ PlaceObj('Conversation', {
 	PlaceObj('ConversationPhrase', {
 		Comment = "Fort: Raiders only",
 		Conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('UnitSquadHasMerc', {
 						HasPerk = "Scoundrel",
@@ -589,7 +589,7 @@ PlaceObj('Conversation', {
 	PlaceObj('ConversationPhrase', {
 		Comment = "Psycho merc directly shoots Bastien",
 		Conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('UnitSquadHasMerc', {
 						Name = "Meltdown",
@@ -635,7 +635,7 @@ PlaceObj('Conversation', {
 			}),
 			PlaceObj('ConditionalEffect', {
 				'Conditions', {
-					PlaceObj('OR', {
+					PlaceObj('CheckOR', {
 						Conditions = {
 							PlaceObj('UnitSquadHasMerc', {
 								Name = "Meltdown",

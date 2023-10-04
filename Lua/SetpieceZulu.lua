@@ -187,9 +187,9 @@ local function InitSPClickSync()
 				if dlg and rawget(dlg, "idSkipHint") then
 					local cntrl = dlg.idSkipHint
 					if data[netUniqueId] then
-						cntrl:SetText(T(221873989540, "Waiting for the other player..."))
+						cntrl:SetText(T(769124019747, "Waiting for <u(GetOtherPlayerNameFormat())>..."))
 					else
-						cntrl:SetText(T{255716179836, "<Count>/<Total> players skipped cutscene", Count = table.count(data, function(k, v) return v end), Total = table.count(netGamePlayers)})						
+						cntrl:SetText(T(270246785102, "<u(GetOtherPlayerNameFormat())> skipped the cutscene"))					
 					end
 					if not cntrl:GetVisible() then
 						cntrl:SetVisible(true)
@@ -601,6 +601,7 @@ DefineClass.SetpieceGotoPosition = {
 		{ id = "animated_rotation", name = "Animated Rotation", editor = "bool", default = false },
 		{ id = "RandomizePhase", name = "Randomize phase", editor = "bool", default = false, help = "When moving an actor group, randomizes the time each actor starts moving." },
 		{ id = "MoveStyle", name = "Move style", editor = "combo", default = "", items = function (self) return GetMoveStyleCombo() end },
+		{ id = "AnimSpeedModifier", name = "Anim Speed Modifier", editor = "number", default = 1000, min = 0, max = 65535, slider = true },
 	},
 	EditorName = "Go to (for Zulu units)",
 }
@@ -609,7 +610,7 @@ function SetpieceGotoPosition:GetEditorView()
 	return self:GetWaitCompletionPrefix() .. self:GetCheckpointPrefix() .. string.format("Actor(s) '<color 70 140 140>%s</color>' go to '<color 140 140 70>%s</color>' ", self.Actors, self.Marker)
 end
 
-function SetpieceGotoPosition.ExecThread(state, Actors, Marker, Orient, UseRun, StraightLine, Stance, AnimatedRotation, RandomizePhase, MoveStyle)
+function SetpieceGotoPosition.ExecThread(state, Actors, Marker, Orient, UseRun, StraightLine, Stance, AnimatedRotation, RandomizePhase, MoveStyle, AnimSpeedModifier)
 	if not Actors or #Actors == 0 then return end
 	local marker = SetpieceMarkerByName(Marker, "check")
 	if not marker then return end
@@ -620,6 +621,7 @@ function SetpieceGotoPosition.ExecThread(state, Actors, Marker, Orient, UseRun, 
 	for i, actor in ipairs(Actors) do
 		actor:SetCommandParamValue("SetpieceGoto", "move_style", MoveStyle)
 		actor:SetCommandParamValue("SetpieceGoto", "move_anim", UseRun and "Run" or "Walk")
+		actor:SetCommandParamValue("SetpieceGoto", "move_speed_modifier", AnimSpeedModifier)
 		actor:SetCommand("SetpieceGoto", pts[i], angle, Stance, StraightLine, AnimatedRotation, RandomizePhase and state.rand(1250))
 	end
 	while true do
@@ -810,7 +812,7 @@ function SetpieceShoot.ExecThread(state, Actors, TargetType, TargetUnits, Target
 				local num_hits = NumShots - num_misses
 				local shot_attack_args = {target_spot_group = TargetBodyPart, stance = actor.stance, step_pos = step_pos}
 				local lof_data = {lof_pos1 = lof_pos1, target_pos = target_pt}
-				local hit_vectors, miss_vectors = Firearm:CalcShotVectors(actor, "SingleShot", target_obj, shot_attack_args, lof_data, 20*guic, guim, guim, num_hits, num_misses)				
+				local hit_vectors, miss_vectors = Firearm:CalcShotVectors(actor, "SingleShot", target_obj, shot_attack_args, lof_data, 20*guic, guim, guim, num_hits, num_misses, 0)				
 				local lowest
 				target_points = {}
 				for _, hit in ipairs(hit_vectors) do

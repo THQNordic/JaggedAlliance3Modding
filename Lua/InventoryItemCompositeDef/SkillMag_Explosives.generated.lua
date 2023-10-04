@@ -14,7 +14,7 @@ DefineClass.SkillMag_Explosives = {
 	Description = T(267053043531, --[[InventoryItemCompositeDef SkillMag_Explosives Description]] "Recently blew up after several issues."),
 	AdditionalHint = T(633118403037, --[[InventoryItemCompositeDef SkillMag_Explosives AdditionalHint]] "<bullet_point> Used through the Item Menu\n<bullet_point> Single use\n<bullet_point> Increases Explosives"),
 	UnitStat = "Explosives",
-	is_valuable = true,
+	Valuable = 1,
 	effect_moment = "on_use",
 	Effects = {
 		PlaceObj('UnitStatBoost', {

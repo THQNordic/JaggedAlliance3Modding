@@ -416,22 +416,37 @@ local function LogDirectDamage(results, attacker, target, context, indent)
 	local cth = results.chance_to_hit or 100
 	local shot_index = 1
 	local absorbed_total = 0
+	local inaccurate_grazed = 0
 	for i,shot in ipairs(results.shots) do
 		local cth = 0
 		local damage = 0
 		local absorbed = 0
+		local grazed_miss
 		if not results.obstructed then
 			cth = shot.cth or 0
-			for _, hit in ipairs(results) do
-				if hit.shot_idx == i and hit.obj == target then
+			for _, hit in ipairs(shot.hits) do
+				if hit.obj == target then
 					damage = damage + (hit.damage or 0)
 					absorbed = absorbed + hit.armor_prevented
+					grazed_miss = grazed_miss or hit.grazed_miss
 				end
 			end
 		end
 		absorbed_total = absorbed_total + absorbed
 		local absorbed_text = (absorbed > 0) and T{101651236091, "(<absorbed> absorbed)",absorbed = absorbed}	or ""
-		CombatLog("debug", T{Untranslated("Shot <id> at <target> CtH: <percent(cth)>, roll: <num>/100 <hit_miss> <damage> damage <absorbed_text> "), id = i, target = target:GetLogName(), cth = cth, num = shot.roll or 100, hit_miss = shot.miss and Untranslated("Miss") or Untranslated("Hit"), damage = damage, absorbed_text = absorbed_text})
+		local outcome
+		if grazed_miss then
+			outcome = Untranslated("Grazed (inaccurate)")
+		elseif shot.miss then
+			outcome = Untranslated("Miss")
+		else
+			outcome = Untranslated("Hit")
+		end
+		CombatLog("debug", T{Untranslated("Shot <id> at <target> CtH: <percent(cth)>, roll: <num>/100 <hit_miss> <damage> damage <absorbed_text> "), 
+			id = i, target = target:GetLogName(), cth = cth, num = shot.roll or 100, 
+			hit_miss = outcome, 
+			damage = damage, absorbed_text = absorbed_text
+		})
 	end
 	for _, hit in ipairs(results) do
 		if hit.obj == target then			
@@ -440,10 +455,13 @@ local function LogDirectDamage(results, attacker, target, context, indent)
 			crits = crits + (hit.critical and 1 or 0)
 			stray = stray or hit.stray		
 			grazing = grazing or hit.grazing
+			if hit.grazed_miss then
+				inaccurate_grazed = inaccurate_grazed + 1
+			end
 		end
 	end
 	
-	if results.miss and not stray or results.obstructed then
+	if results.miss and (inaccurate_grazed == 0) and not stray or results.obstructed then
 		CombatLog("helper",T{556012296568, "<em>Missed</em> <target>",indent=indent, target = target:GetLogName()})
 		return
 	end
@@ -486,6 +504,10 @@ local function LogDirectDamage(results, attacker, target, context, indent)
 		end
 	elseif stray then
 		prefix = T(623586221175, "(<em>Stray shot</em>) ")
+	end
+	
+	if inaccurate_grazed > 0 then
+		CombatLog("helper", T{901890498660, "<number> inaccurate shot(s) grazed the target", number = inaccurate_grazed})
 	end
 	
 	local absorbed_text = absorbed_total > 0 and T{101651236091, "(<absorbed> absorbed)", absorbed = absorbed_total} or ""

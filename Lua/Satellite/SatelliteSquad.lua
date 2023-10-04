@@ -61,6 +61,11 @@ function LocalCheckUnitsMapPresence()
 	end
 	
 	if respawn_squads then
+		MapForEachMarker("GridMarker", nil, function(marker)
+			marker:RecalcAreaPositions()
+		end)
+		UpdateEntranceAreasVisibility()
+	
 		local conflict = GetSectorConflict()
 		local player, enemy = GetSectorSquadsToSpawnInTactical(gv_CurrentSectorId)
 		local squads = player
@@ -303,7 +308,7 @@ function SatelliteReachSectorCenter(squad_id, sector_id, prev_sector_id, dontUpd
 				Msg("PlayerSquadReachedDestination", squad_id)
 				
 				if GetAccountStorageOptionValue("AutoPauseDestReached") then
-					_SetCampaignSpeed(0, "UI")
+					SetCampaignSpeed(0, "UI")
 				end
 			end
 
@@ -369,13 +374,16 @@ function SatelliteReachSectorCenter(squad_id, sector_id, prev_sector_id, dontUpd
 	end
 	
 	vrUnit = player_squad and (squad.units[AsyncRand(#squad.units) + 1] or squad.units[1])
+	local isPrevSectorU = gv_Sectors[prev_sector_id] and gv_Sectors[prev_sector_id].GroundSector 
 	-- Play VR
 	if vrUnit and not sector.conflict and not returningLandTravel and (not reason or reason ~= "squad_split") then
 		local unit = vrUnit
 		if sector.InterestingSector and not sector.player_visited then
 			PlayVoiceResponse(unit, "InterestingSector")
-		elseif not route or #route == 0 then
+		elseif (not route or #route == 0) and not isPrevSectorU then
 			PlayVoiceResponse(unit, "SectorArrived")
+		elseif IsSquadTravelling(squad) then
+			PlayVoiceResponse(unit, "Travelling")
 		end
 	end
 	
@@ -840,7 +848,7 @@ function SetSatelliteSquadSecretRoute(squad, dest, time)
 end
 
 function SendSatelliteSquadOnRoute(squad, dest, params)
-	local route = GenerateRouteDijkstra(squad.CurrentSector, dest, squad.route, squad.units, nil, nil, squad.Side)
+	local route = GenerateRouteDijkstra(squad.CurrentSector, dest, squad.route, squad.units, params and params.enemy_guardpost and "enemy_guardpost", nil, squad.Side)
 	if not route then
 		assert(false, "SendSatelliteSquadOnRoute - spawned squad could not find route to target sector. " .. squad.CurrentSector .. "->" .. dest)
 		return
@@ -1626,11 +1634,18 @@ function NetSyncEvents.ReleaseMerc(merc_id)
 	local squad = gv_Squads[squadId]
 	local sectorId = squad.CurrentSector
 
-	local items = unit_data:GetItemsInSlot("Inventory") 
+	local items = {}
+	unit_data:ForEachItemInSlot("Inventory", function(item, _, x)
+		if not item.locked then
+			items[#items + 1] = item
+		end
+	end)
 	AddToSectorInventory(sectorId,items)
 	unit_data:ForEachItemInSlot("Inventory", function(item)
-		unit_data:RemoveItem("Inventory", item, "no_update")
-		NetUpdateHash("NetSyncEvents.ReleaseMerc_moving_items_params", item.class, item.id, sectorId)
+		if not item.locked then
+			unit_data:RemoveItem("Inventory", item, "no_update")
+			NetUpdateHash("NetSyncEvents.ReleaseMerc_moving_items_params", item.class, item.id, sectorId)
+		end	
 	end)
 	
 	RemoveUnitFromSquad(unit_data, "despawn")
@@ -1805,7 +1820,15 @@ function RemoveUnitFromSquad(unit_data, reason)
 	end
 
 	table.remove_value(squad.units, unit_data.session_id)
-	if not next(squad.units) then
+	
+	-- There is some bug with millitia units being present twice in 
+	-- their squad for some reason 0.0
+	while table.find(squad.units, unit_data.session_id) do
+		assert(false) -- Unit was in the squad twice+ 0.0
+		table.remove_value(squad.units, unit_data.session_id)
+	end
+	
+	if not squad.units or #squad.units == 0 then
 		Msg("PreSquadDespawned", squad_id, squad.CurrentSector, reason)
 		if squad.militia then
 			local sector = gv_Sectors[squad.CurrentSector]
@@ -1947,6 +1970,11 @@ function TrySwapMercs(unit_data1, unit_data2)
 		end]]
 		
 		if sector1 ~= sector2 then
+			-- But don't allow retreating from/to underground when there is a conflict (via squad management)
+			if IsConflictMode(sector1.CurrentSector) or IsConflictMode(sector2.CurrentSector) then
+				return
+			end
+		
 			local resp1 = CheckSquadJoiningFarAway(unit_data1, squad1Obj, squad2Obj)
 			local resp2 = CheckSquadJoiningFarAway(unit_data2, squad2Obj, squad1Obj)
 			if resp1 == "break" or resp2 == "break" then return end
@@ -2035,6 +2063,11 @@ function TryAssignUnitToSquad(unit_data, squad_id, position)
 			oldSquadSectorGround = gv_Sectors[oldSquadSectorGround].GroundSector or oldSquadSectorGround
 			local newSquadSectorGround = squad.CurrentSector
 			newSquadSectorGround = gv_Sectors[newSquadSectorGround].GroundSector or newSquadSectorGround
+			
+			-- But don't allow retreating from/to underground when there is a conflict (via squad management)
+			if IsConflictMode(oldSquad.CurrentSector) and oldSquad.CurrentSector ~= squad.CurrentSector then
+				return
+			end
 			
 			local squadTravelling = IsSquadTravelling(squad) or squad.Retreat
 			local oldSquadTravelling = IsSquadTravelling(oldSquad) or oldSquad.Retreat
@@ -2418,6 +2451,7 @@ function CheckIfPathTaken(curr, neigh, route, squad_curr_sector)
 	return false
 end
 
+DefineConstInt("Satellite", "AttackSquadPlayerSideWeight", 5)
 function GenerateRouteDijkstra(start_sector, end_sector, fullRoute, units, pass_mode, squad_curr_sector, side, noShortcuts)
 	if gv_Sectors and gv_Sectors[start_sector] and gv_Sectors[start_sector].GroundSector then
 		start_sector = gv_Sectors[start_sector].GroundSector
@@ -2430,6 +2464,12 @@ function GenerateRouteDijkstra(start_sector, end_sector, fullRoute, units, pass_
 	end
 	
 	pass_mode = pass_mode or ((side == "enemy1" or side == "diamonds") and "land_water_boatless" or "land_water")
+	
+	local preferMySide = false
+	if pass_mode == "enemy_guardpost" then
+		preferMySide = true
+		pass_mode = "land_water_boatless"
+	end
 	
 	if GetSectorDistance(start_sector, end_sector) == 1 then
 		local dir = GetSectorDirection(start_sector, end_sector)
@@ -2457,6 +2497,10 @@ function GenerateRouteDijkstra(start_sector, end_sector, fullRoute, units, pass_
 			if unvisited_sectors[neigh] then
 				local time = GetSectorTravelTime(curr, neigh, fullRoute, units, pass_mode, squad_curr_sector, side, dir)
 				if time then
+					if preferMySide and side ~= gv_Sectors[neigh].Side then
+						time = time * const.Satellite.AttackSquadPlayerSideWeight
+					end
+				
 					local time_value = time + sector_path_size[curr]
 					if time_value < sector_path_size[neigh] then
 						sector_path_size[neigh] = time_value
@@ -2473,6 +2517,10 @@ function GenerateRouteDijkstra(start_sector, end_sector, fullRoute, units, pass_
 			if unvisited_sectors[exit] then
 				local time = GetSectorTravelTime(curr, exit, fullRoute, units, pass_mode, squad_curr_sector, side)			
 				if time then
+					if preferMySide and side ~= gv_Sectors[exit].Side then
+						time = time * const.Satellite.AttackSquadPlayerSideWeight
+					end
+				
 					local time_value = time + sector_path_size[curr]
 					if time_value < sector_path_size[exit] then
 						sector_path_size[exit] = time_value
@@ -2630,9 +2678,6 @@ function OnMsg.ReachSectorCenter(squad_id, sector_id, prev_sector_id)
 	local waterTravel = IsSquadWaterTravelling(squad)
 	for idx, id in ipairs(squad.units) do
 		local unit_data = gv_UnitData[id]
-		if travelling and idx == 1 then
-			PlayVoiceResponse(table.rand(squad.units), "Travelling")
-		end
 		if unit_data.TravelTimerStart > 0 then
 			local hp = unit_data.HitPoints
 			local additional = GetHPAdditionalTiredTime(hp)
@@ -2743,7 +2788,7 @@ function SatelliteUnitsTick(squad)
 		end	
 		if player_squad then			
 			if (SatelliteUnitRestTimeRemaining(unit_data, "next_step_only") or 1) <= 0 then				
-				unit_data:SetTired(Max(unit_data.Tiredness-1,0))
+				unit_data:SetTired(unit_data.Tiredness>0 and Max(unit_data.Tiredness - 1, 0) or unit_data.Tiredness)
 				unit_data.RestTimer = Game.CampaignTime
 				unit_data.TravelTimerStart = 0
 				unit_data.TravelTime = 0
@@ -2867,7 +2912,7 @@ function GetNeighborSector(sector_id, dir, campaign)
 	local row, col = sector_unpack(sector_id)
 	local campaign = campaign or GetCurrentCampaignPreset()
 	if dir == "North" then
-		if row == 1 then
+		if row == campaign.sector_rowsstart then
 			return false
 		end
 		neigh_id = sector_pack(row - 1, col)
@@ -2895,7 +2940,7 @@ function GetNeighborSectors(sector_id)
 	local sectors = {}
 	local row, col = sector_unpack(sector_id)
 	local campaign = GetCurrentCampaignPreset()
-	if row ~= 1 then
+	if row ~= campaign.sector_rowsstart then
 		table.insert(sectors, sector_pack(row - 1, col))
 	end
 	if row ~= campaign.sector_rows then
@@ -3138,7 +3183,7 @@ function SetSquadWaterTravel(squad, val)
 		for i, u in ipairs(squad.units) do
 			local ud = gv_UnitData[u]
 			if timePassed >= const.Satellite.UnitTirednessRestTime then
-				ud:SetTired(Max(ud.Tiredness - 1, 0))
+				ud:SetTired(ud.Tiredness>0 and Max(ud.Tiredness - 1, 0) or ud.Tiredness)
 			end
 		end
 		squad.water_travel_rest_timer = 0

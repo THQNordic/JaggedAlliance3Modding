@@ -6932,7 +6932,7 @@ PlaceObj('LootDef', {
 	PlaceObj('LootEntryLootDef', {
 		comment = "tier 3+",
 		game_conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('PlayerIsInSectorsOfTier', {
 						MapTier = 30,
@@ -6955,7 +6955,7 @@ PlaceObj('LootDef', {
 	PlaceObj('LootEntryLootDef', {
 		comment = "tier 3+",
 		game_conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('PlayerIsInSectorsOfTier', {
 						MapTier = 30,
@@ -6992,7 +6992,7 @@ PlaceObj('LootDef', {
 	PlaceObj('LootEntryLootDef', {
 		comment = "tier 3+",
 		game_conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('PlayerIsInSectorsOfTier', {
 						MapTier = 30,
@@ -7045,7 +7045,7 @@ PlaceObj('LootDef', {
 	PlaceObj('LootEntryLootDef', {
 		comment = "tier 3+",
 		game_conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('PlayerIsInSectorsOfTier', {
 						MapTier = 30,
@@ -7068,7 +7068,7 @@ PlaceObj('LootDef', {
 	PlaceObj('LootEntryLootDef', {
 		comment = "tier 3+",
 		game_conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('PlayerIsInSectorsOfTier', {
 						MapTier = 30,
@@ -7109,7 +7109,7 @@ PlaceObj('LootDef', {
 	PlaceObj('LootEntryLootDef', {
 		comment = "tier 3+",
 		game_conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('PlayerIsInSectorsOfTier', {
 						MapTier = 30,
@@ -7132,7 +7132,7 @@ PlaceObj('LootDef', {
 	PlaceObj('LootEntryLootDef', {
 		comment = "tier 3+",
 		game_conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('PlayerIsInSectorsOfTier', {
 						MapTier = 30,
@@ -7155,7 +7155,7 @@ PlaceObj('LootDef', {
 	PlaceObj('LootEntryLootDef', {
 		comment = "tier 3+",
 		game_conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('PlayerIsInSectorsOfTier', {
 						MapTier = 30,
@@ -7179,7 +7179,7 @@ PlaceObj('LootDef', {
 		RandomizeCondition = true,
 		comment = "tier 3+",
 		game_conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('PlayerIsInSectorsOfTier', {
 						MapTier = 30,
@@ -7204,7 +7204,7 @@ PlaceObj('LootDef', {
 	PlaceObj('LootEntryLootDef', {
 		comment = "tier 3+",
 		game_conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('PlayerIsInSectorsOfTier', {
 						MapTier = 30,
@@ -7227,7 +7227,7 @@ PlaceObj('LootDef', {
 	PlaceObj('LootEntryLootDef', {
 		comment = "tier 3+",
 		game_conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('PlayerIsInSectorsOfTier', {
 						MapTier = 30,
@@ -7258,7 +7258,7 @@ PlaceObj('LootDef', {
 	PlaceObj('LootEntryLootDef', {
 		comment = "tier 3+",
 		game_conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('PlayerIsInSectorsOfTier', {
 						MapTier = 30,
@@ -7285,7 +7285,7 @@ PlaceObj('LootDef', {
 	PlaceObj('LootEntryLootDef', {
 		comment = "tier 3+",
 		game_conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('PlayerIsInSectorsOfTier', {
 						MapTier = 30,
@@ -7308,7 +7308,7 @@ PlaceObj('LootDef', {
 	PlaceObj('LootEntryLootDef', {
 		comment = "tier 3+",
 		game_conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('PlayerIsInSectorsOfTier', {
 						MapTier = 30,
@@ -7331,7 +7331,7 @@ PlaceObj('LootDef', {
 	PlaceObj('LootEntryLootDef', {
 		comment = "tier 3+",
 		game_conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('PlayerIsInSectorsOfTier', {
 						MapTier = 30,
@@ -7354,7 +7354,7 @@ PlaceObj('LootDef', {
 	PlaceObj('LootEntryLootDef', {
 		comment = "tier 3+",
 		game_conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('PlayerIsInSectorsOfTier', {
 						MapTier = 30,
@@ -7377,7 +7377,7 @@ PlaceObj('LootDef', {
 	PlaceObj('LootEntryLootDef', {
 		comment = "tier 3+",
 		game_conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('PlayerIsInSectorsOfTier', {
 						MapTier = 30,
@@ -7478,7 +7478,7 @@ PlaceObj('LootDef', {
 		amount_modifier = 2000000,
 		comment = "tier 3+",
 		game_conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('PlayerIsInSectorsOfTier', {
 						MapTier = 30,
@@ -7501,7 +7501,7 @@ PlaceObj('LootDef', {
 	PlaceObj('LootEntryInventoryItem', {
 		comment = "tier 3+",
 		game_conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('PlayerIsInSectorsOfTier', {
 						MapTier = 30,
@@ -7526,7 +7526,7 @@ PlaceObj('LootDef', {
 	PlaceObj('LootEntryLootDef', {
 		comment = "tier 3+",
 		game_conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('PlayerIsInSectorsOfTier', {
 						MapTier = 30,
@@ -7549,7 +7549,7 @@ PlaceObj('LootDef', {
 	PlaceObj('LootEntryLootDef', {
 		comment = "tier 3+",
 		game_conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('PlayerIsInSectorsOfTier', {
 						MapTier = 30,
@@ -7572,7 +7572,7 @@ PlaceObj('LootDef', {
 	PlaceObj('LootEntryLootDef', {
 		comment = "tier 3+",
 		game_conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('PlayerIsInSectorsOfTier', {
 						MapTier = 30,
@@ -7596,7 +7596,7 @@ PlaceObj('LootDef', {
 		amount_modifier = 3000000,
 		comment = "tier 3+",
 		game_conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('PlayerIsInSectorsOfTier', {
 						MapTier = 30,
@@ -7619,7 +7619,7 @@ PlaceObj('LootDef', {
 	PlaceObj('LootEntryLootDef', {
 		comment = "tier 3+",
 		game_conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('PlayerIsInSectorsOfTier', {
 						MapTier = 30,
@@ -7642,7 +7642,7 @@ PlaceObj('LootDef', {
 	PlaceObj('LootEntryLootDef', {
 		comment = "tier 3+",
 		game_conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('PlayerIsInSectorsOfTier', {
 						MapTier = 30,
@@ -7665,7 +7665,7 @@ PlaceObj('LootDef', {
 	PlaceObj('LootEntryLootDef', {
 		comment = "tier 3+",
 		game_conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('PlayerIsInSectorsOfTier', {
 						MapTier = 30,
@@ -9659,7 +9659,7 @@ PlaceObj('LootDef', {
 	}),
 	PlaceObj('LootEntryLootDef', {
 		game_conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('PlayerIsInSectorsOfTier', {
 						MapTier = 30,
@@ -9676,7 +9676,7 @@ PlaceObj('LootDef', {
 	}),
 	PlaceObj('LootEntryLootDef', {
 		game_conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('PlayerIsInSectorsOfTier', {
 						MapTier = 30,
@@ -9693,7 +9693,7 @@ PlaceObj('LootDef', {
 	}),
 	PlaceObj('LootEntryLootDef', {
 		game_conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('PlayerIsInSectorsOfTier', {
 						MapTier = 30,

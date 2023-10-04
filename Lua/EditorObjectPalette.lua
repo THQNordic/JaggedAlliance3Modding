@@ -34,14 +34,20 @@ function XEditorPlaceObject(id)
 		marker:SetType(id:sub(12))
 		return marker
 	end
-
-	local obj = old_XEditorPlaceObject(id)
-	
-	return obj
+	return old_XEditorPlaceObject(id)
 end
 
-local l_EditorCanSelect = editor.CanSelect
+local old_EditorCanSelect = editor.CanSelect
 function editor.CanSelect(obj)
 	return not IsKindOfClasses(obj, "DebugCoverDraw", "DebugPassDraw", "PFTunnel", "RoofFXController") and obj.class ~= "LightCCD" and
-		l_EditorCanSelect(obj)
+		old_EditorCanSelect(obj)
+end
+
+local old_XEditorPlaceId = XEditorPlaceId
+function XEditorPlaceId(obj)
+	if IsKindOf(obj, "GridMarker") then
+		return obj.Type and Presets.GridMarkerType.Default[obj.Type] and ("GridMarker-" .. obj.Type) or obj.class
+	else
+		return old_XEditorPlaceId(obj)
+	end
 end

@@ -157,7 +157,7 @@ PlaceObj('XTemplate', {
 				local count = CountCoopUnits(2)
 				local text = ""
 				if host then
-					text =  count>0 and T{901871139404, " Partner's Mercs <count>", count = count} or T(881798518541, "Partner has no mercs")
+					text =  count>0 and T{901871139404, " <u(GetOtherPlayerNameFormat())>'s Mercs <count>", count = count} or T(881798518541, "<u(GetOtherPlayerNameFormat())> has no mercs")
 				else
 					text = T{697391024819, "Mercs you can control <count>", count = count} 
 				end
@@ -181,7 +181,7 @@ PlaceObj('XTemplate', {
 				'HAlign', "right",
 				'TextStyle', "CombatTask_MercName",
 				'Translate', true,
-				'Text', T(124457191657, --[[XTemplate CoopMercsManagement Text]] "Partner has no mercs"),
+				'Text', T(124457191657, --[[XTemplate CoopMercsManagement Text]] "<u(GetOtherPlayerNameFormat())> has no mercs"),
 			}),
 			PlaceObj('XTemplateWindow', {
 				'__condition', function (parent, context) return not NetIsHost() end,
@@ -211,7 +211,7 @@ PlaceObj('XTemplate', {
 						'__class', "SnappingScrollArea",
 						'Id', "idSquadsList",
 						'Margins', box(14, 0, 0, 0),
-						'LayoutVSpacing', 10,
+						'MaxHeight', 700,
 						'VScroll', "idMercScroll",
 					}, {
 						PlaceObj('XTemplateForEach', {

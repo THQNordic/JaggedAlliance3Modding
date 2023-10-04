@@ -321,6 +321,9 @@ PlaceObj('ClassDef', {
 			if prop_id == "Roads" or prop_id == "BlockTravel"then
 				SatelliteSectorSetDirectionsProp(self, prop_id)
 			end
+			-- allow the sector to be saved in the campaign
+			-- (it strips generated sectors before saving)
+			self.generated = nil
 		end,
 	}),
 	PlaceObj('PropertyDefText', {
@@ -1090,6 +1093,9 @@ PlaceObj('ClassDef', {
 		'id', "conflictLoyaltyGained",
 		'help', "Checks whether to give loyalty on Conflict Win. Resets on sector lost and sector defended.",
 		'no_edit', true,
+	}),
+	PlaceObj('ClassConstDef', {
+		'name', "generated",
 	}),
 })
 

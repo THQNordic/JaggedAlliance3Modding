@@ -8,60 +8,67 @@ DefineClass.Downed = {
 
 	object_class = "CharacterEffect",
 	msg_reactions = {
-		PlaceObj('MsgReaction', {
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "obj",
 			Event = "StatusEffectAdded",
 			Handler = function (self, obj, id, stacks)
-				local reaction_idx = table.find(self.msg_reactions or empty_table, "Event", "StatusEffectAdded")
-				if not reaction_idx then return end
 				
 				local function exec(self, obj, id, stacks)
 				CombatLog("important", T{238931952182, "<em><LogName></em> is <em>downed</em>", obj})
 				obj.downing_action_start_time = CombatActions_LastStartedAction and CombatActions_LastStartedAction.start_time
 				CreateGameTimeThread(obj.SetCommandIfNotDead, obj, "Downed")
 				end
-				local _id = GetCharacterEffectId(self)
-				if _id == id then exec(self, obj, id, stacks) end
 				
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[1]
+				if not reaction_def or reaction_def.Event ~= "StatusEffectAdded" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
+					exec(self, obj, id, stacks)
+				end
+				
+				if self:VerifyReaction("StatusEffectAdded", reaction_def, obj, obj, id, stacks) then
+					exec(self, obj, id, stacks)
+				end
 			end,
 			HandlerCode = function (self, obj, id, stacks)
 				CombatLog("important", T{238931952182, "<em><LogName></em> is <em>downed</em>", obj})
 				obj.downing_action_start_time = CombatActions_LastStartedAction and CombatActions_LastStartedAction.start_time
 				CreateGameTimeThread(obj.SetCommandIfNotDead, obj, "Downed")
 			end,
-			param_bindings = false,
 		}),
-		PlaceObj('MsgReaction', {
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "unit",
 			Event = "UnitBeginTurn",
 			Handler = function (self, unit)
-				local reaction_idx = table.find(self.msg_reactions or empty_table, "Event", "UnitBeginTurn")
-				if not reaction_idx then return end
 				
 				local function exec(self, unit)
 				unit:AddStatusEffect("BleedingOut")
 				unit:RemoveStatusEffect("Downed")
 				end
-				local id = GetCharacterEffectId(self)
 				
-				if id then
-					if IsKindOf(unit, "StatusEffectObject") and unit:HasStatusEffect(id) then
-						exec(self, unit)
-					end
-				else
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[2]
+				if not reaction_def or reaction_def.Event ~= "UnitBeginTurn" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
 					exec(self, unit)
 				end
 				
+				if self:VerifyReaction("UnitBeginTurn", reaction_def, unit, unit) then
+					exec(self, unit)
+				end
 			end,
 			HandlerCode = function (self, unit)
 				unit:AddStatusEffect("BleedingOut")
 				unit:RemoveStatusEffect("Downed")
 			end,
-			param_bindings = false,
 		}),
 	},
 	Conditions = {
-		PlaceObj('CombatIsActive', {
-			param_bindings = false,
-		}),
+		PlaceObj('CombatIsActive', {}),
 	},
 	DisplayName = T(398729743970, --[[CharacterEffectCompositeDef Downed DisplayName]] "Downed"),
 	Description = T(848972500465, --[[CharacterEffectCompositeDef Downed Description]] "This character is in <em>Critical condition</em> and will bleed out unless treated with the <em>Bandage</em> action. The character remains alive if a successful check against Health is made next turn."),

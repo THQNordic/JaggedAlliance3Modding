@@ -7,13 +7,13 @@ DefineClass.DebugAuto = {
 
 
 	object_class = "AssaultRifle",
+	ScrapParts = 10,
 	RepairCost = 20,
 	Reliability = 95,
-	ScrapParts = 10,
 	Icon = "UI/Icons/Weapons/AK47",
 	DisplayName = T(396889236298, --[[InventoryItemCompositeDef DebugAuto DisplayName]] "Debug Gun"),
 	DisplayNamePlural = T(343215376565, --[[InventoryItemCompositeDef DebugAuto DisplayNamePlural]] "Debug Guns"),
-	LargeItem = true,
+	LargeItem = 1,
 	Cost = 800,
 	Caliber = "762WP",
 	Damage = 10,

@@ -8,11 +8,10 @@ DefineClass.OpportunisticKillerBuff = {
 
 	object_class = "CharacterEffect",
 	msg_reactions = {
-		PlaceObj('MsgReaction', {
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "unit",
 			Event = "UnitBeginTurn",
 			Handler = function (self, unit)
-				local reaction_idx = table.find(self.msg_reactions or empty_table, "Event", "UnitBeginTurn")
-				if not reaction_idx then return end
 				
 				local function exec(self, unit)
 				local weapon1, weapon2 = unit:GetActiveWeapons()
@@ -24,16 +23,19 @@ DefineClass.OpportunisticKillerBuff = {
 				end
 				unit:RemoveStatusEffect(self.id)
 				end
-				local id = GetCharacterEffectId(self)
 				
-				if id then
-					if IsKindOf(unit, "StatusEffectObject") and unit:HasStatusEffect(id) then
-						exec(self, unit)
-					end
-				else
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[1]
+				if not reaction_def or reaction_def.Event ~= "UnitBeginTurn" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
 					exec(self, unit)
 				end
 				
+				if self:VerifyReaction("UnitBeginTurn", reaction_def, unit, unit) then
+					exec(self, unit)
+				end
 			end,
 			HandlerCode = function (self, unit)
 				local weapon1, weapon2 = unit:GetActiveWeapons()
@@ -45,7 +47,6 @@ DefineClass.OpportunisticKillerBuff = {
 				end
 				unit:RemoveStatusEffect(self.id)
 			end,
-			param_bindings = false,
 		}),
 	},
 }

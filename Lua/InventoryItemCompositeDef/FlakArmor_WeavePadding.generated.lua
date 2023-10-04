@@ -7,8 +7,8 @@ DefineClass.FlakArmor_WeavePadding = {
 
 
 	object_class = "Armor",
-	Degradation = 6,
 	ScrapParts = 4,
+	Degradation = 6,
 	Icon = "UI/Icons/Items/flak_armor",
 	SubIcon = "UI/Icons/Items/padded",
 	DisplayName = T(336822464699, --[[InventoryItemCompositeDef FlakArmor_WeavePadding DisplayName]] "Flak Armor"),

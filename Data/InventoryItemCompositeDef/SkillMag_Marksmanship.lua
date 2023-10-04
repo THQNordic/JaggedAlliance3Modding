@@ -11,7 +11,7 @@ PlaceObj('InventoryItemCompositeDef', {
 	'Description', T(658693817283, --[[InventoryItemCompositeDef SkillMag_Marksmanship Description]] "The articles really hit the mark."),
 	'AdditionalHint', T(315614091781, --[[InventoryItemCompositeDef SkillMag_Marksmanship AdditionalHint]] "<bullet_point> Used through the Item Menu\n<bullet_point> Single use\n<bullet_point> Increases Marksmanship"),
 	'UnitStat', "Marksmanship",
-	'is_valuable', true,
+	'Valuable', 1,
 	'effect_moment', "on_use",
 	'Effects', {
 		PlaceObj('UnitStatBoost', {

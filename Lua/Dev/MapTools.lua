@@ -475,20 +475,29 @@ function DbgIsTreeWind(obj)
 	end
 end
 
-function LowerLODOutsideBorder()
+function ForceLODMinOutsideBorder()
 	local border = GetBorderAreaLimits()
 	MapForEach("map", "AutoAttachObject", function(obj)
 		if not obj:GetPos():InBox2D(border) and border:Intersect2D(obj:GetObjectBBox()) == const.irOutside then
-			obj:SetGameFlags(const.gofLowerLOD)
+			obj:SetForcedLODMin(true)
 			obj:SetAutoAttachMode(obj:GetAutoAttachMode())
 		end
 	end)
 	MapForEach("map", function(obj)
 		if not obj:GetPos():InBox2D(border) and border:Intersect2D(obj:GetObjectBBox()) == const.irOutside then
-			obj:SetGameFlags(const.gofLowerLOD)
+			obj:SetForcedLODMin(true)
 		end
 	end)
 	RecreateRenderObjects()
+end
+
+-- Compatibility method used for reading the old LowerLOD value in the maps
+function CObject:SetLowerLOD(value)
+	if value then
+		self:SetForcedLODState("Minimum")
+	else
+		self:SetForcedLODState("Automatic")
+	end
 end
 
 function CountEntitiesInAllMaps()
@@ -951,6 +960,37 @@ function GetMapsWithWaterUnderTerrain()
 	end)
 end
 
---OnMsg.SaveMap = CheckWaterObjectsUnderTerrain
+function OnMsg.SaveMap()
+	CheckWaterObjectsUnderTerrain()
+end
 
+end
+
+function editor.EyeCandyOutsideMap()
+	if #editor.GetSel() < 1 then
+		print("Please select an object to force EyeCandy to instances of that object outside of the map")
+		return
+	end
+
+	local bx = GetBorderAreaLimits()
+	local threshold = (terminal.IsKeyPressed(const.vkControl) and 50 or 20) * const.SlabSizeX
+	local salt = "EyeCandyOutsideMap"
+	
+	local objs = MapGet("map", table.keys2(table.invert(table.map(editor.GetSel(), "class"))), 
+		function(x)
+			local dist = bx:Dist2D(x)
+			if dist == 0 then return false end
+			return
+				dist > threshold or
+				((xxhash(x:GetPos(), salt) % 1024) < MulDivRound(dist, 1024, threshold))
+		end)
+	
+	XEditorUndo:BeginOp{ objects = objs, name = "Eye Candy outside map" }
+	SuspendPassEditsForEditOp(objs)
+	for _, x in ipairs(objs) do
+		x:ClearEnumFlags(const.efCollision + const.efApplyToGrids)
+		x:SetDetailClass("Eye Candy")
+	end
+	ResumePassEditsForEditOp(objs)
+	XEditorUndo:EndOp(objs)
 end

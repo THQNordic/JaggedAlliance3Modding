@@ -15,7 +15,11 @@ PlaceObj('XTemplate', {
 			end
 			
 			local shortcutText = GetShortcutButtonT(self.action)
-			self:SetText(T{828903919196, "<style PDAIMPCounter>[<shortcut>]</style> <text>", text = ogText, shortcut = shortcutText or ""})
+			if GetUIStyleGamepad() then
+				self:SetText(T{893255535468, "<style PDAIMPCounter><shortcut></style> <text>", text = ogText, shortcut = shortcutText or ""})
+			else
+				self:SetText(T{828903919196, "<style PDAIMPCounter>[<shortcut>]</style> <text>", text = ogText, shortcut = shortcutText or ""})
+			end
 		end,
 		'FXMouseIn', "buttonRollover",
 		'FXPressDisabled', "IactDisabled",

@@ -7,9 +7,9 @@ DefineClass.Bereta92 = {
 
 
 	object_class = "Pistol",
+	ScrapParts = 6,
 	RepairCost = 70,
 	Reliability = 20,
-	ScrapParts = 6,
 	Icon = "UI/Icons/Weapons/Beretta92F",
 	DisplayName = T(913137394341, --[[InventoryItemCompositeDef Bereta92 DisplayName]] "Beretta 92F"),
 	DisplayNamePlural = T(134586456394, --[[InventoryItemCompositeDef Bereta92 DisplayNamePlural]] "Beretta 92Fs"),
@@ -23,7 +23,7 @@ DefineClass.Bereta92 = {
 	CritChanceScaled = 30,
 	MagazineSize = 15,
 	WeaponRange = 14,
-	PointBlankRange = true,
+	PointBlankBonus = 1,
 	OverwatchAngle = 2160,
 	Noise = 10,
 	Entity = "Weapon_Beretta92F",

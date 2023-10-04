@@ -218,9 +218,9 @@ function ModsUIToggleEnabled(mod, win, obj_table, silent, dont_obj_modified)
 			end
 		end
 		if new_enabled then
-			TurnModOn(stored_id)
+			TurnModOn(stored_id, "uiToggle")
 		else
-			TurnModOff(stored_id)
+			TurnModOff(stored_id, "uiToggle")
 		end
 		if not g_ModsUIContextObj then
 			g_EnableModThread = false

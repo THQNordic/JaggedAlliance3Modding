@@ -537,7 +537,7 @@ PlaceObj('Conversation', {
 		AutoRemove = true,
 		Comment = "TCE die",
 		Conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('UnitSquadHasMerc', {
 						Name = "Ivan",
@@ -555,7 +555,7 @@ PlaceObj('Conversation', {
 			}),
 			PlaceObj('ConditionalEffect', {
 				'Conditions', {
-					PlaceObj('OR', {
+					PlaceObj('CheckOR', {
 						Conditions = {
 							PlaceObj('UnitSquadHasMerc', {
 								Name = "Ivan",
@@ -675,7 +675,7 @@ PlaceObj('Conversation', {
 		Align = "right",
 		AutoRemove = true,
 		Conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('UnitSquadHasMerc', {
 						Name = "Fidel",
@@ -696,7 +696,7 @@ PlaceObj('Conversation', {
 			}),
 			PlaceObj('ConditionalEffect', {
 				'Conditions', {
-					PlaceObj('OR', {
+					PlaceObj('CheckOR', {
 						Conditions = {
 							PlaceObj('UnitSquadHasMerc', {
 								Name = "Fidel",

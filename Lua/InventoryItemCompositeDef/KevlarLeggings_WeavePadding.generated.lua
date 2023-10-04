@@ -7,8 +7,8 @@ DefineClass.KevlarLeggings_WeavePadding = {
 
 
 	object_class = "Armor",
-	Degradation = 6,
 	ScrapParts = 4,
+	Degradation = 6,
 	Icon = "UI/Icons/Items/kevlar_leggings",
 	SubIcon = "UI/Icons/Items/padded",
 	DisplayName = T(995619097583, --[[InventoryItemCompositeDef KevlarLeggings_WeavePadding DisplayName]] "Kevlar Leggings"),

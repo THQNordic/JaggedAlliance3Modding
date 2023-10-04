@@ -13,7 +13,7 @@ DefineClass.DiamondBriefcase = {
 	DisplayNamePlural = T(116084819674, --[[InventoryItemCompositeDef DiamondBriefcase DisplayNamePlural]] "Diamond Shipments"),
 	Description = T(894669501328, --[[InventoryItemCompositeDef DiamondBriefcase Description]] "A shipment of diamonds recovered from the enemy."),
 	AdditionalHint = T(952083748618, --[[InventoryItemCompositeDef DiamondBriefcase AdditionalHint]] "<bullet_point> <GameColorD>Can be cashed in for Money</GameColorD>"),
-	is_valuable = true,
+	Valuable = 1,
 	Cost = 12000,
 }
 

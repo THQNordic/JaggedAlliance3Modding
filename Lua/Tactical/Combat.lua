@@ -7,7 +7,7 @@ function IsCompetitiveGame()
 end
 
 function IsCoOpGame()
-	return netInGame and not IsHotSeatGame() and not IsCompetitiveGame() and #netGamePlayers == 2
+	return netInGame and not IsHotSeatGame() and not IsCompetitiveGame() and table.count(netGamePlayers) == 2
 end
 
 function NetPlayerSide(id)
@@ -50,6 +50,8 @@ function IsControlledByLocalPlayer(side, player_control)
 	return true
 end
 
+GameVar("g_FastForwardGameSpeed", "Normal")
+
 if FirstLoad then
 	g_Combat = false
 	g_DefaultShotBodyPart = false
@@ -57,6 +59,7 @@ if FirstLoad then
 	g_ShouldRebuildVisField = false
 	g_LastAttackStealth = false
 	g_LastAttackKill = false
+	g_FastForwardGameSpeedLocal = false
 end
 
 function OnMsg.DoneMap()
@@ -65,6 +68,7 @@ function OnMsg.DoneMap()
 	g_CombatPath = false
 	g_LastAttackStealth = false
 	g_LastAttackKill = false
+	g_FastForwardGameSpeedLocal = false
 end
 
 function OnMsg.DataLoaded()	
@@ -77,6 +81,32 @@ end
 
 function IsInCombat(pending)
 	return g_Combat and not g_Combat.end_combat and not (pending and g_Combat.end_combat_pending and g_Combat:ShouldEndCombat())
+end
+
+function UpdateFastForwardGameSpeed()
+	-- synced code
+	local time_factor
+	if g_FastForwardGameSpeed == "Fast" and g_Combat and not g_Combat.is_player_control then
+		time_factor = Clamp(const.DefaultTimeFactor * const.Combat.FastForwardGameSpeed / 100, 0, const.MaxTimeFactor)
+	else
+		time_factor = const.DefaultTimeFactor
+	end
+	SetTimeFactor(time_factor)
+end
+
+function NetSyncEvents.SetFastForwardGameSpeed(value)
+	if g_FastForwardGameSpeedLocal == value then
+		g_FastForwardGameSpeedLocal = false
+	end
+	if value ~= g_FastForwardGameSpeed then
+		g_FastForwardGameSpeed = value
+		UpdateFastForwardGameSpeed()
+		ObjModified(Selection) -- update interface
+	end
+end
+NetSyncLocalEffects.SetFastForwardGameSpeed = function(value)
+	g_FastForwardGameSpeedLocal = value or false
+	ObjModified(Selection) -- update interface
 end
 
 function GetRandomTerrainVoxelPosAroundCenter(unit, center, radius)
@@ -171,6 +201,7 @@ DefineClass.Combat = {
 	start_of_turn = false,
 	team_playing = false,
 	test_combat = false,
+	is_player_control = false,
 
 	queued_bombards = false,
 	emplacement_assignment = false, -- ai units assigned to take an emplacement
@@ -264,7 +295,8 @@ function Combat:Start(dynamic_data)
 	g_CurrentTeam = g_CurrentTeam or 1
 	self.current_turn = self.current_turn or 1
 	assert(not self.thread)
-	
+	self:SetPlayerControl(false)
+
 	SuspendVisibiltyUpdates("EnterCombat")
 	Msg("CombatStarting", dynamic_data)
 	CombatLog("debug", "Combat starting")
@@ -539,6 +571,7 @@ function Combat:MainLoop(dynamic_data)
 		self.team_playing = g_CurrentTeam
 
 		if IsNetPlayerTurn() then
+			self:SetPlayerControl(true)
 			if IsCompetitiveGame() then
 				ShowTurnNotification()
 			end
@@ -615,6 +648,7 @@ function Combat:MainLoop(dynamic_data)
 		end
 
 		self:WaitEndTurn()
+		self:SetPlayerControl(false)
 		WaitAllCombatActionsEnd()
 		NetUpdateHash("Combat_MainLoop_CombatActionsEnd")
 		if IsNetPlayerTurn() then WaitUIEndTurn() end
@@ -754,6 +788,13 @@ function Combat:AreEnemiesAware(team_idx)
 				return true
 			end
 		end
+	end
+end
+
+function Combat:SetPlayerControl(value)
+	self.is_player_control = value
+	if g_FastForwardGameSpeed ~= "Normal" then
+		UpdateFastForwardGameSpeed()
 	end
 end
 
@@ -900,6 +941,7 @@ function Combat:End()
 	local anyEnemies = CountAnyEnemies() > 0
 	local ui_team_idx = table.find(g_Teams, "side", "player1")
 	g_CurrentTeam = ui_team_idx
+	self:SetPlayerControl(false)
 
 	SetInGameInterfaceMode("IModeExploration", context)	
 	AdjustCombatCamera("reset")
@@ -1501,6 +1543,10 @@ function OnMsg.UnitMovementDone()
 	CombatPathReset(SelectedObj)
 end
 
+function OnMsg.DoorStateChanged()
+	CombatPathReset()
+end
+
 function OnMsg.OnPassabilityChanged()
 	CombatPathReset()
 end
@@ -1964,7 +2010,7 @@ function ApplyDamagePrediction(attacker, action, args, actionResult)
 					local armor, armorIcon, iconPath = obj:IsArmored(target_spot_group)
 					-- It's possible for an aimed aoe shot to hit the armor of another body part.
 					-- We don't show the armor icon in this case.
-					if armor then
+					if armor and armorIcon then
 						results[obj].armor = iconPath .. (hit.armor_pen and hit.armor_pen[armor] and "ignored_" or "") .. armorIcon
 					end
 				end
@@ -2409,7 +2455,7 @@ function GameTests.Combat()
 		end
 		-- start other teams' turn
 		while g_CurrentTeam == team do
-			Dialogs.IModeCombatMovement:ResolveId("idTurn"):Press()
+			Dialogs.IModeCombatMovement.idEndTurnFrame.idTurn:Press()
 			WaitMsg("TurnEnded", 200)
 		end
 		-- wait other teams to finish their turns

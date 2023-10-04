@@ -55,6 +55,7 @@ function GetCameraPosLookAtOnPos(pos)
 	return ptCamera, ptCameraLookAt
 end
 
+SnapCameraToObjInterpolationTimeDefault = 1000
 function SnapCameraToObj(obj, force, floor, time, easingType)
 	if not g_SnapCameraEnabled then return end
 	if not cameraTac.IsActive() then return end
@@ -78,8 +79,9 @@ function SnapCameraToObj(obj, force, floor, time, easingType)
 		else
 			easing = hr.CameraTacPosEasing
 		end
-		cameraTac.SetPosLookAtAndFloor(ptCamera, ptCameraLookAt, floor, time or 1000, easing)
-		return time or 500, ptCamera, ptCameraLookAt
+		time = time or SnapCameraToObjInterpolationTimeDefault
+		cameraTac.SetPosLookAtAndFloor(ptCamera, ptCameraLookAt, floor, time, easing)
+		return time, ptCamera, ptCameraLookAt
 	end
 	return 0
 end

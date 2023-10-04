@@ -11,7 +11,7 @@ PlaceObj('InventoryItemCompositeDef', {
 	'Description', T(862144835554, --[[InventoryItemCompositeDef SkillMag_Health Description]] "Doctors really hate this one simple trick."),
 	'AdditionalHint', T(333976389871, --[[InventoryItemCompositeDef SkillMag_Health AdditionalHint]] "<bullet_point> Used through the Item Menu\n<bullet_point> Single use\n<bullet_point> Increases Health"),
 	'UnitStat', "Health",
-	'is_valuable', true,
+	'Valuable', 1,
 	'effect_moment', "on_use",
 	'Effects', {
 		PlaceObj('UnitStatBoost', {

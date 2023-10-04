@@ -184,6 +184,34 @@ PlaceObj('XTemplate', {
 							end
 						end,
 					}),
+					PlaceObj('XTemplateWindow', {
+						'__class', "XContextFrame",
+						'Id', "idSelection",
+						'Visible', false,
+						'DisabledBackground', RGBA(255, 255, 255, 255),
+						'Image', "UI/Inventory/T_Backpack_Slot_Small_Hover",
+						'FrameBox', box(10, 10, 10, 10),
+						'ContextUpdateOnOpen', true,
+						'OnContextUpdate', function (self, context, ...)
+							local button = self.parent
+							self:SetVisible(button.selected or button.rollover)
+							self:SetDesaturation(button.enabled and 0 or 255)
+							self:SetTransparency(button.enabled and 0 or 125)
+						end,
+					}),
+					PlaceObj('XTemplateFunc', {
+						'name', "SetSelected(self, sel)",
+						'func', function (self, sel)
+							HUDButton.SetSelected(self, sel)
+							self.idSelection:OnContextUpdate()
+						end,
+					}),
+					PlaceObj('XTemplateFunc', {
+						'name', "OnSetRollover(self, rollover)",
+						'func', function (self, rollover)
+							self.idSelection:OnContextUpdate()
+						end,
+					}),
 					}),
 				}),
 			PlaceObj('XTemplateWindow', {
@@ -510,6 +538,7 @@ PlaceObj('XTemplate', {
 									if action and action.ActionType == "Passive" then
 										self.idText:SetTextStyle(rollover and "HUDButtonKeybindActive" or "HUDButtonKeybind")
 									end
+									self.idSelection:OnContextUpdate()
 									HUDButton.OnSetRollover(self, rollover)
 								end,
 							}),

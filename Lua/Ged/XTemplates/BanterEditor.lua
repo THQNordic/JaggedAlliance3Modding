@@ -18,6 +18,7 @@ PlaceObj('XTemplate', {
 				'Id', "idRuntimeState",
 				'Title', "References",
 				'EnableSearch', false,
+				'DisplayWarnings', false,
 				'ActionContext', "PropPanelAction",
 				'SearchActionContexts', {
 					"PropPanelAction",
@@ -28,7 +29,33 @@ PlaceObj('XTemplate', {
 				'HideFirstCategory', true,
 				'RootObjectBindName', "SelectedPreset",
 				'PropActionContext', "PropAction",
-			}),
+			}, {
+				PlaceObj('XTemplateFunc', {
+					'name', "BindViews(self, ...)",
+					'func', function (self, ...)
+						if not self.context then return end
+							
+						self:DeleteThread("BindViewsThread")
+						self:CreateThread("BindViewsThread", function()
+							Sleep(100)
+							self:_BindViews()
+						end)
+					end,
+				}),
+				PlaceObj('XTemplateFunc', {
+					'name', "_BindViews(self, ...)",
+					'func', function (self, ...)
+						if not self.context then return end
+						
+						-- ensures all views will be resent on rebind
+						self:UnbindView("props")
+						self:UnbindView("values")
+						
+						self:BindView("props", "GedGetProperties", self.SuppressProps)
+						self:BindView("values", "GedGetValues")
+					end,
+				}),
+				}),
 			}),
 		}),
 })

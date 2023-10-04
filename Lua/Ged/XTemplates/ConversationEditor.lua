@@ -20,6 +20,7 @@ PlaceObj('XTemplate', {
 			'Dock', "bottom",
 			'Title', "References",
 			'EnableSearch', false,
+			'DisplayWarnings', false,
 			'ActionContext', "PropPanelAction",
 			'SearchActionContexts', {
 				"PropPanelAction",

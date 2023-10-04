@@ -42,46 +42,48 @@ local lAspectRatioItems =
 	{value = 3, text = T(830202883779, "21:9"), real_value = 21./9.}
 }
 
-local game_properties = {
-	{ category = "Controls", id = "InvertRotation",           name = T(210910950476, "Invert Camera Rotation"),         editor = "bool",   default = false,     storage = "account", help = T(557409301877, "Inverts the camera rotation.") },
-	{ category = "Controls", id = "InvertLook",               name = T(175826014125, "Invert Camera Rotation (Y axis)"),editor = "bool",   default = false,     storage = "account", no_edit = not Platform.trailer, },
-	{ category = "Controls", id = "FreeCamRotationSpeed",     name = T(939095110164, "Controller Rotation Speed"),      editor = "number", default = 2000,      storage = "account", min = 100, max = 4000, step = 5, no_edit = not Platform.trailer, },
-	{ category = "Controls", id = "FreeCamPanSpeed",          name = T(188537213687, "Controller Pan Speed"),           editor = "number", default = 1000,      storage = "account", min = 50, max = 2000, step = 5, no_edit = not Platform.trailer, },
-	
-	{ category = "Controls", id = "MouseScrollOutsideWindow", name = T(3587, "Panning outside window"),                 editor = "bool",   default = false,     storage = "account", help = T(787712595891, "Allows camera pan when the mouse cursor is outside the game window.") },
-	{ category = "Controls", id = "LeftClickMoveExploration", name = T(988837649188, "Left-Click Move (Exploration)"),  editor = "bool",   default = false,     storage = "account", no_edit = function() return not terminal.IsMouseEnabled() end, help = T(344343486722, "Use left-click to move mercs while exploring a sector out of combat.") },
-	{ category = "Controls", id = "ShowGamepadHints",         name = T(731273807036, "Control Hints"),                                editor = "bool",   default = true,      storage = "account", help = T(696057050384, "Shows control hints while in exploration and in combat.")},
-	{ category = "Gameplay", id = "Difficulty",               name = T(944075953376, "Difficulty"),                     editor = "choice", default = "Normal",  storage = "local", SortKey = -1900, items = Difficulties, read_only = function() return netInGame and not NetIsHost() end , help = T(146186342821, "Changing the difficulty level of the game affects loot drops, financial rewards, and enemy toughness.<newline><newline><flavor>You can change the difficulty of the game at any time during gameplay.</flavor>") },
-	{ category = "Gameplay", id = "AnalyticsEnabled",         name = T(989416075981, "Analytics Enabled"),              editor = "bool",   default = "Off",     storage = "account", SortKey = 5000, on_value = "On", off_value = "Off", help = T(700491171054, "Enables or disables tracking anonymous usage data for analytics.") },
-	{ category = "Gameplay", id = "HideActionBar",            name = T(805746173830, "Hide Action Bar (Exploration)"),  editor = "bool",   default = true,      storage = "account", help = T(915209994351, "Hides the action bar UI while not in combat.")},
-	{ category = "Gameplay", id = "ActionCamera",             name = T(227204678948, "Targeting Action Camera"),        editor = "bool",   default = false,     storage = "account", help = T(819569684768, "A special cinematic camera view will be used while aiming an attack.\n\nThe action camera is always used with long-range weapons like sniper rifles.")},
-	{ category = "Gameplay", id = "PauseOperationStart",      name = T(195176176002, "Auto-pause: Operation Start"),    editor = "bool",   default = false,     storage = "account", SortKey = 1200, help = T(783599794850, "Pause time in SatView mode whenever an Operation is started and the Operations menu is closed.") },
-	{ category = "Gameplay", id = "PauseActivityDone",        name = T(219275271774, "Auto-pause: Operation Done"),     editor = "bool",   default = true,      storage = "account", SortKey = 1200, help = T(861937087426, "Pause time in SatView mode whenever an Operation is completed.") },
-	{ category = "Gameplay", id = "AutoPauseDestReached",     name = T(220585419104, "Auto-pause: Sector Reached"),     editor = "bool",   default = true,      storage = "account", SortKey = 1000, help = T(679389220889, "Pause time in SatView mode whenever a squad reaches its destination sector.") },
-	{ category = "Gameplay", id = "AutoPauseConflict",        name = T(292439424575, "Auto-pause: Sector Conflict"),    editor = "bool",   default = true,      storage = "account", SortKey = 1100, help = T(271690416933, "Pause time in SatView mode whenever a squad is in conflict.") },
-	{ category = "Gameplay", id = "PauseSquadMovement",       name = T(700874998799, "Auto-pause: Squad Movement"),     editor = "bool",   default = false,     storage = "account", SortKey = 1100, help = T(269721155831, "Pause time in SatView mode whenever a squad travel order is given.") },
-	{ category = "Gameplay", id = "ShowNorth",                name = T(397596571548, "Show North"),                     editor = "bool",   default = true,      storage = "account", help = T(968463817287, "Indicates North with an icon on the screen border.")},
-	{ category = "Gameplay", id = "ShowCovers",               name = T(693926475349, "Show Covers Shields"),            editor = "choice", default = "Combat",  storage = "account", items = lUIViewModes, help = T(549744366946, "Allows cover shields to be visible when not in combat.")},
-	{ category = "Gameplay", id = "AlwaysShowBadges",         name = T(834175857662, "Show Merc Badges"),               editor = "choice", default = "Combat",  storage = "account", items = lUIViewModes, help = T(526076106085, "Shows UI elements with detailed information above the merc's heads.") },
-	{ category = "Gameplay", id = "ShowLOF",                  name = T(304702880820, "Show Line of Fire"),              editor = "bool",   default = true,      storage = "account", help = T(426202778816, "Allows line of fire lines to be visible when in combat.") },
-	{ category = "Gameplay", id = "PauseConversation",        name = T(146071242733, "Pause conversations"),            editor = "bool",   default = true,      storage = "account", help = T(118088730513, "Wait for input before continuing to the next conversation line.")},
-	{ category = "Gameplay", id = "AutoSave",                 name = T(571339674334, "AutoSave"),                       editor = "bool",   default = true,      storage = "account", SortKey = -1500, help = T(690186765577, "Automatically create a savegame when a new day starts, when a sector is entered, when a combat starts or ends, when a conflict starts in SatView, and on exit.") },
-	{ category = "Gameplay", id = "InteractableHighlight",    name = T(770074868053, "Highlight mode"),                 editor = "choice", default = "Toggle",  storage = "account", items = lInteractableHighlightMode, help = T(705105646677, "Interactables can highlighted for a time when a button is pressed or held down.") },
-	{ category = "Gameplay", id = "ForgivingModeToggle",      name = T(836950884858, "Forgiving Mode"),                 editor = "bool",   default = false, storage = "local", no_edit = function (self) return not Game end, read_only = function() return netInGame and not NetIsHost() end, SortKey = -1600, help = T(983637939241, --[[GameRuleDef ForgivingMode description]] 'Lowers the impact of attrition and makes it easier to recover from bad situations (faster healing and repair, better income).<newline><newline><flavor>You cannot unlock the "Ironman" achievement while Forgiving mode is enabled.</flavor><newline><newline><flavor>You can change this option at any time during gameplay.</flavor>')},
-	{ category = "Gameplay", id = "ActivePauseMode",          name = T(133670189455, "Active Pause"),                   editor = "bool",   default = true,  storage = "local", no_edit = function (self) return not Game end, read_only = function() return netInGame and not NetIsHost() end, SortKey = -1590, help = T(466566359686, "Allows pausing the game in Exploration mode. Actions can be ordered while in pause but any attack will unpause the game.<newline><newline><flavor>You can change this option at any time during gameplay.</flavor>")},
-	{ category = "Display",  id = "AspectRatioConstraint",    name = T(125094445172, "UI Aspect Ratio"),                editor = "choice", default = 1, items = lAspectRatioItems, storage = "local", help = T(433997797079, "Constrain UI elements like the HUD to the set aspect ratio. Useful for Ultra Wide and Super Ultra Wide resolutions.") },
+AppendClass.OptionsObject = {
+	properties = {
+		{ category = "Controls", id = "InvertRotation",           name = T(210910950476, "Invert Camera Rotation"),         editor = "bool",   default = false,     storage = "account", help = T(557409301877, "Inverts the camera rotation.") },
+		{ category = "Controls", id = "InvertLook",               name = T(175826014125, "Invert Camera Rotation (Y axis)"),editor = "bool",   default = false,     storage = "account", no_edit = not Platform.trailer, },
+		{ category = "Controls", id = "FreeCamRotationSpeed",     name = T(939095110164, "Controller Rotation Speed"),      editor = "number", default = 2000,      storage = "account", min = 100, max = 4000, step = 5, no_edit = not Platform.trailer, },
+		{ category = "Controls", id = "FreeCamPanSpeed",          name = T(188537213687, "Controller Pan Speed"),           editor = "number", default = 1000,      storage = "account", min = 50, max = 2000, step = 5, no_edit = not Platform.trailer, },
+		
+		{ category = "Controls", id = "GamepadCameraMoveSpeed",   name = T(747450471741, "Tactical view sensitivity"),     editor = "number", default = 2000,      storage = "account", min = 800, max = 2500, step = 5, help = T(199647792136, "Controls how fast the selection moves in tactical view."), no_edit = function() return not GetUIStyleGamepad() end, },
+		{ category = "Controls", id = "GamepadCursorMoveSpeed",   name = T(509293698210, "Cursor sensitivity"),     editor = "number", default = 11,      storage = "account", min = 2, max = 15, step = 1, help = T(573262864566, "Controls how fast the cursor in Satellite view and other menus is."), no_edit = function() return not GetUIStyleGamepad() end, },
+		
+		{ category = "Controls", id = "MouseScrollOutsideWindow", name = T(3587, "Panning outside window"),                 editor = "bool",   default = false,     storage = "account", no_edit = function() return GetUIStyleGamepad() end, help = T(787712595891, "Allows camera pan when the mouse cursor is outside the game window.") },
+		{ category = "Controls", id = "LeftClickMoveExploration", name = T(988837649188, "Left-Click Move (Exploration)"),  editor = "bool",   default = false,     storage = "account", no_edit = function() return GetUIStyleGamepad() end, help = T(344343486722, "Use left-click to move mercs while exploring a sector out of combat.") },
+		{ category = "Controls", id = "ShowGamepadHints",         name = T(731273807036, "Control Hints"),                  editor = "bool",   default = true,      storage = "account", help = T(696057050384, "Shows control hints while in exploration and in combat."), no_edit = function() return not GetUIStyleGamepad() end, },
+		
+		{ category = "Controls", id = "InvertPDAThumbs",          name = T(357598959787, "Swap PDA cursor controls"),  editor = "bool",   default = false,     storage = "account", help = T(965509635524, "Swaps the effect of <LS> and <RS> while using your PDA."), no_edit = function() return not GetUIStyleGamepad() end,},
+		{ category = "Controls", id = "GamepadSwapTriggers",      name = T(447937688557, "Swap additional controls"),       editor = "bool",   default = false,     storage = "account", help = T(699900566044, "Swaps the actions done with <LeftTrigger> and <RightTrigger>."), no_edit = function() return not GetUIStyleGamepad() end,},
+		
+		{ category = "Gameplay", id = "Difficulty",               name = T(944075953376, "Difficulty"),                     editor = "choice", default = "Normal",  storage = "account", SortKey = -1900, items = Difficulties, read_only = function() return netInGame and not NetIsHost() end , help = T(146186342821, "Changing the difficulty level of the game affects loot drops, financial rewards, and enemy toughness.<newline><newline><flavor>You can change the difficulty of the game at any time during gameplay.</flavor>") },
+		{ category = "Gameplay", id = "AnalyticsEnabled",         name = T(989416075981, "Analytics Enabled"),              editor = "bool",   default = "Off",     storage = "account", SortKey = 5000, on_value = "On", off_value = "Off", help = T(700491171054, "Enables or disables tracking anonymous usage data for analytics.") },
+		{ category = "Gameplay", id = "HideActionBar",            name = T(805746173830, "Hide Action Bar (Exploration)"),  editor = "bool",   default = true,      storage = "account", help = T(915209994351, "Hides the action bar UI while not in combat.")},
+		{ category = "Gameplay", id = "ActionCamera",             name = T(227204678948, "Targeting Action Camera"),        editor = "bool",   default = false,     storage = "account", help = T(819569684768, "A special cinematic camera view will be used while aiming an attack.\n\nThe action camera is always used with long-range weapons like sniper rifles.")},
+		{ category = "Gameplay", id = "PauseOperationStart",      name = T(195176176002, "Auto-pause: Operation Start"),    editor = "bool",   default = false,     storage = "account", SortKey = 1200, help = T(783599794850, "Pause time in SatView mode whenever an Operation is started and the Operations menu is closed.") },
+		{ category = "Gameplay", id = "PauseActivityDone",        name = T(219275271774, "Auto-pause: Operation Done"),     editor = "bool",   default = true,      storage = "account", SortKey = 1200, help = T(861937087426, "Pause time in SatView mode whenever an Operation is completed.") },
+		{ category = "Gameplay", id = "AutoPauseDestReached",     name = T(220585419104, "Auto-pause: Sector Reached"),     editor = "bool",   default = true,      storage = "account", SortKey = 1000, help = T(679389220889, "Pause time in SatView mode whenever a squad reaches its destination sector.") },
+		{ category = "Gameplay", id = "AutoPauseConflict",        name = T(292439424575, "Auto-pause: Sector Conflict"),    editor = "bool",   default = true,      storage = "account", SortKey = 1100, help = T(271690416933, "Pause time in SatView mode whenever a squad is in conflict.") },
+		{ category = "Gameplay", id = "PauseSquadMovement",       name = T(700874998799, "Auto-pause: Squad Movement"),     editor = "bool",   default = false,     storage = "account", SortKey = 1100, help = T(269721155831, "Pause time in SatView mode whenever a squad travel order is given.") },
+		{ category = "Gameplay", id = "ShowNorth",                name = T(397596571548, "Show North"),                     editor = "bool",   default = true,      storage = "account", help = T(968463817287, "Indicates North with an icon on the screen border.")},
+		{ category = "Gameplay", id = "ShowCovers",               name = T(693926475349, "Show Covers Shields"),            editor = "choice", default = "Combat",  storage = "account", items = lUIViewModes, help = T(549744366946, "Allows cover shields to be visible when not in combat.")},
+		{ category = "Gameplay", id = "AlwaysShowBadges",         name = T(834175857662, "Show Merc Badges"),               editor = "choice", default = "Combat",  storage = "account", items = lUIViewModes, help = T(526076106085, "Shows UI elements with detailed information above the merc's heads.") },
+		{ category = "Gameplay", id = "ShowLOF",                  name = T(304702880820, "Show Line of Fire"),              editor = "bool",   default = true,      storage = "account", help = T(426202778816, "Allows line of fire lines to be visible when in combat.") },
+		{ category = "Gameplay", id = "PauseConversation",        name = T(146071242733, "Pause conversations"),            editor = "bool",   default = true,      storage = "account", help = T(118088730513, "Wait for input before continuing to the next conversation line.")},
+		{ category = "Gameplay", id = "AutoSave",                 name = T(571339674334, "AutoSave"),                       editor = "bool",   default = true,      storage = "account", SortKey = -1500, help = T(690186765577, "Automatically create a savegame when a new day starts, when a sector is entered, when a combat starts or ends, when a conflict starts in SatView, and on exit.") },
+		{ category = "Gameplay", id = "InteractableHighlight",    name = T(770074868053, "Highlight mode"),                 editor = "choice", default = "Toggle",  storage = "account", items = lInteractableHighlightMode, help = T(705105646677, "Interactables can highlighted for a time when a button is pressed or held down.") },
+		{ category = "Gameplay", id = "ForgivingModeToggle",      name = T(836950884858, "Forgiving Mode"),                 editor = "bool",   default = false, storage = "account", no_edit = function (self) return not Game end, read_only = function() return netInGame and not NetIsHost() end, SortKey = -1600, help = T(210522024503, "<ForgivingModeText()>")},
+		{ category = "Gameplay", id = "ActivePauseMode",          name = T(133670189455, "Active Pause"),                   editor = "bool",   default = true,  storage = "account", no_edit = function (self) return not Game end, read_only = function() return netInGame and not NetIsHost() end, SortKey = -1590, help = T(466566359686, "Allows pausing the game in Exploration mode. Actions can be ordered while in pause but any attack will unpause the game.<newline><newline><flavor>You can change this option at any time during gameplay.</flavor>")},
+		{ category = "Display",  id = "AspectRatioConstraint",    name = T(125094445172, "UI Aspect Ratio"),                editor = "choice", default = 1, items = lAspectRatioItems, storage = "local", no_edit = Platform.console, help = T(433997797079, "Constrain UI elements like the HUD to the set aspect ratio. Useful for Ultra Wide and Super Ultra Wide resolutions.") },
+
+		{ category = "Audio", id = "MuteAll", name = T(757697767039, "Mute All"), storage = "local", editor = "bool", no_edit = true },
+	},
 }
 
 const.MaxUserUIScaleHighRes = 100
-
-function OnMsg.ClassesGenerate(classdefs) 
-	table.iappend(classdefs.OptionsObject.properties, game_properties)
-	
-	local gamepadOption = table.find_value(classdefs.OptionsObject.properties, "id", "Gamepad")
-	if gamepadOption then
-		gamepadOption.no_edit = true
-	end
-end
 
 function OnMsg.ApplyAccountOptions()
 	if AccountStorage then
@@ -90,7 +92,14 @@ function OnMsg.ApplyAccountOptions()
 		const.CameraControlInvertRotation = GetAccountStorageOptionValue("InvertRotation")
 		const.CameraControlControllerPanSpeed = GetAccountStorageOptionValue("FreeCamPanSpeed")
 		hr.CameraFlyRotationSpeed = GetAccountStorageOptionValue("FreeCamRotationSpeed") / 1000.0
+		hr.GamepadMouseUseRightStick = GetAccountStorageOptionValue("InvertPDAThumbs")
+		hr.GamepadMouseSensitivity = GetAccountStorageOptionValue("GamepadCursorMoveSpeed")
+		
 		UpdateAllBadgesAndModes()
+		if GetUIStyleGamepad() then
+			RecreateButtonsTagLookupTable()
+			ObjModified("GamepadUIStyleChanged")
+		end
 	end
 end
 
@@ -127,6 +136,10 @@ function ApplyOptions(host, next_mode)
 					SetObjectDetail(obj.ObjectDetail)
 				end
 			end
+			if category == obj:GetPropertyMetadata("UIScale").category then
+				print("ApplyOptions")
+				terminal.desktop:OnSystemSize(UIL.GetScreenSize()) -- force refresh, UIScale might be changed
+			end
 			Msg("GameOptionsChanged", category)
 		end
 		if not next_mode then
@@ -138,7 +151,7 @@ function ApplyOptions(host, next_mode)
 end
 
 function CancelOptions(host, clear)
-	CreateRealTimeThread(function(host)
+	return CreateRealTimeThread(function(host)
 		if host.window_state == "destroying" then return end
 		local obj = OptionsObj
 		local original_obj = ResolvePropObj(host.idOriginalOptions.context)

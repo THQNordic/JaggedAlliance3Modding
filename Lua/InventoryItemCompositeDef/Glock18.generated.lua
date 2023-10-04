@@ -7,9 +7,9 @@ DefineClass.Glock18 = {
 
 
 	object_class = "Pistol",
+	ScrapParts = 6,
 	RepairCost = 70,
 	Reliability = 80,
-	ScrapParts = 6,
 	Icon = "UI/Icons/Weapons/Glock18",
 	DisplayName = T(477797896110, --[[InventoryItemCompositeDef Glock18 DisplayName]] "Glock 18"),
 	DisplayNamePlural = T(137749552678, --[[InventoryItemCompositeDef Glock18 DisplayNamePlural]] "Glock 18s"),
@@ -22,7 +22,7 @@ DefineClass.Glock18 = {
 	AimAccuracy = 4,
 	MagazineSize = 15,
 	WeaponRange = 14,
-	PointBlankRange = true,
+	PointBlankBonus = 1,
 	OverwatchAngle = 2160,
 	Entity = "Weapon_Glock18",
 	ComponentSlots = {

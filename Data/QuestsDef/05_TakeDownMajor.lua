@@ -21,7 +21,7 @@ PlaceObj('QuestsDef', {
 		LastNoteIdx = 23,
 		PlaceObj('QuestNote', {
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('PlayerIsInSectors', {
 							Sectors = {
@@ -94,7 +94,7 @@ PlaceObj('QuestsDef', {
 			},
 			Idx = 23,
 			ShowConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('PlayerIsInSectors', {
 							Sectors = {
@@ -151,7 +151,7 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('QuestNote', {
 			CompletionConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							QuestId = "05_TakeDownMajor",
@@ -200,7 +200,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							QuestId = "05_TakeDownMajor",
@@ -233,7 +233,7 @@ PlaceObj('QuestsDef', {
 			Idx = 18,
 			Scouting = true,
 			ShowConditions = {
-				PlaceObj('AND', {
+				PlaceObj('CheckAND', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							QuestId = "03_DefeatTheLegion",
@@ -272,21 +272,17 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			CompletionConditions = {
-				PlaceObj('OR', {
-					Conditions = {
-						PlaceObj('QuestIsVariableBool', {
-							QuestId = "03_DefeatTheLegion",
-							Vars = set( "MajorLocation" ),
-							__eval = function ()
-								local quest = gv_Quests['03_DefeatTheLegion'] or QuestGetState('03_DefeatTheLegion')
-								return quest.MajorLocation
-							end,
-						}),
-					},
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "03_DefeatTheLegion",
+					Vars = set( "MajorLocation" ),
+					__eval = function ()
+						local quest = gv_Quests['03_DefeatTheLegion'] or QuestGetState('03_DefeatTheLegion')
+						return quest.MajorLocation
+					end,
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							QuestId = "05_TakeDownMajor",
@@ -976,7 +972,7 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							QuestId = "Smiley",
@@ -1681,7 +1677,7 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('SectorCheckOwner', {
 							sector_id = "C5",

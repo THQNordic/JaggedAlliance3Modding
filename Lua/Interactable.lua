@@ -2,6 +2,10 @@ InteractableCollectionMaxRange = 10 * guim
 InteractableMaxRangeInTiles = 4
 InteractableMaxSurfacesRadius = 12000
 
+DefineClass.ContouredInteractable = { 
+	contourWhenInvisible = true
+}
+
 --[[@@@
 @class Interactable
 Interactable is a base class for things like item containers, items lying on the ground, doors, NPCs - objects in tactical view that mercs in exploration/combat can interact with when commanded by the player.
@@ -66,28 +70,24 @@ function Interactable:GameInit()
 	-- So instead they are hidden when the camera floor is different than their, unless
 	-- the room of their volume(if any) is hidden.
 	if IsKindOf(self, "SlabWallDoor") then
-		local pos = self:GetPos()
-		if not pos:IsValidZ() then pos = pos:SetTerrainZ() end
-		local myFloor = WallInvisibilityGetCamFloor(pos)
 		self.volume_checking_thread = CreateGameTimeThread(function(self)
-			local visible, volume = true, self.volume
+			local myFloor = WallInvisibilityGetCamFloor(self:GetPos())
 			while IsValid(self) do
 				Sleep(500)
 				if IsEditorActive() or not self.interactable_badge then goto continue end
-				visible = self:FloorCheckingThreadProc(myFloor, volume)
+				local visible = self:FloorCheckingThreadProc(myFloor, volume)
 				--if not visible then DbgAddVector(self:GetPos(), point(0, 0, guim * 15), const.clrGreen) end
-				self.interactable_badge:SetVisible(visible)
+				self.interactable_badge:SetVisible(self.volume)
 				self.volume_hidden = not visible
 				::continue::
 			end
 		end, self)
 	elseif self.volume then
 		self.volume_checking_thread = CreateGameTimeThread(function(self)
-			local visible, volume = true, self.volume
 			while IsValid(self) do
 				Sleep(500)
 				if IsEditorActive() or not self.interactable_badge then goto continue end
-				visible = self:VolumeCheckingThreadProc(volume)
+				local visible = self:VolumeCheckingThreadProc(self.volume)
 				--if not visible then DbgAddVector(self:GetPos(), point(0, 0, guim * 15), const.clrRed) end
 				self.interactable_badge:SetVisible(visible)
 				self.volume_hidden = not visible
@@ -95,6 +95,10 @@ function Interactable:GameInit()
 			end
 		end, self)
 	end
+end
+
+if FirstLoad then
+	g_AdditionalContourObjects = {}
 end
 
 function Interactable:PopulateVisualCache()
@@ -105,6 +109,9 @@ function Interactable:PopulateVisualCache()
 	local visuals = ResolveInteractableVisualObjects(self, 0, "no_cache") or empty_table
 	for i, v in ipairs(visuals) do
 		v:SetEnumFlags(const.efSelectable)
+		if v.contourWhenInvisible then -- Add contour outer to specific interactables
+			g_AdditionalContourObjects[v] = true
+		end
 	end
 	local imTheVisual = #visuals == 1 and visuals[1] == self
 	if #visuals > 0 and self.BadgePosition ~= "self" and not imTheVisual then
@@ -380,8 +387,8 @@ function Interactable:GetInteractionPosOld(unit)
 			-- hit a shared visual object of this interactable
 			local sharedObjectHit = false
 			if not noHit and not terrainHit then
-				local _, allInteractables = ResolveInteractableObject(hit_objs[i])
-				sharedObjectHit = table.find(allInteractables, self)
+				local int, allInteractables = ResolveInteractableObject(hit_objs[i])
+				sharedObjectHit = int == self or allInteractables and table.find(allInteractables, self)
 			end
 			
 			if noHit or terrainHit or sharedObjectHit	then
@@ -492,17 +499,16 @@ function Interactable:UpdateInteractableBadge(visible, image)
 end
 
 function Interactable:BadgeTextUpdate()
-	local withCursor = table.find(self.highlight_reasons, "cursor")
 	local badgeInstance = self.interactable_badge
-	if not badgeInstance or badgeInstance.ui.window_state == "destroying" then return end
-	
+	if not badgeInstance or badgeInstance.ui.window_state == "destroying" then
+		return
+	end
 	if IsUnitPartOfAnyActiveBanter(self) then
 		badgeInstance.ui.idText:SetVisible(false)
 		return
 	end
-	
 	local unit = UIFindInteractWith(self)
-	if unit then	
+	if unit then
 		local action = self:GetInteractionCombatAction(unit)
 		badgeInstance.ui.idText:SetContext(unit)
 		if action == CombatActions.Interact_Talk or action == CombatActions.Interact_Banter then
@@ -513,6 +519,7 @@ function Interactable:BadgeTextUpdate()
 			badgeInstance.ui.idText:SetText(T{501564765631, "<ActionName>", ActionName = T{action:GetActionDisplayName({unit, self}), target = self, unit = unit}})
 		end
 	end
+	local withCursor = table.find(self.highlight_reasons, "cursor")
 	badgeInstance.ui.idText:SetVisible(withCursor)
 end
 
@@ -612,7 +619,7 @@ function Interactable:HighlightIntensely(visible, reason)
 	noChangeNeeded = noChangeNeeded and self.intensely_highlit == visible 
 	
 	-- If the cursor is on the interactable the badge must behave as if rollovered.
-	if self.interactable_badge and self.interactable_badge.ui and reason == "cursor" then
+	if reason == "cursor" and self.interactable_badge and self.interactable_badge.ui then
 		self.interactable_badge.ui.RolloverOnFocus = true
 		if not GetUIStyleGamepad() then
 			self.interactable_badge.ui:SetFocus(visible)
@@ -843,69 +850,94 @@ function ResolveInteractableObject(obj)
 		end
 	end
 
-	local interactables
 	-- This interactable is acting as the visual of another interactable.
 	-- Case: doors in exit zone interactables
-	if obj.visual_of_interactable then
-		interactables = { obj.visual_of_interactable }
-	end
-
-	if IsKindOf(obj, "Interactable") then
-		if not interactables then interactables = {} end
-		table.insert_unique(interactables, obj)
-	end
+	local int1 = obj.visual_of_interactable
+	local int2 = obj ~= int1 and IsKindOf(obj, "Interactable") and obj
 
 	local originalObject = obj
 	obj = SelectionPropagate(obj)
-	if obj ~= originalObject and IsKindOf(obj, "Interactable") then
-		if not interactables then interactables = {} end
-		table.insert_unique(interactables, obj)
-	end
+	local int3 = obj ~= originalObject and obj ~= int1 and IsKindOf(obj, "Interactable") and obj
 
+	local interactables
 	local root_collection = obj:GetRootCollection()
 	local collection_idx = root_collection and root_collection.Index or 0
 	if collection_idx ~= 0 then
-		local collection_objs = MapGet(obj, InteractableCollectionMaxRange, "collection", collection_idx, true, "Interactable")
-		if interactables then
-			table.iappend(interactables, collection_objs)
-		else
-			interactables = collection_objs
-		end
+		interactables = MapGet(obj, InteractableCollectionMaxRange, "collection", collection_idx, true, "Interactable")
 	end
 
-	if not interactables then
+	local interactable1 = int1 or int2 or int3 or interactables and interactables[1]
+	if not interactable1 then
 		return
 	end
 
-	-- If any interactable has disabled highlight collection then it
-	-- shouldn't be grouped with interactables with enabled highlight collection.
-	-- In these cases return only the interactables that have it enabled since
-	-- otherwise they would never be return.
-	local hasCollectionExclusion, allCollectionExclusion = false, true
-	for i, int in ipairs(interactables) do
-		if int.highlight_collection then
-			allCollectionExclusion = false
-		else
-			hasCollectionExclusion = true
-		end
-	end
-	if hasCollectionExclusion and not allCollectionExclusion then
-		local nonExcluding = {}
+	local highlight_collection =
+		int1 and int1.highlight_collection or
+		int2 and int2.highlight_collection or
+		int3 and int3.highlight_collection
+	if not highlight_collection and interactables then
 		for i, int in ipairs(interactables) do
 			if int.highlight_collection then
-				nonExcluding[#nonExcluding + 1] = int
+				highlight_collection = true
+				break
 			end
 		end
-		interactables = nonExcluding
 	end
-	
-	-- If the interactable we're about to return has highlight_collection off, then we shouldn't return it
-	-- if we got to it through propagating an object in its collection
-	if interactables[1] and #interactables == 1 and not interactables[1].highlight_collection and originalObject ~= interactables[1] then
-		return false
+
+	if highlight_collection then
+		-- If the interactable we're about to return has highlight_collection off, then we shouldn't return it
+		-- if we got to it through propagating an object in its collection
+		if int1 and not int1.highlight_collection then int1 = nil end
+		if int2 and not int2.highlight_collection then int2 = nil end
+		if int3 and not int3.highlight_collection then int3 = nil end
+		interactable1 = int1 or int2 or int3
+		local count
+		if interactables then
+			for i = #interactables, 1, -1 do
+				if not interactables[i].highlight_collection then
+					table.remove(interactables, i)
+				end
+			end
+			if int3 then
+				interactables[table.find(interactables, int3) or #interactables + 1] = interactables[1]
+				interactables[1] = int3
+			end
+			if int2 then
+				interactables[table.find(interactables, int2) or #interactables + 1] = interactables[1]
+				interactables[1] = int2
+			end
+			if int1 then
+				interactables[table.find(interactables, int1) or #interactables + 1] = interactables[1]
+				interactables[1] = int1
+			end
+			interactable1 = interactable1 or interactables[1]
+			count = #interactables
+		else
+			count = (int1 and 1 or 0) + (int2 and 1 or 0) + (int3 and 1 or 0)
+			if count > 1 then
+				interactables = {}
+				if int1 then table.insert(int1) end
+				if int2 then table.insert_unique(int2) end
+				if int3 then table.insert_unique(int3) end
+			end
+		end
+		if count > 1 then
+			return interactable1, interactables
+		end
+		return interactable1
 	end
-	
-	return interactables[1], interactables[1] and interactables[1].highlight_collection and interactables or { interactables[1] }
+
+	if interactable1 ~= originalObject then
+		-- check if the interactable1 is the only interactable
+		if (not int2 or int2 == interactable1) and
+			(not int3 or int3 == interactable1) and
+			(not interactables or #interactables == 0 or #interactables == 1 and interactables[1] == interactable1)
+		then
+			return
+		end
+	end
+
+	return interactable1
 end
 
 --[[@@
@@ -916,15 +948,15 @@ One is the interactable and the rest are considered visuals.
 @param obj - An object in the collection.
 ]]
 
-function ResolveInteractableVisualObjects(obj, flag, skipCache)
+function ResolveInteractableVisualObjects(obj, flag, skipCache, findFirst)
 	if not obj.highlight_collection then
-		return {obj}
+		return findFirst and obj or { obj }
 	end
 	local collection_objs = not skipCache and obj.visuals_cache
 	if collection_objs then
 		local count = #collection_objs
 		if count == 1 and IsKindOf(collection_objs[1], "Interactable") then
-			return collection_objs
+			return findFirst and collection_objs[1] or collection_objs
 		end
 		-- Cleanup destroyed objects
 		if count > 0 then
@@ -965,16 +997,20 @@ function ResolveInteractableVisualObjects(obj, flag, skipCache)
 		local root_collection = obj:GetRootCollection()
 		local collection_idx = root_collection and root_collection.Index or 0
 		if collection_idx == 0 then
-			return {obj}
+			return findFirst and obj or { obj }
 		end
-	
+
 		collection_objs = MapGet(obj, InteractableCollectionMaxRange, "collection", collection_idx, true, flag or const.efVisible)
-		
+
 		-- If the interactable is its own visual, return it. This basically equalizes the above "no collection" case
 		-- with the "accidentally made a collection of one object" case.
 		if collection_objs and #collection_objs == 1 and IsKindOf(collection_objs[1], "Interactable") then
-			return collection_objs
+			return findFirst and collection_objs[1] or collection_objs
 		end
+	end
+
+	if findFirst and collection_objs and collection_objs[1] then
+		return collection_objs[1]
 	end
 
 	-- Add any objects spawned by associated visual spawners.
@@ -982,6 +1018,9 @@ function ResolveInteractableVisualObjects(obj, flag, skipCache)
 		local t = collection_objs ~= obj.visuals_cache and collection_objs
 		for i, sp in ipairs(obj.visuals_spawners) do
 			for i, o in ipairs(sp.objects) do
+				if findFirst then
+					return o
+				end
 				if not t then
 					t = table.copy{collection_objs}
 				end
@@ -991,7 +1030,7 @@ function ResolveInteractableVisualObjects(obj, flag, skipCache)
 		collection_objs = t or collection_objs
 	end
 
-	return collection_objs
+	return (not findFirst) and collection_objs or collection_objs[1]
 end
 
 function OnMsg.GatherFXActions(list)
@@ -1056,20 +1095,17 @@ end
 function InteractableCollectionsTooBigVME()
 	MapForEach("map", "Interactable", function(obj)
 		local collection_idx = GetObjCollectionIdx(obj)
-		if not collection_idx then return end
-		
-		local objPos = obj:GetPos()
-		local collection_objs = MapGet("map", "collection", collection_idx, true)
-		for i, colObj in ipairs(collection_objs) do
-			if IsKindOf(colObj, "Interactable") then goto continue end
-		
-			local dist = colObj:GetPos():Dist(objPos)
-			if dist > InteractableCollectionMaxRange then
-				StoreErrorSource(colObj, "Object in interactable collection is further from than interactable than what is allowed. " .. dist .. " > " .. InteractableCollectionMaxRange)
-			end
-			
-			::continue::
+		if not collection_idx then
+			return
 		end
+		local collection_objs = MapForEach("map", "collection", collection_idx, true, function(colObj, obj)
+			if IsKindOf(colObj, "Interactable") then
+				return
+			elseif IsCloser(colObj, obj, InteractableCollectionMaxRange + 1) then
+				return
+			end
+			StoreErrorSource(colObj, "Object in interactable collection is further from than interactable than what is allowed. " .. colObj:GetDist(obj) .. " > " .. InteractableCollectionMaxRange)
+		end, obj)
 	end)
 end
 
@@ -1079,17 +1115,18 @@ OnMsg.NewMapLoaded = InteractableCollectionsTooBigVME
 function MakeInteractableCollectionsEssentialsOnly()
 	MapForEach("map", "Interactable", function(obj)
 		local collection_idx = GetObjCollectionIdx(obj)
-		if not collection_idx then return end
-		
-		local collection_objs = MapGet("map", "collection", collection_idx, true)
-		for i, colObj in ipairs(collection_objs) do
-			if not IsKindOf(colObj, "Interactable") then
-				if colObj:GetDetailClass() ~= "Essential" then
-					StoreErrorSource(colObj, "Object in collection with interactable is not 'Essential' - forcing it to save as such!", obj)
-					colObj:SetDetailClass("Essential")
-				end
-			end
+		if not collection_idx then
+			return
 		end
+		local collection_objs = MapForEach("map", "collection", collection_idx, true, function(colObj, obj)
+			if IsKindOf(colObj, "Interactable") then
+				return
+			elseif colObj:GetDetailClass() == "Essential" then
+				return
+			end
+			StoreErrorSource(colObj, "Object in collection with interactable is not 'Essential' - forcing it to save as such!", obj)
+			colObj:SetDetailClass("Essential")
+		end, obj)
 	end)
 end
 
@@ -1136,30 +1173,33 @@ function InteractableVisibilityUpdate(units)
 	table.iclear(__InteractableVisibility_CanNoLongerInteractWith)
 	for i, unit in ipairs(units) do
 		if IsValid(unit) and unit:CanBeControlled(-1) then
-			MapForEach(unit, lInteractableVisibilityRange, "Interactable", function(o)
-				local can_interact_with
+			MapForEach(unit, lInteractableVisibilityRange, "Interactable", function(o, unit)
+				local checkLos = true
+				local checkCanStillInteract = o.until_interacted_with_highlight
+				
 				if o.discovered then
-					can_interact_with = false
-				elseif IsKindOf(o, "Unit") then
-					if not o:IsDead() then
-						can_interact_with = false
-					end
+					checkCanStillInteract = true
+				end
+				
+				if IsKindOf(i, "Unit") then
+					checkLos = not not o:IsDead()
 				elseif IsKindOf(o, "ExitZoneInteractable") then
-					can_interact_with = false
+					checkLos = false
 				end
-				if can_interact_with == nil then
-					if unit:CanInteractWith(o) then
-						can_interact_with = true
-					end
+				
+				local canInteractWith = false
+				if checkLos or checkCanStillInteract then
+					canInteractWith = unit:CanInteractWith(o)
 				end
-				if can_interact_with then
+			
+				if checkLos and canInteractWith then
 					table.insert(__InteractableVisibility_Units, unit)
 					table.insert(__InteractableVisibility_Targets, o)
 					table.insert(__InteractableVisibility_TargetsLOSCheck, o.los_check_obj or o)
-				elseif o.until_interacted_with_highlight then
+				elseif checkCanStillInteract and not canInteractWith then
 					table.insert_unique(__InteractableVisibility_CanNoLongerInteractWith, o)
 				end
-			end)
+			end, unit)
 		end
 	end
 

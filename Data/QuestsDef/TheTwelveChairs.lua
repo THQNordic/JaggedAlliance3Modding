@@ -49,14 +49,14 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			CompletionConditions = {
-				PlaceObj('AND', {
+				PlaceObj('CheckAND', {
 					Conditions = {
 						PlaceObj('PlayerIsInSectors', {
 							Sectors = {
 								"H9",
 							},
 						}),
-						PlaceObj('OR', {
+						PlaceObj('CheckOR', {
 							Conditions = {
 								PlaceObj('UnitHasInteraction', {
 									'TargetUnit', "any merc",
@@ -91,7 +91,7 @@ PlaceObj('QuestsDef', {
 						return quest.Given
 					end,
 				}),
-				PlaceObj('AND', {
+				PlaceObj('CheckAND', {
 					Conditions = {
 						PlaceObj('PlayerIsInSectors', {
 							Sectors = {
@@ -119,14 +119,14 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			CompletionConditions = {
-				PlaceObj('AND', {
+				PlaceObj('CheckAND', {
 					Conditions = {
 						PlaceObj('PlayerIsInSectors', {
 							Sectors = {
 								"I9",
 							},
 						}),
-						PlaceObj('OR', {
+						PlaceObj('CheckOR', {
 							Conditions = {
 								PlaceObj('UnitHasInteraction', {
 									'TargetUnit', "any merc",
@@ -161,7 +161,7 @@ PlaceObj('QuestsDef', {
 						return quest.Given
 					end,
 				}),
-				PlaceObj('AND', {
+				PlaceObj('CheckAND', {
 					Conditions = {
 						PlaceObj('PlayerIsInSectors', {
 							Sectors = {
@@ -189,14 +189,14 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			CompletionConditions = {
-				PlaceObj('AND', {
+				PlaceObj('CheckAND', {
 					Conditions = {
 						PlaceObj('PlayerIsInSectors', {
 							Sectors = {
 								"A2",
 							},
 						}),
-						PlaceObj('OR', {
+						PlaceObj('CheckOR', {
 							Conditions = {
 								PlaceObj('UnitHasInteraction', {
 									'TargetUnit', "any merc",
@@ -231,7 +231,7 @@ PlaceObj('QuestsDef', {
 						return quest.Given
 					end,
 				}),
-				PlaceObj('AND', {
+				PlaceObj('CheckAND', {
 					Conditions = {
 						PlaceObj('PlayerIsInSectors', {
 							Sectors = {
@@ -259,14 +259,14 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			CompletionConditions = {
-				PlaceObj('AND', {
+				PlaceObj('CheckAND', {
 					Conditions = {
 						PlaceObj('PlayerIsInSectors', {
 							Sectors = {
 								"D7",
 							},
 						}),
-						PlaceObj('OR', {
+						PlaceObj('CheckOR', {
 							Conditions = {
 								PlaceObj('UnitHasInteraction', {
 									'TargetUnit', "any merc",
@@ -301,7 +301,7 @@ PlaceObj('QuestsDef', {
 						return quest.Given
 					end,
 				}),
-				PlaceObj('AND', {
+				PlaceObj('CheckAND', {
 					Conditions = {
 						PlaceObj('PlayerIsInSectors', {
 							Sectors = {
@@ -329,14 +329,14 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			CompletionConditions = {
-				PlaceObj('AND', {
+				PlaceObj('CheckAND', {
 					Conditions = {
 						PlaceObj('PlayerIsInSectors', {
 							Sectors = {
 								"H12",
 							},
 						}),
-						PlaceObj('OR', {
+						PlaceObj('CheckOR', {
 							Conditions = {
 								PlaceObj('UnitHasInteraction', {
 									'TargetUnit', "any merc",
@@ -371,7 +371,7 @@ PlaceObj('QuestsDef', {
 						return quest.Given
 					end,
 				}),
-				PlaceObj('AND', {
+				PlaceObj('CheckAND', {
 					Conditions = {
 						PlaceObj('PlayerIsInSectors', {
 							Sectors = {
@@ -399,14 +399,14 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			CompletionConditions = {
-				PlaceObj('AND', {
+				PlaceObj('CheckAND', {
 					Conditions = {
 						PlaceObj('PlayerIsInSectors', {
 							Sectors = {
 								"I1",
 							},
 						}),
-						PlaceObj('OR', {
+						PlaceObj('CheckOR', {
 							Conditions = {
 								PlaceObj('UnitHasInteraction', {
 									'TargetUnit', "any merc",
@@ -441,7 +441,7 @@ PlaceObj('QuestsDef', {
 						return quest.Given
 					end,
 				}),
-				PlaceObj('AND', {
+				PlaceObj('CheckAND', {
 					Conditions = {
 						PlaceObj('PlayerIsInSectors', {
 							Sectors = {
@@ -469,14 +469,14 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			CompletionConditions = {
-				PlaceObj('AND', {
+				PlaceObj('CheckAND', {
 					Conditions = {
 						PlaceObj('PlayerIsInSectors', {
 							Sectors = {
 								"F7",
 							},
 						}),
-						PlaceObj('OR', {
+						PlaceObj('CheckOR', {
 							Conditions = {
 								PlaceObj('UnitHasInteraction', {
 									'TargetUnit', "any merc",
@@ -511,7 +511,7 @@ PlaceObj('QuestsDef', {
 						return quest.Given
 					end,
 				}),
-				PlaceObj('AND', {
+				PlaceObj('CheckAND', {
 					Conditions = {
 						PlaceObj('PlayerIsInSectors', {
 							Sectors = {
@@ -539,14 +539,14 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			CompletionConditions = {
-				PlaceObj('AND', {
+				PlaceObj('CheckAND', {
 					Conditions = {
 						PlaceObj('PlayerIsInSectors', {
 							Sectors = {
 								"D8",
 							},
 						}),
-						PlaceObj('OR', {
+						PlaceObj('CheckOR', {
 							Conditions = {
 								PlaceObj('UnitHasInteraction', {
 									'TargetUnit', "any merc",
@@ -581,7 +581,7 @@ PlaceObj('QuestsDef', {
 						return quest.Given
 					end,
 				}),
-				PlaceObj('AND', {
+				PlaceObj('CheckAND', {
 					Conditions = {
 						PlaceObj('PlayerIsInSectors', {
 							Sectors = {
@@ -609,14 +609,14 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			CompletionConditions = {
-				PlaceObj('AND', {
+				PlaceObj('CheckAND', {
 					Conditions = {
 						PlaceObj('PlayerIsInSectors', {
 							Sectors = {
 								"C7_Underground",
 							},
 						}),
-						PlaceObj('OR', {
+						PlaceObj('CheckOR', {
 							Conditions = {
 								PlaceObj('UnitHasInteraction', {
 									'TargetUnit', "any merc",
@@ -651,7 +651,7 @@ PlaceObj('QuestsDef', {
 						return quest.Given
 					end,
 				}),
-				PlaceObj('AND', {
+				PlaceObj('CheckAND', {
 					Conditions = {
 						PlaceObj('PlayerIsInSectors', {
 							Sectors = {
@@ -679,14 +679,14 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			CompletionConditions = {
-				PlaceObj('AND', {
+				PlaceObj('CheckAND', {
 					Conditions = {
 						PlaceObj('PlayerIsInSectors', {
 							Sectors = {
 								"G10",
 							},
 						}),
-						PlaceObj('OR', {
+						PlaceObj('CheckOR', {
 							Conditions = {
 								PlaceObj('UnitHasInteraction', {
 									'TargetUnit', "any merc",
@@ -721,7 +721,7 @@ PlaceObj('QuestsDef', {
 						return quest.Given
 					end,
 				}),
-				PlaceObj('AND', {
+				PlaceObj('CheckAND', {
 					Conditions = {
 						PlaceObj('PlayerIsInSectors', {
 							Sectors = {
@@ -749,14 +749,14 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			CompletionConditions = {
-				PlaceObj('AND', {
+				PlaceObj('CheckAND', {
 					Conditions = {
 						PlaceObj('PlayerIsInSectors', {
 							Sectors = {
 								"D10",
 							},
 						}),
-						PlaceObj('OR', {
+						PlaceObj('CheckOR', {
 							Conditions = {
 								PlaceObj('UnitHasInteraction', {
 									'TargetUnit', "any merc",
@@ -791,7 +791,7 @@ PlaceObj('QuestsDef', {
 						return quest.Given
 					end,
 				}),
-				PlaceObj('AND', {
+				PlaceObj('CheckAND', {
 					Conditions = {
 						PlaceObj('PlayerIsInSectors', {
 							Sectors = {
@@ -819,14 +819,14 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			CompletionConditions = {
-				PlaceObj('AND', {
+				PlaceObj('CheckAND', {
 					Conditions = {
 						PlaceObj('PlayerIsInSectors', {
 							Sectors = {
 								"B12",
 							},
 						}),
-						PlaceObj('OR', {
+						PlaceObj('CheckOR', {
 							Conditions = {
 								PlaceObj('UnitHasInteraction', {
 									'TargetUnit', "any merc",
@@ -861,7 +861,7 @@ PlaceObj('QuestsDef', {
 						return quest.Given
 					end,
 				}),
-				PlaceObj('AND', {
+				PlaceObj('CheckAND', {
 					Conditions = {
 						PlaceObj('PlayerIsInSectors', {
 							Sectors = {

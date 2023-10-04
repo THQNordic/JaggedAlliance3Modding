@@ -162,6 +162,15 @@ PlaceObj('XTemplate', {
 			end,
 		}),
 		PlaceObj('XTemplateAction', {
+			'ActionId', "idUpdate",
+			'ActionName', T(570518612409, --[[XTemplate PGMainActions ActionName]] "Update"),
+			'ActionToolbar', "mainmenu",
+			'OnAction', function (self, host, source, ...)
+				OpenGameUpdatesPopup(false, "force")
+			end,
+			'__condition', function (parent, context) return not Platform.console end,
+		}),
+		PlaceObj('XTemplateAction', {
 			'ActionId', "idMods",
 			'ActionName', T(405038833124, --[[XTemplate PGMainActions ActionName]] "Mod Manager"),
 			'ActionToolbar', "mainmenu",
@@ -176,6 +185,7 @@ PlaceObj('XTemplate', {
 					CreateRealTimeThread(function()
 						LoadingScreenOpen("idLoadingScreen", "load mods")	
 						ModsUIObjectCreateAndLoad()
+						g_ModsUIContextObj:SetInstalledSortMethod("enabled_desc")
 						LoadingScreenClose("idLoadingScreen", "load mods")
 						Sleep(1)
 						host:SetMode(param)
@@ -204,8 +214,11 @@ PlaceObj('XTemplate', {
 			'ActionShortcut', "Escape",
 			'ActionGamepad', "ButtonB",
 			'OnAction', function (self, host, source, ...)
-				QuitGame(host)
+				if not GetLoadingScreenDialog("noAccStorage") then
+					QuitGame(host)
+				end
 			end,
+			'__condition', function (parent, context) return not Platform.console end,
 		}),
 		}),
 })

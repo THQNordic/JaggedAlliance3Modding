@@ -8,6 +8,10 @@ local sizex = const.SlabSizeX
 local sizey = const.SlabSizeY
 local sizez = const.SlabSizeZ
 
+MapVar("MapIncendiaryGrenadeZones", {})
+MapVar("MapSmokeZones", {})
+MapVar("MapFlareOnGround", {})
+
 DefineClass.Grenade = {
 	__parents = { "QuickSlotItem", "GrenadeProperties", "InventoryStack", "BaseWeapon" },
 	RolloverClassTemplate = "Throwables",
@@ -292,7 +296,7 @@ function ApplyExplosionDamage(attacker, fx_actor, results, noise, disableBurnFx,
 					end
 				elseif IsKindOf(obj, "CombatObject") then
 					obj:TakeDamage(hit.damage, attacker, hit)
-				elseif IsKindOf(obj, "Destroyable") then
+				elseif IsKindOf(obj, "Destroyable") and hit.damage > 0 then
 					obj:Destroy()
 				end
 			end
@@ -827,20 +831,20 @@ MapGameTimeRepeat("ExplosionFiresUpdate", 500, function()
 	if g_Combat or g_StartingCombat then return end -- handled on NewCombatTurn msg
 
 	local change
-	MapForEach("map", "IncendiaryGrenadeZone", function(fire)
+	for _, fire in ipairs(MapIncendiaryGrenadeZones) do
 		if fire:UpdateRemainingTime(500) then
 			change = true
 		end
-	end)
+	end
 	if change then
 		UpdateMapBurningState(GameState.FireStorm)
 	end
-	MapForEach("map", "SmokeZone", function(zone)
+	for _, zone in ipairs(MapSmokeZones) do
 		zone:UpdateRemainingTime(500)
-	end)
-	MapForEach("map", "FlareOnGround", function(flare)
+	end
+	for _, flare in ipairs(MapFlareOnGround) do
 		flare:UpdateRemainingTime(500)
-	end)
+	end
 end)
 
 local function EnvEffectReaction(zone_type, attacker, target, damage)
@@ -865,30 +869,47 @@ end
 function EnvEffectBurningTick(unit, voxels, combat_moment)
 	local inside
 	if next(g_DistToFire) ~= nil then
-		voxels = voxels or unit:GetVisualVoxels()
+		if not voxels then
+			voxels = unit:GetVisualVoxels()
+		end
 		local fire, dist = AreVoxelsInFireRange(voxels)
 		inside = fire and dist < const.SlabSizeX
 	end
 	if unit:HasStatusEffect("Burning") then
-		local surf_fx_type = GetObjMaterial(unit:GetVisualPos())
-		local start_time = unit:GetEffectValue("burning_start_time")
-		if not inside and (surf_fx_type == "Surface:Water" or surf_fx_type == "Surface:ShallowWater") then
-			unit:RemoveStatusEffect("Burning")
-		elseif (combat_moment == "end turn") or (not g_Combat and not g_StartingCombat and GameTime() >= start_time + 5000) then		
-			local damage = Burning:ResolveValue("damage")
-			unit:TakeDirectDamage(damage, T{529212078060, "<damage> (Burning)", damage = damage})
+		if not inside then
+			local x, y, z = unit:GetVisualPosXYZ()
+			if terrain.IsWater(x, y, z) then
+				local water_z = terrain.GetWaterHeight(x, y)
+				local dz = (z or terrain.GetHeight(x, y)) - water_z
+				if dz >= const.FXWaterMinOffsetZ and dz <= const.FXWaterMaxOffsetZ then
+					unit:RemoveStatusEffect("Burning")
+					return
+				end
+			end
+		end
+		local start_time
+		if combat_moment ~= "end turn" then
+			if g_Combat or g_StartingCombat then
+				return
+			end
+			start_time = unit:GetEffectValue("burning_start_time")
+			if GameTime() - start_time < 5000 then
+				return
+			end
+		end
+		local damage = Burning:ResolveValue("damage")
+		unit:TakeDirectDamage(damage, T{529212078060, "<damage> (Burning)", damage = damage})
+		if inside then
 			if g_Combat or g_StartingCombat then
 				start_time = GameTime()
 			else
-				start_time = start_time + 5000
+				start_time = (start_time or unit:GetEffectValue("burning_start_time")) + 5000
 			end
-			if inside then
-				unit:SetEffectValue("burning_start_time", start_time)
-			else
-				unit:RemoveStatusEffect("Burning")
-			end
+			unit:SetEffectValue("burning_start_time", start_time)
+		else
+			unit:RemoveStatusEffect("Burning")
 		end
-	elseif inside and not unit:HasStatusEffect("Burning") then
+	elseif inside then
 		unit:AddStatusEffect("Burning")
 	end
 end
@@ -896,7 +917,6 @@ end
 function EnvEffectToxicGasTick(unit, voxels, combat_moment)
 	local inside, protected, attacker
 	if next(g_SmokeObjs) ~= nil then
-		local mask = unit:GetItemInSlot("Head", "GasMask")
 		if not voxels then
 			voxels = unit:GetVisualVoxels()
 		end
@@ -910,6 +930,8 @@ function EnvEffectToxicGasTick(unit, voxels, combat_moment)
 			end
 		end
 		if inside then
+			local mask = unit:GetItemInSlot("Head", "GasMask")
+			protected = mask and mask.Condition > 0
 			for _, zone in ipairs(smoke.zones) do
 				if zone.owner then
 					attacker = zone.owner
@@ -917,7 +939,6 @@ function EnvEffectToxicGasTick(unit, voxels, combat_moment)
 				end
 			end
 		end
-		protected = mask and mask.Condition > 0
 	end
 	
 	if inside and protected and attacker then
@@ -955,7 +976,6 @@ end
 function EnvEffectTearGasTick(unit, voxels, combat_moment)
 	local inside, protected, attacker
 	if next(g_SmokeObjs) ~= nil then
-		local mask = unit:GetItemInSlot("Head", "GasMask")
 		if not voxels then
 			voxels = unit:GetVisualVoxels()
 		end
@@ -969,6 +989,8 @@ function EnvEffectTearGasTick(unit, voxels, combat_moment)
 			end
 		end
 		if inside then
+			local mask = unit:GetItemInSlot("Head", "GasMask")
+			protected = mask and mask.Condition > 0
 			for _, zone in ipairs(smoke.zones) do
 				if zone.owner then
 					attacker = zone.owner
@@ -976,7 +998,6 @@ function EnvEffectTearGasTick(unit, voxels, combat_moment)
 				end
 			end
 		end
-		protected = mask and mask.Condition > 0
 	end
 	
 	if inside and protected and attacker then
@@ -1056,13 +1077,46 @@ function EnvEffectDarknessTick(unit, voxels)
 	end
 end
 
-function EnvEffectsUpdateTick()
-	if IsSetpiecePlaying() then return end
+function EnvEffectsUpdate(side_type, time)
+	if IsSetpiecePlaying() then
+		Sleep(time)
+		return
+	end
+	local units = {}
+	for _, team in ipairs(g_Teams) do
+		if side_type == "player" then
+			if team.player_team then
+				table.iappend(units, team.units)
+			end
+		else
+			local team_side = team.side
+			if team_side == "enemyNeutral" then
+				team_side = GameState.Conflict and "enemy1" or "neutral"
+			end
+			if side_type == "neutral" then
+				if team_side == "neutral" then
+					table.iappend(units, team.units)
+				end
+			else
+				if team_side ~= "neutral" then
+					table.iappend(units, team.units)
+				end
+			end
+		end
+	end
+	local count = #units
+	if count == 0 then
+		Sleep(time)
+		return
+	end
+	local iclear = table.iclear
 	local voxels = {}
-	for _, unit in ipairs(g_Units) do
+	for i = 1, count do
+		Sleep(i * time / count - (i - 1) * time / count)
+		local unit = units[i]
 		if IsValid(unit) and not unit:IsDead() then
-			table.iclear(voxels)
-			local voxels, head = unit:GetVisualVoxels(nil, nil, voxels)
+			iclear(voxels)
+			unit:GetVisualVoxels(nil, nil, voxels)
 			EnvEffectBurningTick(unit, voxels)
 			EnvEffectToxicGasTick(unit, voxels)
 			EnvEffectTearGasTick(unit, voxels)
@@ -1070,27 +1124,28 @@ function EnvEffectsUpdateTick()
 			EnvEffectDarknessTick(unit, voxels)
 		end
 	end
-	AlertPendingUnits()
 end
 
-MapGameTimeRepeat("EnvEffectsTick", 100, EnvEffectsUpdateTick)
+MapGameTimeRepeat("EnvEffectsPlayer", 0, function() return EnvEffectsUpdate("player", 100) end)
+MapGameTimeRepeat("EnvEffectsNeutral", 0, function() return EnvEffectsUpdate("neutral", 500) end)
+MapGameTimeRepeat("EnvEffectsOther", 0, function() return EnvEffectsUpdate("other", 300) end)
 
 function OnMsg.NewCombatTurn()
 	local change
-	MapForEach("map", "IncendiaryGrenadeZone", function(fire)
+	for _, fire in ipairs(MapIncendiaryGrenadeZones) do
 		if fire:UpdateRemainingTime(5000) then
 			change = true
 		end
-	end)
+	end
 	if change then
 		UpdateMapBurningState(GameState.FireStorm)
 	end
-	MapForEach("map", "SmokeZone", function(zone)
+	for _, zone in ipairs(MapSmokeZones) do
 		zone:UpdateRemainingTime(5000)
-	end)
-	MapForEach("map", "FlareOnGround", function(flare)
+	end
+	for _, flare in ipairs(MapFlareOnGround) do
 		flare:UpdateRemainingTime(5000)
-	end)
+	end
 end
 
 MapVar("g_FireAreas", {})
@@ -1117,6 +1172,7 @@ DefineClass.IncendiaryGrenadeZone = {
 }
 
 function IncendiaryGrenadeZone:GameInit()
+	table.insert(MapIncendiaryGrenadeZones, self)
 	self.campaign_time = self.campaign_time or Game.CampaignTime
 	PlayFX("FireZone", "start", self)
 end
@@ -1144,6 +1200,7 @@ function IncendiaryGrenadeZone:Init()
 end
 
 function IncendiaryGrenadeZone:Done()
+	table.remove_value(MapIncendiaryGrenadeZones, self)
 	for _, obj in ipairs(self.visuals) do
 		DoneObject(obj)
 	end
@@ -1255,6 +1312,9 @@ function ExplosionCreateFireAOE(attacker, attackResults, fx_actor)
 	end)
 		
 	local los_any, los_to_targets = CheckLOS(los_targets, pos)
+	if not los_any then
+		return
+	end
 	
 	local fire_locs = {}
 	
@@ -1957,11 +2017,13 @@ DefineClass.SmokeZone = {
 }
 
 function SmokeZone:GameInit()
+	table.insert(MapSmokeZones, self)
 	self.campaign_time = self.campaign_time or Game.CampaignTime
 	PlayFX("SmokeZone", "start", self, self.gas_type)
 end
 
 function SmokeZone:Done()
+	table.remove_value(MapSmokeZones, self)
 	for _, wpt in pairs(self.smoke_positions) do
 		self:RemoveSmokeFromPos(point_pack(WorldToVoxel(wpt)))
 	end
@@ -2196,6 +2258,14 @@ DefineClass.FlareOnGround = {
 	Despawn = true,
 }
 
+function FlareOnGround:GameInit()
+	table.insert(MapFlareOnGround, self)
+end
+
+function FlareOnGround:Done()
+	table.remove_value(MapFlareOnGround, self)
+end
+
 function FlareOnGround:UpdateVisualObj(start_fx)
 	if not IsValid(self.visual_obj) then
 		self.visual_obj = PlaceObject("GrenadeVisual", {fx_actor_class = self.item_class .. "_OnGround"})
@@ -2231,9 +2301,9 @@ function FlareOnGround:UpdateRemainingTime(delta)
 end
 
 function TestKillFlares()
-	MapForEach("map", "FlareOnGround", function(f)
+	for _, f in ipairs(MapFlareOnGround) do
 		f:UpdateRemainingTime(99999999)
-	end)
+	end
 end
 
 function FlareOnGround:GetDynamicData(data)

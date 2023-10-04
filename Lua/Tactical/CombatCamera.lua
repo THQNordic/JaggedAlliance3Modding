@@ -1144,8 +1144,9 @@ local function __AIExecutionControllerExecute(self, units, reposition, played_un
 		if (not pois or #pois <= 0) and not hiddenTurnShowMercs then
 			local selected = self:SelectObjsInZone(pov_team.units, self.zone)
 			local closestMerc = false
+			local center = self.zone.center
 			for _, merc in ipairs(selected) do
-				if not closestMerc or IsCloser(self.zone.center, merc:GetPos(), closestMerc:GetPos()) then
+				if not closestMerc or IsCloser(center, merc, closestMerc) then
 					closestMerc = merc
 					hiddenTurnShowMercs = true
 				end
@@ -1337,12 +1338,19 @@ end
 MapVar("g_UnawareQueue", {})
 
 function AIExecutionController:Execute(units)
+	local is_player_control = g_Combat.is_player_control
+	if is_player_control then
+		g_Combat:SetPlayerControl(false)
+	end
 	local played_units = {}
 	g_LastUnitToShoot = false
 	g_UnawareQueue = {}
 	sprocall(__AIExecutionControllerExecute, self, units, nil, played_units)
 	for _, unit in ipairs(played_units) do
 		unit.ai_context = nil
+	end
+	if is_player_control then
+		g_Combat:SetPlayerControl(true)
 	end
 	local check
 	for _, unit in ipairs(g_UnawareQueue) do
@@ -1691,12 +1699,12 @@ local function CheckEnemySightedQueue()
 	end
 	
 	g_AIExecutionControllerCamera = AIExecutionController_Camera:new()
-	CreateGameTimeThread(function()
+	CreateGameTimeThread(function(controller)
 		local units = s_EnemySightedQueue
 		s_EnemySightedQueue = {}
-		g_AIExecutionControllerCamera:ShowUnits(units, 1500)
-		DoneObject(g_AIExecutionControllerCamera)
-	end)
+		controller:ShowUnits(units, 1500)
+		DoneObject(controller)
+	end, g_AIExecutionControllerCamera)
 end
 
 function OnMsg.EnemySighted(team, enemy)
@@ -1883,17 +1891,27 @@ end
 
 function RevealUnitBeforeMove(unit, args)
 	local goto_pos = args.goto_pos
-	local goto_stance = StancesList.Standing --args.goto_stance --for now, assume the end stance will be standing as there is a bug around that logic
-	local step_pos_duplicated_arr = {}
+	local units, step_pos_duplicated_arr
 	local pov_team = GetPoVTeam()
-	for i = 1, #pov_team.units do
-		table.insert(step_pos_duplicated_arr, goto_pos)
+	for i, pu in ipairs(pov_team.units) do
+		local sight = pu:GetSightRadius(unit, nil, goto_pos)
+		if IsCloser(pu, goto_pos, sight + 1) then
+			if not units then
+				units = {}
+				step_pos_duplicated_arr = {}
+			end
+			table.insert(units, pu)
+			table.insert(step_pos_duplicated_arr, goto_pos)
+		end
 	end
-	
-	local los_any, result = CheckLOS(step_pos_duplicated_arr, pov_team.units) 
+	if not units then
+		return
+	end
+	local los_any, result = CheckLOS(step_pos_duplicated_arr, units)
 	if los_any then
-		for pi, pu in ipairs(pov_team.units) do
-			if (result[pi] == 2 or result[pi] == 1 and goto_stance == StancesList.Standing) and pu:GetDist(goto_pos) <= pu:GetSightRadius(unit, nil, goto_pos) then
+		local goto_stance = StancesList.Standing --args.goto_stance --for now, assume the end stance will be standing as there is a bug around that logic
+		for i, los in ipairs(result) do
+			if los == 2 or los == 1 and goto_stance == StancesList.Standing then
 				NetSyncEvent("RevealToTeam", unit, table.find(g_Teams, pov_team))
 				return true
 			end

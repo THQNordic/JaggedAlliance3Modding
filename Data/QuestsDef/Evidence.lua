@@ -13,7 +13,7 @@ PlaceObj('QuestsDef', {
 		LastNoteIdx = 19,
 		PlaceObj('QuestNote', {
 			CompletionConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							Condition = "or",
@@ -37,7 +37,7 @@ PlaceObj('QuestsDef', {
 			},
 			Idx = 16,
 			ShowConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							Condition = "or",
@@ -231,7 +231,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							QuestId = "Hermit",

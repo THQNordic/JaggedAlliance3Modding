@@ -279,7 +279,7 @@ PlaceObj('Conversation', {
 						return quest.BreakAndEnter and quest.DieselMention
 					end,
 				}),
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('UnitSquadHasMerc', {
 							HasPerk = "Scoundrel",
@@ -1281,7 +1281,7 @@ PlaceObj('Conversation', {
 			}),
 			PlaceObj('ConversationLine', {
 				Character = "Bounce",
-				Text = T(263276972558, --[[Conversation Bounce_1 Text voice:Bounce section:Bounce_1 keyword:Tell us about Siegfried]] "He owns the land. He owns the mine. Hell, he owns this very <em>Night Club</em>. Everybody's working for the big white man, cuz. Even me."),
+				Text = T(263276972558, --[[Conversation Bounce_1 Text voice:Bounce section:Bounce_1 keyword:Tell us about Siegfried]] "He owns the land. He owns the mine. Hell, he owns this very <em>Night Club</em>. Everyone's working for the big white man, cuz. Even me."),
 			}),
 		},
 		id = "WhoisSiegfried",

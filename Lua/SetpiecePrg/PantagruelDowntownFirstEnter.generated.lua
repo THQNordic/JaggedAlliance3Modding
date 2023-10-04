@@ -42,11 +42,11 @@ SetpiecePrgs.PantagruelDowntownFirstEnter = function(seed, state)
 	prgdbg(li, 1, 20) sprocall(SetpieceCamera.Exec, SetpieceCamera, state, rand, true, "", "Max", "", "", "linear", 0, false, false, point(174140, 177423, 8676), point(177034, 178208, 8763), false, false, 4200, 2000, false, 0, 0, 0, 0, 0, 0, "Default", 100)
 	prgdbg(li, 1, 21) sprocall(SetpieceSleep.Exec, SetpieceSleep, state, rand, true, "", 100)
 	local _, LegionActor3MoveTo
-	prgdbg(li, 1, 22) _, LegionActor3MoveTo = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", LegionActor1, "LegionActor1Run", true, true, false, "Standing", false, false, "")
+	prgdbg(li, 1, 22) _, LegionActor3MoveTo = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", LegionActor1, "LegionActor1Run", true, true, false, "Standing", false, false, "", 1000)
 	local _
-	prgdbg(li, 1, 23) _, LegionActor3MoveTo = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", LegionActor2, "LegionActor2Run", true, true, false, "Standing", false, false, "")
+	prgdbg(li, 1, 23) _, LegionActor3MoveTo = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", LegionActor2, "LegionActor2Run", true, true, false, "Standing", false, false, "", 1000)
 	local _
-	prgdbg(li, 1, 24) _, LegionActor3MoveTo = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", LegionActor3, "LegionActor3Run", true, true, false, "Standing", false, false, "")
+	prgdbg(li, 1, 24) _, LegionActor3MoveTo = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", LegionActor3, "LegionActor3Run", true, true, false, "Standing", false, false, "", 1000)
 	prgdbg(li, 1, 25) sprocall(SetpieceSleep.Exec, SetpieceSleep, state, rand, true, "", 1000)
 	prgdbg(li, 1, 26) sprocall(SetpieceFadeIn.Exec, SetpieceFadeIn, state, rand, true, "", 400, 700)
 	prgdbg(li, 1, 27) sprocall(SetpieceSleep.Exec, SetpieceSleep, state, rand, true, "", 5000)

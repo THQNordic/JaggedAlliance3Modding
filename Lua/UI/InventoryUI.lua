@@ -216,7 +216,7 @@ function XInventoryItem:Init()
 
 	local item_pad = XTemplateSpawn("XImage", self)
 		local item = self:GetContext()
-		local w = item.LargeItem and tile_size_rollover * 2 or tile_size_rollover
+		local w = item:IsLargeItem() and tile_size_rollover * 2 or tile_size_rollover
 		item_pad:SetMinWidth(w)
 		item_pad:SetMaxWidth(w)
 		item_pad:SetMinHeight(tile_size_rollover)
@@ -403,15 +403,15 @@ function XInventoryItem:OnContextUpdate(item,...)
 	self:SetRolloverTitle(item:GetRolloverTitle())		
 	self:SetRolloverText(item:GetRollover())		
 
-	self.idDropshadow:SetImage(item.LargeItem and "UI/Inventory/T_Backpack_Slot_Large" or GetTileImage(self.idItemPad))
-	self.idItemPad:SetImage(item.LargeItem and "UI/Inventory/T_Backpack_Slot_Large_Empty.tga" or "UI/Inventory/T_Backpack_Slot_Small_Empty.tga")
+	self.idDropshadow:SetImage(item:IsLargeItem() and "UI/Inventory/T_Backpack_Slot_Large" or GetTileImage(self.idItemPad))
+	self.idItemPad:SetImage(item:IsLargeItem() and "UI/Inventory/T_Backpack_Slot_Large_Empty.tga" or "UI/Inventory/T_Backpack_Slot_Small_Empty.tga")
 	local slot = self:GetInventorySlotCtrl()
 	if slot and IsEquipSlot(slot.slot_name) then
-		self.idItemPad:SetImage(item.LargeItem and "UI/Inventory/T_Backpack_Slot_Large.tga" or GetTileImage(self.idItemPad))
+		self.idItemPad:SetImage(item:IsLargeItem() and "UI/Inventory/T_Backpack_Slot_Large.tga" or GetTileImage(self.idItemPad))
 	end
-	--self.idItemPad:SetImage(item.LargeItem and "UI/Inventory/T_Backpack_Slot_Large_Empty.tga" or GetTileImage(self.idItemPad))
+	--self.idItemPad:SetImage(item:IsLargeItem() and "UI/Inventory/T_Backpack_Slot_Large_Empty.tga" or GetTileImage(self.idItemPad))
 	--self.idItemPad:SetImageColor(0xffc3bdac)
-	self.idRollover:SetImage(item.LargeItem and "UI/Inventory/T_Backpack_Slot_Large_Hover.tga" or "UI/Inventory/T_Backpack_Slot_Small_Hover.tga")
+	self.idRollover:SetImage(item:IsLargeItem() and "UI/Inventory/T_Backpack_Slot_Large_Hover.tga" or "UI/Inventory/T_Backpack_Slot_Small_Hover.tga")
 	self.idRollover:SetImageColor(0xffc3bdac)
 	self.idText:SetText(item:GetItemSlotUI() or "")
 	if IsKindOfClasses(item, "Armor", "Firearm", "HeavyWeapon", "MeleeWeapon", "ToolItem", "Medicine" ) and not IsKindOf(item, "InventoryStack") then
@@ -792,7 +792,7 @@ function XInventorySlot:SpawnItemUI(item, left, top)
 		return 
 	end	
 	image:SetVisible(false)
-	if item.LargeItem then
+	if item:IsLargeItem() then
 		self.tiles[left+1][top]:SetVisible(false)
 	end
 	local item_wnd = XTemplateSpawn("XInventoryItem", self, item)
@@ -1182,7 +1182,7 @@ function XInventorySlot:DragDrop_MoveItem(pt, target, check_only)
 		return "no target tile"
 	end
 	local ssx, ssy, sdx = point_unpack(InventoryDragItemPos)
-	if item.LargeItem then
+	if item:IsLargeItem() then
 		dx = dx - sdx
 		if IsEquipSlot(dest_slot) then
 			dx = 1
@@ -1382,20 +1382,20 @@ function XInventorySlot:CanDropAt(pt)
 	local is_equip_slot = IsEquipSlot(dest_slot)
 	if not is_equip_slot and item_at_dest and (item_at_dest ~= InventoryDragItem and not stackable) then
 		--swapping is now allowed for items of the same size
-		if InventoryDragItem.LargeItem ~= item_at_dest.LargeItem then
+		if InventoryDragItem:IsLargeItem() ~= item_at_dest:IsLargeItem() then
 			--print("CanDropAt", InventoryDragItem.class, item_at_dest.class, "false")
 			return false, "cannot swap"
 		end
 	end
 	
-	if not is_equip_slot and InventoryDragItem.LargeItem then
+	if not is_equip_slot and InventoryDragItem:IsLargeItem() then
 		local ssx, ssy, sdx = point_unpack(InventoryDragItemPos)
 		if sdx>=0 then
 			dx = dx - sdx
 			end
 	
 		local otherItem = unit:GetItemInSlot(dest_slot, nil, dx, dy) --item at other slot
-		if otherItem and (otherItem.LargeItem ~= InventoryDragItem.LargeItem or (item_at_dest and item_at_dest ~= otherItem)) then
+		if otherItem and (otherItem:IsLargeItem() ~= InventoryDragItem:IsLargeItem() or (item_at_dest and item_at_dest ~= otherItem)) then
 			--allow swap when both are large and there is only one underneath
 			return false,"cannot swap"
 		end
@@ -1631,7 +1631,7 @@ function HighlihgtRollover(width, wnd, bShow)
 	local item = wnd:GetContext()
 	local large 
 	if item then
-		large = item.LargeItem 
+		large = item:IsLargeItem() 
 	else 
 		large = width and width>1
 	end
@@ -2190,7 +2190,7 @@ DefineClass.BrowseInventorySlot = {
 	__parents = {"XInventorySlot"},
 }
 
-function BrowseInventorySlot:OnMouseButtonDoubleClick(pt, button)
+function BrowseInventorySlot:OnMouseButtonDoubleClick(pt, button, source)
 	local dlgContext = GetDialogContext(self)
 	if dlgContext then
 		if InventoryDisabled(dlgContext) then	return "break" end
@@ -2201,7 +2201,7 @@ function BrowseInventorySlot:OnMouseButtonDoubleClick(pt, button)
 	end		
 	
 	if button == "L" then
-		if not IsMouseViaGamepadActive() then
+		if not IsMouseViaGamepadActive() or source == "gamepad" then
 			if WasDraggingLastLMBClick then return end
 			local wnd_found, item
 			local is_dragging = not not InventoryDragItem
@@ -2214,7 +2214,7 @@ function BrowseInventorySlot:OnMouseButtonDoubleClick(pt, button)
 			
 			if self:TryMoveToBag(item) then
 				return "break"
-			elseif is_dragging then
+			elseif item then
 				self:EquipItem(item)
 			end
 		end
@@ -2324,6 +2324,10 @@ function BrowseInventorySlot:EquipItem(item)
 	if not InventoryIsContainerOnSameSector(context) then
 		return
 	end
+	if not gv_SatelliteView and not InventoryIsValidGiveDistance(context, unit)then
+		return
+	end	
+	
 	local slot 	
 	local slot_pos = point_pack(1,1)
 	local prev_item, slot, slot_pos = self:GetPrevEquipItem(item)
@@ -2621,7 +2625,7 @@ function PlayResponseOpenContainer(unit,container)
 	if container then
 		local play_unit = false and GetRandomMapMerc(unit.Squad,AsyncRand()) or unit --stop using random merc for these vr's
 		container:ForEachItem(function(item, slot, l,t) 
-			if item.is_valuable then
+			if item:IsValuable() then
 				PlayVoiceResponse(play_unit,"ValuableItemFound")
 				return "break"
 			end
@@ -2944,7 +2948,7 @@ OnMsg.InventoryAddItem = InventoryUIRespawn
 function GetValidMercsToTakeItem(context)
 	local remove_self = not context.container and "remove self"
 	local unit
-
+ 
 	if IsKindOf(context.context, "Unit") and not context.context:IsDead() 
 		or IsKindOf(context.context, "UnitData") 
 		or (IsKindOf(context.context, "SectorStash") and context.unit.Operation=="Arriving")
@@ -2957,6 +2961,9 @@ function GetValidMercsToTakeItem(context)
 	end	
 	
 	local item = context.item
+	if (not gv_SatelliteView or InventoryIsCombatMode(unit)) and not InventoryIsValidGiveDistance(context.context, unit)then
+		return 
+	end	
 	local units = InventoryGetSquadUnits(unit, remove_self, 
 		function(u)
 			if type(u)== "string" then

@@ -717,7 +717,7 @@ function TriggerTimedExplosives()
 			AdjustCombatCamera("set")
 			local cameraClose = DoPointsFitScreen({trap:GetVisualPos()}, nil, const.Camera.BufferSizeNoCameraMov)
 			if not cameraClose then
-				SnapCameraToObj(trap:GetVisualPos(), "force",  GetFloorOfPos(SnapToPassSlab(trap:GetVisualPos())))
+				SnapCameraToObj(trap:GetVisualPos(), "force",  GetFloorOfPos(SnapToPassSlab(trap:GetVisualPosXYZ())))
 				Sleep(1000)
 			end
 			trap:TriggerTrap(nil, trap.attacker)
@@ -780,7 +780,14 @@ end
 function Landmine:AttemptDisarm(unit)
 	self:UpdateTriggerRadiusFx("delete")
 	self:UpdateTimedExplosionFx("delete")
-	Trap.AttemptDisarm(self, unit)
+	local success = Trap.AttemptDisarm(self, unit)
+	if success then
+		local onGroundAttach
+		self:ForEachAttach(function(attach) onGroundAttach = attach  end)
+		if onGroundAttach then
+			onGroundAttach:ForEachAttach(function(attach) DoneObject(attach)  end)
+		end
+	end
 end
 
 -- Always visible shootable trap that triggers when killed
@@ -1033,9 +1040,9 @@ local function lTrapVisibilityUpdate(unit)
 	-- Perform LOS check and record attackable traps which are currently visible.
 	local attackableVisibleFill = {}
 	g_AttackableVisibility[unit] = attackableVisibleFill
-	local _, losData = CheckLOS(trapsLosCheck, unit, unitSightRange)
+	local los_any, losData = CheckLOS(trapsLosCheck, unit, unitSightRange)
 	for i, t in ipairs(minesAround) do
-		if not t.discovered_trap and losData[i] then
+		if not t.discovered_trap and losData and losData[i] then
 			t:CheckDiscovered(unit)
 		end
 		
@@ -1153,7 +1160,16 @@ function BoobyTrappable:GetInteractionCombatAction(unit)
 	if not self.discovered_trap then
 		return false
 	end
-	return Presets.CombatAction.Interactions.Interact_Disarm
+	
+	local stat = self:GetTrapStat()
+	local icon
+	if stat == "Mechanical" then
+		icon = "UI/Hud/iw_mechanical_trap"
+	else
+		icon = "UI/Hud/iw_disarm"
+	end
+
+	return Presets.CombatAction.Interactions.Interact_Disarm, icon
 end
 
 function BoobyTrappable:GetHighlightColor()
@@ -1574,6 +1590,8 @@ function TrapDetonator:GetAttackResults(action, attack_args)
 			damage = 99999
 		}
 	end
+	
+	hits.trajectory = { { pos = target_pos } }
 	
 	return hits
 end

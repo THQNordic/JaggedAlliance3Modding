@@ -138,7 +138,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableNum', {
 							Amount = 3,
@@ -194,7 +194,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			CompletionConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							Condition = "or",
@@ -215,7 +215,7 @@ PlaceObj('QuestsDef', {
 			},
 			Idx = 7,
 			ShowConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableNum', {
 							Amount = 1,
@@ -451,18 +451,14 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('QuestNote', {
 			HideConditions = {
-				PlaceObj('OR', {
-					Conditions = {
-						PlaceObj('QuestIsVariableBool', {
-							Condition = "or",
-							QuestId = "GhostStories",
-							Vars = set( "Completed", "LegionKilled", "TriggerThugSpawn" ),
-							__eval = function ()
-								local quest = gv_Quests['GhostStories'] or QuestGetState('GhostStories')
-								return quest.Completed or quest.LegionKilled or quest.TriggerThugSpawn
-							end,
-						}),
-					},
+				PlaceObj('QuestIsVariableBool', {
+					Condition = "or",
+					QuestId = "GhostStories",
+					Vars = set( "Completed", "LegionKilled", "TriggerThugSpawn" ),
+					__eval = function ()
+						local quest = gv_Quests['GhostStories'] or QuestGetState('GhostStories')
+						return quest.Completed or quest.LegionKilled or quest.TriggerThugSpawn
+					end,
 				}),
 			},
 			Idx = 23,
@@ -689,7 +685,7 @@ PlaceObj('QuestsDef', {
 	TCEs = {
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('BanterHasPlayed', {
 							Banters = {

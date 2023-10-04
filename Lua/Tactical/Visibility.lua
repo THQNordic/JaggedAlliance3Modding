@@ -92,8 +92,8 @@ function GetAreaAttackHitModifiers(action_id, attack_args, targets)
 	end
 	local maxvalue, los_values = CheckLOS(targets, attack_args.step_pos, attack_args.distance, attack_args.stance, cone_angle, attack_args.target, false, attack_args.min_distance_2d)
 	local modifiers = {}
-	for i, value in ipairs(los_values) do
-		modifiers[i] = GetAreaAttackHitModifier(targets[i], value)
+	for i, target in ipairs(targets) do
+		modifiers[i] = GetAreaAttackHitModifier(target, los_values and los_values[i])
 	end
 	return modifiers
 end
@@ -101,7 +101,7 @@ end
 function GetAOETiles(step_pos, stance, distance, cone_angle, target, force2d)
 	local step_positions, step_objs = GetStepPositionsInArea(step_pos, distance, 0, cone_angle, target, force2d)
 	local maxvalue, los_values = CheckLOS(step_positions, step_pos, -1, stance, -1, false, false)
-	return step_positions, step_objs, los_values
+	return step_positions, step_objs, los_values or empty_table
 end
 
 function GetAreaAttackResults(aoe_params, damage_bonus, applied_status, damage_override)
@@ -318,68 +318,53 @@ function Unit:RevealTo(obj, combat)
 end
 
 function VisibilityCheckAll(observer, other, visibility, mask)
-	local trap = IsKindOf(other, "Trap")
-	local unit = IsKindOf(other, "Unit")
-	if not trap and not unit then return true end
-	
-	if trap then
+	if IsKindOf(other, "Unit") then
+		local vis = (visibility or g_Visibility)[observer]
+		return band(vis and vis[other] or 0, mask) == mask
+	elseif IsKindOf(other, "Trap") then
 		assert((observer.team and observer.team.side == "player1") or observer.side == "player1")
-		local trapVis = g_AttackableVisibility[observer] or empty_table
-		trapVis = trapVis[other] and const.uvVisible or 0
+		local trapVis = g_AttackableVisibility[observer]
+		trapVis = trapVis and trapVis[other] and const.uvVisible or 0
 		return band(trapVis, mask) == mask
 	end
-
-	visibility = visibility or g_Visibility
-	local value = visibility[observer] and visibility[observer][other] or 0
-	return band(value, mask) == mask
+	return true
 end
 
 function VisibilityCheckAny(observer, other, visibility, mask)
-	local trap = IsKindOf(other, "Trap")
-	local unit = IsKindOf(other, "Unit")
-	if not trap and not unit then return true end
-	
-	if trap then
+	if IsKindOf(other, "Unit") then
+		local vis = (visibility or g_Visibility)[observer]
+		return band(vis and vis[other] or 0, mask) ~= 0
+	elseif IsKindOf(other, "Trap") then
 		assert((observer.team and observer.team.side == "player1") or observer.side == "player1")
-		local trapVis = g_AttackableVisibility[observer] or empty_table
-		trapVis = trapVis[other] and const.uvVisible or 0		
+		local trapVis = g_AttackableVisibility[observer]
+		trapVis = trapVis and trapVis[other] and const.uvVisible or 0		
 		return band(trapVis, mask) ~= 0
 	end
-
-	visibility = visibility or g_Visibility
-	local value = visibility[observer] and visibility[observer][other] or 0
-	return band(value, mask) ~= 0
+	return true
 end
 
 function HasVisibilityTo(observer, other, visibility)
-	local trap = IsKindOf(other, "Trap")
-	local unit = IsKindOf(other, "Unit")
-	if not trap and not unit then return true end
-	
-	if trap then
+	if IsKindOf(other, "Unit") then
+		local vis = (visibility or g_Visibility)[observer]
+		return (vis and vis[other] or 0) >= const.uvVisible
+	elseif IsKindOf(other, "Trap") then
 		assert((observer.team and observer.team.side == "player1") or observer.side == "player1")
-		local trapVis = g_AttackableVisibility[observer] or empty_table
-		return trapVis[other]
+		local trapVis = g_AttackableVisibility[observer]
+		return trapVis and trapVis[other]
 	end
-	
-	visibility = visibility or g_Visibility
-	local value = visibility[observer] and visibility[observer][other] or 0
-	return value >= const.uvVisible
+	return true
 end
 
 function VisibilityGetValue(observer, other, visibility)
-	local trap = IsKindOf(other, "Trap")
-	local unit = IsKindOf(other, "Unit")
-	if not trap and not unit then return const.uvVisible end
-	
-	if trap then
+	if IsKindOf(other, "Unit") then
+		local vis = (visibility or g_Visibility)[observer]
+		return vis and vis[other] or 0
+	elseif IsKindOf(other, "Trap") then
 		assert((observer.team and observer.team.side == "player1") or observer.side == "player1")
-		local trapVis = g_AttackableVisibility[observer] or empty_table
-		return trapVis[other] and const.uvVisible or 0		
+		local trapVis = g_AttackableVisibility[observer]
+		return trapVis and trapVis[other] and const.uvVisible or 0
 	end
-	
-	visibility = visibility or g_Visibility
-	return visibility[observer] and visibility[observer][other] or 0
+	return const.uvVisible
 end
 
 function IsFullVisibility()
@@ -395,23 +380,21 @@ local function HandleSortFunction(a, b)
 	return a.handle < b.handle
 end
 
-function Unit:ComputeVisibleUnits(visibility)
+function Unit:ComputeVisibleUnits()
 	local unit_visibility = {}
-	local team = self.team
 	local uvVisible = const.uvVisible
-	for unit, los in pairs(g_UnitsLOS[self]) do
-		local vis_value = los and uvVisible or 0
-		if not unit:IsOnEnemySide(self) and unit:IsNPC() then
-			if not unit:HasStatusEffect("HiddenNPC") then
-				vis_value = bor(vis_value, const.uvNPC)
+	local uvVisibleNPC = bor(uvVisible, const.uvNPC)
+	local team = self.team
+	for i, other in ipairs(g_UnitsLOS[self]) do
+		local vis_value = uvVisible
+		if not other.team:IsEnemySide(team) then
+			if other:IsNPC() and not other:HasStatusEffect("HiddenNPC") then
+				vis_value = uvVisibleNPC
 			end
 		end
-		if vis_value >= uvVisible then
-			table.insert(unit_visibility, unit)
-		end
-		unit_visibility[unit] = vis_value
+		unit_visibility[i] = other
+		unit_visibility[other] = vis_value
 	end
-	table.sort(unit_visibility, HandleSortFunction)
 	return unit_visibility
 end
 
@@ -420,57 +403,93 @@ function GetMaxSightRadius()
 	return MulDivRound(const.Combat.AwareSightRange, const.SlabSizeX * const.Combat.SightModMaxValue, 100)
 end
 
-local function is_script_target(unit, target_groups)
-	for _, group in ipairs(unit.Groups) do
-		if target_groups[group] then
-			return true
-		end
-	end
-end
-
 local function UpdateUnitsLOS(unitsLOS)
 	local player_units = {}
 	local enemy_units = {}
 	local neutral_units = {} -- units that do not need LOS info (only players could check LOS to them for free aim attack)
 	local dead_units = {}  -- enemies alarm checks
 	local enemyNeutral_Side = GameState.Conflict and "enemy1" or "neutral"
-	local script_target_groups = {}
-	
+	local script_target_groups
+
 	for group, mods in pairs(gv_AITargetModifiers) do
 		for target_group, value in pairs(mods) do
+			if not script_target_groups then script_target_groups = {} end
 			script_target_groups[target_group] = true
 		end
 	end
-	
+
 	local insert = table.insert
-	for _, unit in ipairs(g_Units) do
-		local team = unit.team
-		local side = team and team.side
-		if side == "enemyNeutral" then side = enemyNeutral_Side end
-		if not unit:IsValidPos() then
-		elseif unit:IsDead() then
-			if side and side ~= "neutral" and not team.player_team then
-				insert(dead_units, unit)
-			end
-		elseif side == "neutral" then
-			if is_script_target(unit, script_target_groups) then
-				insert(enemy_units, unit)
-			else
-				insert(neutral_units, unit)
-			end
-		elseif team and team.player_team then
-			insert(player_units, unit)
-		elseif side then
-			insert(enemy_units, unit)
+	local clear = table.clear
+	local IsValidPos = Unit.IsValidPos
+	local IsDead = Unit.IsDead
+
+	for _, team in ipairs(g_Teams) do
+		local side = team.side
+		if side == "enemyNeutral" then
+			side = enemyNeutral_Side
 		end
-		local los_tbl = unitsLOS[unit]
-		if los_tbl then
-			table.clear(los_tbl)
+		if side == "neutral" then
+			for _, unit in ipairs(team.units) do
+				local has_los_tbl
+				if IsValidPos(unit) and not IsDead(unit) then
+					local is_script_target
+					if script_target_groups then
+						for _, group in ipairs(unit.Groups) do
+							if script_target_groups[group] then
+								is_script_target = true
+								break
+							end
+						end
+					end
+					if is_script_target then
+						insert(enemy_units, unit)
+						has_los_tbl = true
+					else
+						insert(neutral_units, unit)
+					end
+				end
+				if has_los_tbl then
+					local los_tbl = unitsLOS[unit]
+					if los_tbl then clear(los_tbl) else los_tbl = {} unitsLOS[unit] = los_tbl end
+					los_tbl[1] = unit
+					los_tbl[unit] = 2
+				else
+					unitsLOS[unit] = nil
+				end
+			end
+		elseif team.player_team then
+			for _, unit in ipairs(team.units) do
+				if IsValidPos(unit) and not IsDead(unit) then
+					insert(player_units, unit)
+					local los_tbl = unitsLOS[unit]
+					if los_tbl then clear(los_tbl) else los_tbl = {} unitsLOS[unit] = los_tbl end
+					los_tbl[1] = unit
+					los_tbl[unit] = 2
+				else
+					unitsLOS[unit] = nil
+				end
+			end
 		else
-			los_tbl = setmetatable({}, weak_keys_meta)
-			unitsLOS[unit] = los_tbl
+			for _, unit in ipairs(team.units) do
+				local has_los_tbl
+				if IsValidPos(unit) then
+					if IsDead(unit) then
+						insert(dead_units, unit)
+					else
+						insert(enemy_units, unit)
+						has_los_tbl = true
+					end
+				end
+				if has_los_tbl then
+					local los_tbl = unitsLOS[unit]
+					if los_tbl then clear(los_tbl) else los_tbl = {} unitsLOS[unit] = los_tbl end
+					los_tbl[1] = unit
+					los_tbl[unit] = 2
+				else
+					unitsLOS[unit] = nil
+				end
+			end
 		end
-		los_tbl[unit] = 2
 	end
 
 	local src_units, target_units = {}, {}
@@ -517,8 +536,13 @@ local function UpdateUnitsLOS(unitsLOS)
 	if #src_units > 0 then
 		local los_any, result = CheckLOS(target_units, src_units)
 		local uvVisible = const.uvVisible
-		for i, vis_value in ipairs(result) do
-			unitsLOS[ src_units[i] ][ target_units[i] ] = vis_value
+		for i, target in ipairs(target_units) do
+			local value = result and result[i]
+			if value then
+				local los_tbl = unitsLOS[src_units[i]]
+				insert(los_tbl, target)
+				los_tbl[target] = value
+			end
 		end
 	end
 end
@@ -526,62 +550,68 @@ end
 function ComputeUnitsVisibility()
 	UpdateUnitsLOS(g_UnitsLOS)
 
-	local visibility = { }
-	-- init team visibility
-	for _, t in ipairs(g_Teams) do
-		local tvis = {}
-		visibility[t] = tvis
-		for i, ru in ipairs(g_RevealedUnits[t]) do
-			if not ru:IsDead() then
-				table.insert(tvis, ru)
-				tvis[ru] = const.uvRevealed
-			end
-		end
-		--table.icopy(g_RevealedUnits[t] or empty_table)
-	end
-
-	for _, unit in ipairs(g_Units) do
-		if IsValid(unit) and unit:IsValidPos() and not unit:IsDead() then
-			if unit.team.side ~= "neutral" then -- neutral units don't care about combat visibility
-				visibility[unit] = unit:ComputeVisibleUnits(visibility)
-			end
-		end
-	end
-
-	-- build team visibility 
-	local old_visual = {}
+	local visibility = {}
+	local visual_contact_change = {}
 	local uvVisible = const.uvVisible
-	for i, unit in ipairs(g_Units) do
-		old_visual[i] = unit.enemy_visual_contact
-		unit.enemy_visual_contact = false
-		local uteam = unit.team
-		local tvis = visibility[uteam]
-		local uvis = visibility[unit]
+	local uvRevealed = const.uvRevealed
+	local insert = table.insert
 
-		for key, value in sorted_handled_obj_key_pairs(uvis) do
-			if IsValid(key) then
-				--NetUpdateHash("CompVis1", key)
-				local tval = bor(tvis[key] or 0, value)
-				if tval >= uvVisible and not HasVisibilityTo(uteam, key, visibility) then
-					tvis[#tvis + 1] = key
+	-- init team visibility
+	for _, team in ipairs(g_Teams) do
+		if team.side == "neutral" then -- neutral units don't care about combat visibility
+			-- update visibility for the script units
+			for _, unit in ipairs(team.units) do
+				if g_UnitsLOS[unit] then
+					local unit_visibility = unit:ComputeVisibleUnits()
+					visibility[unit] = unit_visibility
 				end
-				tvis[key] = tval
+			end
+		else
+			local team_visibility = {}
+			visibility[team] = team_visibility
+			for i, ru in ipairs(g_RevealedUnits[team]) do
+				if not ru:IsDead() then
+					insert(team_visibility, ru)
+					team_visibility[ru] = uvRevealed
+				end
+			end
+			for _, unit in ipairs(team.units) do
+				if unit.enemy_visual_contact then
+					insert(visual_contact_change, unit)
+					visual_contact_change[unit] = 1
+				end
+				unit.enemy_visual_contact = false
+				if IsValid(unit) and unit:IsValidPos() and not unit:IsDead() then
+					local unit_visibility = unit:ComputeVisibleUnits()
+					visibility[unit] = unit_visibility
+					-- build team visibility
+					for i, other in ipairs(unit_visibility) do
+						--NetUpdateHash("CompVis1", other)
+						local prev_val = team_visibility[other] or 0
+						local tval = bor(prev_val, unit_visibility[other])
+						if tval ~= prev_val then
+							if prev_val == 0 then
+								insert(team_visibility, other)
+							end
+							team_visibility[other] = tval
+						end
+					end
+				end
 			end
 		end
 	end
 
 	-- share visibility to allies
-	for _, team in ipairs(g_Teams) do
+	for j, team in ipairs(g_Teams) do
 		local vis = visibility[team]
-		for _, team2 in ipairs(g_Teams) do
-			if team ~= team2 and team:IsAllySide(team2) then
-				local vis2 = visibility[team2]
-				for key, value in sorted_handled_obj_key_pairs(vis) do
-					if IsValid(key) then
-						--NetUpdateHash("CompVis2", key)
-						if value >= uvVisible and not HasVisibilityTo(team2, key, visibility) then
-							vis2[#vis2 + 1] = key
-							vis2[key] = bor(vis2[key], const.uvRevealed)
+		if vis and #vis > 0 then
+			for k, team2 in ipairs(g_Teams) do
+				if team ~= team2 and team:IsAllySide(team2) then
+					local vis2 = visibility[team2]
+					for i, other in ipairs(vis) do
+						if not vis2[other] then
+							insert(vis2, other)
+							vis2[other] =  const.uvRevealed
 						end
 					end
 				end
@@ -591,49 +621,75 @@ function ComputeUnitsVisibility()
 
 	-- update visual contact & sight conditions
 	g_SightConditions = {}
-	local FogUnkownFoeDistance = const.EnvEffects.FogUnkownFoeDistance
-	local DustStormUnkownFoeDistance = const.EnvEffects.DustStormUnkownFoeDistance
-	for i, unit in ipairs(g_Units) do
-		g_SightConditions[unit] = {}
-		if unit:IsAware("pending") then -- visual contact
-			for _, other in ipairs(visibility[unit]) do
-				if IsValid(other) and other:IsOnEnemySide(unit) then
-					other.enemy_visual_contact = true
-					if g_Combat and g_Teams[g_CurrentTeam] == other.team and other:HasStatusEffect("Hidden") and other.team.player_team and other.in_combat_movement then
-						other:AddStatusEffect("Spotted")
-						other:SetEffectValue("Spotted-" .. unit.team.side, true)
+	local FogUnkownFoeDistance = GameState.Fog and const.EnvEffects.FogUnkownFoeDistance
+	local DustStormUnkownFoeDistance = GameState.DustStorm and const.EnvEffects.DustStormUnkownFoeDistance
+	local current_player_team = g_Combat and g_Teams[g_CurrentTeam] and g_Teams[g_CurrentTeam].player_team and g_Teams[g_CurrentTeam]
+
+	for _, team in ipairs(g_Teams) do
+		if team.side ~= "neutral" then
+			for _, unit in ipairs(team.units) do
+				local unit_sight_conditions
+				if unit:IsAware("pending") then -- visual contact
+					for _, other in ipairs(visibility[unit]) do
+						if other.team:IsEnemySide(team) then
+							if not other.enemy_visual_contact then
+								other.enemy_visual_contact = true
+								local prev = visual_contact_change[other]
+								visual_contact_change[other] = (prev or 0) | 2
+								if not prev then
+									insert(visual_contact_change, other)
+								end
+							end
+							if other.team == current_player_team and other.in_combat_movement and other:HasStatusEffect("Hidden") then
+								other:AddStatusEffect("Spotted")
+								other:SetEffectValue("Spotted-" .. team.side, true)
+							end
+						end
+					end
+				end
+				if FogUnkownFoeDistance or DustStormUnkownFoeDistance then
+					for _, other in ipairs(visibility[team]) do
+						if not other.indoors then
+							local value = 0
+							if FogUnkownFoeDistance and not IsCloser(unit, other, FogUnkownFoeDistance) then
+								value = const.usConcealed
+							end
+							if DustStormUnkownFoeDistance and not IsCloser(unit, other, DustStormUnkownFoeDistance) then
+								value = bor(value, const.usObscured)
+							end
+							if value ~= 0 then
+								if not unit_sight_conditions then
+									unit_sight_conditions = {}
+									g_SightConditions[unit] = unit_sight_conditions
+								end
+								local oldVal = unit_sight_conditions[other]
+								unit_sight_conditions[other] = value
+								if oldVal ~= value then
+									ObjModified(other)
+								end
+							end
+						end
 					end
 				end
 			end
-		end
-		for _, other in ipairs(visibility[unit.team]) do
-			local value = 0
-			if IsValid(other) then
-				if GameState.Fog and not other.indoors and not IsCloser(unit, other, FogUnkownFoeDistance) then
-					value = bor(value, const.usConcealed)
-				end
-				if GameState.DustStorm and not other.indoors and not IsCloser(unit, other, DustStormUnkownFoeDistance) then
-					value = bor(value, const.usObscured)
-				end
-			end
-			g_SightConditions[unit][other] = value
 		end
 	end
 
 	-- update HiddenNPC status
 	for _, team in ipairs(g_Teams) do
 		if team.player_team then
-			local seen = visibility[team]
-			for _, unit in ipairs(seen) do
-				if IsValid(unit) and unit:HasStatusEffect("HiddenNPC") and VisibilityCheckAll(team, unit, visibility, uvVisible) then
-					unit:RemoveStatusEffect("HiddenNPC")
+			for _, unit in ipairs(visibility[team]) do
+				if unit:HasStatusEffect("HiddenNPC") then
+					if VisibilityCheckAll(team, unit, visibility, uvVisible) then
+						unit:RemoveStatusEffect("HiddenNPC")
+					end
 				end
 			end
 		end
 	end
 
-	for i, unit in ipairs(g_Units) do
-		if IsValid(unit) and unit.enemy_visual_contact ~= old_visual[i] then
+	for _, unit in ipairs(visual_contact_change) do
+		if visual_contact_change[unit] ~= 3 then
 			unit:UpdateHidden()
 			Msg("UnitStealthChanged", unit)
 		end
@@ -938,13 +994,16 @@ MapVar("g_UnitsLOS", {}, weak_keys_meta)
 function InvalidateUnitLOS(unit)
 	g_UnitsLOS[unit] = nil
 	for u, los_tbl in pairs(g_UnitsLOS) do
-		los_tbl[unit] = nil
+		if los_tbl[unit] then
+			los_tbl[unit] = nil
+			table.remove_value(los_tbl, unit)
+		end
 	end
 	VisibilityUpdate()
 end
 
 function InvalidateVisibility(force)
-	g_UnitsLOS = {}
+	g_UnitsLOS = setmetatable({}, weak_keys_meta)
 	VisibilityUpdate(force)
 end
 
@@ -1201,10 +1260,11 @@ end
 AppendClass.EntitySpecProperties = {
 	properties = {
 		{ id = "obstruction", name = "Blocks line of sight", editor = "bool", category = "Misc", default = false, entitydata = true, },
+		{ id = "provide_cover", name = "Provide cover", editor = "bool", default = true, entitydata = true, },
 	},
 }
 
-function SetupEntityObstructionMasks(cheatEnabled)
+function SetupEntityObstructionMasks()
 	local obstruction_entities = {}
 	local cover_entities = {}
 	local materials = Presets.ObjMaterial.Default
@@ -1227,7 +1287,7 @@ function SetupEntityObstructionMasks(cheatEnabled)
 			then
 				obstruction_entities[#obstruction_entities+1] = k
 			end
-			if not cheatEnabled or not material or not material.is_prop and material.armor_class > 1 then
+			if entity and entity.provide_cover ~= false then
 				cover_entities[#cover_entities + 1] = k
 			end
 		end

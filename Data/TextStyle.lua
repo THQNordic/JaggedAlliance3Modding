@@ -143,11 +143,152 @@ PlaceObj('TextStyle', {
 })
 
 PlaceObj('TextStyle', {
+	RolloverTextColor = 4294572507,
+	ShadowColor = 3698283069,
+	ShadowSize = 10,
+	ShadowType = "glow",
+	TextColor = 4294572507,
+	TextFont = T(902312951402, --[[TextStyle PDABobbyHighlight_Glow TextFont]] "HMGothic Regular A, 30"),
+	group = "PDA Browser",
+	id = "PDABobbyHighlight_Glow",
+})
+
+PlaceObj('TextStyle', {
 	RolloverTextColor = 4286742648,
 	TextColor = 4286742648,
 	TextFont = T(252001885774, --[[TextStyle PDABobbyPrivacyLinks TextFont]] "Source Code Pro Bold, 16"),
 	group = "PDA Browser",
 	id = "PDABobbyPrivacyLinks",
+})
+
+PlaceObj('TextStyle', {
+	RolloverTextColor = 4281612093,
+	TextColor = 4281612093,
+	TextFont = T(231928901552, --[[TextStyle PDABobbyStore_HG16A TextFont]] "HMGothic Regular A, 16"),
+	group = "PDA Browser",
+	id = "PDABobbyStore_HG16A",
+})
+
+PlaceObj('TextStyle', {
+	RolloverTextColor = 4286742648,
+	TextColor = 4286742648,
+	TextFont = T(587352361904, --[[TextStyle PDABobbyStore_HG16D TextFont]] "HMGothic Regular A, 16"),
+	group = "PDA Browser",
+	id = "PDABobbyStore_HG16D",
+})
+
+PlaceObj('TextStyle', {
+	RolloverTextColor = 2156036216,
+	TextColor = 2156036216,
+	TextFont = T(492324086984, --[[TextStyle PDABobbyStore_HG16D_Transparent TextFont]] "HMGothic Regular A, 16"),
+	group = "PDA Browser",
+	id = "PDABobbyStore_HG16D_Transparent",
+})
+
+PlaceObj('TextStyle', {
+	RolloverTextColor = 4294572507,
+	ShadowColor = 1081037373,
+	ShadowSize = 5,
+	ShadowType = "glow",
+	TextColor = 4294572507,
+	TextFont = T(192263021251, --[[TextStyle PDABobbyStore_HG16E TextFont]] "HMGothic Regular A, 16"),
+	group = "PDA Browser",
+	id = "PDABobbyStore_HG16E",
+})
+
+PlaceObj('TextStyle', {
+	RolloverTextColor = 4291018156,
+	TextColor = 4291018156,
+	TextFont = T(799402808350, --[[TextStyle PDABobbyStore_HG16F TextFont]] "HMGothic Regular A, 16"),
+	group = "PDA Browser",
+	id = "PDABobbyStore_HG16F",
+})
+
+PlaceObj('TextStyle', {
+	RolloverTextColor = 4286349920,
+	TextColor = 4286349920,
+	TextFont = T(953828634198, --[[TextStyle PDABobbyStore_HG16G TextFont]] "HMGothic Regular A, 16"),
+	group = "PDA Browser",
+	id = "PDABobbyStore_HG16G",
+})
+
+PlaceObj('TextStyle', {
+	RolloverTextColor = 4290724685,
+	TextColor = 4290724685,
+	TextFont = T(910815853657, --[[TextStyle PDABobbyStore_HG16I TextFont]] "HMGothic Regular A, 16"),
+	group = "PDA Browser",
+	id = "PDABobbyStore_HG16I",
+})
+
+PlaceObj('TextStyle', {
+	RolloverTextColor = 4291080053,
+	TextColor = 4291080053,
+	TextFont = T(108908440301, --[[TextStyle PDABobbyStore_HG16K TextFont]] "HMGothic Regular A, 16"),
+	group = "PDA Browser",
+	id = "PDABobbyStore_HG16K",
+})
+
+PlaceObj('TextStyle', {
+	RolloverTextColor = 4294572507,
+	TextColor = 4294572507,
+	TextFont = T(488844448191, --[[TextStyle PDABobbyStore_HG18E TextFont]] "HMGothic Regular A, 18"),
+	group = "PDA Browser",
+	id = "PDABobbyStore_HG18E",
+})
+
+PlaceObj('TextStyle', {
+	RolloverTextColor = 4286349920,
+	TextColor = 4286349920,
+	TextFont = T(649778129918, --[[TextStyle PDABobbyStore_HG18G TextFont]] "HMGothic Regular A, 18"),
+	group = "PDA Browser",
+	id = "PDABobbyStore_HG18G",
+})
+
+PlaceObj('TextStyle', {
+	RolloverTextColor = 4294572507,
+	ShadowColor = 1081037373,
+	ShadowSize = 5,
+	ShadowType = "glow",
+	TextColor = 4294572507,
+	TextFont = T(649993225331, --[[TextStyle PDABobbyStore_HG24E TextFont]] "HMGothic Regular A, 24"),
+	group = "PDA Browser",
+	id = "PDABobbyStore_HG24E",
+})
+
+PlaceObj('TextStyle', {
+	RolloverTextColor = 4286742648,
+	TextColor = 4286742648,
+	TextFont = T(292678972465, --[[TextStyle PDABobbyStore_SCP16ID TextFont]] "Source Code Pro Italic, 16"),
+	group = "PDA Browser",
+	id = "PDABobbyStore_SCP16ID",
+})
+
+PlaceObj('TextStyle', {
+	RolloverTextColor = 4292321104,
+	TextColor = 4292321104,
+	TextFont = T(760962516835, --[[TextStyle PDABobbyStore_SCP16IL TextFont]] "Source Code Pro Italic, 16"),
+	group = "PDA Browser",
+	id = "PDABobbyStore_SCP16IL",
+})
+
+PlaceObj('TextStyle', {
+	RolloverTextColor = 4280296239,
+	ShadowColor = 2164260863,
+	ShadowSize = 1,
+	TextColor = 4280296239,
+	TextFont = T(522374298908, --[[TextStyle PDABobbyStore_SCP_16MB TextFont]] "Source Code Pro Medium, 16"),
+	group = "PDA Browser",
+	id = "PDABobbyStore_SCP_16MB",
+})
+
+PlaceObj('TextStyle', {
+	RolloverTextColor = 4280296239,
+	ShadowColor = 2164260863,
+	ShadowSize = 1,
+	TextColor = 4280296239,
+	TextFont = T(489099960225, --[[TextStyle PDABobbyStore_SCP_18MB TextFont]] "Source Code Pro Medium, 18"),
+	group = "PDA Browser",
+	id = "PDABobbyStore_SCP_18MB",
 })
 
 PlaceObj('TextStyle', {
@@ -973,6 +1114,17 @@ PlaceObj('TextStyle', {
 	TextFont = T(444808523848, --[[TextStyle ConflictWarning TextFont]] "Source Code Pro Medium, 16"),
 	group = "Zulu",
 	id = "ConflictWarning",
+})
+
+PlaceObj('TextStyle', {
+	RolloverTextColor = 4286349920,
+	ShadowColor = 4282006074,
+	ShadowSize = 10,
+	ShadowType = "glow",
+	TextColor = 4286349920,
+	TextFont = T(271608692441, --[[TextStyle ControllerLayoutHeading TextFont]] "HMGothic Rough A, 36"),
+	group = "Zulu",
+	id = "ControllerLayoutHeading",
 })
 
 PlaceObj('TextStyle', {
@@ -2023,6 +2175,15 @@ PlaceObj('TextStyle', {
 	TextFont = T(144341501477, --[[TextStyle MMSubemenuTitle TextFont]] "HMGothic Rough A, 48"),
 	group = "Zulu",
 	id = "MMSubemenuTitle",
+})
+
+PlaceObj('TextStyle', {
+	DisabledRolloverTextColor = 0,
+	RolloverTextColor = 0,
+	TextColor = 4286742648,
+	TextFont = T(335050456632, --[[TextStyle MMTagDisabled TextFont]] "HMGothic Rough A, 20"),
+	group = "Zulu",
+	id = "MMTagDisabled",
 })
 
 PlaceObj('TextStyle', {

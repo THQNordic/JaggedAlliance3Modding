@@ -3,12 +3,15 @@
 -- mandatory code in this file should eventually go into methods in the campaign def itself
 
 local function PlayOutroCredits()
+	local dlg = OpenDialog("Fade")
+	dlg.idFade:SetVisible(true, true)
 	StartRadioStation("_Playlist_Outro", 0, "force")
 	WaitDialog("Outro")
 	StartRadioStation("_Playlist_Credits", 0, "force")
 	WaitDialog("Credits")	
 	Sleep(500)
 	Msg("CampaignEnd", "HotDiamonds")
+	CloseDialog(dlg)
 	OpenPreGameMainMenu()
 end
 
@@ -338,9 +341,11 @@ local function lInfectedHouseMarkerTrigger(self, dontAlert)
 		entranceMarker = entranceMarker and entranceMarker[1] or closestExitZone
 		for i, v in ipairs(villagers) do
 			v:SetSide("ally")
+			v.script_archetype = "Panicked"
 			v:AddStatusEffect("SavedCivilian")
 			v:AddStatusEffect("DontFastForwardExit")
 			v:AddStatusEffect("Unaware")
+			v:AddStatusEffect("ForceCower")
 			
 			local startTime = GameTime() + 1000
 			v:SetBehavior("ExitMap", { entranceMarker, startTime })
@@ -422,30 +427,11 @@ function OnMsg.CombatStart()
 	local allyTeam = table.find_value(g_Teams, "side", "ally")
 	local units = table.copy(allyTeam.units) -- Need to copy as side change will remove them
 	for i, u in ipairs(units) do
-		if u:IsInGroup("RunningCivilians") then
-			u:SetSide("neutral")
-			u.conflict_ignore = false
-			if u:CanCower() then
-				u:SetCommand("Cower", "find cower spot")
-				u:SetCommandParamValue("Cower", "move_anim", "Run")
-			end
-		elseif u:IsInGroup("Infected") then
+		if u:IsInGroup("Infected") then
 			infected[#infected + 1] = u
 		end
 	end
 	TriggerUnitAlert("script", infected, "aware")
-end
-
-function OnMsg.CombatEnd()
-	if not quest_GrimerHouses then return end
-	
-	local allyTeam = table.find_value(g_Teams, "side", "neutral")
-	local units = table.copy(allyTeam.units) -- Need to copy as side change will remove them
-	for i, u in ipairs(units) do
-		if u:IsInGroup("RunningCivilians") then
-			u:SetSide("ally")
-		end
-	end
 end
 
 function OnMsg.DoneEnterSector()

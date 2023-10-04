@@ -4,10 +4,6 @@ PlaceObj('Conversation', {
 	AssignToGroup = "Pierre",
 	Comment = "initial conversation",
 	Conditions = {
-		PlaceObj('VillainIsDefeated', {
-			Group = "Pierre",
-			Negate = true,
-		}),
 		PlaceObj('QuestIsVariableBool', {
 			QuestId = "04_Betrayal",
 			Vars = set({
@@ -34,7 +30,11 @@ PlaceObj('Conversation', {
 				"H4",
 			},
 		}),
-		PlaceObj('OR', {
+		PlaceObj('VillainIsDefeated', {
+			Group = "Pierre",
+			Negate = true,
+		}),
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "LegionFlag",

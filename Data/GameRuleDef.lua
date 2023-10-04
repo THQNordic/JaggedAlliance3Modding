@@ -33,7 +33,7 @@ PlaceObj('GameRuleDef', {
 			'Tag', "<HealingProgressBoost>%",
 		}),
 	},
-	description = T(885105596551, --[[GameRuleDef ForgivingMode description]] 'Lowers the impact of attrition and makes it easier to recover from bad situations (faster healing and repair, better income).<newline><newline><flavor>You cannot unlock the "Ironman" achievement while Forgiving mode is enabled.</flavor><newline><newline><flavor>You can change this option at any time during gameplay.</flavor>'),
+	description = T(885105596551, --[[GameRuleDef ForgivingMode description]] "<ForgivingModeText()>"),
 	display_name = T(853662858218, --[[GameRuleDef ForgivingMode display_name]] "Forgiving mode"),
 	group = "Default",
 	id = "ForgivingMode",

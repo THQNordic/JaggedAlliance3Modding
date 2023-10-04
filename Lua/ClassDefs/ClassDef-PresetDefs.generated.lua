@@ -380,14 +380,24 @@ DefineClass.CampaignPreset = {
 			editor = "text", default = false, },
 		{ category = "Preset", id = "DisplayName", name = "Display Name", 
 			editor = "text", default = false, translate = true, },
-		{ id = "sector_columns", name = "Sector Columns", 
-			editor = "number", default = false, min = 0, },
-		{ id = "sector_rows", name = "Sector Rows", 
-			editor = "number", default = false, min = 0, },
-		{ id = "map_editor_btn", name = "Map Editor", 
-			editor = "buttons", default = false, buttons = { {name = "Edit Map", func = "OpenGedSatelliteSectorEditor"}, }, },
-		{ id = "InitialSector", name = "Initial Sector", help = "The sector in which the campaign starts", 
+		{ category = "Preset", id = "Description", name = "Description", 
+			editor = "text", default = "", translate = true, },
+		{ category = "Map Size & Sectors", id = "sector_topleft", name = "Top-left sector", 
+			editor = "text", default = false, read_only = function(self) return next(self.Sectors or empty_table) and not self.editing_size end, },
+		{ category = "Map Size & Sectors", id = "sector_bottomright", name = "Bottom-right sector", 
+			editor = "text", default = false, read_only = function(self) return next(self.Sectors or empty_table) and not self.editing_size end, },
+		{ category = "Map Size & Sectors", id = "size_btns", 
+			editor = "buttons", default = false, buttons = { {name = "Edit size", func = "EditSize", is_hidden = function(self) return self.editing_size end },  {name = "Confirm new size", func = "UpdateSize", is_hidden = function(self) return not self.editing_size end }, }, },
+		{ category = "Map Size & Sectors", id = "sector_columns", name = "Sector columns", 
+			editor = "number", default = false, read_only = true, min = 1, max = 99, },
+		{ category = "Map Size & Sectors", id = "sector_rowsstart", name = "Sector rows start", 
+			editor = "number", default = false, read_only = true, min = -25, max = 1, },
+		{ category = "Map Size & Sectors", id = "sector_rows", name = "Sector rows end", 
+			editor = "number", default = false, read_only = true, min = 1, max = 26, },
+		{ category = "Map Size & Sectors", id = "InitialSector", name = "Initial sector", help = "The sector in which the campaign starts", 
 			editor = "text", default = false, },
+		{ category = "Map Size & Sectors", id = "map_editor_btn", 
+			editor = "buttons", default = false, buttons = { {name = "Edit sectors for current Game's campaign", func = "OpenGedSatelliteSectorEditor", is_hidden = function(self) return not Game or not next(gv_Sectors) end }, }, },
 		{ id = "Cities", 
 			editor = "nested_list", default = false, base_class = "CampaignCity", inclusive = true, },
 		{ id = "Sides", 
@@ -417,8 +427,30 @@ DefineClass.CampaignPreset = {
 	EditorMenubarName = "Campaign",
 	EditorIcon = "CommonAssets/UI/Icons/chart map paper sheet travel.png",
 	EditorMenubar = "Scripting",
+	editing_size = false,
 	EnableReloading = false,
 }
+
+function CampaignPreset:EditSize(root, prop_id, ged)
+	self.editing_size = true
+	CreateRealTimeThread(function()
+		Sleep(100)
+		ged:Send("rfnApp", "FocusProperty", "SelectedObject", "sector_topleft")
+	end)
+	ObjModified(self)
+end
+
+function CampaignPreset:UpdateSize()
+	local x1, y1 = sector_unpack(self.sector_topleft)
+	local x2, y2 = sector_unpack(self.sector_bottomright)
+	self.sector_columns = y2 - y1 + 1
+	self.sector_rowsstart = x1
+	self.sector_rows = x2
+	self.editing_size = nil
+	ObjModified(self)
+	
+	self:GenerateEmptySectors()
+end
 
 function CampaignPreset:OnEditorSetProperty(prop_id, old_value, ged)
 	if ged and prop_id:starts_with("starting") then
@@ -436,7 +468,53 @@ function CampaignPreset:OnStartCampaign(...)
 	self:Initialize(...)
 	self:FirstRunInterface(...)
 	Game.CampaignStarted = true
-	Msg("CampaignStarted")
+	Msg("CampaignStarted", self.id)
+end
+
+function CampaignPreset:GenerateEmptySectors()
+	self.Sectors = self.Sectors or {}
+	
+	local existing = {}
+	for _, sector in ipairs(self.Sectors) do
+		existing[sector.Id] = true
+	end
+	for y = 1, self.sector_columns do
+		for x = self.sector_rowsstart, self.sector_rows do
+			local sector_id = sector_pack(x, y)
+			if not existing[sector_id] then
+				table.insert(self.Sectors, GenerateEmptySector(sector_id))
+			end
+		end
+	end
+	table.sortby_field(self.Sectors, "Id")
+	ObjModified(self.Sectors)
+end
+
+function CampaignPreset:PostLoad()
+	local bbox = box()
+	for _, sector in ipairs(self.Sectors) do
+		local x, y = sector_unpack(sector.Id)
+		bbox = Extend(bbox, point(x, y))
+	end
+	
+	self.sector_topleft = sector_pack(bbox:minx(), 1)
+	self.sector_bottomright = sector_pack(bbox:maxx() - 1, bbox:maxy() - 1)
+	self:UpdateSize()
+end
+
+function CampaignPreset:OnPreSave()
+	local sectors = self.Sectors or {}
+	for idx = #sectors, 1, -1 do
+		if sectors[idx].generated then
+			table.remove(sectors, idx)
+		end
+	end
+	
+	self.editing_size = nil
+end
+
+function CampaignPreset:OnPostSave()
+	self:GenerateEmptySectors()
 end
 
 DefineClass.ChanceToHitModifier = {
@@ -1375,11 +1453,21 @@ DefineClass.ConversationStoryBranchIcons = {
 	GlobalMap = "StoryBranchIcons",
 }
 
+DefineClass.CraftOperationId = {
+	__parents = { "Preset", },
+	__generated_by_class = "PresetDef",
+
+	GlobalMap = "CraftOperationIds",
+	GedEditor = "",
+}
+
 DefineClass.CraftOperationsRecipeDef = {
 	__parents = { "Preset", },
 	__generated_by_class = "PresetDef",
 
 	properties = {
+		{ id = "CraftOperationId", help = "which craft operation displays that recipe", 
+			editor = "combo", default = false, buttons = { {name = "Add to combo", func = "AddCraftOperationIdToCombo"}, }, items = function (self) return PresetsCombo("CraftOperationId") end, show_recent_items = 5,},
 		{ id = "Ingredients", name = "Ingredients", 
 			editor = "nested_list", default = false, base_class = "RecipeIngredient", },
 		{ id = "ResultItem", name = "Result Item", 
@@ -1407,6 +1495,15 @@ end,
 }
 
 DefineModItemPreset("CraftOperationsRecipeDef", { EditorName = "Crafting operation recipe", EditorSubmenu = "Satellite" })
+
+function CraftOperationsRecipeDef:AddCraftOperationIdToCombo()
+	if self.CraftOperationId ~= "" and not table.find(CraftOperationIds, "id", self.CraftOperationId) then
+		local id = CraftOperationId:new()
+		id:SetGroup("Default")
+		id:SetId(self.CraftOperationId)
+		CraftOperationId:SaveAll("force")
+	end
+end
 
 DefineClass.EliteEnemyName = {
 	__parents = { "Preset", },
@@ -1593,8 +1690,8 @@ function EnemySquads:GetSquadPowerRange()
 				end
 			end
 		end
-		minSquadPower = minSquadPower + lowestPower * minCount
-		maxSquadPower = maxSquadPower + highestPower * maxCount
+		minSquadPower = minSquadPower + (lowestPower and (lowestPower * minCount) or 0)
+		maxSquadPower = maxSquadPower + (highestPower and (highestPower * maxCount) or 0)
 	end
 	return tostring(minSquadPower) .. " - " .. tostring(maxSquadPower)
 end
@@ -1653,6 +1750,28 @@ DefineClass.GameTerm = {
 		{ id = "Description", 
 			editor = "text", default = false, translate = true, },
 	},
+}
+
+DefineClass.GameUpdate = {
+	__parents = { "Preset", },
+	__generated_by_class = "PresetDef",
+
+	properties = {
+		{ category = "General", id = "Title", 
+			editor = "text", default = false, translate = true, },
+		{ category = "General", id = "Text", 
+			editor = "text", default = false, translate = true, wordwrap = true, lines = 3, },
+		{ category = "General", id = "open_as_read", name = "Mark as read on open", 
+			editor = "bool", default = false, },
+	},
+	HasGroups = false,
+	HasSortKey = true,
+	GlobalMap = "GameUpdates",
+	EditorMenubarName = "Game Updates Editor",
+	EditorIcon = "CommonAssets/UI/Icons/appointment calendar date day event month schedule.png",
+	EditorMenubar = "Editors.Other",
+	EditorMenubarSortKey = "4130",
+	StoreAsTable = true,
 }
 
 DefineClass.GuardpostObjective = {
@@ -2033,7 +2152,7 @@ function ChangeGameStateExclusive(state_descr)
 		state_types[map_state.group] = true
 	end
 	for id, state in pairs(GameStateDefs) do
-		if state_types[state.group] and not state_descr[id] then
+		if state_types[state.group] and not state_descr[id] and not state.AutoSet then
 			state_descr[id] = false
 		end
 	end
@@ -3698,7 +3817,7 @@ function TriggeredConditionalEvent:GetError()
 end
 
 function TriggeredConditionalEvent:OnEditorNew(parent, ged, is_paste)
-	local quest_def = ged:ResolveObj("SelectedPreset")
+	local quest_def = ged:ResolveObj("SelectedPreset") or ged:ResolveObj("SelectedObject")
 	self.QuestId = quest_def.id
 end
 
@@ -3865,6 +3984,8 @@ DefineClass.WeaponComponent = {
 			editor = "string_list", default = {}, item_default = "", items = function (self) return PresetGroupCombo("WeaponUpgradeSlot", "Default") end, },
 		{ category = "Misc", id = "ModifyRightHandGrip", name = "Modify the right hand grip", 
 			editor = "bool", default = false, },
+		{ category = "Misc", id = "EnableAimFX", name = "Enable Aim FX", 
+			editor = "bool", default = false, },
 	},
 	HasParameters = true,
 	GlobalMap = "WeaponComponents",
@@ -3914,7 +4035,7 @@ end,
 }
 
 DefineClass.WeaponComponentEffect = {
-	__parents = { "Preset", },
+	__parents = { "MsgActorReactionsPreset", },
 	__generated_by_class = "PresetDef",
 
 	properties = {
@@ -3939,7 +4060,39 @@ DefineClass.WeaponComponentEffect = {
 	GlobalMap = "WeaponComponentEffects",
 	EditorIcon = "CommonAssets/UI/Icons/cog outline.png",
 	EditorMenubar = "Combat",
+	EditorMenubarName = "WeaponComponentEffect",
 }
+
+function WeaponComponentEffect:VerifyReaction(event, reaction_def, reaction_actor, ...)
+	if IsKindOf(reaction_actor, "BaseWeapon") then
+		return reaction_actor:HasComponent(self.id)
+	end
+	
+	if not IsKindOf(reaction_actor, "UnitInventory") then return end
+	
+	local weapons = reaction_actor:GetEquippedWeapons(reaction_actor.current_weapon, "FirearmBase")
+	for _, weapon in ipairs(weapons) do
+		if weapon:HasComponent(self.id) then
+			return true
+		end
+	end
+end
+
+function WeaponComponentEffect:GetReactionActors(event, reaction_def, ...)
+	local objs = {}
+	if reaction_def:HasFlag("SatView") then
+		for session_id, data in pairs(gv_UnitData) do
+			local obj = ZuluReactionResolveUnitActorObj(session_id, data)
+			if self:VerifyReaction(event, obj, ...) then
+				objs[#objs + 1] = obj
+			end
+		end
+	else
+		table.iappend(objs, g_Units)
+	end
+	table.sortby_field(objs, "session_id")
+	return objs
+end
 
 DefineClass.WeaponComponentSharedClass = {
 	__parents = { "Preset", },
@@ -4078,5 +4231,5 @@ DefineClass.WeaponUpgradeSlot = {
 	},
 }
 
-DefineModItemPreset("WeaponUpgradeSlot", { EditorName = "Weapon Slot", EditorSubmenu = "Item" })
+DefineModItemPreset("WeaponUpgradeSlot", { EditorName = "Weapon slot", EditorSubmenu = "Item" })
 

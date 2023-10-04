@@ -123,7 +123,7 @@ PlaceObj('XTemplate', {
 				'Margins', box(8, 8, 8, 8),
 				'Padding', box(16, 0, 28, 0),
 				'Dock', "box",
-				'MaxHeight', 228,
+				'MaxHeight', 230,
 				'GridStretchX', false,
 				'GridStretchY', false,
 				'LayoutMethod', "Grid",
@@ -215,27 +215,6 @@ PlaceObj('XTemplate', {
 				'Margins', box(16, 0, 0, 32),
 				'HAlign', "right",
 				'ScaleModifier', point(750, 750),
-				'OnContextUpdate', function (self, context, ...)
-					local prop_id = self.BindTo
-					local prop_meta = self.prop_meta
-					self.color_default = RGB(195, 189, 172)
-					self.color_active = RGB(195, 189, 172)
-					if context and (prop_id ~= "" or prop_meta) then
-						if prop_meta then
-							prop_id = prop_meta.id
-							local name = self:ResolveId("idName")
-							if name then
-								name:SetText(prop_meta.name or prop_meta.id)
-							end
-						end
-						local value = ResolveValue(context, prop_id)
-						if value ~= rawget(self, "value") then
-							self.value = value
-							self:OnPropUpdate(context, prop_meta, value)
-						end
-					end
-					XContextControl.OnContextUpdate(self, context)
-				end,
 				'Target', "idScrollArea",
 				'SnapToItems', true,
 				'AutoHide', true,

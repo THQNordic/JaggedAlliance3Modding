@@ -8,11 +8,10 @@ DefineClass.BleedingOut = {
 
 	object_class = "CharacterEffect",
 	msg_reactions = {
-		PlaceObj('MsgReaction', {
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "unit",
 			Event = "UnitEndTurn",
 			Handler = function (self, unit)
-				local reaction_idx = table.find(self.msg_reactions or empty_table, "Event", "UnitEndTurn")
-				if not reaction_idx then return end
 				
 				local function exec(self, unit)
 				if not IsInCombat() then return end
@@ -24,16 +23,19 @@ DefineClass.BleedingOut = {
 					CombatLog("short", T{333799512710, "<em><LogName></em> is <em>bleeding</em>", unit})
 				end
 				end
-				local id = GetCharacterEffectId(self)
 				
-				if id then
-					if IsKindOf(unit, "StatusEffectObject") and unit:HasStatusEffect(id) then
-						exec(self, unit)
-					end
-				else
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[1]
+				if not reaction_def or reaction_def.Event ~= "UnitEndTurn" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
 					exec(self, unit)
 				end
 				
+				if self:VerifyReaction("UnitEndTurn", reaction_def, unit, unit) then
+					exec(self, unit)
+				end
 			end,
 			HandlerCode = function (self, unit)
 				if not IsInCombat() then return end
@@ -45,13 +47,10 @@ DefineClass.BleedingOut = {
 					CombatLog("short", T{333799512710, "<em><LogName></em> is <em>bleeding</em>", unit})
 				end
 			end,
-			param_bindings = false,
 		}),
 	},
 	Conditions = {
-		PlaceObj('CombatIsActive', {
-			param_bindings = false,
-		}),
+		PlaceObj('CombatIsActive', {}),
 	},
 	DisplayName = T(833314215129, --[[CharacterEffectCompositeDef BleedingOut DisplayName]] "Downed"),
 	Description = T(588355193847, --[[CharacterEffectCompositeDef BleedingOut Description]] "This character is in <em>Critical condition</em> and will bleed out unless treated with the <em>Bandage</em> action. The character remains alive if a successful check against Health is made next turn."),

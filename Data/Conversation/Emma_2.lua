@@ -2289,7 +2289,7 @@ PlaceObj('Conversation', {
 		PlaceObj('ConversationPhrase', {
 			AutoRemove = true,
 			Conditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('SectorCheckOwner', {
 							sector_id = "L7",

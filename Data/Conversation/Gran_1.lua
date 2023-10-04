@@ -559,9 +559,9 @@ PlaceObj('Conversation', {
 						return quest.Completed
 					end,
 				}),
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
-						PlaceObj('AND', {
+						PlaceObj('CheckAND', {
 							Conditions = {
 								PlaceObj('QuestIsVariableNum', {
 									Amount = 3,
@@ -576,7 +576,7 @@ PlaceObj('Conversation', {
 								}),
 							},
 						}),
-						PlaceObj('AND', {
+						PlaceObj('CheckAND', {
 							Conditions = {
 								PlaceObj('QuestIsVariableNum', {
 									Amount = 3,
@@ -962,7 +962,7 @@ PlaceObj('Conversation', {
 					return not quest.GranSoften
 				end,
 			}),
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('UnitSquadHasMerc', {
 						Name = "Buns",
@@ -1511,15 +1511,23 @@ PlaceObj('Conversation', {
 				QuestId = "Docks",
 				Vars = set({
 	Completed = false,
+	DocksLost = false,
 	Failed = false,
 	Given = true,
 	MentionGang = true,
 	MentionGuns = true,
+	["N-NightCombat"] = false,
 }),
 				__eval = function ()
 					local quest = gv_Quests['Docks'] or QuestGetState('Docks')
-					return not quest.Completed and not quest.Failed and quest.Given and quest.MentionGang and quest.MentionGuns
+					return not quest.Completed and not quest.DocksLost and not quest.Failed and quest.Given and quest.MentionGang and quest.MentionGuns and not quest['N-NightCombat']
 				end,
+			}),
+			PlaceObj('QuestIsVariableNum', {
+				Amount = 6,
+				Condition = "<",
+				Prop = "CacaoGang",
+				QuestId = "Docks",
 			}),
 		},
 		Effects = {

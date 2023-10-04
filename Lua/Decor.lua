@@ -513,5 +513,5 @@ DefineClass.Vehicle = {
 DefineClass.HorizonObject = {
 	__parents = { "CObject" },
 	max_allowed_radius = 200 * guim,
-	flags = { gofAlwaysRenderable = true, efSelectable = false, cofComponentCollider = false },
+	flags = { efSelectable = false, cofComponentCollider = false },
 }

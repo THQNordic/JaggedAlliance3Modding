@@ -8,11 +8,10 @@ DefineClass.LeadFromTheFront = {
 
 	object_class = "Perk",
 	msg_reactions = {
-		PlaceObj('MsgReaction', {
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "attacker",
 			Event = "OnAttack",
 			Handler = function (self, attacker, action, target, results, attack_args)
-				local reaction_idx = table.find(self.msg_reactions or empty_table, "Event", "OnAttack")
-				if not reaction_idx then return end
 				
 				local function exec(self, attacker, action, target, results, attack_args)
 				if IsKindOf(target, "Unit") and results.total_damage and results.total_damage >= self:ResolveValue("damageTreshold") then
@@ -22,16 +21,19 @@ DefineClass.LeadFromTheFront = {
 					end
 				end
 				end
-				local id = GetCharacterEffectId(self)
 				
-				if id then
-					if IsKindOf(attacker, "StatusEffectObject") and attacker:HasStatusEffect(id) then
-						exec(self, attacker, action, target, results, attack_args)
-					end
-				else
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[1]
+				if not reaction_def or reaction_def.Event ~= "OnAttack" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
 					exec(self, attacker, action, target, results, attack_args)
 				end
 				
+				if self:VerifyReaction("OnAttack", reaction_def, attacker, attacker, action, target, results, attack_args) then
+					exec(self, attacker, action, target, results, attack_args)
+				end
 			end,
 			HandlerCode = function (self, attacker, action, target, results, attack_args)
 				if IsKindOf(target, "Unit") and results.total_damage and results.total_damage >= self:ResolveValue("damageTreshold") then
@@ -41,7 +43,6 @@ DefineClass.LeadFromTheFront = {
 					end
 				end
 			end,
-			param_bindings = false,
 		}),
 	},
 	DisplayName = T(589057792592, --[[CharacterEffectCompositeDef LeadFromTheFront DisplayName]] "Inspiring Strike"),

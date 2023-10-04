@@ -190,6 +190,9 @@ end, no_edit = true, params = "self, display_name", },
 if prop_id == "Roads" or prop_id == "BlockTravel"then
 	SatelliteSectorSetDirectionsProp(self, prop_id)
 end
+-- allow the sector to be saved in the campaign
+-- (it strips generated sectors before saving)
+self.generated = nil
 end, no_edit = true, params = "self, prop_id", },
 		{ id = "Id", 
 			editor = "text", default = false, read_only = true, },
@@ -444,6 +447,7 @@ end, no_edit = true, params = "self, prop_id", },
 			editor = "bool", default = false, no_edit = true, },
 	},
 	FilterClass = "SatelliteSectorGedFilter",
+	generated = false,
 }
 
 function SatelliteSector:GetError()

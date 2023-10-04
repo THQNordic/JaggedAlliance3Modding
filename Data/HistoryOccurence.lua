@@ -19,7 +19,7 @@ PlaceObj('HistoryOccurence', {
 
 PlaceObj('HistoryOccurence', {
 	conditions = {
-		PlaceObj('AND', {
+		PlaceObj('CheckAND', {
 			Conditions = {
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "DiamondRed",
@@ -46,17 +46,13 @@ PlaceObj('HistoryOccurence', {
 
 PlaceObj('HistoryOccurence', {
 	conditions = {
-		PlaceObj('AND', {
-			Conditions = {
-				PlaceObj('QuestIsVariableBool', {
-					QuestId = "CorazonCaptureMine",
-					Vars = set( "FleatownSyndicate", "TCE_FleatownSyndicate_High" ),
-					__eval = function ()
-						local quest = gv_Quests['CorazonCaptureMine'] or QuestGetState('CorazonCaptureMine')
-						return quest.FleatownSyndicate and quest.TCE_FleatownSyndicate_High
-					end,
-				}),
-			},
+		PlaceObj('QuestIsVariableBool', {
+			QuestId = "CorazonCaptureMine",
+			Vars = set( "FleatownSyndicate", "TCE_FleatownSyndicate_High" ),
+			__eval = function ()
+				local quest = gv_Quests['CorazonCaptureMine'] or QuestGetState('CorazonCaptureMine')
+				return quest.FleatownSyndicate and quest.TCE_FleatownSyndicate_High
+			end,
 		}),
 	},
 	group = "DiamondRed",
@@ -104,7 +100,7 @@ PlaceObj('HistoryOccurence', {
 
 PlaceObj('HistoryOccurence', {
 	conditions = {
-		PlaceObj('AND', {
+		PlaceObj('CheckAND', {
 			Conditions = {
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "CorazonCaptureMine",
@@ -130,7 +126,7 @@ PlaceObj('HistoryOccurence', {
 
 PlaceObj('HistoryOccurence', {
 	conditions = {
-		PlaceObj('AND', {
+		PlaceObj('CheckAND', {
 			Conditions = {
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "DiamondRed",
@@ -156,7 +152,7 @@ PlaceObj('HistoryOccurence', {
 
 PlaceObj('HistoryOccurence', {
 	conditions = {
-		PlaceObj('AND', {
+		PlaceObj('CheckAND', {
 			Conditions = {
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "DiamondRed",
@@ -183,7 +179,7 @@ PlaceObj('HistoryOccurence', {
 
 PlaceObj('HistoryOccurence', {
 	conditions = {
-		PlaceObj('AND', {
+		PlaceObj('CheckAND', {
 			Conditions = {
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "DiamondRed",
@@ -209,7 +205,7 @@ PlaceObj('HistoryOccurence', {
 
 PlaceObj('HistoryOccurence', {
 	conditions = {
-		PlaceObj('AND', {
+		PlaceObj('CheckAND', {
 			Conditions = {
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "DiamondRed",
@@ -291,12 +287,6 @@ PlaceObj('HistoryOccurence', {
 					LogHistoryOccurence(self.id, context)
 				end
 			end,
-			HandlerCode = function (self, unit, oldOperation, newOperation, prevProfession, interrupted)
-				if newOperation.id == "Idle" and oldOperation.id ~= "Traveling" and oldOperation.id ~= "Arriving" and not interrupted then
-					local context = { unitId = unit.session_id, operationId = oldOperation.id, day = GetCampaignDay(), professionId = prevProfession,  sectorId = gv_Squads[unit.Squad].CurrentSector }
-					LogHistoryOccurence(self.id, context)
-				end
-			end,
 		}),
 	},
 	repeatable = true,
@@ -310,11 +300,6 @@ PlaceObj('HistoryOccurence', {
 		PlaceObj('MsgReaction', {
 			Event = "BecomeDisliked",
 			Handler = function (self, unit, newDislike)
-				if not IsImpUnit(unit) then
-					LogHistoryOccurence(self.id, {unitId = unit, otherUnitId = newDislike})
-				end
-			end,
-			HandlerCode = function (self, unit, newDislike)
 				if not IsImpUnit(unit) then
 					LogHistoryOccurence(self.id, {unitId = unit, otherUnitId = newDislike})
 				end
@@ -336,11 +321,6 @@ PlaceObj('HistoryOccurence', {
 					LogHistoryOccurence(self.id, {unitId = unit, otherUnitId = newDislike})
 				end
 			end,
-			HandlerCode = function (self, unit, newDislike)
-				if not IsImpUnit(unit) then
-					LogHistoryOccurence(self.id, {unitId = unit, otherUnitId = newDislike})
-				end
-			end,
 		}),
 	},
 	repeatable = true,
@@ -358,11 +338,6 @@ PlaceObj('HistoryOccurence', {
 					LogHistoryOccurence(self.id, {unitId = unit.session_id, taskId = taskId})
 				end
 			end,
-			HandlerCode = function (self, taskId, unit, success)
-				if success == true then
-					LogHistoryOccurence(self.id, {unitId = unit.session_id, taskId = taskId})
-				end
-			end,
 		}),
 	},
 	repeatable = true,
@@ -376,11 +351,6 @@ PlaceObj('HistoryOccurence', {
 		PlaceObj('MsgReaction', {
 			Event = "CombatTaskFinished",
 			Handler = function (self, taskId, unit, success)
-				if success == false then
-					LogHistoryOccurence(self.id, {unitId = unit.session_id, taskId = taskId})
-				end
-			end,
-			HandlerCode = function (self, taskId, unit, success)
 				if success == false then
 					LogHistoryOccurence(self.id, {unitId = unit.session_id, taskId = taskId})
 				end
@@ -416,11 +386,6 @@ PlaceObj('HistoryOccurence', {
 					LogHistoryOccurence(self.id, unitData.session_id)
 				end
 			end,
-			HandlerCode = function (self, unitData, oldStatus, newStatus)
-				if IsMerc(unitData) and oldStatus == "Hired" and newStatus == "Available" then
-					LogHistoryOccurence(self.id, unitData.session_id)
-				end
-			end,
 		}),
 	},
 	repeatable = true,
@@ -450,9 +415,6 @@ PlaceObj('HistoryOccurence', {
 			Handler = function (self, unitData)
 				LogHistoryOccurence(self.id, unitData.session_id)
 			end,
-			HandlerCode = function (self, unitData)
-				LogHistoryOccurence(self.id, unitData.session_id)
-			end,
 		}),
 	},
 	repeatable = true,
@@ -470,11 +432,6 @@ PlaceObj('HistoryOccurence', {
 		PlaceObj('MsgReaction', {
 			Event = "MercHireStatusChanged",
 			Handler = function (self, unitData, oldStatus, newStatus)
-				if IsMerc(unitData) and newStatus == "Dead" then
-					LogHistoryOccurence(self.id, unitData.session_id)
-				end
-			end,
-			HandlerCode = function (self, unitData, oldStatus, newStatus)
 				if IsMerc(unitData) and newStatus == "Dead" then
 					LogHistoryOccurence(self.id, unitData.session_id)
 				end
@@ -510,11 +467,6 @@ PlaceObj('HistoryOccurence', {
 					LogHistoryOccurence(self.id, unitData.session_id)
 				end
 			end,
-			HandlerCode = function (self, unitData, oldStatus, newStatus)
-				if IsMerc(unitData) and not IsImpUnit(unitData) and oldStatus== "Available" and newStatus == "Hired" then
-					LogHistoryOccurence(self.id, unitData.session_id)
-				end
-			end,
 		}),
 	},
 	repeatable = true,
@@ -531,15 +483,6 @@ PlaceObj('HistoryOccurence', {
 		PlaceObj('MsgReaction', {
 			Event = "MoneyChanged",
 			Handler = function (self, amount, logReason, previousBalance)
-				local previousMoney = previousBalance
-				local moneyNow = previousMoney + amount
-				local wasInDebt = previousMoney < 0
-				local isNowInDebt = moneyNow < 0
-				if wasInDebt and not isNowInDebt then
-					LogHistoryOccurence(self.id, { money = moneyNow })
-				end
-			end,
-			HandlerCode = function (self, amount, logReason, previousBalance)
 				local previousMoney = previousBalance
 				local moneyNow = previousMoney + amount
 				local wasInDebt = previousMoney < 0
@@ -566,12 +509,6 @@ PlaceObj('HistoryOccurence', {
 					LogHistoryOccurence(self.id, {questId = questId})
 				end
 			end,
-			HandlerCode = function (self, questId, varId, prevVal, newVal)
-				local quest = Quests[questId]
-				if not quest.Hidden and varId == "Completed" and newVal == true then
-					LogHistoryOccurence(self.id, {questId = questId})
-				end
-			end,
 		}),
 	},
 	repeatable = true,
@@ -585,12 +522,6 @@ PlaceObj('HistoryOccurence', {
 		PlaceObj('MsgReaction', {
 			Event = "QuestParamChanged",
 			Handler = function (self, questId, varId, prevVal, newVal)
-				local quest = Quests[questId]
-				if not quest.Hidden and varId == "Failed" and newVal == true then
-					LogHistoryOccurence(self.id, {questId = questId})
-				end
-			end,
-			HandlerCode = function (self, questId, varId, prevVal, newVal)
 				local quest = Quests[questId]
 				if not quest.Hidden and varId == "Failed" and newVal == true then
 					LogHistoryOccurence(self.id, {questId = questId})
@@ -628,11 +559,6 @@ PlaceObj('HistoryOccurence', {
 					LogHistoryOccurence(self.id, {sectorId = sector.Id})
 				end
 			end,
-			HandlerCode = function (self, sector, bNoVoice, playerAttacking, playerWon)
-				if playerAttacking and not playerWon then
-					LogHistoryOccurence(self.id, {sectorId = sector.Id})
-				end
-			end,
 		}),
 	},
 	repeatable = true,
@@ -647,11 +573,6 @@ PlaceObj('HistoryOccurence', {
 		PlaceObj('MsgReaction', {
 			Event = "ConflictEnd",
 			Handler = function (self, sector, bNoVoice, playerAttacking, playerWon)
-				if playerAttacking and playerWon then
-					LogHistoryOccurence(self.id, {sectorId = sector.Id})
-				end
-			end,
-			HandlerCode = function (self, sector, bNoVoice, playerAttacking, playerWon)
 				if playerAttacking and playerWon then
 					LogHistoryOccurence(self.id, {sectorId = sector.Id})
 				end
@@ -674,11 +595,6 @@ PlaceObj('HistoryOccurence', {
 					LogHistoryOccurence(self.id, {sectorId = sector.Id})
 				end
 			end,
-			HandlerCode = function (self, sector, bNoVoice, playerAttacking, playerWon)
-				if not playerAttacking and not playerWon then
-					LogHistoryOccurence(self.id, {sectorId = sector.Id})
-				end
-			end,
 		}),
 	},
 	repeatable = true,
@@ -693,11 +609,6 @@ PlaceObj('HistoryOccurence', {
 		PlaceObj('MsgReaction', {
 			Event = "ConflictEnd",
 			Handler = function (self, sector, bNoVoice, playerAttacking, playerWon)
-				if not playerAttacking and playerWon then
-					LogHistoryOccurence(self.id, {sectorId = sector.Id})
-				end
-			end,
-			HandlerCode = function (self, sector, bNoVoice, playerAttacking, playerWon)
 				if not playerAttacking and playerWon then
 					LogHistoryOccurence(self.id, {sectorId = sector.Id})
 				end
@@ -726,11 +637,6 @@ PlaceObj('HistoryOccurence', {
 					LogHistoryOccurence(self.id, {nameId = TGetID(villain.Name)})
 				end
 			end,
-			HandlerCode = function (self, villain, attacker)
-				if IsMerc(attacker) and not villain.villain_defeated then
-					LogHistoryOccurence(self.id, {nameId = TGetID(villain.Name)})
-				end
-			end,
 		}),
 	},
 	repeatable = true,
@@ -755,15 +661,6 @@ PlaceObj('HistoryOccurence', {
 					LogHistoryOccurence(self.id, { money = moneyNow })
 				end
 			end,
-			HandlerCode = function (self, amount, logReason, previousBalance)
-				local previousMoney = previousBalance
-				local moneyNow = previousMoney + amount
-				local wasInDebt = previousMoney < 0
-				local isNowInDebt = moneyNow < 0
-				if not wasInDebt and isNowInDebt then
-					LogHistoryOccurence(self.id, { money = moneyNow })
-				end
-			end,
 		}),
 	},
 	repeatable = true,
@@ -772,7 +669,7 @@ PlaceObj('HistoryOccurence', {
 
 PlaceObj('HistoryOccurence', {
 	conditions = {
-		PlaceObj('AND', {
+		PlaceObj('CheckAND', {
 			Conditions = {
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "TheTwelveChairs",
@@ -804,7 +701,7 @@ PlaceObj('HistoryOccurence', {
 
 PlaceObj('HistoryOccurence', {
 	conditions = {
-		PlaceObj('AND', {
+		PlaceObj('CheckAND', {
 			Conditions = {
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "TheTwelveChairs",
@@ -836,7 +733,7 @@ PlaceObj('HistoryOccurence', {
 
 PlaceObj('HistoryOccurence', {
 	conditions = {
-		PlaceObj('AND', {
+		PlaceObj('CheckAND', {
 			Conditions = {
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "TheTwelveChairs",
@@ -868,7 +765,7 @@ PlaceObj('HistoryOccurence', {
 
 PlaceObj('HistoryOccurence', {
 	conditions = {
-		PlaceObj('AND', {
+		PlaceObj('CheckAND', {
 			Conditions = {
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "TheTwelveChairs",
@@ -900,7 +797,7 @@ PlaceObj('HistoryOccurence', {
 
 PlaceObj('HistoryOccurence', {
 	conditions = {
-		PlaceObj('AND', {
+		PlaceObj('CheckAND', {
 			Conditions = {
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "TheTwelveChairs",
@@ -932,7 +829,7 @@ PlaceObj('HistoryOccurence', {
 
 PlaceObj('HistoryOccurence', {
 	conditions = {
-		PlaceObj('AND', {
+		PlaceObj('CheckAND', {
 			Conditions = {
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "TheTwelveChairs",
@@ -964,17 +861,13 @@ PlaceObj('HistoryOccurence', {
 
 PlaceObj('HistoryOccurence', {
 	conditions = {
-		PlaceObj('AND', {
-			Conditions = {
-				PlaceObj('QuestIsVariableBool', {
-					QuestId = "TheTwelveChairs",
-					Vars = set( "Given", "Lead_Blaubert" ),
-					__eval = function ()
-						local quest = gv_Quests['TheTwelveChairs'] or QuestGetState('TheTwelveChairs')
-						return quest.Given and quest.Lead_Blaubert
-					end,
-				}),
-			},
+		PlaceObj('QuestIsVariableBool', {
+			QuestId = "TheTwelveChairs",
+			Vars = set( "Given", "Lead_Blaubert" ),
+			__eval = function ()
+				local quest = gv_Quests['TheTwelveChairs'] or QuestGetState('TheTwelveChairs')
+				return quest.Given and quest.Lead_Blaubert
+			end,
 		}),
 	},
 	group = "TwelveChairs",
@@ -985,7 +878,7 @@ PlaceObj('HistoryOccurence', {
 
 PlaceObj('HistoryOccurence', {
 	conditions = {
-		PlaceObj('AND', {
+		PlaceObj('CheckAND', {
 			Conditions = {
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "TheTwelveChairs",
@@ -1017,7 +910,7 @@ PlaceObj('HistoryOccurence', {
 
 PlaceObj('HistoryOccurence', {
 	conditions = {
-		PlaceObj('AND', {
+		PlaceObj('CheckAND', {
 			Conditions = {
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "TheTwelveChairs",
@@ -1049,7 +942,7 @@ PlaceObj('HistoryOccurence', {
 
 PlaceObj('HistoryOccurence', {
 	conditions = {
-		PlaceObj('AND', {
+		PlaceObj('CheckAND', {
 			Conditions = {
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "TheTwelveChairs",
@@ -1081,7 +974,7 @@ PlaceObj('HistoryOccurence', {
 
 PlaceObj('HistoryOccurence', {
 	conditions = {
-		PlaceObj('AND', {
+		PlaceObj('CheckAND', {
 			Conditions = {
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "TheTwelveChairs",
@@ -1113,7 +1006,7 @@ PlaceObj('HistoryOccurence', {
 
 PlaceObj('HistoryOccurence', {
 	conditions = {
-		PlaceObj('AND', {
+		PlaceObj('CheckAND', {
 			Conditions = {
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "TheTwelveChairs",
@@ -1145,7 +1038,7 @@ PlaceObj('HistoryOccurence', {
 
 PlaceObj('HistoryOccurence', {
 	conditions = {
-		PlaceObj('AND', {
+		PlaceObj('CheckAND', {
 			Conditions = {
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "TheTwelveChairs",

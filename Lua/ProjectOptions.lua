@@ -78,14 +78,14 @@ OptionsData.VideoPresetsData = {
 		SSR = "Ultra",
 	},
 	XboxOne = {
-		Textures = "Medium (Consoles)",
+		Textures = "Low (Consoles)",
 		Shadows = "Medium (PS4,XboxOne)",
 		Terrain = "Medium",
 		Effects = "High",
 		ViewDistance = "High",
-		Antialiasing = "FXAA",
+		Antialiasing = "FSR2",
 		Anisotropy = "4x",
-		ResolutionPercent = "100",
+		ResolutionPercent = "67",
 		Lights = "High",
 		Postprocess = "Low",
 		Bloom = "On",
@@ -102,15 +102,16 @@ OptionsData.VideoPresetsData = {
 		Terrain = "Medium",
 		Effects = "High",
 		ViewDistance = "High",
-		Antialiasing = "FXAA",
+		Antialiasing = "FSR2",
 		Anisotropy = "8x",
-		ResolutionPercent = "100",
+		ResolutionPercent = "77",
 		Lights = "High",
 		Postprocess = "Low",
 		Bloom = "On",
 		EyeAdaptation = "On",
 		Vignette = "On",
 		FPSCounter = "Off",
+		ObjectDetail = "Low",
 		SSAO = "On",
 		SSR = "High",
 	},
@@ -120,15 +121,16 @@ OptionsData.VideoPresetsData = {
 		Terrain = "Medium",
 		Effects = "High",
 		ViewDistance = "High",
-		Antialiasing = "FXAA",
+		Antialiasing = "FSR2",
 		Anisotropy = "8x",
-		ResolutionPercent = "100",
+		ResolutionPercent = "59",
 		Lights = "High",
 		Postprocess = "Low",
 		Bloom = "On",
 		EyeAdaptation = "On",
 		Vignette = "On",
 		FPSCounter = "Off",
+		ObjectDetail = "Low",
 		SSAO = "On",
 		SSR = "High",
 	},
@@ -138,44 +140,46 @@ OptionsData.VideoPresetsData = {
 		Terrain = "High",
 		Effects = "High",
 		ViewDistance = "High",
-		Antialiasing = "FXAA",
-		Anisotropy = "8x",
-		ResolutionPercent = "100",
+		Antialiasing = "FSR2",
+		Anisotropy = "4x",
+		ResolutionPercent = "77",
 		Lights = "High",
-		Postprocess = "Medium",
+		Postprocess = "High",
 		Bloom = "On",
 		EyeAdaptation = "On",
 		Vignette = "On",
+		ObjectDetail = "High",
 		FPSCounter = "Off",
 		SSAO = "On",
-		SSR = "High",
+		SSR = "Medium",
 	},
-	XboxSeriesSPreformance = {
+	XboxSeriesSPerformance = {
 		Textures = "High",
 		Shadows = "High",
 		Terrain = "High",
 		Effects = "High",
 		ViewDistance = "High",
-		Antialiasing = "FXAA",
-		Anisotropy = "8x",
-		ResolutionPercent = "100",
+		Antialiasing = "FSR2",
+		Anisotropy = "4x",
+		ResolutionPercent = "59",
 		Lights = "High",
-		Postprocess = "Medium",
+		Postprocess = "High",
 		Bloom = "On",
 		EyeAdaptation = "On",
 		Vignette = "On",
+		ObjectDetail = "High",
 		FPSCounter = "Off",
 		SSAO = "On",
-		SSR = "High",
+		SSR = "Medium",
 	},
 	XboxSeriesXQuality = {
 		Textures = "Ultra",
 		Shadows = "High",
-		Terrain = "Ultra",
-		Effects = "Ultra",
-		ViewDistance = "Ultra",
-		Antialiasing = "SMAA",
-		Anisotropy = "16x",
+		Terrain = "High",
+		Effects = "High",
+		ViewDistance = "High",
+		Antialiasing = "FSR2",
+		Anisotropy = "8x",
 		ResolutionPercent = "100",
 		Lights = "High",
 		Postprocess = "High",
@@ -185,17 +189,17 @@ OptionsData.VideoPresetsData = {
 		ObjectDetail = "High",
 		FPSCounter = "Off",
 		SSAO = "On",
-		SSR = "High",
+		SSR = "Medium",
 	},
-	XboxSeriesXPreformance = {
+	XboxSeriesXPerformance = {
 		Textures = "Ultra",
 		Shadows = "High",
-		Terrain = "Ultra",
-		Effects = "Ultra",
-		ViewDistance = "Ultra",
-		Antialiasing = "SMAA",
-		Anisotropy = "16x",
-		ResolutionPercent = "100",
+		Terrain = "High",
+		Effects = "High",
+		ViewDistance = "High",
+		Antialiasing = "FSR2",
+		Anisotropy = "4x",
+		ResolutionPercent = "77",
 		Lights = "High",
 		Postprocess = "High",
 		Bloom = "On",
@@ -204,7 +208,7 @@ OptionsData.VideoPresetsData = {
 		ObjectDetail = "High",
 		FPSCounter = "Off",
 		SSAO = "On",
-		SSR = "High",
+		SSR = "Medium",
 	},
 	PS4 = {
 		Textures = "Medium (Consoles)",
@@ -244,7 +248,7 @@ OptionsData.VideoPresetsData = {
 		SSAO = "On",
 		SSR = "High",
 	},
-	PS5 = {
+	PS5Quality = {
 		Textures = "Ultra",
 		Shadows = "High",
 		Terrain = "Ultra",
@@ -261,7 +265,26 @@ OptionsData.VideoPresetsData = {
 		ObjectDetail = "High",
 		FPSCounter = "Off",
 		SSAO = "On",
-		SSR = "High",
+		SSR = "Medium",
+	},
+	PS5Performance = {
+		Textures = "High",
+		Shadows = "High",
+		Terrain = "High",
+		Effects = "High",
+		ViewDistance = "High",
+		Antialiasing = "SMAA",
+		Anisotropy = "8x",
+		ResolutionPercent = "77",
+		Lights = "High",
+		Postprocess = "Medium",
+		Bloom = "On",
+		EyeAdaptation = "On",
+		Vignette = "On",
+		ObjectDetail = "High",
+		FPSCounter = "Off",
+		SSAO = "On",
+		SSR = "Medium",
 	},
 	Switch = {
 		Textures = "Low",
@@ -337,3 +360,37 @@ OptionsData.Options.ObjectDetail = {
 	},
 }
 
+AppendClass.OptionsObject = {
+	properties = {
+		{ id = "Gamepad", no_edit = true },
+		{ id = "DisplayAreaMargin", no_edit = true },
+	},
+}
+
+function HideChangeUserCategory()
+	return true
+end
+
+function AccountOptionFixups.CameraShakeStorage(account_options)
+	if EngineOptions and EngineOptions.CameraShake then
+		account_options.CameraShake = EngineOptions.CameraShake
+	end
+end
+
+function AccountOptionFixups.ActivePauseStorage(account_options)
+	if EngineOptions and EngineOptions.ActivePauseMode then
+		account_options.ActivePauseMode = EngineOptions.ActivePauseMode
+	end
+end
+
+function AccountOptionFixups.DifficultyStorage(account_options)
+	if EngineOptions and EngineOptions.Difficulty then
+		account_options.Difficulty = EngineOptions.Difficulty
+	end
+end
+
+function AccountOptionFixups.ForgivingModeStorage(account_options)
+	if EngineOptions and EngineOptions.ForgivingModeToggle then
+		account_options.ForgivingModeToggle = EngineOptions.ForgivingModeToggle
+	end
+end

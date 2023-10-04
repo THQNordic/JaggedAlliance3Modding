@@ -402,7 +402,7 @@ end
 function SatelliteTimeline:SetMapZoom(scale, time, origin_pos)
 	local current_scale = UIL.GetParam(self.scale_modId)
 	
-	scale = Clamp(scale, 1, self.max_zoom)
+	scale = Clamp(scale, 1, self:GetScaledMaxZoom())
 	time = 0--time or 100
 	
 	local currentX = self:GetTimeWiseCurrentX(scale)
@@ -461,9 +461,12 @@ local function lTimelineAddedEventFXPlay()
 	PlayFX("TimelineEventAdded", "start")
 end
 
+local dbgTimeline = false
 function AddTimelineEvent(id, due, typ, context)
 	assert(due)
-
+	if dbgTimeline then
+		print("add timeline", id, due, typ, context)
+	end	
 	local existingIdx = table.find(gv_Timeline, "id", id)
 	if existingIdx then
 		-- Move lock on to new due
@@ -489,6 +492,9 @@ end
 
 function RemoveTimelineEvent(id)
 	local existingIdx = table.find(gv_Timeline, "id", id)
+	if dbgTimeline then
+		print("rem timeline", id)
+	end	
 	if existingIdx then
 		-- Remove lock on if event is removed
 		local event = gv_Timeline[existingIdx]
@@ -625,6 +631,8 @@ local function lOperationChangedUpdateEvent(ud, previousOperation, _,prev_prof, 
 					AddTimelineEvent(previousTimelineId, Game.CampaignTime + previousTimeLeft, "operation", ctx)
 				end
 				RecalcOperationETAs(gv_Sectors[sectorId],previousOperationId)
+			else
+				RemoveTimelineEvent(previousTimelineId)
 			end	
 		end
 		
@@ -647,6 +655,13 @@ end
 OnMsg.OperationChanged = lOperationChangedUpdateEvent
 
 function OnMsg.UnitTiredAdded(unit)
+	local ud = gv_UnitData[unit.session_id]
+	if ud.Operation == "Idle" then
+		lOperationChangedUpdateEvent(ud, SectorOperations.Idle)
+	end
+end
+
+function OnMsg.UnitTiredRemoved(unit)
 	local ud = gv_UnitData[unit.session_id]
 	if ud.Operation == "Idle" then
 		lOperationChangedUpdateEvent(ud, SectorOperations.Idle)
@@ -743,8 +758,10 @@ function OnMsg.SquadTeleported(squad)
 end
 
 local function lSquadTravelConflictUpdate(sector_id)
-	local squads = GetSquadsInSector(sector_id)
-	for i, s in ipairs(squads) do
+	local squads, enemySquads = GetSquadsInSector(sector_id)
+	
+	for i = 1, #squads + #enemySquads do
+		local s = i > #squads and enemySquads[i - #squads] or squads[i]
 		if IsSquadTravelling(s, "skip_tick") then
 			lSquadTravelEventUpdate(s)
 		else
@@ -754,7 +771,7 @@ local function lSquadTravelConflictUpdate(sector_id)
 end
 
 OnMsg.ConflictStart = lSquadTravelConflictUpdate
---OnMsg.ConflictEnd = lSquadTravelConflictUpdate
+OnMsg.ConflictEnd = lSquadTravelConflictUpdate
 
 function OnMsg.TravelModeChanged(newMode)
 	if not newMode then

@@ -7,6 +7,7 @@ DefineClass.Knife_Sharpened = {
 
 
 	object_class = "StackableMeleeWeapon",
+	ScrapParts = 1,
 	Reliability = 50,
 	Icon = "UI/Icons/Weapons/Combat Knife Balanced",
 	SubIcon = "UI/Icons/Weapons/sharpened",

@@ -14,7 +14,7 @@ DefineClass.SkillMag_Dexterity = {
 	Description = T(469561072760, --[[InventoryItemCompositeDef SkillMag_Dexterity Description]] "Much better read than Daily Prestidigitation."),
 	AdditionalHint = T(684823166353, --[[InventoryItemCompositeDef SkillMag_Dexterity AdditionalHint]] "<bullet_point> Used through the Item Menu\n<bullet_point> Single use\n<bullet_point> Increases Dexterity"),
 	UnitStat = "Dexterity",
-	is_valuable = true,
+	Valuable = 1,
 	effect_moment = "on_use",
 	Effects = {
 		PlaceObj('UnitStatBoost', {

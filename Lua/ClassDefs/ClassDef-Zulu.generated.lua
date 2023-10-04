@@ -976,6 +976,10 @@ DefineClass.MultiplayerGameFilters = {
 	properties = {
 		{ id = "Name", 
 			editor = "text", default = false, translate = true, },
+		{ id = "Condition", 
+			editor = "func", default = function (self)
+return true
+end, },
 	},
 	GlobalMap = "MultiplayerGameFiltersList",
 }
@@ -1074,6 +1078,7 @@ function ShowHideCollectionMarker:HideObjects()
 	local objects = self.objects or self:GetObjects()
 	local enumflags = self.restore_enumflags
 	local efCollision = const.efCollision
+	local bbox
 	for i, o in ipairs(objects) do
 		if IsValid(o) and o:GetVisible() then
 			o:SetVisible(false)
@@ -1083,11 +1088,15 @@ function ShowHideCollectionMarker:HideObjects()
 					enumflags = {}
 				end
 				enumflags[o] = efCollision
+				bbox = bbox and AddRects(bbox, o:GetObjectAttachesBBox()) or o:GetObjectAttachesBBox()
 			end
 		end
 	end
 	if enumflags then
 		self.restore_enumflags = enumflags
+	end
+	if bbox then
+		RebuildCovers(bbox)
 	end
 end
 
@@ -1096,6 +1105,7 @@ function ShowHideCollectionMarker:ShowObjects()
 	local enumflags = self.restore_enumflags
 	self.restore_enumflags = nil
 	local efCollision = const.efCollision
+	local bbox
 	for i, o in ipairs(objects) do
 		if IsValid(o) then
 			o:SetVisible(true)
@@ -1103,9 +1113,13 @@ function ShowHideCollectionMarker:ShowObjects()
 				local flags = enumflags[o]
 				if flags and (flags & efCollision) ~= 0 then
 					o:SetCollision(true)
+					bbox = bbox and AddRects(bbox, o:GetObjectAttachesBBox()) or o:GetObjectAttachesBBox()
 				end
 			end
 		end
+	end
+	if bbox then
+		RebuildCovers(bbox)
 	end
 end
 
@@ -2458,6 +2472,16 @@ DefineClass.UnitTarget = {
 }
 
 function UnitTarget:Match(target, unit, context)
+	if Groups[target] then
+		if IsKindOfClasses(unit, "Unit", "CheeringDummy") then
+			return unit:IsInGroup(target)
+		end
+	end
+	
+	if UnitDataDefs[target] and IsKindOfClasses(unit, "Unit", "UnitData") then
+		return target == unit.unitdatadef_id or target == unit.class
+	end
+	
 	if target == "any" then
 		return true
 	elseif IsKindOf(unit, "Unit") and target== "any merc" then
@@ -2468,55 +2492,66 @@ function UnitTarget:Match(target, unit, context)
 		return IsKindOf(unit, "Unit") and unit.team and unit.team.side == "player1"
 	elseif (target == "current unit") then
 		return  table.find(context and context.target_units or empty_table, unit)
-	else
-		if IsKindOf(unit, "Unit") then
-			if unit:IsInGroup(target) then
-				return true
-			end
-		end
-		
-		if IsKindOf(unit, "CheeringDummy") then
-			local groups = unit.Groups
-			if table.find(groups, target) then
-				return true
-			end
-		end
-		
-		if UnitDataDefs[target] and IsKindOfClasses(unit, "Unit", "UnitData") then
-			return target == unit.unitdatadef_id or target == unit.class
-		end	
 	end
 	return false
 end
 
 function UnitTarget:MatchMapUnit(target, unit, context)
-	if target == "any" then
-		return true
-	elseif target == "any merc" then
+	if target == "any merc" then
 		return unit:IsMerc()
+	elseif UnitDataDefs[target] then
+		return target == unit.unitdatadef_id or target == unit.class
+	elseif Groups[target] and unit:IsInGroup(target) then
+		return true
+	elseif target == "any" then
+		return true
 	elseif target == "player mercs on map" then
 		return unit.team and unit.team.side == "player1"
 	elseif target == "current unit" then
 		return  table.find(context and context.target_units or empty_table, unit)
-	else
-		if unit:IsInGroup(target) then
-			return true
-		end
-		
-		if UnitDataDefs[target] then
-			return target == unit.unitdatadef_id or target == unit.class
-		end	
 	end
-	
 	return false
 end
 
+function UnitTarget:GetMatchedMapUnits(target, context)
+	local units
+	if target == "any merc" then
+		units = {}
+		local IsMerc = Unit.IsMerc
+		for i, unit in ipairs(g_Units) do
+			if IsMerc(unit) then
+				units[#units + 1] = unit
+			end
+		end
+	elseif target == "any" then
+		units = g_Units
+	elseif target == "player mercs on map" then
+		local idx = table.find(g_Teams, "side", "player1")
+		if idx then
+			units = g_Teams[idx].units
+		end
+	elseif target == "current unit" then
+		if context then
+			units = context.target_units
+		end
+	elseif UnitDataDefs[target] then
+		units = {}
+		for i, unit in ipairs(g_Units) do
+			if target == unit.unitdatadef_id or target == unit.class then
+				units[#units + 1] = unit
+			end
+		end
+	elseif Groups[target] then
+		units = Groups[target]
+	end
+	return units
+end
+
 function UnitTarget:MatchMapUnits(obj, context)
-	local triggered
-	local new_units = {}
-	local units = false
+	local units, new_units, triggered
 	local unitsAreClassUnit = true
-	if self.TargetUnit == "player mercs on map" then
+	local targetUnit = self.TargetUnit
+	if targetUnit == "player mercs on map" then
 		local team = GetCampaignPlayerTeam()
 		if team then
 			units = team.units
@@ -2524,7 +2559,7 @@ function UnitTarget:MatchMapUnits(obj, context)
 	end
 	
 	if context and not units then
-		if self.TargetUnit == "current unit" then
+		if targetUnit == "current unit" then
 			units = context.target_units
 		elseif context.is_sector_unit then
 			if not obj then return false end
@@ -2535,21 +2570,30 @@ function UnitTarget:MatchMapUnits(obj, context)
 	
 	-- performance optimization
 	local matchFunc = unitsAreClassUnit and self.MatchMapUnit or self.Match
+	local negate = self.Negate
+	local replace_units = not self.DisableContextModification and type(context) == "table"
 	
 	for _, unit in ipairs(units or g_Units) do
 		assert(not unitsAreClassUnit or IsKindOf(unit, "Unit"))
-		if matchFunc(self, self.TargetUnit, unit, context) and self:UnitCheck(unit, obj, context) then
-			if not self.Negate then
+		if matchFunc(self, targetUnit, unit, context) and self:UnitCheck(unit, obj, context) then
+			triggered = true
+			if not replace_units then
+				return true
+			end
+			if not negate then
+				new_units = new_units or {}
 				table.insert_unique(new_units, unit)
 			end
-			triggered = true
-		elseif self.Negate then
+		elseif negate and replace_units then
+			new_units = new_units or {}
 			table.insert_unique(new_units, unit)
 		end
 	end
-	if not self.DisableContextModification and type(context) == "table" then
-		context.target_units  =  new_units
+	
+	if replace_units then
+		context.target_units = new_units
 	end
+	
 	return triggered
 end
 

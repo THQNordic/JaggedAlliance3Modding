@@ -8,7 +8,7 @@ DefineClass.Unconscious = {
 
 	object_class = "CharacterEffect",
 	msg_reactions = {
-		PlaceObj('MsgReactionEffects', {
+		PlaceObj('MsgActorReactionEffects', {
 			Effects = {
 				PlaceObj('ConditionalEffect', {
 					'Effects', {
@@ -23,22 +23,19 @@ DefineClass.Unconscious = {
 							end,
 							FuncCode = 'if not IsKindOf(obj, "Unit") then return end\nlocal recovery = obj:GetEffectValue("unconscious_recovery_exploration_time") \nif recovery and GameTime() >= recovery then\n	obj:SetTired(const.utExhausted)\n	obj:SetCommand("DownedRally")\nend',
 							SaveAsText = false,
-							param_bindings = false,
 						}),
 					},
 				}),
 			},
 			Event = "ExplorationTick",
 			Handler = function (self)
-				CE_ExecReactionEffects(self, "ExplorationTick")
+				ExecReactionEffects(self, 1, "ExplorationTick", nil, self)
 			end,
-			param_bindings = false,
 		}),
-		PlaceObj('MsgReaction', {
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "obj",
 			Event = "StatusEffectAdded",
 			Handler = function (self, obj, id, stacks)
-				local reaction_idx = table.find(self.msg_reactions or empty_table, "Event", "StatusEffectAdded")
-				if not reaction_idx then return end
 				
 				local function exec(self, obj, id, stacks)
 				local delay = self:ResolveValue("recovery_delay_turns")
@@ -51,9 +48,19 @@ DefineClass.Unconscious = {
 				obj:AddStatusEffectImmunity("Surprised", id)
 				CreateGameTimeThread(obj.SetCommandIfNotDead, obj, obj.command == "GetDowned" and "Downed" or "KnockDown")
 				end
-				local _id = GetCharacterEffectId(self)
-				if _id == id then exec(self, obj, id, stacks) end
 				
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[2]
+				if not reaction_def or reaction_def.Event ~= "StatusEffectAdded" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
+					exec(self, obj, id, stacks)
+				end
+				
+				if self:VerifyReaction("StatusEffectAdded", reaction_def, obj, obj, id, stacks) then
+					exec(self, obj, id, stacks)
+				end
 			end,
 			HandlerCode = function (self, obj, id, stacks)
 				local delay = self:ResolveValue("recovery_delay_turns")
@@ -66,13 +73,11 @@ DefineClass.Unconscious = {
 				obj:AddStatusEffectImmunity("Surprised", id)
 				CreateGameTimeThread(obj.SetCommandIfNotDead, obj, obj.command == "GetDowned" and "Downed" or "KnockDown")
 			end,
-			param_bindings = false,
 		}),
-		PlaceObj('MsgReaction', {
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "obj",
 			Event = "StatusEffectRemoved",
 			Handler = function (self, obj, id, stacks, reason)
-				local reaction_idx = table.find(self.msg_reactions or empty_table, "Event", "StatusEffectRemoved")
-				if not reaction_idx then return end
 				
 				local function exec(self, obj, id, stacks, reason)
 				obj:SetEffectValue("unconscious_recovery_turn")
@@ -84,9 +89,19 @@ DefineClass.Unconscious = {
 					obj:SetTired(Min(obj.Tiredness, const.utExhausted))
 				end
 				end
-				local _id = GetCharacterEffectId(self)
-				if _id == id then exec(self, obj, id, stacks, reason) end
 				
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[3]
+				if not reaction_def or reaction_def.Event ~= "StatusEffectRemoved" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
+					exec(self, obj, id, stacks, reason)
+				end
+				
+				if self:VerifyReaction("StatusEffectRemoved", reaction_def, obj, obj, id, stacks, reason) then
+					exec(self, obj, id, stacks, reason)
+				end
 			end,
 			HandlerCode = function (self, obj, id, stacks, reason)
 				obj:SetEffectValue("unconscious_recovery_turn")
@@ -98,13 +113,11 @@ DefineClass.Unconscious = {
 					obj:SetTired(Min(obj.Tiredness, const.utExhausted))
 				end
 			end,
-			param_bindings = false,
 		}),
-		PlaceObj('MsgReaction', {
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "unit",
 			Event = "UnitBeginTurn",
 			Handler = function (self, unit)
-				local reaction_idx = table.find(self.msg_reactions or empty_table, "Event", "UnitBeginTurn")
-				if not reaction_idx then return end
 				
 				local function exec(self, unit)
 				local recovery_turn = unit:GetEffectValue("unconscious_recovery_turn") or -1
@@ -116,16 +129,19 @@ DefineClass.Unconscious = {
 					unit:SetCommand("DownedRally")
 				end
 				end
-				local id = GetCharacterEffectId(self)
 				
-				if id then
-					if IsKindOf(unit, "StatusEffectObject") and unit:HasStatusEffect(id) then
-						exec(self, unit)
-					end
-				else
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[4]
+				if not reaction_def or reaction_def.Event ~= "UnitBeginTurn" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
 					exec(self, unit)
 				end
 				
+				if self:VerifyReaction("UnitBeginTurn", reaction_def, unit, unit) then
+					exec(self, unit)
+				end
 			end,
 			HandlerCode = function (self, unit)
 				local recovery_turn = unit:GetEffectValue("unconscious_recovery_turn") or -1
@@ -137,7 +153,6 @@ DefineClass.Unconscious = {
 					unit:SetCommand("DownedRally")
 				end
 			end,
-			param_bindings = false,
 		}),
 	},
 	DisplayName = T(132204403941, --[[CharacterEffectCompositeDef Unconscious DisplayName]] "Unconscious"),

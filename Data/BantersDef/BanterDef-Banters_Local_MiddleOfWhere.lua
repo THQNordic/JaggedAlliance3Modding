@@ -626,7 +626,7 @@ PlaceObj('BanterDef', {
 				return quest.Given
 			end,
 		}),
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('QuestIsVariableNum', {
 					Amount = 1,
@@ -1236,7 +1236,7 @@ PlaceObj('BanterDef', {
 				return quest.Given
 			end,
 		}),
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('QuestIsVariableNum', {
 					Amount = 1,

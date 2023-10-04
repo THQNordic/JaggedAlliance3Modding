@@ -11,10 +11,11 @@ PlaceObj('Conversation', {
 				HangLuc = false,
 				HangNoOne = false,
 				HangingActive = false,
+				HermanRescued = false,
 			},
 			__eval = function ()
 				local quest = gv_Quests['RescueHerMan'] or QuestGetState('RescueHerMan')
-				return not quest.HangHerman and not quest.HangLuc and not quest.HangNoOne and not quest.HangingActive
+				return not quest.HangHerman and not quest.HangLuc and not quest.HangNoOne and not quest.HangingActive and not quest.HermanRescued
 			end,
 		}),
 		PlaceObj('PlayerIsInSectors', {

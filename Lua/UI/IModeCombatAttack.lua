@@ -79,7 +79,7 @@ function IModeCombatAttack:SetTarget(target, dontMove)
 		dontMove = true
 		self.context.changing_action = false
 	end
-	local attacker = SelectedObj
+	local attacker = self.attacker
 
 	if self.action and IsValid(target) and not self.context.free_aim and IsKindOf(target, "Unit") then
 		local targets = self.action:GetTargets({attacker})

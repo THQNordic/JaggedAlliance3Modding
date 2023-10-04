@@ -8,5 +8,5 @@ SetpiecePrgs.CirclesChickenMove3_Schliemann = function(seed, state, TriggerUnits
 	prgdbg(li, 1, 1) _, Schliemann = sprocall(SetpieceAssignFromGroup.Exec, SetpieceAssignFromGroup, state, rand, Schliemann, "", "chicken", "Object", false)
 	prgdbg(li, 1, 2) sprocall(SetpieceSleep.Exec, SetpieceSleep, state, rand, true, "", 500)
 	prgdbg(li, 1, 3) sprocall(PrgPlayEffect.Exec, PrgPlayEffect, state, rand, true, "", {PlaceObj('QuestSetVariableBool', {Prop = "circlestreasure",QuestId = "TreasureHunting",}),})
-	prgdbg(li, 1, 4) sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, true, "", Schliemann, "chicken3", true, true, false, "", false, true, "")
+	prgdbg(li, 1, 4) sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, true, "", Schliemann, "chicken3", true, true, false, "", false, true, "", 1000)
 end

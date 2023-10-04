@@ -132,7 +132,7 @@ PlaceObj('PopupNotification', {
 })
 
 PlaceObj('PopupNotification', {
-	GamepadText = T(183802323794, --[[PopupNotification GoToSatelliteView GamepadText]] "When you are done exploring the map, you can quickly travel to another location by using the Sat View, by opening the <em>Command</em> menu with <GamepadShortcutName('Start')>. Alternatively, you can explore the map to find an exit zone."),
+	GamepadText = T(183802323794, --[[PopupNotification GoToSatelliteView GamepadText]] "When you are done exploring the map, you can quickly travel to another location by using the Sat View by pressing <ShortcutName('actionToggleSatellite')>. Alternatively, you can explore the map to find an exit zone."),
 	Image = "UI/Messages/Tutorials/tutorial_satview",
 	Text = T(683693192440, --[[PopupNotification GoToSatelliteView Text]] "When you are done exploring the map, you can quickly travel to another location by using the Sat View, accessible from the <em>Command</em> menu located on the bottom left of the HUD. Alternatively, you can explore the map to find an exit zone."),
 	Title = T(133627577045, --[[PopupNotification GoToSatelliteView Title]] "Sat View"),
@@ -141,6 +141,7 @@ PlaceObj('PopupNotification', {
 })
 
 PlaceObj('PopupNotification', {
+	GamepadText = T(174120512701, --[[PopupNotification IntelTutorial GamepadText]] "You can acquire <em>Intel</em> for the sectors you explore. Intel may reveal enemy positions, loot caches or advantageous terrain features. You can inspect the information in the overview camera or during deployment mode.\n\nWhen you have acquired <em>Intel</em> for a sector press <ShortcutName('actionCamOverview')> to activate Overview camera and examine the information from the Intel."),
 	Image = "UI/Messages/scouting_outcome",
 	OnceOnly = true,
 	Text = T(881934699559, --[[PopupNotification IntelTutorial Text]] "You can acquire <em>Intel</em> for the sectors you explore. Intel may reveal enemy positions, loot caches or advantageous terrain features. You can inspect the information in the overview camera or during deployment mode.\n\nWhen you have acquired <em>Intel</em> for a sector press the <em><ShortcutName('actionCamOverview')></em> key to activate Overview camera and examine the information from the Intel."),
@@ -182,7 +183,7 @@ PlaceObj('PopupNotification', {
 })
 
 PlaceObj('PopupNotification', {
-	GamepadText = T(988835057660, --[[PopupNotification SatteliteWounded GamepadText]] "Sometimes your merc will become <em>wounded</em> in battle. Wounds will heal naturally as time passes in the Sat View, however this process is very slow. For faster healing you can use the <em>Treat Wounds</em> Operation.\n\nTo start any Operation, select a sector and press the <ButtonX> button. Choose Treat Wounds and assign at least one <em>doctor</em> and up to 3 <em>patients</em> per doctor.\n\nYou will need to spend <em>Meds</em> to treat the wounds of your mercs. Meds can be found as loot while exploring or after battle."),
+	GamepadText = T(988835057660, --[[PopupNotification SatteliteWounded GamepadText]] "Sometimes your merc will become <em>wounded</em> in battle. Wounds will heal naturally as time passes in the Sat View, however this process is very slow. For faster healing you can use the <em>Treat Wounds</em> Operation.\n\nTo start any Operation, select a sector and press <ShortcutName('idOperations')>. Choose Treat Wounds and assign at least one <em>doctor</em> and up to 3 <em>patients</em> per doctor.\n\nYou will need to spend <em>Meds</em> to treat the wounds of your mercs. Meds can be found as loot while exploring or after battle."),
 	Image = "UI/Messages/Tutorials/tutorial_satview",
 	OnceOnly = true,
 	Text = T(339378095991, --[[PopupNotification SatteliteWounded Text]] "Sometimes your merc will become <em>wounded</em> in battle. Wounds will heal naturally as time passes in the Sat View, however this process is very slow. For faster healing you can use the <em>Treat Wounds</em> Operation.\n\nTo start any Operation, select a sector and click the <em>Operation</em> button in the sector info panel. Choose Treat Wounds and assign at least one <em>doctor</em> and up to 3 <em>patients</em> per doctor.\n\nYou will need to spend <em>Meds</em> to treat the wounds of your mercs. Meds can be found as loot while exploring or after battle."),
@@ -192,7 +193,7 @@ PlaceObj('PopupNotification', {
 })
 
 PlaceObj('PopupNotification', {
-	GamepadText = T(255057134902, --[[PopupNotification SelectionAndMovement GamepadText]] "Select any of your mercs with <GamepadShortcutName('LeftShoulder')> and <GamepadShortcutName('RightShoulder')>. You can use <GamepadShortcutName('LS')> to select all your mercs or just a single one.\n\nOrder the currently selected mercs to move by pressing <GamepadShortcutName('ButtonA')> on the desired destination.\n\nInteraction with items and talking to NPC characters are initiated with <GamepadShortcutName('ButtonA')>."),
+	GamepadText = T(255057134902, --[[PopupNotification SelectionAndMovement GamepadText]] "Select any of your mercs with <ShortcutName('GamepadPrevUnit')> or <ShortcutName('GamepadNextUnit')>. You can use <ShortcutName('ExplorationSelectionToggle')> to select all your mercs or just a single one.\n\nOrder the currently selected mercs to move by pressing <GamepadShortcutName('ButtonA')> on the desired destination.\n\nInteraction with items and talking to NPC characters are initiated with <GamepadShortcutName('ButtonA')>."),
 	Image = "UI/Messages/Tutorials/tutorial_general_2",
 	Text = T(236073339960, --[[PopupNotification SelectionAndMovement Text]] "Select any of your mercs with <em>left-click</em> or use <em>drag selection</em> to select a group.\n\nOrder the currently selected mercs to move by <em>right-clicking</em> on the desired destination.\n\nInteraction with items and talking to NPC characters are initiated with <em>left-click</em>.\n\nPlease note that some of these default controls can be changed from the Options menu."),
 	Title = T(532384069417, --[[PopupNotification SelectionAndMovement Title]] "Basic Controls"),
@@ -218,7 +219,7 @@ PlaceObj('PopupNotification', {
 })
 
 PlaceObj('PopupNotification', {
-	GamepadText = T(591199783398, --[[PopupNotification Aiming GamepadText]] "Aiming can improve the accuracy of your attacks at the cost of spending additional Action Points. It can be very useful when the enemies are far away or behind cover.\n\nUse <GamepadShortcutName('RightTrigger')> to cycle between different aim levels before executing an attack."),
+	GamepadText = T(591199783398, --[[PopupNotification Aiming GamepadText]] "Aiming can improve the accuracy of your attacks at the cost of spending additional Action Points. It can be very useful when the enemies are far away or behind cover.\n\nUse <ShortcutName('actionAttackAimGamepadReverse')>/<ShortcutName('actionAttackAim')> to cycle between different aim levels before executing an attack."),
 	Image = "UI/Messages/Tutorials/tutorial_combat_2",
 	Text = T(906069343771, --[[PopupNotification Aiming Text]] "Aiming can improve the accuracy of your attacks at the cost of spending additional Action Points. It can be very useful when the enemies are far away or behind cover.\n\n<em>Right-click</em> to cycle between different aim levels before executing an attack."),
 	Title = T(257864012366, --[[PopupNotification Aiming Title]] "Aiming"),
@@ -237,6 +238,7 @@ PlaceObj('PopupNotification', {
 })
 
 PlaceObj('PopupNotification', {
+	GamepadText = T(549653228856, --[[PopupNotification DeploymentTutorial GamepadText]] "You can freely <em>Deploy</em> your mercs within the deployment areas. Examine the map, check for <em>Intel</em> and choose your approach for the upcoming conflict.\n\nPosition all mercs and press <ShortcutName('DeploymentStartExploration')> to proceed."),
 	Image = "UI/Messages/Tutorials/tutorial_deployment",
 	OnceOnly = true,
 	Text = T(952294642312, --[[PopupNotification DeploymentTutorial Text]] "You can freely <em>Deploy</em> your mercs within the deployment areas. Examine the map, check for <em>Intel</em> and choose your approach for the upcoming conflict.\n\nPosition all mercs and press <em>Deploy</em> to proceed."),
@@ -296,7 +298,7 @@ PlaceObj('PopupNotification', {
 })
 
 PlaceObj('PopupNotification', {
-	GamepadText = T(445673061476, --[[PopupNotification MilitiaTutorial GamepadText]] "Sometimes enemy squads will try to attack a sector you've already liberated. Your mercs may repel the attack or intercept the enemy squad while they are on their way.\n\nTrained <em>Militia</em> will defend the village from attacks even when your mercs are not there.\n\nUse the <ButtonX> button in Sat View to initiate the Train Militia Operation (you must have mercs in the village of Ernie sector). Mercs with high Leadership are most suitable for this task."),
+	GamepadText = T(445673061476, --[[PopupNotification MilitiaTutorial GamepadText]] "Sometimes enemy squads will try to attack a sector you've already liberated. Your mercs may repel the attack or intercept the enemy squad while they are on their way.\n\nTrained <em>Militia</em> will defend the village from attacks even when your mercs are not there.\n\nUse the <ShortcutName('idOperations')> button in Sat View to initiate the Train Militia Operation (you must have mercs in the village of Ernie sector). Mercs with high Leadership are most suitable for this task."),
 	Image = "UI/Messages/militia_trained",
 	OnceOnly = true,
 	Text = T(203227587021, --[[PopupNotification MilitiaTutorial Text]] "Sometimes enemy squads will try to attack a sector you've already liberated. Your mercs may repel the attack or intercept the enemy squad while they are on their way.\n\nTrained <em>Militia</em> will defend the village from attacks even when your mercs are not there.\n\nUse the <em>Operation</em> button in Sat View to initiate the Train Militia Operation (you must have mercs in the village of Ernie sector). Mercs with high Leadership are most suitable for this task."),

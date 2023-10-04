@@ -15,5 +15,7 @@ g_PlatinumAchievement = {
 	dlc = false,
 }
 
-T(103278828302, "Finished the game on “Mission Impossible”, “Dead is Dead”, “To The Bitter End” and “Lethal Weapons”.")
-T(218540356017, "Finish the game on “Mission Impossible”, “Dead is Dead”, “To The Bitter End” and “Lethal Weapons”.")
+T(790986860016, "Finished the game on “Mission Impossible”, “Dead is Dead”, “To The Bitter End” and “Lethal Weapons”.")
+T(894158313589, "Finish the game on “Mission Impossible”, “Dead is Dead”, “To The Bitter End” and “Lethal Weapons”.")
+
+T(284695860080, --[[GameRuleDef ForgivingMode Playstation description]] 'Lowers the impact of attrition and makes it easier to recover from bad situations (faster healing and repair, better income).<newline><newline><flavor>You cannot unlock the "Ironman" trophy while Forgiving mode is enabled.</flavor><newline><newline><flavor>You can change this option at any time during gameplay.</flavor>')

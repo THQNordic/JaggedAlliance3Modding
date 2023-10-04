@@ -94,12 +94,8 @@ PlaceObj('UnitDataCompositeDef', {
 				}),
 			},
 			'Conditions', {
-				PlaceObj('AND', {
-					Conditions = {
-						PlaceObj('UnitHireStatus', {
-							TargetUnit = "Shadow",
-						}),
-					},
+				PlaceObj('UnitHireStatus', {
+					TargetUnit = "Shadow",
 				}),
 			},
 		}),
@@ -110,12 +106,8 @@ PlaceObj('UnitDataCompositeDef', {
 				}),
 			},
 			'Conditions', {
-				PlaceObj('AND', {
-					Conditions = {
-						PlaceObj('UnitHireStatus', {
-							TargetUnit = "Wolf",
-						}),
-					},
+				PlaceObj('UnitHireStatus', {
+					TargetUnit = "Wolf",
 				}),
 			},
 		}),

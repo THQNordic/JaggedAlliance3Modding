@@ -82,6 +82,7 @@ PlaceObj('XTemplate', {
 			end,
 			'Translate', true,
 			'Text', T(796492295103, --[[XTemplate SmallStanceHudButton Text]] "<ButtonA>"),
+			'ImageScale', 750,
 		}, {
 			PlaceObj('XTemplateFunc', {
 				'name', "UpdateLayout(self)",
@@ -91,10 +92,10 @@ PlaceObj('XTemplate', {
 					local parent = self.parent
 					local parentb = parent.box
 					self:SetBox(
-						parentb:minx() + self.measure_width / 1.5,
-						parentb:miny() + self.measure_height / 2,
-						self.measure_width,
-						self.measure_height
+						parentb:minx() + self.measure_width / 2.5,
+						parentb:miny(),
+						parentb:maxx() + self.measure_width / 2.5,
+						parentb:maxy()
 					)
 					XText.UpdateLayout(self)
 				end,

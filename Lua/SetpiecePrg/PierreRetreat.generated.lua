@@ -28,13 +28,13 @@ SetpiecePrgs.PierreRetreat = function(seed, state, TriggerUnits)
 	prgdbg(li, 1, 18) sprocall(SetpieceFadeOut.Exec, SetpieceFadeOut, state, rand, true, "", 700)
 	prgdbg(li, 1, 19) sprocall(SetpieceSetStance.Exec, SetpieceSetStance, state, rand, true, "", Pierre, "Standing", "AK74", true)
 	local _, PierreRetreatInside
-	prgdbg(li, 1, 20) _, PierreRetreatInside = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Pierre, "PierreRetreatWalkTo", true, false, false, "", false, true, "")
+	prgdbg(li, 1, 20) _, PierreRetreatInside = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Pierre, "PierreRetreatWalkTo", true, false, false, "", false, true, "", 1000)
 	prgdbg(li, 1, 21) sprocall(SetpieceSleep.Exec, SetpieceSleep, state, rand, true, "", 900)
 	local _
-	prgdbg(li, 1, 22) _, PierreRetreatInside = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", PierreGuard01, "PierreRetreatWalkTo_02", true, false, false, "", false, true, "")
+	prgdbg(li, 1, 22) _, PierreRetreatInside = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", PierreGuard01, "PierreRetreatWalkTo_02", true, false, false, "", false, true, "", 1000)
 	prgdbg(li, 1, 23) sprocall(SetpieceSleep.Exec, SetpieceSleep, state, rand, true, "", 400)
 	local _
-	prgdbg(li, 1, 24) _, PierreRetreatInside = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", PierreGuard02, "PierreRetreatWalkTo_01", true, false, false, "", false, true, "")
+	prgdbg(li, 1, 24) _, PierreRetreatInside = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", PierreGuard02, "PierreRetreatWalkTo_01", true, false, false, "", false, true, "", 1000)
 	prgdbg(li, 1, 25) sprocall(SetpieceCamera.Exec, SetpieceCamera, state, rand, false, "", "Max", "", "", "linear", 0, false, false, point(148701, 162474, 48121), point(152758, 163548, 50839), false, false, 4200, 2000, false, 0, 0, 0, 0, 0, 0, "Default", 100)
 	prgdbg(li, 1, 26) sprocall(SetpieceFadeIn.Exec, SetpieceFadeIn, state, rand, true, "", 0, 900)
 	prgdbg(li, 1, 27) sprocall(SetpieceCamera.Exec, SetpieceCamera, state, rand, true, "", "Max", "", "", "linear", 4000, false, false, point(148701, 162474, 48121), point(152758, 163548, 50839), false, false, 4200, 2000, false, 0, 0, 0, 0, 0, 0, "Default", 100)

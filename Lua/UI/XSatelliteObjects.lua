@@ -267,13 +267,13 @@ end
 
 function SectorWindow:SetSectorVisible(visible)
 	self.SectorVisible = visible
-	self:SetBackground(visible and RGBA(0,0,0,0) or RGBA(0, 0, 0, 0))
+	--self:SetBackground(visible and RGBA(0,0,0,0) or RGBA(0, 0, 0, 0))
 	self:SetBorderWidth(0)
 end
 
 function SectorWindow:UpdateZoom(prevZoom, newZoom, time)
 	local map = self.map
-	local maxZoom = map.max_zoom
+	local maxZoom = map:GetScaledMaxZoom()
 	if self.idUndergroundIconsList then
 		self.idUndergroundIconsList:SetVisible(not self.context.HideUnderground and newZoom > maxZoom / 2)
 	end
@@ -503,7 +503,7 @@ end
 
 function SquadWindow:UpdateZoom(prevZoom, newZoom, time)
 	local map = self.map
-	local maxZoom = map.max_zoom
+	local maxZoom = map:GetScaledMaxZoom()
 	local minZoom = Max(1000 * map.box:sizex() / map.map_size:x(), 1000 * map.box:sizey() / map.map_size:y())
 	newZoom = Clamp(newZoom, minZoom + 120, maxZoom)
 
@@ -650,6 +650,7 @@ function SquadWindow:OnSetRollover(rollover)
 		
 		for i, w in ipairs(displayedRoute) do
 			w:SetBackground(rollover and GameColors.C or GameColors.Enemy)
+			w:SetDrawOnTop(rollover)
 		end
 
 		for i, w in ipairs(displayedRoute.decorations) do
@@ -658,10 +659,12 @@ function SquadWindow:OnSetRollover(rollover)
 			else
 				w:SetColor(rollover and GameColors.C or GameColors.Enemy)
 			end
+			w:SetDrawOnTop(rollover)
 		end
 		
 		for i, w in ipairs(displayedRoute.shortcuts) do
 			w:SetBackground(rollover and GameColors.C or GameColors.Enemy)
+			w:SetDrawOnTop(rollover)
 		end
 	end
 end

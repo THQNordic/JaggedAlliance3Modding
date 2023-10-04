@@ -343,7 +343,22 @@ PlaceObj('XTemplate', {
 		PlaceObj('XTemplateWindow', {
 			'__class', "VirtualCursorManager",
 			'Reason', "Browser",
-		}),
+		}, {
+			PlaceObj('XTemplateFunc', {
+				'name', "Open(self, ...)",
+				'func', function (self, ...)
+					VirtualCursorManager.Open(self,...)
+					SetDisableMouseRightClickReason(true, "Browser")
+				end,
+			}),
+			PlaceObj('XTemplateFunc', {
+				'name', "Done(self, ...)",
+				'func', function (self, ...)
+					VirtualCursorManager.Done(self,...)
+					SetDisableMouseRightClickReason(false, "Browser")
+				end,
+			}),
+			}),
 		}),
 })
 

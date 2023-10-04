@@ -243,7 +243,7 @@ PlaceObj('BanterDef', {
 		}),
 	},
 	conditions = {
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "PantagruelDramas",
@@ -255,17 +255,13 @@ PlaceObj('BanterDef', {
 						return not quest.BestFriendsGiven
 					end,
 				}),
-				PlaceObj('OR', {
-					Conditions = {
-						PlaceObj('QuestIsVariableBool', {
-							QuestId = "PantagruelDramas",
-							Vars = set( "BestFriendsCompleted" ),
-							__eval = function ()
-								local quest = gv_Quests['PantagruelDramas'] or QuestGetState('PantagruelDramas')
-								return quest.BestFriendsCompleted
-							end,
-						}),
-					},
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "PantagruelDramas",
+					Vars = set( "BestFriendsCompleted" ),
+					__eval = function ()
+						local quest = gv_Quests['PantagruelDramas'] or QuestGetState('PantagruelDramas')
+						return quest.BestFriendsCompleted
+					end,
 				}),
 			},
 		}),
@@ -1142,7 +1138,7 @@ PlaceObj('BanterDef', {
 			City = "Pantagruel",
 			Condition = ">=",
 		}),
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('CheckGameState', {
 					GameState = "Sunset",

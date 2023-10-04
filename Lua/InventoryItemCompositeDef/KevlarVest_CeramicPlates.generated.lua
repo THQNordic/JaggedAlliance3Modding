@@ -7,8 +7,8 @@ DefineClass.KevlarVest_CeramicPlates = {
 
 
 	object_class = "TransmutedArmor",
-	Degradation = 6,
 	ScrapParts = 4,
+	Degradation = 6,
 	Icon = "UI/Icons/Items/kevlar_armor",
 	SubIcon = "UI/Icons/Items/plates",
 	DisplayName = T(982997486407, --[[InventoryItemCompositeDef KevlarVest_CeramicPlates DisplayName]] "Kevlar Armor"),

@@ -7,15 +7,15 @@ DefineClass.M24Sniper = {
 
 
 	object_class = "SniperRifle",
-	Reliability = 44,
 	ScrapParts = 14,
+	Reliability = 44,
 	Icon = "UI/Icons/Weapons/M24",
 	DisplayName = T(672666400702, --[[InventoryItemCompositeDef M24Sniper DisplayName]] "M24"),
 	DisplayNamePlural = T(703533260621, --[[InventoryItemCompositeDef M24Sniper DisplayNamePlural]] "M24s"),
 	Description = T(767131106202, --[[InventoryItemCompositeDef M24Sniper Description]] "US Army sniper weapon system that replaced the M21 (based on the M14). Apparently semi-auto was still not up to par with what snipers needed in terms of reliability and accuracy that bolt action can provide. "),
 	AdditionalHint = T(622433882128, --[[InventoryItemCompositeDef M24Sniper AdditionalHint]] "<bullet_point> Cumbersome (no Free Move)\n<bullet_point> Very noisy"),
-	LargeItem = true,
-	Cumbersome = true,
+	LargeItem = 1,
+	Cumbersome = 1,
 	UnitStat = "Marksmanship",
 	Cost = 2500,
 	Caliber = "762NATO",

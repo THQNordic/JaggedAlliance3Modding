@@ -8,28 +8,30 @@ DefineClass.Ambidextrous = {
 
 	object_class = "Perk",
 	msg_reactions = {
-		PlaceObj('MsgReaction', {
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "attacker",
 			Event = "GatherCTHModifications",
-			Handler = function (self, attacker, cth_id, data)
-				local reaction_idx = table.find(self.msg_reactions or empty_table, "Event", "GatherCTHModifications")
-				if not reaction_idx then return end
+			Handler = function (self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
 				
-				local function exec(self, attacker, cth_id, data)
+				local function exec(self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
 				if cth_id == "TwoWeaponFire" then
 					data.meta_text[#data.meta_text + 1] = T{756119910645, "Perk: <perkName>", perkName = self.DisplayName}
 					data.mod_add = self:ResolveValue("PenaltyReduction")
 				end
 				end
-				local id = GetCharacterEffectId(self)
 				
-				if id then
-					if IsKindOf(attacker, "StatusEffectObject") and attacker:HasStatusEffect(id) then
-						exec(self, attacker, cth_id, data)
-					end
-				else
-					exec(self, attacker, cth_id, data)
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[1]
+				if not reaction_def or reaction_def.Event ~= "GatherCTHModifications" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
+					exec(self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
 				end
 				
+				if self:VerifyReaction("GatherCTHModifications", reaction_def, attacker, attacker, cth_id, action_id, target, weapon1, weapon2, data) then
+					exec(self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
+				end
 			end,
 			HandlerCode = function (self, attacker, cth_id, data)
 				if cth_id == "TwoWeaponFire" then
@@ -37,7 +39,6 @@ DefineClass.Ambidextrous = {
 					data.mod_add = self:ResolveValue("PenaltyReduction")
 				end
 			end,
-			param_bindings = false,
 		}),
 	},
 	Modifiers = {},

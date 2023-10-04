@@ -313,7 +313,7 @@ PlaceObj('Conversation', {
 					Text = T(119786379743, --[[Conversation Hyena_1 Text voice:Flay section:Hyena_1 keyword:Yes, that was the plan!]] "Putain de merde! You brought me here so this poacher could have the final kill shot? Cowards! All of you! Cowards!"),
 				}),
 			},
-			StoryBranchIcon = "conversation_action",
+			StoryBranchIcon = "conversation_attack",
 			id = "Yesthatwastheplan",
 		}),
 		PlaceObj('ConversationPhrase', {
@@ -414,7 +414,7 @@ PlaceObj('Conversation', {
 					Text = T(992854858865, --[[Conversation Hyena_1 Text voice:Hyena section:Hyena_1 keyword:No, he is working for us]] "Okay, okay! Just calm down. As long as the killing stops, that's all I care about. Here's the money. Take it."),
 				}),
 			},
-			StoryBranchIcon = "conversation_action",
+			StoryBranchIcon = "conversation_arrow",
 			VariantPhrase = true,
 			id = "Noheisworkingforus",
 		}),
@@ -944,7 +944,7 @@ PlaceObj('Conversation', {
 					return quest.HyenaOffended and not quest.HyenaScared
 				end,
 			}),
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('UnitSquadHasMerc', {
 						HasPerk = "Psycho",

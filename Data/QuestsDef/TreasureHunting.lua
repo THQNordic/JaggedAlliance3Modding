@@ -366,6 +366,17 @@ PlaceObj('QuestsDef', {
 						"Circles_LuckyVeinard01",
 					},
 				}),
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "TreasureHunting",
+					Vars = set({
+	Completed = false,
+	Failed = false,
+}),
+					__eval = function ()
+						local quest = gv_Quests['TreasureHunting'] or QuestGetState('TreasureHunting')
+						return not quest.Completed and not quest.Failed
+					end,
+				}),
 			},
 			Text = T(521834794888, --[[QuestsDef TreasureHunting Text]] "<em>Lucky Veinard</em> mentioned a secret treasure that waits to be found somewhere in the <em><SectorName('K18')></em>"),
 		}),

@@ -8,32 +8,33 @@ DefineClass.BattleFocusBuff = {
 
 	object_class = "StatusEffect",
 	msg_reactions = {
-		PlaceObj('MsgReaction', {
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "unit",
 			Event = "UnitBeginTurn",
 			Handler = function (self, unit)
-				local reaction_idx = table.find(self.msg_reactions or empty_table, "Event", "UnitBeginTurn")
-				if not reaction_idx then return end
 				
 				local function exec(self, unit)
 				local ap = CharacterEffectDefs.BattleFocus:ResolveValue("battleFocusAP") * const.Scale.AP
 				unit:GainAP(ap)
 				end
-				local id = GetCharacterEffectId(self)
 				
-				if id then
-					if IsKindOf(unit, "StatusEffectObject") and unit:HasStatusEffect(id) then
-						exec(self, unit)
-					end
-				else
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[1]
+				if not reaction_def or reaction_def.Event ~= "UnitBeginTurn" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
 					exec(self, unit)
 				end
 				
+				if self:VerifyReaction("UnitBeginTurn", reaction_def, unit, unit) then
+					exec(self, unit)
+				end
 			end,
 			HandlerCode = function (self, unit)
 				local ap = CharacterEffectDefs.BattleFocus:ResolveValue("battleFocusAP") * const.Scale.AP
 				unit:GainAP(ap)
 			end,
-			param_bindings = false,
 		}),
 	},
 	DisplayName = T(314094810941, --[[CharacterEffectCompositeDef BattleFocusBuff DisplayName]] "Battle Focus"),

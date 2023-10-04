@@ -8,34 +8,35 @@ DefineClass.NailsPerk = {
 
 	object_class = "Perk",
 	msg_reactions = {
-		PlaceObj('MsgReaction', {
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "attacker",
 			Event = "OnKill",
 			Handler = function (self, attacker, killedUnits)
-				local reaction_idx = table.find(self.msg_reactions or empty_table, "Event", "OnKill")
-				if not reaction_idx then return end
 				
 				local function exec(self, attacker, killedUnits)
 				if HasPerk(attacker, self.id) then
 					attacker:AddStatusEffect("Bloodthirst")
 				end
 				end
-				local id = GetCharacterEffectId(self)
 				
-				if id then
-					if IsKindOf(attacker, "StatusEffectObject") and attacker:HasStatusEffect(id) then
-						exec(self, attacker, killedUnits)
-					end
-				else
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[1]
+				if not reaction_def or reaction_def.Event ~= "OnKill" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
 					exec(self, attacker, killedUnits)
 				end
 				
+				if self:VerifyReaction("OnKill", reaction_def, attacker, attacker, killedUnits) then
+					exec(self, attacker, killedUnits)
+				end
 			end,
 			HandlerCode = function (self, attacker, killedUnits)
 				if HasPerk(attacker, self.id) then
 					attacker:AddStatusEffect("Bloodthirst")
 				end
 			end,
-			param_bindings = false,
 		}),
 	},
 	DisplayName = T(399524807633, --[[CharacterEffectCompositeDef NailsPerk DisplayName]] "Nailed It"),

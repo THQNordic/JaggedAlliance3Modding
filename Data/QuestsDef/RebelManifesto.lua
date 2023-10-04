@@ -107,18 +107,14 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
-					Conditions = {
-						PlaceObj('QuestIsVariableBool', {
-							Condition = "or",
-							QuestId = "RebelManifesto",
-							Vars = set( "Completed", "Failed" ),
-							__eval = function ()
-								local quest = gv_Quests['RebelManifesto'] or QuestGetState('RebelManifesto')
-								return quest.Completed or quest.Failed
-							end,
-						}),
-					},
+				PlaceObj('QuestIsVariableBool', {
+					Condition = "or",
+					QuestId = "RebelManifesto",
+					Vars = set( "Completed", "Failed" ),
+					__eval = function ()
+						local quest = gv_Quests['RebelManifesto'] or QuestGetState('RebelManifesto')
+						return quest.Completed or quest.Failed
+					end,
 				}),
 			},
 			Idx = 3,
@@ -158,7 +154,7 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('QuestNote', {
 			CompletionConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							Condition = "or",
@@ -196,7 +192,7 @@ PlaceObj('QuestsDef', {
 			},
 			Idx = 8,
 			ShowConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							Condition = "or",
@@ -239,7 +235,7 @@ PlaceObj('QuestsDef', {
 	TCEs = {
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							Condition = "or",
@@ -277,18 +273,14 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
-				PlaceObj('OR', {
-					Conditions = {
-						PlaceObj('QuestIsVariableBool', {
-							Condition = "or",
-							QuestId = "PantagruelDramas",
-							Vars = set( "ChimurengaDead", "ChimurengaEnemy", "ChimurengaLeave" ),
-							__eval = function ()
-								local quest = gv_Quests['PantagruelDramas'] or QuestGetState('PantagruelDramas')
-								return quest.ChimurengaDead or quest.ChimurengaEnemy or quest.ChimurengaLeave
-							end,
-						}),
-					},
+				PlaceObj('QuestIsVariableBool', {
+					Condition = "or",
+					QuestId = "PantagruelDramas",
+					Vars = set( "ChimurengaDead", "ChimurengaEnemy", "ChimurengaLeave" ),
+					__eval = function ()
+						local quest = gv_Quests['PantagruelDramas'] or QuestGetState('PantagruelDramas')
+						return quest.ChimurengaDead or quest.ChimurengaEnemy or quest.ChimurengaLeave
+					end,
 				}),
 			},
 			Effects = {

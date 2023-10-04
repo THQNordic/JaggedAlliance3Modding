@@ -539,7 +539,7 @@ PlaceObj('XTemplate', {
 											local count = 9
 											for i,itm_data in ipairs(full_table) do
 												local itm = SectorOperation_FindItemDef(itm_data) 
-												count =  count - (itm.LargeItem  and 2 or 1)
+												count =  count - (itm:IsLargeItem()  and 2 or 1)
 											end
 											for i=1,count do
 												to_return[i] = i

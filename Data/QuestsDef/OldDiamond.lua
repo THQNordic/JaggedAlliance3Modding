@@ -214,7 +214,7 @@ PlaceObj('QuestsDef', {
 						"K10",
 					},
 				}),
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							QuestId = "_GroupsAttacked",
@@ -294,7 +294,7 @@ PlaceObj('QuestsDef', {
 						return quest.ImpostorsKilled
 					end,
 				}),
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('CheckIsPersistentUnitDead', {
 							per_ses_id = "NPC_Fournier",

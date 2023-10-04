@@ -7,8 +7,8 @@ DefineClass.FlakLeggings = {
 
 
 	object_class = "Armor",
-	Degradation = 6,
 	ScrapParts = 4,
+	Degradation = 6,
 	Icon = "UI/Icons/Items/flak_leggings",
 	DisplayName = T(491297757952, --[[InventoryItemCompositeDef FlakLeggings DisplayName]] "Flak Leggings"),
 	DisplayNamePlural = T(547653505048, --[[InventoryItemCompositeDef FlakLeggings DisplayNamePlural]] "Flak Leggings"),

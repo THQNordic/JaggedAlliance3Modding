@@ -10,7 +10,7 @@ PlaceObj('InventoryItemCompositeDef', {
 	'DisplayNamePlural', T(736601384762, --[[InventoryItemCompositeDef MetaviraShot DisplayNamePlural]] "Metaviron"),
 	'Description', T(288596816028, --[[InventoryItemCompositeDef MetaviraShot Description]] "Miracle cure derived from the sap of the Fallow trees indigenous to the island of Metavira"),
 	'AdditionalHint', T(532971264222, --[[InventoryItemCompositeDef MetaviraShot AdditionalHint]] "<bullet_point> Used through the Item Menu\n<bullet_point> Single use\n<bullet_point> Fully restores lost HP\n<bullet_point> Cures all Wounds\n"),
-	'is_valuable', true,
+	'Valuable', 1,
 	'effect_moment', "on_use",
 	'Effects', {
 		PlaceObj('HealWounds', {}),

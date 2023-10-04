@@ -164,7 +164,7 @@ PlaceObj('QuestsDef', {
 			},
 			Idx = 17,
 			ShowConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							Condition = "or",
@@ -197,7 +197,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							Condition = "or",
@@ -656,7 +656,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			CompletionConditions = {
-				PlaceObj('AND', {
+				PlaceObj('CheckAND', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							QuestId = "RescueBiff",
@@ -687,7 +687,7 @@ PlaceObj('QuestsDef', {
 			},
 			Idx = 20,
 			ShowConditions = {
-				PlaceObj('AND', {
+				PlaceObj('CheckAND', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							QuestId = "RescueBiff",
@@ -814,7 +814,7 @@ PlaceObj('QuestsDef', {
 		PlaceObj('QuestNote', {
 			AddInHistory = true,
 			CompletionConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							Condition = "or",
@@ -841,7 +841,7 @@ PlaceObj('QuestsDef', {
 			},
 			Idx = 32,
 			ShowConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							Condition = "or",
@@ -998,7 +998,7 @@ PlaceObj('QuestsDef', {
 						return not quest.Completed and not quest.Failed
 					end,
 				}),
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							QuestId = "RescueBiff",
@@ -1032,7 +1032,8 @@ PlaceObj('QuestsDef', {
 					Prop = "BiffDeadOnArrival",
 					QuestId = "RescueBiff",
 				}),
-				PlaceObj('SectorSetForceConflict', {
+				PlaceObj('SectorEnterConflict', {
+					conflict_mode = false,
 					sector_id = "A8",
 				}),
 				PlaceObj('CityGrantLoyalty', {
@@ -1314,7 +1315,7 @@ PlaceObj('QuestsDef', {
 				PlaceObj('GroupIsDead', {
 					Group = "Wave2",
 				}),
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							Condition = "or",
@@ -1448,7 +1449,7 @@ PlaceObj('QuestsDef', {
 				PlaceObj('GroupIsDead', {
 					Group = "Wave4",
 				}),
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('GroupIsDead', {
 							Group = "Wave5",
@@ -1603,7 +1604,7 @@ PlaceObj('QuestsDef', {
 						"A8",
 					},
 				}),
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('CheckIsPersistentUnitDead', {
 							per_ses_id = "NPC_Biff",

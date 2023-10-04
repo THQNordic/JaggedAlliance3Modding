@@ -143,7 +143,7 @@ PlaceObj('Conversation', {
 	PlaceObj('ConversationPhrase', {
 		AutoRemove = true,
 		Conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('QuestIsVariableBool', {
 						Condition = "or",
@@ -221,7 +221,7 @@ PlaceObj('Conversation', {
 	PlaceObj('ConversationPhrase', {
 		AutoRemove = true,
 		Conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('QuestIsVariableBool', {
 						QuestId = "RefugeeBlues",
@@ -371,7 +371,7 @@ PlaceObj('Conversation', {
 					return quest.BastienCornered
 				end,
 			}),
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('UnitSquadHasMerc', {
 						HasPerk = "Negotiator",
@@ -477,7 +477,7 @@ PlaceObj('Conversation', {
 					return quest.BastienCornered
 				end,
 			}),
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('UnitSquadHasMerc', {
 						HasPerk = "Scoundrel",

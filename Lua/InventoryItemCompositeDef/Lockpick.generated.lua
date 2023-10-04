@@ -7,8 +7,8 @@ DefineClass.Lockpick = {
 
 
 	object_class = "LockpickBase",
-	Repairable = false,
 	ScrapParts = 2,
+	Repairable = false,
 	Icon = "UI/Icons/Items/lockpick",
 	DisplayName = T(363189070824, --[[InventoryItemCompositeDef Lockpick DisplayName]] "Locksmith's Kit"),
 	DisplayNamePlural = T(983215060783, --[[InventoryItemCompositeDef Lockpick DisplayNamePlural]] "Locksmith's Kits"),

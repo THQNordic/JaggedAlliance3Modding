@@ -476,8 +476,13 @@ function IModeAIDebug:Update()
 		
 		if self.ai_context.ai_destination and self.ai_context.dbg_enemy_damage_score then
 			text = text .. "\n\nPotential targets:"
-			for target, score in sorted_pairs(self.ai_context.dbg_enemy_damage_score) do
-				text = text .. string.format("\n  %s: %d", target.session_id, score)
+			local target_scores = {}
+			for target, score in pairs(self.ai_context.dbg_enemy_damage_score) do
+				table.insert(target_scores, {target = target, score = score})
+			end
+			table.sortby_field_descending(target_scores, "score")
+			for _, target_score in ipairs(target_scores) do
+				text = text .. string.format("\n  %s: %d", target_score.target.session_id, target_score.score)
 			end
 		end
 		

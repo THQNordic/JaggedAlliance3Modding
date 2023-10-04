@@ -50,7 +50,7 @@ SetpiecePrgs.Landsbach_MadMax = function(seed, state, TriggerUnits)
 	local _, SP_MolotovUnit_TP
 	prgdbg(li, 1, 32) _, SP_MolotovUnit_TP = sprocall(SetpieceTeleport.Exec, SetpieceTeleport, state, MolotovUnit, "SP_MolotovUnit_TP", true)
 	local _, SP_MolotovUnit_GoTo
-	prgdbg(li, 1, 33) _, SP_MolotovUnit_GoTo = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", MolotovUnit, "SP_MolotovUnit_GoTo", true, false, false, "Standing", true, false, "")
+	prgdbg(li, 1, 33) _, SP_MolotovUnit_GoTo = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", MolotovUnit, "SP_MolotovUnit_GoTo", true, false, false, "Standing", true, false, "", 1000)
 	prgdbg(li, 1, 34) sprocall(SetpieceSleep.Exec, SetpieceSleep, state, rand, true, "", 750)
 	prgdbg(li, 1, 35) sprocall(SetpieceFadeIn.Exec, SetpieceFadeIn, state, rand, false, "", 0, 3000)
 	prgdbg(li, 1, 36) sprocall(SetpieceCamera.Exec, SetpieceCamera, state, rand, false, "", "Max", 0, "linear", "linear", 12000, false, false, point(147354, 173916, 10582), point(147161, 176904, 10377), point(158973, 174674, 10582), point(158780, 177662, 10377), 4200, 650, false, 75, 0, 15000, 0, 0, 0, "Default", 100)

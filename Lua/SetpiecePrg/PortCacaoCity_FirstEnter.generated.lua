@@ -55,7 +55,7 @@ SetpiecePrgs.PortCacaoCity_FirstEnter = function(seed, state, TriggerUnits)
 	prgdbg(li, 1, 37) sprocall(PrgPlayEffect.Exec, PrgPlayEffect, state, rand, false, "PortCacaoCity_SecondBanterDone", {PlaceObj('PlayBanterEffect', {Banters = {"PortCacaoCity_Gouverneur_02_SetPieceFollowUp",},searchInMap = true,searchInMarker = false,}),})
 	prgdbg(li, 1, 38) sprocall(SetpieceWaitCheckpoint.Exec, SetpieceWaitCheckpoint, state, rand, "PortCacaoCity_SecondBanterDone")
 	local _, SP_Governor_Exit
-	prgdbg(li, 1, 39) _, SP_Governor_Exit = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Governor, "SP_Governor_Exit", true, true, false, "", false, false, "")
+	prgdbg(li, 1, 39) _, SP_Governor_Exit = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Governor, "SP_Governor_Exit", true, true, false, "", false, false, "", 1000)
 	prgdbg(li, 1, 40) sprocall(SetpieceSleep.Exec, SetpieceSleep, state, rand, true, "", 1300)
 	prgdbg(li, 1, 41) sprocall(SetpieceFadeOut.Exec, SetpieceFadeOut, state, rand, true, "", 300)
 	prgdbg(li, 1, 42) sprocall(SetpieceCamera.Exec, SetpieceCamera, state, rand, false, "", "Max", "", "", "linear", 0, false, false, point(161280, 151380, 17434), point(159560, 146887, 18796), false, false, 4200, 1300, false, 0, 0, 0, 0, 0, 0, "Default", 100)

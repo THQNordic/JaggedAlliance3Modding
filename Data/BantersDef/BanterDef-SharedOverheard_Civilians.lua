@@ -212,7 +212,7 @@ PlaceObj('BanterDef', {
 				return quest.Given
 			end,
 		}),
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('CheckGameState', {
 					GameState = "Sunset",
@@ -259,7 +259,7 @@ PlaceObj('BanterDef', {
 		PlaceObj('CheckGameState', {
 			GameState = "Day",
 		}),
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "Smiley",
@@ -724,7 +724,7 @@ PlaceObj('BanterDef', {
 				return not quest.GoodWitch and not quest.WitchDead
 			end,
 		}),
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('CheckGameState', {
 					GameState = "Day",
@@ -1239,7 +1239,7 @@ PlaceObj('BanterDef', {
 				"I18",
 			},
 		}),
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('CheckGameState', {
 					GameState = "Sunset",
@@ -1293,7 +1293,7 @@ PlaceObj('BanterDef', {
 				return quest.GraafForeman
 			end,
 		}),
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('CheckGameState', {
 					GameState = "Day",
@@ -1347,7 +1347,7 @@ PlaceObj('BanterDef', {
 				"K10",
 			},
 		}),
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('CheckGameState', {
 					GameState = "Sunrise",

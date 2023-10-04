@@ -8,13 +8,11 @@ DefineClass.HawksEye = {
 
 	object_class = "Perk",
 	msg_reactions = {
-		PlaceObj('MsgReaction', {
+		PlaceObj('MsgActorReaction', {
 			Event = "MercHired",
 			Handler = function (self, mercId, price, days, alreadyHired)
-				local reaction_idx = table.find(self.msg_reactions or empty_table, "Event", "MercHired")
-				if not reaction_idx then return end
 				
-				local function exec(self, mercId, price, days, alreadyHired)
+				local function exec(self, reaction_actor, mercId, price, days, alreadyHired)
 				-- add cookies
 				local unit = gv_UnitData[mercId]
 				if unit and HasPerk(unit, self.id) and days > 0 then
@@ -27,25 +25,26 @@ DefineClass.HawksEye = {
 					PlaceItemInInventory("Cookie", days, unit)
 				end
 				end
-				local id = GetCharacterEffectId(self)
 				
-				if id then
-					local objs = {}
-					for session_id, data in pairs(gv_UnitData) do
-						local obj = g_Units[session_id] or data
-						if obj:HasStatusEffect(id) then
-							objs[session_id] = obj
-						end
-					end
-					for _, obj in sorted_pairs(objs) do
-						exec(self, mercId, price, days, alreadyHired)
-					end
-				else
-					exec(self, mercId, price, days, alreadyHired)
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[1]
+				if not reaction_def or reaction_def.Event ~= "MercHired" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
+					local reaction_actor
+					exec(self, reaction_actor, mercId, price, days, alreadyHired)
 				end
 				
+				
+				local actors = self:GetReactionActors("MercHired", reaction_def, mercId, price, days, alreadyHired)
+				for _, reaction_actor in ipairs(actors) do
+					if self:VerifyReaction("MercHired", reaction_def, reaction_actor, mercId, price, days, alreadyHired) then
+						exec(self, reaction_actor, mercId, price, days, alreadyHired)
+					end
+				end
 			end,
-			HandlerCode = function (self, mercId, price, days, alreadyHired)
+			HandlerCode = function (self, reaction_actor, mercId, price, days, alreadyHired)
 				-- add cookies
 				local unit = gv_UnitData[mercId]
 				if unit and HasPerk(unit, self.id) and days > 0 then
@@ -58,7 +57,6 @@ DefineClass.HawksEye = {
 					PlaceItemInInventory("Cookie", days, unit)
 				end
 			end,
-			param_bindings = false,
 		}),
 	},
 	DisplayName = T(930669061773, --[[CharacterEffectCompositeDef HawksEye DisplayName]] "Eagle Eye"),

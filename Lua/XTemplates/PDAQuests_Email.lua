@@ -286,7 +286,7 @@ PlaceObj('XTemplate', {
 				'ContextUpdateOnOpen', true,
 				'OnContextUpdate', function (self, context, ...)
 					local dlg = GetDialog(self)
-					--self:SetVisible(dlg.selectedEmail)
+					self:SetVisible(dlg.selectedEmail)
 				end,
 			}, {
 				PlaceObj('XTemplateWindow', {
@@ -590,6 +590,7 @@ PlaceObj('XTemplate', {
 					
 						-- Unselect old email
 						local selEmail = self.selectedEmail
+						self:SelectEmail(false)
 						self.selectedEmail = false
 						emailList:SetSelection(false)
 						ObjModified(selEmail)

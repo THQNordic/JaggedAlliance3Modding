@@ -936,13 +936,78 @@ PlaceObj('XTemplate', {
 						'name', "OnSetRollover(self, rollover)",
 						'func', function (self, rollover)
 							local context = self.context
-							local action = CombatActions["Bandage"]
-							local cost_ap = action:GetAPCost(context.unit, false, context.item)
-							
 							self:SetTextStyle((rollover and self.enabled) and "SatelliteContextMenuTextRollover" or "SatelliteContextMenuText")
 							
 							local item = context.item
 							local parts = item:AmountOfScrapPartsFromItem()
+							self:SetText(T{399084673498, "<parts> PARTS", parts = parts})
+						end,
+					}),
+					}),
+				}),
+			PlaceObj('XTemplateTemplate', {
+				'comment', "scrap all",
+				'__condition', function (parent, context) return context and InventoryIsContainerOnSameSector(context) and context.item and context.item.ScrapParts and context.item.ScrapParts > 0 and context.item.object_class~="Medicine" and IsKindOf(context.item, "InventoryStack") end,
+				'__template', "ContextMenuButton",
+				'Id', "scrapall",
+				'FocusOrder', point(1, 11),
+				'OnContextUpdate', function (self, context, ...)
+					self:SetEnabled(not context.item.locked)
+				end,
+				'OnPress', function (self, gamepad)
+					local context = self:ResolveId("node").context
+					if not context then return end
+					
+					CreateRealTimeThread(function()
+						local popupHost = GetInGameInterface()
+						local scrapPrompt = CreateQuestionBox(
+							popupHost,
+							T(862015339762, "Scrap all"),
+							T(131046045582, "This action will destroy the entire stack. Are you sure?"),
+							T(689884995409, "Yes"), 
+							T(782927325160, "No"))
+									
+						local resp = scrapPrompt:Wait()
+						if resp ~= "ok" then
+							return
+						else
+							local unit = context.unit
+							local container = context.context
+							local item = context.item
+							local slot_name = context.slot_wnd.slot_name
+							
+							NetSquadBagAction(unit, container, slot_name, item, gv_SquadBag, "scrapall", 0)
+							PlayFX("Scrap", "start", item)							
+						end
+					end)
+					context.slot_wnd:ClosePopup()
+				end,
+				'Text', T(522902019009, --[[XTemplate InventoryContextMenu Text]] "SCRAP ALL"),
+			}, {
+				PlaceObj('XTemplateWindow', {
+					'__class', "XText",
+					'Margins', box(0, 0, 10, 0),
+					'Dock', "right",
+					'HandleMouse', false,
+					'TextStyle', "SatelliteContextMenuText",
+					'Translate', true,
+					'TextHAlign', "right",
+				}, {
+					PlaceObj('XTemplateFunc', {
+						'name', "Open(self)",
+						'func', function (self)
+							self:OnSetRollover(false)
+							XText.Open(self)
+						end,
+					}),
+					PlaceObj('XTemplateFunc', {
+						'name', "OnSetRollover(self, rollover)",
+						'func', function (self, rollover)
+							local context = self.context
+							self:SetTextStyle((rollover and self.enabled) and "SatelliteContextMenuTextRollover" or "SatelliteContextMenuText")
+							
+							local item = context.item
+							local parts = item:AmountOfScrapPartsFromItem()*item.Amount
 							self:SetText(T{399084673498, "<parts> PARTS", parts = parts})
 						end,
 					}),
@@ -1096,7 +1161,7 @@ PlaceObj('XTemplate', {
 				}),
 			PlaceObj('XTemplateTemplate', {
 				'comment', "cashstack",
-				'__condition', function (parent, context) return InvContextMenuFilter(context, "ValuablesStack") end,
+				'__condition', function (parent, context) return InvContextMenuFilter(context, "ValuablesStack")  and context.item and context.item.Amount>1 end,
 				'__template', "ContextMenuButton",
 				'Id', "cashstack",
 				'FocusOrder', point(1, 12),
@@ -1108,7 +1173,7 @@ PlaceObj('XTemplate', {
 						local prompt = CreateQuestionBox(
 							terminal.desktop,
 							T(727797864120, "Cash In"),
-							T(131046045582, "This action will destroy the whole stack. Are you sure?"),
+							T(131046045582, "This action will destroy the entire stack. Are you sure?"),
 							T(689884995409, "Yes"), 
 							T(782927325160, "No"))
 									
@@ -1174,7 +1239,16 @@ PlaceObj('XTemplate', {
 					local err = false
 					
 					local container = context.context
-					if not IsKindOfClasses(container, "Unit", "UnitData") then
+					if IsKindOf(container, "SectorStash") then
+						if not InventoryIsValidTargetForUnitInTransit(container) then			
+							err = T(865982134636, "In transit")
+						end
+						
+						local unit = GetInventoryUnit()
+						if unit and unit.Squad and gv_Squads[unit.Squad] and container.sector_id ~= gv_Squads[unit.Squad].CurrentSector then
+							err = T(610545203321, "Not on sector")
+						end
+					elseif not IsKindOfClasses(container, "Unit", "UnitData") then
 						err = T(926573774956, "Not in Inventory")
 					else
 						local unit = container

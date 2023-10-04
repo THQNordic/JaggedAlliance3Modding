@@ -46,7 +46,7 @@ PlaceObj('XTemplate', {
 			'ActionName', "Advance",
 			'ActionGamepad', "ButtonA",
 			'ActionState', function (self, host)
-				if not host.context.MessengerOnline then
+				if not host.context.MessengerOnline or not host.controlling_player then
 					return "disabled"
 				end
 				
@@ -125,6 +125,9 @@ PlaceObj('XTemplate', {
 				if not host then return end
 				host:ActionsUpdated()
 			end,
+		}),
+		PlaceObj('XTemplateTemplate', {
+			'__template', "ShowOtherPlayerId",
 		}),
 		PlaceObj('XTemplateWindow', {
 			'__class', "XFrame",

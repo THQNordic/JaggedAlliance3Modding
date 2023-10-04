@@ -178,6 +178,52 @@ function OnMsg.OnPreSavePreset(preset)
 	end
 end
 
+AppendClass.EntitySpecProperties = {	
+	properties = {
+		{ id = "SunShadowOptional", help = "Sun shadow can be disabled on low settings", editor = "bool", category = "Misc", default = false, entitydata = true, }
+	}
+}
+
+g_SunShadowCastersOptionalClasses = {}
+
+function OnMsg.ClassesBuilt()
+	for name, cl in pairs(g_Classes) do
+		if IsKindOf(cl, "CObject") and table.get(EntityData, cl:GetEntity(), "entity", "SunShadowOptional") then
+			g_SunShadowCastersOptionalClasses[#g_SunShadowCastersOptionalClasses + 1] = name
+		end
+	end
+end
+
+function SetSunShadowCasters(set)
+	local t = GetPreciseTicks()
+	local c = 0
+	local f = set and CObject.SetEnumFlags or CObject.ClearEnumFlags
+	local efSunShadow = const.efSunShadow
+	MapForEach("map", "CObject", function(o)
+		if o:IsKindOf("Slab") then return end
+		local v = EnumVolumes(o)
+		if v and v[1] and not v[1].dont_use_interior_lighting then
+			f(o, efSunShadow)
+			c = c + 1
+		end
+	end)
+	c = c + MapForEach("map", g_SunShadowCastersOptionalClasses, function(o)
+		local z = o:GetAxis():z()
+		if z > 3000 or z < -3000 then
+			f(o, efSunShadow)
+		end
+	end)
+	if Platform.developer and Platform.console then
+		printf("SetSunShadowCasters: removed %d objects in %d ms", c, GetPreciseTicks() - t)
+	end
+end
+
+function OnMsg.NewMapLoaded()
+	if Platform.xbox_one or Platform.ps4 or (not Platform.developer and not IsEditorActive() and EngineOptions.Shadows == "Low") then
+		SetSunShadowCasters(false)
+	end
+end
+
 function EngineOptionFixups.DisableUpscalingIfNotAvailable(engine_options, last_applied_fixup_revision)
 	local upscaling = engine_options.Upscaling
 	if not upscaling then return end
@@ -188,4 +234,119 @@ function EngineOptionFixups.DisableUpscalingIfNotAvailable(engine_options, last_
 			engine_options.Upscaling = "Off"
 		end
 	end
+end
+
+function CheckAND:GetEditorView()
+	local conditions =  self.Conditions
+	if not conditions then return Untranslated(" AND ") end
+	local txt = {}
+	for _, cond in ipairs(conditions) do
+		txt[#txt+1] = Untranslated("( ".._InternalTranslate(cond:GetEditorView(), cond).." )")
+	end
+	return table.concat(txt, Untranslated(" AND "))
+end
+
+function CheckAND:GetUIText(context, template, game)
+	local texts = {}
+	for _, cond in ipairs(self.Conditions) do
+		local text = cond:HasMember("GetUIText") and cond:GetUIText(context, template, game)
+		if text and text~="" then
+		 	texts[#texts + 1] = text	
+		end
+	end
+	local count = #texts
+	if count <1 then return end
+	if count == 1 then return texts[1] end
+	return  table.concat(texts,"\n")
+end
+
+function CheckANDGetPhraseTopRolloverText(negative, template, game)
+	local texts = {}
+	for _, cond in ipairs(self.Conditions) do
+		local text = cond:HasMember("GetPhraseTopRolloverText") and cond:GetPhraseTopRolloverText(negative, template, game)
+		if text and text~="" then
+		 	texts[#texts + 1] = text	
+		end
+	end
+	local count = #texts
+	if count <1 then return end
+	if count == 1 then return texts[1] end
+	return  table.concat(texts,"\n")
+end
+
+function CheckAND:GetPhraseFX()
+	for _, cond in ipairs(self.Conditions) do
+		local fx = cond:HasMember("GetPhraseFX") and cond:GetPhraseFX()
+		if fx then
+			return fx
+		end
+	end
+end
+
+function CheckOR:GetEditorView()
+	local conditions =  self.Conditions
+	if not conditions then return Untranslated(" OR ") end
+	local txt = {}
+	for _, cond in ipairs(conditions) do
+		txt[#txt+1] = Untranslated("( ".._InternalTranslate(cond:GetEditorView(), cond).." )")
+	end
+	return table.concat(txt, Untranslated(" OR "))
+end
+
+function CheckOR:GetUIText(context, template, game)
+	local texts = {}
+	for _, cond in ipairs(self.Conditions) do
+		local text = cond:HasMember("GetUIText") and cond:GetUIText(context, template, game)
+		if text and text~="" then
+		 	texts[#texts + 1] = text	
+		end
+	end
+	local count = #texts
+	if count <1 then return end
+	if count == 1 then return texts[1] end
+	
+	return  table.concat(texts,"\n")
+end
+
+function CheckOR:GetPhraseTopRolloverText(negative, template, game)
+	local texts = {}
+	for _, cond in ipairs(self.Conditions) do
+		local text = cond:HasMember("GetPhraseTopRolloverText") and cond:GetPhraseTopRolloverText(negative, template, game)
+		if text and text~="" then
+		 	texts[#texts + 1] = text	
+		end
+	end
+	local count = #texts
+	if count <1 then return end
+	if count == 1 then return texts[1] end
+	return texts[AsyncRand(count) +1]
+end
+
+function CheckOR:GetPhraseFX()
+	for _, cond in ipairs(self.Conditions) do
+		local fx = cond:HasMember("GetPhraseFX") and cond:GetPhraseFX()
+		if fx then
+			return fx
+		end
+	end
+end
+
+DefineClass.AND = {__parents = {"CheckAND"}}
+DefineClass.OR = {__parents = {"CheckOR"}}
+
+CascadesDropOnHighestFloor = {
+	Low = true,
+	["Medium (PS4,XboxOne)"] = true,
+	["High (PS4Pro)"] = true,
+	Medium = true,
+}
+
+function OnMsg.TacCamFloorChanged()
+	local cascades = hr.ShadowCSMCascades
+	if CascadesDropOnHighestFloor[EngineOptions.Shadows or "none"] then
+		if cameraTac.GetFloor() > 0 and cascades > 2 then
+			cascades = cascades - 1
+		end
+	end
+	hr.ShadowCSMActiveCascades = cascades
 end

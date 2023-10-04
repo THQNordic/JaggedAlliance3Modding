@@ -20,6 +20,13 @@ PlaceObj('XTemplate', {
 				XDialog.Open(self, ...)
 				ShowMouseCursor("PreGame")
 				SetDisableMouseViaGamepad(false, "PreGameMenu")
+				if Platform.xbox and XboxNewDlc then
+					XboxNewDlc = false
+					self:CreateThread("XboxDlc", function() 
+						LoadDlcs("force reload")
+						OpenPreGameMainMenu("")
+					end)
+				end
 				RemoveOutdatedMods(self)
 				ChangeMap(GetMainMenuMapName())
 				CreateRealTimeThread( function()
@@ -98,6 +105,9 @@ PlaceObj('XTemplate', {
 					'ActionGamepad', "ButtonB",
 					'OnActionEffect', "back",
 					'OnAction', function (self, host, source, ...)
+						if GetLoadingScreenDialog("noAccStorage") then
+							return
+						end
 						if source and source.class == "XButton" then
 							source:SetFocus(true)
 						end
@@ -130,17 +140,54 @@ PlaceObj('XTemplate', {
 					'ActionShortcut', "Escape",
 					'ActionGamepad', "ButtonB",
 					'OnAction', function (self, host, source, ...)
+						if GetLoadingScreenDialog("noAccStorage") then
+							return
+						end
 						if not Game and not GetPreGameMainMenu() then
 							MultiplayerLobbySetUI("multiplayer")
 						else
 							local mp = GetMultiplayerLobbyDialog()
 							if not mp or (mp:ResolveId("idSubContent").Mode ~= "multiplayer_guest" and
 										mp:ResolveId("idSubContent").Mode ~= "multiplayer_host") then
-								MultiplayerLobbySetUI("empty", "unlist")
+								if host.isMMFocused or not GetUIStyleGamepad() then
+									MultiplayerLobbySetUI("empty", "unlist")
+								else
+										local gameList = host:ResolveId("idSubMenu"):ResolveId("idScrollArea")
+										gameList:SetSelection(false)
+								
+										local list = host:ResolveId("idMainMenuButtonsContent"):ResolveId("idList")
+										list:SetFocus(true)
+										list:SelectFirstValidItem()
+										host.isMMFocused = true
+								end
 							else
 								MultiplayerLobbySetUI("multiplayer")
 							end
 						end
+					end,
+					'FXPress', "MainMenuButtonClick",
+				}),
+				PlaceObj('XTemplateAction', {
+					'ActionId', "idGoToSubMenu",
+					'ActionGamepad', "DPadRight",
+					'ActionState', function (self, host)
+						return GoToSubMenu_ActionState(self, host)
+					end,
+					'OnAction', function (self, host, source, ...)
+						host.isMMFocused = false
+						GoToSubMenu_OnAction(self, host, source, ...)
+					end,
+					'FXPress', "MainMenuButtonClick",
+				}),
+				PlaceObj('XTemplateAction', {
+					'ActionId', "idGoToSubMenu",
+					'ActionGamepad', "LeftThumbRight",
+					'ActionState', function (self, host)
+						return GoToSubMenu_ActionState(self, host)
+					end,
+					'OnAction', function (self, host, source, ...)
+						host.isMMFocused = false
+						GoToSubMenu_OnAction(self, host, source, ...)
 					end,
 					'FXPress', "MainMenuButtonClick",
 				}),

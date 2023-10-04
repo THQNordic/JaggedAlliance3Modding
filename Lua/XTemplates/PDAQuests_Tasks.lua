@@ -505,7 +505,7 @@ PlaceObj('XTemplate', {
 			'ActionName', T(261552753375, --[[XTemplate PDAQuests_Tasks ActionName]] "Set Active"),
 			'ActionToolbar', "ActionBar",
 			'ActionShortcut', "A",
-			'ActionGamepad', "Start",
+			'ActionGamepad', "ButtonX",
 			'ActionState', function (self, host)
 				local tabDlg = host.idContent
 				local subContentHolder = tabDlg.idSubContent

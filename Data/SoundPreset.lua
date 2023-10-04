@@ -7871,6 +7871,36 @@ PlaceObj('SoundPreset', {
 })
 
 PlaceObj('SoundPreset', {
+	MapName = "K-11U - Cryolabor",
+	Regions = {
+		"Underground",
+	},
+	group = "ATMOSPHERIC",
+	id = "Laboratory_Cold",
+	looping = true,
+	type = "EnvironmentNonPositional",
+	volume = 52,
+	PlaceObj('Sample', {
+		'file', "Sounds/environment-stereo/ATMO_Lab COLD",
+	}),
+})
+
+PlaceObj('SoundPreset', {
+	MapName = "G-12U - Waffenlabor",
+	Regions = {
+		"Underground",
+	},
+	group = "ATMOSPHERIC",
+	id = "Laboratory_warm",
+	looping = true,
+	type = "EnvironmentNonPositional",
+	volume = 35,
+	PlaceObj('Sample', {
+		'file', "Sounds/environment-stereo/ATMO_Lab WARM",
+	}),
+})
+
+PlaceObj('SoundPreset', {
 	Regions = {
 		"Savanna",
 	},

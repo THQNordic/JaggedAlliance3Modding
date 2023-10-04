@@ -253,7 +253,7 @@ PlaceObj('Conversation', {
 		AutoRemove = true,
 		Comment = "+10 Loyalty, Martha & Herman leave",
 		Conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('UnitSquadHasMerc', {
 						HasPerk = "Negotiator",

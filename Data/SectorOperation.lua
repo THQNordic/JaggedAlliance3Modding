@@ -621,7 +621,7 @@ PlaceObj('SectorOperation', {
 	OnRemoveOperation = function (self, merc)
 		merc.wounds_being_treated = 0
 		if merc.RestTimer>0 and (Game.CampaignTime - merc.RestTimer) >= const.Satellite.UnitTirednessRestTime then				
-				merc:SetTired(Max(merc.Tiredness-1,0))
+				merc:SetTired(merc.Tiredness>0 and Max(merc.Tiredness-1, 0) or merc.Tiredness)
 				merc.TravelTimerStart = 0
 				merc.TravelTime = 0
 		end
@@ -1601,6 +1601,11 @@ PlaceObj('SectorOperation', {
 			if not teacher then
 				return
 			end
+			local is_learned_max = merc[stat]>=teacher[stat] or merc[stat]>max_learned_stat
+			if is_learned_max then
+				merc:SetCurrentOperation("Idle")
+				return
+			end
 		else-- teacher
 			local students = GetOperationProfessionals(sector.Id, self.id, "Student")
 			local t_stat = merc[stat]
@@ -1718,7 +1723,7 @@ PlaceObj('SectorOperation', {
 			elseif progress>=self:ResolveValue("ActivityDurationInHoursReduced")*scale then	
 				merc:SetTired(Min(merc.Tiredness,0))
 			elseif progress>=self:ResolveValue("ActivityDurationInHoursMin")*scale then	
-				merc:SetTired(Max(merc.Tiredness-1, 0))
+				merc:SetTired(merc.Tiredness>0 and Max(merc.Tiredness-1, 0) or merc.Tiredness)
 			end	
 		end
 	end,
@@ -2297,10 +2302,9 @@ PlaceObj('SectorOperation', {
 	end,
 	OnRemoveOperation = function (self, merc)
 		local sector = merc:GetSector()
-		local qid = GetCraftOperationListsIds(self.id)
-		sector[qid] = {}
+		local tbl = SetCraftOperationQueueTable(sector, self.id, {})
 		SectorOperationValidateItemsToCraft(sector.Id, self.id, merc)
-		ObjModified(sector[qid])
+		ObjModified(tbl)
 		sector.custom_operations[self.id] = nil
 		if sector.started_operations and sector.started_operations[self.id] then
 			NetSyncEvent("InterruptSectorOperation", sector.Id,self.id)				
@@ -2309,11 +2313,10 @@ PlaceObj('SectorOperation', {
 	end,
 	OnSetOperation = function (self, merc, arg)
 		local sector = merc:GetSector()
-		local qid = GetCraftOperationListsIds(self.id)
-		sector[qid] = {}
+		local tbl = SetCraftOperationQueueTable(sector, self.id, {})
 		SectorOperationValidateItemsToCraft(sector.Id, self.id, merc)
 		SectorOperation_CraftTotalTime(sector.Id, self.id)
-		ObjModified(sector[qid] )
+		ObjModified(tbl )
 	end,
 	Parameters = {
 		PlaceObj('PresetParamNumber', {
@@ -2428,9 +2431,9 @@ PlaceObj('SectorOperation', {
 				end
 				-- update queue
 				rem_progress = used_time
-				local qid = GetCraftOperationListsIds(self.id)
-				table.remove(gv_Sectors[sector.Id][qid], 1)			
-		
+				local tbl = GetCraftOperationQueueTable(gv_Sectors[sector.Id], self.id)
+				table.remove(tbl, 1)			
+				SetCraftOperationQueueTable(gv_Sectors[sector.Id], self.id, tbl)
 				--SectorOperation_ItemsUpdateItemLists()
 			end		
 		until not next(queue) or (not rem_progress or rem_progress<=0)		

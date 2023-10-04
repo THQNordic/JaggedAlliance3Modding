@@ -13,7 +13,7 @@ PlaceObj('QuestsDef', {
 		LastNoteIdx = 10,
 		PlaceObj('QuestNote', {
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('PlayerIsInSectors', {
 							Sectors = {
@@ -75,7 +75,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							QuestId = "03_DefeatTheLegion",
@@ -121,7 +121,7 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('QuestNote', {
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('PlayerIsInSectors', {
 							Sectors = {
@@ -178,7 +178,7 @@ PlaceObj('QuestsDef', {
 			},
 			Idx = 3,
 			ShowConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('PlayerIsInSectors', {
 							Sectors = {
@@ -206,7 +206,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							Condition = "or",

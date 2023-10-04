@@ -269,49 +269,37 @@ PlaceObj('QuestsDef', {
 			},
 			Idx = 9,
 			ShowConditions = {
-				PlaceObj('OR', {
-					Conditions = {
-						PlaceObj('QuestIsVariableBool', {
-							QuestId = "TheTrashFief",
-							Vars = set( "CombatWon", "SidedKnights" ),
-							__eval = function ()
-								local quest = gv_Quests['TheTrashFief'] or QuestGetState('TheTrashFief')
-								return quest.CombatWon and quest.SidedKnights
-							end,
-						}),
-					},
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "TheTrashFief",
+					Vars = set( "CombatWon", "SidedKnights" ),
+					__eval = function ()
+						local quest = gv_Quests['TheTrashFief'] or QuestGetState('TheTrashFief')
+						return quest.CombatWon and quest.SidedKnights
+					end,
 				}),
 			},
 			Text = T(528593826738, --[[QuestsDef TheTrashFief Text]] "<em>Outcome:</em> The <em>Junkyard Knights</em> will protect <em><SectorName('L9')></em>"),
 		}),
 		PlaceObj('QuestNote', {
 			CompletionConditions = {
-				PlaceObj('OR', {
-					Conditions = {
-						PlaceObj('QuestIsVariableBool', {
-							QuestId = "TheTrashFief",
-							Vars = set( "CombatWon", "SidedNobles" ),
-							__eval = function ()
-								local quest = gv_Quests['TheTrashFief'] or QuestGetState('TheTrashFief')
-								return quest.CombatWon and quest.SidedNobles
-							end,
-						}),
-					},
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "TheTrashFief",
+					Vars = set( "CombatWon", "SidedNobles" ),
+					__eval = function ()
+						local quest = gv_Quests['TheTrashFief'] or QuestGetState('TheTrashFief')
+						return quest.CombatWon and quest.SidedNobles
+					end,
 				}),
 			},
 			Idx = 12,
 			ShowConditions = {
-				PlaceObj('OR', {
-					Conditions = {
-						PlaceObj('QuestIsVariableBool', {
-							QuestId = "TheTrashFief",
-							Vars = set( "CombatWon", "SidedNobles" ),
-							__eval = function ()
-								local quest = gv_Quests['TheTrashFief'] or QuestGetState('TheTrashFief')
-								return quest.CombatWon and quest.SidedNobles
-							end,
-						}),
-					},
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "TheTrashFief",
+					Vars = set( "CombatWon", "SidedNobles" ),
+					__eval = function ()
+						local quest = gv_Quests['TheTrashFief'] or QuestGetState('TheTrashFief')
+						return quest.CombatWon and quest.SidedNobles
+					end,
 				}),
 			},
 			Text = T(747425867159, --[[QuestsDef TheTrashFief Text]] "<em>Outcome:</em> The <em>Junkyard Nobles</em> granted a concession for the <em>Junk Fields</em> at <em><SectorName('L9')></em>"),

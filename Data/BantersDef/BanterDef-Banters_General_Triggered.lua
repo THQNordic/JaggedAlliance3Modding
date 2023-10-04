@@ -1155,7 +1155,7 @@ PlaceObj('BanterDef', {
 		}),
 	},
 	conditions = {
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('UnitSquadHasMerc', {
 					Name = "Larry",

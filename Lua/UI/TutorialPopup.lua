@@ -18,6 +18,12 @@ function TutorialPopupClass:UpdateText()
 	self.idText:SetText(text)
 end
 
+function OnMsg.TranslationChanged()
+	if CurrentTutorialPopup then
+		CurrentTutorialPopup:UpdateText()
+	end
+end
+
 local function lGetOverlapping(popup)
 	if RolloverWin and not popup:IsWithin(RolloverWin) and BoxIntersectsBox(popup.idContent.box, RolloverWin.box) then
 		return true
@@ -235,6 +241,10 @@ function OpenTutorialPopup(onWindow, parent, preset, textContext)
 	local enabled_option = GetAccountStorageOptionValue("HintsEnabled")
 	if not enabled_option then
 		return false
+	end
+	
+	if not HasAnyMercsControlled() then
+		return -- Do not show popups for "spectator"
 	end
 	
 	if not CanShowTutorialPopup then
@@ -1411,5 +1421,17 @@ function OnMsg.SelectionChange()
 	
 	if WholeTeamSelected() then
 		TutorialHintsState.SelectAll = true
+	end
+end
+
+function HasAnyMercsControlled()
+	local squads = GetPlayerMercSquads()
+	for _, squad in pairs(squads) do
+		for _, unitId in ipairs(squad.units) do
+			local ud = gv_UnitData[unitId]
+			if ud and ud:IsLocalPlayerControlled() then
+				return true
+			end
+		end
 	end
 end

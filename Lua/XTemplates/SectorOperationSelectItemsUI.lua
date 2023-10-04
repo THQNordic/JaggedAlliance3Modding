@@ -276,7 +276,7 @@ PlaceObj('XTemplate', {
 											local count = 9
 											for i,itm_data in ipairs(full_table) do
 												local itm = SectorOperation_FindItemDef(itm_data)
-												count =  count - ( itm.LargeItem  and 2 or 1)
+												count =  count - ( itm:IsLargeItem()  and 2 or 1)
 											end
 											for i=1,count do
 												to_return[i] = i
@@ -392,7 +392,7 @@ PlaceObj('XTemplate', {
 									local operation_id = context[1].operation
 									local count = #(SectorOperationItems_GetAllItems(sector_id, operation_id) or empty_table)
 									local text = T{948764566986, "Damaged Gear<right><GameColorF><count>", count =count}
-									if operation_id=="CraftAmmo" or operation_id=="CraftExplosives" then
+									if IsCraftOperationId(operation_id) then
 										text = T{215483657916, "Recipes<right><GameColorF><count>", count =count}
 									end
 									node.idRepairItems:SetText(text)

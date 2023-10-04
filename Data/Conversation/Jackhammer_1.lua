@@ -516,7 +516,7 @@ PlaceObj('Conversation', {
 			Align = "right",
 			AutoRemove = true,
 			Conditions = {
-				PlaceObj('AND', {
+				PlaceObj('CheckAND', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							QuestId = "Luigi",
@@ -643,22 +643,18 @@ PlaceObj('Conversation', {
 			Align = "right",
 			AutoRemove = true,
 			Conditions = {
-				PlaceObj('AND', {
-					Conditions = {
-						PlaceObj('QuestIsVariableBool', {
-							QuestId = "Luigi",
-							Vars = set({
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "Luigi",
+					Vars = set({
 	JackhammerClue = true,
 	JackhammerExposed = false,
 }),
-							__eval = function ()
-								local quest = gv_Quests['Luigi'] or QuestGetState('Luigi')
-								return quest.JackhammerClue and not quest.JackhammerExposed
-							end,
-						}),
-					},
+					__eval = function ()
+						local quest = gv_Quests['Luigi'] or QuestGetState('Luigi')
+						return quest.JackhammerClue and not quest.JackhammerExposed
+					end,
 				}),
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('UnitSquadHasMerc', {
 							Name = "Nails",
@@ -945,7 +941,7 @@ PlaceObj('Conversation', {
 			AutoRemove = true,
 			Comment = "have enough Leadership OR both have a clue and know about the documents",
 			Conditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('UnitSquadHasMerc', {
 							HasStat = "Leadership",

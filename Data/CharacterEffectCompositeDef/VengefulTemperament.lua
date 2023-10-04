@@ -6,11 +6,10 @@ PlaceObj('CharacterEffectCompositeDef', {
 	'Comment', "Meltdown - last enemy that attacks her has Vengeance",
 	'object_class', "Perk",
 	'msg_reactions', {
-		PlaceObj('MsgReaction', {
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "attacker",
 			Event = "OnAttack",
 			Handler = function (self, attacker, action, target, results, attack_args)
-				local reaction_idx = table.find(self.msg_reactions or empty_table, "Event", "OnAttack")
-				if not reaction_idx then return end
 				
 				local function exec(self, attacker, action, target, results, attack_args)
 				-- proc
@@ -18,16 +17,19 @@ PlaceObj('CharacterEffectCompositeDef', {
 					attacker:AddStatusEffect("Inspired")
 				end
 				end
-				local id = GetCharacterEffectId(self)
 				
-				if id then
-					if IsKindOf(attacker, "StatusEffectObject") and attacker:HasStatusEffect(id) then
-						exec(self, attacker, action, target, results, attack_args)
-					end
-				else
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[1]
+				if not reaction_def or reaction_def.Event ~= "OnAttack" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
 					exec(self, attacker, action, target, results, attack_args)
 				end
 				
+				if self:VerifyReaction("OnAttack", reaction_def, attacker, attacker, action, target, results, attack_args) then
+					exec(self, attacker, action, target, results, attack_args)
+				end
 			end,
 			HandlerCode = function (self, attacker, action, target, results, attack_args)
 				-- proc
@@ -36,41 +38,44 @@ PlaceObj('CharacterEffectCompositeDef', {
 				end
 			end,
 		}),
-		PlaceObj('MsgReaction', {
-			Event = "OnAttacked",
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "target",
+			Event = "OnAttack",
 			Handler = function (self, attacker, action, target, results, attack_args)
-				local reaction_idx = table.find(self.msg_reactions or empty_table, "Event", "OnAttacked")
-				if not reaction_idx then return end
 				
 				local function exec(self, attacker, action, target, results, attack_args)
 				-- apply debuff
 				if not results.miss and not IsMerc(attacker) then
-					for _, unit in ipairs(g_Units) do
+					for _, unit in ipairs(g_Units) do 
 						unit:RemoveStatusEffect("VengeanceTarget")
 					end
 					attacker:AddStatusEffect("VengeanceTarget")
 				end
 				end
-				local id = GetCharacterEffectId(self)
 				
-				if id then
-					if IsKindOf(target, "StatusEffectObject") and target:HasStatusEffect(id) then
-						exec(self, attacker, action, target, results, attack_args)
-					end
-				else
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[2]
+				if not reaction_def or reaction_def.Event ~= "OnAttack" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
 					exec(self, attacker, action, target, results, attack_args)
 				end
 				
+				if self:VerifyReaction("OnAttack", reaction_def, target, attacker, action, target, results, attack_args) then
+					exec(self, attacker, action, target, results, attack_args)
+				end
 			end,
 			HandlerCode = function (self, attacker, action, target, results, attack_args)
 				-- apply debuff
 				if not results.miss and not IsMerc(attacker) then
-					for _, unit in ipairs(g_Units) do
+					for _, unit in ipairs(g_Units) do 
 						unit:RemoveStatusEffect("VengeanceTarget")
 					end
 					attacker:AddStatusEffect("VengeanceTarget")
 				end
 			end,
+			helpActor = "target",
 		}),
 	},
 	'DisplayName', T(562100828460, --[[CharacterEffectCompositeDef VengefulTemperament DisplayName]] "Hard Feelings"),

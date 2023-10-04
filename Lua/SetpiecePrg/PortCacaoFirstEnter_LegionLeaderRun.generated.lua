@@ -8,5 +8,5 @@ SetpiecePrgs.PortCacaoFirstEnter_LegionLeaderRun = function(seed, state, MainAct
 	prgdbg(li, 1, 1) _, LegionLeaderStartRun = sprocall(SetpieceTeleport.Exec, SetpieceTeleport, state, MainActor, "LegionLeaderStartRun", true)
 	prgdbg(li, 1, 2) sprocall(SetpieceSetStance.Exec, SetpieceSetStance, state, rand, true, "", MainActor, "Standing", "Current Weapon", true)
 	local _, LegionLeaderHide
-	prgdbg(li, 1, 3) _, LegionLeaderHide = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, true, "", MainActor, "LegionLeaderHide", true, true, false, "Standing", true, false, "")
+	prgdbg(li, 1, 3) _, LegionLeaderHide = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, true, "", MainActor, "LegionLeaderHide", true, true, false, "Standing", true, false, "", 1000)
 end

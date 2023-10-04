@@ -7,8 +7,8 @@ DefineClass.KevlarVest = {
 
 
 	object_class = "Armor",
-	Degradation = 6,
 	ScrapParts = 4,
+	Degradation = 6,
 	Icon = "UI/Icons/Items/kevlar_armor",
 	DisplayName = T(681283668250, --[[InventoryItemCompositeDef KevlarVest DisplayName]] "Kevlar Armor"),
 	DisplayNamePlural = T(520688450583, --[[InventoryItemCompositeDef KevlarVest DisplayNamePlural]] "Kevlar Armors"),

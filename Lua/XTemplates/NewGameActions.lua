@@ -12,6 +12,9 @@ PlaceObj('XTemplate', {
 			'ActionGamepad', "ButtonB",
 			'OnActionEffect', "back",
 			'OnAction', function (self, host, source, ...)
+				if GetLoadingScreenDialog("noAccStorage") then
+					return
+				end
 				if source and source.class == "XButton" then
 					source:SetFocus(true)
 				end

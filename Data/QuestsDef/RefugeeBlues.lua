@@ -36,7 +36,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('CheckIsPersistentUnitDead', {
 							per_ses_id = "NPC_Shaman",
@@ -74,7 +74,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('CheckIsPersistentUnitDead', {
 							per_ses_id = "NPC_Shaman",
@@ -120,7 +120,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			CompletionConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							QuestId = "TheTwelveChairs",
@@ -237,7 +237,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('CheckIsPersistentUnitDead', {
 							per_ses_id = "NPC_Shaman",
@@ -278,7 +278,7 @@ PlaceObj('QuestsDef', {
 		PlaceObj('QuestNote', {
 			AddInHistory = true,
 			CompletionConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('CheckIsPersistentUnitDead', {
 							per_ses_id = "NPC_Shaman",
@@ -304,7 +304,7 @@ PlaceObj('QuestsDef', {
 						return quest.Given
 					end,
 				}),
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('CheckIsPersistentUnitDead', {
 							per_ses_id = "NPC_Shaman",
@@ -424,7 +424,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			CompletionConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('CheckIsPersistentUnitDead', {
 							per_ses_id = "NPC_Claudette",
@@ -621,7 +621,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							Condition = "or",
@@ -676,32 +676,28 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
-						PlaceObj('OR', {
-							Conditions = {
-								PlaceObj('QuestIsVariableBool', {
-									Condition = "or",
-									QuestId = "04_Betrayal",
-									Vars = set( "Given", "TriggerWorldFlip", "WorldFlipDone" ),
-									__eval = function ()
-										local quest = gv_Quests['04_Betrayal'] or QuestGetState('04_Betrayal')
-										return quest.Given or quest.TriggerWorldFlip or quest.WorldFlipDone
-									end,
-								}),
-								PlaceObj('QuestIsVariableBool', {
-									Condition = "or",
-									QuestId = "RefugeeBlues",
-									Vars = set( "KarenKilled", "KarenPassportFound", "KarenPassportGiven" ),
-									__eval = function ()
-										local quest = gv_Quests['RefugeeBlues'] or QuestGetState('RefugeeBlues')
-										return quest.KarenKilled or quest.KarenPassportFound or quest.KarenPassportGiven
-									end,
-								}),
-								PlaceObj('CheckIsPersistentUnitDead', {
-									per_ses_id = "NPC_Karen",
-								}),
-							},
+						PlaceObj('QuestIsVariableBool', {
+							Condition = "or",
+							QuestId = "04_Betrayal",
+							Vars = set( "Given", "TriggerWorldFlip", "WorldFlipDone" ),
+							__eval = function ()
+								local quest = gv_Quests['04_Betrayal'] or QuestGetState('04_Betrayal')
+								return quest.Given or quest.TriggerWorldFlip or quest.WorldFlipDone
+							end,
+						}),
+						PlaceObj('QuestIsVariableBool', {
+							Condition = "or",
+							QuestId = "RefugeeBlues",
+							Vars = set( "KarenKilled", "KarenPassportFound", "KarenPassportGiven" ),
+							__eval = function ()
+								local quest = gv_Quests['RefugeeBlues'] or QuestGetState('RefugeeBlues')
+								return quest.KarenKilled or quest.KarenPassportFound or quest.KarenPassportGiven
+							end,
+						}),
+						PlaceObj('CheckIsPersistentUnitDead', {
+							per_ses_id = "NPC_Karen",
 						}),
 					},
 				}),
@@ -745,7 +741,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							Condition = "or",
@@ -874,7 +870,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							Condition = "or",
@@ -1136,7 +1132,7 @@ PlaceObj('QuestsDef', {
 					Negate = true,
 					per_ses_id = "NPC_Claudette",
 				}),
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('CombatIsActive', {}),
 						PlaceObj('GroupIsDead', {
@@ -1574,7 +1570,7 @@ PlaceObj('QuestsDef', {
 						return quest.KarenKilled or quest.KarenPassportGiven
 					end,
 				}),
-				PlaceObj('AND', {
+				PlaceObj('CheckAND', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							QuestId = "RescueHerMan",
@@ -1584,7 +1580,7 @@ PlaceObj('QuestsDef', {
 								return quest.Completed
 							end,
 						}),
-						PlaceObj('OR', {
+						PlaceObj('CheckOR', {
 							Conditions = {
 								PlaceObj('QuestIsVariableBool', {
 									Condition = "or",
@@ -1608,7 +1604,7 @@ PlaceObj('QuestsDef', {
 						}),
 					},
 				}),
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							Condition = "or",
@@ -1619,7 +1615,7 @@ PlaceObj('QuestsDef', {
 								return quest.JoseKilled
 							end,
 						}),
-						PlaceObj('AND', {
+						PlaceObj('CheckAND', {
 							Conditions = {
 								PlaceObj('QuestIsVariableBool', {
 									Condition = "or",
@@ -1630,7 +1626,7 @@ PlaceObj('QuestsDef', {
 										return quest.RunAway
 									end,
 								}),
-								PlaceObj('OR', {
+								PlaceObj('CheckOR', {
 									Conditions = {
 										PlaceObj('QuestIsVariableBool', {
 											Condition = "or",

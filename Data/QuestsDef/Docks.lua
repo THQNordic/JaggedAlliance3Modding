@@ -1291,6 +1291,25 @@ PlaceObj('QuestsDef', {
 					Negate = true,
 					sector_id = "K9",
 				}),
+				PlaceObj('CheckOR', {
+					Conditions = {
+						PlaceObj('QuestIsVariableBool', {
+							QuestId = "Docks",
+							Vars = set({
+	BombsArmed = false,
+}),
+							__eval = function ()
+								local quest = gv_Quests['Docks'] or QuestGetState('Docks')
+								return not quest.BombsArmed
+							end,
+						}),
+						PlaceObj('QuestIsVariableNum', {
+							Amount = 3,
+							Prop = "BombsDisarmed",
+							QuestId = "Docks",
+						}),
+					},
+				}),
 			},
 			Effects = {
 				PlaceObj('GrantExperienceSector', {

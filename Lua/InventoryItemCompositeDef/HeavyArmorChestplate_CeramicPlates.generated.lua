@@ -7,15 +7,15 @@ DefineClass.HeavyArmorChestplate_CeramicPlates = {
 
 
 	object_class = "TransmutedArmor",
-	Degradation = 6,
 	ScrapParts = 4,
+	Degradation = 6,
 	Icon = "UI/Icons/Items/heavy_vest",
 	SubIcon = "UI/Icons/Items/plates",
 	DisplayName = T(409839949549, --[[InventoryItemCompositeDef HeavyArmorChestplate_CeramicPlates DisplayName]] "Heavy Vest"),
 	DisplayNamePlural = T(792099182547, --[[InventoryItemCompositeDef HeavyArmorChestplate_CeramicPlates DisplayNamePlural]] "Heavy Vests"),
 	AdditionalHint = T(852368073119, --[[InventoryItemCompositeDef HeavyArmorChestplate_CeramicPlates AdditionalHint]] "<bullet_point> Damage reduction improved by Ceramic Plates\n<bullet_point> The ceramic plates will break after taking <GameColorG><RevertConditionCounter></GameColorG> hits\n<bullet_point> Cumbersome (no Free Move)"),
-	Cumbersome = true,
-	is_valuable = true,
+	Cumbersome = 1,
+	Valuable = 1,
 	PenetrationClass = 4,
 	DamageReduction = 40,
 	AdditionalReduction = 40,

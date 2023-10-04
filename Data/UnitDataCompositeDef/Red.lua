@@ -84,7 +84,7 @@ PlaceObj('UnitDataCompositeDef', {
 				}),
 			},
 			'Conditions', {
-				PlaceObj('AND', {
+				PlaceObj('CheckAND', {
 					Conditions = {
 						PlaceObj('UnitHireStatus', {
 							Status = "Hired",

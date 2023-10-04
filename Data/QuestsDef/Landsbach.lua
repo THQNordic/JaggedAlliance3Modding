@@ -1238,7 +1238,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			ShowWhenCompleted = true,
-			Text = T(762873418561, --[[QuestsDef Landsbach Text]] "<em>Outcome:</em> <em>Nightclub</em> no longer functions and <em>Siegfried</em> is nowhere to be seen but <em>Diesel</em> keeps spreading and poisoning the people of <em>Landsbach</em>"),
+			Text = T(762873418561, --[[QuestsDef Landsbach Text]] "<em>Outcome:</em> The <em>Nightclub</em> no longer functions and <em>Siegfried</em> is nowhere to be seen but <em>Diesel</em> keeps spreading and poisoning the people of <em>Landsbach</em>"),
 		}),
 		PlaceObj('QuestNote', {
 			CompletionConditions = {
@@ -1275,7 +1275,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			ShowWhenCompleted = true,
-			Text = T(198491534829, --[[QuestsDef Landsbach Text]] "<em>Outcome:</em> <em>Nightclub</em> no longer functions and <em>Siegfried</em> is out of the picture but <em>Diesel</em> keeps spreading and poisoning the people of <em>Landsbach</em>"),
+			Text = T(198491534829, --[[QuestsDef Landsbach Text]] "<em>Outcome:</em> The <em>Nightclub</em> no longer functions and <em>Siegfried</em> is out of the picture but <em>Diesel</em> keeps spreading and poisoning the people of <em>Landsbach</em>"),
 		}),
 		PlaceObj('QuestNote', {
 			CompletionConditions = {
@@ -1576,9 +1576,9 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
-						PlaceObj('AND', {
+						PlaceObj('CheckAND', {
 							Conditions = {
 								PlaceObj('QuestIsVariableBool', {
 									QuestId = "Landsbach",
@@ -1592,7 +1592,7 @@ PlaceObj('QuestsDef', {
 										return not quest.BounceBattle and not quest.SecretPlan and not quest.SigfriedBattle
 									end,
 								}),
-								PlaceObj('OR', {
+								PlaceObj('CheckOR', {
 									Conditions = {
 										PlaceObj('GroupIsDead', {
 											Group = "Gunther",
@@ -1609,7 +1609,7 @@ PlaceObj('QuestsDef', {
 								}),
 							},
 						}),
-						PlaceObj('AND', {
+						PlaceObj('CheckAND', {
 							Conditions = {
 								PlaceObj('QuestIsVariableBool', {
 									Condition = "or",
@@ -1728,7 +1728,7 @@ PlaceObj('QuestsDef', {
 								return quest.Failed
 							end,
 						}),
-						PlaceObj('AND', {
+						PlaceObj('CheckAND', {
 							Conditions = {
 								PlaceObj('QuestIsVariableBool', {
 									QuestId = "Landsbach",
@@ -1887,9 +1887,9 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
-						PlaceObj('AND', {
+						PlaceObj('CheckAND', {
 							Conditions = {
 								PlaceObj('QuestIsVariableBool', {
 									QuestId = "Landsbach",
@@ -1904,7 +1904,7 @@ PlaceObj('QuestsDef', {
 								}),
 							},
 						}),
-						PlaceObj('AND', {
+						PlaceObj('CheckAND', {
 							Conditions = {
 								PlaceObj('QuestIsVariableBool', {
 									QuestId = "Landsbach",
@@ -1922,7 +1922,7 @@ PlaceObj('QuestsDef', {
 								}),
 							},
 						}),
-						PlaceObj('AND', {
+						PlaceObj('CheckAND', {
 							Conditions = {
 								PlaceObj('QuestIsVariableBool', {
 									QuestId = "Landsbach",
@@ -1937,7 +1937,7 @@ PlaceObj('QuestsDef', {
 								}),
 							},
 						}),
-						PlaceObj('AND', {
+						PlaceObj('CheckAND', {
 							Conditions = {
 								PlaceObj('QuestIsVariableBool', {
 									QuestId = "Landsbach",
@@ -1952,7 +1952,7 @@ PlaceObj('QuestsDef', {
 								}),
 							},
 						}),
-						PlaceObj('AND', {
+						PlaceObj('CheckAND', {
 							Conditions = {
 								PlaceObj('QuestIsVariableBool', {
 									QuestId = "Landsbach",
@@ -2228,7 +2228,7 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('BanterHasPlayed', {
 							Banters = {
@@ -2289,7 +2289,7 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('BanterHasPlayed', {
 							Banters = {
@@ -2751,7 +2751,7 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('GroupIsDead', {
 							Group = "Gunther",

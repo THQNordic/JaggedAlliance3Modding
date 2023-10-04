@@ -100,7 +100,7 @@ PlaceObj('ChanceToHitModifier', {
 				param = "mg_burst_max_penalty"
 			else
 				param = "mg_burst_max_held_penalty"
-				if weapon1 and weapon1.Cumbersome then
+				if weapon1 and weapon1:IsCumbersome() then
 					extra = self:ResolveValue("mg_burst_cumbersome_penalty")
 				end
 			end
@@ -211,17 +211,6 @@ PlaceObj('ChanceToHitModifier', {
 	CalcValue = function (self, attacker, target, body_part_def, action, weapon1, weapon2, lof, aim, opportunity_attack, attacker_pos, target_pos)
 		if IsIlluminated(target) then
 			return false, 0
-		end
-		
-		if weapon1 then
-			local has, component = weapon1:HasComponent("IgnoreInTheDarkWhenFullyAimed")
-			if has and IsFullyAimedAttack(aim) then
-				return true, 0, component.DisplayName
-			end
-			has, component = weapon1:HasComponent("IgnoreInTheDark")
-			if has then
-				return true, 0, component.DisplayName
-			end
 		end
 		
 		local atPointBlank =  attacker ~= target and attacker:IsPointBlankRange(target)
@@ -466,9 +455,6 @@ PlaceObj('ChanceToHitModifier', {
 		if not IsKindOf(weapon1, "Firearm") or not attacker or not target then
 			return false, 0
 		end
-		if weapon1 and weapon1:HasComponent("IgnoreLightOfSightWhenFullyAimed") and IsFullyAimedAttack(aim) then
-			return false, 0
-		end
 		
 		return true, self:ResolveValue("Penalty")
 	end,
@@ -522,7 +508,7 @@ PlaceObj('ChanceToHitModifier', {
 
 PlaceObj('ChanceToHitModifier', {
 	CalcValue = function (self, attacker, target, body_part_def, action, weapon1, weapon2, lof, aim, opportunity_attack, attacker_pos, target_pos)
-		if attacker and weapon1 and weapon1.PointBlankRange and attacker:IsPointBlankRange(target) then
+		if attacker and IsKindOf(weapon1, "FirearmProperties") and weapon1:HasPointBlankBonus() and attacker:IsPointBlankRange(target) then
 			return true, self:ResolveValue("bonus")
 		end
 		

@@ -7,13 +7,13 @@ DefineClass.Machete = {
 
 
 	object_class = "MacheteWeapon",
-	Reliability = 50,
 	ScrapParts = 2,
+	Reliability = 50,
 	Icon = "UI/Icons/Weapons/Machete",
 	DisplayName = T(898985781986, --[[InventoryItemCompositeDef Machete DisplayName]] "Machete"),
 	DisplayNamePlural = T(315076086987, --[[InventoryItemCompositeDef Machete DisplayNamePlural]] "Machetes"),
 	AdditionalHint = T(725616226891, --[[InventoryItemCompositeDef Machete AdditionalHint]] "<bullet_point> Increased damage bonus from Strength"),
-	LargeItem = true,
+	LargeItem = 1,
 	UnitStat = "Dexterity",
 	Cost = 150,
 	BaseChanceToHit = 100,

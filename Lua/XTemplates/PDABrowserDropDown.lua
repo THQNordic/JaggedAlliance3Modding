@@ -30,6 +30,7 @@ PlaceObj('XTemplate', {
 				PlaceObj('XTemplateForEach', {
 					'array', function (parent, context) return PDABrowserHistoryState end,
 					'map', function (parent, context, array, i) return array and array[i] end,
+					'condition', function (parent, context, item, i) return not PDABrowserTabState[item.mode] or not PDABrowserTabState[item.mode].locked end,
 					'run_after', function (child, context, item, i, n, last)
 						if item.mode == "banner_page" then
 							child:SetText(PDABrowserSites[item.mode_param].bookmark)

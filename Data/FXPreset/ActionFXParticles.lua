@@ -276,6 +276,146 @@ PlaceObj('ActionFXParticles', {
 })
 
 PlaceObj('ActionFXParticles', {
+	Action = "Spawn",
+	Actor = "Ricochet",
+	Disabled = true,
+	GameTime = true,
+	Moment = "start",
+	Orientation = "ActionDir",
+	Particles = "Bullet_Small",
+	Source = "ActionPos",
+	Target = "Surface:Asphalt",
+	group = "Bullet Impacts VFX",
+	id = "922214276634170393",
+})
+
+PlaceObj('ActionFXParticles', {
+	Action = "Spawn",
+	Actor = "Ricochet",
+	Disabled = true,
+	GameTime = true,
+	Moment = "start",
+	Orientation = "ActionDir",
+	Particles = "Bullet_Small",
+	Source = "ActionPos",
+	Target = "Surface:Brick",
+	group = "Bullet Impacts VFX",
+	id = "9017994600208838107",
+})
+
+PlaceObj('ActionFXParticles', {
+	Action = "Spawn",
+	Actor = "Ricochet",
+	Disabled = true,
+	GameTime = true,
+	Moment = "start",
+	Orientation = "ActionDir",
+	Particles = "Bullet_Small",
+	Source = "ActionPos",
+	Target = "Surface:Brick_Inv",
+	group = "Bullet Impacts VFX",
+	id = "3888871173041430984",
+})
+
+PlaceObj('ActionFXParticles', {
+	Action = "Spawn",
+	Actor = "Ricochet",
+	Disabled = true,
+	GameTime = true,
+	Moment = "start",
+	Orientation = "ActionDir",
+	Particles = "Bullet_Small",
+	Source = "ActionPos",
+	Target = "Surface:Concrete",
+	group = "Bullet Impacts VFX",
+	id = "7476784400663132629",
+})
+
+PlaceObj('ActionFXParticles', {
+	Action = "Spawn",
+	Actor = "Ricochet",
+	Disabled = true,
+	GameTime = true,
+	Moment = "start",
+	Orientation = "ActionDir",
+	Particles = "Bullet_Small",
+	Source = "ActionPos",
+	Target = "Surface:ConcreteThin",
+	group = "Bullet Impacts VFX",
+	id = "6433738913069205829",
+})
+
+PlaceObj('ActionFXParticles', {
+	Action = "Spawn",
+	Actor = "Ricochet",
+	Disabled = true,
+	GameTime = true,
+	Moment = "start",
+	Orientation = "ActionDir",
+	Particles = "Bullet_Small",
+	Source = "ActionPos",
+	Target = "Surface:Metal_Inv_Imp",
+	group = "Bullet Impacts VFX",
+	id = "8887645423726372369",
+})
+
+PlaceObj('ActionFXParticles', {
+	Action = "Spawn",
+	Actor = "Ricochet",
+	Disabled = true,
+	GameTime = true,
+	Moment = "start",
+	Orientation = "ActionDir",
+	Particles = "Bullet_Small",
+	Source = "ActionPos",
+	Target = "Surface:Metal_Props",
+	group = "Bullet Impacts VFX",
+	id = "7189165921818840014",
+})
+
+PlaceObj('ActionFXParticles', {
+	Action = "Spawn",
+	Actor = "Ricochet",
+	Disabled = true,
+	GameTime = true,
+	Moment = "start",
+	Orientation = "ActionDir",
+	Particles = "Bullet_Small",
+	Source = "ActionPos",
+	Target = "Surface:Rock",
+	group = "Bullet Impacts VFX",
+	id = "8111315519649724061",
+})
+
+PlaceObj('ActionFXParticles', {
+	Action = "Spawn",
+	Actor = "Ricochet",
+	Disabled = true,
+	GameTime = true,
+	Moment = "start",
+	Orientation = "ActionDir",
+	Particles = "Bullet_Small",
+	Source = "ActionPos",
+	Target = "Surface:Stone",
+	group = "Bullet Impacts VFX",
+	id = "4813251559288840403",
+})
+
+PlaceObj('ActionFXParticles', {
+	Action = "Spawn",
+	Actor = "Ricochet",
+	Disabled = true,
+	GameTime = true,
+	Moment = "start",
+	Orientation = "ActionDir",
+	Particles = "Bullet_Small",
+	Source = "ActionPos",
+	Target = "Surface:Tin_VFX",
+	group = "Bullet Impacts VFX",
+	id = "1515208202740140775",
+})
+
+PlaceObj('ActionFXParticles', {
 	Action = "BulletImpact",
 	GameTime = true,
 	Moment = "start",
@@ -685,133 +825,15 @@ PlaceObj('ActionFXParticles', {
 })
 
 PlaceObj('ActionFXParticles', {
-	Action = "Spawn",
-	Actor = "FXBullet",
+	Action = "Ricochet",
+	DetailLevel = 40,
 	GameTime = true,
-	Moment = "end",
+	Moment = "start",
 	Orientation = "ActionDir",
 	Particles = "Bullet_Ricochet",
 	Source = "ActionPos",
-	Target = "Surface:Asphalt",
 	group = "Bullet Impacts VFX",
-	id = "922214276634170393",
-})
-
-PlaceObj('ActionFXParticles', {
-	Action = "Spawn",
-	Actor = "FXBullet",
-	GameTime = true,
-	Moment = "end",
-	Orientation = "ActionDir",
-	Particles = "Bullet_Ricochet",
-	Source = "ActionPos",
-	Target = "Surface:Brick",
-	group = "Bullet Impacts VFX",
-	id = "9017994600208838107",
-})
-
-PlaceObj('ActionFXParticles', {
-	Action = "Spawn",
-	Actor = "FXBullet",
-	GameTime = true,
-	Moment = "end",
-	Orientation = "ActionDir",
-	Particles = "Bullet_Ricochet",
-	Source = "ActionPos",
-	Target = "Surface:Brick_Inv",
-	group = "Bullet Impacts VFX",
-	id = "3888871173041430984",
-})
-
-PlaceObj('ActionFXParticles', {
-	Action = "Spawn",
-	Actor = "FXBullet",
-	GameTime = true,
-	Moment = "end",
-	Orientation = "ActionDir",
-	Particles = "Bullet_Ricochet",
-	Source = "ActionPos",
-	Target = "Surface:Concrete",
-	group = "Bullet Impacts VFX",
-	id = "7476784400663132629",
-})
-
-PlaceObj('ActionFXParticles', {
-	Action = "Spawn",
-	Actor = "FXBullet",
-	GameTime = true,
-	Moment = "end",
-	Orientation = "ActionDir",
-	Particles = "Bullet_Ricochet",
-	Source = "ActionPos",
-	Target = "Surface:ConcreteThin",
-	group = "Bullet Impacts VFX",
-	id = "6433738913069205829",
-})
-
-PlaceObj('ActionFXParticles', {
-	Action = "Spawn",
-	Actor = "FXBullet",
-	GameTime = true,
-	Moment = "end",
-	Orientation = "ActionDir",
-	Particles = "Bullet_Ricochet",
-	Source = "ActionPos",
-	Target = "Surface:Metal_Inv_Imp",
-	group = "Bullet Impacts VFX",
-	id = "8887645423726372369",
-})
-
-PlaceObj('ActionFXParticles', {
-	Action = "Spawn",
-	Actor = "FXBullet",
-	GameTime = true,
-	Moment = "end",
-	Orientation = "ActionDir",
-	Particles = "Bullet_Ricochet",
-	Source = "ActionPos",
-	Target = "Surface:Metal_Props",
-	group = "Bullet Impacts VFX",
-	id = "7189165921818840014",
-})
-
-PlaceObj('ActionFXParticles', {
-	Action = "Spawn",
-	Actor = "FXBullet",
-	GameTime = true,
-	Moment = "end",
-	Orientation = "ActionDir",
-	Particles = "Bullet_Ricochet",
-	Source = "ActionPos",
-	Target = "Surface:Rock",
-	group = "Bullet Impacts VFX",
-	id = "8111315519649724061",
-})
-
-PlaceObj('ActionFXParticles', {
-	Action = "Spawn",
-	Actor = "FXBullet",
-	GameTime = true,
-	Moment = "end",
-	Orientation = "ActionDir",
-	Particles = "Bullet_Ricochet",
-	Source = "ActionPos",
-	Target = "Surface:Stone",
-	group = "Bullet Impacts VFX",
-	id = "4813251559288840403",
-})
-
-PlaceObj('ActionFXParticles', {
-	Action = "Spawn",
-	Actor = "FXBullet",
-	GameTime = true,
-	Moment = "end",
-	Orientation = "ActionDir",
-	Particles = "Bullet_Ricochet",
-	Source = "ActionPos",
-	Target = "Surface:Tin_VFX",
-	group = "Bullet Impacts VFX",
-	id = "1515208202740140775",
+	id = "Sq_OQvuh",
 })
 
 PlaceObj('ActionFXParticles', {
@@ -7411,7 +7433,6 @@ PlaceObj('ActionFXParticles', {
 	Moment = "start",
 	OrientationAxis = 3,
 	Particles = "Bullet_Small",
-	Spot = "Muzzle",
 	group = "Weapons VFX",
 	id = "6021595289892519306",
 })

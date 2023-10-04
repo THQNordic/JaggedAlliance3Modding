@@ -479,7 +479,7 @@ PlaceObj('QuestsDef', {
 						return not quest.MaquieAllies
 					end,
 				}),
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							QuestId = "PantagruelRebels",
@@ -497,7 +497,7 @@ PlaceObj('QuestsDef', {
 						}),
 					},
 				}),
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							QuestId = "PantagruelRebels",

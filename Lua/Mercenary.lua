@@ -91,6 +91,7 @@ function AddItemsToInventory(inventoryObj, items, bLog)
 				   if curitm.Amount < curitm.MaxStacks then
 						local to_add = Min(curitm.MaxStacks - curitm.Amount, item.Amount)
 						curitm.Amount =curitm.Amount + to_add
+						curitm.drop_chance = Max(curitm.drop_chance, item.drop_chance)
 						if bLog then
 							Msg("InventoryAddItem", inventoryObj, curitm, to_add)
 						end
@@ -345,7 +346,7 @@ function UnitInventory:CountAvailableAmmo(ammo_type)
 	return count.count
 end
 
-function UnitInventory:ReloadWeapon(gun, ammo_type, delayed_fx)
+function UnitInventory:ReloadWeapon(gun, ammo_type, delayed_fx, ai)
 	local reloaded
 	local ammo
 	local ammo_items = {}
@@ -369,11 +370,10 @@ function UnitInventory:ReloadWeapon(gun, ammo_type, delayed_fx)
 	end
 	
 	local prev, playedFX, change
-	while ammo and (((gun.ammo and gun.ammo.Amount or 0) < gun.MagazineSize) or not gun.ammo or gun.ammo.class ~= ammo.class) do
+	while ammo and (ai or ((gun.ammo and gun.ammo.Amount or 0) < gun.MagazineSize) or not gun.ammo or gun.ammo.class ~= ammo.class) do
 		prev, playedFX, change = gun:Reload(ammo, nil, delayed_fx)
-		
 		local vo = gun:GetVisualObj()
-		if change and vo and not playedFX then
+		if (change or ai) and vo and not playedFX then
 			CreateGameTimeThread(function(weapon, obj, delayed_fx)
 				--Added randomness for weapon reload to cover the case with all mercs reloading on combat end or ReloadMultiSelection shortcut(both are during unpaused game)
 				if delayed_fx then
@@ -390,7 +390,7 @@ function UnitInventory:ReloadWeapon(gun, ammo_type, delayed_fx)
 			end, gun, vo, delayed_fx)
 			playedFX = true
 		end
-		
+		ai = false	
 		reloaded = true	
 		local slot_name = GetContainerInventorySlotName(self)
 		if ammo.Amount <= 0 then
@@ -419,6 +419,7 @@ function UnitInventory:ReloadWeapon(gun, ammo_type, delayed_fx)
 	end
 	
 	Msg("WeaponReloaded", self)
+	ObjModified("WeaponReloaded")
 	return reloaded
 end
 
@@ -432,6 +433,16 @@ function UnitInventory:GetEquippedWeapons(slot_name, class)
 	end, weapons)
 	return weapons
 end
+
+function UnitInventory:GetItemsInWeaponSlot(slot_name) 
+	local items = {}
+	self:ForEachItemInSlot(slot_name, function(item, _, x)
+		items[x] = item
+	end)
+	table.compact(items) -- Items will be sorted by x
+	return items
+end
+
 
 function UnitInventory:InventoryBandage()
 	local target = self
@@ -661,7 +672,7 @@ function GetAvailableIntelSectors(sector_id)
 	local radius = 2
 	for r = row - 2, row + 2 do
 		for c = col - 2, col + 2 do
-			if r >= 1 and r <= campaign.sector_rows and c >= 1 and c <= campaign.sector_columns then
+			if r >= campaign.sector_rowsstart and r <= campaign.sector_rows and c >= 1 and c <= campaign.sector_columns then
 				local sector_id = sector_pack(r, c)
 				if gv_Sectors[sector_id].Intel and not gv_Sectors[sector_id].intel_discovered then
 					table.insert(available, sector_id)
@@ -1385,6 +1396,7 @@ function UIPlaceInInventory(root, obj, prop_id, self)
 	print("Trying to place item", obj.id, "in inventory of", unit.session_id)
 end
 
+
 function UIPlaceIngredientsInInventory(root, obj, prop_id, self)
 	if not IsKindOf(SelectedObj, "UnitInventory") or not obj then
 		return
@@ -1406,6 +1418,61 @@ function UIPlaceInInventoryAmmo(root, obj, prop_id, self)
 	end
 	assert(ammos[ammoKey].id)
 	PlaceItemInInventory(ammos[ammoKey].id)
+end
+
+function OnMsg.ClassesGenerate(classdefs)
+	local props = classdefs.LootDef.properties
+	local idx = table.find(props, "id", "TestFile")
+	table.insert(props, idx and idx + 1 or -1, 
+		{ category = "Test", id = "btnGenerateItems", 
+			editor = "buttons", default = false, buttons = { {name = "Generate test loot", func = "GedUIGenerateAndDropLoot"}, }, template = true, }
+	)
+	if config.Mods then
+		local props = classdefs.ModItemLootDefEdit.properties
+		table.insert(props, 
+			{ category = "Test", id = "btnGenerateItems", 
+				editor = "buttons", default = false, buttons = { {name = "Generate test loot", func = "GedUIGenerateAndDropLoot"}, }, template = true, }
+		)
+	end
+end
+
+function GedUIGenerateAndDropLoot(root, obj, prop_id, self)
+	local table_id = obj.id or obj.TargetId
+	local name = obj.TargetId and obj.name or false
+	if not table_id then return end
+	UIGenerateAndDropLoot(table_id, name)
+end
+
+function UIGenerateAndDropLoot(table_id, name)
+	if not table_id then return end
+	local loot_tbl = LootDefs[table_id]
+	if not loot_tbl then return end
+	
+	local unit = GetMercInventoryDlg() and GetInventoryUnit() or SelectedObj
+	local pos 
+	if not unit then
+		pos = terrain.FindPassable(GetCursorPos())
+		pos = pos and SnapToPassSlab(pos)
+	end	
+	local bag = GetDropContainer(unit, pos)
+	local items = {}
+	loot_tbl:GenerateLoot(bag, {}, InteractionRand(nil, "LootTest"), items)
+	print("Test item generation from loot table: ", name or table_id)
+	for _,item in ipairs(items) do
+		local amount = IsKindOf(item, "InventoryStack") and item.Amount or 1
+		print("\t",string.format("%3d x %s", amount, item.DisplayName and _InternalTranslate(item.DisplayName) or item.class))
+	end
+	AddItemsToInventory(bag,items)
+end
+
+if config.Mods then  
+	function ModItemLootDef:TestModItem(ged)
+		UIGenerateAndDropLoot(self.id)	
+	end
+
+	function ModItemLootDefEdit:TestModItem(ged)
+		UIGenerateAndDropLoot(self.TargetId, self.name)	
+	end
 end
 
 local all_caps_stats = {

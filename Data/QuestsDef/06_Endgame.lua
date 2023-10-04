@@ -527,7 +527,7 @@ PlaceObj('QuestsDef', {
 				}),
 				PlaceObj('ConditionalEffect', {
 					'Conditions', {
-						PlaceObj('OR', {
+						PlaceObj('CheckOR', {
 							Conditions = {
 								PlaceObj('QuestIsVariableBool', {
 									QuestId = "Landsbach",

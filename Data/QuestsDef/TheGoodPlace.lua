@@ -132,7 +132,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			CompletionConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('SectorCheckOwner', {
 							sector_id = "L6",
@@ -346,7 +346,7 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('QuestNote', {
 			CompletionConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							QuestId = "Luigi",
@@ -375,7 +375,7 @@ PlaceObj('QuestsDef', {
 			},
 			Idx = 13,
 			ShowConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							QuestId = "Luigi",

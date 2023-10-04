@@ -7,8 +7,8 @@ DefineClass.Medkit = {
 
 
 	object_class = "Medicine",
-	Repairable = false,
 	ScrapParts = 1,
+	Repairable = false,
 	Icon = "UI/Icons/Items/medkit",
 	DisplayName = T(999601948111, --[[InventoryItemCompositeDef Medkit DisplayName]] "Med Kit"),
 	DisplayNamePlural = T(221861569054, --[[InventoryItemCompositeDef Medkit DisplayNamePlural]] "Med Kits"),

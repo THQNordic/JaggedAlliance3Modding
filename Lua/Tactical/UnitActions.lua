@@ -34,20 +34,7 @@ function Unit:OnAttack(action, target, results, attack_args, holdXpLog)
 	if action.ActionType == "Melee Attack" and IsKindOf(target, "Unit") and not results.miss then 
 		target:AddStatusEffect("Exposed")
 	end
-	
-	if HasPerk(self, "LastWarning") and self.team.morale > 0 and self:Random(100) < CharacterEffectDefs.LastWarning:ResolveValue("panic_chance") then
-		local units = {}
-		for _, hit in ipairs(results) do
-			local unit = IsKindOf(hit.obj, "Unit") and not hit.obj:IsIncapacitated() and hit.obj
-			local damage = hit.damage or 0
-			if unit and unit:IsOnEnemySide(self) and (hit.aoe or not hit.stray) and (damage > 0) then
-				table.insert_unique(units, unit)
-				unit:AddStatusEffect("Panicked")
-				unit.ActionPoints = unit:GetMaxActionPoints()
-			end
-		end
-	end
-	
+		
 	if IsValidTarget(target) then
 		target.attacked_this_turn = target.attacked_this_turn or {}
 		table.insert(target.attacked_this_turn, self)
@@ -75,7 +62,6 @@ function Unit:OnAttack(action, target, results, attack_args, holdXpLog)
 	end
 	
 	Msg("OnAttack", self, action, target, results, attack_args)
-	Msg("OnAttacked", self, action, target, results, attack_args)
 	
 	local hitUnitFromAttack = false
 	for _, hit in ipairs(results.hit_objs) do
@@ -434,16 +420,17 @@ function Unit:ExecFirearmAttacks(action, cost_ap, attack_args, results)
 
 	-- wait end moment and restore animation
 	local time_to_fire_end = self:TimeToAnimEnd()
-
-	if self:CanAimIK(results.weapon) then
-		local restore_aim_delay = Min(300, time_to_fire_end)
-		Sleep(restore_aim_delay)
-		self:SetIK("AimIK", lof_data.lof_pos2, nil, nil, 0)
-		Sleep(time_to_fire_end - restore_aim_delay)
-		self:SetState(aim_state, const.eKeepComponentTargets)
-	else
-		Sleep(time_to_fire_end)
-		self:SetState(aim_state, const.eKeepComponentTargets)
+	if not attack_args.dont_restore_aim then
+		if self:CanAimIK(results.weapon) then
+			local restore_aim_delay = Min(300, time_to_fire_end)
+			Sleep(restore_aim_delay)
+			self:SetIK("AimIK", lof_data.lof_pos2, nil, nil, 0)
+			Sleep(time_to_fire_end - restore_aim_delay)
+			self:SetState(aim_state, const.eKeepComponentTargets)
+		else
+			Sleep(time_to_fire_end)
+			self:SetState(aim_state, const.eKeepComponentTargets)
+		end
 	end
 
 	-- special-case: interrupt neutral units with neutral_retaliate flag attacked by player units,
@@ -466,7 +453,11 @@ function Unit:ExecFirearmAttacks(action, cost_ap, attack_args, results)
 		end
 	end
 
-	Firearm:WaitFiredShots(shot_threads)
+	if attack_args.external_wait_shots then
+		table.iappend(attack_args.external_wait_shots, shot_threads)
+	else
+		Firearm:WaitFiredShots(shot_threads)
+	end
 
 	-- wait target dodge anim
 	while target_unit and target_unit.command == "Dodge" do
@@ -659,13 +650,14 @@ function Unit:RunAndGun(action_id, cost_ap, args)
 		end)
 	end
 	local base_idle = self:GetIdleBaseAnim()
+	local shot_threads
 	for i, attack in ipairs(results.attacks) do
 		if not self:CanUseWeapon(weapon) then -- might jam, run out of ammo, etc
 			goto continue
 		end
-		NetUpdateHash("RunAndGun_1", self, attack.mobile_attack_pos, attack.mobile_attack_target)
-		if attack.mobile_attack_pos and not IsValidTarget(attack.mobile_attack_target) then
-			local enemies = action:GetTargets({self})
+		NetUpdateHash("RunAndGun_1", self, attack.mobile_attack_pos, attack.mobile_attack_target)		
+		if attack.mobile_attack_pos and (not IsValidTarget(attack.mobile_attack_target) or attack.mobile_attack_target:IsIncapacitated()) then
+			local enemies = table.ifilter(action:GetTargets({self}), function(idx, u) return IsValidTarget(u) and not u:IsIncapacitated() end)
 			NetUpdateHash("RunAndGun_Branch_1", self, attack.mobile_attack_pos, #enemies)
 			attack.mobile_attack_target = FindTargetFromPos(action_id, self, action, enemies, point(point_unpack(attack.mobile_attack_pos)), weapon)
 		end
@@ -685,6 +677,16 @@ function Unit:RunAndGun(action_id, cost_ap, args)
 				pathObj:RebuildPaths(self, aim_params.move_ap)
 				path = pathObj:GetCombatPathFromPos(targetPos)			
 				self:CombatGoto(action_id, 0, nil, path, true, i == #results.attacks and args.toDoStance)
+			end
+
+			-- recheck target, as they might have died while we were moving
+			if not IsValidTarget(attack.mobile_attack_target) or attack.mobile_attack_target:IsIncapacitated() then
+				local enemies = table.ifilter(action:GetTargets({self}), function(idx, u) return IsValidTarget(u) and not u:IsIncapacitated() end)
+				NetUpdateHash("RunAndGun_Branch_1_1", self, attack.mobile_attack_pos, #enemies)
+				attack.mobile_attack_target = FindTargetFromPos(action_id, self, action, enemies, point(point_unpack(attack.mobile_attack_pos)), weapon)
+				if not IsValidTarget(attack.mobile_attack_target) then
+					goto continue
+				end
 			end
 
 			if action_camera then
@@ -710,14 +712,18 @@ function Unit:RunAndGun(action_id, cost_ap, args)
 			attack_args.origin_action_id = action_id
 			attack_args.keep_ui_mode = true
 			attack_args.unit_moved = true
+			attack_args.dont_restore_aim = true
 			if atk_action.id == "KnifeThrow" then
 				self:ExecKnifeThrow(atk_action, cost_ap, attack_args, atk_results)
 			else
+				shot_threads = shot_threads or {}
+				attack_args.external_wait_shots = shot_threads
 				self:ExecFirearmAttacks(atk_action, cost_ap, attack_args, atk_results)
 			end
 		end
 		::continue::
 	end
+	
 	local cooldown = action:ResolveValue("cooldown")
 	if cooldown then
 		self:SetEffectExpirationTurn(action.id, "cooldown", g_Combat.current_turn + cooldown)
@@ -738,6 +744,9 @@ function Unit:RunAndGun(action_id, cost_ap, args)
 		path = pathObj:GetCombatPathFromPos(target)
 		self:CombatGoto(action_id, 0, nil, path, true)
 	end
+	if shot_threads then
+		Firearm:WaitFiredShots(shot_threads)
+	end	
 	self:PopAndCallDestructor() -- pathObj 
 end
 
@@ -1195,9 +1204,21 @@ function Unit:MeleeAttack(action_id, cost_ap, args)
 			fx_actor = "fist"
 			base_anim = "inf_Standing_Attack"
 		else
-			local attach_forward =
-				target.stance == "Standing" and attack_args.target_spot_group ~= "Legs" or
-				target.stance == "Crouch" and attack_args.target_spot_group == "Head"
+			local BodyParts = UnitColliders[target.species].BodyParts
+			local idx = table.find(BodyParts, "id", attack_args.target_spot_group)
+			if not idx then
+				if attack_args.target_spot_group == "Neck" then
+					idx = table.find(BodyParts, "id", "Head")
+				end
+			end
+			local spot_relative_z
+			local target_spot = idx and BodyParts[idx].TargetSpots[1]
+			if target_spot and target:HasSpot(target_spot) then
+				local spot_pos = target:GetSpotLocPos(target:GetSpotBeginIndex(target_spot))
+				local aposx, aposy, aposz = self:GetPosXYZ()
+				spot_relative_z = spot_pos:z() - (aposz or terrain.GetHeight(aposx, aposy))
+			end
+			local attach_forward = not spot_relative_z or spot_relative_z >= 700
 			if weapon.IsUnarmed then
 				fx_actor = "fist"
 				base_anim = attach_forward and "nw_Standing_Attack_Forward" or "nw_Standing_Attack_Down"

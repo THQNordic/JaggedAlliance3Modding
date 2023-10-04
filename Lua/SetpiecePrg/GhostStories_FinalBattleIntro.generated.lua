@@ -20,11 +20,11 @@ SetpiecePrgs.GhostStories_FinalBattleIntro = function(seed, state, TriggerUnits)
 	local _
 	prgdbg(li, 1, 9) _, Thug1_Start = sprocall(SetpieceTeleport.Exec, SetpieceTeleport, state, Thug3, "Thug3_Start", true)
 	local _, Thug1_WalkTo
-	prgdbg(li, 1, 10) _, Thug1_WalkTo = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Thug1, "Thug1_WalkTo", true, false, false, "", false, false, "Walk3_TMP")
+	prgdbg(li, 1, 10) _, Thug1_WalkTo = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Thug1, "Thug1_WalkTo", true, false, false, "", false, false, "Walk3_TMP", 1000)
 	local _, Thug2_WalkTo
-	prgdbg(li, 1, 11) _, Thug2_WalkTo = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Thug2, "Thug2_WalkTo", true, false, false, "", false, false, "Walk_Normal_Neutral")
+	prgdbg(li, 1, 11) _, Thug2_WalkTo = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Thug2, "Thug2_WalkTo", true, false, false, "", false, false, "Walk_Normal_Neutral", 1000)
 	local _, Thug3_WalkTo
-	prgdbg(li, 1, 12) _, Thug3_WalkTo = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Thug3, "Thug3_WalkTo", true, false, false, "", false, false, "Walk4_TMP")
+	prgdbg(li, 1, 12) _, Thug3_WalkTo = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Thug3, "Thug3_WalkTo", true, false, false, "", false, false, "Walk4_TMP", 1000)
 	prgdbg(li, 1, 13) sprocall(SetpieceCamera.Exec, SetpieceCamera, state, rand, true, "", "Tac", 0, "", "linear", 3000, false, false, point(139920, 139189, 9410), point(148913, 148726, 20410), point(137628, 136759, 9107), point(146621, 146296, 20107), 4200, 1300, {floor = 1,}, 0, 0, 0, 0, 0, 0, "Default", 100)
 	prgdbg(li, 1, 14) sprocall(SetpieceCamera.Exec, SetpieceCamera, state, rand, false, "", "Tac", 0, "", "linear", 6000, false, false, point(137628, 136759, 9107), point(146621, 146296, 20107), point(137628, 136759, 9107), point(146621, 146296, 20107), 4200, 1300, {floor = 1,}, 0, 0, 0, 0, 0, 0, "Default", 100)
 	prgdbg(li, 1, 15) sprocall(PrgPlayEffect.Exec, PrgPlayEffect, state, rand, true, "", {PlaceObj('PlayBanterEffect', {Banters = {"GhostStoriesMansion_Thugs_02",},searchInMap = true,searchInMarker = false,}),})

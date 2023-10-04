@@ -164,42 +164,38 @@ PlaceObj('XTemplate', {
 			'name', "OnShortcut(self, shortcut, source, ...)",
 			'func', function (self, shortcut, source, ...)
 				--				print("imp",shortcut)
-								if shortcut=="ButtonB" or shortcut=="Escape" then
-									local host = self.parent
-									host = GetDialog(GetDialog(host).parent)
-									if host then
-										host:CloseAction(host)
-									end
-									return "break"
-								end
-								local mode = self:GetMode()
-								if mode=="test" or mode=="imp_confirm" or mode=="imp_confirm_intro" or mode=="final_confirm" then
-									local 	list = self.idContent.idAnswers.idList
-									if shortcut=="DPadUp" or shortcut=="Up" then
-										list:SelPrev()
-									end
-									if shortcut=="DPadDown" or shortcut=="Down" then
-										list:SelNext()
-									end
-								end
-								--start_page,login,test,test_result_stats,test_result_perks,error,pet_intro, imp_confirm,imp_confirm_intro, final_confirm, outcome, pswd_reset, title_text, home, gallery
-								local actions = self:GetShortcutActions(shortcut)
-								for _, action in ipairs(actions) do
+				if shortcut=="ButtonB" or shortcut=="Escape" then
+					local host = self.parent
+					host = GetDialog(GetDialog(host).parent)
+					if host then
+						host:CloseAction(host)
+					end
+					return "break"
+				end
+				local mode = self:GetMode()
+				if mode=="test" or mode=="imp_confirm" or mode=="imp_confirm_intro" or mode=="final_confirm" then
+					local 	list = self.idContent.idAnswers.idList
+					if shortcut=="DPadUp" or shortcut=="Up" then
+						list:SelPrev()
+					end
+					if shortcut=="DPadDown" or shortcut=="Down" then
+						list:SelNext()
+					end
+				end
+				--start_page,login,test,test_result_stats,test_result_perks,error,pet_intro, imp_confirm,imp_confirm_intro, final_confirm, outcome, pswd_reset, title_text, home, gallery
+				local actions = self:GetShortcutActions(shortcut)
+				for _, action in ipairs(actions) do
 				--					print("imp state",action.ActionId, action:ActionState(self))
-									local state = action:ActionState(self)
-									if state ~= "disabled" and state~="hidden" then
-										action:OnAction(self,"gamepad")
-										return "break"
-									end
-								end
-								if shortcut=="ButtonY" then
-									self:SetMode("login")
-									return "break"
-								end
-								-- prevent ingame menu opening 
-								if shortcut=="Start" then
-									return "break"
-								end	
+					local state = action:ActionState(self)
+					if state ~= "disabled" and state~="hidden" then
+						action:OnAction(self,"gamepad")
+						return "break"
+					end
+				end
+				if shortcut=="ButtonY" then
+					self:SetMode("login")
+					return "break"
+				end
 			end,
 		}),
 		PlaceObj('XTemplateFunc', {
@@ -319,7 +315,22 @@ PlaceObj('XTemplate', {
 		PlaceObj('XTemplateWindow', {
 			'__class', "VirtualCursorManager",
 			'Reason', "Imp",
-		}),
+		}, {
+			PlaceObj('XTemplateFunc', {
+				'name', "Open(self, ...)",
+				'func', function (self, ...)
+					VirtualCursorManager.Open(self,...)
+					SetDisableMouseRightClickReason(true, "Browser")
+				end,
+			}),
+			PlaceObj('XTemplateFunc', {
+				'name', "Done(self, ...)",
+				'func', function (self, ...)
+					VirtualCursorManager.Done(self,...)
+					SetDisableMouseRightClickReason(false, "Browser")
+				end,
+			}),
+			}),
 		PlaceObj('XTemplateWindow', {
 			'HAlign', "center",
 			'MinWidth', 1076,
@@ -1108,9 +1119,13 @@ PlaceObj('XTemplate', {
 									'ActionToolbar', "ActionBar",
 									'ActionGamepad', "RightShoulder",
 									'ActionState', function (self, host)
-										local context = host.idContent:GetContext()
+										local context = host and host.idContent:GetContext()
 										local idx = context and context.question or 0
-										return idx < 10 and "enabled" or "hidden"
+										if idx == 10 then return "hidden" end
+										if not context then return "disabled" end
+										local item_idx = table.find(g_ImpTest.answers, "id",  context.preset.id)
+										if g_ImpTest.answers[item_idx] then return "enabled" end
+										return "disabled"
 									end,
 									'OnAction', function (self, host, source, ...)
 										host:NextQuestion()
@@ -1124,7 +1139,10 @@ PlaceObj('XTemplate', {
 									'ActionState', function (self, host)
 										local context = host and host.idContent:GetContext()
 										local idx = context and context.question or 0
-										return idx >= 10 and "enabled" or "hidden"
+										if idx < 10 then return "hidden" end
+										local item_idx = table.find(g_ImpTest.answers, "id",  context.preset.id)
+										if g_ImpTest.answers[item_idx] then return "enabled" end
+										return "disabled"
 									end,
 									'OnAction', function (self, host, source, ...)
 										host:OpenQuestion("outcome")
@@ -1174,7 +1192,7 @@ PlaceObj('XTemplate', {
 									'ActionId', "idDone",
 									'ActionName', T(131832481511, --[[XTemplate PDAImpDialog ActionName]] "Done"),
 									'ActionToolbar', "ActionBar",
-									'ActionGamepad', "Start",
+									'ActionGamepad', "ButtonX",
 									'ActionState', function (self, host)
 										return GetDialog(self.host):CanFinishMercCreation() and "enabled" or "disabled"
 									end,
@@ -1195,7 +1213,7 @@ PlaceObj('XTemplate', {
 									'ActionName', T(175732041340, --[[XTemplate PDAImpDialog ActionName]] "OK"),
 									'ActionToolbar', "ActionBar",
 									'ActionShortcut', "Enter",
-									'ActionGamepad', "Start",
+									'ActionGamepad', "ButtonX",
 									'ActionState', function (self, host)
 										if  g_ImpTest and  g_ImpTest.final  and  g_ImpTest.final.created  then
 											return  "hidden"
@@ -1220,7 +1238,7 @@ PlaceObj('XTemplate', {
 									'ActionName', T(175732041340, --[[XTemplate PDAImpDialog ActionName]] "OK"),
 									'ActionToolbar', "ActionBar",
 									'ActionShortcut', "Enter",
-									'ActionGamepad', "Start",
+									'ActionGamepad', "ButtonX",
 									'OnActionEffect', "mode",
 									'OnActionParam', "imp_confirm",
 									'OnAction', function (self, host, source, ...)
@@ -1257,7 +1275,7 @@ PlaceObj('XTemplate', {
 									'ActionId', "idOK",
 									'ActionName', T(655064233565, --[[XTemplate PDAImpDialog ActionName]] "Next"),
 									'ActionToolbar', "ActionBar",
-									'ActionGamepad', "Start",
+									'ActionGamepad', "ButtonX",
 									'ActionState', function (self, host)
 										return (host.impconfirm.next or  host.impconfirm.skip) and "enabled" or "disabled"
 									end,
@@ -1284,7 +1302,7 @@ PlaceObj('XTemplate', {
 									'ActionId', "idSelect",
 									'ActionName', T(993621221616, --[[XTemplate PDAImpDialog ActionName]] "Select"),
 									'ActionToolbar', "ActionBar",
-									'ActionGamepad', "Start",
+									'ActionGamepad', "ButtonX",
 									'ActionState', function (self, host)
 										return (host.impconfirm.confirm and CanPay(const.Imp.CertificateCost) and not g_ImpTest.final.created or host.impconfirm.back)  and "enabled" or "disabled"
 									end,
@@ -1314,7 +1332,7 @@ PlaceObj('XTemplate', {
 									'ActionId', "idTest",
 									'ActionName', T(728933977679, --[[XTemplate PDAImpDialog ActionName]] "Test"),
 									'ActionToolbar', "ActionBar",
-									'ActionGamepad', "Start",
+									'ActionGamepad', "ButtonX",
 									'OnAction', function (self, host, source, ...)
 										host:StartTest()
 									end,
@@ -1343,7 +1361,7 @@ PlaceObj('XTemplate', {
 									'ActionId', "idConfirm",
 									'ActionName', T(524975808890, --[[XTemplate PDAImpDialog ActionName]] "Confirm"),
 									'ActionToolbar', "ActionBar",
-									'ActionGamepad', "Start",
+									'ActionGamepad', "ButtonX",
 									'OnAction', function (self, host, source, ...)
 										g_ImpTest.confirmed = true
 										host:SetMode("test_result_stats")
@@ -1362,7 +1380,7 @@ PlaceObj('XTemplate', {
 									'ActionId', "idBack",
 									'ActionName', T(351426544644, --[[XTemplate PDAImpDialog ActionName]] "Back"),
 									'ActionToolbar', "ActionBar",
-									'ActionGamepad', "Start",
+									'ActionGamepad', "ButtonX",
 									'OnActionEffect', "back",
 								}),
 								}),
@@ -1378,7 +1396,7 @@ PlaceObj('XTemplate', {
 									'ActionId', "idBack",
 									'ActionName', T(351426544644, --[[XTemplate PDAImpDialog ActionName]] "Back"),
 									'ActionToolbar', "ActionBar",
-									'ActionGamepad', "Start",
+									'ActionGamepad', "ButtonX",
 									'OnActionEffect', "back",
 								}),
 								}),
@@ -1394,7 +1412,7 @@ PlaceObj('XTemplate', {
 									'ActionId', "idBack",
 									'ActionName', T(467176861358, --[[XTemplate PDAImpDialog ActionName]] "Back"),
 									'ActionToolbar', "ActionBar",
-									'ActionGamepad', "Start",
+									'ActionGamepad', "ButtonX",
 									'OnActionEffect', "back",
 								}),
 								}),
@@ -1410,7 +1428,7 @@ PlaceObj('XTemplate', {
 									'ActionId', "idBack",
 									'ActionName', T(971938007854, --[[XTemplate PDAImpDialog ActionName]] "Back"),
 									'ActionToolbar', "ActionBar",
-									'ActionGamepad', "Start",
+									'ActionGamepad', "ButtonX",
 									'OnActionEffect', "back",
 								}),
 								}),

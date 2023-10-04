@@ -85,6 +85,10 @@ PlaceObj('XTemplate', {
 				local value = not self.idContent:GetVisible()
 				self.idContent:SetVisible(value)
 				self.idActionBar:RespawnContent()
+				if Platform.console then
+					self.idActionBar:SetVisible(value)
+					self.idFreeCameraWarning:SetVisible(value and cameraFly.IsActive())
+				end
 				if value and GetUIStyleGamepad() then
 					self.idList:SetSelection(self.idList.focused_item or 1)
 				end
@@ -325,6 +329,7 @@ PlaceObj('XTemplate', {
 					host.idActionBar:RespawnContent()
 					PhotoModeTake(host.context.frameDuration, meta.max)
 				end,
+				'__condition', function (parent, context) return not Platform.console end,
 			}),
 			PlaceObj('XTemplateAction', {
 				'ActionId', "idReset",

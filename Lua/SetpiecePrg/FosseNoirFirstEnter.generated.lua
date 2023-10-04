@@ -64,15 +64,15 @@ SetpiecePrgs.FosseNoirFirstEnter = function(seed, state, TriggerUnits)
 	local _, SP_Merc6_TP
 	prgdbg(li, 1, 36) _, SP_Merc6_TP = sprocall(SetpieceTeleport.Exec, SetpieceTeleport, state, Merc6, "SP_Merc6_TP", true)
 	local _, SP_LegionActor1_GoTo_Prim
-	prgdbg(li, 1, 37) _, SP_LegionActor1_GoTo_Prim = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", LegionActor1, "SP_LegionActor1_GoTo", true, false, false, "Crouch", false, true, "")
+	prgdbg(li, 1, 37) _, SP_LegionActor1_GoTo_Prim = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", LegionActor1, "SP_LegionActor1_GoTo", true, false, false, "Crouch", false, true, "", 1000)
 	local _
-	prgdbg(li, 1, 38) _, SP_LegionActor1_GoTo_Prim = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", LegionActor3, "SP_LegionActor3_goto1", true, false, false, "Prone", false, true, "")
+	prgdbg(li, 1, 38) _, SP_LegionActor1_GoTo_Prim = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", LegionActor3, "SP_LegionActor3_goto1", true, false, false, "Prone", false, true, "", 1000)
 	prgdbg(li, 1, 39) sprocall(PrgPlaySetpiece.Exec, PrgPlaySetpiece, state, rand, false, "", "", "FosseNoir_LegionActor4_1", LegionActor4)
 	prgdbg(li, 1, 40) sprocall(PrgPlaySetpiece.Exec, PrgPlaySetpiece, state, rand, false, "", "", "FosseNoir_LegionActor5", LegionActor5, RebelActor1)
 	prgdbg(li, 1, 41) sprocall(SetpieceFadeIn.Exec, SetpieceFadeIn, state, rand, false, "", 0, 1500)
 	prgdbg(li, 1, 42) sprocall(SetpieceSleep.Exec, SetpieceSleep, state, rand, true, "", 400)
 	local _
-	prgdbg(li, 1, 43) _, SP_LegionActor1_GoTo_Prim = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", LegionActor2, "SP_LegionActor2_GoTo", true, false, true, "Crouch", true, true, "")
+	prgdbg(li, 1, 43) _, SP_LegionActor1_GoTo_Prim = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", LegionActor2, "SP_LegionActor2_GoTo", true, false, true, "Crouch", true, true, "", 1000)
 	prgdbg(li, 1, 44) sprocall(SetpieceSleep.Exec, SetpieceSleep, state, rand, true, "", 4100)
 	prgdbg(li, 1, 45) sprocall(PrgPlayEffect.Exec, PrgPlayEffect, state, rand, false, "", {PlaceObj('Explosion', {Damage = 0,LocationGroup = "LegionActor1_Landmine",Noise = 0,}),})
 	prgdbg(li, 1, 46) sprocall(SetpieceDeath.Exec, SetpieceDeath, state, rand, false, "", LegionActor1, "civ_DeathOnSpot_R")

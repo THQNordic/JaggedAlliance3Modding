@@ -148,7 +148,7 @@ PlaceObj('Conversation', {
 					return not quest.DiamondGiven_Chimurenga and quest.MERC_Diamond
 				end,
 			}),
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('UnitSquadHasMerc', {
 						Name = "Larry_Clean",

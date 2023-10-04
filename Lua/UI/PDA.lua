@@ -162,7 +162,7 @@ function PDAScreen:DrawChildren(clip_box)
 			
 		node.idDisplayPopupHost:DrawWindow(clip_box)
 	else
-		UIL.DrawSolidRect(self.box, black)
+		UIL.DrawSolidRect(node.idDisplay.box, black)
 	end
 	
 	-- All of the PDA content, except windows which are DrawOnTop
@@ -1099,6 +1099,12 @@ end
 function SnappingScrollArea:Measure(preferred_width, preferred_height)
 	preferred_width, preferred_height = XScrollArea.Measure(self, preferred_width, preferred_height)
 	self.base_scroll_range_y = self.scroll_range_y
+	if self[1] then
+		local h = self[1].measure_height
+		if h ~= 0 then 
+			preferred_height = (preferred_height / h) * h
+		end
+	end
 	return preferred_width, preferred_height
 end
 
@@ -1247,7 +1253,7 @@ QuestGroups = {
 	{ value = "Pantagruel", name = T(734135115036, "Pantagruel") },
 	{ value = "Port Cacao", name = T(874186097952, "Port Cacao") },
 	{ value = "Wetlands", name = T(351722511561, "Wetlands") },
-	{ value = "Other", name = T(253906787355, "Other") }, -- fallback
+	{ value = "Other", name = T(329506037614, "Other") }, -- fallback
 }
 
 function GetQuestLogData()
@@ -2599,6 +2605,7 @@ PDAActiveWebBanners = {
 	{ Id = "PDABrowserMortuary", Image = web_banner_image_template .. "23" },
 	{ Id = "PDABrowserSunCola", Image = web_banner_image_template .. "24" },
 	{ Id = "PDABrowserAskThieves", Image = web_banner_image_template .. "22" },
+	{ Id = "PDABrowserBobbyRay", Image = web_banner_image_template .. "21" },
 }
 messenger_banner_image_template = "UI/PDA/Chat/T_Call_Ad_"
 PDAActiveMessengerBanners = {
@@ -2607,6 +2614,7 @@ PDAActiveMessengerBanners = {
 	{ Id = "PDABrowserSunCola", Image = messenger_banner_image_template .. "04", mode = "banner_page", mode_param = "PDABrowserSunCola"},
 	{ Id = "PDABrowserMortuary", Image = messenger_banner_image_template .. "05", mode = "banner_page", mode_param = "PDABrowserMortuary"},
 	{ Id = "PDABrowserAskThieves", Image = messenger_banner_image_template .. "06", mode = "banner_page", mode_param = "PDABrowserAskThieves"},
+	{ Id = "PDABrowserBobbyRay", Image = messenger_banner_image_template .. "07", mode = "banner_page", mode_param = "PDABrowserBobbyRay"},
 }
 function RandomizeBanners()
 	local rand = BraidRandomCreate(AsyncRand(99999999))

@@ -694,14 +694,21 @@ function CleanBlackPlanes(floor)
 	DoneObjects(MapGet("map", "BlackPlane", function(o) return not floor or floor == o.floor end))
 end
 
-local function HideBlackPlanesNotOnFloor(floor)
+AppendClass.MapDataPreset = { properties = {
+	{ category = "Camera", name = "Dont Hide Black Planes", id = "DontHideBlackPlanes", editor = "bool", default = false, help = "If planes were invisible when toggled, reload map to pop them up" },
+}}
+
+function HideBlackPlanesNotOnFloor(floor)
 	local edit = IsEditorActive()
 	if edit and LocalStorage.FilteredCategories.BlackPlane == "invisible" then
 		return
 	end
-	local mn = GetMapName()
-	if mn and mn:starts_with("H-3U") then
-		--hack - always visible on this map regardless of floor
+
+	if GetMapName() == "" then
+		return
+	end
+	
+	if mapdata and mapdata.DontHideBlackPlanes then
 		return
 	end
 	
@@ -725,11 +732,32 @@ end
 
 MapVar("blackPlanesLastVisibleFloor", false)
 function OnMsg.WallVisibilityChanged()
-	local camFloor = cameraTac.GetFloor() + 1
+	UpdateBlackPlaneVisibilityOnFloorChange()
+end
+
+function ResetBlackPlaneVisibility()
+	blackPlanesLastVisibleFloor = false
+	UpdateBlackPlaneVisibilityOnFloorChange()
+end
+
+function UpdateBlackPlaneVisibilityOnFloorChange()
+	local camFloor = cameraTac.GetFloor()
+	camFloor = camFloor + 1
+	if not WallInvisibilityThread and mapdata then
+		camFloor = mapdata.CameraMaxFloor + 1
+	end
+	
 	if blackPlanesLastVisibleFloor ~= camFloor then
 		HideBlackPlanesNotOnFloor(camFloor)
 		blackPlanesLastVisibleFloor = camFloor
 	end
+end
+
+function ShowAllBlackPlanes()
+	MapForEach("map", "BlackPlane", function(o)
+		o:SetOpacity(100)
+	end)
+	blackPlanesLastVisibleFloor = false
 end
 
 function OnMsg.ChangeMapDone()
@@ -737,9 +765,7 @@ function OnMsg.ChangeMapDone()
 	if not mapdata.GameLogic then return end
 	--GameToolsRestoreObjectsVisibility now makes black planes save on maps with opacity 0,
 	--cmt expects them to start with opacity 100, hence this:
-	MapForEach("map", "BlackPlane", function(o)
-		o:SetOpacity(100)
-	end)
+	ShowAllBlackPlanes()
 end
 
 function Slab:ApplyMaterialProps()

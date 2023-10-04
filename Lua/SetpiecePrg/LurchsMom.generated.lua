@@ -45,7 +45,7 @@ SetpiecePrgs.LurchsMom = function(seed, state, TriggerUnits)
 	prgdbg(li, 1, 24) sprocall(SetpieceAnimation.Exec, SetpieceAnimation, state, rand, false, "", BarClient4, "", true, "civ_Ambient_DrinkingAtTable2", 1000, 0, range(1, 1), 0, false, true, false, "")
 	prgdbg(li, 1, 25) sprocall(SetpieceAnimation.Exec, SetpieceAnimation, state, rand, false, "", BarClient5, "", true, "civ_Ambient_DrinkingAtTable", 1000, 0, range(1, 1), 0, false, true, false, "")
 	local _, SP_GranyToBar
-	prgdbg(li, 1, 26) _, SP_GranyToBar = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Hue, "SP_HueExit", true, false, false, "", true, false, "")
+	prgdbg(li, 1, 26) _, SP_GranyToBar = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Hue, "SP_HueExit", true, false, false, "", true, false, "", 1000)
 	prgdbg(li, 1, 27) sprocall(SetpieceSleep.Exec, SetpieceSleep, state, rand, true, "", 5000)
 	prgdbg(li, 1, 28) sprocall(SetpieceFadeOut.Exec, SetpieceFadeOut, state, rand, true, "", 700)
 	local _
@@ -64,10 +64,10 @@ SetpiecePrgs.LurchsMom = function(seed, state, TriggerUnits)
 	prgdbg(li, 1, 35) _, Granny = sprocall(SetpieceSpawn.Exec, SetpieceSpawn, state, rand, Granny, "Granny")
 	prgdbg(li, 1, 36) sprocall(SetpieceCamera.Exec, SetpieceCamera, state, rand, false, "", "Max", "", "", "linear", 3000, false, false, point(152211, 169668, 9572), point(149191, 173443, 10845), false, false, 4300, 2000, false, 0, 0, 0, 0, 0, 0, "Default", 100)
 	local _
-	prgdbg(li, 1, 37) _, SP_GranyToBar = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, true, "", Lurch, "SP_LurchMomConv", true, false, true, "Standing", true, false, "")
+	prgdbg(li, 1, 37) _, SP_GranyToBar = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, true, "", Lurch, "SP_LurchMomConv", true, false, true, "Standing", true, false, "", 1000)
 	prgdbg(li, 1, 38) sprocall(SetpieceFadeIn.Exec, SetpieceFadeIn, state, rand, true, "", 400, 700)
 	local _
-	prgdbg(li, 1, 39) _, SP_GranyToBar = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, true, "", Granny, "SP_GranyToBar", true, false, false, "", true, false, "")
+	prgdbg(li, 1, 39) _, SP_GranyToBar = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, true, "", Granny, "SP_GranyToBar", true, false, false, "", true, false, "", 1000)
 	prgdbg(li, 1, 40) sprocall(SetpieceSleep.Exec, SetpieceSleep, state, rand, true, "", 750)
 	prgdbg(li, 1, 41) sprocall(SetpieceAnimation.Exec, SetpieceAnimation, state, rand, false, "", Granny, "SP_GranyToBar", true, "civ_Ambient_Angry", 1000, 0, range(1, 1), 0, false, true, false, "")
 	prgdbg(li, 1, 42) sprocall(PrgPlayEffect.Exec, PrgPlayEffect, state, rand, true, "", {PlaceObj('PlayBanterEffect', {Banters = {"PortCacaoDocks_LurchMom_SetPiece",},searchInMap = true,searchInMarker = false,}),})
@@ -77,14 +77,14 @@ SetpiecePrgs.LurchsMom = function(seed, state, TriggerUnits)
 	prgdbg(li, 1, 46) sprocall(SetpieceWaitCheckpoint.Exec, SetpieceWaitCheckpoint, state, rand, "Granny Exit")
 	prgdbg(li, 1, 47) sprocall(SetpieceFadeIn.Exec, SetpieceFadeIn, state, rand, false, "", 400, 700)
 	local _, SP_GrannyExit
-	prgdbg(li, 1, 48) _, SP_GrannyExit = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "Granny Exit", Granny, "SP_GrannyExit", true, false, false, "", false, false, "")
+	prgdbg(li, 1, 48) _, SP_GrannyExit = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "Granny Exit", Granny, "SP_GrannyExit", true, false, false, "", false, false, "", 1000)
 	prgdbg(li, 1, 49) sprocall(SetpieceSleep.Exec, SetpieceSleep, state, rand, true, "", 5800)
 	prgdbg(li, 1, 50) sprocall(SetpieceDespawn.Exec, SetpieceDespawn, Granny)
 	prgdbg(li, 1, 51) sprocall(SetpieceFadeOut.Exec, SetpieceFadeOut, state, rand, true, "", 700)
 	prgdbg(li, 1, 52) sprocall(SetpieceSleep.Exec, SetpieceSleep, state, rand, true, "", 1000)
 	prgdbg(li, 1, 53) sprocall(SetpieceFadeIn.Exec, SetpieceFadeIn, state, rand, true, "", 400, 700)
 	local _, SP_HueReturn
-	prgdbg(li, 1, 54) _, SP_HueReturn = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Hue, "SP_HueReturn", true, false, true, "", false, false, "")
+	prgdbg(li, 1, 54) _, SP_HueReturn = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Hue, "SP_HueReturn", true, false, true, "", false, false, "", 1000)
 	prgdbg(li, 1, 55) sprocall(SetpieceSleep.Exec, SetpieceSleep, state, rand, true, "", 6000)
 	prgdbg(li, 1, 56) sprocall(SetpieceFadeOut.Exec, SetpieceFadeOut, state, rand, true, "", 1500)
 	local _

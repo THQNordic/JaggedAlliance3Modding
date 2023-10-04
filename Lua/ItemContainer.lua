@@ -179,8 +179,8 @@ end
 function ItemContainer:GetInteractionCombatAction(unit)
 	if self.interacting_unit then return end
 	
-	local trapAction = BoobyTrappable.GetInteractionCombatAction(self, unit)
-	if trapAction then return trapAction end
+	local trapAction, icon = BoobyTrappable.GetInteractionCombatAction(self, unit)
+	if trapAction then return trapAction, icon end
 	
 	if self:CannotOpen() then
 		local baseAction = Lockpickable.GetInteractionCombatAction(self, unit)
@@ -378,7 +378,8 @@ function ItemDropContainer:GetInteractionCombatAction(unit)
 		local mypos = point_pack(SnapToVoxel(self:GetPosXYZ()))
 		local upos = point_pack(SnapToVoxel(unit:GetPosXYZ()))
 		if upos ~= mypos then
-			local tile_unit = MapGetFirst(point(point_unpack(mypos)), const.SlabSizeX/2, "Unit", function(u, mypos)
+			local x, y = point_unpack(mypos)
+			local tile_unit = MapGetFirst(x, y, const.SlabSizeX/2, "Unit", function(u, mypos)
 				return not u:IsDead() and mypos == point_pack(SnapToVoxel(u:GetPosXYZ()))
 			end, mypos)
 			if tile_unit then

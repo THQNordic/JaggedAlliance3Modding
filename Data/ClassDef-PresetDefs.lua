@@ -640,31 +640,114 @@ PlaceObj('PresetDef', {
 		'id', "DisplayName",
 		'name', "Display Name",
 	}),
-	PlaceObj('PropertyDefNumber', {
-		'id', "sector_columns",
-		'name', "Sector Columns",
-		'min', 0,
+	PlaceObj('PropertyDefText', {
+		'category', "Preset",
+		'id', "Description",
+		'name', "Description",
+		'default', "",
 	}),
-	PlaceObj('PropertyDefNumber', {
-		'id', "sector_rows",
-		'name', "Sector Rows",
-		'min', 0,
+	PlaceObj('ClassConstDef', {
+		'name', "editing_size",
+	}),
+	PlaceObj('PropertyDefText', {
+		'category', "Map Size & Sectors",
+		'id', "sector_topleft",
+		'name', "Top-left sector",
+		'read_only', "expression",
+		'read_only_expression', function (self) return next(self.Sectors or empty_table) and not self.editing_size end,
+		'translate', false,
+	}),
+	PlaceObj('PropertyDefText', {
+		'category', "Map Size & Sectors",
+		'id', "sector_bottomright",
+		'name', "Bottom-right sector",
+		'read_only', "sector_topleft.read_only",
+		'translate', false,
 	}),
 	PlaceObj('PropertyDefButtons', {
-		'id', "map_editor_btn",
-		'name', "Map Editor",
+		'category', "Map Size & Sectors",
+		'id', "size_btns",
 		'buttons', {
 			PlaceObj('PropertyDefPropButton', {
-				'Name', "Edit Map",
-				'FuncName', "OpenGedSatelliteSectorEditor",
+				'Name', "Edit size",
+				'FuncName', "EditSize",
+				'IsHidden', function (self) return self.editing_size end,
+			}),
+			PlaceObj('PropertyDefPropButton', {
+				'Name', "Confirm new size",
+				'FuncName', "UpdateSize",
+				'IsHidden', function (self) return not self.editing_size end,
 			}),
 		},
 	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "EditSize",
+		'params', "root, prop_id, ged",
+		'code', function (self, root, prop_id, ged)
+			self.editing_size = true
+			CreateRealTimeThread(function()
+				Sleep(100)
+				ged:Send("rfnApp", "FocusProperty", "SelectedObject", "sector_topleft")
+			end)
+			ObjModified(self)
+		end,
+	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "UpdateSize",
+		'comment', "Sets map size from sector_topleft and sector_bottomright",
+		'code', function (self)
+			local x1, y1 = sector_unpack(self.sector_topleft)
+			local x2, y2 = sector_unpack(self.sector_bottomright)
+			self.sector_columns = y2 - y1 + 1
+			self.sector_rowsstart = x1
+			self.sector_rows = x2
+			self.editing_size = nil
+			ObjModified(self)
+			
+			self:GenerateEmptySectors()
+		end,
+	}),
+	PlaceObj('PropertyDefNumber', {
+		'category', "Map Size & Sectors",
+		'id', "sector_columns",
+		'name', "Sector columns",
+		'read_only', true,
+		'min', 1,
+		'max', 99,
+	}),
+	PlaceObj('PropertyDefNumber', {
+		'category', "Map Size & Sectors",
+		'id', "sector_rowsstart",
+		'name', "Sector rows start",
+		'read_only', true,
+		'min', -25,
+		'max', 1,
+	}),
+	PlaceObj('PropertyDefNumber', {
+		'category', "Map Size & Sectors",
+		'id', "sector_rows",
+		'name', "Sector rows end",
+		'read_only', true,
+		'min', 1,
+		'max', 26,
+	}),
 	PlaceObj('PropertyDefText', {
+		'category', "Map Size & Sectors",
 		'id', "InitialSector",
-		'name', "Initial Sector",
+		'name', "Initial sector",
 		'help', "The sector in which the campaign starts",
 		'translate', false,
+	}),
+	PlaceObj('PropertyDefButtons', {
+		'category', "Map Size & Sectors",
+		'id', "map_editor_btn",
+		'buttons', {
+			PlaceObj('PropertyDefPropButton', {
+				'Name', "Edit sectors for current Game's campaign",
+				'FuncName', "OpenGedSatelliteSectorEditor",
+				'IsHidden', function (self) return not Game or not next(gv_Sectors) end,
+			}),
+		},
 	}),
 	PlaceObj('PropertyDefNestedList', {
 		'id', "Cities",
@@ -723,7 +806,65 @@ PlaceObj('PresetDef', {
 			self:Initialize(...)
 			self:FirstRunInterface(...)
 			Game.CampaignStarted = true
-			Msg("CampaignStarted")
+			Msg("CampaignStarted", self.id)
+		end,
+	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "GenerateEmptySectors",
+		'comment', "Places empty sectors at each point within the map where a sector doesn't exist",
+		'code', function (self)
+			self.Sectors = self.Sectors or {}
+			
+			local existing = {}
+			for _, sector in ipairs(self.Sectors) do
+				existing[sector.Id] = true
+			end
+			for y = 1, self.sector_columns do
+				for x = self.sector_rowsstart, self.sector_rows do
+					local sector_id = sector_pack(x, y)
+					if not existing[sector_id] then
+						table.insert(self.Sectors, GenerateEmptySector(sector_id))
+					end
+				end
+			end
+			table.sortby_field(self.Sectors, "Id")
+			ObjModified(self.Sectors)
+		end,
+	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "PostLoad",
+		'comment', "Updates map bounds from the existing sectors",
+		'code', function (self)
+			local bbox = box()
+			for _, sector in ipairs(self.Sectors) do
+				local x, y = sector_unpack(sector.Id)
+				bbox = Extend(bbox, point(x, y))
+			end
+			
+			self.sector_topleft = sector_pack(bbox:minx(), 1)
+			self.sector_bottomright = sector_pack(bbox:maxx() - 1, bbox:maxy() - 1)
+			self:UpdateSize()
+		end,
+	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "OnPreSave",
+		'comment', "Remove generated sectors",
+		'code', function (self)
+			local sectors = self.Sectors or {}
+			for idx = #sectors, 1, -1 do
+				if sectors[idx].generated then
+					table.remove(sectors, idx)
+				end
+			end
+			
+			self.editing_size = nil
+		end,
+	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "OnPostSave",
+		'comment', "Add back generated sectors",
+		'code', function (self)
+			self:GenerateEmptySectors()
 		end,
 	}),
 	PlaceObj('PropertyDefNumber', {
@@ -2222,6 +2363,14 @@ PlaceObj('PresetDef', {
 })
 
 PlaceObj('PresetDef', {
+	Comment = "stores combo items for craft operations ids",
+	DefGedEditor = "",
+	DefGlobalMap = "CraftOperationIds",
+	group = "PresetDefs",
+	id = "CraftOperationId",
+})
+
+PlaceObj('PresetDef', {
 	DefEditorIcon = "CommonAssets/UI/Icons/auction court hammer judge justice law.png",
 	DefEditorMenubar = "Scripting",
 	DefEditorMenubarSortKey = "4061",
@@ -2235,6 +2384,18 @@ PlaceObj('PresetDef', {
 	DefModItemSubmenu = "Satellite",
 	group = "PresetDefs",
 	id = "CraftOperationsRecipeDef",
+	PlaceObj('PropertyDefCombo', {
+		'id', "CraftOperationId",
+		'help', "which craft operation displays that recipe",
+		'buttons', {
+			PlaceObj('PropertyDefPropButton', {
+				'Name', "Add to combo",
+				'FuncName', "AddCraftOperationIdToCombo",
+			}),
+		},
+		'items', function (self) return PresetsCombo("CraftOperationId") end,
+		'show_recent_items', 5,
+	}),
 	PlaceObj('PropertyDefNestedList', {
 		'id', "Ingredients",
 		'name', "Ingredients",
@@ -2278,6 +2439,17 @@ PlaceObj('PresetDef', {
 			}),
 		},
 		'template', true,
+	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "AddCraftOperationIdToCombo",
+		'code', function (self)
+			if self.CraftOperationId ~= "" and not table.find(CraftOperationIds, "id", self.CraftOperationId) then
+				local id = CraftOperationId:new()
+				id:SetGroup("Default")
+				id:SetId(self.CraftOperationId)
+				CraftOperationId:SaveAll("force")
+			end
+		end,
 	}),
 })
 
@@ -2562,8 +2734,8 @@ PlaceObj('PresetDef', {
 						end
 					end
 				end
-				minSquadPower = minSquadPower + lowestPower * minCount
-				maxSquadPower = maxSquadPower + highestPower * maxCount
+				minSquadPower = minSquadPower + (lowestPower and (lowestPower * minCount) or 0)
+				maxSquadPower = maxSquadPower + (highestPower and (highestPower * maxCount) or 0)
 			end
 			return tostring(minSquadPower) .. " - " .. tostring(maxSquadPower)
 		end,
@@ -2661,6 +2833,34 @@ PlaceObj('PresetDef', {
 	}),
 	PlaceObj('PropertyDefText', {
 		'id', "Description",
+	}),
+})
+
+PlaceObj('PresetDef', {
+	DefEditorIcon = "CommonAssets/UI/Icons/appointment calendar date day event month schedule.png",
+	DefEditorMenubar = "Editors.Other",
+	DefEditorMenubarSortKey = "4130",
+	DefEditorName = "Game Updates Editor",
+	DefGlobalMap = "GameUpdates",
+	DefHasGroups = false,
+	DefHasSortKey = true,
+	DefStoreAsTable = "true",
+	group = "PresetDefs",
+	id = "GameUpdate",
+	PlaceObj('PropertyDefText', {
+		'category', "General",
+		'id', "Title",
+	}),
+	PlaceObj('PropertyDefText', {
+		'category', "General",
+		'id', "Text",
+		'wordwrap', true,
+		'lines', 3,
+	}),
+	PlaceObj('PropertyDefBool', {
+		'category', "General",
+		'id', "open_as_read",
+		'name', "Mark as read on open",
 	}),
 })
 
@@ -3048,7 +3248,7 @@ PlaceObj('PresetDef', {
 					state_types[map_state.group] = true
 				end
 				for id, state in pairs(GameStateDefs) do
-					if state_types[state.group] and not state_descr[id] then
+					if state_types[state.group] and not state_descr[id] and not state.AutoSet then
 						state_descr[id] = false
 					end
 				end
@@ -5757,7 +5957,7 @@ PlaceObj('ClassDef', {
 		'name', "OnEditorNew",
 		'params', "parent, ged, is_paste",
 		'code', function (self, parent, ged, is_paste)
-			local quest_def = ged:ResolveObj("SelectedPreset")
+			local quest_def = ged:ResolveObj("SelectedPreset") or ged:ResolveObj("SelectedObject")
 			self.QuestId = quest_def.id
 		end,
 	}),
@@ -6078,6 +6278,11 @@ PlaceObj('PresetDef', {
 		'id', "ModifyRightHandGrip",
 		'name', "Modify the right hand grip",
 	}),
+	PlaceObj('PropertyDefBool', {
+		'category', "Misc",
+		'id', "EnableAimFX",
+		'name', "Enable Aim FX",
+	}),
 	PlaceObj('ClassConstDef', {
 		'name', "GetWarning",
 	}),
@@ -6134,6 +6339,9 @@ PlaceObj('PresetDef', {
 	DefGlobalMap = "WeaponComponentEffects",
 	DefHasParameters = true,
 	DefHasSortKey = true,
+	DefParentClassList = {
+		"MsgActorReactionsPreset",
+	},
 	group = "PresetDefs",
 	id = "WeaponComponentEffect",
 	PlaceObj('PropertyDefText', {
@@ -6177,6 +6385,48 @@ PlaceObj('PresetDef', {
 		'read_only', true,
 		'template', true,
 		'extra_code', "buttons = function(obj) return WeaponComponentEffectUsedIn(obj) end",
+	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "VerifyReaction",
+		'params', "event, reaction_def, reaction_actor, ...",
+		'code', function (self, event, reaction_def, reaction_actor, ...)
+			if IsKindOf(reaction_actor, "BaseWeapon") then
+				return reaction_actor:HasComponent(self.id)
+			end
+			
+			if not IsKindOf(reaction_actor, "UnitInventory") then return end
+			
+			local weapons = reaction_actor:GetEquippedWeapons(reaction_actor.current_weapon, "FirearmBase")
+			for _, weapon in ipairs(weapons) do
+				if weapon:HasComponent(self.id) then
+					return true
+				end
+			end
+		end,
+	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "GetReactionActors",
+		'params', "event, reaction_def, ...",
+		'code', function (self, event, reaction_def, ...)
+			local objs = {}
+			if reaction_def:HasFlag("SatView") then
+				for session_id, data in pairs(gv_UnitData) do
+					local obj = ZuluReactionResolveUnitActorObj(session_id, data)
+					if self:VerifyReaction(event, obj, ...) then
+						objs[#objs + 1] = obj
+					end
+				end
+			else
+				table.iappend(objs, g_Units)
+			end
+			table.sortby_field(objs, "session_id")
+			return objs
+		end,
+	}),
+	PlaceObj('ClassConstDef', {
+		'name', "EditorMenubarName",
+		'type', "text",
+		'value', "WeaponComponentEffect",
 	}),
 })
 
@@ -6376,7 +6626,7 @@ PlaceObj('PresetDef', {
 
 PlaceObj('PresetDef', {
 	DefModItem = true,
-	DefModItemName = "Weapon Slot",
+	DefModItemName = "Weapon slot",
 	DefModItemSubmenu = "Item",
 	DefParentClassList = {
 		"ListPreset",

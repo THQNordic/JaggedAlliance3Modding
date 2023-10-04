@@ -10,7 +10,7 @@ PlaceObj('InventoryItemCompositeDef', {
 	'DisplayNamePlural', T(309014082489, --[[InventoryItemCompositeDef DiamondNecklace DisplayNamePlural]] "Diamond Necklaces"),
 	'Description', T(636879840583, --[[InventoryItemCompositeDef DiamondNecklace Description]] "The valuable diamond necklace of Madam Lecoq."),
 	'AdditionalHint', T(220266976707, --[[InventoryItemCompositeDef DiamondNecklace AdditionalHint]] "<bullet_point> <GameColorD>Can be cashed in for Money</GameColorD>"),
-	'is_valuable', true,
+	'Valuable', 1,
 	'Cost', 9000,
 })
 

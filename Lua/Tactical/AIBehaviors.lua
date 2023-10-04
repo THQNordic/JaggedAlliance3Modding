@@ -197,7 +197,7 @@ end
 function AIBehavior:EndMovement(unit)
 	local context = unit.ai_context
 	local dest = context.ai_destination
-	if not dest or unit.species ~= "Human" then return end
+	if not dest or unit.species ~= "Human" or unit:IsIncapacitated() then return end
 	local upos = GetPackedPosAndStance(unit)
 	if stance_pos_dist(dest, upos) == 0 then
 		local x, y, z, stance_idx = stance_pos_unpack(dest)

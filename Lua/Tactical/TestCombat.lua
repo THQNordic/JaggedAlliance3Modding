@@ -87,12 +87,12 @@ function InitTestCombat(combat, combat_params, time_of_day)
 
 		if team.spawn_marker_group ~= "" then
 			markers = MapGetMarkers("Entrance", team.spawn_marker_group)
-			if #markers > 0 then
+			if markers and #markers > 0 then
 				marker, positions, angle = GetRandomSpawnMarkerPositions(markers, #team.units)
 				assert(#positions == #team.units)
 			else
 				markers = MapGetMarkers("Position", team.spawn_marker_group)
-				if #markers > 0 then
+				if markers and #markers > 0 then
 					positions = {}
 					for i = 1, #markers do
 						positions[i] = markers[i]:GetPos()

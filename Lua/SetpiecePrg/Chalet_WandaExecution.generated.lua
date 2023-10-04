@@ -46,7 +46,7 @@ SetpiecePrgs.Chalet_WandaExecution = function(seed, state, TriggerUnits)
 	prgdbg(li, 1, 26) sprocall(SetpieceCamera.Exec, SetpieceCamera, state, rand, true, "", "Tac", "", "", "linear", 6000, false, false, point(124766, 142259, 8855), point(120514, 144874, 9136), false, false, 4200, 1150, false, 0, 0, 0, 0, 0, 0, "Show all", 100)
 	prgdbg(li, 1, 27) sprocall(SetpieceFadeOut.Exec, SetpieceFadeOut, state, rand, true, "", 3000)
 	local _, DocRobertAfter
-	prgdbg(li, 1, 28) _, DocRobertAfter = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", DocRobert, "DocRobertExecution_01", true, false, true, "Standing", false, false, "Walk_Fast_Neutral")
+	prgdbg(li, 1, 28) _, DocRobertAfter = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", DocRobert, "DocRobertExecution_01", true, false, true, "Standing", false, false, "Walk_Fast_Neutral", 1000)
 	prgdbg(li, 1, 29) sprocall(SetpieceFadeIn.Exec, SetpieceFadeIn, state, rand, false, "", 1000, 2000)
 	prgdbg(li, 1, 30) sprocall(SetpieceSleep.Exec, SetpieceSleep, state, rand, true, "", 5)
 	local _
@@ -55,7 +55,7 @@ SetpiecePrgs.Chalet_WandaExecution = function(seed, state, TriggerUnits)
 	prgdbg(li, 1, 32) _, WandaExecution = sprocall(SetpieceTeleport.Exec, SetpieceTeleport, state, Wanda, "WandaExecution_01", true)
 	prgdbg(li, 1, 33) sprocall(SetpieceSleep.Exec, SetpieceSleep, state, rand, true, "", 5)
 	local _
-	prgdbg(li, 1, 34) _, DocRobertAfter = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Wanda, "WandaExecution", true, false, true, "Standing", false, false, "Walk_Normal_Neutral")
+	prgdbg(li, 1, 34) _, DocRobertAfter = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Wanda, "WandaExecution", true, false, true, "Standing", false, false, "Walk_Normal_Neutral", 1000)
 	prgdbg(li, 1, 35) sprocall(SetpieceSetStance.Exec, SetpieceSetStance, state, rand, true, "", Wanda, "Standing", "Current Weapon", false)
 	prgdbg(li, 1, 36) sprocall(SetpieceSetStance.Exec, SetpieceSetStance, state, rand, true, "", DocRobert, "Standing", "DesertEagle", false)
 	prgdbg(li, 1, 37) sprocall(SetpieceCamera.Exec, SetpieceCamera, state, rand, false, "", "Tac", "", "", "linear", 5000, false, false, point(121309, 144804, 11113), point(117959, 148064, 12888), false, false, 4200, 1150, false, 0, 0, 0, 0, 0, 0, "Show all", 100)

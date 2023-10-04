@@ -70,14 +70,24 @@ function GamepadUnitControl:ClearWorldCursor()
 	end
 end
 
-function OnMsg.GamepadUIStyleChanged()
+local function lUpdateGamepadThread()
 	local igi = GetInGameInterfaceModeDlg()
 	if not IsKindOf(igi, "GamepadUnitControl") then return end
 	if GetUIStyleGamepad() then
+		-- Remove the mouse rollover from where the mouse is.
+		if terminal.desktop then
+			terminal.desktop:MouseEvent("OnMousePos", terminal.GetMousePos())
+		end
+
 		igi:ResumeGamepadThread()
 	else
 		igi:StopGamepadThread()
 	end
+end
+
+function OnMsg.GamepadUIStyleChanged()
+	-- This needs to be delayed due to ReloadLua calling GamepadUIStyleChanged
+	DelayedCall(0, lUpdateGamepadThread)
 end
 
 function GamepadUnitControl:StopGamepadThread()
@@ -111,7 +121,7 @@ function GamepadUnitControl:ResumeGamepadThread(start)
 	self:InitializeWorldCursor()
 
 	ObjModified("combat_bar")
-	if not Platform.trailer and not start and not gv_SatelliteView then OpenCombatLog() end
+	--if not Platform.trailer and not start and not gv_SatelliteView then OpenCombatLog() end
 	ForceHideMouseCursor("GamepadActive")
 	ObjModified(APIndicator)
 	table.change(hr, "gamepad-ui", {CameraTacMouseEdgeScrolling = false, GamepadPreciseSelectionPos = 1})
@@ -152,7 +162,6 @@ function GamepadUnitControl:ThreadProc()
 	if not self.visible then return end
 	
 	local cursorPos = GetCursorPos(self.movement_mode and "walkable")
-	local passPos = GetPassSlab(cursorPos)
 	
 	--self.world_cursor:SetPos(cursorPos) --done via special orientation
 	
@@ -207,9 +216,10 @@ function GamepadUnitControl:ThreadProc()
 		hintShown = true
 	end
 	
-	local cameraSpeed = GamepadCameraTacMoveSpeed
+	local settingSpeed = GetAccountStorageOptionValue("GamepadCameraMoveSpeed") or GamepadCameraTacMoveSpeed
+	local cameraSpeed = settingSpeed
 	local snapMaxDist = const.SlabSizeX
-	local speedCap = 150
+	local speedCap = 500
 	local interactableAroundCursor = self.potential_interactable or self.potential_target
 	if self.potential_interactable_gamepad_resolved then
 		local obj = self.potential_interactable_gamepad_resolved[interactableAroundCursor]
@@ -221,7 +231,7 @@ function GamepadUnitControl:ThreadProc()
 	if interactableAroundCursor then
 		local distToIt = cursorPos:Dist(interactableAroundCursor)
 		distToIt = Min(distToIt, snapMaxDist)
-		cameraSpeed = Lerp(speedCap, 500, EaseCoeff(easingCubic, distToIt, snapMaxDist), snapMaxDist)
+		cameraSpeed = Lerp(speedCap, Max(settingSpeed / 2, speedCap), EaseCoeff(easingCubic, distToIt, snapMaxDist), snapMaxDist)
 	end
 	
 	if Selection[1] and not hintShown then	
@@ -251,7 +261,7 @@ function GamepadUnitControl:ThreadProc()
 		elseif gv_Deployment then
 			self:SpawnHelperTexts({"ButtonASmall"},{T(602300303403, "Deploy merc")})
 			hintShown = true
-		elseif passPos and #Selection > 0 and not combatAttackMode then
+		elseif #Selection > 0 and not combatAttackMode and GetPassSlabXYZ(cursorPos) then
 			if combatMovementIgi and not combatMovementMode then
 				local combatPath = Selection[1] and GetCombatPath(Selection[1])
 				if combatPath and table.count(combatPath.destinations) > 1 then
@@ -262,7 +272,7 @@ function GamepadUnitControl:ThreadProc()
 				self:SpawnHelperTexts({"ButtonASmall"}, {T(463014525696, "Move")})				
 				hintShown = true
 			else
-				if Selection and #Selection > 1 then
+				if #Selection > 1 then
 					self:SpawnHelperTexts({"ButtonASmall"}, {T(463014525696, "Move")})				
 				else
 					self:SpawnHelperTexts({"ButtonASmall", "ButtonASmallHold"}, {T(463014525696, "Move"),T(657923169702, "Move squad")})				
@@ -274,11 +284,11 @@ function GamepadUnitControl:ThreadProc()
 	
 	if not cameraTac.IsActive() then
 		hintShown = false
-		cameraSpeed = GamepadCameraTacMoveSpeed
+		cameraSpeed = settingSpeed
 	end
 	
 	-- Hide if focus is in another ui like the action bar
-	if terminal.desktop.keyboard_focus ~= self then
+	if terminal.desktop.keyboard_focus ~= self and not self:IsWithin(terminal.desktop.keyboard_focus) then
 		hintShown = false
 	end
 	
@@ -537,6 +547,24 @@ function GamepadUnitControl:GamepadSelectionSetTarget(target)
 	ObjModified("combat_bar_enemies")
 end
 
+function OnMsg.SelectionChange()
+	if g_Combat then return end
+	
+	local igi = GetInGameInterfaceModeDlg()
+	if IsKindOf(igi, "GamepadUnitControl") then
+		igi:GamepadSelectionSetTarget(false)
+	end
+end
+
+function OnMsg.SelectedObjChange()
+	if not g_Combat then return end
+	
+	local igi = GetInGameInterfaceModeDlg()
+	if IsKindOf(igi, "GamepadUnitControl") then
+		igi:GamepadSelectionSetTarget(false)
+	end
+end
+
 function DetermineUnitCombatActionButtonX()
 	local priorityList = {
 		CombatActions.Hide,
@@ -583,7 +611,7 @@ function XEvent(action, nCtrlId, button, ...)
 	end
 end
 
-DefineConstInt("Default", "GamePadButtonHoldTime", 200)
+DefineConstInt("Default", "GamePadButtonHoldTime", 300)
 
 function IsXInputHeld(button, time)
 	local time = time or const.GamePadButtonHoldTime

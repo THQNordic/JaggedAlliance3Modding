@@ -95,7 +95,7 @@ PlaceObj('XTemplate', {
 		PlaceObj('XTemplateFunc', {
 			'name', "IsSelectable(self)",
 			'func', function (self)
-				return not self.context.prop_meta.separator or self.context.prop_meta.category ~= "Mod"
+				return not self.context.prop_meta.separator and self.context.prop_meta.category ~= "Mod"
 			end,
 		}),
 		}),

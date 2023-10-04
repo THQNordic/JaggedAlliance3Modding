@@ -39,7 +39,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('PlayerIsInSectors', {
 							Sectors = {
@@ -82,7 +82,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('SectorCheckOwner', {
 							sector_id = "H4",
@@ -109,7 +109,7 @@ PlaceObj('QuestsDef', {
 						return quest.Given
 					end,
 				}),
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('PlayerIsInSectors', {
 							Sectors = {
@@ -167,7 +167,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('PlayerIsInSectors', {
 							Sectors = {
@@ -218,7 +218,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('SectorCheckOwner', {
 							sector_id = "H4_Underground",

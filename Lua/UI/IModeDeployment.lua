@@ -306,7 +306,11 @@ function LocalDeployUnitsOnMarker(units, marker, show, slab_pos)
 		unit:SetPos(snap_pos or positions[i])
 		unit:SetAngle(snap_angle or marker_angle)
 		unit:SetTargetDummy(false)
+		unit:InterruptPreparedAttack()
 		unit.entrance_marker = marker
+		
+		local voxels, head = unit:GetVisualVoxels(nil, nil)
+		EnvEffectDarknessTick(unit, voxels)
 		
 		if igi then
 			igi.units_deployed[unit] = true
@@ -339,6 +343,9 @@ function NetSyncEvents.DeployUnit(session_id, pos, marker)
 	unit:SetAngle(snap_angle or angle)
 	unit:SetTargetDummy(false)
 	unit.entrance_marker = marker
+	
+	local voxels, head = unit:GetVisualVoxels(nil, nil)
+	EnvEffectDarknessTick(unit, voxels)
 	
 	local igi = GetInGameInterfaceModeDlg()
 	if not IsKindOf(igi, "IModeDeployment") or not igi.units_deployed then
@@ -584,11 +591,11 @@ end
 function OnMsg.CurrentSquadChanged()
 	if not gv_Deployment then return end
 	local playerUnits = GetAllPlayerUnitsOnMap()
-	for i, u in ipairs(playerUnits) do
+--[[	for i, u in ipairs(playerUnits) do
 		if not IsUnitDeployed(u) then
 			u:SetVisible(false)
 		end
-	end
+	end]]
 
 	if not g_CurrentSquad then return end
 	local selUnit = Selection[1]

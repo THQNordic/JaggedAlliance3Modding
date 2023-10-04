@@ -31,7 +31,7 @@ SetpiecePrgs.MajorArrested_Main = function(seed, state, TriggerUnits)
 	prgdbg(li, 1, 17) _, SP_GuardC_Port = sprocall(SetpieceTeleport.Exec, SetpieceTeleport, state, MilitiaGuardC, "SP_GuardC_Port", true)
 	prgdbg(li, 1, 18) sprocall(SetpieceAnimation.Exec, SetpieceAnimation, state, rand, false, "", MilitiaGuardB, "", true, "ar_Standing_Aim", 1000, 0, range(1, 1), 0, false, true, false, "")
 	local _, SP_GuardB_EscortEnd
-	prgdbg(li, 1, 19) _, SP_GuardB_EscortEnd = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", MilitiaGuardB, "SP_GuardB_EscortEnd", true, false, false, "Standing", true, true, "")
+	prgdbg(li, 1, 19) _, SP_GuardB_EscortEnd = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", MilitiaGuardB, "SP_GuardB_EscortEnd", true, false, false, "Standing", true, true, "", 1000)
 	prgdbg(li, 1, 20) sprocall(SetpieceFadeIn.Exec, SetpieceFadeIn, state, rand, false, "", 0, 1500)
 	prgdbg(li, 1, 21) sprocall(SetpieceCamera.Exec, SetpieceCamera, state, rand, true, "", "Max", 0, "linear", "linear", 6000, false, false, point(139786, 123195, 13831), point(134783, 138085, 24831), point(141784, 118200, 12786), point(136781, 133090, 23786), 4200, 2000, false, 0, 0, 0, 0, 0, 0, "Default", 100)
 	prgdbg(li, 1, 22) sprocall(SetpieceFadeOut.Exec, SetpieceFadeOut, state, rand, true, "", 700)

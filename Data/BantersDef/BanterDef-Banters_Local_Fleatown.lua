@@ -1669,7 +1669,7 @@ PlaceObj('BanterDef', {
 				return not quest.Completed and not quest.Failed
 			end,
 		}),
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('CheckGameState', {
 					GameState = "Sunset",

@@ -21,18 +21,6 @@ PlaceObj('CombatTask', {
 					end
 				end
 			end,
-			HandlerCode = function (self, attacker, target, dmg, hit_descr)
-				if IsMerc(attacker) and IsKindOf(target, "Unit") and target:IsOnEnemySide(attacker) then
-					local task = FindActiveCombatTask(self.id)
-					if dmg > 0 and task then
-						if task.unitId == attacker.session_id then
-							task:Update(dmg)
-						elseif task.otherUnitId == attacker.session_id then
-							task:Update(0, dmg)
-						end
-					end
-				end
-			end,
 		}),
 	},
 	name = T(224628040381, --[[CombatTask DamageCompetition name]] "Damage Competition"),
@@ -49,19 +37,6 @@ PlaceObj('CombatTask', {
 		PlaceObj('MsgReaction', {
 			Event = "OnAttack",
 			Handler = function (self, attacker, action, target, results, attack_args)
-				if IsMerc(attacker) then
-					local kills = EnemiesKilled(attacker, results)
-					local task = FindActiveCombatTask(self.id)
-					if kills > 0 and task then
-						if task.unitId == attacker.session_id then
-							task:Update(kills)
-						elseif task.otherUnitId == attacker.session_id then
-							task:Update(0, kills)
-						end
-					end
-				end
-			end,
-			HandlerCode = function (self, attacker, action, target, results, attack_args)
 				if IsMerc(attacker) then
 					local kills = EnemiesKilled(attacker, results)
 					local task = FindActiveCombatTask(self.id)
@@ -96,21 +71,12 @@ PlaceObj('CombatTask', {
 					end
 				end
 			end,
-			HandlerCode = function (self, attacker, action, target, results, attack_args)
-				if IsMerc(attacker) and IsKindOfClasses(results.weapon, "AssaultRifle", "SubmachineGun") then
-					local kills = EnemiesKilled(attacker, results)
-					if kills > 0 then
-						local task = FindActiveCombatTask(self.id)
-						if task then task:Update(kills) end
-					end
-				end
-			end,
 		}),
 	},
 	name = T(226845938375, --[[CombatTask AutomaticKills name]] "Automatic Kills"),
 	requiredProgress = 3,
 	selectionConditions = {
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('UnitHasWeaponKind', {
 					TargetUnit = "current unit",
@@ -150,14 +116,6 @@ PlaceObj('CombatTask', {
 					end
 				end
 			end,
-			HandlerCode = function (self, attacker, target, dmg, hit_descr)
-				if IsMerc(attacker) and IsKindOf(target, "Unit") and target:IsOnEnemySide(attacker) then
-					local task = attacker:FirstCombatTaskById(self.id)
-					if task then
-						task:Update(dmg)
-					end
-				end
-			end,
 		}),
 	},
 	name = T(823186688823, --[[CombatTask DamageDealer name]] "Destruction Distributor"),
@@ -181,22 +139,10 @@ PlaceObj('CombatTask', {
 					if task then task:Update(1) end
 				end
 			end,
-			HandlerCode = function (self, attacker, action, target, results, attack_args)
-				if IsMerc(attacker) and IsEnemyKill(attacker, results) then
-					local task = attacker:FirstCombatTaskById(self.id)
-					if task then task:Update(1) end
-				end
-			end,
 		}),
 		PlaceObj('MsgReaction', {
 			Event = "DamageDone",
 			Handler = function (self, attacker, target, dmg, hit_descr)
-				if IsMerc(target) then
-					local task = target:FirstCombatTaskById(self.id)
-					if task then task:Fail() end
-				end
-			end,
-			HandlerCode = function (self, attacker, target, dmg, hit_descr)
 				if IsMerc(target) then
 					local task = target:FirstCombatTaskById(self.id)
 					if task then task:Fail() end
@@ -233,22 +179,12 @@ PlaceObj('CombatTask', {
 					end
 				end
 			end,
-			HandlerCode = function (self, unit, attacker)
-				if IsMerc(attacker) then
-					local task = FindActiveCombatTask(self.id)
-					if task then
-						if unit.on_die_hit_descr and unit.on_die_hit_descr.explosion and unit:IsOnEnemySide(attacker) and not unit.immortal then
-							task:Update(1)
-						end
-					end
-				end
-			end,
 		}),
 	},
 	name = T(327792067279, --[[CombatTask ExplosiveKills name]] "Explosive Kills"),
 	requiredProgress = 2,
 	selectionConditions = {
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('UnitHasWeaponKind', {
 					TargetUnit = "current unit",
@@ -285,16 +221,6 @@ PlaceObj('CombatTask', {
 					end
 				end
 			end,
-			HandlerCode = function (self, attacker, action, target, results, attack_args)
-				if IsMerc(attacker) and IsEnemyKill(attacker, results) then
-					local task = FindActiveCombatTask(self.id)
-					if not target or (target.species == "Human" and attack_args.target_spot_group ~= "Groin") then
-						if task then task:Fail() end
-					elseif target and target.species == "Human" then
-						if task then task:Update(1) end
-					end
-				end
-			end,
 		}),
 	},
 	name = T(639828499284, --[[CombatTask GroinKiller name]] "Make them Suffer"),
@@ -320,21 +246,12 @@ PlaceObj('CombatTask', {
 					end
 				end
 			end,
-			HandlerCode = function (self, attacker, action, target, results, attack_args)
-				if IsMerc(attacker) and IsKindOfClasses(results.weapon, "Pistol", "Revolver") then
-					local kills = EnemiesKilled(attacker, results)
-					if kills > 0 then
-						local task = FindActiveCombatTask(self.id)
-						if task then task:Update(kills) end
-					end
-				end
-			end,
 		}),
 	},
 	name = T(542106263178, --[[CombatTask HandgunKills name]] "Handgun Kills"),
 	requiredProgress = 3,
 	selectionConditions = {
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('UnitHasWeaponKind', {
 					TargetUnit = "current unit",
@@ -360,22 +277,6 @@ PlaceObj('CombatTask', {
 		PlaceObj('MsgReaction', {
 			Event = "OnAttack",
 			Handler = function (self, attacker, action, target, results, attack_args)
-				if IsMerc(attacker) then
-					local headshots = 0
-					for _, shot in ipairs(results.shots) do
-						for _, hit in ipairs(shot.hits) do
-							if hit.spot_group and hit.spot_group == "Head" then
-								headshots = headshots + 1
-							end
-						end
-					end
-					if headshots > 0 then
-						local task = FindActiveCombatTask(self.id)
-						if task then task:Update(headshots) end
-					end
-				end
-			end,
-			HandlerCode = function (self, attacker, action, target, results, attack_args)
 				if IsMerc(attacker) then
 					local headshots = 0
 					for _, shot in ipairs(results.shots) do
@@ -424,22 +325,6 @@ PlaceObj('CombatTask', {
 					end
 				end
 			end,
-			HandlerCode = function (self, attacker, action, target, results, attack_args)
-				if IsMerc(attacker) then
-					local limbShots = 0
-					for _, shot in ipairs(results.shots) do
-						for _, hit in ipairs(shot.hits) do
-							if hit.spot_group and (hit.spot_group == "Legs" or hit.spot_group == "Arms") then
-								limbShots = limbShots + 1
-							end
-						end
-					end
-					if limbShots > 0 then
-						local task = FindActiveCombatTask(self.id)
-						if task then task:Update(limbShots) end
-					end
-				end
-			end,
 		}),
 	},
 	name = T(205504297105, --[[CombatTask LimbShots name]] "Mutilator"),
@@ -457,15 +342,6 @@ PlaceObj('CombatTask', {
 		PlaceObj('MsgReaction', {
 			Event = "OnAttack",
 			Handler = function (self, attacker, action, target, results, attack_args)
-				if IsMerc(attacker) and IsKindOf(results.weapon, "MachineGun") then
-					local kills = EnemiesKilled(attacker, results)
-					if kills > 0 then
-						local task = FindActiveCombatTask(self.id)
-						if task then task:Update(kills) end
-					end
-				end
-			end,
-			HandlerCode = function (self, attacker, action, target, results, attack_args)
 				if IsMerc(attacker) and IsKindOf(results.weapon, "MachineGun") then
 					local kills = EnemiesKilled(attacker, results)
 					if kills > 0 then
@@ -497,15 +373,6 @@ PlaceObj('CombatTask', {
 		PlaceObj('MsgReaction', {
 			Event = "OnAttack",
 			Handler = function (self, attacker, action, target, results, attack_args)
-				if IsMerc(attacker) and results.melee_attack then
-					local kills =  EnemiesKilled(attacker, results)
-					if kills > 0 then
-						local task = FindActiveCombatTask(self.id)
-						if task then task:Update(kills) end
-					end
-				end
-			end,
-			HandlerCode = function (self, attacker, action, target, results, attack_args)
 				if IsMerc(attacker) and results.melee_attack then
 					local kills =  EnemiesKilled(attacker, results)
 					if kills > 0 then
@@ -557,26 +424,6 @@ PlaceObj('CombatTask', {
 					end
 				end
 			end,
-			HandlerCode = function (self, attacker, action, target, results, attack_args)
-				if not IsMerc(attacker) then
-					return
-				end
-				local kills = 0
-				local weapon = attack_args and attack_args.weapon
-				for _, unit in ipairs(results.killed_units) do
-					if attacker:IsOnEnemySide(unit) then
-						if attacker:IsPointBlankRange(unit) then
-							kills = kills + 1
-						end
-					end
-				end
-				if kills > 0 then
-					local task = attacker:FirstCombatTaskById(self.id)
-					if task then
-						task:Update(kills)
-					end
-				end
-			end,
 		}),
 	},
 	name = T(282408867052, --[[CombatTask PointBlank name]] "Point-Blank"),
@@ -602,14 +449,6 @@ PlaceObj('CombatTask', {
 					end
 				end
 			end,
-			HandlerCode = function (self, attacker, action, target, results, attack_args)
-				if IsMerc(attacker) and IsKindOf(target, "Unit") and target:IsOnEnemySide(attacker) then
-					if attack_args.target_spot_group == "Head" and not results.miss and IsFullyAimedAttack(attack_args) then
-						local task = attacker:FirstCombatTaskById(self.id)
-						if task then task:Update(1) end
-					end
-				end
-			end,
 		}),
 	},
 	name = T(174050258256, --[[CombatTask PrecisionHeadshots name]] "Put this apple..."),
@@ -626,17 +465,18 @@ PlaceObj('CombatTask', {
 	id = "SameTurnKills",
 	msg_reactions = {
 		PlaceObj('MsgReaction', {
-			Event = "OnAttack",
-			Handler = function (self, attacker, action, target, results, attack_args)
-				if IsMerc(attacker) then
-					local kills = EnemiesKilled(attacker, results)
-					if kills > 0 then
-						local task = attacker:FirstCombatTaskById(self.id)
-						if task then task:Update(kills) end
-					end
+			Event = "Attack",
+			Handler = function (self, action, results, attack_args, combat_starting, attacker, target)
+				-- Clear the progress in case the combat doesn't start
+				if IsMerc(attacker) and not g_Combat and not combat_starting then
+					local task = attacker:FirstCombatTaskById(self.id)
+					if task then task:Update(-task.currentProgress) end
 				end
 			end,
-			HandlerCode = function (self, attacker, action, target, results, attack_args)
+		}),
+		PlaceObj('MsgReaction', {
+			Event = "OnAttack",
+			Handler = function (self, attacker, action, target, results, attack_args)
 				if IsMerc(attacker) then
 					local kills = EnemiesKilled(attacker, results)
 					if kills > 0 then
@@ -649,12 +489,6 @@ PlaceObj('CombatTask', {
 		PlaceObj('MsgReaction', {
 			Event = "TurnEnded",
 			Handler = function (self, teamEnded)
-				if g_Teams[teamEnded].player_team then
-					local task = FindActiveCombatTask(self.id)
-					if task then task:Update(-task.currentProgress) end
-				end
-			end,
-			HandlerCode = function (self, teamEnded)
 				if g_Teams[teamEnded].player_team then
 					local task = FindActiveCombatTask(self.id)
 					if task then task:Update(-task.currentProgress) end
@@ -678,15 +512,6 @@ PlaceObj('CombatTask', {
 		PlaceObj('MsgReaction', {
 			Event = "OnAttack",
 			Handler = function (self, attacker, action, target, results, attack_args)
-				if IsMerc(attacker) and IsKindOf(results.weapon, "Shotgun") then
-					local kills = EnemiesKilled(attacker, results)
-					if kills > 0 then
-						local task = FindActiveCombatTask(self.id)
-						if task then task:Update(kills) end
-					end
-				end
-			end,
-			HandlerCode = function (self, attacker, action, target, results, attack_args)
 				if IsMerc(attacker) and IsKindOf(results.weapon, "Shotgun") then
 					local kills = EnemiesKilled(attacker, results)
 					if kills > 0 then
@@ -719,15 +544,6 @@ PlaceObj('CombatTask', {
 		PlaceObj('MsgReaction', {
 			Event = "OnAttack",
 			Handler = function (self, attacker, action, target, results, attack_args)
-				if IsMerc(attacker) and IsKindOf(results.weapon, "SniperRifle") then
-					local kills = EnemiesKilled(attacker, results)
-					if kills > 0 then
-						local task = FindActiveCombatTask(self.id)
-						if task then task:Update(kills) end
-					end
-				end
-			end,
-			HandlerCode = function (self, attacker, action, target, results, attack_args)
 				if IsMerc(attacker) and IsKindOf(results.weapon, "SniperRifle") then
 					local kills = EnemiesKilled(attacker, results)
 					if kills > 0 then
@@ -770,17 +586,6 @@ PlaceObj('CombatTask', {
 					end
 				end
 			end,
-			HandlerCode = function (self, attacker, action, target, results, attack_args)
-				if IsMerc(attacker) then
-					if not IsBasicAttack(action, attack_args) then
-						local kills = EnemiesKilled(attacker, results)
-						if kills > 0 then
-							local task = FindActiveCombatTask(self.id)
-							if task then task:Update(kills) end
-						end
-					end
-				end
-			end,
 		}),
 	},
 	name = T(215882327453, --[[CombatTask SpecialKills name]] "Specialist"),
@@ -813,15 +618,6 @@ PlaceObj('CombatTask', {
 					end
 				end
 			end,
-			HandlerCode = function (self, attacker, action, target, results, attack_args)
-				if IsMerc(attacker) then
-					local kills = EnemiesKilled(attacker, results)
-					if kills > 0 then
-						local task = FindActiveCombatTask(self.id)
-						if task then task:Update(kills) end
-					end
-				end
-			end,
 		}),
 		PlaceObj('MsgReaction', {
 			Event = "TurnStart",
@@ -831,28 +627,10 @@ PlaceObj('CombatTask', {
 					if task then task:Fail() end
 				end
 			end,
-			HandlerCode = function (self, team)
-				if g_Teams[team].player_team and g_Combat.current_turn >= 2 then
-					local task = FindActiveCombatTask(self.id)
-					if task then task:Fail() end
-				end
-			end,
 		}),
 		PlaceObj('MsgReaction', {
 			Event = "CombatStart",
 			Handler = function (self, dynamic_data)
-				local task = FindActiveCombatTask(self.id)
-				if task then
-					local fail = false
-					if g_Combat.starting_unit and g_Combat.starting_unit.session_id ~= task.unitId then
-						task:Fail()
-						return
-					end
-					local unit = g_Units[task.unitId]
-					if not unit:HasStatusEffect("Hidden") then task:Fail() end
-				end
-			end,
-			HandlerCode = function (self, dynamic_data)
 				local task = FindActiveCombatTask(self.id)
 				if task then
 					local fail = false
@@ -895,14 +673,6 @@ PlaceObj('CombatTask', {
 					end
 				end
 			end,
-			HandlerCode = function (self, attacker, target, dmg, hit_descr)
-				if IsMerc(target) then
-					local task = FindActiveCombatTask(self.id)
-					if task then
-						task:Update(dmg)
-					end
-				end
-			end,
 		}),
 	},
 	name = T(974373173731, --[[CombatTask TakeLessDamage name]] "Careful Combatant"),
@@ -931,14 +701,6 @@ PlaceObj('CombatTask', {
 					end
 				end
 			end,
-			HandlerCode = function (self, obj, id, stacks)
-				if IsMerc(obj) and id == "Wounded" then
-					local task = FindActiveCombatTask(self.id)
-					if task and task.unitId ~= obj.session_id then
-						task:Fail()
-					end
-				end
-			end,
 		}),
 	},
 	name = T(437732136157, --[[CombatTask TankWounds name]] "Ardent Defender"),
@@ -959,16 +721,7 @@ PlaceObj('CombatTask', {
 				if IsMerc(attacker) and IsKindOf(results.weapon, "MeleeWeapon") and action.id == "KnifeThrow" then
 					local kills = EnemiesKilled(attacker, results)
 					if kills > 0 then
-						local task = FindActiveCombatTask(self.id)
-						if task then task:Update(kills) end
-					end
-				end
-			end,
-			HandlerCode = function (self, attacker, action, target, results, attack_args)
-				if IsMerc(attacker) and IsKindOf(results.weapon, "MeleeWeapon") and action.id == "KnifeThrow" then
-					local kills = EnemiesKilled(attacker, results)
-					if kills > 0 then
-						local task = FindActiveCombatTask(self.id)
+						local task = attacker:FirstCombatTaskById(self.id)
 						if task then task:Update(kills) end
 					end
 				end
@@ -995,15 +748,6 @@ PlaceObj('CombatTask', {
 		PlaceObj('MsgReaction', {
 			Event = "OnAttack",
 			Handler = function (self, attacker, action, target, results, attack_args)
-				if IsMerc(attacker) and IsKindOf(results.weapon, "Unarmed") then
-					local kills = EnemiesKilled(attacker, results)
-					if kills > 0 then
-						local task = FindActiveCombatTask(self.id)
-						if task then task:Update(kills) end
-					end
-				end
-			end,
-			HandlerCode = function (self, attacker, action, target, results, attack_args)
 				if IsMerc(attacker) and IsKindOf(results.weapon, "Unarmed") then
 					local kills = EnemiesKilled(attacker, results)
 					if kills > 0 then

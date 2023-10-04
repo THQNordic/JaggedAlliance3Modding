@@ -350,6 +350,11 @@ PlaceObj('QuestsDef', {
 	TCEs = {
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"A11",
+					},
+				}),
 				PlaceObj('UnitIsAroundOtherUnit', {
 					Distance = 12,
 					SecondTargetUnit = "Justine",
@@ -386,6 +391,9 @@ PlaceObj('QuestsDef', {
 			Once = true,
 			ParamId = "TCE_GiveQuest",
 			QuestId = "MiddleOfNowhere",
+			requiredSectors = {
+				"A11",
+			},
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
@@ -534,6 +542,11 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"A11",
+					},
+				}),
 				PlaceObj('SquadDefeated', {
 					custom_squad_id = "NowhereMarauders",
 				}),
@@ -564,6 +577,9 @@ PlaceObj('QuestsDef', {
 			Once = true,
 			ParamId = "TCE_GiveDiamondQuest",
 			QuestId = "MiddleOfNowhere",
+			requiredSectors = {
+				"A11",
+			},
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
@@ -584,7 +600,7 @@ PlaceObj('QuestsDef', {
 				}),
 				PlaceObj('ConditionalEffect', {
 					'Conditions', {
-						PlaceObj('OR', {
+						PlaceObj('CheckOR', {
 							Conditions = {
 								PlaceObj('UnitSquadHasMerc', {
 									HasStat = "Leadership",
@@ -674,7 +690,7 @@ PlaceObj('QuestsDef', {
 				}),
 				PlaceObj('ConditionalEffect', {
 					'Conditions', {
-						PlaceObj('OR', {
+						PlaceObj('CheckOR', {
 							Conditions = {
 								PlaceObj('UnitSquadHasMerc', {
 									HasStat = "Leadership",
@@ -764,7 +780,7 @@ PlaceObj('QuestsDef', {
 				}),
 				PlaceObj('ConditionalEffect', {
 					'Conditions', {
-						PlaceObj('OR', {
+						PlaceObj('CheckOR', {
 							Conditions = {
 								PlaceObj('UnitSquadHasMerc', {
 									HasStat = "Leadership",

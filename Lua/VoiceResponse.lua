@@ -219,7 +219,7 @@ function VoiceResponse:GetProperties()
 
 						comment = comment .. " " .. note .. "."
 						return comment
-					elseif preset.id == "AnimalFound" and table.find(unitdef:GetProperty("StartingPerks"),preset.id)then
+					elseif preset.id == "AnimalFound" and table.find(unitdef and unitdef:GetProperty("StartingPerks"), preset.id) then
 						comment = comment .. " This character is zoophobic."
 					end
 					
@@ -240,7 +240,7 @@ function VoiceResponse:GetProperties()
 				end,
 				editor = "T_list",
 				default = false,
-				buttons = { { name = "Edit props", func = function() preset:OpenEditor() end, } },
+				buttons = { { name = "Edit props", func = function() preset:OpenEditor() end, is_hidden = function(obj) return IsKindOf(obj, "ModItem") end,} },
 				per_item_buttons = { {name = "Test Voice Response", icon = "CommonAssets/UI/Ged/play.tga", func = "TestVoiceResponse"} },
 				no_edit = function(self)
 					local unitdata = UnitDataDefs[self.id]

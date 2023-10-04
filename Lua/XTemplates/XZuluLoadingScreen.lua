@@ -31,19 +31,6 @@ PlaceObj('XTemplate', {
 		'FocusOnOpen', "self",
 	}, {
 		PlaceObj('XTemplateFunc', {
-			'name', "OnShortcut(self, shortcut, source, ...)",
-			'func', function (self, shortcut, source, ...)
-				local context = self:GetContext()
-				if context.loaded then
-					if IsInMultiplayerGame() and shortcut == "ButtonB" then
-						self.idTimeoutLeave:Press()
-					else
-						self.idStart:Press()
-					end
-				end
-			end,
-		}),
-		PlaceObj('XTemplateFunc', {
 			'name', "Open(self, ...)",
 			'func', function (self, ...)
 				XDialog.Open(self, ...)
@@ -100,7 +87,8 @@ PlaceObj('XTemplate', {
 				end
 				self.idImage:SetImage(img)
 				
-				self.idOptional:SetVisible(not not next(data))
+				self.idTitle:SetVisible(not not next(data))
+				
 				local weather, tod, weatherPreset, todPreset
 				
 				if next(data) and sector then
@@ -249,6 +237,32 @@ PlaceObj('XTemplate', {
 						self.idStart:Press()
 					end)
 				end
+				
+				if config.AutorunLoadingScreenProgressDuration and context and context.reason and context.reason == "autorun" then
+					self.idLoadingAnim:SetEnabled(false)
+					self.idProgressAnim:SetFPS(0)
+					self.idProgressAnim:SetAnimDuration(config.AutorunLoadingScreenProgressDuration)
+				end
+			end,
+		}),
+		PlaceObj('XTemplateWindow', {
+			'__class', "XMuteSounds",
+			'AudioGroups', set( "Ambience", "AmbientLife", "Default" ),
+		}),
+		PlaceObj('XTemplateFunc', {
+			'name', "OnShortcut(self, shortcut, source, ...)",
+			'func', function (self, shortcut, source, ...)
+				if not self:GetContext().loaded then return "break" end
+				
+				if shortcut == "+ButtonB" or shortcut == "ButtonB" or shortcut == "-ButtonB" then
+					self.idTimeoutLeave:Press()
+					return "break"
+				elseif shortcut == "MouseL" or shortcut == "+ButtonA" or shortcut == "ButtonA" or shortcut == "-ButtonA" then
+					self.idStart:Press()
+					return "break"
+				end
+				
+				return "break"
 			end,
 		}),
 		PlaceObj('XTemplateWindow', {
@@ -456,6 +470,10 @@ PlaceObj('XTemplate', {
 							'FXPressDisabled', "IactDisabled",
 							'FocusedBackground', RGBA(52, 55, 61, 255),
 							'OnPress', function (self, gamepad)
+								if GetDialog(self).used_input then
+									return
+								end
+								
 								local context = self:GetContext()		
 								if not self:IsThreadRunning("close loading") or IsInMultiplayerGame() and IsWaitingForPlayerToClick(netUniqueId) then
 									self:DeleteThread("close loading")
@@ -512,11 +530,19 @@ PlaceObj('XTemplate', {
 							'FXPressDisabled', "IactDisabled",
 							'FocusedBackground', RGBA(52, 55, 61, 255),
 							'OnPress', function (self, gamepad)
-								local is_host = NetIsHost()
-								NetLeaveGame()
-								if not is_host then
-									OnGuestForceLeaveGame()
+								if (not self:GetEnabled()) or GetDialog(self).used_input then
+									return
 								end
+								GetDialog(self).used_input = true
+								
+								if netInGame then
+									local is_host = NetIsHost()
+									NetLeaveGame()
+									if not is_host then
+										OnGuestForceLeaveGame()
+									end
+								end
+								
 								if not self:IsThreadRunning("close loading") or IsInMultiplayerGame() and IsWaitingForPlayerToClick(netUniqueId) then
 									self:DeleteThread("close loading")
 									self:CreateThread("close loading",function() 
@@ -561,7 +587,10 @@ PlaceObj('XTemplate', {
 										self.idControllerHint:SetVisible(false)
 										local timeOut = 15
 										while timeOut > 0 do
-											self:SetText(Untranslated("(" .. tostring(timeOut) .. ") ") .. T(189179798078, "Waiting for other player"))
+											if not (netGamePlayers and table.count(netGamePlayers) > 1) then
+												break
+											end
+											self:SetText(Untranslated("(" .. tostring(timeOut) .. ") ") .. T(769124019747, "Waiting for <u(GetOtherPlayerNameFormat())>..."))
 											Sleep(1000)
 											timeOut = timeOut - 1
 										end
@@ -584,19 +613,44 @@ PlaceObj('XTemplate', {
 							'MouseCursor', "UI/Cursors/Loading.tga",
 						}, {
 							PlaceObj('XTemplateWindow', {
-								'__class', "XText",
-								'Id', "idLoadingText",
 								'VAlign', "center",
-								'TextStyle', "LoadingAnimText",
-								'Translate', true,
-								'Text', T(665087177892, --[[XTemplate XZuluLoadingScreen Text]] "Loading"),
-							}),
+							}, {
+								PlaceObj('XTemplateWindow', {
+									'LayoutMethod', "VList",
+								}, {
+									PlaceObj('XTemplateWindow', {
+										'__condition', function (parent, context)
+											return true
+										end,
+										'__class', "XText",
+										'Id', "idLoadingText",
+										'HAlign', "center",
+										'VAlign', "center",
+										'TextStyle', "LoadingAnimText",
+										'Translate', true,
+										'Text', T(665087177892, --[[XTemplate XZuluLoadingScreen Text]] "Loading"),
+									}),
+									PlaceObj('XTemplateWindow', {
+										'__condition', function (parent, context) return config.AutorunLoadingScreenProgressDuration and context and context.reason and context.reason == "autorun" end,
+										'__class', "XImage",
+										'Id', "idProgressAnim",
+										'Image', "UI/PDA/Loading14",
+										'Rows', 14,
+										'ImageScale', point(800, 800),
+										'DisabledImageColor', RGBA(255, 255, 255, 0),
+										'Animate', true,
+										'FPS', 0,
+										'AnimFlags', set(),
+									}),
+									}),
+								}),
 							PlaceObj('XTemplateWindow', {
 								'__class', "XImage",
 								'Id', "idLoadingAnim",
 								'Image', "UI/Hud/radar",
 								'Columns', 24,
 								'ImageScale', point(800, 800),
+								'DisabledImageColor', RGBA(255, 255, 255, 0),
 								'Animate', true,
 							}),
 							}),
@@ -623,7 +677,6 @@ PlaceObj('XTemplate', {
 								'LayoutHSpacing', 10,
 							}, {
 								PlaceObj('XTemplateWindow', {
-									'__class', "XSquareWindow",
 									'Id', "idSquareSector",
 									'VAlign', "center",
 									'MinWidth', 30,
@@ -736,10 +789,6 @@ PlaceObj('XTemplate', {
 					}),
 				}),
 			}),
-		PlaceObj('XTemplateWindow', {
-			'__class', "XMuteSounds",
-			'AudioGroups', set( "Ambience", "AmbientLife", "Default" ),
-		}),
 		}),
 })
 

@@ -175,6 +175,11 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"I2",
+					},
+				}),
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "ErnieSideQuests",
 					Vars = set({
@@ -216,6 +221,9 @@ PlaceObj('QuestsDef', {
 			Once = true,
 			ParamId = "TCE_StealthTutorialNPC_SetPatrol",
 			QuestId = "ErnieSideQuests",
+			requiredSectors = {
+				"I2",
+			},
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {

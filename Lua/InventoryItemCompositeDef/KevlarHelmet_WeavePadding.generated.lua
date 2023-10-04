@@ -7,8 +7,8 @@ DefineClass.KevlarHelmet_WeavePadding = {
 
 
 	object_class = "Armor",
-	Degradation = 6,
 	ScrapParts = 2,
+	Degradation = 6,
 	Icon = "UI/Icons/Items/kevlar_helmet",
 	SubIcon = "UI/Icons/Items/padded",
 	DisplayName = T(801641960244, --[[InventoryItemCompositeDef KevlarHelmet_WeavePadding DisplayName]] "Kevlar Helmet"),

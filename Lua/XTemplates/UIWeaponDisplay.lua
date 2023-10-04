@@ -67,7 +67,7 @@ PlaceObj('XTemplate', {
 						
 						local warningText = child.idWarningText
 						local button = child.idFrame
-						if item.LargeItem then
+						if item:IsLargeItem() then
 							itemIcon:SetMaxWidth(155)
 						else
 							itemIcon:SetMaxWidth(77)
@@ -271,6 +271,9 @@ PlaceObj('XTemplate', {
 									local node = self:ResolveId("node"):ResolveId("node")
 									if node.idOtherSets then
 										node.idOtherSets:SetVisible(rollover)
+										if rollover then
+											HideCombatLog(true)
+										end
 									end
 									XButton.OnSetRollover(self, rollover)
 								end,
@@ -545,7 +548,7 @@ PlaceObj('XTemplate', {
 									local warningText = child.idWarningText
 									local button = child.idFrame
 									local sideButtonsSize = 0
-									if item.LargeItem then
+									if item:IsLargeItem() then
 										itemIcon:SetMaxWidth(154 + sideButtonsSize)
 									else
 										itemIcon:SetMaxWidth(77 + sideButtonsSize)

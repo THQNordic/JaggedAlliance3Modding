@@ -23,7 +23,7 @@ SetpiecePrgs.GhostStories_RunAway = function(seed, state, TriggerUnits)
 	prgdbg(li, 1, 15) sprocall(SetpieceAnimation.Exec, SetpieceAnimation, state, rand, true, "", Ghost, "GhostPos_A", true, "civ_Standing_Run", 900, 0, range(1, 1), 0, false, true, false, "")
 	prgdbg(li, 1, 16) sprocall(SetpieceSleep.Exec, SetpieceSleep, state, rand, true, "", 10)
 	local _, Hypo
-	prgdbg(li, 1, 17) _, Hypo = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, true, "", Ghost, "Hypo", true, true, false, "Standing", true, false, "Run_RainHeavy")
+	prgdbg(li, 1, 17) _, Hypo = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, true, "", Ghost, "Hypo", true, true, false, "Standing", true, false, "Run_RainHeavy", 1000)
 	prgdbg(li, 1, 18) sprocall(SetpieceSleep.Exec, SetpieceSleep, state, rand, true, "", 10)
 	prgdbg(li, 1, 19) sprocall(SetpieceAnimation.Exec, SetpieceAnimation, state, rand, true, "", Ghost, "", true, "dw_Open_Door", 300, 0, range(1, 1), 0, false, true, false, "nw_Standing_CombatBegin2")
 	prgdbg(li, 1, 20) sprocall(SetpieceSleep.Exec, SetpieceSleep, state, rand, true, "", 10)

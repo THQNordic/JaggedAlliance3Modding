@@ -52,7 +52,7 @@ DefineClass.Mouse = {
 				}),
 			},
 			'Conditions', {
-				PlaceObj('AND', {
+				PlaceObj('CheckAND', {
 					Conditions = {
 						PlaceObj('UnitHireStatus', {
 							Status = "Hired",
@@ -75,7 +75,7 @@ DefineClass.Mouse = {
 				}),
 			},
 			'Conditions', {
-				PlaceObj('AND', {
+				PlaceObj('CheckAND', {
 					Conditions = {
 						PlaceObj('UnitHireStatus', {
 							Status = "Hired",

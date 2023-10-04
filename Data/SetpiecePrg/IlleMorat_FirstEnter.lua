@@ -87,6 +87,14 @@ PlaceObj('SetpiecePrg', {
 	PlaceObj('SetpieceWaitCheckpoint', {
 		WaitCheckpoint = "BanterDone",
 	}),
+	PlaceObj('PrgPlayEffect', {
+		Effects = {
+			PlaceObj('QuestSetVariableBool', {
+				Prop = "IlleMorat_FirstEnter",
+				QuestId = "Beast",
+			}),
+		},
+	}),
 	PlaceObj('PrgForceStopSetpiece', {}),
 })
 

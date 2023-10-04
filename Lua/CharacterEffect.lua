@@ -33,9 +33,18 @@ function CharacterEffect:__toluacode(indent, pstr, GetPropFunc)
 	return pstr:append(")")
 end
 
+function GetCharacterEffectId(self)
+	if IsKindOf(self, "CharacterEffect") then 
+		return self.class 
+	end
+	if IsKindOf(self, "CharacterEffectCompositeDef") then 
+		return self.id 
+	end
+end
+
 -- CompositeDef code
 DefineClass.CharacterEffectCompositeDef = {
-	__parents = { "CompositeDef", "MsgReactionsPreset" },
+	__parents = { "CompositeDef", "MsgActorReactionsPreset" },
 	
 	-- Composite def
 	ObjectBaseClass = "CharacterEffect",
@@ -97,6 +106,32 @@ function CharacterEffectCompositeDef:ResolveValue(key)
 	end
 end
 
+function CharacterEffectCompositeDef:VerifyReaction(event, reaction_def, actor, ...)
+	if not IsKindOf(actor, "StatusEffectObject") then
+		return
+	end
+	
+	local id = GetCharacterEffectId(self)
+	if actor and (event == "StatusEffectAdded" or event == "StatusEffectRemoved") then
+		local _id = select(2, ...)
+		return id == _id
+	end
+	return actor:HasStatusEffect(id)
+end
+
+function CharacterEffectCompositeDef:GetReactionActors(event, reaction_def, ...)
+	local objs = {}
+	local id = GetCharacterEffectId(self)
+	for session_id, data in pairs(gv_UnitData) do
+		local obj = ZuluReactionResolveUnitActorObj(session_id, data)
+		if obj:HasStatusEffect(id) then
+			objs[#obj + 1] = obj
+		end
+	end
+	table.sortby_field(objs, "session_id")
+	return objs
+end
+
 -- Overwrite of the old PlaceCharacterEffect
 function PlaceCharacterEffect(item_id, instance, ...)
 	local id = item_id
@@ -118,24 +153,6 @@ function PlaceCharacterEffect(item_id, instance, ...)
 	
 	return obj
 end
-
-function CharacterEffectCompositeDef:OnPreSave()
-	for _, reaction in ipairs(self.msg_reactions) do
-		if reaction:HasMember("__generateHandler") then
-			reaction:__generateHandler()
-		end
-	end
-end
-
-function CharacterEffectCompositeDef:GetError()
-	local effect_reactions = {}
-	for _, reaction in ipairs(self.msg_reactions) do
-		if effect_reactions[reaction.Event] then
-			return string.format("Multiple reactions defined for event %s, only the first one will be executed!", reaction.Event)
-		end
-		effect_reactions[reaction.Event] = true
-	end
-end
 -- end of CompositeDef code
 
 DefineClass.StatusEffectObject = {
@@ -144,12 +161,14 @@ DefineClass.StatusEffectObject = {
 	properties = {
 		{ id = "StatusEffects", editor = "nested_list", default = false, no_edit = true, },
 		{ id = "StatusEffectImmunity", editor = "nested_list", default = false, no_edit = true, },
+		{ id = "StatusEffectReceivedTime", editor = "nested_list", default = false, no_edit = true, },
 	},
 }
 
 function StatusEffectObject:Init()
 	self.StatusEffects = {}
 	self.StatusEffectImmunity = {}
+	self.StatusEffectReceivedTime = {}
 end
 
 function StatusEffectObject:UpdateStatusEffectIndex()
@@ -227,6 +246,7 @@ function StatusEffectObject:AddStatusEffect(id, stacks)
 		for _, mod in ipairs(preset:GetProperty("Modifiers")) do
 			self:AddModifier("StatusEffect:"..id, mod.target_prop, mod.mod_mul*10, mod.mod_add)
 		end
+		self.StatusEffectReceivedTime[id] = GameTime()
 	else
 		newStack = effect.stacks
 		effect.stacks = Min(effect.stacks + stacks, effect.max_stacks)
@@ -274,6 +294,7 @@ function StatusEffectObject:RemoveStatusEffect(id, stacks, reason)
 	if not effect.stacks then -- shield from faulty effects
 		table.remove(self.StatusEffects, has)
 		self.StatusEffects[id] = nil
+		self.StatusEffectReceivedTime[id] = nil
 		self:UpdateStatusEffectIndex()
 		for _, mod in ipairs(preset:GetProperty("Modifiers")) do
 			self:RemoveModifier("StatusEffect:"..id, mod.target_prop)
@@ -292,6 +313,7 @@ function StatusEffectObject:RemoveStatusEffect(id, stacks, reason)
 	if effect.stacks == 0 then
 		table.remove(self.StatusEffects, has)
 		self.StatusEffects[id] = nil
+		self.StatusEffectReceivedTime[id] = nil
 		self:UpdateStatusEffectIndex()
 		for _, mod in ipairs(preset:GetProperty("Modifiers")) do
 			self:RemoveModifier("StatusEffect:"..id, mod.target_prop)
@@ -425,178 +447,6 @@ function StatusEffectObject:StatusEffectsCleanUp()
 	end
 end
 
-AppendClass.MsgDef = {
-	properties = {
-		{ id = "SingleActor", editor = "bool", default = false, help = "When the event is fired for a single object/actor" },
-		{ id = "Actor", editor = "combo", default = false, no_edit = function(self) return not self.SingleActor end,
-			items = function(self)
-				local items = { false }
-				if (self.Params or "") ~= "" then
-					local params = string.split(self.Params, ",")
-					for _, param in ipairs(params) do
-						items[#items + 1] = string.trim_spaces(param)
-					end
-				end
-				return items
-			end, 
-			help = "Specifies the object for which the Msg is fired, if any"
-		}, 
-	},
-}
-
-function GetCharacterEffectId(self)
-	if IsKindOf(self, "CharacterEffect") then 
-		return self.class 
-	end
-	if IsKindOf(self, "CharacterEffectCompositeDef") then 
-		return self.id 
-	end
-end
-
-function CE_ExecReactionEffects(self, event, actor)
-	local reaction_idx = table.find(self.msg_reactions or empty_table, "Event", event)
-	if not reaction_idx then return end
-	local id = GetCharacterEffectId(self)
-	if event == "StatusEffectRemoved" and actor then id = nil end -- msg comes after the removal so we shouldn't check if the unit still has it	
-	local context = {}
-	context.target_units = {actor}
-	if id then
-		if actor then
-			if IsKindOf(actor, "StatusEffectObject") and actor:HasStatusEffect(id) then				
-				ExecuteEffectList(self.msg_reactions[reaction_idx].Effects, actor, context)
-			end
-		else
-			local objs = {} -- gather applicable objects first, use sorted_pairs on the filtered table
-			for session_id, data in pairs(gv_UnitData) do
-				local obj
-				local mapUnit = g_Units[session_id]
-				if gv_SatelliteView or (mapUnit and (not IsValid(mapUnit) or mapUnit.is_despawned)) then
-					obj = data
-				else
-					obj = mapUnit
-				end
-
-				if obj and obj:HasStatusEffect(id) then
-					objs[session_id] = obj
-				end
-			end
-			for _, obj in sorted_pairs(objs) do
-				context.target_units = {obj}
-				ExecuteEffectList(self.msg_reactions[reaction_idx].Effects, obj, context)
-			end
-		end
-	else
-	
-		ExecuteEffectList(self.msg_reactions[reaction_idx].Effects, actor, context) -- actor can be nil here
-	end
-end
-
-AppendClass.Reaction = {
-	properties = {
-		{ id = "Handler", editor = "func", default = false, lines = 6, max_lines = 60, no_edit = true,
-			name = function(self) return self.Event end,
-			params = function (self) return self:GetParams() end, },
-		{ id = "HandlerCode", editor = "func", default = false, lines = 6, max_lines = 60,
-			name = function(self) return self.Event or "Handler" end,
-			params = function (self) return self:GetParams() end, },
-	},
-}
-
-function Reaction:__generateHandler()
-	if type(self.HandlerCode) ~= "function" then return end
-	
-	local msgdef = MsgDefs[self.Event] or empty_table
-	local code = string.format("local reaction_idx = table.find(self.msg_reactions or empty_table, \"Event\", \"%s\")\n", self.Event) ..
-		"if not reaction_idx then return end\n"
-	
-	local params = self:GetParams()
-	local handler_code = GetFuncSourceString(self.HandlerCode, "exec", params)
-	if not handler_code or handler_code == "GetMissingSourceFallback()" then 
-		handler_code = "function exec() end"
-	end
-	local actor = msgdef.SingleActor and msgdef.Actor
-	local handler_call = string.format("exec(%s)", params)
-	
-	code = code .. "\nlocal " .. handler_code .. "\n"
-	if actor and (self.Event == "StatusEffectRemoved" or self.Event == "StatusEffectAdded") then -- only call these when adding/removing the current effect
-		code = code .. string.format("local _id = GetCharacterEffectId(self)\n")
-		code = code .. string.format("if _id == id then %s end\n",handler_call)
-	else
-		code = code .. "local id = GetCharacterEffectId(self)\n\n"
-		if actor then
-			code = code .. 			
-				"if id then\n" ..
-					string.format("\tif IsKindOf(%s, \"StatusEffectObject\") and %s:HasStatusEffect(id) then\n", actor, actor) ..
-						string.format("\t\t%s\n", handler_call) ..
-					"\tend\n" ..
-				"else\n" ..
-					string.format("\t%s\n",handler_call) ..
-				"end\n"
-		else
-			code = code ..			
-				"if id then\n" ..
-					"\tlocal objs = {}\n" ..
-					"\tfor session_id, data in pairs(gv_UnitData) do\n" ..
-						"\t\tlocal obj = g_Units[session_id] or data\n" ..
-						"\t\tif obj:HasStatusEffect(id) then\n" ..
-							"\t\t\tobjs[session_id] = obj\n" ..
-						"\t\tend\n" ..
-					"\tend\n" ..
-					"\tfor _, obj in sorted_pairs(objs) do\n" ..
-						string.format("\t\t%s\n", handler_call) ..
-					"\tend\n" ..
-				"else\n" ..
-					string.format("\t%s\n", handler_call) ..
-				"end\n"
-		end
-	end
-	
-	self.Handler = CompileFunc("Handler", params, code)
-end
-
-function Reaction:OnEditorSetProperty(prop_id, old_value, ged)
-	if prop_id == "Event" then
-		self:__generateHandler()
-		-- force reevaluation of the Handler's params when the event changes
-		GedSetProperty(ged, self, "Handler", GameToGedValue(self.Handler, self:GetPropertyMetadata("Handler"), self))
-	end
-end
-
-DefineClass.CharacterEffectReactionEffects = {
-	__parents = { "Reaction" },
-	properties = {
-		{ id = "Handler", editor = "func", default = false, lines = 6, max_lines = 60, no_edit = true,
-			name = function(self) return self.Event end,
-			params = function (self) return self:GetParams() end, },
-		{ id = "HandlerCode", editor = "func", default = false, lines = 6, max_lines = 60, no_edit =  true, dont_save = true,
-			name = function(self) return self.Event or "Handler" end,
-			params = function (self) return self:GetParams() end, },			
-		{ id = "Effects", editor = "nested_list", default = false, template = true, base_class = "ConditionalEffect", inclusive = true, },
-	},
-}
-
-function CharacterEffectReactionEffects:__generateHandler()
-	local msgdef = MsgDefs[self.Event] or empty_table
-	local actor = msgdef.SingleActor and msgdef.Actor
-	local code
-	if actor then
-		code = string.format("CE_ExecReactionEffects(self, \"%s\", %s)", self.Event, actor)
-	else
-		code = string.format("CE_ExecReactionEffects(self, \"%s\")", self.Event)
-	end
-	self.Handler = CompileFunc("Handler", self:GetParams(), code)
-end
-
-function CharacterEffectReactionEffects:OnEditorSetProperty(prop_id, old_value, ged)
-	if prop_id == "Event" then
-		self:__generateHandler()
-		-- force reevaluation of the Handler's params when the event changes
-		GedSetProperty(ged, self, "Handler", GameToGedValue(self.Handler, self:GetPropertyMetadata("Handler"), self))
-	end
-end
-
-DefineClass("MsgReactionEffects", "MsgReaction", "CharacterEffectReactionEffects")
-
 DefineClass.UnitModifier = {
 	__parents = { "PropertyObject" },
 	properties = {
@@ -637,12 +487,22 @@ function OnMsg.CampaignTimeAdvanced(time, ot)
 		if IsValid(unit) then
 			for i = #unit.StatusEffects, 1, -1 do
 				local effect = unit.StatusEffects[i]
-				if effect.RemoveOnCampaignTimeAdvance then
+				if effect.RemoveOnCampaignTimeAdvance or effect.RemoveOnEndCombat then
 					unit:RemoveStatusEffect(effect.class)
 					
 					local unitData = gv_UnitData[unit.session_id]
 					unitData:RemoveStatusEffect(effect.class)
 				end
+			end
+		end
+	end
+end
+
+function OnMsg.ExplorationTick()
+	for _, unit in ipairs(g_Units) do
+		for _, effect in ripairs(unit.StatusEffects) do
+			if effect.RemoveOnEndCombat and (GameTime() > (unit.StatusEffectReceivedTime[effect.class] or 0) + 5000) then
+				unit:RemoveStatusEffect(effect.class)
 			end
 		end
 	end

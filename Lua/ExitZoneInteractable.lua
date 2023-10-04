@@ -40,7 +40,7 @@ function ExitZoneInteractable:GameInit()
 end
 
 function ExitZoneInteractable:Done()
-	if self.fake_visual_obj then
+	if IsValid(self.fake_visual_obj) then
 		DoneObject(self.fake_visual_obj)
 		self.fake_visual_obj = false
 	end
@@ -67,7 +67,9 @@ function ExitZoneInteractable:PopulateVisualCache()
 		end
 	end
 	
-	if self.fake_visual_obj then self.visuals_cache[#self.visuals_cache + 1] = self.fake_visual_obj end
+--[[	if IsValid(self.fake_visual_obj) then
+		self.visuals_cache[#self.visuals_cache + 1] = self.fake_visual_obj
+	end]]
 end
 
 local function lUpdateVisualsOfExitZoneInteractables()
@@ -106,10 +108,16 @@ function ExitZoneInteractable:EvaluateNeedForFakeVisual()
 	end
 	
 	shouldHave = shouldHave or IsEditorActive()
-	if shouldHave then	
+	if shouldHave then
+		if self.visuals_cache and not table.find(self.visuals_cache, self.fake_visual_obj) then
+			self.visuals_cache[#self.visuals_cache + 1] = self.fake_visual_obj
+		end
 		self.fake_visual_obj:SetEnumFlags(const.efVisible)
 		self.fake_visual_obj:SetCollision(true)
 	else
+		if self.visuals_cache then
+			table.remove_value(self.visuals_cache, self.fake_visual_obj)
+		end
 		self.fake_visual_obj:ClearEnumFlags(const.efVisible)
 		self.fake_visual_obj:SetCollision(false)
 	end
@@ -577,6 +585,7 @@ function NetSyncEvents.RetreatUnits(session_ids, sector_id, underground, remaini
 	end
 	
 	-- check if there are new squads with all mercs retreated
+	local squadsToMove = {}
 	for _, id in ipairs(check_squads) do
 		local retreat_whole_squad = true
 		local squad = gv_Squads[id]
@@ -588,10 +597,15 @@ function NetSyncEvents.RetreatUnits(session_ids, sector_id, underground, remaini
 		end
 		if retreat_whole_squad then
 			lMoveWholeSquadTacticalView(squad.UniqueId, sector_id)
+			table.insert(squadsToMove, squad.UniqueId)
 		end
 	end
 	EnsureCurrentSquad()
 	ShowTacticalNotification("allyRetreat", nil, T(312444150797, "Retreated successfully"), { number = remaining })
+	
+	if #squadsToMove > 0 and #GetAllPlayerUnitsOnMap() <= 0 then --no guys left on map
+		NetSyncEvents.LeaveSectorMap(sector_id, false, underground, squadsToMove)
+	end
 end
 
 function SyncSplitSquad(squad_id, available)
@@ -740,7 +754,7 @@ MapVar("gv_RetreatOrTravelOption", false)
 
 function CheckRetreatButtonVisibility()
 	local selectedUnit = Selection and Selection[1]
-	if not selectedUnit or not selectedUnit:CanBeControlled() then
+	if not selectedUnit or (IsKindOf(selectedUnit, "Unit") and not selectedUnit:CanBeControlled()) then
 		gv_RetreatOrTravelOption = false
 		ObjModified("gv_RetreatOrTravelOption")
 		return

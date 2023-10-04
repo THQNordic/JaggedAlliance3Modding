@@ -7,8 +7,8 @@ DefineClass.FlakVest_Test = {
 
 
 	object_class = "Armor",
-	Degradation = 6,
 	ScrapParts = 4,
+	Degradation = 6,
 	Icon = "UI/Icons/Items/flak_vest",
 	DisplayName = T(374509228449, --[[InventoryItemCompositeDef FlakVest_Test DisplayName]] "Flak Vest"),
 	DisplayNamePlural = T(696476836520, --[[InventoryItemCompositeDef FlakVest_Test DisplayNamePlural]] "Flak Vests"),

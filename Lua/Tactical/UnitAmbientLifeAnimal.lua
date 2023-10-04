@@ -4,7 +4,7 @@ function Unit:RoamHyenaLead(group_range)
 	self:SetBehavior("RoamHyenaLead")
 	local groups_map = self:GetGroupsMap()
 	local animals = MapGet(self, group_range, "Unit", function(unit)
-		return unit.species == self.species and not unit:IsDead() and self:GroupsMatch(unit, nil, groups_map)
+		return unit.species == self.species and not unit:IsDead() and self:GroupsMatch(unit, groups_map)
 	end)
 	table.shuffle(animals, InteractionRand(nil, "HyenaRoam"))
 	
@@ -23,15 +23,17 @@ function Unit:RoamHyenaLead(group_range)
 	
 	table.remove_entry(animals, self)
 	for _, animal in ipairs(animals) do
-		animal:SetCommand("RoamHyenaFollow", GetPassSlab(point(point_unpack(dests[animal]))) or pos)
+		animal:SetCommand("RoamHyenaFollow", GetPassSlab(point(point_unpack(dests[animal]))) or pos, self)
 	end
 	self:GotoSlab(GetPassSlab(point(point_unpack(dests[self]))) or pos)
 	self:IdleRoutine_StandStill(2000, "don't halt")
 	local animals_finished = {}
 	while #animals_finished < #animals do
 		for _, animal in ipairs(animals) do
-			if animal.command == "RoamHyenaWait" then
+			local finished = (animal.command == "RoamHyenaWait") or (not IsValid(animal) or animal:IsDead())
+			if finished and not animals_finished[animal] then
 				table.insert(animals_finished, animal)
+				animals_finished[animal] = true
 			end
 		end
 		WaitMsg("UnitGoTo", 300)
@@ -41,15 +43,20 @@ function Unit:RoamHyenaLead(group_range)
 	end
 end
 
-function Unit:RoamHyenaFollow(pos)
+function Unit:RoamHyenaFollow(pos, leader)
+	self:PushDestructor(function() self:SetBehavior() end)
 	self:SetBehavior("RoamHyenaFollow")
 	Sleep(self:Random(200))
 	self:GotoSlab(pos)
-	self:SetCommand("RoamHyenaWait")
+	if IsValid(leader) and not leader:IsDead() then
+		self:SetCommand("RoamHyenaWait", leader)
+	end
+	self:PopAndCallDestructor()
 end
 
-function Unit:RoamHyenaWait(pos)
+function Unit:RoamHyenaWait()
+	self:PushDestructor(function() self:SetBehavior() end)
 	self:SetBehavior("RoamHyenaWait")
-	self:IdleRoutine_StandStill()
-	Halt()
+	self:IdleRoutine_StandStill(2000, "don't halt")
+	self:PopAndCallDestructor()
 end

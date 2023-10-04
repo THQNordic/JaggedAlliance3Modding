@@ -164,7 +164,9 @@ function BossfightPierre:OnTurnStart()
 		end
 
 		self.guard_heavy.AIKeywords = table.copy(self.guard_heavy.AIKeywords)
-		self.guard_rpg.AIKeywords = table.copy(self.guard_rpg.AIKeywords)
+		if self.guard_rpg then
+			self.guard_rpg.AIKeywords = table.copy(self.guard_rpg.AIKeywords)
+		end
 		
 		if g_Combat.current_turn >= self.enrage_turn then
 			self.boss.script_archetype = "Brute"
@@ -201,10 +203,12 @@ function BossfightPierre:OnTurnStart()
 		end
 		
 		-- RPG Guard
-		if g_Combat.current_turn > 3 then
-			table.insert_unique(self.guard_rpg.AIKeywords, "Ordnance")
-		else
-			table.remove_value(self.guard_rpg.AIKeywords, "Ordnance")
+		if self.guard_rpg then
+			if g_Combat.current_turn > 3 then
+				table.insert_unique(self.guard_rpg.AIKeywords, "Ordnance")
+			else
+				table.remove_value(self.guard_rpg.AIKeywords, "Ordnance")
+			end
 		end
 	end
 

@@ -7,14 +7,14 @@ DefineClass.AR15 = {
 
 
 	object_class = "AssaultRifle",
-	Reliability = 80,
 	ScrapParts = 10,
+	Reliability = 80,
 	Icon = "UI/Icons/Weapons/AR15",
 	DisplayName = T(532039127176, --[[InventoryItemCompositeDef AR15 DisplayName]] "AR-15"),
 	DisplayNamePlural = T(685781028407, --[[InventoryItemCompositeDef AR15 DisplayNamePlural]] "AR-15s"),
 	Description = T(436294294475, --[[InventoryItemCompositeDef AR15 Description]] "Created to ensure the highest constitutional rights of self-defense and the possibility to bear a weapon that's easy as hell to convert to a fully-automatic one because a law-abiding citizen always needs one."),
 	AdditionalHint = T(387507453824, --[[InventoryItemCompositeDef AR15 AdditionalHint]] "<bullet_point> High Crit chance\n<bullet_point> Low attack costs\n<bullet_point> Highly modifiable\n<bullet_point> No Auto firing mode with standard Stock"),
-	LargeItem = true,
+	LargeItem = 1,
 	UnitStat = "Marksmanship",
 	Cost = 1800,
 	Caliber = "556",

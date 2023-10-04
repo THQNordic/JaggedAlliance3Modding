@@ -6,7 +6,7 @@ PlaceObj('Email', {
 	id = "AIMDoctorHint",
 	label = "Important",
 	sendConditions = {
-		PlaceObj('AND', {
+		PlaceObj('CheckAND', {
 			Conditions = {
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "02_LiberateErnie",
@@ -35,7 +35,7 @@ PlaceObj('Email', {
 	id = "AIMExplosivesHInt",
 	label = "Important",
 	sendConditions = {
-		PlaceObj('AND', {
+		PlaceObj('CheckAND', {
 			Conditions = {
 				PlaceObj('PlayerIsInSectors', {
 					Sectors = {
@@ -77,7 +77,7 @@ PlaceObj('Email', {
 	id = "AIMMechanicalHint",
 	label = "Important",
 	sendConditions = {
-		PlaceObj('AND', {
+		PlaceObj('CheckAND', {
 			Conditions = {
 				PlaceObj('PlayerIsInSectors', {
 					Sectors = {
@@ -129,17 +129,6 @@ PlaceObj('Email', {
 					ReceiveEmail(self.id, context)
 				end
 			end,
-			HandlerCode = function (self, unitData, oldStatus, newStatus)
-				if oldStatus == "Hired" and newStatus == "Dead" then
-					local context = {
-						unitId = unitData.session_id,
-						totalDuration = GetTrackedStat(unitData, "DaysInService") or 0,
-						moneyPaid = GetTrackedStat(unitData, "TotalHiringFee") or 0,
-						tasksDone = GetTrackedStat(unitData, "CombatTasksCompleted") or 0,
-					}
-					ReceiveEmail(self.id, context)
-				end
-			end,
 		}),
 	},
 	repeatable = true,
@@ -165,17 +154,6 @@ PlaceObj('Email', {
 					ReceiveEmail(self.id, context)
 				end
 			end,
-			HandlerCode = function (self, unitData, oldStatus, newStatus)
-				if oldStatus == "Hired" and newStatus == "Available" and not unitData:HasStatusEffect("Wounded") then
-					local context = {
-						unitId = unitData.session_id,
-						totalDuration = GetTrackedStat(unitData, "DaysInService") or 0,
-						moneyPaid = GetTrackedStat(unitData, "TotalHiringFee") or 0,
-						tasksDone = GetTrackedStat(unitData, "CombatTasksCompleted") or 0,
-					}
-					ReceiveEmail(self.id, context)
-				end
-			end,
 		}),
 	},
 	repeatable = true,
@@ -191,17 +169,6 @@ PlaceObj('Email', {
 		PlaceObj('MsgReaction', {
 			Event = "MercHireStatusChanged",
 			Handler = function (self, unitData, oldStatus, newStatus)
-				if oldStatus == "Hired" and newStatus == "Available" and unitData:HasStatusEffect("Wounded") then
-					local context = {
-						unitId = unitData.session_id,
-						totalDuration = GetTrackedStat(unitData, "DaysInService") or 0,
-						moneyPaid = GetTrackedStat(unitData, "TotalHiringFee") or 0,
-						tasksDone = GetTrackedStat(unitData, "CombatTasksCompleted") or 0,
-					}
-					ReceiveEmail(self.id, context)
-				end
-			end,
-			HandlerCode = function (self, unitData, oldStatus, newStatus)
 				if oldStatus == "Hired" and newStatus == "Available" and unitData:HasStatusEffect("Wounded") then
 					local context = {
 						unitId = unitData.session_id,
@@ -314,11 +281,6 @@ PlaceObj('Email', {
 		PlaceObj('MsgReaction', {
 			Event = "CombatTaskFinished",
 			Handler = function (self, taskId, unit, success)
-				if success then
-					ReceiveEmail(self.id, {unitId = unit.session_id})
-				end
-			end,
-			HandlerCode = function (self, taskId, unit, success)
 				if success then
 					ReceiveEmail(self.id, {unitId = unit.session_id})
 				end
@@ -440,7 +402,7 @@ PlaceObj('Email', {
 				return quest.Completed and not quest.PresidentSaved
 			end,
 		}),
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "05_TakeDownCorazon",
@@ -483,7 +445,7 @@ PlaceObj('Email', {
 				return quest.Completed and quest.PresidentSaved
 			end,
 		}),
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "05_TakeDownCorazon",
@@ -874,7 +836,7 @@ PlaceObj('Email', {
 	group = "Newsletter",
 	id = "Newsletter_Initial",
 	sendConditions = {
-		PlaceObj('AND', {
+		PlaceObj('CheckAND', {
 			Conditions = {
 				PlaceObj('PlayerIsInSectors', {
 					Sectors = {

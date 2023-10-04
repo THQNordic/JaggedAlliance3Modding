@@ -532,28 +532,13 @@ PlaceObj('XTemplate', {
 			'func', function (self, shortcut, source, controller_id, ...)
 				if self.window_state == "destroying" then return end
 				
-				-- 1 and 3, 4 and 6 have alternate versions without the middle button
-				-- where they are named 11 and 31, 41 and 61
-				local first_idx, last_idx = false
-				local indexReplacements = {}
-				for i = 1, 6 do
-					local ctrl = self["choice"..i]
-					if ctrl:GetVisible() then
-						indexReplacements[i] = i
-						if not first_idx then first_idx = i end
-						last_idx = i
-					else
-						local replace_idx = i*10+1
-						local ctrlReplace = self["choice"..replace_idx]
-						if ctrlReplace and ctrlReplace:GetVisible() then
-							indexReplacements[i] = replace_idx
-							if not first_idx then first_idx =  replace_idx end
-							last_idx = replace_idx
-						else
-							indexReplacements[i] = false
-						end
-					end
-				end
+				if shortcut == "+Start" or
+					shortcut == "Start" or
+					shortcut == "-Start" then return end
+				
+				local prev = self.selected_phrase_idx
+				local indexReplacements, first_idx, last_idx, boxes = self:GetChoiceData()
+				
 				local dpad_map = {
 					-- left
 					[1] =  {top = false,                down = indexReplacements[2],                                                 left = false, right = indexReplacements[4]},
@@ -572,7 +557,6 @@ PlaceObj('XTemplate', {
 					[61] = {top = indexReplacements[4],                                                 down = false,                left = indexReplacements[3] or indexReplacements[1], right = false},
 				}
 				
-				local prev				
 				local dpad_left  = XInput.IsCtrlButtonPressed(controller_id,"DPadLeft")
 				local dpad_right = XInput.IsCtrlButtonPressed(controller_id,"DPadRight")
 				local dpad_up    = XInput.IsCtrlButtonPressed(controller_id,"DPadUp")
@@ -581,22 +565,21 @@ PlaceObj('XTemplate', {
 				local dpad_left_down  = (dpad_left  and shortcut=="+DPadDown") or (dpad_down and shortcut=="+DPadLeft")
 				local dpad_right_up   = (dpad_right and shortcut=="+DPadUp")   or (dpad_up   and shortcut=="+DPadRight")
 				local dpad_right_down = (dpad_right and shortcut=="+DPadDown") or (dpad_down and shortcut=="+DPadRight")
-				prev = self.selected_phrase_idx
 				
-				if shortcut == "+LeftThumbUpLeft"  or dpad_left_up then
+				if dpad_left_up then
 					self.selected_phrase_idx = indexReplacements[1]
-				elseif shortcut == "+LeftThumbDownLeft" or  dpad_left_down then
+				elseif dpad_left_down then
 					self.selected_phrase_idx = indexReplacements[3]
-				elseif shortcut == "+LeftThumbUpRight" or dpad_right_up then
+				elseif dpad_right_up then
 					self.selected_phrase_idx = indexReplacements[4]
-				elseif shortcut == "+LeftThumbDownRight" or dpad_right_down then 
+				elseif dpad_right_down then 
 					self.selected_phrase_idx = indexReplacements[6]
 				elseif not dpad_left_up and not dpad_left_down and not dpad_right_up and not dpad_right_down then
-					if shortcut == "+LeftThumbRight" or shortcut == "+DPadRight" then
+					if shortcut == "+DPadRight" then
 						self.selected_phrase_idx = indexReplacements[5]
-					elseif shortcut == "+LeftThumbLeft" or shortcut == "+DPadLeft" then
+					elseif shortcut == "+DPadLeft" then
 						self.selected_phrase_idx = indexReplacements[2]
-					elseif shortcut == "+LeftThumbDown" or shortcut == "+LeftThumbUp" or shortcut == "+DPadDown" or shortcut == "+DPadUp" then
+					elseif shortcut == "+DPadDown" or shortcut == "+DPadUp" then
 						self.selected_phrase_idx = false
 					end
 				end	
@@ -609,19 +592,6 @@ PlaceObj('XTemplate', {
 						self.selected_phrase_idx = prev and dpad_map[prev].left or first_idx or false
 					elseif shortcut=="+DPadRight" then
 						self.selected_phrase_idx = prev and dpad_map[prev].right or last_idx or false
-					end
-				end
-				if GetUIStyleGamepad() then
-					if self.selected_phrase_idx then
-						self.last_valid_selected_phrase_idx = self.selected_phrase_idx
-					end
-					local gamepadState = GetActiveGamepadState()
-					if  gamepadState.LeftThumb == point20 and not (dpad_left or dpad_right or dpad_up or dpad_down) and
-						not prev and
-						not self.selected_phrase_idx and
-						self.last_valid_selected_phrase_idx then
-						prev = self.selected_phrase_idx
-						self.selected_phrase_idx = self.last_valid_selected_phrase_idx
 					end
 				end
 				
@@ -637,22 +607,26 @@ PlaceObj('XTemplate', {
 				
 				if prev and prev~=self.selected_phrase_idx then					
 					local ctrl = self["choice"..prev]
-					if ctrl:GetVisible() then
-						ctrl:SetRollover(false)				
-						ctrl:OnSetRollover(false)				
-					end
+					ctrl:SetRollover(false)				
+					ctrl:OnSetRollover(false)		
 				end
-				if self.selected_phrase_idx then					
+				
+				if self.selected_phrase_idx and self.phrase_choices_available then					
 					local ctrl = self["choice"..self.selected_phrase_idx]
 					ctrl:SetRollover(true)
 					if ctrl:GetVisible() then
 						if shortcut == "+ButtonA" then
 							ctrl:OnPress()
 							ctrl:SetRollover(false)
+							ctrl:OnSetRollover(false)
+							self.idRhombusSel:LockRotation(ConversationGetCircleAngle(self.selected_phrase_idx))
 							self.selected_phrase_idx = false
-							self.last_valid_selected_phrase_idx = false
-							self.idRhombusSel:LockRotation(true)
 						end
+					else
+						ctrl:SetRollover(false)				
+						ctrl:OnSetRollover(false)
+						self.idRhombusSel:LockRotation(false)
+						self.selected_phrase_idx = false
 					end
 					return "break"
 				end
@@ -689,6 +663,40 @@ PlaceObj('XTemplate', {
 				end
 					
 				return XDialog.OnShortcut(self, shortcut, source, ...)
+			end,
+		}),
+		PlaceObj('XTemplateFunc', {
+			'name', "GetChoiceData(self)",
+			'func', function (self)
+				-- 1 and 3, 4 and 6 have alternate versions without the middle button
+				-- where they are named 11 and 31, 41 and 61
+				local first_idx, last_idx = false
+				local indexReplacements = {}
+				local boxes = {}
+				for i = 1, 6 do
+					local ctrl = self["choice"..i]
+					if ctrl:GetVisible() then
+						indexReplacements[i] = i
+						if not first_idx then first_idx = i end
+						last_idx = i
+				
+						boxes[i] = ctrl.box
+					else
+						local replace_idx = i*10+1
+						local ctrlReplace = self["choice"..replace_idx]
+						if ctrlReplace and ctrlReplace:GetVisible() then
+							indexReplacements[i] = replace_idx
+							if not first_idx then first_idx =  replace_idx end
+							last_idx = replace_idx
+							
+							boxes[i] = ctrlReplace.box
+						else
+							indexReplacements[i] = false
+						end
+					end
+				end
+				
+				return indexReplacements, first_idx, last_idx, boxes
 			end,
 		}),
 		PlaceObj('XTemplateFunc', {
@@ -1170,6 +1178,8 @@ PlaceObj('XTemplate', {
 											local node = self:ResolveId("node")
 											local arrow = node.idRhombusSel
 											arrow:SetVisible(false)
+											arrow:SetAngle(0)
+											arrow:LockRotation(false)
 											arrow:StartFollowThread()
 										end
 									end,
@@ -1234,13 +1244,73 @@ PlaceObj('XTemplate', {
 													self:CreateThread("follow-mouse", function()
 														while self.window_state ~= "destroying" do
 															Sleep(rotateTime)
+															if terminal.desktop.keyboard_focus ~= dlg then goto continue end
+															
 															local angle
+															local overrideLock = false
 															if GetUIStyleGamepad() then
 																local state = GetActiveGamepadState()
 																local leftThumbPos = state.LeftThumb
 																-- modified from XInput.PointToDirection(pt)
 																angle = AngleNormalize(90*60 - CalcOrientation(leftThumbPos))
-																if leftThumbPos==point20 then
+																
+																local setSelectionTo = false
+																local indexReplacements, first_idx, last_idx, boxes = dlg:GetChoiceData()
+																if leftThumbPos ~= point20 then
+																	
+																	local center = dlg:ResolveId("idRhombus")
+																	local rhombusSel = dlg:ResolveId("idRhombusSel")
+																	
+																	local gamepadState = GetActiveGamepadState()
+																	local centerOnBox = center.box:Center()
+																	local gamePadStick = gamepadState.LeftThumb
+																	gamePadStick = gamePadStick:SetY(-gamePadStick:y())
+																	gamePadStick = Normalize(gamePadStick)
+																	local gamepadPointingTowards = gamePadStick
+																	local gamepadRay = centerOnBox + gamePadStick
+																	
+																	local highestDot, highestDotSel = false, false
+																	for choiceIdx, box in pairs(boxes) do
+																		--[[local topLeft = box:min()
+																		local topRight = box:min() + point(box:sizex(), 0)
+																		local bottomRight = box:max()
+																		local bottomLeft = box:min() + point(0, box:sizey())
+																		if IntersectSegmentWithSegment2D(centerOnBox, gamepadRay, topLeft, topRight) or
+																		   IntersectSegmentWithSegment2D(centerOnBox, gamepadRay, topRight, bottomRight) or
+																		   IntersectSegmentWithSegment2D(centerOnBox, gamepadRay, bottomRight, bottomLeft) or
+																		   IntersectSegmentWithSegment2D(centerOnBox, gamepadRay, bottomLeft, topLeft) then
+																			setSelectionTo = indexReplacements[choiceIdx] or choiceIdx
+																			break
+																		end]]
+																		
+																		local vecTowardsBox = box:Center() - centerOnBox
+																		vecTowardsBox = Normalize(vecTowardsBox)
+																		local dot = Dot(gamepadPointingTowards, vecTowardsBox) / 4096
+																		if (not highestDot or dot > highestDot) and dot > 0 then
+																			highestDot = dot
+																			highestDotSel = indexReplacements[choiceIdx] or choiceIdx
+																		end
+																	end
+																	setSelectionTo = highestDotSel
+																	
+																	if setSelectionTo and dlg.phrase_choices_available then
+																		local prev = dlg.selected_phrase_idx
+																		if prev and prev ~= setSelectionTo then					
+																			local ctrl = dlg["choice"..prev]
+																			ctrl:SetRollover(false)				
+																			ctrl:OnSetRollover(false)				
+																		end
+																	
+																		dlg.selected_phrase_idx = setSelectionTo
+													
+																		if setSelectionTo then
+																			local ctrl = dlg["choice"..setSelectionTo]
+																			ctrl:SetRollover(true)
+																		end
+																	end
+																	
+																	overrideLock = true
+																else
 																	angle = self:DPadToAngle() or 0
 																end
 															else
@@ -1250,9 +1320,12 @@ PlaceObj('XTemplate', {
 																angle = atan(mousePos:y(), mousePos:x()) + 90 * 60
 															end
 																					
-															if not rawget(self, "lock") then
-																self:PointTo(angle)
+															local lockAngle = rawget(self, "lock")
+															if lockAngle and not overrideLock then
+																angle = lockAngle
 															end
+															
+															self:PointTo(angle)
 													
 															-- Show arrow if angle changed
 															if not initialAngle then
@@ -1260,6 +1333,8 @@ PlaceObj('XTemplate', {
 															elseif initialAngle ~= angle and not self.visible then
 																self:SetVisible(true)
 															end
+															
+															::continue::
 														end
 													end)
 												end,
@@ -1338,8 +1413,7 @@ PlaceObj('XTemplate', {
 												rhombus_sel:SetEnabled(child:GetEnabled())
 												
 												local selected = rollover and child.selection_idx
-												rhombus_sel:LockRotation(selected)
-												if selected then rhombus_sel:PointTo(ConversationGetCircleAngle(selected)) end
+												rhombus_sel:LockRotation(selected and ConversationGetCircleAngle(selected))
 												
 												local keywordWnd = dlg.idKeywordRollover
 												local phraseWnd = dlg.idPhraseRollover
@@ -1634,6 +1708,8 @@ PlaceObj('XTemplate', {
 								'Margins', box(0, 30, 0, 0),
 								'HAlign', "center",
 								'VAlign', "bottom",
+								'MinHeight', 50,
+								'HandleMouse', false,
 								'TextStyle', "ConversationNext",
 								'ContextUpdateOnOpen', true,
 								'OnContextUpdate', function (self, context, ...)
@@ -1645,6 +1721,7 @@ PlaceObj('XTemplate', {
 								end,
 								'Translate', true,
 								'Text', T(645426615525, --[[XTemplate ConversationDialog Text]] "<left_click> Next"),
+								'TextVAlign', "center",
 							}, {
 								PlaceObj('XTemplateCode', {
 									'run', function (self, parent, context)
@@ -1661,6 +1738,23 @@ PlaceObj('XTemplate', {
 					}),
 				}),
 			}),
+		PlaceObj('XTemplateWindow', {
+			'comment', "controller observer",
+			'__context', function (parent, context) return "GamepadUIStyleChanged" end,
+			'__class', "XContextWindow",
+			'OnContextUpdate', function (self, context, ...)
+				local dlg = GetDialog(self)
+				local prev = dlg.selected_phrase_idx
+				local setSelectionTo = false
+				if prev and prev ~= setSelectionTo then					
+					local ctrl = dlg["choice"..prev]
+					ctrl:SetRollover(false)				
+					ctrl:OnSetRollover(false)		
+				end
+				
+				dlg.selected_phrase_idx = setSelectionTo
+			end,
+		}),
 		}),
 })
 

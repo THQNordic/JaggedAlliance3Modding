@@ -11,11 +11,17 @@ PlaceObj('MultiplayerGameFilters', {
 })
 
 PlaceObj('MultiplayerGameFilters', {
+	Condition = function (self)
+		return not Platform.console
+	end,
 	Name = T(713942809466, --[[MultiplayerGameFilters mods Name]] "With Mods"),
 	id = "mods",
 })
 
 PlaceObj('MultiplayerGameFilters', {
+	Condition = function (self)
+		return not Platform.console
+	end,
 	Name = T(105619625897, --[[MultiplayerGameFilters no_mods Name]] "No Mods"),
 	id = "no_mods",
 })

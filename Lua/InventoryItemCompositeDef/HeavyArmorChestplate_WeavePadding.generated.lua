@@ -7,15 +7,15 @@ DefineClass.HeavyArmorChestplate_WeavePadding = {
 
 
 	object_class = "Armor",
-	Degradation = 6,
 	ScrapParts = 4,
+	Degradation = 6,
 	Icon = "UI/Icons/Items/heavy_vest",
 	SubIcon = "UI/Icons/Items/padded",
 	DisplayName = T(413722923124, --[[InventoryItemCompositeDef HeavyArmorChestplate_WeavePadding DisplayName]] "Heavy Vest"),
 	DisplayNamePlural = T(403645732222, --[[InventoryItemCompositeDef HeavyArmorChestplate_WeavePadding DisplayNamePlural]] "Heavy Vests"),
 	AdditionalHint = T(209137598743, --[[InventoryItemCompositeDef HeavyArmorChestplate_WeavePadding AdditionalHint]] "<bullet_point> Damage reduction improved by Weave Padding\n<bullet_point> Cumbersome (no Free Move)"),
-	Cumbersome = true,
-	is_valuable = true,
+	Cumbersome = 1,
+	Valuable = 1,
 	PenetrationClass = 4,
 	AdditionalReduction = 50,
 	ProtectedBodyParts = set( "Torso" ),

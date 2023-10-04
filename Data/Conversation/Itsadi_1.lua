@@ -550,7 +550,7 @@ PlaceObj('Conversation', {
 					return quest.JunkShopMoney
 				end,
 			}),
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('UnitSquadHasMerc', {
 						HasPerk = "Scoundrel",
@@ -752,7 +752,7 @@ PlaceObj('Conversation', {
 					return not quest.CombatWon and not quest.DumpPeace and quest.Given and not quest.LegionResolutionTriggered
 				end,
 			}),
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('PlayerIsInSectors', {
 						Sectors = {

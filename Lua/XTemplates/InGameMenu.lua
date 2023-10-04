@@ -47,14 +47,14 @@ PlaceObj('XTemplate', {
 			end,
 		}),
 		PlaceObj('XTemplateWindow', {
-			'__condition', function (parent, context) return not GetDialog("PDADialog") and not GetDialog("PDADialogSatellite") and not IsInMultiplayerGame() end,
+			'__condition', function (parent, context) return ShowInGameMenuBlurRect() and not IsInMultiplayerGame() end,
 			'__class', "XBlurRect",
 			'TintColor', RGBA(255, 255, 255, 255),
 			'BlurRadius', 15,
 			'Desaturation', 80,
 		}),
 		PlaceObj('XTemplateWindow', {
-			'__condition', function (parent, context) return GetDialog("PDADialog") or GetDialog("PDADialogSatellite") end,
+			'__condition', function (parent, context) return not ShowInGameMenuBlurRect() end,
 			'Id', "idVignette",
 			'Dock', "box",
 			'Background', RGBA(30, 30, 35, 115),
@@ -73,6 +73,9 @@ PlaceObj('XTemplate', {
 				end,
 			}),
 			}),
+		PlaceObj('XTemplateTemplate', {
+			'__template', "ShowOtherPlayerId",
+		}),
 		PlaceObj('XTemplateFunc', {
 			'name', "Close(self)",
 			'func', function (self)
@@ -88,6 +91,9 @@ PlaceObj('XTemplate', {
 				self.idContent:SetVisible(false)
 				if self.idMainMenu then self.idMainMenu:SetVisible(false) end
 				self.idVignette:SetTransparency(255, 400)
+				if self.idOtherPlayerId then
+					self.idOtherPlayerId:SetTransparency(255, 400)
+				end
 				self:CreateThread("close-later", function()
 					Sleep(450)
 					self:delete()
@@ -165,6 +171,9 @@ PlaceObj('XTemplate', {
 					'ActionShortcut', "Escape",
 					'ActionGamepad', "ButtonB",
 					'OnAction', function (self, host, source, ...)
+						if GetLoadingScreenDialog("noAccStorage") then
+							return
+						end
 						if not Game then
 							MultiplayerLobbySetUI("multiplayer")
 						else
@@ -180,6 +189,7 @@ PlaceObj('XTemplate', {
 						return GoToSubMenu_ActionState(self, host)
 					end,
 					'OnAction', function (self, host, source, ...)
+						host.isMMFocused = false
 						GoToSubMenu_OnAction(self, host, source, ...)
 					end,
 					'FXPress', "MainMenuButtonClick",
@@ -191,6 +201,7 @@ PlaceObj('XTemplate', {
 						return GoToSubMenu_ActionState(self, host)
 					end,
 					'OnAction', function (self, host, source, ...)
+						host.isMMFocused = false
 						GoToSubMenu_OnAction(self, host, source, ...)
 					end,
 					'FXPress', "MainMenuButtonClick",
@@ -206,6 +217,9 @@ PlaceObj('XTemplate', {
 					'ActionShortcut', "Escape",
 					'ActionGamepad', "ButtonB",
 					'OnAction', function (self, host, source, ...)
+						if GetLoadingScreenDialog("noAccStorage") then
+							return
+						end
 						if source and source.class == "XButton" then
 							source:SetFocus(true)
 						end
@@ -249,6 +263,9 @@ PlaceObj('XTemplate', {
 					'ActionShortcut', "Escape",
 					'ActionGamepad', "ButtonB",
 					'OnAction', function (self, host, source, ...)
+						if GetLoadingScreenDialog("noAccStorage") then
+							return
+						end
 						if source and source.class == "XButton" then
 							source:SetFocus(true)
 						end

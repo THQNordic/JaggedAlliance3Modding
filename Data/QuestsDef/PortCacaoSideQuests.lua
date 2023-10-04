@@ -12,7 +12,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							QuestId = "03_DefeatTheLegion",
@@ -42,7 +42,7 @@ PlaceObj('QuestsDef', {
 			Idx = 3,
 			Scouting = true,
 			ShowConditions = {
-				PlaceObj('AND', {
+				PlaceObj('CheckAND', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							QuestId = "PortCacaoSideQuests",
@@ -98,7 +98,7 @@ PlaceObj('QuestsDef', {
 			},
 			Idx = 4,
 			ShowConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('PlayerIsInSectors', {
 							Sectors = {
@@ -234,7 +234,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			CompletionConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							QuestId = "05_TakeDownMajor",
@@ -302,7 +302,7 @@ PlaceObj('QuestsDef', {
 						return quest.L8_SpawnWave1
 					end,
 				}),
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							QuestId = "Docks",
@@ -511,7 +511,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							QuestId = "05_TakeDownMajor",
@@ -543,7 +543,7 @@ PlaceObj('QuestsDef', {
 					end,
 				}),
 			},
-			Text = T(467664660708, --[[QuestsDef PortCacaoSideQuests Text]] "Emma needs <em>archeological treasures</em> that will be presented in a future Museum of the Adjani in in <em><SectorName('L8')></em>"),
+			Text = T(467664660708, --[[QuestsDef PortCacaoSideQuests Text]] "Emma needs <em>archeological treasures</em> that will be presented in a future Museum of the Adjani in <em><SectorName('L8')></em>"),
 		}),
 		PlaceObj('QuestNote', {
 			Badges = {
@@ -553,7 +553,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							QuestId = "05_TakeDownMajor",
@@ -615,7 +615,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							QuestId = "05_TakeDownMajor",
@@ -670,7 +670,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							QuestId = "PortCacaoSideQuests",
@@ -718,7 +718,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							QuestId = "04_Betrayal",
@@ -836,7 +836,7 @@ PlaceObj('QuestsDef', {
 		PlaceObj('QuestNote', {
 			AddInHistory = true,
 			CompletionConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							QuestId = "PortCacaoSideQuests",
@@ -864,7 +864,7 @@ PlaceObj('QuestsDef', {
 			},
 			Idx = 21,
 			ShowConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							QuestId = "PortCacaoSideQuests",
@@ -1061,6 +1061,12 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"L8",
+						"I1",
+					},
+				}),
 				PlaceObj('UnitIsAroundOtherUnit', {
 					Distance = 12,
 					SecondTargetUnit = "Emma",
@@ -1076,6 +1082,10 @@ PlaceObj('QuestsDef', {
 			Once = true,
 			ParamId = "TCE_EmmaReached",
 			QuestId = "PortCacaoSideQuests",
+			requiredSectors = {
+				"L8",
+				"I1",
+			},
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
@@ -1164,6 +1174,11 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"L8",
+					},
+				}),
 				PlaceObj('UnitIsAroundMarkerOfGroup', {
 					MarkerGroup = "Detect_Wave",
 					TargetUnit = "LegionWave",
@@ -1274,10 +1289,13 @@ PlaceObj('QuestsDef', {
 			Once = true,
 			ParamId = "TCE_Assign_Waves_Initial",
 			QuestId = "PortCacaoSideQuests",
+			requiredSectors = {
+				"L8",
+			},
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
-				PlaceObj('AND', {
+				PlaceObj('CheckAND', {
 					Conditions = {
 						PlaceObj('PlayerIsPlayerTurn', {}),
 						PlaceObj('CombatTurn', {
@@ -1288,6 +1306,11 @@ PlaceObj('QuestsDef', {
 							MarkerGroup = "FightArea_Barricades_FlankEast",
 							TargetUnit = "LegionWave_Flankers_East",
 						}),
+					},
+				}),
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"L8",
 					},
 				}),
 			},
@@ -1314,10 +1337,18 @@ PlaceObj('QuestsDef', {
 			Once = true,
 			ParamId = "TCE_FlankEast_Start",
 			QuestId = "PortCacaoSideQuests",
+			requiredSectors = {
+				"L8",
+			},
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
-				PlaceObj('AND', {
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"L8",
+					},
+				}),
+				PlaceObj('CheckAND', {
 					Conditions = {
 						PlaceObj('PlayerIsPlayerTurn', {}),
 						PlaceObj('CombatTurn', {
@@ -1354,6 +1385,9 @@ PlaceObj('QuestsDef', {
 			Once = true,
 			ParamId = "TCE_FlankWest_Start",
 			QuestId = "PortCacaoSideQuests",
+			requiredSectors = {
+				"L8",
+			},
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
@@ -1373,14 +1407,19 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
-				PlaceObj('AND', {
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"L8",
+					},
+				}),
+				PlaceObj('CheckAND', {
 					Conditions = {
 						PlaceObj('QuestIsVariableNum', {
 							Condition = ">",
 							Prop = "NewCombatTurn",
 							QuestId = "PortCacaoSideQuests",
 						}),
-						PlaceObj('OR', {
+						PlaceObj('CheckOR', {
 							Conditions = {
 								PlaceObj('UnitIsAroundMarkerOfGroup', {
 									MarkerGroup = "FightArea_Flank_MidpointWest",
@@ -1431,10 +1470,18 @@ PlaceObj('QuestsDef', {
 			Once = true,
 			ParamId = "TCE_Flank_Backdoor",
 			QuestId = "PortCacaoSideQuests",
+			requiredSectors = {
+				"L8",
+			},
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
-				PlaceObj('AND', {
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"L8",
+					},
+				}),
+				PlaceObj('CheckAND', {
 					Conditions = {
 						PlaceObj('QuestIsVariableNum', {
 							Amount = 10,
@@ -1442,7 +1489,7 @@ PlaceObj('QuestsDef', {
 							Prop = "NewCombatTurn",
 							QuestId = "PortCacaoSideQuests",
 						}),
-						PlaceObj('OR', {
+						PlaceObj('CheckOR', {
 							Conditions = {
 								PlaceObj('UnitIsAroundMarkerOfGroup', {
 									MarkerGroup = "FightArea_BackEntrance",
@@ -1468,6 +1515,9 @@ PlaceObj('QuestsDef', {
 			Once = true,
 			ParamId = "TCE_Flank_Backdoor_Free",
 			QuestId = "PortCacaoSideQuests",
+			requiredSectors = {
+				"L8",
+			},
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {

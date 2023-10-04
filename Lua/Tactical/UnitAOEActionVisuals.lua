@@ -417,7 +417,7 @@ function OverwatchVisuals:UpdateFromOverwatch(overwatch)
 
 	local new_overwatch = not self.aoe_tiles_mesh
 	local old_mat = self.aoe_tiles_mesh and self.aoe_tiles_mesh.CRMaterial
-	local aoe_tiles_mesh, avgz = CreateAOETilesSector(step_positions, step_objs, los_values,
+	local aoe_tiles_mesh, avgz = CreateAOETilesSector(step_positions, step_objs, los_values or empty_table,
 		self.aoe_tiles_mesh, overwatch.pos, overwatch.target_pos, overwatch.min_distance_2d or 1*guim, overwatch.dist, overwatch.cone_angle)
 	
 	local pos = aoe_tiles_mesh:GetPos()

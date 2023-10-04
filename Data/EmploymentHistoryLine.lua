@@ -33,12 +33,6 @@ PlaceObj('EmploymentHistoryLine', {
 					AddEmploymentHistoryLog(unit, self.id, context)
 				end
 			end,
-			HandlerCode = function (self, unit, oldOperation, newOperation, prevProfession, interrupted)
-				if newOperation.id == "Idle" and oldOperation.id ~= "Traveling" and oldOperation.id ~= "Arriving" and not interrupted then
-					local context = { operationId = oldOperation.id, day = GetCampaignDay(), professionId = prevProfession, sectorId = gv_Squads[unit.Squad].CurrentSector }
-					AddEmploymentHistoryLog(unit, self.id, context)
-				end
-			end,
 		}),
 	},
 	text = T(438419945982, --[[EmploymentHistoryLine ActivityFinished text]] "Day <day> - Finished <em><display_name></em> operation"),
@@ -72,12 +66,6 @@ PlaceObj('EmploymentHistoryLine', {
 		PlaceObj('MsgReaction', {
 			Event = "OperationChanged",
 			Handler = function (self, unit, oldOperation, newOperation, prevProfession, interrupted)
-				if newOperation.id == "Idle" and oldOperation.id ~= "Traveling" and oldOperation.id ~= "Arriving"  and interrupted then
-					local context = { operationId = oldOperation.id, day = GetCampaignDay(), professionId = prevProfession, sectorId = gv_Squads[unit.Squad].CurrentSector }
-					AddEmploymentHistoryLog(unit, self.id, context)
-				end
-			end,
-			HandlerCode = function (self, unit, oldOperation, newOperation, prevProfession, interrupted)
 				if newOperation.id == "Idle" and oldOperation.id ~= "Traveling" and oldOperation.id ~= "Arriving"  and interrupted then
 					local context = { operationId = oldOperation.id, day = GetCampaignDay(), professionId = prevProfession, sectorId = gv_Squads[unit.Squad].CurrentSector }
 					AddEmploymentHistoryLog(unit, self.id, context)
@@ -121,12 +109,6 @@ PlaceObj('EmploymentHistoryLine', {
 					AddEmploymentHistoryLog(unit, self.id, context)
 				end
 			end,
-			HandlerCode = function (self, unit, oldOperation, newOperation, prevProfession, interrupted)
-				if newOperation.id and newOperation.id ~= "Idle" and newOperation.id ~= "Traveling" and newOperation.id ~= "Arriving" then
-					local context = { operationId = newOperation.id, day = GetCampaignDay(), professionId = unit.OperationProfession, sectorId = gv_Squads[unit.Squad].CurrentSector }
-					AddEmploymentHistoryLog(unit, self.id, context)
-				end
-			end,
 		}),
 	},
 	text = T(943898067009, --[[EmploymentHistoryLine ActivityStarted text]] "Day <day> - Started <em><display_name></em> operation"),
@@ -139,12 +121,6 @@ PlaceObj('EmploymentHistoryLine', {
 		PlaceObj('MsgReaction', {
 			Event = "OperationChanged",
 			Handler = function (self, unit, oldOperation, newOperation, prevProfession, interrupted)
-				if newOperation.id == "Idle" and oldOperation.id == "Arriving" and not interrupted then
-					local context = { day = GetCampaignDay() }
-					AddEmploymentHistoryLog(unit, self.id, context)
-				end
-			end,
-			HandlerCode = function (self, unit, oldOperation, newOperation, prevProfession, interrupted)
 				if newOperation.id == "Idle" and oldOperation.id == "Arriving" and not interrupted then
 					local context = { day = GetCampaignDay() }
 					AddEmploymentHistoryLog(unit, self.id, context)
@@ -173,12 +149,6 @@ PlaceObj('EmploymentHistoryLine', {
 					AddEmploymentHistoryLog(unit, self.id, { day = GetCampaignDay(), mercId = newDislike })
 				end
 			end,
-			HandlerCode = function (self, unit, newDislike)
-				local unit = gv_UnitData[unit]
-				if not IsImpUnit(unit) then
-					AddEmploymentHistoryLog(unit, self.id, { day = GetCampaignDay(), mercId = newDislike })
-				end
-			end,
 		}),
 	},
 	text = T(901056728705, --[[EmploymentHistoryLine BecomeDisliked text]] "Day <day> - Started to dislike <em><mercName></em>"),
@@ -197,12 +167,6 @@ PlaceObj('EmploymentHistoryLine', {
 		PlaceObj('MsgReaction', {
 			Event = "BecomeLiked",
 			Handler = function (self, unit, newLike)
-				local unit = gv_UnitData[unit]
-				if not IsImpUnit(unit) then
-					AddEmploymentHistoryLog(unit, self.id, { day = GetCampaignDay(), mercId = newLike })
-				end
-			end,
-			HandlerCode = function (self, unit, newLike)
 				local unit = gv_UnitData[unit]
 				if not IsImpUnit(unit) then
 					AddEmploymentHistoryLog(unit, self.id, { day = GetCampaignDay(), mercId = newLike })
@@ -229,11 +193,6 @@ PlaceObj('EmploymentHistoryLine', {
 					AddEmploymentHistoryLog(unit, self.id, { day = GetCampaignDay(), taskId = taskId })
 				end
 			end,
-			HandlerCode = function (self, taskId, unit, success)
-				if success == true then
-					AddEmploymentHistoryLog(unit, self.id, { day = GetCampaignDay(), taskId = taskId })
-				end
-			end,
 		}),
 	},
 	text = T(145261145795, --[[EmploymentHistoryLine CombatTaskCompleted text]] "Day <day> - <em><taskName></em> combat task <em>completed</em>"),
@@ -255,11 +214,6 @@ PlaceObj('EmploymentHistoryLine', {
 					AddEmploymentHistoryLog(unit, self.id, { day = GetCampaignDay(), taskId = taskId })
 				end
 			end,
-			HandlerCode = function (self, taskId, unit, success)
-				if success == false then
-					AddEmploymentHistoryLog(unit, self.id, { day = GetCampaignDay(), taskId = taskId })
-				end
-			end,
 		}),
 	},
 	text = T(185316730686, --[[EmploymentHistoryLine CombatTaskFailed text]] "Day <day> - <em><taskName></em> combat task <em>failed</em>"),
@@ -272,11 +226,6 @@ PlaceObj('EmploymentHistoryLine', {
 		PlaceObj('MsgReaction', {
 			Event = "MercHireStatusChanged",
 			Handler = function (self, unitData, oldStatus, newStatus)
-				if oldStatus == "Hired" and newStatus == "Available" then
-					AddEmploymentHistoryLog(unitData, self.id, { day = GetCampaignDay() })
-				end
-			end,
-			HandlerCode = function (self, unitData, oldStatus, newStatus)
 				if oldStatus == "Hired" and newStatus == "Available" then
 					AddEmploymentHistoryLog(unitData, self.id, { day = GetCampaignDay() })
 				end
@@ -297,11 +246,6 @@ PlaceObj('EmploymentHistoryLine', {
 					AddEmploymentHistoryLog(unit, self.id, { day = GetCampaignDay() })
 				end
 			end,
-			HandlerCode = function (self, unit)
-				if IsMerc(unit) then
-					AddEmploymentHistoryLog(unit, self.id, { day = GetCampaignDay() })
-				end
-			end,
 		}),
 	},
 	text = T(334686164186, --[[EmploymentHistoryLine Downed text]] "Day <day> - Downed in battle"),
@@ -318,11 +262,6 @@ PlaceObj('EmploymentHistoryLine', {
 					AddEmploymentHistoryLog(obj, self.id, { day = GetCampaignDay() })
 				end
 			end,
-			HandlerCode = function (self, obj, id, stacks)
-				if IsMerc(obj) and id == "Exhausted" then
-					AddEmploymentHistoryLog(obj, self.id, { day = GetCampaignDay() })
-				end
-			end,
 		}),
 	},
 	text = T(101811597932, --[[EmploymentHistoryLine Exhausted text]] "Day <day> - Became exhausted"),
@@ -335,11 +274,6 @@ PlaceObj('EmploymentHistoryLine', {
 		PlaceObj('MsgReaction', {
 			Event = "StatusEffectRemoved",
 			Handler = function (self, obj, id, stacks)
-				if IsMerc(obj) and id == "Exhausted" then
-					AddEmploymentHistoryLog(obj, self.id, { day = GetCampaignDay() })
-				end
-			end,
-			HandlerCode = function (self, obj, id, stacks)
 				if IsMerc(obj) and id == "Exhausted" then
 					AddEmploymentHistoryLog(obj, self.id, { day = GetCampaignDay() })
 				end
@@ -366,12 +300,6 @@ PlaceObj('EmploymentHistoryLine', {
 					AddEmploymentHistoryLog(unit, self.id, { day = GetCampaignDay(), days = days, rehired = alreadyHired })
 				end
 			end,
-			HandlerCode = function (self, mercId, price, days, alreadyHired)
-				local unit = gv_UnitData[mercId]
-				if not IsImpUnit(unit) then
-					AddEmploymentHistoryLog(unit, self.id, { day = GetCampaignDay(), days = days, rehired = alreadyHired })
-				end
-			end,
 		}),
 	},
 	text = T(323355315663, --[[EmploymentHistoryLine Hired text]] "Day <day> - <rehiredText> for <em><days></em> days"),
@@ -384,11 +312,6 @@ PlaceObj('EmploymentHistoryLine', {
 		PlaceObj('MsgReaction', {
 			Event = "UnitLeveledUp",
 			Handler = function (self, unit)
-				if IsMerc(unit) then
-					AddEmploymentHistoryLog(unit, self.id, {day = GetCampaignDay()})
-				end
-			end,
-			HandlerCode = function (self, unit)
 				if IsMerc(unit) then
 					AddEmploymentHistoryLog(unit, self.id, {day = GetCampaignDay()})
 				end
@@ -414,11 +337,6 @@ PlaceObj('EmploymentHistoryLine', {
 					AddEmploymentHistoryLog(unit, self.id, { perkId = perkId, day = GetCampaignDay() })
 				end
 			end,
-			HandlerCode = function (self, unit, perkIds)
-				for _, perkId in ipairs(perkIds) do
-					AddEmploymentHistoryLog(unit, self.id, { perkId = perkId, day = GetCampaignDay() })
-				end
-			end,
 		}),
 	},
 	text = T(571786525879, --[[EmploymentHistoryLine PerkLearned text]] "Day <day> - New perk: <em><perkName></em>"),
@@ -436,16 +354,6 @@ PlaceObj('EmploymentHistoryLine', {
 		PlaceObj('MsgReaction', {
 			Event = "QuestParamChanged",
 			Handler = function (self, questId, varId, prevVal, newVal)
-				local quest = Quests[questId]
-				if not quest.Hidden and varId == "Completed" and newVal == true then
-					for _, unit in pairs(gv_UnitData) do
-						if IsMerc(unit) and unit.HireStatus == "Hired" then
-							AddEmploymentHistoryLog(unit, self.id, { day = GetCampaignDay(), questId = questId})
-						end
-					end
-				end
-			end,
-			HandlerCode = function (self, questId, varId, prevVal, newVal)
 				local quest = Quests[questId]
 				if not quest.Hidden and varId == "Completed" and newVal == true then
 					for _, unit in pairs(gv_UnitData) do
@@ -481,16 +389,6 @@ PlaceObj('EmploymentHistoryLine', {
 					end
 				end
 			end,
-			HandlerCode = function (self, questId, varId, prevVal, newVal)
-				local quest = Quests[questId]
-				if not quest.Hidden and varId == "Failed" and newVal == true then
-					for _, unit in pairs(gv_UnitData) do
-						if IsMerc(unit) and unit.HireStatus == "Hired" then
-							AddEmploymentHistoryLog(unit, self.id, { day = GetCampaignDay(), questId = questId})
-						end
-					end
-				end
-			end,
 		}),
 	},
 	text = T(177842835715, --[[EmploymentHistoryLine QuestFailed text]] "Day <day> - Failed quest: <em><questName></em>"),
@@ -508,15 +406,6 @@ PlaceObj('EmploymentHistoryLine', {
 		PlaceObj('MsgReaction', {
 			Event = "ConflictEnd",
 			Handler = function (self, sector, bNoVoice, playerAttacking, playerWon, isAutoResolve)
-				if playerAttacking and not playerWon then
-					local units = GetPlayerMercsInSector(sector.Id)
-					for _, unitId in ipairs(units) do
-						local unit = not gv_SatelliteView and g_Units[unitId] or gv_UnitData[unitId]
-						AddEmploymentHistoryLog(unit, self.id, {sector = sector.Id, day = GetCampaignDay()})
-					end
-				end
-			end,
-			HandlerCode = function (self, sector, bNoVoice, playerAttacking, playerWon, isAutoResolve)
 				if playerAttacking and not playerWon then
 					local units = GetPlayerMercsInSector(sector.Id)
 					for _, unitId in ipairs(units) do
@@ -550,15 +439,6 @@ PlaceObj('EmploymentHistoryLine', {
 					end
 				end
 			end,
-			HandlerCode = function (self, sector, bNoVoice, playerAttacking, playerWon, isAutoResolve)
-				if playerAttacking and playerWon then
-					local units = GetPlayerMercsInSector(sector.Id)
-					for _, unitId in ipairs(units) do
-						local unit = not gv_SatelliteView and g_Units[unitId] or gv_UnitData[unitId]
-						AddEmploymentHistoryLog(unit, self.id, {sector = sector.Id, day = GetCampaignDay()})
-					end
-				end
-			end,
 		}),
 	},
 	text = T(455749220627, --[[EmploymentHistoryLine SectorAttackedAndWon text]] "Day <day> - <em><SectorName(sector)></em> attacked and taken over"),
@@ -584,15 +464,6 @@ PlaceObj('EmploymentHistoryLine', {
 					end
 				end
 			end,
-			HandlerCode = function (self, sector, bNoVoice, playerAttacking, playerWon, isAutoResolve)
-				if not playerAttacking and not playerWon then
-					local units = GetPlayerMercsInSector(sector.Id)
-					for _, unitId in ipairs(units) do
-						local unit = not gv_SatelliteView and g_Units[unitId] or gv_UnitData[unitId]
-						AddEmploymentHistoryLog(unit, self.id, {sector = sector.Id, day = GetCampaignDay()})
-					end
-				end
-			end,
 		}),
 	},
 	text = T(492475142182, --[[EmploymentHistoryLine SectorDefendedAndLost text]] "Day <day> - <em><SectorName(sector)></em> lost"),
@@ -610,15 +481,6 @@ PlaceObj('EmploymentHistoryLine', {
 		PlaceObj('MsgReaction', {
 			Event = "ConflictEnd",
 			Handler = function (self, sector, bNoVoice, playerAttacking, playerWon, isAutoResolve)
-				if not playerAttacking and playerWon then
-					local units = GetPlayerMercsInSector(sector.Id)
-					for _, unitId in ipairs(units) do
-						local unit = not gv_SatelliteView and g_Units[unitId] or gv_UnitData[unitId]
-						AddEmploymentHistoryLog(unit, self.id, {sector = sector.Id, day = GetCampaignDay()})
-					end
-				end
-			end,
-			HandlerCode = function (self, sector, bNoVoice, playerAttacking, playerWon, isAutoResolve)
 				if not playerAttacking and playerWon then
 					local units = GetPlayerMercsInSector(sector.Id)
 					for _, unitId in ipairs(units) do
@@ -654,11 +516,6 @@ PlaceObj('EmploymentHistoryLine', {
 					AddEmploymentHistoryLog(obj, self.id, { stat = stat, amount = amount, reason = reason, day = GetCampaignDay() })
 				end
 			end,
-			HandlerCode = function (self, obj, stat, amount, reason)
-				if IsMerc(obj) then
-					AddEmploymentHistoryLog(obj, self.id, { stat = stat, amount = amount, reason = reason, day = GetCampaignDay() })
-				end
-			end,
 		}),
 	},
 	text = T(585706136298, --[[EmploymentHistoryLine StatIncreased text]] "Day <day> - <em><statName></em> increased by <amount>"),
@@ -679,11 +536,6 @@ PlaceObj('EmploymentHistoryLine', {
 		PlaceObj('MsgReaction', {
 			Event = "VillainDefeated",
 			Handler = function (self, villain, attacker)
-				if IsMerc(attacker) and not villain.villain_defeated  then
-					AddEmploymentHistoryLog(attacker, self.id, { day = GetCampaignDay(), nameId = TGetID(villain.Name) })
-				end
-			end,
-			HandlerCode = function (self, villain, attacker)
 				if IsMerc(attacker) and not villain.villain_defeated  then
 					AddEmploymentHistoryLog(attacker, self.id, { day = GetCampaignDay(), nameId = TGetID(villain.Name) })
 				end
@@ -710,11 +562,6 @@ PlaceObj('EmploymentHistoryLine', {
 					AddEmploymentHistoryLog(obj, self.id, { day = GetCampaignDay(), reason = reason })
 				end
 			end,
-			HandlerCode = function (self, obj, id, stacks, reason)
-				if IsMerc(obj) and id == "Wounded" and reason then
-					AddEmploymentHistoryLog(obj, self.id, { day = GetCampaignDay(), reason = reason })
-				end
-			end,
 		}),
 	},
 	text = T(675778881722, --[[EmploymentHistoryLine WoundHealed text]] "Day <day> - Wound was healed (<em><reasonText></em>)"),
@@ -727,11 +574,6 @@ PlaceObj('EmploymentHistoryLine', {
 		PlaceObj('MsgReaction', {
 			Event = "StatusEffectAdded",
 			Handler = function (self, obj, id, stacks)
-				if IsMerc(obj) and id == "Wounded" then
-					AddEmploymentHistoryLog(obj, self.id, { day = GetCampaignDay() })
-				end
-			end,
-			HandlerCode = function (self, obj, id, stacks)
 				if IsMerc(obj) and id == "Wounded" then
 					AddEmploymentHistoryLog(obj, self.id, { day = GetCampaignDay() })
 				end

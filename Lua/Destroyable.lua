@@ -131,11 +131,7 @@ function ProcessObjectsAroundSlabs(destroyedFloorBoxes, destroyedFloorMap, destr
 		
 		MapForEach(queryb, "CObject", const.efVisible, function(o)
 			if ShouldDestroyObject(o) then
-				local ob = o:GetObjectBBox()
-				o:ForEachAttach(function(att)
-					ob = AddRects(ob, att:GetObjectBBox())
-				end)
-				
+				local ob = o:GetObjectAttachesBBox()
 				if ob:Intersect(testTouchingFloorBox) ~= const.irOutside then --it's probably on the floor, or below it
 					local obsx, obsy, obsz = ob:size():xyz()
 					local shouldDie = false
@@ -258,11 +254,7 @@ end
 
 local xyGrowth = 50
 function GetDestroyQueryBoxForObj(obj)
-	local bbox = obj:GetObjectBBox()
-	obj:ForEachAttach(function(o)
-		bbox = AddRects(bbox, o:GetObjectBBox())
-	end)
-
+	local bbox = obj:GetObjectAttachesBBox()
 	local isLarge = Max(bbox:sizex(), bbox:sizey()) / voxelSizeX > 0
 	local x, y, z = bbox:sizexyz()
 	local growth = isLarge and string.find(obj:GetEntity(), "Dec") and 0 or xyGrowth
@@ -271,10 +263,7 @@ function GetDestroyQueryBoxForObj(obj)
 end
 
 function GetDestroyQueryBoxForObj_HangingTest(obj)
-	local bbox = obj:GetObjectBBox()
-	obj:ForEachAttach(function(o)
-		bbox = AddRects(bbox, o:GetObjectBBox())
-	end)
+	local bbox = obj:GetObjectAttachesBBox()
 	local x, y, z = bbox:sizexyz()
 	return Offset(bbox:grow(x / 2, y / 2, z / 2), 0, 0, z / 2 + 25), bbox
 end
@@ -472,6 +461,7 @@ function CObject:SetupDestroyedState(destroyed, spread_debris, dont_update_hash)
 	end
 end
 
+--TwoPointsAttachParent optimization - grab children in member, so we dont have to mapget the entire map every time;
 function OnMsg.ChangeMapDone()
 	if GetMapName() == "" then return end
 	if not mapdata.GameLogic then return end
@@ -486,6 +476,10 @@ end
 AppendClass.TwoPointsAttachParent = {
 	children = false
 }
+
+function TwoPointsAttachParent:Done()
+	self.children = nil
+end
 
 function TwoPointsAttachParent:SetupDestroyedState(destroyed)
 	CObject.SetupDestroyedState(self, destroyed)
@@ -502,6 +496,50 @@ function TwoPointsAttachParent:SetupDestroyedState(destroyed)
 		end, destroyed)
 	end
 end
+
+--TwoPointsAttachParent editor filter hides wires impl.
+function TwoPointsAttachParent:UpdateChildrenStateFromSolidShadow(flags)
+	if IsEditorActive() then
+		if band(const.gofSolidShadow, flags) ~= 0 then
+			--editor is hiding or showing us
+			for i, c in ipairs(self.children) do
+				if c.obj1:GetGameFlags(const.gofSolidShadow) ~= 0 or
+					c.obj2:GetGameFlags(const.gofSolidShadow) ~= 0 then
+					c:SetVisible(false)
+				else
+					c:SetVisible(true)
+				end
+			end
+		end
+	end
+end
+
+function TwoPointsAttachParent:ClearHierarchyGameFlags(flags)
+	CObject.ClearHierarchyGameFlags(self, flags)
+	self:UpdateChildrenStateFromSolidShadow(flags)
+end
+
+function TwoPointsAttachParent:SetHierarchyGameFlags(flags)
+	CObject.SetHierarchyGameFlags(self, flags)
+	self:UpdateChildrenStateFromSolidShadow(flags)
+end
+
+--TwoPointsAttachParent hides wires in game when parent gets hidden, also pops up wires when turning off hiding;
+function TwoPointsAttachParent:SetShadowOnly(bSet)
+	if g_CMTPaused then return end
+	CObject.SetShadowOnly(self, bSet)
+		
+	for i, c in ipairs(self.children) do
+		if not CMT_IsObjVisible(c.obj1) or 
+			not CMT_IsObjVisible(c.obj2) then
+			c:SetVisible(false)
+		else
+			c:SetVisible(true)
+		end
+	end
+end
+
+TwoPointsAttachParent.SetShadowOnlyImmediate = TwoPointsAttachParent.SetShadowOnly
 
 function TwoPointsAttach:SetupDestroyedState(destroyed)
 	self:SetVisible(not destroyed)
@@ -592,6 +630,8 @@ function ProcessDestroyedGenericObjectsThisTick()
 	end
 end
 
+local bbox_ignore_classes = {"Light", "AutoAttachSIModulator"}
+
 function GetCascadeDestroyObjects(obj, pos_cache, dqb, bb)
 	if DbgDestruction_DisableWallAndObjPropagation then
 		return
@@ -600,12 +640,7 @@ function GetCascadeDestroyObjects(obj, pos_cache, dqb, bb)
 	local function getPosFromCache(obj, box)
 		local b = pos_cache[obj]
 		if not b then
-			if not box then
-				box = obj:GetObjectBBox()
-				obj:ForEachAttach(function(o)
-					box = AddRects(box, o:GetObjectBBox())
-				end)
-			end
+			box = box or obj:GetObjectAttachesBBox(bbox_ignore_classes)
 			pos_cache[obj] = box
 			b = box
 		end
@@ -756,7 +791,7 @@ function LoadSavedDestroyedObjects()
 	end, IsGenericObjDestroyed, total)
 	--print(count, total)
 	RemoveInvalidDestroyedObjects(Destruction_DestroyedObjects)
-	RemoveInvalidDestroyedObjects(Destruction_DestroyedCObjects)
+	--RemoveInvalidDestroyedObjects(Destruction_DestroyedCObjects)
 end
 
 function OnMsg.GameExitEditor()

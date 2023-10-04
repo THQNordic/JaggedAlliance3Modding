@@ -470,7 +470,7 @@ PlaceObj('Conversation', {
 		Lines = {
 			PlaceObj('ConversationLine', {
 				Character = "HeadshotHue",
-				Text = T(409131065300, --[[Conversation HeadshotHue_1 Text voice:HeadshotHue section:HeadshotHue_1 keyword:Greeting4]] "Hey, hey, look who it is! Still afraid of a little bet?"),
+				Text = T(409131065300, --[[Conversation HeadshotHue_1 Text voice:HeadshotHue section:HeadshotHue_1 keyword:Greeting4]] "Hey, hey, look who it is! Still afraid of a little <em>bet</em>?"),
 			}),
 		},
 		id = "Greeting4",
@@ -617,7 +617,7 @@ PlaceObj('Conversation', {
 			}),
 			PlaceObj('ConversationLine', {
 				Character = "HeadshotHue",
-				Text = T(443140565086, --[[Conversation HeadshotHue_1 Text voice:HeadshotHue section:HeadshotHue_1 keyword:“Headshot” Hue?]] "You don't believe me, do you? Come on, bet some money and I'll show you!"),
+				Text = T(443140565086, --[[Conversation HeadshotHue_1 Text voice:HeadshotHue section:HeadshotHue_1 keyword:“Headshot” Hue?]] "You don't believe me, do you? Come on, bet some <em>money</em> and I'll show you!"),
 			}),
 		},
 		NoBackOption = true,
@@ -646,6 +646,7 @@ PlaceObj('Conversation', {
 			KeywordT = T(873624889406, --[[Conversation HeadshotHue_1 KeywordT]] "No way, show us!"),
 			PhraseConditionRolloverText = T(261912398025, --[[Conversation HeadshotHue_1 PhraseConditionRolloverText]] "Headshot Hue does have a hole through his brain"),
 			PlayGoToPhrase = true,
+			ShowDisabled = true,
 			StoryBranchIcon = "conversation_trade",
 			id = "Nowayshowus",
 		}),
@@ -674,6 +675,7 @@ PlaceObj('Conversation', {
 			KeywordT = T(154240261590, --[[Conversation HeadshotHue_1 KeywordT]] "Okay, show us"),
 			PhraseConditionRolloverText = T(173963918847, --[[Conversation HeadshotHue_1 PhraseConditionRolloverText]] "Headshot Hue does have a hole through his brain"),
 			PlayGoToPhrase = true,
+			ShowDisabled = true,
 			StoryBranchIcon = "conversation_trade",
 			id = "Okayshowus",
 		}),

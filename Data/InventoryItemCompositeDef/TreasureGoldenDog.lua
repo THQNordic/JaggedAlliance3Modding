@@ -10,7 +10,7 @@ PlaceObj('InventoryItemCompositeDef', {
 	'DisplayNamePlural', T(618615461525, --[[InventoryItemCompositeDef TreasureGoldenDog DisplayNamePlural]] "Ancient Golden Dogs"),
 	'Description', T(117877389631, --[[InventoryItemCompositeDef TreasureGoldenDog Description]] "Ancient Chiennese had great love and appreciation for man's best friend - gold."),
 	'AdditionalHint', T(627443489254, --[[InventoryItemCompositeDef TreasureGoldenDog AdditionalHint]] "<bullet_point> A piece of Grand Chien's glorious past\n<bullet_point> <GameColorD>Can be cashed in for Money</GameColorD>"),
-	'is_valuable', true,
+	'Valuable', 1,
 	'Cost', 3000,
 })
 

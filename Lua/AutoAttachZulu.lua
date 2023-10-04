@@ -5,7 +5,7 @@ function AutoAttachObject:OnDestroy()
 end
 
 function AutoAttachObject:SetState(state, flags, crossfade, speed)
-	self:DestroyAttaches()
+	self:DestroyAutoAttaches()
 	self:ClearAttachMembers()
 	
 	-- Call original SetState
@@ -44,7 +44,7 @@ function AutoAttachObject:SetAutoAttachMode(value)
 	end
 	
 	self.auto_attach_mode = value
-	self:DestroyAttaches()
+	self:DestroyAutoAttaches()
 	self:ClearAttachMembers()
 	self:AutoAttachObjects()
 	

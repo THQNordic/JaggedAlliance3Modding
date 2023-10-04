@@ -19,7 +19,7 @@ PlaceObj('Conversation', {
 				return not quest.HermanRescued
 			end,
 		}),
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "RescueHerMan",

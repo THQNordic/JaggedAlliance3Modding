@@ -1,14 +1,44 @@
 local old_NetWaitGameStart = NetWaitGameStart
 g_dbgFasterNetJoin = false --Platform.developer
 function NetWaitGameStart(timeout)
+	if not NetIsConnected() then return "disconnected" end
 	if netGamePlayers and table.count(netGamePlayers) <= 1 then
 		--something fucks up in this scenario, when a player has left and we try to load a new game
 		--server never starts the game even though we say we are ready
 		NetGameSend("rfnStartGame")
 		netDesync = false
-		return false --not an error
+		return (not NetIsHost()) and "host left" or false --not an error
 	end
-	return old_NetWaitGameStart(timeout)
+	
+	-- to cancel out the "NetWaitGameStart" before the timeout in case we detect that the host left the game
+	local cur_thread = CurrentThread()
+	local thread_result = "waiting"
+	local net_wait_thread = CreateRealTimeThread(function()
+		local err = old_NetWaitGameStart(timeout)
+		if thread_result == "waiting" then thread_result = err or false end
+		Wakeup(cur_thread)
+	end)
+	local net_player_left_thread = CreateRealTimeThread(function()
+		WaitMsg("NetPlayerLeft")
+		if thread_result == "waiting" then thread_result = "player left" end
+		Wakeup(cur_thread)
+	end)
+	local net_game_left_thread = CreateRealTimeThread(function()
+		WaitMsg("NetGameLeft")
+		if thread_result == "waiting" then thread_result = "net_game_left" end
+		Wakeup(cur_thread)
+	end)
+	local net_disconnect_thread = CreateRealTimeThread(function()
+		WaitMsg("NetDisconnect")
+		if thread_result == "waiting" then thread_result = "disconnected" end
+		Wakeup(cur_thread)
+	end)
+	WaitWakeup()
+	if IsValidThread(net_wait_thread) then DeleteThread(net_wait_thread) end
+	if IsValidThread(net_player_left_thread) then DeleteThread(net_player_left_thread) end
+	if IsValidThread(net_game_left_thread) then DeleteThread(net_game_left_thread) end
+	if IsValidThread(net_disconnect_thread) then DeleteThread(net_disconnect_thread) end
+	return thread_result
 end
 
 local shield_vars = {}
@@ -95,12 +125,35 @@ function NetEvents.LoadGame(game_type, game_data, metadata)
 	CreateRealTimeThread(function()
 		-- if not netInGame then return end -- !TODO: very narrow timing issue, player may leave game just before this is run
 		assert(netInGame)
-		local err = LoadNetGame(game_type, Decompress(game_data), metadata)
+		
+		local err
+		if metadata and metadata.campaign and not CampaignPresets[metadata.campaign] then
+			err = "missing campaign"
+		else
+			err = LoadNetGame(game_type, Decompress(game_data), metadata)
+		end
+		
+		if err then print("LoadNetGame failed:", err) end
 		err = err or NetWaitGameStart()
 		if err then
+			print("NetWaitGameStart failed:", err)
 			NetLeaveGame(err)
-			print("LoadNetGame failed:", err)
+			
+			-- force close loading screen (it fails to be closed under normal circumstances with reason "sync")
+			while #LoadingScreenLog > 0 do
+				local dlg = GetDialog(LoadingScreenLog[#LoadingScreenLog])
+				local id = dlg:GetId()
+				local reason = false
+				for r, _ in pairs(dlg:GetOpenReasons()) do
+					reason = r
+				end
+				-- print("Forcing close open dialog. Id: " .. tostring(id or "") .. " reason: " .. tostring(reason or ""))
+				LoadingScreenClose(id, reason)
+			end
+			Sleep(10)
 			OpenPreGameMainMenu("")
+			WaitLoadingScreenClose()
+			ShowMPLobbyError("disconnect-after-leave-game", err)
 		end
 	end)
 end
@@ -117,6 +170,12 @@ function OnMsg.NetGameJoined(game_id, unique_id)
 end
 
 function StartHostedGame(game_type, game_data, metadata)
+	if not netInGame then 
+		OpenPreGameMainMenu("")
+		WaitLoadingScreenClose() 
+		ShowMPLobbyError("connect", "disconnected")
+		return "disconnected"
+	end
 	assert(NetIsHost())
 	LoadingScreenOpen(GetLoadingScreenParamsFromMetadata(metadata, "host game"))
 	if IsChangingMap() then
@@ -140,7 +199,24 @@ function StartHostedGame(game_type, game_data, metadata)
 			err = NetWaitGameStart()
 			if err then
 				print("NetWaitGameStart failed:", err)
+				NetLeaveGame(err)
+				
+				-- force close loading screen (it fails to be closed under normal circumstances with reason "sync")
+				while #LoadingScreenLog > 0 do
+					local dlg = GetDialog(LoadingScreenLog[#LoadingScreenLog])
+					local id = dlg:GetId()
+					local reason = false
+					for r, _ in pairs(dlg:GetOpenReasons()) do
+						reason = r
+					end
+					-- print("Forcing close open dialog. Id: " .. tostring(id or "") .. " reason: " .. tostring(reason or ""))
+					LoadingScreenClose(id, reason)
+				end
+				Sleep(10)
+				
 				OpenPreGameMainMenu("")
+				WaitLoadingScreenClose()
+				ShowMPLobbyError("disconnect-after-leave-game", err)
 			end
 		end
 	end
@@ -153,7 +229,8 @@ end
 PlatformCreateMultiplayerGame = rawget(_G, "PlatformCreateMultiplayerGame") or empty_func
 PlatformJoinMultiplayerGame = rawget(_G, "PlatformJoinMultiplayerGame") or empty_func
 
-function HostMultiplayerGame(visible_to)
+function HostMultiplayerGame(visible_to, campaignId)
+	campaignId = campaignId or rawget(_G, "DefaultCampaign") or "HotDiamonds"
 	local err = MultiplayerConnect()
 	if err then
 		ShowMPLobbyError("connect", err)
@@ -181,7 +258,7 @@ function HostMultiplayerGame(visible_to)
 	local max_players = 2
 	local info = {
 		map = GetMapName(),
-		campaign = Game and Game.Campaign or rawget(_G, "DefaultCampaign") or "HotDiamonds",
+		campaign = Game and Game.Campaign or campaignId,
 		mods = enabledMods,
 		day = Game and TFormat.day() or 1,
 		host_id = netAccountId,
@@ -227,7 +304,7 @@ function MultiplayerConnect()
 	-- make a new official connection otherwise.
 	NetForceDisconnect() 
 	local err = NetConnect(config.SwarmHost, config.SwarmPort, auth_provider, auth_provider_data, display_name, config.NetCheckUpdates)
-	msg:Close()
+	if msg.window_state == "open" or msg.window_state == "closing" then msg:Close() end
 	
 	if not err and netRestrictedAccount then
 		err = "restricted"
@@ -277,9 +354,9 @@ function NetSyncEvents.CoOpReadyToEndTurn(player_id, isReady)
 		SelectObj(false)
 	end
 	
-	local endTurnButton = GetInGameInterfaceModeDlg():ResolveId("idTurn")
+	local endTurnButton = Dialogs.IModeCombatMovement.idEndTurnFrame
 	if endTurnButton then
-		endTurnButton:OnContextUpdate(Selection)
+		endTurnButton:OnContextUpdate(Selection, true)
 	end
 	
 	local otherPlayerHasNoLivingUnits = true
@@ -449,9 +526,13 @@ local function lOnPlayerClickedSyncDlg(self, player_id, data) --on player clicke
 		self.idSkipHint:SetVisible(true)
 	end
 	if data[netUniqueId] then
-		self.idSkipHint:SetText(T(221873989540, "Waiting for the other player..."))
+		self.idSkipHint:SetText(T(769124019747, "Waiting for <u(GetOtherPlayerNameFormat())>..."))
 	else
-		self.idSkipHint:SetText(T{181264542969, "<Count>/<Total> players skipped the cutscene", Count = table.count(data, function(k, v) return v end), Total = table.count(netGamePlayers)})
+		if table.count(netGamePlayers) == 2 then
+			self.idSkipHint:SetText(T(270246785102, "<u(GetOtherPlayerNameFormat())> skipped the cutscene"))
+		else
+			self.idSkipHint:SetText(T{181264542969, "<Count>/<Total> players skipped the cutscene", Count = table.count(data, function(k, v) return v end), Total = table.count(netGamePlayers)})
+		end
 	end
 end
 --------------------------------------------------
@@ -462,7 +543,7 @@ function ComicOnShortcut(self, shortcut, source, ...)
 	if RealTime() - terminal.activate_time < 500 then return "break" end
 	
 	if IsInMultiplayerGame() then
-		if shortcut ~= "Escape" and shortcut ~= "ButtonB" and shortcut ~= "MouseL" then return end
+		if shortcut ~= "Escape" and shortcut ~= "ButtonB" and shortcut ~= "MouseL" then return "break" end
 		assert(PlayersClickedSync_IsInitializedForReason("Outro"))
 		LocalPlayerClickedReady("Outro")
 	else
@@ -470,7 +551,7 @@ function ComicOnShortcut(self, shortcut, source, ...)
 			self.idSkipHint:SetVisible(true)
 			return "break"
 		end
-		if shortcut ~= "Escape" and shortcut ~= "ButtonB" and shortcut ~= "MouseL" then return end
+		if shortcut ~= "Escape" and shortcut ~= "ButtonB" and shortcut ~= "MouseL" then return "break" end
 		self:Close()
 	end
 	return "break"
@@ -691,7 +772,7 @@ function OnMsg.NetDisconnect()
 	disconnecting = true
 	print("Thread Created", #sent_events)
 	CreateGameTimeThread(function()
-		while #SyncEventsQueue > 0 do
+		while SyncEventsQueue and #SyncEventsQueue > 0 do
 			local t = GetThreadStatus(PeriodicRepeatThreads["SyncEvents"])
 			if t > GameTime() then
 				Sleep(t - GameTime())
@@ -1391,6 +1472,9 @@ function TryConnectToServer()
 		while not AccountStorage do
 			WaitMsg("AccountStorageChanged")
 		end
+		if Platform.xbox then
+			WaitMsg("XboxUserSignedIn")
+		end
 		local wait = 60*1000
 		while config.SwarmConnect do
 			if not NetIsConnected() and GetAccountStorageOptionValue("AnalyticsEnabled") == "On" then
@@ -1432,4 +1516,23 @@ end
 
 function OnMsg.PostNewMapLoaded()
 	FireNetSyncEventOnHost("NewMapLoaded", CurrentMap, mapdata.NetHash, MapLoadRandom, Game and Game.seed_text)
+end
+
+function OnMsg.PreLoadSessionData()
+	local dlg = GetDialog("Intro")
+	if dlg and (dlg.window_state == "open" or dlg.window_state == "closing") then
+		dlg:Close()
+	end
+	
+	local dlg = GetDialog("Credits")
+	if dlg and (dlg.window_state == "open" or dlg.window_state == "closing") then
+		dlg:Close()
+	end
+end
+
+function OnMsg.NetGameJoined()
+	local dlg = GetDialog("Credits")
+	if dlg and (dlg.window_state == "open" or dlg.window_state == "closing") then
+		dlg:Close()
+	end
 end

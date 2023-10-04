@@ -732,7 +732,10 @@ function QuestGatherRefsFromConversations(depending, quest_id, check_var)
 end
 
 function QuestGatherRefsFromMaps(depending, quest_id, check_var)
-	GatherMarkerScriptingData()
+	local map_name = GetMapName()
+	if not g_DebugMarkersInfo[map_name] then
+		GatherMarkerScriptingData()
+	end
 	local out = depending.markers or {}
 	-- filter for current quest_id
 	local res
@@ -1423,10 +1426,11 @@ local function lFindTargetForQuestBadge(groupName, all, isRemove)
 		local markers = MapGetMarkers("GridMarker", groupName, function(m)
 			return not IsKindOf(m, "UnitMarker")
 		end)
-		
-		if #filteredUnits > 0 or #markers > 0 then
-			filteredUnits = filteredUnits or {}
-			markers = markers or empty_table
+		if not markers or #markers == 0 then
+			return filteredUnits
+		elseif #filteredUnits == 0 then
+			return markers
+		else
 			return table.iappend(filteredUnits, markers)
 		end
 	else
@@ -1439,8 +1443,8 @@ local function lFindTargetForQuestBadge(groupName, all, isRemove)
 			return m:IsInGroup(groupName) and not IsKindOf(m, "UnitMarker")
 		end)
 		if IsKindOf(marker, "Interactable") then
-			local visuals = ResolveInteractableVisualObjects(marker)
-			if #(visuals or empty_table) == 0 then
+			local visual = ResolveInteractableVisualObjects(marker, nil, nil, "findFirst")
+			if not visual then
 				if isRemove then return {marker} end
 				return false
 			end
@@ -1580,8 +1584,6 @@ function UpdateQuestBadges(quest)
 		end
 
 		local targetsForBadge = lFindTargetForQuestBadge(unitName, sh.place_on_all)
-		if not targetsForBadge then goto continue end
-		
 		-- Spawn the badge only if missing
 		for i, unitTarget in ipairs(targetsForBadge) do
 			local hasBadgeOfPreset = g_Badges[unitTarget] and table.find(g_Badges[unitTarget], "preset", preset)
@@ -1683,7 +1685,7 @@ function OpenHelpMenu(atHint)
 	if pda then
 		parent = pda.idDisplayPopupHost
 	end
-	local popupUI = XTemplateSpawn("PopupNotification", parent, empty_table)
+	local popupUI = XTemplateSpawn("PopupNotification", parent, TutorialGetHelpMenuHints())
 	popupUI:Open()
 	popupUI.idHintChoices:SetVisible(true)
 	popupUI.idPopupTitle:SetText(T(174457905586, "HELP TOPICS"))
@@ -1733,6 +1735,12 @@ function TutorialGetHelpMenuHints()
 	AddToArray("visible")
 	
 	return modeSorted
+end
+
+function TutorialIsHintRead(context)
+	local hintId = context.preset.id
+	local read = TutorialHintsState.read and TutorialHintsState.read[hintId]
+	return read
 end
 
 function TutorialGetCurrentHints()
@@ -2106,14 +2114,37 @@ function SavegameSessionDataFixups.Sanatorium(session_data)
 	session_data.gvars.gv_Quests["Sanatorium"]["Failed"] = false
 end
 
+function SavegameSessionDataFixups.BiffDeadOnArrivalConflict(session_data)
+	if not session_data then return end
+	if not session_data.gvars then return end
+	if not session_data.gvars.gv_Quests then return end
+	if not session_data.gvars.gv_Quests["RescueBiff"] then return end
+	if not session_data.gvars.gv_Quests["RescueBiff"]["TCE_BiffDeadOnArrival"] then return end
+	if not session_data.gvars.gv_Sectors then return end
+	if not session_data.gvars.gv_Sectors["A8"].conflict then return end
+	if not session_data.gvars.gv_Sectors["A8"].conflict.locked then return end
+	session_data.gvars.gv_Sectors["A8"].conflict.locked = false
+end
+
+
+function SavegameSessionDataFixups.IlleMoratFirstEnter(session_data)
+	if not session_data then return end
+	if not session_data.gvars then return end
+	if not session_data.gvars.gv_Sectors then return end
+	if not session_data.gvars.gv_Sectors.D17 then return end
+	if not session_data.gvars.gv_Quests["Beast"] then return end	
+	if session_data.gvars.gv_Sectors.D17.last_enter_campaign_time ~= 0 then
+	session_data.gvars.gv_Quests["Beast"]["IlleMorat_FirstEnter"] = true
+	end
+end
+
 function SavegameSessionDataFixups.BeastKillTCE(session_data)
 	if not session_data then return end
 	if not session_data.gvars then return end
 	if not session_data.gvars.gv_Quests then return end
 	if not session_data.gvars.gv_Quests["Beast"] then return end
 	if session_data.gvars.gv_Quests["Beast"]["TCE_RemoveConflict"] then return end
-	session_data.gvars.gv_Quests["Beast"]["completed_tce"] = false
-	print("Beast fix")
+	session_data.gvars.gv_Quests["Beast"]["completed_tce"] = false	
 end
 
 function SavegameSessionDataFixups.FaucheuxEndgame(session_data)
@@ -2127,6 +2158,18 @@ function SavegameSessionDataFixups.FaucheuxEndgame(session_data)
 	if not session_data.gvars.gv_Quests["06_Endgame"] then return end
 	session_data.gvars.gv_Quests["06_Endgame"]["Outro_PeaceRestored"] = false
 end
+
+function SavegameSessionDataFixups.PierreHanging(session_data)
+	if not session_data then return end
+	if not session_data.gvars then return end
+	if not session_data.gvars.gv_Quests then return end
+	if not session_data.gvars.gv_Quests["RescueHerMan"] then return end	
+	if not session_data.gvars.gv_Quests["RescueHerMan"]["HangingActive"] then return end
+	if not session_data.gvars.gv_Quests["PierreDefeated"] then return end
+	if not session_data.gvars.gv_Quests["PierreDefeated"]["PierreJoined"] then return end
+	session_data.gvars.gv_Quests["RescueHerMan"]["HangingActive"] = false
+end
+
 
 function OnMsg.GatherMusic(used_music)
 	for _, group in ipairs(Presets.QuestsDef or empty_table) do
@@ -2262,7 +2305,7 @@ function BuildTCESectorRelations(quest)
 			if not condition.Negate then
 				table.iappend(storage, condition.Sectors)
 			end
-		elseif IsKindOfClasses(condition, "AND", "CheckAND") then
+		elseif IsKindOf(condition, "CheckAND") then
 			for _, inner in ipairs(condition.Conditions) do
 				CheckAddRelation(storage, inner)
 			end

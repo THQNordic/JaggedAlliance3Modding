@@ -698,6 +698,16 @@ PlaceObj('XTemplate', {
 										'UnscaledWidth', 16,
 									}),
 									}),
+								PlaceObj('XTemplateWindow', {
+									'comment', "gamepad logic changer",
+									'__context', function (parent, context) return "GamepadStyleChanged" end,
+									'__class', "XContextWindow",
+									'ContextUpdateOnOpen', true,
+									'OnContextUpdate', function (self, context, ...)
+										self.parent.ClickToDrop = GetUIStyleGamepad()
+										self.parent.ClickToDrag = self.parent.ClickToDrop
+									end,
+								}),
 								}),
 							}),
 						PlaceObj('XTemplateTemplate', {

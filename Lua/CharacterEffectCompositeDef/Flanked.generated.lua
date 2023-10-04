@@ -8,56 +8,66 @@ DefineClass.Flanked = {
 
 	object_class = "StatusEffect",
 	msg_reactions = {
-		PlaceObj('MsgReaction', {
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "obj",
 			Event = "StatusEffectAdded",
 			Handler = function (self, obj, id, stacks)
-				local reaction_idx = table.find(self.msg_reactions or empty_table, "Event", "StatusEffectAdded")
-				if not reaction_idx then return end
 				
 				local function exec(self, obj, id, stacks)
 				if not obj:IsMerc() and IsNetPlayerTurn() then
 					PlayVoiceResponse(obj, "AIFlanked")
 				end
 				end
-				local _id = GetCharacterEffectId(self)
-				if _id == id then exec(self, obj, id, stacks) end
 				
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[1]
+				if not reaction_def or reaction_def.Event ~= "StatusEffectAdded" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
+					exec(self, obj, id, stacks)
+				end
+				
+				if self:VerifyReaction("StatusEffectAdded", reaction_def, obj, obj, id, stacks) then
+					exec(self, obj, id, stacks)
+				end
 			end,
 			HandlerCode = function (self, obj, id, stacks)
 				if not obj:IsMerc() and IsNetPlayerTurn() then
 					PlayVoiceResponse(obj, "AIFlanked")
 				end
 			end,
-			param_bindings = false,
 		}),
-		PlaceObj('MsgReaction', {
-			Event = "GatherTargetDamageModifications",
-			Handler = function (self, attacker, target, attack_args, hit_descr, mod_data)
-				local reaction_idx = table.find(self.msg_reactions or empty_table, "Event", "GatherTargetDamageModifications")
-				if not reaction_idx then return end
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "target",
+			Event = "GatherDamageModifications",
+			Handler = function (self, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data)
 				
-				local function exec(self, attacker, target, attack_args, hit_descr, mod_data)
+				local function exec(self, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data)
 				local flankBonus = self:ResolveValue("bonus")
 				mod_data.base_damage = MulDivRound(mod_data.base_damage, 100 + flankBonus, 100)
 				mod_data.breakdown[#mod_data.breakdown + 1] = { name = self.DisplayName, value = flankBonus }
 				end
-				local id = GetCharacterEffectId(self)
 				
-				if id then
-					if IsKindOf(target, "StatusEffectObject") and target:HasStatusEffect(id) then
-						exec(self, attacker, target, attack_args, hit_descr, mod_data)
-					end
-				else
-					exec(self, attacker, target, attack_args, hit_descr, mod_data)
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[2]
+				if not reaction_def or reaction_def.Event ~= "GatherDamageModifications" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
+					exec(self, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data)
 				end
 				
+				if self:VerifyReaction("GatherDamageModifications", reaction_def, target, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data) then
+					exec(self, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data)
+				end
 			end,
 			HandlerCode = function (self, attacker, target, attack_args, hit_descr, mod_data)
 				local flankBonus = self:ResolveValue("bonus")
 				mod_data.base_damage = MulDivRound(mod_data.base_damage, 100 + flankBonus, 100)
 				mod_data.breakdown[#mod_data.breakdown + 1] = { name = self.DisplayName, value = flankBonus }
 			end,
-			param_bindings = false,
+			helpActor = "target",
 		}),
 	},
 	DisplayName = T(529722665638, --[[CharacterEffectCompositeDef Flanked DisplayName]] "Flanked"),

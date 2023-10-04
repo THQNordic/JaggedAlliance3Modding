@@ -675,7 +675,7 @@ PlaceObj('BanterDef', {
 		PlaceObj('CombatIsActive', {
 			Negate = true,
 		}),
-		PlaceObj('AND', {
+		PlaceObj('CheckAND', {
 			Conditions = {
 				PlaceObj('UnitSquadHasMerc', {
 					Name = "Buns",
@@ -781,7 +781,7 @@ PlaceObj('BanterDef', {
 		PlaceObj('CombatIsActive', {
 			Negate = true,
 		}),
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('UnitSquadHasMerc', {
 					Name = "Fox",

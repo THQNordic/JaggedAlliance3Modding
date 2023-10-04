@@ -6,11 +6,10 @@ PlaceObj('CharacterEffectCompositeDef', {
 	'SortKey', 1,
 	'object_class', "Perk",
 	'msg_reactions', {
-		PlaceObj('MsgReaction', {
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "attacker",
 			Event = "Attack",
 			Handler = function (self, action, results, attack_args, combat_starting, attacker, target)
-				local reaction_idx = table.find(self.msg_reactions or empty_table, "Event", "Attack")
-				if not reaction_idx then return end
 				
 				local function exec(self, action, results, attack_args, combat_starting, attacker, target)
 				if action.ActionType == "Melee Attack" and IsKindOf(target, "Unit") then
@@ -21,16 +20,19 @@ PlaceObj('CharacterEffectCompositeDef', {
 					end
 				end
 				end
-				local id = GetCharacterEffectId(self)
 				
-				if id then
-					if IsKindOf(attacker, "StatusEffectObject") and attacker:HasStatusEffect(id) then
-						exec(self, action, results, attack_args, combat_starting, attacker, target)
-					end
-				else
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[1]
+				if not reaction_def or reaction_def.Event ~= "Attack" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
 					exec(self, action, results, attack_args, combat_starting, attacker, target)
 				end
 				
+				if self:VerifyReaction("Attack", reaction_def, attacker, action, results, attack_args, combat_starting, attacker, target) then
+					exec(self, action, results, attack_args, combat_starting, attacker, target)
+				end
 			end,
 			HandlerCode = function (self, action, results, attack_args, combat_starting, attacker, target)
 				if action.ActionType == "Melee Attack" and IsKindOf(target, "Unit") then

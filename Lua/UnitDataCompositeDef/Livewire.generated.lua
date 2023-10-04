@@ -36,7 +36,7 @@ DefineClass.Livewire = {
 				}),
 			},
 			'Conditions', {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('UnitHireStatus', {
 							Status = "Hired",
@@ -95,7 +95,7 @@ DefineClass.Livewire = {
 				}),
 			},
 			'Conditions', {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('UnitHireStatus', {
 							Status = "Hired",

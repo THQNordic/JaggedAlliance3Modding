@@ -105,7 +105,7 @@ function OperationsSync_SuspendObjModified()
 	end)
 end
 
-function NetSyncEvents.LogOperationStart(operation_id, sector_id)
+function NetSyncEvents.LogOperationStart(operation_id, sector_id, voicelog)
 	OperationsSync_SuspendObjModified()
 	if operation_id == "Traveling" or operation_id == "Idle" or operation_id== "Arriving" then
 		return
@@ -119,7 +119,7 @@ function NetSyncEvents.LogOperationStart(operation_id, sector_id)
 			if #m_students >=1 and #m_teachers>=1 then
 				local trainers = table.map(m_teachers, "Nick")				
 				local students = table.map(m_students, "Nick")
-				PlayVoiceResponse(table.rand(m_teachers),"ActivityStarted") 
+				if voicelog then PlayVoiceResponse(table.rand(m_teachers),"ActivityStarted") end
 				CombatLog("short",T{559221136920, "<em><trainers></em> started training <em><students></em> in <SectorName(sector)>",trainers = ConcatListWithAnd(trainers), students = ConcatListWithAnd(students), sector = sector})
 			end	
 		elseif operation_id == "TreatWounds" then
@@ -128,7 +128,7 @@ function NetSyncEvents.LogOperationStart(operation_id, sector_id)
 			if #m_doctors>=1 and #m_patients>=1 then
 				local doctors  = table.map(m_doctors,  "Nick")
 				local patients = table.map(m_patients, "Nick")
-				PlayVoiceResponse(table.rand(m_doctors),"ActivityStarted") 
+				if voicelog then PlayVoiceResponse(table.rand(m_doctors),"ActivityStarted") end
 				CombatLog("short",T{306176602916, "<em><doctors></em> started treating the wounds of <em><patients></em> in <SectorName(sector)>",doctors = ConcatListWithAnd(doctors), patients = ConcatListWithAnd(patients), sector = sector})
 			end
 		end
@@ -144,11 +144,13 @@ function NetSyncEvents.LogOperationStart(operation_id, sector_id)
 				table.insert(negotiatorUnits, merc)
 			end
 		end
-		if next(negotiatorUnits) then
-			PlayVoiceResponse(table.rand(negotiatorUnits, InteractionRand(1000000, "RandomNegotiator")), "Negotiator")
-		else
-			PlayVoiceResponse(table.rand(operationMercs, InteractionRand(1000000, "RandomActivityStartedMerc")), "ActivityStarted")
-		end
+		if voicelog then
+			if next(negotiatorUnits) then
+				PlayVoiceResponse(table.rand(negotiatorUnits, InteractionRand(1000000, "RandomNegotiator")), "Negotiator")
+			elseif next(operationMercs) then
+				PlayVoiceResponse(table.rand(operationMercs, InteractionRand(1000000, "RandomActivityStartedMerc")), "ActivityStarted")
+			end
+		end	
 	end
 end
 
@@ -301,6 +303,21 @@ function NetSyncEvents.InterruptSectorOperation(sector_id, operation, reason)
 
 	ObjModified(sector)
 end
+
+function NetSyncEvents.ChangeSectorOperation(sector_id, operation)
+	OperationsSync_SuspendObjModified()
+	local mercs = GetOperationProfessionals(sector_id, operation)
+	for _, merc in ipairs(mercs) do
+		local event_id =  GetOperationEventId(merc, operation)
+		RemoveTimelineEvent(event_id)
+	end
+	local sector = gv_Sectors[sector_id]
+	if sector.started_operations then
+		sector.started_operations[operation] = false
+	end
+
+	ObjModified(sector)
+end
 -- reset operation and cancel prev operation
 function SectorOperation_CancelByGame(units,operation_id, already_synced)
 	local to_cancel_units = {}
@@ -353,15 +370,14 @@ function NetSyncEvents.ChangeSectorOperationItemsOrder(sector_id, operation_id, 
 		sector[allid] = TableWithItemsFromNet(sector_items)
 		ObjModified(sector[allid])
 	end
-	sector[quid]  = TableWithItemsFromNet(sector_items_queued)
+	local tbl = SetCraftOperationQueueTable(sector, operation_id, TableWithItemsFromNet(sector_items_queued))
 	ObjModified(sector)
-	ObjModified(sector[quid])
+	ObjModified(tbl)
 end
 
 function SectorOperation_CalcCraftResources(sector_id, operation_id)
-	local queued  = GetCraftOperationListsIds(operation_id)
 	local sector =  gv_Sectors[sector_id]
-	local craft_table = sector[queued] or {}
+	local craft_table = GetCraftOperationQueueTable(sector, operation_id) or {}
 	-- calc queued/all resources
 	local res_items = {}
 	for _, q_data in pairs(craft_table) do
@@ -395,7 +411,7 @@ function SectorOperation_ValidateRecipeIngredientsAmount(mercs, recipe, res_item
 end
 
 function SectorOperationValidateItemsToCraft(sector_id, operation_id, merc )	
-	if operation_id~="CraftAmmo" and operation_id~="CraftExplosives" then
+	if not IsCraftOperationId(operation_id) then
 		return
 	end	
 	local merc =  merc or GetOperationProfessionals(sector_id, operation_id)[1]
@@ -408,7 +424,7 @@ function SectorOperationValidateItemsToCraft(sector_id, operation_id, merc )
 	local res_items = SectorOperation_CalcCraftResources(sector_id, operation_id)
 	
 	local id =  "g_Recipes"..operation_id
-	if not _G[id] then
+	if not rawget(_G,id) then
 		SectorOperationFillItemsToCraft(sector_id, operation_id, merc)
 		return
 	end
@@ -444,7 +460,7 @@ end
 function SectorOperations_CraftAdditionalResources(sector_id,operation_id)
 	local res_table = {}
 	for recipe_id, recipe in pairs(CraftOperationsRecipes) do
-		if recipe.group=="Ammo" and operation_id=="CraftAmmo" or recipe.group=="Explosives" and operation_id=="CraftExplosives" then
+		if recipe.CraftOperationId==operation_id or recipe.group=="Ammo" and operation_id=="CraftAmmo" or recipe.group=="Explosives" and operation_id=="CraftExplosives" then
 			for _, ingr in ipairs(recipe.Ingredients) do
 				res_table[ingr.item] = (res_table[ingr.item] or 0) + ingr.amount
 			end
@@ -660,12 +676,44 @@ function GetCraftOperationListsIds(operation_id)
 	if operation_id=="RepairItems" then
 		return "sector_repair_items_queued", "sector_repair_items"
 	end
-	local queued = operation_id == "CraftAmmo" and "sector_craft_ammo_items_queued" or "sector_craft_explosive_items_queued"
+	local queued = operation_id == "CraftAmmo" and "sector_craft_ammo_items_queued" or operation_id == "CraftExplosives" and "sector_craft_explosive_items_queued"
+	if not queued and IsCraftOperationId(operation_id) then
+		return "sector_"..operation_id.."_items_queued", false, "_custom"
+	end
 	return queued, false
+end		
+
+function 	SetCraftOperationQueueTable(sector, operation_id, queue)
+	local qid, _, is_custom = GetCraftOperationListsIds(operation_id)
+	if is_custom then
+		sector.custom_operations = sector.custom_operations or {}
+		sector.custom_operations[operation_id] = sector.custom_operations[operation_id] or {}
+		sector.custom_operations[operation_id][qid] = queue
+		return sector.custom_operations[operation_id][qid]
+	else
+		sector[qid] = queue
+		return sector[qid]
+	end
 end	
 
+function 	GetCraftOperationQueueTable(sector, operation_id)
+	local qid, _, is_custom = GetCraftOperationListsIds(operation_id)
+	if is_custom then
+		sector.custom_operations[operation_id] = sector.custom_operations[operation_id] or {}
+		ObjModified(sector.custom_operations[operation_id][qid])
+		return sector.custom_operations[operation_id][qid]
+	else
+		ObjModified(sector[qid])
+		return sector[qid]
+	end
+end	
+
+function IsCraftOperationId(operation_id)
+	return CraftOperationIds[operation_id]
+end
+
 function IsCraftOperation(operation_id)
-	return operation_id=="RepairItems" or operation_id=="CraftAmmo" or operation_id=="CraftExplosives"
+	return operation_id=="RepairItems" or IsCraftOperationId(operation_id)
 end
 
 function MercsOperationsFillTempData(sector, operation_id)
@@ -1387,7 +1435,7 @@ function PatientAddHealWoundProgress(merc, progress, max_progress, dont_log)
 	end
 	if IsPatientReady(merc) then
 		if merc.heal_wound_progress > 0 then
-			merc:SetTired(const.utNormal)
+			merc:SetTired(Min(merc.Tiredness, const.utNormal))
 		end
 		merc.heal_wound_progress = 0
 		merc.wounds_being_treated = 0
@@ -1449,7 +1497,7 @@ function SectorOperationItems_ItemsCount(tbl)
 	local count= 0
 	for i,itm_data in ipairs(tbl) do
 		local itm = SectorOperation_FindItemDef(itm_data) 
-		count = count + (itm.LargeItem  and 2 or 1)
+		count = count + (itm:IsLargeItem()  and 2 or 1)
 	end
 	return count
 end	
@@ -1458,7 +1506,8 @@ function SectorOperationItems_GetTables(sector_id, operation_id)
 	local sector = gv_Sectors[sector_id]
 	if IsCraftOperation(operation_id) then
 		local quid, allid = GetCraftOperationListsIds(operation_id)
-		return sector[quid], operation_id~="RepairItems" and _G["g_Recipes"..operation_id] or sector[allid]
+		local tbl = GetCraftOperationQueueTable(sector, operation_id)
+		return tbl, operation_id~="RepairItems" and _G["g_Recipes"..operation_id] or sector[allid]
 	end
 end
 
@@ -1536,7 +1585,7 @@ function XActivityItem:Init()
 	item_equipimg:SetId("idItemEqImg")
 	item_equipimg:SetUseClipBox(false)	
 	item_equipimg:SetHandleMouse(false)
-	item_equipimg:SetImage(IsEquipSlot(self.slot) and "UI/Icons/Operations/equipped" or "UI/Icons/Operations/backpack")
+	--item_equipimg:SetImage(IsEquipSlot(self.slot) and "UI/Icons/Operations/equipped" or "UI/Icons/Operations/backpack")
 	item_equipimg:SetScaleModifier(point(600,600))
 	item_equipimg:SetMargins(box(0,0,-15,-15))
 	local roll_ctrl = self.idRollover
@@ -1563,6 +1612,7 @@ function XActivityItem:OnContextUpdate(item,...)
 		img_mod:SetMargins(box(-18,-18, 0 , 0))
 	end
 	self.idItemImg.idItemEqImg:SetVisible(IsEquipSlot(self.slot) or item and item.owner)
+	self.idItemImg.idItemEqImg:SetImage(IsEquipSlot(self.slot) and "UI/Icons/Operations/equipped" or "UI/Icons/Operations/backpack")
 	local itm = rawget(self, "item")
 	if itm then
 		self.idText:SetText(T{641971138327, "<style InventoryItemsCountMax><amount></style>", amount = itm.amount})
@@ -1639,7 +1689,7 @@ function XDragContextWindow:OnMouseButtonDoubleClick(pos, button)
 			local item, idx = table.find_value(all, search_id, serch_context)
 			local itm = item and SectorOperationRepairItems_GetItemFromData(item)
 
-			local itm_width = itm and itm.LargeItem and 2 or 1
+			local itm_width = itm and itm:IsLargeItem() and 2 or 1
 			if SectorOperationItems_ItemsCount(queue) + itm_width <= 9 then
 				if is_repair then 
 					table.remove(all,idx)
@@ -1724,7 +1774,7 @@ function XDragContextWindow:OnDragDrop(target, drag_win, drop_res, pt)
 	local target_idx = is_repair and table.find(target_queue, "id", target_context.id)	 or table.find(target_queue,"item_id", target_context.class)
 	local itm        = self_queue[cur_idx]
 	local item = itm and SectorOperationRepairItems_GetItemFromData(itm)
-	local itm_width  = is_repair and (item and item.LargeItem and 2 or 1) or 1
+	local itm_width  = is_repair and (item and item:IsLargeItem() and 2 or 1) or 1
 	
 	if self_slot==target_slot then
 		if cur_idx then
@@ -1819,7 +1869,7 @@ function SectorOperation_ItemsCalcRes(sector_id, operation_id)
 			end
 		end	
 	end
-	if operation_id=="CraftAmmo" or operation_id=="CraftExplosives" then
+	if IsCraftOperationId(operation_id) then
 		for _, item_data in ipairs(queued_items) do
 			local item = CraftOperationsRecipes[item_data.recipe]
 			for __,ing in ipairs(item.Ingredients) do
@@ -1882,7 +1932,7 @@ function SectorOperations_DataHasDifference(prev, cur, operation_id, sector)
 				end
 				for id,tdata in ipairs(tt_merc)  do						
 					local idx = id
-					if idx>=3 then idx = idx+1 end
+					--if idx>=3 then idx = idx+1 end
 					if cur[idx]==nil or cur[idx]~=tdata then
 						return true
 					end	

@@ -8,11 +8,10 @@ DefineClass.TheGrim = {
 
 	object_class = "Perk",
 	msg_reactions = {
-		PlaceObj('MsgReaction', {
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "attacker",
 			Event = "OnAttack",
 			Handler = function (self, attacker, action, target, results, attack_args)
-				local reaction_idx = table.find(self.msg_reactions or empty_table, "Event", "OnAttack")
-				if not reaction_idx then return end
 				
 				local function exec(self, attacker, action, target, results, attack_args)
 				if action.id == self.id and IsKindOf(target, "Unit") and table.find(results.killed_units or empty_table, target) then
@@ -26,16 +25,19 @@ DefineClass.TheGrim = {
 					end
 				end
 				end
-				local id = GetCharacterEffectId(self)
 				
-				if id then
-					if IsKindOf(attacker, "StatusEffectObject") and attacker:HasStatusEffect(id) then
-						exec(self, attacker, action, target, results, attack_args)
-					end
-				else
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[1]
+				if not reaction_def or reaction_def.Event ~= "OnAttack" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
 					exec(self, attacker, action, target, results, attack_args)
 				end
 				
+				if self:VerifyReaction("OnAttack", reaction_def, attacker, attacker, action, target, results, attack_args) then
+					exec(self, attacker, action, target, results, attack_args)
+				end
 			end,
 			HandlerCode = function (self, attacker, action, target, results, attack_args)
 				if action.id == self.id and IsKindOf(target, "Unit") and table.find(results.killed_units or empty_table, target) then
@@ -49,7 +51,36 @@ DefineClass.TheGrim = {
 					end
 				end
 			end,
-			param_bindings = false,
+		}),
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "attacker",
+			Event = "GatherCritChanceModifications",
+			Handler = function (self, attacker, target, action_id, weapon, data)
+				
+				local function exec(self, attacker, target, action_id, weapon, data)
+				if data.action_id == self.id then
+					data.guaranteed_crit = true
+				end
+				end
+				
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[2]
+				if not reaction_def or reaction_def.Event ~= "GatherCritChanceModifications" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
+					exec(self, attacker, target, action_id, weapon, data)
+				end
+				
+				if self:VerifyReaction("GatherCritChanceModifications", reaction_def, attacker, attacker, target, action_id, weapon, data) then
+					exec(self, attacker, target, action_id, weapon, data)
+				end
+			end,
+			HandlerCode = function (self, attacker, target, data)
+				if data.action_id == self.id then
+					data.guaranteed_crit = true
+				end
+			end,
 		}),
 	},
 	DisplayName = T(976473584324, --[[CharacterEffectCompositeDef TheGrim DisplayName]] "Grim Fate"),

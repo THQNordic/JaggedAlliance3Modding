@@ -5,13 +5,13 @@ PlaceObj('InventoryItemCompositeDef', {
 	'Id', "PlasmaGun_Crowbar",
 	'Comment', "conversation craft - based on Crowbar",
 	'object_class', "CrowbarBase",
-	'RepairCost', 120,
 	'ScrapParts', 4,
+	'RepairCost', 120,
 	'Icon', "UI/Icons/Items/plasma_gun_crowbar",
 	'DisplayName', T(507871191066, --[[InventoryItemCompositeDef PlasmaGun_Crowbar DisplayName]] "Plasma Gun Crowbar"),
 	'DisplayNamePlural', T(593438446878, --[[InventoryItemCompositeDef PlasmaGun_Crowbar DisplayNamePlural]] "Plasma Gun Crowbars"),
 	'AdditionalHint', T(209695381987, --[[InventoryItemCompositeDef PlasmaGun_Crowbar AdditionalHint]] "<bullet_point> Shoots deadly plasma bolts while in perfect vacuum. Otherwise works as a crowbar\n<bullet_point> Breaks locks of doors and containers (based on Strength)\n<bullet_point> Bonus to skill checks for breaking locks\n<bullet_point> May damage the contents of containers\n<bullet_point> Loses Condition after each use\n<bullet_point> Can be repaired\n<bullet_point> Used automatically from the Inventory"),
-	'is_valuable', true,
+	'Valuable', 1,
 	'skillCheckPenalty', -15,
 })
 

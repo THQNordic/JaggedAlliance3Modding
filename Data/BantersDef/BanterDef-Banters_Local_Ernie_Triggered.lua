@@ -1142,10 +1142,11 @@ PlaceObj('BanterDef', {
 			QuestId = "PierreDefeated",
 			Vars = set({
 	PierreInactive = false,
+	TCE_PierreStealthKillFlip = false,
 }),
 			__eval = function ()
 				local quest = gv_Quests['PierreDefeated'] or QuestGetState('PierreDefeated')
-				return not quest.PierreInactive
+				return not quest.PierreInactive and not quest.TCE_PierreStealthKillFlip
 			end,
 		}),
 	},
@@ -1214,6 +1215,7 @@ PlaceObj('BanterDef', {
 })
 
 PlaceObj('BanterDef', {
+	FX = "CheckSuccess",
 	Lines = {
 		PlaceObj('BanterLine', {
 			'Text', T(980082829864, --[[BanterDef TheRust_BunkerDesk Text]] '<wisdom-s>\nThe papers on the desk contain an elaborate minefield map labeled EMERALD COAST. There are a lot of crossed out circles, arrows, huge exclamation marks and a few words in red ink:\n"That crazy bitch keeps moving and replacing the goddamn mines!!!"'),

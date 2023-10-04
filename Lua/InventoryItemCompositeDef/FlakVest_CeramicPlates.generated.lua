@@ -7,8 +7,8 @@ DefineClass.FlakVest_CeramicPlates = {
 
 
 	object_class = "TransmutedArmor",
-	Degradation = 6,
 	ScrapParts = 4,
+	Degradation = 6,
 	Icon = "UI/Icons/Items/flak_vest",
 	SubIcon = "UI/Icons/Items/plates",
 	DisplayName = T(204904790371, --[[InventoryItemCompositeDef FlakVest_CeramicPlates DisplayName]] "Flak Vest"),

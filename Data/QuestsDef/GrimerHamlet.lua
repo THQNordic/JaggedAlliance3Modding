@@ -24,7 +24,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			CompletionConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableNum', {
 							Amount = 1,
@@ -44,7 +44,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			ShowConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableNum', {
 							Amount = 1,
@@ -95,7 +95,7 @@ PlaceObj('QuestsDef', {
 						return not quest.InfectedUnleashed and not quest.PeopleSaved
 					end,
 				}),
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableNum', {
 							Amount = 1,
@@ -328,13 +328,13 @@ PlaceObj('QuestsDef', {
 	TCEs = {
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
-				PlaceObj('GroupIsDead', {
-					Group = "InitialInfected",
-				}),
 				PlaceObj('PlayerIsInSectors', {
 					Sectors = {
 						"I19",
 					},
+				}),
+				PlaceObj('GroupIsDead', {
+					Group = "InitialInfected",
 				}),
 			},
 			Effects = {
@@ -360,6 +360,11 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"I19",
+					},
+				}),
 				PlaceObj('QuestIsVariableNum', {
 					AgainstVar = true,
 					Prop = "HousesOpened",
@@ -380,17 +385,21 @@ PlaceObj('QuestsDef', {
 			Once = true,
 			ParamId = "TCE_UnlockAllHouses",
 			QuestId = "GrimerHamlet",
+			requiredSectors = {
+				"I19",
+			},
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
-				PlaceObj('OR', {
-					Conditions = {
-						PlaceObj('UnitIsAroundOtherUnit', {
-							Distance = 8,
-							SecondTargetUnit = "GrimerLovers",
-							TargetUnit = "any merc",
-						}),
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"I19",
 					},
+				}),
+				PlaceObj('UnitIsAroundOtherUnit', {
+					Distance = 8,
+					SecondTargetUnit = "GrimerLovers",
+					TargetUnit = "any merc",
 				}),
 			},
 			Effects = {
@@ -405,9 +414,17 @@ PlaceObj('QuestsDef', {
 			Once = true,
 			ParamId = "TCE_LoversEnemy",
 			QuestId = "GrimerHamlet",
+			requiredSectors = {
+				"I19",
+			},
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"I19",
+					},
+				}),
 				PlaceObj('GroupIsDead', {
 					Group = "GrimerLovers",
 				}),
@@ -424,6 +441,9 @@ PlaceObj('QuestsDef', {
 			Once = true,
 			ParamId = "TCE_LoversKilled",
 			QuestId = "GrimerHamlet",
+			requiredSectors = {
+				"I19",
+			},
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
@@ -514,16 +534,16 @@ PlaceObj('QuestsDef', {
 						return quest.BellaKilled and not quest.Completed and not quest.Failed and quest.InfectedKilled and quest.InfectedUnleashedKilled and quest.PeopleSaved
 					end,
 				}),
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"I19",
+					},
+				}),
 				PlaceObj('CheckIsPersistentUnitDead', {
 					per_ses_id = "NPC_Monday",
 				}),
 				PlaceObj('SectorIsInConflict', {
 					Negate = true,
-				}),
-				PlaceObj('PlayerIsInSectors', {
-					Sectors = {
-						"I19",
-					},
 				}),
 			},
 			Effects = {
@@ -564,6 +584,11 @@ PlaceObj('QuestsDef', {
 						return not quest.Completed and not quest.Failed and quest.InfectedKilled and quest.InfectedUnleashedKilled and not quest.PeopleSaved
 					end,
 				}),
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"I19",
+					},
+				}),
 				PlaceObj('QuestIsVariableNum', {
 					AgainstVar = true,
 					Amount = 1,
@@ -575,11 +600,6 @@ PlaceObj('QuestsDef', {
 				}),
 				PlaceObj('SectorIsInConflict', {
 					Negate = true,
-				}),
-				PlaceObj('PlayerIsInSectors', {
-					Sectors = {
-						"I19",
-					},
 				}),
 			},
 			Effects = {

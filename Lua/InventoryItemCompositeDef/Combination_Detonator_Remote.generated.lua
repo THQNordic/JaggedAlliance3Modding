@@ -7,6 +7,7 @@ DefineClass.Combination_Detonator_Remote = {
 
 
 	object_class = "MiscItem",
+	ScrapParts = 1,
 	Repairable = false,
 	Icon = "UI/Icons/Items/combination_detonator_remote",
 	DisplayName = T(613057190995, --[[InventoryItemCompositeDef Combination_Detonator_Remote DisplayName]] "Remote Detonator"),

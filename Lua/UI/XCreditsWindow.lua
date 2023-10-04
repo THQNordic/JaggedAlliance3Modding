@@ -95,6 +95,7 @@ function XCreditsWindow:MoveThread()
 	end)
 end
 
+--[[
 function XCreditsWindow:OnMouseButtonUp(pt, button)
 	if button == "L" then
 		self.paused = not self.paused
@@ -106,6 +107,7 @@ function XCreditsWindow:OnMouseButtonUp(pt, button)
 		return "break"
 	end
 end
+--]]
 --[[
 function XCreditsWindow:OnMouseWheelForward()
 	local val = self.paused
@@ -125,12 +127,14 @@ function XCreditsWindow:OnMouseWheelBack()
 	--self:SetMouseScroll(false)
 end
 --]]
+--[[
 function XCreditsWindow:OnShortcut(shortcut, source, ...)
 	if shortcut == "Space" or shortcut == "ButtonA" then
 		self.paused = not self.paused
 		return "break"
 	end
 end
+--]]
 
 const.TagLookupTable["crp"]      = "<style CreditsPosition>"
 const.TagLookupTable["/crp"]     = "</style>"

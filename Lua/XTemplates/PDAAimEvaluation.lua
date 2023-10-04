@@ -151,7 +151,7 @@ PlaceObj('XTemplate', {
 									'ActionName', T(470265902414, --[[XTemplate PDAAimEvaluation ActionName]] "LEVEL UP"),
 									'ActionToolbar', "LevelUpBar",
 									'ActionShortcut', "L",
-									'ActionGamepad', "Start",
+									'ActionGamepad', "ButtonX",
 									'ActionButtonTemplate', "PDACommonButtonOrange",
 									'ActionState', function (self, host)
 										local dlg = GetDialog(host)
@@ -190,7 +190,7 @@ PlaceObj('XTemplate', {
 									'ActionName', T(294433237069, --[[XTemplate PDAAimEvaluation ActionName]] "Perks"),
 									'ActionToolbar', "ActionBar",
 									'ActionShortcut', "P",
-									'ActionGamepad', "Start",
+									'ActionGamepad', "ButtonX",
 									'ActionState', function (self, host)
 										local dlg = GetDialog(host)
 										local context = host:GetContext()
@@ -212,6 +212,7 @@ PlaceObj('XTemplate', {
 									'ActionName', T(715124601032, --[[XTemplate PDAAimEvaluation ActionName]] "Confirm"),
 									'ActionToolbar', "ActionBar",
 									'ActionShortcut', "P",
+									'ActionGamepad', "Start",
 									'ActionState', function (self, host)
 										local dlg = GetDialog(host)
 										local context = host:GetContext()
@@ -266,7 +267,7 @@ PlaceObj('XTemplate', {
 									'ActionName', T(731677990405, --[[XTemplate PDAAimEvaluation ActionName]] "Stats"),
 									'ActionToolbar', "ActionBar",
 									'ActionShortcut', "S",
-									'ActionGamepad', "Start",
+									'ActionGamepad', "ButtonX",
 									'ActionState', function (self, host)
 										local dlg = GetDialog(host)
 										return dlg:GetMode() == "perks" and "enabled" or "hidden"
@@ -358,7 +359,27 @@ PlaceObj('XTemplate', {
 						PlaceObj('XTemplateAction', {
 							'ActionId', "idToggleHistoryAndStats",
 							'ActionSortKey', "1090",
-							'ActionGamepad', "ButtonX",
+							'ActionGamepad', "DPadLeft",
+							'ActionState', function (self, host)
+								local dlg = GetDialog(host)
+								
+								return dlg:GetMode() == "record" and "enabled" or "disabled"
+							end,
+							'OnAction', function (self, host, source, ...)
+								local dlg = GetDialog(host)
+								local recordDlg = dlg.idRecord
+								if not recordDlg then return end
+								if recordDlg:GetMode() == "history" then
+									recordDlg:SetMode("stats")
+								else
+									recordDlg:SetMode("history")
+								end
+							end,
+						}),
+						PlaceObj('XTemplateAction', {
+							'ActionId', "idToggleHistoryAndStatsAlt",
+							'ActionSortKey', "1091",
+							'ActionGamepad', "DPadRight",
 							'ActionState', function (self, host)
 								local dlg = GetDialog(host)
 								
@@ -956,7 +977,7 @@ PlaceObj('XTemplate', {
 											XText.OnContextUpdate(self, context, ...)
 										end,
 										'Translate', true,
-										'Text', T(177313543661, --[[XTemplate PDAAimEvaluation Text]] "<ButtonX>"),
+										'Text', T(177313543661, --[[XTemplate PDAAimEvaluation Text]] "<DPadLeft>/<DPadRight>"),
 									}),
 									PlaceObj('XTemplateWindow', {
 										'__class', "XFrame",

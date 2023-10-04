@@ -1854,6 +1854,7 @@ EntityData["BorderWindow_01"] = {
 	entity = {
 		FXTargetOverride = "Window",
 		FXTargetSecondary = "Planks",
+		SunShadowOptional = true,
 		fade_category = "Never",
 		material_type = "Sticks_Props",
 	},
@@ -1861,12 +1862,14 @@ EntityData["BorderWindow_01"] = {
 EntityData["BorderWindow_02"] = {
 	entity = {
 		FXTargetSecondary = "Planks",
+		SunShadowOptional = true,
 		fade_category = "Never",
 		material_type = "Sticks_Props",
 	},
 }
 EntityData["BorderWindow_03"] = {
 	entity = {
+		SunShadowOptional = true,
 		fade_category = "Never",
 		material_type = "Sticks_Props",
 	},
@@ -1875,6 +1878,7 @@ EntityData["BorderWindow_04"] = {
 	entity = {
 		FXTargetOverride = "Window",
 		FXTargetSecondary = "Planks",
+		SunShadowOptional = true,
 		fade_category = "Never",
 		material_type = "Sticks_Props",
 	},
@@ -1883,6 +1887,7 @@ EntityData["BorderWindow_05"] = {
 	entity = {
 		FXTargetOverride = "Window",
 		FXTargetSecondary = "Planks",
+		SunShadowOptional = true,
 		fade_category = "Never",
 		material_type = "Sticks_Props",
 	},
@@ -1892,6 +1897,7 @@ EntityData["BrokenOff_Concrete_01"] = {
 	editor_category = "Structure",
 	editor_subcategory = "Other",
 	entity = {
+		SunShadowOptional = true,
 		class_parent = "Deposition",
 		fade_category = "Never",
 		material_type = "ConcreteThin",
@@ -1902,6 +1908,7 @@ EntityData["BrokenOff_Concrete_02"] = {
 	editor_category = "Structure",
 	editor_subcategory = "Other",
 	entity = {
+		SunShadowOptional = true,
 		class_parent = "Deposition",
 		fade_category = "Never",
 		material_type = "ConcreteThin",
@@ -1912,6 +1919,7 @@ EntityData["BrokenOff_Concrete_03"] = {
 	editor_category = "Structure",
 	editor_subcategory = "Other",
 	entity = {
+		SunShadowOptional = true,
 		class_parent = "Deposition",
 		fade_category = "Never",
 		material_type = "ConcreteThin",
@@ -1922,6 +1930,7 @@ EntityData["BrokenOff_Concrete_04"] = {
 	editor_category = "Structure",
 	editor_subcategory = "Other",
 	entity = {
+		SunShadowOptional = true,
 		class_parent = "Deposition",
 		fade_category = "Never",
 		material_type = "ConcreteThin",
@@ -1932,6 +1941,7 @@ EntityData["BrokenOff_Concrete_05"] = {
 	editor_category = "Structure",
 	editor_subcategory = "Other",
 	entity = {
+		SunShadowOptional = true,
 		class_parent = "Deposition",
 		fade_category = "Never",
 		material_type = "ConcreteThin",
@@ -1942,6 +1952,7 @@ EntityData["BrokenOff_Concrete_06"] = {
 	editor_category = "Structure",
 	editor_subcategory = "Other",
 	entity = {
+		SunShadowOptional = true,
 		class_parent = "Deposition",
 		fade_category = "Never",
 		material_type = "ConcreteThin",
@@ -1952,6 +1963,7 @@ EntityData["BrokenOff_Concrete_07"] = {
 	editor_category = "Structure",
 	editor_subcategory = "Other",
 	entity = {
+		SunShadowOptional = true,
 		class_parent = "Deposition",
 		fade_category = "Never",
 		material_type = "ConcreteThin",
@@ -1962,6 +1974,7 @@ EntityData["BrokenOff_Concrete_08"] = {
 	editor_category = "Structure",
 	editor_subcategory = "Other",
 	entity = {
+		SunShadowOptional = true,
 		class_parent = "Deposition",
 		fade_category = "Never",
 		material_type = "ConcreteThin",
@@ -1972,6 +1985,7 @@ EntityData["BrokenOff_Concrete_09"] = {
 	editor_category = "Structure",
 	editor_subcategory = "Other",
 	entity = {
+		SunShadowOptional = true,
 		class_parent = "Deposition",
 		fade_category = "Never",
 		material_type = "ConcreteThin",
@@ -1982,6 +1996,7 @@ EntityData["BrokenOff_Concrete_10"] = {
 	editor_category = "Structure",
 	editor_subcategory = "Other",
 	entity = {
+		SunShadowOptional = true,
 		class_parent = "Deposition",
 		fade_category = "Never",
 		material_type = "ConcreteThin",
@@ -2166,7 +2181,7 @@ EntityData["BunkerInterior_Desk_01"] = {
 	editor_category = "Prop",
 	editor_subcategory = "Furniture",
 	entity = {
-		class_parent = "GroundAlignedObj,CombatObject,AutoAttachObject",
+		class_parent = "CombatObject,AutoAttachObject",
 		fade_category = "Never",
 		material_type = "Metal_Solid_Hard",
 	},
@@ -2565,7 +2580,7 @@ EntityData["BunkerInterior_Pillar_Upgrade"] = {
 		class_parent = "GroundAlignedObj",
 		fade_category = "Never",
 		material_type = "Concrete",
-		obstruction = true,
+		provide_cover = false,
 	},
 }
 EntityData["BunkerInterior_PlatePile_03"] = {
@@ -4013,6 +4028,7 @@ EntityData["Cinematic_PaperPile_01"] = {
 	editor_category = "Prop",
 	editor_subcategory = "Other",
 	entity = {
+		SunShadowOptional = true,
 		class_parent = "CombatObject",
 		fade_category = "Never",
 		material_type = "Papers",
@@ -5428,6 +5444,7 @@ EntityData["City_Curbstone_01"] = {
 	editor_category = "Prop",
 	editor_subcategory = "Outdoors",
 	entity = {
+		SunShadowOptional = true,
 		fade_category = "Never",
 		material_type = "Concrete",
 	},
@@ -5437,6 +5454,7 @@ EntityData["City_Curbstone_02"] = {
 	editor_category = "Prop",
 	editor_subcategory = "Outdoors",
 	entity = {
+		SunShadowOptional = true,
 		fade_category = "Never",
 		material_type = "Concrete",
 	},
@@ -5446,6 +5464,7 @@ EntityData["City_Curbstone_03"] = {
 	editor_category = "Prop",
 	editor_subcategory = "Outdoors",
 	entity = {
+		SunShadowOptional = true,
 		fade_category = "Never",
 		material_type = "Concrete",
 	},
@@ -5455,6 +5474,7 @@ EntityData["City_Curbstone_04"] = {
 	editor_category = "Prop",
 	editor_subcategory = "Outdoors",
 	entity = {
+		SunShadowOptional = true,
 		fade_category = "Never",
 		material_type = "Concrete",
 	},
@@ -5464,6 +5484,7 @@ EntityData["City_Curbstone_05"] = {
 	editor_category = "Prop",
 	editor_subcategory = "Outdoors",
 	entity = {
+		SunShadowOptional = true,
 		fade_category = "Never",
 		material_type = "Concrete",
 	},
@@ -5473,6 +5494,7 @@ EntityData["City_Curbstone_06"] = {
 	editor_category = "Prop",
 	editor_subcategory = "Outdoors",
 	entity = {
+		SunShadowOptional = true,
 		fade_category = "Never",
 		material_type = "Concrete",
 	},
@@ -5482,6 +5504,7 @@ EntityData["City_Curbstone_Corner_01"] = {
 	editor_category = "Prop",
 	editor_subcategory = "Outdoors",
 	entity = {
+		SunShadowOptional = true,
 		fade_category = "Never",
 		material_type = "Concrete",
 	},
@@ -5491,6 +5514,7 @@ EntityData["City_Curbstone_Corner_02"] = {
 	editor_category = "Prop",
 	editor_subcategory = "Outdoors",
 	entity = {
+		SunShadowOptional = true,
 		fade_category = "Never",
 		material_type = "Concrete",
 	},
@@ -5500,6 +5524,7 @@ EntityData["City_Curbstone_Oval_01"] = {
 	editor_category = "Prop",
 	editor_subcategory = "Outdoors",
 	entity = {
+		SunShadowOptional = true,
 		fade_category = "Never",
 		material_type = "Concrete",
 	},
@@ -5509,6 +5534,7 @@ EntityData["City_Curbstone_Oval_02"] = {
 	editor_category = "Prop",
 	editor_subcategory = "Outdoors",
 	entity = {
+		SunShadowOptional = true,
 		fade_category = "Never",
 		material_type = "Concrete",
 	},
@@ -5518,6 +5544,7 @@ EntityData["City_Curbstone_Oval_03"] = {
 	editor_category = "Prop",
 	editor_subcategory = "Outdoors",
 	entity = {
+		SunShadowOptional = true,
 		fade_category = "Never",
 		material_type = "Concrete",
 	},
@@ -5788,6 +5815,7 @@ EntityData["City_ElectricityPole_Small_01"] = {
 	editor_category = "Prop",
 	editor_subcategory = "Other",
 	entity = {
+		SunShadowOptional = true,
 		class_parent = "WireSupporter",
 		fade_category = "Never",
 		material_type = "Metal_Props",
@@ -5798,6 +5826,7 @@ EntityData["City_ElectricityPole_Small_02"] = {
 	editor_category = "Prop",
 	editor_subcategory = "Other",
 	entity = {
+		SunShadowOptional = true,
 		class_parent = "WireSupporter",
 		fade_category = "Never",
 		material_type = "Metal_Props",
@@ -5808,6 +5837,7 @@ EntityData["City_ElectricityPole_Small_03"] = {
 	editor_category = "Prop",
 	editor_subcategory = "Other",
 	entity = {
+		SunShadowOptional = true,
 		class_parent = "WireSupporter",
 		fade_category = "Never",
 		material_type = "Metal_Props",
@@ -5818,6 +5848,7 @@ EntityData["City_ElectricityPole_Small_04"] = {
 	editor_category = "Prop",
 	editor_subcategory = "Other",
 	entity = {
+		SunShadowOptional = true,
 		class_parent = "WireSupporter",
 		fade_category = "Never",
 		material_type = "Metal_Props",
@@ -7581,6 +7612,7 @@ EntityData["City_TornPaper_01"] = {
 	editor_category = "Prop",
 	editor_subcategory = "Other",
 	entity = {
+		SunShadowOptional = true,
 		fade_category = "Never",
 	},
 }
@@ -7600,6 +7632,7 @@ EntityData["City_TornPaper_02"] = {
 	editor_category = "Prop",
 	editor_subcategory = "Other",
 	entity = {
+		SunShadowOptional = true,
 		fade_category = "Never",
 	},
 }
@@ -7619,6 +7652,7 @@ EntityData["City_TornPaper_03"] = {
 	editor_category = "Prop",
 	editor_subcategory = "Other",
 	entity = {
+		SunShadowOptional = true,
 		fade_category = "Never",
 	},
 }
@@ -7638,6 +7672,7 @@ EntityData["City_TornPaper_04"] = {
 	editor_category = "Prop",
 	editor_subcategory = "Other",
 	entity = {
+		SunShadowOptional = true,
 		fade_category = "Never",
 	},
 }
@@ -7657,6 +7692,7 @@ EntityData["City_TornPaper_05"] = {
 	editor_category = "Prop",
 	editor_subcategory = "Other",
 	entity = {
+		SunShadowOptional = true,
 		fade_category = "Never",
 	},
 }
@@ -7676,6 +7712,7 @@ EntityData["City_TornPaper_06"] = {
 	editor_category = "Prop",
 	editor_subcategory = "Other",
 	entity = {
+		SunShadowOptional = true,
 		fade_category = "Never",
 	},
 }
@@ -7695,6 +7732,7 @@ EntityData["City_TornPaper_07"] = {
 	editor_category = "Prop",
 	editor_subcategory = "Other",
 	entity = {
+		SunShadowOptional = true,
 		fade_category = "Never",
 	},
 }
@@ -7714,6 +7752,7 @@ EntityData["City_TornPaper_08"] = {
 	editor_category = "Prop",
 	editor_subcategory = "Other",
 	entity = {
+		SunShadowOptional = true,
 		fade_category = "Never",
 	},
 }
@@ -8092,6 +8131,7 @@ EntityData["Colonial_Carpet_01"] = {
 	editor_category = "Prop",
 	editor_subcategory = "Furniture",
 	entity = {
+		SunShadowOptional = true,
 		class_parent = "CombatObject",
 		fade_category = "Never",
 		material_type = "Carpet_Solid",
@@ -11346,6 +11386,7 @@ EntityData["DecBunker_ConcretePile"] = {
 	editor_category = "Rock",
 	entity = {
 		DetailClass = "Eye Candy",
+		SunShadowOptional = true,
 		class_parent = "Deposition",
 		fade_category = "Never",
 	},
@@ -11355,6 +11396,7 @@ EntityData["DecBunker_ConcretePile_02"] = {
 	editor_category = "Rock",
 	entity = {
 		DetailClass = "Eye Candy",
+		SunShadowOptional = true,
 		class_parent = "Deposition",
 		fade_category = "Never",
 	},
@@ -11364,6 +11406,7 @@ EntityData["DecBunker_ConcretePile_03"] = {
 	editor_category = "Rock",
 	entity = {
 		DetailClass = "Eye Candy",
+		SunShadowOptional = true,
 		class_parent = "Deposition",
 		fade_category = "Never",
 	},
@@ -11373,6 +11416,7 @@ EntityData["DecBunker_ConcretePile_04"] = {
 	editor_category = "Rock",
 	entity = {
 		DetailClass = "Eye Candy",
+		SunShadowOptional = true,
 		class_parent = "Deposition",
 		fade_category = "Never",
 	},
@@ -11382,6 +11426,7 @@ EntityData["DecBunker_ConcretePile_05"] = {
 	editor_category = "Rock",
 	entity = {
 		DetailClass = "Eye Candy",
+		SunShadowOptional = true,
 		class_parent = "Deposition",
 		fade_category = "Never",
 	},
@@ -12038,6 +12083,7 @@ EntityData["DecFloatersTrash3D_01"] = {
 	editor_category = "Decal",
 	editor_subcategory = "Other",
 	entity = {
+		SunShadowOptional = true,
 		class_parent = "Decal",
 		fade_category = "Never",
 	},
@@ -12047,6 +12093,7 @@ EntityData["DecFloatersTrash3D_02"] = {
 	editor_category = "Decal",
 	editor_subcategory = "Other",
 	entity = {
+		SunShadowOptional = true,
 		class_parent = "Decal",
 		fade_category = "Never",
 	},
@@ -12056,6 +12103,7 @@ EntityData["DecFloatersTrash3D_03"] = {
 	editor_category = "Decal",
 	editor_subcategory = "Other",
 	entity = {
+		SunShadowOptional = true,
 		class_parent = "Decal",
 		fade_category = "Never",
 	},
@@ -12065,6 +12113,7 @@ EntityData["DecFloatersTrash3D_04"] = {
 	editor_category = "Decal",
 	editor_subcategory = "Other",
 	entity = {
+		SunShadowOptional = true,
 		class_parent = "Decal",
 		fade_category = "Never",
 	},
@@ -12074,6 +12123,7 @@ EntityData["DecFloatersTrashGround_01"] = {
 	editor_category = "Decal",
 	editor_subcategory = "Other",
 	entity = {
+		SunShadowOptional = true,
 		class_parent = "Decal",
 		fade_category = "Never",
 	},
@@ -12083,6 +12133,7 @@ EntityData["DecFloatersTrashGround_02"] = {
 	editor_category = "Decal",
 	editor_subcategory = "Other",
 	entity = {
+		SunShadowOptional = true,
 		class_parent = "Decal",
 		fade_category = "Never",
 	},
@@ -12092,6 +12143,7 @@ EntityData["DecFloatersTrashGround_03"] = {
 	editor_category = "Decal",
 	editor_subcategory = "Other",
 	entity = {
+		SunShadowOptional = true,
 		class_parent = "Decal",
 		fade_category = "Never",
 	},
@@ -12101,6 +12153,7 @@ EntityData["DecFloatersTrashGround_04"] = {
 	editor_category = "Decal",
 	editor_subcategory = "Other",
 	entity = {
+		SunShadowOptional = true,
 		class_parent = "Decal",
 		fade_category = "Never",
 	},
@@ -13232,6 +13285,7 @@ EntityData["DecPaperPile_01"] = {
 	editor_category = "Decal",
 	editor_subcategory = "Terrain",
 	entity = {
+		SunShadowOptional = true,
 		class_parent = "TerrainDecal",
 		fade_category = "Never",
 	},
@@ -13241,6 +13295,7 @@ EntityData["DecPaperPile_02"] = {
 	editor_category = "Decal",
 	editor_subcategory = "Terrain",
 	entity = {
+		SunShadowOptional = true,
 		class_parent = "TerrainDecal",
 		fade_category = "Never",
 	},
@@ -25585,6 +25640,7 @@ EntityData["JungleCamp_NewspaperPile_01"] = {
 	editor_category = "Prop",
 	editor_subcategory = "Other",
 	entity = {
+		SunShadowOptional = true,
 		class_parent = "CombatObject",
 		fade_category = "Never",
 		material_type = "Wallpaper",
@@ -25595,6 +25651,7 @@ EntityData["JungleCamp_NewspaperPile_02"] = {
 	editor_category = "Prop",
 	editor_subcategory = "Other",
 	entity = {
+		SunShadowOptional = true,
 		class_parent = "CombatObject",
 		fade_category = "Never",
 		material_type = "Wallpaper",
@@ -25605,6 +25662,7 @@ EntityData["JungleCamp_NewspaperPile_03"] = {
 	editor_category = "Prop",
 	editor_subcategory = "Other",
 	entity = {
+		SunShadowOptional = true,
 		class_parent = "CombatObject",
 		fade_category = "Never",
 		material_type = "Wallpaper",
@@ -28483,6 +28541,7 @@ EntityData["MilitaryCamp_WoodSign_02"] = {
 		class_parent = "CombatObject,AutoAttachObject",
 		fade_category = "Never",
 		material_type = "Planks",
+		obstruction = true,
 	},
 }
 EntityData["MilitiaCostumeMale_Mask_01"] = {
@@ -31326,6 +31385,7 @@ EntityData["Prison_DecPaperPile_01"] = {
 	editor_category = "Prop",
 	editor_subcategory = "Other",
 	entity = {
+		SunShadowOptional = true,
 		fade_category = "Never",
 		material_type = "Papers",
 	},
@@ -31335,6 +31395,7 @@ EntityData["Prison_DecPaperPile_02"] = {
 	editor_category = "Prop",
 	editor_subcategory = "Other",
 	entity = {
+		SunShadowOptional = true,
 		fade_category = "Never",
 		material_type = "Papers",
 	},
@@ -40058,6 +40119,7 @@ EntityData["Scaffolding_Planks_01"] = {
 	editor_category = "Prop",
 	editor_subcategory = "Other",
 	entity = {
+		SunShadowOptional = true,
 		class_parent = "CombatObject",
 		fade_category = "Never",
 		material_type = "Planks",
@@ -40079,6 +40141,7 @@ EntityData["Scaffolding_Planks_02"] = {
 	editor_category = "Prop",
 	editor_subcategory = "Other",
 	entity = {
+		SunShadowOptional = true,
 		class_parent = "CombatObject",
 		fade_category = "Never",
 		material_type = "Planks",
@@ -40100,6 +40163,7 @@ EntityData["Scaffolding_Planks_03"] = {
 	editor_category = "Prop",
 	editor_subcategory = "Other",
 	entity = {
+		SunShadowOptional = true,
 		class_parent = "CombatObject",
 		fade_category = "Never",
 		material_type = "Planks",
@@ -40121,6 +40185,7 @@ EntityData["Scaffolding_Planks_04"] = {
 	editor_category = "Prop",
 	editor_subcategory = "Other",
 	entity = {
+		SunShadowOptional = true,
 		class_parent = "CombatObject",
 		fade_category = "Never",
 		material_type = "Planks",
@@ -40142,6 +40207,7 @@ EntityData["Scaffolding_Planks_05"] = {
 	editor_category = "Prop",
 	editor_subcategory = "Other",
 	entity = {
+		SunShadowOptional = true,
 		class_parent = "CombatObject",
 		fade_category = "Never",
 		material_type = "Planks",
@@ -41191,6 +41257,7 @@ EntityData["Shanty_Carpet_01"] = {
 	editor_category = "Prop",
 	editor_subcategory = "Furniture",
 	entity = {
+		SunShadowOptional = true,
 		fade_category = "Never",
 		material_type = "Carpet_Solid",
 	},
@@ -41200,6 +41267,7 @@ EntityData["Shanty_Carpet_02"] = {
 	editor_category = "Prop",
 	editor_subcategory = "Furniture",
 	entity = {
+		SunShadowOptional = true,
 		fade_category = "Never",
 		material_type = "Carpet_Solid",
 	},
@@ -41209,6 +41277,7 @@ EntityData["Shanty_Carpet_03"] = {
 	editor_category = "Prop",
 	editor_subcategory = "Furniture",
 	entity = {
+		SunShadowOptional = true,
 		fade_category = "Never",
 		material_type = "Carpet_Solid",
 	},
@@ -41218,6 +41287,7 @@ EntityData["Shanty_Carpet_04"] = {
 	editor_category = "Prop",
 	editor_subcategory = "Furniture",
 	entity = {
+		SunShadowOptional = true,
 		fade_category = "Never",
 		material_type = "Carpet_Solid",
 	},
@@ -41227,6 +41297,7 @@ EntityData["Shanty_Carpet_05"] = {
 	editor_category = "Prop",
 	editor_subcategory = "Furniture",
 	entity = {
+		SunShadowOptional = true,
 		fade_category = "Never",
 		material_type = "Carpet_Solid",
 	},
@@ -41236,6 +41307,7 @@ EntityData["Shanty_Carpet_06"] = {
 	editor_category = "Prop",
 	editor_subcategory = "Furniture",
 	entity = {
+		SunShadowOptional = true,
 		fade_category = "Never",
 		material_type = "Carpet_Solid",
 	},
@@ -41331,6 +41403,7 @@ EntityData["Shanty_Debris_01"] = {
 	editor_category = "Prop",
 	editor_subcategory = "Other",
 	entity = {
+		SunShadowOptional = true,
 		class_parent = "AutoAttachObject,Deposition",
 		fade_category = "Never",
 		material_type = "Debris",
@@ -41341,6 +41414,7 @@ EntityData["Shanty_Debris_02"] = {
 	editor_category = "Prop",
 	editor_subcategory = "Other",
 	entity = {
+		SunShadowOptional = true,
 		class_parent = "AutoAttachObject,Deposition",
 		fade_category = "Never",
 		material_type = "Debris",
@@ -41351,6 +41425,7 @@ EntityData["Shanty_Debris_03"] = {
 	editor_category = "Prop",
 	editor_subcategory = "Other",
 	entity = {
+		SunShadowOptional = true,
 		class_parent = "AutoAttachObject,Deposition",
 		fade_category = "Never",
 		material_type = "Debris",
@@ -41361,6 +41436,7 @@ EntityData["Shanty_Debris_04"] = {
 	editor_category = "Prop",
 	editor_subcategory = "Other",
 	entity = {
+		SunShadowOptional = true,
 		class_parent = "AutoAttachObject,Deposition",
 		fade_category = "Never",
 		material_type = "Debris",
@@ -41371,6 +41447,7 @@ EntityData["Shanty_Debris_05"] = {
 	editor_category = "Prop",
 	editor_subcategory = "Other",
 	entity = {
+		SunShadowOptional = true,
 		class_parent = "AutoAttachObject,Deposition",
 		fade_category = "Never",
 		material_type = "Debris",
@@ -41991,6 +42068,7 @@ EntityData["Shanty_SandPile_01"] = {
 		fade_category = "Never",
 		material_type = "Debris",
 		obstruction = true,
+		provide_cover = false,
 	},
 }
 EntityData["Shanty_SandPile_02"] = {
@@ -42013,6 +42091,7 @@ EntityData["Shanty_SandPile_02"] = {
 		fade_category = "Never",
 		material_type = "Debris",
 		obstruction = true,
+		provide_cover = false,
 	},
 }
 EntityData["Shanty_SandPile_03"] = {
@@ -42035,6 +42114,7 @@ EntityData["Shanty_SandPile_03"] = {
 		fade_category = "Never",
 		material_type = "Debris",
 		obstruction = true,
+		provide_cover = false,
 	},
 }
 EntityData["Shanty_SandPile_04"] = {
@@ -42057,6 +42137,7 @@ EntityData["Shanty_SandPile_04"] = {
 		fade_category = "Never",
 		material_type = "Debris",
 		obstruction = true,
+		provide_cover = false,
 	},
 }
 EntityData["Shanty_SandPile_05"] = {
@@ -42079,6 +42160,7 @@ EntityData["Shanty_SandPile_05"] = {
 		fade_category = "Never",
 		material_type = "Debris",
 		obstruction = true,
+		provide_cover = false,
 	},
 }
 EntityData["Shanty_SandPile_06"] = {
@@ -42101,6 +42183,7 @@ EntityData["Shanty_SandPile_06"] = {
 		fade_category = "Never",
 		material_type = "Debris",
 		obstruction = true,
+		provide_cover = false,
 	},
 }
 EntityData["Shanty_SandPile_07"] = {
@@ -42123,6 +42206,7 @@ EntityData["Shanty_SandPile_07"] = {
 		fade_category = "Never",
 		material_type = "Debris",
 		obstruction = true,
+		provide_cover = false,
 	},
 }
 EntityData["Shanty_SandPile_08"] = {
@@ -42145,6 +42229,7 @@ EntityData["Shanty_SandPile_08"] = {
 		fade_category = "Never",
 		material_type = "Debris",
 		obstruction = true,
+		provide_cover = false,
 	},
 }
 EntityData["Shanty_SandPile_09"] = {
@@ -42167,6 +42252,7 @@ EntityData["Shanty_SandPile_09"] = {
 		fade_category = "Never",
 		material_type = "Debris",
 		obstruction = true,
+		provide_cover = false,
 	},
 }
 EntityData["Shanty_Saucepan_01"] = {
@@ -43014,6 +43100,7 @@ EntityData["SolidVoxel"] = {
 	editor_subcategory = "Other",
 	entity = {
 		fade_category = "Never",
+		provide_cover = false,
 	},
 }
 EntityData["Spatula"] = {

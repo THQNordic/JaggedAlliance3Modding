@@ -1,3 +1,5 @@
+local slab_x = const.SlabSizeX
+local slab_y = const.SlabSizeY
 
 function GetGridMarkerTypesCombo()
 	local marker_types = PresetGroupCombo("GridMarkerType", "Default")()
@@ -101,9 +103,11 @@ DefineClass.GridMarker = {
 	EditorIcon = "CommonAssets/UI/Icons/radar.tga",
 	last_conditions_eval = false,
 	trigger_count = 0, -- debug (displayed in Ged)
+	area_box = false,
 	area_thickness_divisor = 30,
 	area_positions = false,
 	area_effect = false,
+	area_outside_repulse = false,
 	fl_text = false,
 	ground_visuals = false,
 	recalc_area_on_pass_rebuild = true,
@@ -149,18 +153,18 @@ end
 
 function GetGridRangeContour(marker)
 	local chamf_div = marker.area_thickness_divisor
-	local contour_width = marker.Type == "BorderArea" and const.ContoursWidth or 2 * const.SlabSizeX / chamf_div
-	local radius2D = const.SlabSizeX / chamf_div
+	local contour_width = marker.Type == "BorderArea" and const.ContoursWidth or 2 * slab_x / chamf_div
+	local radius2D = slab_x / chamf_div
 	local contour
 	if marker.Type == "BorderArea" then
 		local bbox = marker:GetBBox()
 		local mx, my, mz = marker:GetPosXYZ()
 		local z = (mz or terrain.GetHeight(mx, my)) + const.ContoursOffsetZ
-		local x1 = bbox:minx() - const.SlabSizeX / 2
-		local x2 = bbox:maxx() + const.SlabSizeX / 2
-		local y1 = bbox:miny() - const.SlabSizeY / 2
-		local y2 = bbox:maxy() + const.SlabSizeY / 2
-
+		local x1, y1, z1, x2, y2, z2 = bbox:xyzxyz()
+		x1 = x1 - slab_x / 2
+		x2 = x2 + slab_x / 2
+		y1 = y1 - slab_y / 2
+		y2 = y2 + slab_y / 2
 		contour = { GetMapBorderPstr(box(x1, y1, z, x2, y2, z), contour_width, radius2D) }
 	elseif marker.Reachable or marker.Type == "BorderArea" then
 		local positions = marker:GetAreaPositions(true)
@@ -169,10 +173,11 @@ function GetGridRangeContour(marker)
 		local bbox = marker:GetBBox()
 		local mx, my, mz = marker:GetPosXYZ()
 		local z = (mz or terrain.GetHeight(mx, my)) + const.ContoursOffsetZ
-		local x1 = bbox:minx() - const.SlabSizeX / 2
-		local x2 = bbox:maxx() + const.SlabSizeX / 2
-		local y1 = bbox:miny() - const.SlabSizeY / 2
-		local y2 = bbox:maxy() + const.SlabSizeY / 2
+		local x1, y1, z1, x2, y2, z2 = bbox:xyzxyz()
+		x1 = x1 - slab_x / 2
+		x2 = x2 + slab_x / 2
+		y1 = y1 - slab_y / 2
+		y2 = y2 + slab_y / 2
 		local box_contour = GetRectContourPStr(box(x1, y1, z, x2, y2, z), contour_width, radius2D)
 		if box_contour then
 			contour = { box_contour }
@@ -202,6 +207,7 @@ function GridMarker:EditorEnter()
 end
 
 function GridMarker:EditorExit()
+	self.area_box = nil -- clear cached value
 	if self:GetGameFlags(const.gofPermanent) == 0 then
 		return
 	end
@@ -288,7 +294,7 @@ function GridMarker:UpdateVisuals(marker_type, force)
 		if (not self.Groups or #self.Groups == 0) and marker_type_item.MarkerGroup and marker_type_item.MarkerGroup ~= "" then
 			self:AddToGroup(marker_type_item.MarkerGroup)
 		end
-		self.area_thickness_divisor = MulDivRound(const.SlabSizeX, 2, marker_type_item.AreaThickness)
+		self.area_thickness_divisor = MulDivRound(slab_x, 2, marker_type_item.AreaThickness)
 	end
 	if marker_type_item then
 		self:SetColorModifier(marker_type_item.Color)
@@ -374,10 +380,6 @@ end
 
 -- Defender Markers, Defender Priority Markers and Villain Defender Priority markers  - conditions that enable or disable them
 function GridMarker:IsMarkerEnabled(context)
-	if not self.EnabledConditions then 
-		return true
-	end
-
 	for i,condition in ipairs(self.EnabledConditions) do
 		if not condition:Evaluate(self, context) then
 			return false
@@ -414,170 +416,208 @@ end
 
 function GridMarker:IsVoxelInsideArea(x, y, z)
 	local pos_voxel_z, markerOnTerrain = self:IsVoxelInsideArea2D(x, y)
-	if not pos_voxel_z then return end
-	
+	if not pos_voxel_z then
+		return false
+	end
+
 	-- If both the marker and the position being querried are on terrain, they should be considered
 	-- on the same height regardless of the difference as the terrain can vary
-	local passSlabAtQueryPos = GetPassSlab(VoxelToWorld(x, y, z))
-	local markerAndQueryPosOnTerrain = passSlabAtQueryPos and not passSlabAtQueryPos:IsValidZ() and markerOnTerrain
+	local passX, passY, passZ = GetPassSlabXYZ(VoxelToWorld(x, y, z))
+	if passX and not passZ and markerOnTerrain then
+		return true
+	end
 
 	-- If the position or the marker isn't on terrain then the allowed difference is up to 2 Z voxel (default deviation of GetPassSlab)
 	-- and the slab at the height of the marker at the position shouldn't be passable
-	if not markerAndQueryPosOnTerrain and z then
-		local passSlabAtQueryPosAtMarkerHeight = GetPassSlab(VoxelToWorld(x, y, pos_voxel_z))
-		if passSlabAtQueryPosAtMarkerHeight and passSlabAtQueryPosAtMarkerHeight == passSlabAtQueryPos then
-			passSlabAtQueryPosAtMarkerHeight = false
+	if z then
+		local markerX, markerY, markerZ = GetPassSlabXYZ(VoxelToWorld(x, y, pos_voxel_z))
+		if markerX and markerX == passX and markerY == passY and markerZ == passZ then
+			markerX = nil
 		end
-		return not passSlabAtQueryPosAtMarkerHeight and abs(pos_voxel_z - z) <= 2
+		return not markerX and abs(pos_voxel_z - z) <= 2
 	end
-	
+
 	return true
 end
 
 function GridMarker:GetMarkerCornerPositions()
 	local positions = self:GetAreaPositions()
 	local pos_voxel_x, pos_voxel_y = self:GetPosXYZ()
-	local area_width = self.AreaWidth * const.SlabSizeX
-	local area_height = self.AreaHeight * const.SlabSizeY
+	local area_width = self.AreaWidth * slab_x
+	local area_height = self.AreaHeight * slab_y
 	local area_left = pos_voxel_x - area_width / 2
 	local area_right = area_left + area_width
 	local area_top = pos_voxel_y - area_height / 2
 	local area_bottom = area_top + area_height
-	local left_top = point(area_left, area_top)
-	local right_top = point(area_right, area_top)
-	local left_bottom = point(area_left, area_bottom)
-	local right_bottom = point(area_right, area_bottom)
 	local left_top_min_dist = max_int
 	local right_top_min_dist = max_int
 	local left_bottom_min_dist = max_int
 	local right_bottom_min_dist = max_int
 	local result = {}
 	for _, pos_packed in ipairs(positions) do
-		local pos = point(point_unpack(pos_packed))
-		local dist = pos:Dist2D2(left_top)
-		if dist < left_top_min_dist then
+		local x, y = point_unpack(pos_packed)
+		if IsCloser2D(x, y, area_left, area_top, left_top_min_dist) then
 			left_top_min_dist = dist
-			result[1] = {pos}
+			result[1] = pos_packed
 		end
-		dist = pos:Dist2D2(right_top)
-		if dist < right_top_min_dist then
+		if IsCloser2D(x, y, area_right, area_top, right_top_min_dist) then
 			right_top_min_dist = dist
-			result[2] = {pos}
+			result[2] = pos_packed
 		end
-		dist = pos:Dist2D2(left_bottom)
-		if dist < left_bottom_min_dist then
+		if IsCloser2D(x, y, area_left, area_bottom, left_bottom_min_dist) then
 			left_bottom_min_dist = dist
-			result[4] = {pos}
+			result[4] = pos_packed
 		end
-		dist = pos:Dist2D2(right_bottom)
-		if dist < right_bottom_min_dist then
+		if IsCloser2D(x, y, area_right, area_bottom, right_bottom_min_dist) then
 			right_bottom_min_dist = dist
-			result[3] = {pos}
+			result[3] = pos_packed
+		end
+	end
+	for i = 1, 4 do
+		if result[i] then
+			result[i] = { point(point_unpack(result[i])) }
 		end
 	end
 	return result
 end
 
-function GridMarker:GetAreaPositions(ignore_occupied)
-	if not self.area_positions then
-		self.area_positions = {}
+local ignore_occupied_bit = 1
+local outside_repulse_bit = 2
+local skip_tunnels_bit = 4
+local z_tolerance_bit = 8
+
+function GridMarker:GetAreaPositions(ignore_occupied, outside_repulse, skip_tunnels, z_tolerance)
+	local area_positions = self.area_positions
+	if not area_positions then
+		area_positions = {}
+		self.area_positions = area_positions
 	end
+	local key =
+		(ignore_occupied and ignore_occupied_bit or 0) |
+		((outside_repulse or outside_repulse == nil and self.area_outside_repulse) and outside_repulse_bit or 0) |
+		(skip_tunnels and skip_tunnels_bit or 0) |
+		(z_tolerance and z_tolerance_bit or 0)
 
-	local recached = false
-	if not (IsEditorActive() and IsDeployMarker(self)) and self.Reachable then
-		local key = "reachable|" .. tostring(not not ignore_occupied)
-		if not self.area_positions[key] then
-			local voxels = {}
-			local width = self.AreaWidth*const.SlabSizeX
-			local height = self.AreaHeight*const.SlabSizeY
-			if width == 0 or height == 0 then
-				return voxels
-			end
-			local pos = GetPassSlab(self) or self:GetPos()
-			local area_left = pos:x() - width/2
-			local area_top = pos:y() - height/2
-			local restrict_area = box(area_left, area_top, area_left + width, area_top + height)
-			self.area_positions[key] = GetCombatPathDestinations(nil, pos, nil, nil, nil, nil, restrict_area, ignore_occupied, "move_through_occupied", "avoid_mines")
-			recached = true
-
-			-- Apply IsOccupiedExploration to all positions outside of combat
-			if not ignore_occupied and not g_Combat then
-				local allUnits = MapGet("map", "Unit") -- this is used in SpawnSquads so we can't use g_Units
-				local unitPositionsPacked = {}
-				for i, u in ipairs(allUnits) do
-					if not u:IsValidPos() then goto continue end
-					if gv_Deployment and not IsUnitDeployed(u) then goto continue end
-				
-					local snapped = SnapToVoxel(u:GetPos())
-					local packed = point_pack(snapped)
-					unitPositionsPacked[packed] = true
-					
-					::continue::
-				end
-				local positions = self.area_positions[key]
-				local total = #positions
-				for i = 1, total do
-					local pos = positions[i]
-					if unitPositionsPacked[pos] then
-						positions[i] = nil
-					end
-				end
-				table.compact(positions)
-			end
+	local positions = area_positions[key]
+	if positions then
+		return positions
+	end
+	if z_tolerance then
+		local p = self:GetAreaPositions(ignore_occupied, outside_repulse, skip_tunnels)
+		positions = self:FilterZTolerance(p)
+		if #positions == #p then
+			area_positions[key] = p
+			return p
 		end
-		return self.area_positions[key], recached
+	elseif outside_repulse or outside_repulse == nil and self.area_outside_repulse then
+		local p = self:GetAreaPositions(ignore_occupied, false, skip_tunnels)
+		positions = FilterPackedPositionsRepulsionZone(p)
+		if #positions == #p then
+			area_positions[key] = p
+			return p
+		end
+	elseif skip_tunnels then
+		local p = self:GetAreaPositions(ignore_occupied, false, false)
+		positions = table.ifilter(p, function(_, packed_pos) return not pf.GetTunnel(point_unpack(packed_pos)) end)
+		if #positions == #p then
+			area_positions[key] = p
+			return p
+		end
+	elseif not (IsEditorActive() and IsDeployMarker(self)) and self.Reachable then
+		local width = self.AreaWidth * slab_x
+		local height = self.AreaHeight * slab_y
+		if width == 0 or height == 0 then
+			return empty_table
+		end
+		local pos = GetPassSlab(self) or self:GetPos()
+		local area_left = pos:x() - width/2
+		local area_top = pos:y() - height/2
+		local restrict_area = box(area_left, area_top, area_left + width, area_top + height)
+		positions = GetCombatPathDestinations(nil, pos, nil, nil, nil, nil, restrict_area, ignore_occupied, "move_through_occupied", "avoid_mines")
+
+		-- Apply IsOccupiedExploration to all positions outside of combat
+		if not ignore_occupied and not g_Combat then
+			local allUnits = MapGet("map", "Unit") -- this is used in SpawnSquads so we can't use g_Units
+			local unitPositionsPacked = {}
+			for i, u in ipairs(allUnits) do
+				if not u:IsValidPos() then goto continue end
+				if gv_Deployment and not IsUnitDeployed(u) then goto continue end
+
+				unitPositionsPacked[point_pack(SnapToVoxel(u:GetPosXYZ()))] = true
+
+				::continue::
+			end
+			local total = #positions
+			for i = 1, total do
+				local pos = positions[i]
+				if unitPositionsPacked[pos] then
+					positions[i] = nil
+				end
+			end
+			table.compact(positions)
+		end
+	else
+		positions = self:GetAllVoxels()
 	end
-	
-	if not self.area_positions["all"] then
-		self.area_positions["all"] = self:GetAllVoxels()
-		recached = true
+	-- recached
+	if #positions == 0 then
+		area_positions[key] = empty_table
+		return empty_table
 	end
-	return self.area_positions["all"], recached
+	local values = {}
+	for _, v in ipairs(positions) do
+		values[v] = true
+	end
+	positions.values = values
+	area_positions[key] = positions
+	return positions
 end
 
-function GridMarker:GetAreaPositionsOutsideRepulsors(ignore_occupied)
-	local area_positions, recached = GridMarker.GetAreaPositions(self, ignore_occupied)
-	if recached or not self.area_positions["outside-repulse"] then
-		self.area_positions["outside-repulse"] = FilterPackedPositionsRepulsionZone(area_positions)
+function OnMsg.OnPassabilityChanged()
+	for _, marker in ipairs(g_GridMarkersContainer.labels.GridMarker) do
+		marker.area_positions = false
 	end
-	return self.area_positions["outside-repulse"], recached
+end
+
+function GridMarker:ResetRepulseAreaPositions()
+	local area_positions = self.area_positions
+	if not area_positions then
+		return
+	end
+	area_positions["reachable|ignore_occupied|outside_repulse|skip_tunnels"] = nil
+	area_positions["reachable|outside_repulse|skip_tunnels"] = nil
+	area_positions["reachable|ignore_occupied|outside_repulse"] = nil
+	area_positions["reachable|outside_repulse"] = nil
 end
 
 function GridMarker:GetBBox()
-	local stepx = const.SlabSizeX
-	local stepy = const.SlabSizeY
-	local sizex = self.AreaWidth * stepx
-	local sizey = self.AreaHeight * stepy
+	local sizex = self.AreaWidth * slab_x
+	local sizey = self.AreaHeight * slab_y
 	local posx, posy, posz = self:GetPosXYZ()
 	local bbox = sizebox(posx - sizex / 2, posy - sizey / 2, sizex, sizey)
 	local border_box = not IsEditorActive() and GetBorderAreaLimits()
 	if border_box then
 		bbox = IntersectRects(bbox, border_box)
 	end
-	local x1, y1 = VoxelToWorld(WorldToVoxel(bbox:minx(), bbox:miny()))
-	local x2, y2 = VoxelToWorld(WorldToVoxel(bbox:maxx(), bbox:maxy()))
-	if x1 < bbox:minx() then x1 = x1 + (bbox:minx() - x1 + stepx - 1) / stepx * stepx end
-	if y1 < bbox:miny() then y1 = y1 + (bbox:miny() - y1 + stepy - 1) / stepy * stepy end
-	if x2 >= bbox:maxx() then x2 = x2 - (x2 - bbox:maxx() + stepx) / stepx * stepx end
-	if y2 >= bbox:maxy() then y2 = y2 - (y2 - bbox:maxy() + stepy) / stepy * stepy end
+	local minx, miny, minz, maxx, maxy, maxz = bbox:xyzxyz()
+	local x1, y1 = VoxelToWorld(WorldToVoxel(minx, miny))
+	local x2, y2 = VoxelToWorld(WorldToVoxel(maxx, maxy))
+	if x1 < minx then x1 = x1 + (minx - x1 + slab_x - 1) / slab_x * slab_x end
+	if y1 < miny then y1 = y1 + (miny - y1 + slab_y - 1) / slab_y * slab_y end
+	if x2 >= maxx then x2 = x2 - (x2 - maxx + slab_x) / slab_x * slab_x end
+	if y2 >= maxy then y2 = y2 - (y2 - maxy + slab_y) / slab_y * slab_y end
 	local z = SnapToVoxelZ(posx, posy, posz)
 	return box(x1, y1, z, x2, y2, z)
 end
 
 function GridMarker:GetAllVoxels(filter)
 	local bbox = self:GetBBox()
-	local x1 = bbox:minx()
-	local x2 = bbox:maxx()
-	local y1 = bbox:miny()
-	local y2 = bbox:maxy()
-	local z = bbox:minz()
+	local x1, y1, z1, x2, y2, z2 = bbox:xyzxyz()
 	local voxels = {}
 	local insert = table.insert
-	local stepx = const.SlabSizeX
-	local stepy = const.SlabSizeY
-	for x = x1, x2, stepx do
-		for y = y1, y2, stepy do
-			insert(voxels, point_pack(x, y, z))
+	for x = x1, x2, slab_x do
+		for y = y1, y2, slab_y do
+			insert(voxels, point_pack(x, y, z1))
 		end
 	end
 	return voxels
@@ -598,8 +638,8 @@ function GridMarker:GetAreaTrianglePtOffs(i, j, width, height)
 end
 
 function GridMarker:GetAreaTriangleFadeArg(pt, center, width, height)
-	local w = width * const.SlabSizeX
-	local h = height * const.SlabSizeY
+	local w = width * slab_x
+	local h = height * slab_y
 	local max_dist, dist
 	if w > h then
 		max_dist = h / 2
@@ -611,17 +651,21 @@ function GridMarker:GetAreaTriangleFadeArg(pt, center, width, height)
 	return 100 - MulDivRound(dist, 100, max_dist)
 end
 
-local slab_x = const.SlabSizeX
-local slab_y = const.SlabSizeY
-
 function GridMarker:GetAreaBox()
-	local center_x, center_y = self:GetPosXYZ()
-	local width, height = self.AreaWidth, self.AreaHeight
-	local x = center_x - (width / 2) * slab_x - slab_x / 2
-	local y = center_y - (height / 2) * slab_y - slab_y / 2
-	local area = box(x, y, x + width * slab_x, y + height * slab_y)
-	local border = GetBorderAreaLimits()
-	return border and IntersectRects(border, area) or area
+	local area = self.area_box
+	if not area then
+		local center_x, center_y = self:GetPosXYZ()
+		local width, height = self.AreaWidth, self.AreaHeight
+		local x = center_x - (width / 2) * slab_x - slab_x / 2
+		local y = center_y - (height / 2) * slab_y - slab_y / 2
+		area = box(x, y, x + width * slab_x, y + height * slab_y)
+		local border = GetBorderAreaLimits()
+		if border then
+			area = IntersectRects(border, area)
+		end
+		self.area_box = area
+	end
+	return area
 end
 
 function GridMarker:GetAreaTrianglePstr()
@@ -629,8 +673,8 @@ function GridMarker:GetAreaTrianglePstr()
 
 	if IsDeployMarker(self) then
 		local voxels = self:GetAreaPositions(true)
-
-		local xAvg, yAvg = AppendVerticesAOETilesWithDF(v_pstr, table.map(voxels, function(v) return point(point_unpack(v)) end), {--[[step_objs]]}, {--[[values]]}, RGB(255, 255, 255), 100)
+		local points = table.imap(voxels, function(v) return point(point_unpack(v)) end)
+		local xAvg, yAvg = AppendVerticesAOETilesWithDF(v_pstr, points, {--[[step_objs]]}, {--[[values]]}, RGB(255, 255, 255), 100)
 		if true then return v_pstr end
 	end
 
@@ -787,9 +831,10 @@ end
 
 function GridMarker:IsMarkerAreaPosition(pt)
 	if not self.Reachable then return true end
-	local packed_pos = point_pack(SnapToPassSlab(pt) or pt)
+	local x, y, z = SnapToPassSlabXYZ(pt)
+	local packed_pos = x and point_pack(x, y, z) or IsPoint(pt) and point_pack(pt) or point_pack(pt:GetPosXYZ())
 	local area_positions = self:GetAreaPositions(true)
-	if table.find(area_positions, packed_pos) then
+	if (area_positions.values or empty_table)[packed_pos] then
 		return true
 	end
 	return false
@@ -797,7 +842,6 @@ end
 
 function GridMarker:IsInsideArea2D(pt)
 	if self.Reachable then
-		pt = IsPoint(pt) and pt or pt:GetPos()
 		return self:IsMarkerAreaPosition(pt)
 	else
 		local x, y = WorldToVoxel(pt)
@@ -807,7 +851,6 @@ end
 
 function GridMarker:IsInsideArea(pt)
 	if self.Reachable then
-		pt = IsPoint(pt) and pt or pt:GetPos()
 		return self:IsMarkerAreaPosition(pt)
 	else
 		local x, y, z = WorldToVoxel(pt)
@@ -915,86 +958,72 @@ end
 
 function GridMarker:GetRandomPositions(number, around_center, positions, req_pos, avoid_close_pos)
 	positions = positions or self:GetAreaPositions()
-	if not next(positions) then return empty_table, self:GetAngle() end
+	if not next(positions) then
+		return empty_table, self:GetAngle()
+	end
+	assert(number <= #positions)
 
-	if not req_pos then
+	local x, y, z
+	if req_pos then
+		x, y, z = req_pos:xyz()
+	else
 		if around_center then
-			req_pos = self:GetPos()
+			x, y, z = self:GetPosXYZ()
 		else
 			local packedPoint = table.interaction_rand(positions, "GridMarker")
-			req_pos = point(point_unpack(packedPoint))
+			x, y, z = point_unpack(packedPoint)
 		end
 	end
-	
-	assert(number <= #positions)
-	local level_z = req_pos:IsValidZ() and req_pos:z() or terrain.GetHeight(req_pos)
-	local x, y = req_pos:xy()
-	local first = SnapToPassSlab(point(x, y, SnapToVoxelZ(x, y, level_z)))	
-	
+	z = z or terrain.GetHeight(x, y)
+	local level_z = SnapToVoxelZ(x, y, z)
+	local first_x, first_y, first_z = SnapToPassSlabXYZ(x, y, level_z)
+
 	-- SpawnMarkers are usually set to Reachable only but they are (there is a VME for this)
 	-- accidentally toggled on some maps, prevent position overlap due to duplicate z
-	if first and not self.Reachable and not first:IsValidZ() then 
-		first = first:SetZ(SnapToVoxelZ(x, y, level_z))
+	if first_x and not self.Reachable and not first_z then 
+		first_z = level_z
 	end
-	
-	local reqPositionPacked = first and point_pack(first)
-	local result = first and {first} or {}
-	
+
+	local result = table.icopy(positions)
+
 	-- Score positions based on avoid_close_pos 
 	-- The function will return closest positions always, but in the avoid_close_pos case
 	-- it will prioritize positions at least some distance away, while in the false case it will
 	-- return positions that are closer than that distance.
-	if first then
+	if first_x then
 		local close_dist = number*guim
-		local distances = {}
-		for i = 1, #positions do
-			local packedPos = positions[i]
-			if packedPos == reqPositionPacked then goto continue end
-			
-			local pt = point(point_unpack(packedPos))
-			local distance = pt:Dist(first)
-			
+		local scores = {}
+		for i, packedPos in ipairs(positions) do
+			local x, y, z = point_unpack(packedPos)
+			local distance = GetLen(x - first_x, y - first_y, z and first_z and z - first_z or 0)
+
 			local score
 			if avoid_close_pos then
 				score = distance > close_dist and distance or max_int
 			else
 				score = distance < close_dist and distance or max_int
 			end
-			
-			if pt:IsValidZ() and first:IsValidZ() and pt:z() ~= first:z() then
+			if z and first_z and z ~= first_z then
 				score = score + close_dist + 100
 			end
-			
-			distances[#distances + 1] = { score = score, pos = pt }
-			
-			::continue::
+			scores[packedPos] = score
 		end
-		table.stable_sort(distances, function(a, b) return a.score < b.score end)
-		
-		local close_positions = {}
-		for i = 1, number do
-			if distances[i] then
-				close_positions[#close_positions + 1] = distances[i].pos
-			end
+		local reqPositionPacked = point_pack(first_x, first_y, first_z)
+		if not scores[reqPositionPacked] then
+			table.insert(result, reqPositionPacked)
 		end
-		
-		-- Fill preferred positions first (they should be unpacked)
-		for i = 1, #close_positions do
-			if #result >= number then break end
-			result[#result + 1] = close_positions[i]
-		end
+		-- Fill preferred positions first
+		scores[reqPositionPacked] = -1
+		table.stable_sort(result, function(a, b) return scores[a] < scores[b] end)
 	end
-	
-	for i = 1, #positions do
-		if #result >= number then break end
-	
-		local packedPos = positions[i]
-		if packedPos and packedPos ~= reqPositionPacked then
-			result[#result + 1] = point(point_unpack(packedPos))
-		end
+	for i = #result, number + 1, -1 do
+		result[i] = nil
+	end
+	for i, packed_pos in ipairs(result) do
+		result[i] = point(point_unpack(packed_pos))
 	end
 
-	return result, self:GetAngle()
+	return result
 end
 
 function GridMarker:GetExtraEditorText(texts)
@@ -1047,7 +1076,7 @@ function GetGridMarkers(no_sorting, with_cursor_obj, no_AL_markers)
 		return (with_cursor_obj or not EditorCursorObjs[marker]) and not marker:IsKindOf("SetpieceMarker")
 	end
 	
-	local markers = MapGetMarkers("GridMarker", nil, filter, with_cursor_obj)
+	local markers = MapGetMarkers("GridMarker", nil, filter, with_cursor_obj) or {}
 	if not no_AL_markers then
 		table.iappend(markers, MapGet("map", "AmbientLifeMarker", filter, with_cursor_obj))
 	end
@@ -1148,7 +1177,7 @@ if FirstLoad then
 	OffsetMarkers = {}
 end
 
-local dir = point(0, const.SlabSizeY/4)
+local dir = point(0, slab_y/4)
 local up = point(0, 0, 4096)
 local angle = 90 * 60
 
@@ -1375,36 +1404,45 @@ function GedOpPlaceGridMarker(socket, marker, marker_type)
 end
 
 function MapGetMarkers(marker_type, group, filter, ...)
+	if group == "" then group = nil end
+	if group and not Groups[group] then
+		return
+	end
 	local all_markers = g_GridMarkersContainer.labels[marker_type or "GridMarker"]
-	local markers = {}
+	if not group and not filter then
+		return all_markers
+	end
+	local markers
 	for _, marker in ipairs(all_markers) do
-		if (not group or group == "" or marker:IsInGroup(group)) and (not filter or filter(marker, ...)) then
+		if (not group or marker:IsInGroup(group)) and (not filter or filter(marker, ...)) then
+			if not markers then markers = {} end
 			table.insert(markers, marker)
 		end
 	end
-	
 	return markers
 end
 
 function MapCountMarkers(marker_type, group, filter, ...)
+	if group == "" then group = nil end
+	if group and not Groups[group] then
+		return 0
+	end
 	local all_markers = g_GridMarkersContainer.labels[marker_type or "GridMarker"]
 	local count = 0
 	for _, marker in ipairs(all_markers) do
-		if (not group or group == "" or marker:IsInGroup(group)) and (not filter or filter(marker, ...)) then
+		if (not group or marker:IsInGroup(group)) and (not filter or filter(marker, ...)) then
 			count = count + 1
 		end
 	end
-	
 	return count
 end
 
 function MapForEachMarker(marker_type, group, exec, ...)
-	local args = {...}
 	g_GridMarkersContainer:ForEachInLabel(marker_type or "GridMarker", function(marker, ...)
 		if not group or group == "" or marker:IsInGroup(group) then
 			exec(marker, ...)
 		end
-	end, table.unpack(args))
+	end, ...)
 end
 
 function MapGetFirstMarker(marker_type, filter)
@@ -1431,7 +1469,7 @@ function OnMsg.ValidateMap()
 	local border_area_markers = 0
 	local first_ba_marker
 	MapForEach("map", "GridMarker", function(marker)
-		if marker.Type == "Entrance" and not SnapToPassSlab(marker) then
+		if marker.Type == "Entrance" and not SnapToPassSlabXYZ(marker) then
 			StoreErrorSource(marker, string.format("Entrance marker '%s' on impassable!", marker.class))
 		end
 		if marker.Type == "Defender" then
@@ -1539,7 +1577,7 @@ end
 function OnMsg.OnPassabilityChanged(clip)
 	if IsEditorSaving() then return end
 	batchedWork = batchedWork or {}
-	clip = clip:grow(const.SlabSizeX * 10)
+	clip = clip:grow(slab_x * 10)
 	MapForEach(clip, "GridMarker", function(marker, batchedWork)
 		if marker.recalc_area_on_pass_rebuild and marker.Reachable and marker.Type ~= "BorderArea" then
 			batchedWork[marker] = true
@@ -1555,9 +1593,6 @@ function BorderAreaMarkerMessage(count)
 		return "Border area marker not present on map."
 	end
 end
-
-local slab_x = const.SlabSizeX
-local slab_y = const.SlabSizeY
 
 function GetBorderAreaLimits()
 	local bam = GetBorderAreaMarker()
@@ -1587,8 +1622,8 @@ function GetReachablePositionsFromPos(pos, count)
 	if count == 1 then
 		return {pos}
 	end
-	local width = count*const.SlabSizeX
-	local height = count*const.SlabSizeY
+	local width = count * slab_x
+	local height = count * slab_y
 	local path = PlaceObject("CombatPath")
 	local area_left = pos:x() - width/2
 	local area_top = pos:y() - height/2
@@ -1736,7 +1771,7 @@ function OnMsg.ZuluGameLoaded()
 	for _, light in ipairs(lights) do
 		for _, marker in ipairs(lights_markers) do
 			if marker.lights_off and (not marker.lights_intensities or not marker.lights_intensities[light]) then
-				if marker:IsInsideArea2D(light:GetPos()) then
+				if marker:IsInsideArea2D(light) then
 					marker:TurnLightOff(light)
 				end
 			end

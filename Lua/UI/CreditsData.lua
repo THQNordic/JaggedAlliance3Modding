@@ -98,17 +98,22 @@ Vlad Abadzhiev - Jahn</crn>
 
 
 
+<crp>PROGRAMMERS</crp>
+
+<crn>Diogo Costa
+Raya Litova</crn>
+
+
+
 <crp>ADDITIONAL PROGRAMMING</crp>
 
 <crn>Alexander "Scarver" Apostolov
 Bisser Krastev
 Borislav Todorov
-Diogo Costa
 Gergana Tyufekchieva
 Ivan Vankov
 Jordan Malchev
 Nikolay Karashtranov
-Raya Litova
 Svetoslav Genchev
 Valeriya Dyulgerova
 Vihar Bozadzhiev
@@ -383,7 +388,8 @@ Georg Schulz</crn>
 
 
 <crp>PROJECT QA ANALYSTS</crp>
-<crn>Amber Chalmers</crn>
+<crn>Aaricia Lambrigts
+Jérémy Soulet</crn>
 
 
 
@@ -393,7 +399,8 @@ Georg Schulz</crn>
 Markus Rohringer
 Emilia Adler
 Aaricia Lambrigts
-Christoph Ruehmkopf</crn>
+Christoph Ruehmkorf
+Amber Chalmers</crn>
 
 
 
@@ -1336,6 +1343,14 @@ YOU ROCK</crn>
 
 {
 Untranslated [[
+<crp>ACKNOWLEDGEMENTS FOR AWARDS</crp>
+<crn>The Twelve Chairs (Movie, 1970) - Brooks M. (Director). Crossbow Productions, The Twelve Chairs Company.
+Monty Python and the Holy Grail  (Movie, 1975) - Gillam T., Jones T. (Directors). Python (Monty) Pictures.</crn>]],
+},
+
+
+{
+Untranslated [[
 <crn>© 2023 THQ Nordic AB, Sweden. © 2003-2023 Haemimont Games AD, Sofia, Bulgaria. 
 Published by THQ Nordic GmbH, Austria. Developed by Haemimont Games AD, Bulgaria.</crn>]],
 },
@@ -1346,6 +1361,7 @@ Untranslated [[
 <crn>Jagged Alliance, THQ, THQ Nordic and their respective logos are trademarks and/or registered trademarks of THQ Nordic AB. 
 All rights reserved. All other trademarks, logos and copyrights are property of their respective owners.</crn>]],
 },
+
 	
 BackgroundMusic = {
 	--mode = track

@@ -159,15 +159,8 @@ PlaceObj('XTemplate', {
 					'Margins', box(0, 55, 0, 0),
 					'MaxWidth', 1150,
 					'TextStyle', "PDALandingText",
-					'ContextUpdateOnOpen', true,
-					'OnContextUpdate', function (self, context, ...)
-						self:SetText(Untranslated(_InternalTranslate(self.Text, {
-							["em"] = "<style PDALandingEm>",
-							["/em"] = "</style>"
-						})))
-					end,
 					'Translate', true,
-					'Text', T(989191017446, --[[XTemplate PDABrowserLanding Text]] "This is the web page for the Association of International Mercenaries, or A.I.M. for short. Here you can browse and hire different mercs. For your starting squad it is recommended that you <em>hire at least three mercs</em>, but do keep a watch on your funds. You will be able to hire mercs at any time during your mission, so do not worry if you currently lack the funds to hire the most legendary mercs."),
+					'Text', T(989191017446, --[[XTemplate PDABrowserLanding Text]] "This is the web page for the Association of International Mercenaries, or A.I.M. for short. Here you can browse and hire different mercs. For your starting squad it is recommended that you <style PDALandingEm>hire at least three mercs</style>, but do keep a watch on your funds. You will be able to hire mercs at any time during your mission, so do not worry if you currently lack the funds to hire the most legendary mercs."),
 					'TextHAlign', "center",
 				}),
 				PlaceObj('XTemplateWindow', {
@@ -198,6 +191,7 @@ PlaceObj('XTemplate', {
 			'ActionName', T(451752778865, --[[XTemplate PDABrowserLanding ActionName]] "Continue"),
 			'ActionToolbar', "ActionBar",
 			'ActionShortcut', "C",
+			'ActionShortcut2', "Enter",
 			'ActionGamepad', "ButtonA",
 			'OnAction', function (self, host, source, ...)
 				TutorialHintsState.LandingPageShown = true

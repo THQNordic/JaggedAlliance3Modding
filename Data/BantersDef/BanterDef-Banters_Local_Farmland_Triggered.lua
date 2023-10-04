@@ -39,7 +39,7 @@ PlaceObj('BanterDef', {
 			Prop = "TedClues",
 			QuestId = "Ted",
 		}),
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('PlayerIsInSectors', {
 					Sectors = {
@@ -104,7 +104,7 @@ PlaceObj('BanterDef', {
 			QuestId = "Ted",
 			QuestId2 = "Ted",
 		}),
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('PlayerIsInSectors', {
 					Sectors = {
@@ -178,7 +178,7 @@ PlaceObj('BanterDef', {
 			QuestId = "Ted",
 			QuestId2 = "Ted",
 		}),
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('PlayerIsInSectors', {
 					Sectors = {
@@ -287,7 +287,7 @@ PlaceObj('BanterDef', {
 			QuestId = "Ted",
 			QuestId2 = "Ted",
 		}),
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('PlayerIsInSectors', {
 					Sectors = {

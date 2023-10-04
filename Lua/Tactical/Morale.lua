@@ -311,6 +311,7 @@ function ExecMoraleActions()
 	-- activate morale-related AI-control (panic, berserk) on eligible units, if any
 	local panicked = table.ifilter(team.units, function(idx, unit) return unit:HasStatusEffect("Panicked") and not unit:IsIncapacitated() and unit.ActionPoints > 0 end)
 	local controller
+	local lastUnit
 	if #panicked > 0 then
 		local name = UnitsDisplayAlias(panicked)
 		local notification = (team.player_team or team.player_ally) and "allyMoraleEffect" or "enemyMoraleEffect"
@@ -321,6 +322,7 @@ function ExecMoraleActions()
 		for _, unit in ipairs(panicked) do
 			unit:RemoveStatusEffect("FreeMove")
 			unit.ActionPoints = 0
+			lastUnit = unit
 			ObjModified(unit)
 		end
 	end
@@ -340,6 +342,7 @@ function ExecMoraleActions()
 		for _, unit in ipairs(berserk) do
 			unit:RemoveStatusEffect("FreeMove")
 			unit.ActionPoints = 0
+			lastUnit = unit
 			ObjModified(unit)
 		end
 	end
@@ -347,6 +350,7 @@ function ExecMoraleActions()
 	if controller then
 		HideTacticalNotification("allyMoraleEffect")
 		HideTacticalNotification("enemyMoraleEffect")
+		controller.restore_camera_obj = lastUnit --with this set, controller will restore camera angle on done and focus this obj
 		DoneObject(controller)
 		ClearAllCombatBadges()
 	end	

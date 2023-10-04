@@ -255,7 +255,7 @@ PlaceObj('Conversation', {
 	PlaceObj('ConversationPhrase', {
 		Comment = "You have found out Wlad is an excellent engineer",
 		Conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('QuestIsVariableBool', {
 						QuestId = "Beast",
@@ -291,7 +291,7 @@ PlaceObj('Conversation', {
 	PlaceObj('ConversationPhrase', {
 		Comment = "Alternative. You have found out Wlad is an excellent engineer",
 		Conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('QuestIsVariableBool', {
 						QuestId = "Beast",
@@ -327,7 +327,7 @@ PlaceObj('Conversation', {
 	PlaceObj('ConversationPhrase', {
 		Comment = "Alternative. You have found out Wlad is an excellent engineer",
 		Conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('QuestIsVariableBool', {
 						QuestId = "Beast",
@@ -363,7 +363,7 @@ PlaceObj('Conversation', {
 	PlaceObj('ConversationPhrase', {
 		Comment = "Alternative. You have found out Wlad is an excellent engineer",
 		Conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('QuestIsVariableBool', {
 						QuestId = "Beast",
@@ -984,7 +984,7 @@ PlaceObj('Conversation', {
 		Align = "right",
 		AutoRemove = true,
 		Conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('QuestIsVariableBool', {
 						QuestId = "Beast",

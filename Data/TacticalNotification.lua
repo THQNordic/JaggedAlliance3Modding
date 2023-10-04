@@ -29,6 +29,14 @@ PlaceObj('TacticalNotification', {
 })
 
 PlaceObj('TacticalNotification', {
+	SortKey = -61,
+	group = "Default",
+	id = "actionInterrupted",
+	style = "blue",
+	text = T(714961825590, --[[TacticalNotification Default actionInterrupted text]] "Action Cancelled"),
+})
+
+PlaceObj('TacticalNotification', {
 	SortKey = -60,
 	combatLog = true,
 	group = "Default",

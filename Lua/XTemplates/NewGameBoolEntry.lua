@@ -17,6 +17,7 @@ PlaceObj('XTemplate', {
 		'BorderColor', RGBA(0, 0, 0, 0),
 		'Background', RGBA(255, 255, 255, 0),
 		'OnContextUpdate', function (self, context, ...)
+			if not NewGameObj then return end
 			local gameObj = Game or NewGameObj
 			local difficultyKey = gameObj == Game and "game_difficulty" or "difficulty"
 			if IsKindOf(self.context, "GameDifficultyDef") then

@@ -90,17 +90,23 @@ function GetCoverDirAngle(dir)
 	return cover_dir_angle[dir]
 end
 
+local coverHigh = const.CoverHigh
+local coverLow = const.CoverLow
+
 function GetCoversAt(pos_or_obj)
 	local up, right, down, left = GetCover(pos_or_obj)
 	if not up then
 		return
 	end
-	return {
-		[cover_dir_angle.up] = up,
-		[cover_dir_angle.right] = right,
-		[cover_dir_angle.down] = down,
-		[cover_dir_angle.left] = left,
+	
+	local covers = {
+		[cover_dir_angle.up] = (up == coverHigh or up == coverLow) and up or nil,
+		[cover_dir_angle.right] = (right == coverHigh or right == coverLow) and right or nil,
+		[cover_dir_angle.down] = (down == coverHigh or down == coverLow) and down or nil,
+		[cover_dir_angle.left] = (left == coverHigh or left == coverLow) and left or nil,
 	}
+	
+	return next(covers) and covers or nil
 end
 
 local cover_offsets = {
@@ -129,25 +135,26 @@ function GetHighestCoverUI(pos_or_obj)
 	return GetHighestCover(pos_or_obj)
 end
 
-function GetHighestCover(pos_or_obj)
-	local up, right, down, left = GetCover(pos_or_obj)
-	if not up then
-		return
-	end
-	local high = const.CoverHigh
-	return (up == high or right == high or down == high or left == high) and high or const.CoverLow
-end
-
 function GetCoverTypes(pos_or_obj)
 	local up, right, down, left = GetCover(pos_or_obj)
 	if not up then
 		return
 	end
-	local low = const.CoverLow
-	local high = const.CoverHigh
-	local cover_low = up == low or right == low or down == low or left == low
-	local cover_high = up == high or right == high or down == high or left == high
+
+	local cover_low = up == coverLow or right == coverLow or down == coverLow or left == coverLow
+	local cover_high = up == coverHigh or right == coverHigh or down == coverHigh or left == coverHigh
+	
 	return cover_high, cover_low
+end
+
+function GetHighestCover(pos_or_obj)
+	local high, low = GetCoverTypes(pos_or_obj)
+	if high then
+		return coverHigh
+	end
+	if low then
+		return coverLow
+	end
 end
 
 function GetUnitOrientationToHighCover(pos, angle)
@@ -155,10 +162,10 @@ function GetUnitOrientationToHighCover(pos, angle)
 	if not up then
 		return
 	end
-	local high = const.CoverHigh
-	if up ~= high and right ~= high and down ~= high and left ~= high then
+	if up ~= coverHigh and right ~= coverHigh and down ~= coverHigh and left ~= coverHigh then
 		return
 	end
+	
 	local max_diff = 90*60
 	local best_angle, best_diff
 	-- rotations against the cover
@@ -174,25 +181,25 @@ function GetUnitOrientationToHighCover(pos, angle)
 
 	-- avoid facing another high cover
 	-- up / down
-	if right == high and diff2 < max_diff or left == high and diff4 < max_diff then
-		if up ~= high   and (not best_diff or diff1 < best_diff) then best_angle, best_diff = a1, diff1 end
-		if down ~= high and (not best_diff or diff3 < best_diff) then best_angle, best_diff = a3, diff3 end
+	if right == coverHigh and diff2 < max_diff or left == coverHigh and diff4 < max_diff then
+		if up ~= coverHigh   and (not best_diff or diff1 < best_diff) then best_angle, best_diff = a1, diff1 end
+		if down ~= coverHigh and (not best_diff or diff3 < best_diff) then best_angle, best_diff = a3, diff3 end
 	end
 	-- left / right
-	if up == high and diff1 < max_diff or down == high and diff3 < max_diff then
-		if left ~= high and (not best_diff or diff4 < best_diff) then best_angle, best_diff = a4, diff4 end
-		if right ~= high and (not best_diff or diff2 < best_diff) then best_angle, best_diff = a2, diff2 end
+	if up == coverHigh and diff1 < max_diff or down == coverHigh and diff3 < max_diff then
+		if left ~= coverHigh and (not best_diff or diff4 < best_diff) then best_angle, best_diff = a4, diff4 end
+		if right ~= coverHigh and (not best_diff or diff2 < best_diff) then best_angle, best_diff = a2, diff2 end
 	end
 
 	-- fallback (can face another high cover)
 	if not best_angle then
 		-- up / down
-		if right == high and diff2 < max_diff or left == high and diff4 < max_diff then
+		if right == coverHigh and diff2 < max_diff or left == coverHigh and diff4 < max_diff then
 			if not best_diff or diff1 < best_diff then best_angle, best_diff = a1, diff1 end
 			if not best_diff or diff3 < best_diff then best_angle, best_diff = a3, diff3 end
 		end
 		-- left / right
-		if up == high and diff1 < max_diff or down == high and diff3 < max_diff then
+		if up == coverHigh and diff1 < max_diff or down == coverHigh and diff3 < max_diff then
 			if not best_diff or diff4 < best_diff then best_angle, best_diff = a4, diff4 end
 			if not best_diff or diff2 < best_diff then best_angle, best_diff = a2, diff2 end
 		end
@@ -273,7 +280,7 @@ end
 
 function GetCoverPercentage(stand_pos, attack_pos, target_stance)
 	local cover, any, coverage = PosGetCoverPercentageFrom(stand_pos, attack_pos)
-	if cover == const.CoverLow and target_stance == "Standing" then
+	if cover == coverLow and target_stance == "Standing" then
 		cover, coverage = false, 0
 	end
 	return cover, any, coverage or 0

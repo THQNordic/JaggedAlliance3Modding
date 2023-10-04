@@ -371,7 +371,7 @@ PlaceObj('XTemplate', {
 			'ActionName', T(130203409953, --[[XTemplate SectorOperationsAssignDlgUI ActionName]] "Confirm"),
 			'ActionToolbar', "ActionBar",
 			'ActionShortcut', "Enter",
-			'ActionGamepad', "ButtonY",
+			'ActionGamepad', "ButtonX",
 			'ActionState', function (self, host)
 				local mercs_list = host.idMercsList
 				local selected = {}

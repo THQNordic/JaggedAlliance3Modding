@@ -1,9 +1,16 @@
+function CanOpenPhotoMode()
+	if gv_SatelliteView then return "disabled" end
+	if GetDialog("ConversationDialog") then return "disabled" end
+	if GetDialog("ModifyWeaponDlg") then return "disabled" end
+	return "enabled"
+end
+
 function PhotoModeDialogOpen()
     OpenDialog("PhotoMode")
 end
 
 function StartPhotoMode()
-	g_PrePhotoModeStoredVisuals = {}
+	--g_PrePhotoModeStoredVisuals = {}
 	PhotoModeBegin()
 	PhotoModeDialogOpen()
 end
@@ -45,14 +52,6 @@ function OnMsg.PhotoModeFreeCameraDeactivated()
 	if fov then
 		camera.SetAutoFovX(1, 0, fov, 16, 9)
 	end
-end
-
-local old_PhotoModeApply = PhotoModeApply
-function PhotoModeApply(pm_object, prop_id)
-	if prop_id == "fov" then
-		camera.SetAutoFovX(1, 0, pm_object.fov, 16, 9)
-	end
-	old_PhotoModeApply(pm_object, prop_id)
 end
 
 function OnMsg.PhotoModeScreenshotTaken(file_path)

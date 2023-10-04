@@ -3,7 +3,7 @@
 PlaceObj('Conversation', {
 	AssignToGroup = "TimTurtledove",
 	Conditions = {
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "PantagruelClinic",
@@ -506,7 +506,7 @@ PlaceObj('Conversation', {
 	PlaceObj('ConversationPhrase', {
 		Align = "right",
 		Conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('QuestIsVariableBool', {
 						Condition = "or",
@@ -619,7 +619,7 @@ PlaceObj('Conversation', {
 				Amount = 2,
 				Condition = "<",
 			}),
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('QuestIsVariableBool', {
 						QuestId = "PantagruelClinic",
@@ -718,7 +718,7 @@ PlaceObj('Conversation', {
 		Align = "right",
 		AutoRemove = true,
 		Conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('UnitSquadHasMerc', {
 						Name = "Flay",

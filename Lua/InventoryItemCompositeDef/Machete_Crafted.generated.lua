@@ -7,14 +7,14 @@ DefineClass.Machete_Crafted = {
 
 
 	object_class = "MacheteWeapon",
-	Reliability = 50,
 	ScrapParts = 2,
+	Reliability = 50,
 	Icon = "UI/Icons/Weapons/MacheteChainsword",
 	DisplayName = T(416965583814, --[[InventoryItemCompositeDef Machete_Crafted DisplayName]] "Composite Machete"),
 	DisplayNamePlural = T(703147370925, --[[InventoryItemCompositeDef Machete_Crafted DisplayNamePlural]] "Composite Machetes"),
 	Description = T(617282185892, --[[InventoryItemCompositeDef Machete_Crafted Description]] "Includes built-in multitool, corkscrew and nail clipper."),
 	AdditionalHint = T(553000990624, --[[InventoryItemCompositeDef Machete_Crafted AdditionalHint]] "<bullet_point> Increased damage bonus from Strength\n<bullet_point> High Crit chance"),
-	LargeItem = true,
+	LargeItem = 1,
 	UnitStat = "Dexterity",
 	Cost = 150,
 	BaseChanceToHit = 100,

@@ -228,6 +228,11 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"D14",
+					},
+				}),
 				PlaceObj('UnitIsAroundOtherUnit', {
 					Distance = 14,
 					SecondTargetUnit = "LegionMale_TeaParty",
@@ -257,9 +262,17 @@ PlaceObj('QuestsDef', {
 			Once = true,
 			ParamId = "TCE_TeaPartySurvivor",
 			QuestId = "CursedForestSideQuests",
+			requiredSectors = {
+				"D14",
+			},
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"D14",
+					},
+				}),
 				PlaceObj('GroupIsDead', {
 					Group = "LegionMale_TeaParty",
 				}),
@@ -274,6 +287,9 @@ PlaceObj('QuestsDef', {
 			Once = true,
 			ParamId = "TCE_TeaPartyDone",
 			QuestId = "CursedForestSideQuests",
+			requiredSectors = {
+				"D14",
+			},
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
@@ -292,7 +308,7 @@ PlaceObj('QuestsDef', {
 				PlaceObj('CombatIsActive', {
 					Negate = true,
 				}),
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('CheckGameState', {
 							GameState = "Marshlands",
@@ -316,6 +332,11 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"C14",
+					},
+				}),
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "Beast",
 					Vars = set({
@@ -350,11 +371,6 @@ PlaceObj('QuestsDef', {
 				PlaceObj('UnitIsOnMap', {
 					TargetUnit = "TheBeast",
 				}),
-				PlaceObj('PlayerIsInSectors', {
-					Sectors = {
-						"C14",
-					},
-				}),
 			},
 			Effects = {
 				PlaceObj('GroupSetSide', {
@@ -370,6 +386,11 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"D17",
+					},
+				}),
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "Beast",
 					Vars = set({
@@ -385,11 +406,6 @@ PlaceObj('QuestsDef', {
 				}),
 				PlaceObj('UnitIsOnMap', {
 					TargetUnit = "TheBeast",
-				}),
-				PlaceObj('PlayerIsInSectors', {
-					Sectors = {
-						"D17",
-					},
 				}),
 			},
 			Effects = {
@@ -407,6 +423,11 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"C14",
+					},
+				}),
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "Beast",
 					Vars = set({
@@ -432,11 +453,6 @@ PlaceObj('QuestsDef', {
 				}),
 				PlaceObj('UnitIsOnMap', {
 					TargetUnit = "TheBeast",
-				}),
-				PlaceObj('PlayerIsInSectors', {
-					Sectors = {
-						"C14",
-					},
 				}),
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "Beast",

@@ -114,7 +114,7 @@ function SlabTunnel:GetExit()
 	return self.end_point
 end
 
-function SlabTunnel:CanSprintThrough(unit, pos1, pos2)
+function SlabTunnel:CanSprintThrough()
 	return self.can_sprint_through
 end
 
@@ -916,6 +916,7 @@ function Door:SetDoorState(state, animated)
 		end
 		Msg("CoversChanged", self:GetObjectBBox())
 	end
+	Msg("DoorStateChanged")
 end
 
 -- Map lockpickable state to pass_through_state
@@ -964,15 +965,18 @@ function Door:InteractionEnabled()
 end
 
 function DoorOnSameLevel(unit, door)
-	local unitPos = unit:GetPos()
-	local unitPosZ = unitPos:z()
-	if not unitPosZ then unitPosZ = SnapToVoxelZ(unitPos:xy()) or terrain.GetHeight(unitPos) end
-	
-	local doorPos = door:GetPos()
-	local doorPosZ = doorPos:z()
-	if not doorPosZ then doorPosZ = SnapToVoxelZ(doorPos:xy()) or terrain.GetHeight(doorPos) end
-
-	return abs(unitPosZ - doorPosZ) <= const.SlabSizeZ
+	local ux, uy, uz = unit:GetPosXYZ()
+	local dx, dy, dz = door:GetPosXYZ()
+	if not uz then
+		ux, uy, uz = SnapToVoxel(ux, uy, terrain.GetHeight(ux, uy) + tilez / 2)
+	end
+	if not dz then
+		dx, dy, dz = SnapToVoxel(dx, dy, terrain.GetHeight(dx, dy) + tilez / 2)
+	end
+	if abs(uz - dz) > tilez then
+		return false
+	end
+	return true
 end
 
 -- Returns the default interaction for the object.
@@ -995,9 +999,9 @@ function Door:GetInteractionCombatAction(unit)
 		return
 	end
 	
-	local trapAction = BoobyTrappable.GetInteractionCombatAction(self, unit)
+	local trapAction, icon = BoobyTrappable.GetInteractionCombatAction(self, unit)
 	if trapAction then
-		return trapAction
+		return trapAction, icon
 	end
 	
 	if self:CannotOpen() then
@@ -1095,7 +1099,7 @@ DefineClass.SlabTunnelDoor = {
 	tunnel_type = const.TunnelTypeDoor,
 }
 
-function SlabTunnelDoor:CanSprintThrough(unit, pos1, pos2)
+function SlabTunnelDoor:CanSprintThrough()
 	return self.pass_through_obj.pass_through_state == "open"
 end
 
@@ -1132,10 +1136,12 @@ function SlabTunnelDoor:GetCost(context)
 		return -1 -- AI players can't use locked doors
 	end
 	
-	local interact_cost = self.base_interact_cost
+	local obj = self.pass_through_obj
+	local interact_cost = obj:GetOpenAPCost()
+
 	local move_cost = self.base_move_cost * (100 + (context and context.walk_modifier or 0)) / 100
 	
-	return self.base_cost + interact_cost + move_cost
+	return interact_cost + move_cost
 end
 
 local function lWindowSpecialImpassable(window)
@@ -1260,6 +1266,12 @@ DefineClass.SlabWallWindowGrounded = {
 	entity = "TallWindow_City_Single_01",
 	flags = { efCollision = true, efApplyToGrids = true, },
 	pass_through_state = "intact",
+}
+
+UndefineClass("SlabWallWindowGroundedOpen")
+DefineClass.SlabWallWindowGroundedOpen = {
+	__parents = {"SlabWallWindowGrounded"},
+	pass_through_state = "open",
 }
 
 UndefineClass("ImpassableWindowTunnelObject")
@@ -1403,7 +1415,7 @@ DefineClass.SlabTunnelWindow = {
 	base_drop_cost = 0,
 }
 
-function SlabTunnelWindow:CanSprintThrough(unit, pos1, pos2)
+function SlabTunnelWindow:CanSprintThrough()
 	return self.pass_through_obj.pass_through_state == "open"
 end
 
@@ -1476,7 +1488,7 @@ function SlabTunnelWindow:GetCost(context)
 	local move_cost = self.base_move_cost * (100 + (context and context.walk_modifier or 0)) / 100
 	local drop_cost = self.base_drop_cost * (100 + (context and context.drop_down_modifier or 0)) / 100
 	
-	return self.base_cost + interact_cost + move_cost + drop_cost
+	return interact_cost + move_cost + drop_cost
 end
 
 function OnMsg.GatherFXActions(list)

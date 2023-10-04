@@ -8,7 +8,7 @@ PlaceObj('QuestsDef', {
 	TCEs = {
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							QuestId = "Luigi",
@@ -69,7 +69,7 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							QuestId = "Luigi",
@@ -154,6 +154,11 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"I9",
+					},
+				}),
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "Luigi",
 					Vars = set({
@@ -209,6 +214,9 @@ PlaceObj('QuestsDef', {
 			Once = true,
 			ParamId = "TCE_BossConvTresspassers",
 			QuestId = "RimvilleGuardsLogic",
+			requiredSectors = {
+				"I9",
+			},
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
@@ -217,7 +225,7 @@ PlaceObj('QuestsDef', {
 						"I9",
 					},
 				}),
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							QuestId = "_GroupsAttacked",
@@ -289,17 +297,27 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "Luigi",
+					Vars = set({
+	BossInvited = false,
+}),
+					__eval = function ()
+						local quest = gv_Quests['Luigi'] or QuestGetState('Luigi')
+						return not quest.BossInvited
+					end,
+				}),
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"I9",
+					},
+				}),
 				PlaceObj('SectorWarningReceived', {
 					sector_id = "I9",
 				}),
 				PlaceObj('SectorInWarningState', {
 					Negate = true,
 					sector_id = "I9",
-				}),
-				PlaceObj('PlayerIsInSectors', {
-					Sectors = {
-						"I9",
-					},
 				}),
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "RimvilleGuardsLogic",
@@ -309,16 +327,6 @@ PlaceObj('QuestsDef', {
 					__eval = function ()
 						local quest = gv_Quests['RimvilleGuardsLogic'] or QuestGetState('RimvilleGuardsLogic')
 						return not quest.BattlePositions
-					end,
-				}),
-				PlaceObj('QuestIsVariableBool', {
-					QuestId = "Luigi",
-					Vars = set({
-	BossInvited = false,
-}),
-					__eval = function ()
-						local quest = gv_Quests['Luigi'] or QuestGetState('Luigi')
-						return not quest.BossInvited
 					end,
 				}),
 			},
@@ -429,7 +437,7 @@ PlaceObj('QuestsDef', {
 						"I9",
 					},
 				}),
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							QuestId = "RimvilleGuardsLogic",
@@ -503,17 +511,17 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"I9",
+					},
+				}),
 				PlaceObj('UnitIsAroundOtherUnit', {
 					Distance = 12,
 					SecondTargetUnit = "ThugActor_1",
 					TargetUnit = "any merc",
 				}),
 				PlaceObj('SectorWarningReceived', {}),
-				PlaceObj('PlayerIsInSectors', {
-					Sectors = {
-						"I9",
-					},
-				}),
 			},
 			Effects = {
 				PlaceObj('PlayBanterEffect', {

@@ -11,6 +11,7 @@ local function lPlayerSelectedUnit(playerId, tableOfUnitId)
 end
 
 function SetCoOpPlayerAimingAtUnit(playerId, unitId)
+	if not g_PlayerToAim then return end
 	g_PlayerToAim[playerId] = unitId
 	ObjModified("co-op-ui")
 end

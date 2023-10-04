@@ -11,7 +11,7 @@ PlaceObj('InventoryItemCompositeDef', {
 	'Description', T(526556854684, --[[InventoryItemCompositeDef SkillMag_Medical Description]] "90+ beats to which you can perform CPR."),
 	'AdditionalHint', T(420149826572, --[[InventoryItemCompositeDef SkillMag_Medical AdditionalHint]] "<bullet_point> Used through the Item Menu\n<bullet_point> Single use\n<bullet_point> Increases Medical"),
 	'UnitStat', "Medical",
-	'is_valuable', true,
+	'Valuable', 1,
 	'effect_moment', "on_use",
 	'Effects', {
 		PlaceObj('UnitStatBoost', {

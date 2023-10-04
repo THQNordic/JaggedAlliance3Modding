@@ -31,7 +31,7 @@ PlaceObj('XTemplate', {
 					local all_mercs, others_count = 0, 0
 					local profs, profs_count = {}, {}
 					for _, squad in ipairs(squads) do
-						for _, id in pairs(squad.units) do
+						for _, id in ipairs(squad.units) do
 							all_mercs = all_mercs + 1
 							local u = gv_UnitData[id]
 							local op = SectorOperations[u.Operation]

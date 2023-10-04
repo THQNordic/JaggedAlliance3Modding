@@ -83,7 +83,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							QuestId = "04_Betrayal",
@@ -128,7 +128,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableNum', {
 							Amount = 3,
@@ -214,33 +214,29 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
-						PlaceObj('OR', {
-							Conditions = {
-								PlaceObj('QuestIsVariableNum', {
-									Amount = 3,
-									Prop = "Clues",
-									QuestId = "Smiley",
-								}),
-								PlaceObj('QuestIsVariableBool', {
-									Condition = "or",
-									QuestId = "Smiley",
-									Vars = set( "Pastor_Key", "SmileyDead", "SmileyMet" ),
-									__eval = function ()
-										local quest = gv_Quests['Smiley'] or QuestGetState('Smiley')
-										return quest.Pastor_Key or quest.SmileyDead or quest.SmileyMet
-									end,
-								}),
-								PlaceObj('QuestIsVariableBool', {
-									QuestId = "Smiley",
-									Vars = set( "CrimeSceneChecked" ),
-									__eval = function ()
-										local quest = gv_Quests['Smiley'] or QuestGetState('Smiley')
-										return quest.CrimeSceneChecked
-									end,
-								}),
-							},
+						PlaceObj('QuestIsVariableNum', {
+							Amount = 3,
+							Prop = "Clues",
+							QuestId = "Smiley",
+						}),
+						PlaceObj('QuestIsVariableBool', {
+							Condition = "or",
+							QuestId = "Smiley",
+							Vars = set( "Pastor_Key", "SmileyDead", "SmileyMet" ),
+							__eval = function ()
+								local quest = gv_Quests['Smiley'] or QuestGetState('Smiley')
+								return quest.Pastor_Key or quest.SmileyDead or quest.SmileyMet
+							end,
+						}),
+						PlaceObj('QuestIsVariableBool', {
+							QuestId = "Smiley",
+							Vars = set( "CrimeSceneChecked" ),
+							__eval = function ()
+								local quest = gv_Quests['Smiley'] or QuestGetState('Smiley')
+								return quest.CrimeSceneChecked
+							end,
 						}),
 					},
 				}),
@@ -265,25 +261,21 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
-						PlaceObj('OR', {
-							Conditions = {
-								PlaceObj('QuestIsVariableBool', {
-									Condition = "or",
-									QuestId = "Smiley",
-									Vars = set( "Completed", "Failed", "LoveNestChecked", "SmileyDead" ),
-									__eval = function ()
-										local quest = gv_Quests['Smiley'] or QuestGetState('Smiley')
-										return quest.Completed or quest.Failed or quest.LoveNestChecked or quest.SmileyDead
-									end,
-								}),
-								PlaceObj('QuestIsVariableNum', {
-									Amount = 3,
-									Prop = "Clues",
-									QuestId = "Smiley",
-								}),
-							},
+						PlaceObj('QuestIsVariableBool', {
+							Condition = "or",
+							QuestId = "Smiley",
+							Vars = set( "Completed", "Failed", "LoveNestChecked", "SmileyDead" ),
+							__eval = function ()
+								local quest = gv_Quests['Smiley'] or QuestGetState('Smiley')
+								return quest.Completed or quest.Failed or quest.LoveNestChecked or quest.SmileyDead
+							end,
+						}),
+						PlaceObj('QuestIsVariableNum', {
+							Amount = 3,
+							Prop = "Clues",
+							QuestId = "Smiley",
 						}),
 					},
 				}),
@@ -309,33 +301,29 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
-						PlaceObj('OR', {
-							Conditions = {
-								PlaceObj('QuestIsVariableBool', {
-									Condition = "or",
-									QuestId = "Smiley",
-									Vars = set( "Completed", "Failed", "Lead_Shaman", "SmileyDead" ),
-									__eval = function ()
-										local quest = gv_Quests['Smiley'] or QuestGetState('Smiley')
-										return quest.Completed or quest.Failed or quest.Lead_Shaman or quest.SmileyDead
-									end,
-								}),
-								PlaceObj('QuestIsVariableNum', {
-									Amount = 3,
-									Prop = "Clues",
-									QuestId = "Smiley",
-								}),
-								PlaceObj('QuestIsVariableBool', {
-									QuestId = "04_Betrayal",
-									Vars = set( "Given" ),
-									__eval = function ()
-										local quest = gv_Quests['04_Betrayal'] or QuestGetState('04_Betrayal')
-										return quest.Given
-									end,
-								}),
-							},
+						PlaceObj('QuestIsVariableBool', {
+							Condition = "or",
+							QuestId = "Smiley",
+							Vars = set( "Completed", "Failed", "Lead_Shaman", "SmileyDead" ),
+							__eval = function ()
+								local quest = gv_Quests['Smiley'] or QuestGetState('Smiley')
+								return quest.Completed or quest.Failed or quest.Lead_Shaman or quest.SmileyDead
+							end,
+						}),
+						PlaceObj('QuestIsVariableNum', {
+							Amount = 3,
+							Prop = "Clues",
+							QuestId = "Smiley",
+						}),
+						PlaceObj('QuestIsVariableBool', {
+							QuestId = "04_Betrayal",
+							Vars = set( "Given" ),
+							__eval = function ()
+								local quest = gv_Quests['04_Betrayal'] or QuestGetState('04_Betrayal')
+								return quest.Given
+							end,
 						}),
 					},
 				}),
@@ -362,25 +350,21 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
-						PlaceObj('OR', {
-							Conditions = {
-								PlaceObj('QuestIsVariableBool', {
-									Condition = "or",
-									QuestId = "Smiley",
-									Vars = set( "Completed", "Failed", "Lead_Broker", "Pastor_Key", "SmileyDead", "SmileyMet" ),
-									__eval = function ()
-										local quest = gv_Quests['Smiley'] or QuestGetState('Smiley')
-										return quest.Completed or quest.Failed or quest.Lead_Broker or quest.Pastor_Key or quest.SmileyDead or quest.SmileyMet
-									end,
-								}),
-								PlaceObj('QuestIsVariableNum', {
-									Amount = 3,
-									Prop = "Clues",
-									QuestId = "Smiley",
-								}),
-							},
+						PlaceObj('QuestIsVariableBool', {
+							Condition = "or",
+							QuestId = "Smiley",
+							Vars = set( "Completed", "Failed", "Lead_Broker", "Pastor_Key", "SmileyDead", "SmileyMet" ),
+							__eval = function ()
+								local quest = gv_Quests['Smiley'] or QuestGetState('Smiley')
+								return quest.Completed or quest.Failed or quest.Lead_Broker or quest.Pastor_Key or quest.SmileyDead or quest.SmileyMet
+							end,
+						}),
+						PlaceObj('QuestIsVariableNum', {
+							Amount = 3,
+							Prop = "Clues",
+							QuestId = "Smiley",
 						}),
 					},
 				}),
@@ -550,7 +534,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							Condition = "or",
@@ -735,7 +719,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							Condition = "or",

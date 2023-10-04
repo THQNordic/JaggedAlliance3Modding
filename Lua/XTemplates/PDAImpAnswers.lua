@@ -164,6 +164,7 @@ PlaceObj('XTemplate', {
 										self.idAnswer:SetTextStyle(toggled and "PDAIMPAnswerSelected" or "PDAIMPAnswer")
 										self.idBack:SetBackground(toggled and GameColors.L or RGBA(255,255,255,0))
 										local answers = self.parent
+										GetActionsHost(self, true):ActionsUpdated()
 										
 										local context  = self:GetContext()
 										local preset_id =  context.preset.id

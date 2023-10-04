@@ -32,7 +32,7 @@ PlaceObj('BanterDef', {
 	},
 	Once = true,
 	conditions = {
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "OldDiamond",

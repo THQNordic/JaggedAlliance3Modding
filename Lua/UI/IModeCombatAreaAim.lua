@@ -628,7 +628,7 @@ function Targeting_AOE_ParabolaAoE(dialog, blackboard, command, pt)
 					los_values = los_values
 				}
 				if not blackboard.meshes[i] or not IsValid(blackboard.meshes[i]) then
-					local is_mortar = IsKindOfClasses(weapon, "MortarInventoryItem")
+					local is_mortar = IsKindOfClasses(weapon, "MortarInventoryItem", "TrapDetonator")
 					local class = is_mortar and MortarAOEVisuals or GrenadeAOEVisuals
 					blackboard.meshes[i] = class:new({mode = "Ally", state = "blueprint"}, nil, data)
 				end

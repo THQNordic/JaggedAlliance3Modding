@@ -6,13 +6,11 @@ PlaceObj('CharacterEffectCompositeDef', {
 	'SortKey', 1000,
 	'object_class', "Perk",
 	'msg_reactions', {
-		PlaceObj('MsgReaction', {
+		PlaceObj('MsgActorReaction', {
 			Event = "CombatStart",
 			Handler = function (self, dynamic_data)
-				local reaction_idx = table.find(self.msg_reactions or empty_table, "Event", "CombatStart")
-				if not reaction_idx then return end
 				
-				local function exec(self, dynamic_data)
+				local function exec(self, reaction_actor, dynamic_data)
 				if IsSectorUnderground(gv_CurrentSectorId) then
 					for _, unit in ipairs(g_Units) do
 						if HasPerk(unit, self.id) and not unit:HasStatusEffect("ClaustrophobiaChecked") then
@@ -22,25 +20,26 @@ PlaceObj('CharacterEffectCompositeDef', {
 					end
 				end
 				end
-				local id = GetCharacterEffectId(self)
 				
-				if id then
-					local objs = {}
-					for session_id, data in pairs(gv_UnitData) do
-						local obj = g_Units[session_id] or data
-						if obj:HasStatusEffect(id) then
-							objs[session_id] = obj
-						end
-					end
-					for _, obj in sorted_pairs(objs) do
-						exec(self, dynamic_data)
-					end
-				else
-					exec(self, dynamic_data)
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[1]
+				if not reaction_def or reaction_def.Event ~= "CombatStart" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
+					local reaction_actor
+					exec(self, reaction_actor, dynamic_data)
 				end
 				
+				
+				local actors = self:GetReactionActors("CombatStart", reaction_def, dynamic_data)
+				for _, reaction_actor in ipairs(actors) do
+					if self:VerifyReaction("CombatStart", reaction_def, reaction_actor, dynamic_data) then
+						exec(self, reaction_actor, dynamic_data)
+					end
+				end
 			end,
-			HandlerCode = function (self, dynamic_data)
+			HandlerCode = function (self, reaction_actor, dynamic_data)
 				if IsSectorUnderground(gv_CurrentSectorId) then
 					for _, unit in ipairs(g_Units) do
 						if HasPerk(unit, self.id) and not unit:HasStatusEffect("ClaustrophobiaChecked") then
@@ -51,13 +50,11 @@ PlaceObj('CharacterEffectCompositeDef', {
 				end
 			end,
 		}),
-		PlaceObj('MsgReaction', {
+		PlaceObj('MsgActorReaction', {
 			Event = "OnEnterMapVisual",
 			Handler = function (self)
-				local reaction_idx = table.find(self.msg_reactions or empty_table, "Event", "OnEnterMapVisual")
-				if not reaction_idx then return end
 				
-				local function exec(self)
+				local function exec(self, reaction_actor)
 				if IsSectorUnderground(gv_CurrentSectorId) then
 					CreateGameTimeThread(function()
 						while GetInGameInterfaceMode() == "IModeDeployment" do
@@ -71,25 +68,26 @@ PlaceObj('CharacterEffectCompositeDef', {
 					end)
 				end
 				end
-				local id = GetCharacterEffectId(self)
 				
-				if id then
-					local objs = {}
-					for session_id, data in pairs(gv_UnitData) do
-						local obj = g_Units[session_id] or data
-						if obj:HasStatusEffect(id) then
-							objs[session_id] = obj
-						end
-					end
-					for _, obj in sorted_pairs(objs) do
-						exec(self)
-					end
-				else
-					exec(self)
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[2]
+				if not reaction_def or reaction_def.Event ~= "OnEnterMapVisual" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
+					local reaction_actor
+					exec(self, reaction_actor)
 				end
 				
+				
+				local actors = self:GetReactionActors("OnEnterMapVisual", reaction_def, nil)
+				for _, reaction_actor in ipairs(actors) do
+					if self:VerifyReaction("OnEnterMapVisual", reaction_def, reaction_actor, nil) then
+						exec(self, reaction_actor)
+					end
+				end
 			end,
-			HandlerCode = function (self)
+			HandlerCode = function (self, reaction_actor)
 				if IsSectorUnderground(gv_CurrentSectorId) then
 					CreateGameTimeThread(function()
 						while GetInGameInterfaceMode() == "IModeDeployment" do

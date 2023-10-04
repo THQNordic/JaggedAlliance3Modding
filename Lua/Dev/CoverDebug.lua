@@ -699,3 +699,34 @@ function OnMsg.NewTargetDummy(obj)
 		ShowTargetDummy(obj)
 	end
 end
+
+function DumpStepVectors()
+	local entities = { "EquipmentBarry_Top", "EquipmentLivewire_Top", "Animal_Hyena", "Animal_Crocodile", "Animal_Hen" }
+	local filename = string.format("TmpData/AnimStepData.log")
+	local f = io.open(filename, "w+")
+	local log = {}
+	for i, entity in ipairs(entities) do
+		local states = GetStates(entity)
+		for j, anim in ipairs(states) do
+			local step_len = GetStepLength(entity, anim)
+			if step_len ~= 0 then
+				local duration = GetAnimDuration(entity, anim)
+				local compensate = GetAnimCompensate(entity, anim)
+				local txt = string.format('Entity "%s", Anim: "%s", Duration: %d, %s, Step Lenght: %d\n', entity, anim, duration, compensate, step_len)
+				table.insert(log, txt)
+				local last_step = point30
+				for phase = 1, duration do
+					local step = GetEntityStepVector(entity, anim, 0, phase)
+					if step ~= last_step then
+						last_step = step
+						table.insert(log, string.format("%10d : %5d, %d, %d\n", phase, step:xyz()))
+					end
+				end
+				table.insert(log, "\n")
+				f:write(log)
+				table.iclear(log)
+			end
+		end
+	end
+	f:close()
+end

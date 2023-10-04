@@ -13,25 +13,27 @@ PlaceObj('CharacterEffectCompositeDef', {
 	},
 	'object_class', "Perk",
 	'msg_reactions', {
-		PlaceObj('MsgReaction', {
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "target",
 			Event = "DamageTaken",
 			Handler = function (self, attacker, target, dmg, hit_descr)
-				local reaction_idx = table.find(self.msg_reactions or empty_table, "Event", "DamageTaken")
-				if not reaction_idx then return end
 				
 				local function exec(self, attacker, target, dmg, hit_descr)
 				target:AddStatusEffect("BattleFocusBuff")
 				end
-				local id = GetCharacterEffectId(self)
 				
-				if id then
-					if IsKindOf(target, "StatusEffectObject") and target:HasStatusEffect(id) then
-						exec(self, attacker, target, dmg, hit_descr)
-					end
-				else
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[1]
+				if not reaction_def or reaction_def.Event ~= "DamageTaken" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
 					exec(self, attacker, target, dmg, hit_descr)
 				end
 				
+				if self:VerifyReaction("DamageTaken", reaction_def, target, attacker, target, dmg, hit_descr) then
+					exec(self, attacker, target, dmg, hit_descr)
+				end
 			end,
 			HandlerCode = function (self, attacker, target, dmg, hit_descr)
 				target:AddStatusEffect("BattleFocusBuff")

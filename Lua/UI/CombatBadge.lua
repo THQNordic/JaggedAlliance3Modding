@@ -13,6 +13,8 @@ local lAboveBadgeTexts = {
 	InDanger = T(608680053799, "IN DANGER!"),
 	-- queued actions (active pause
 	QueuedAction = T(262910234067, "QUEUED ACTION"),
+	
+	InterruptAttacksRemaining = T(760116982146, "MAX. ATTACKS: <number>"),
 }
 
 -- The combat badge UI
@@ -55,7 +57,9 @@ function CombatBadge:GetCombatBadgeHidingMode()
 		--mode used for showing the target's badge of an attack from AI
 		return "ShowTargetBadge"
 	end
-	if self.combat then return "PlayerTurn" end
+	if self.combat then
+		return "Always"
+	end
 	
 	local optionValue = GetAccountStorageOptionValue("AlwaysShowBadges")
 	if optionValue and optionValue == "Always" and self.mode == "friend" then
@@ -334,14 +338,24 @@ function CombatBadgeAboveNameTextUpdate(win)
 	local badge = win:ResolveId("node")
 	local unit = badge.unit
 	local attacker = Selection and Selection[1]
-	if badge.window_state == "destroying" or not attacker or not IsNetPlayerTurn() then
+	if badge.window_state == "destroying" then
 		win:SetVisible(false)
 		return
 	end
 	
 	local text = false
 	local style = false
-	if badge.mode == "enemy" then
+	
+	if not text and g_Overwatch[unit] then
+		local overwatchData = g_Overwatch[unit]
+		local numberOfAttacks = overwatchData and overwatchData.num_attacks
+		if numberOfAttacks and numberOfAttacks > 0 then
+			text = T{lAboveBadgeTexts.InterruptAttacksRemaining, number = numberOfAttacks}
+			style = "BadgeName_Red"
+		end
+	end
+	
+	if badge.mode == "enemy" and attacker then
 		local enemySeesPlayer = VisibilityCheckAll(attacker, unit, nil, const.uvVisible)
 		local outOfRange = false
 		if attacker and IsKindOf(attacker, "Unit") then	

@@ -10,7 +10,7 @@ PlaceObj('InventoryItemCompositeDef', {
 	'DisplayNamePlural', T(262567603123, --[[InventoryItemCompositeDef TheGreenDiamond DisplayNamePlural]] "Green Diamonds"),
 	'Description', T(696031866693, --[[InventoryItemCompositeDef TheGreenDiamond Description]] "Everybody seems to want it and nobody knows why."),
 	'AdditionalHint', T(682491878825, --[[InventoryItemCompositeDef TheGreenDiamond AdditionalHint]] "<bullet_point> <GameColorD>Can be cashed in for a ridiculous amount of Money</GameColorD>"),
-	'is_valuable', true,
+	'Valuable', 1,
 	'Cost', 50000,
 })
 

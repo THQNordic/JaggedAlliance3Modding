@@ -19,13 +19,12 @@ PlaceObj('CharacterEffectCompositeDef', {
 	'Comment', "lose 1/10 of the bonus for each tile between you and the target (if the target is adjacent I count it as range 0)",
 	'object_class', "Perk",
 	'msg_reactions', {
-		PlaceObj('MsgReaction', {
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "attacker",
 			Event = "GatherCTHModifications",
-			Handler = function (self, attacker, cth_id, data)
-				local reaction_idx = table.find(self.msg_reactions or empty_table, "Event", "GatherCTHModifications")
-				if not reaction_idx then return end
+			Handler = function (self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
 				
-				local function exec(self, attacker, cth_id, data)
+				local function exec(self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
 				if cth_id == self.id then
 					local attacker, target = data.attacker, data.target
 					
@@ -38,16 +37,19 @@ PlaceObj('CharacterEffectCompositeDef', {
 					data.mod_add = Max(0, value)
 				end
 				end
-				local id = GetCharacterEffectId(self)
 				
-				if id then
-					if IsKindOf(attacker, "StatusEffectObject") and attacker:HasStatusEffect(id) then
-						exec(self, attacker, cth_id, data)
-					end
-				else
-					exec(self, attacker, cth_id, data)
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[1]
+				if not reaction_def or reaction_def.Event ~= "GatherCTHModifications" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
+					exec(self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
 				end
 				
+				if self:VerifyReaction("GatherCTHModifications", reaction_def, attacker, attacker, cth_id, action_id, target, weapon1, weapon2, data) then
+					exec(self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
+				end
 			end,
 			HandlerCode = function (self, attacker, cth_id, data)
 				if cth_id == self.id then

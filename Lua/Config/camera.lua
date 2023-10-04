@@ -22,6 +22,7 @@ end
 
 function OnMsg.NewMap()
 	if Platform.developer then
+		--this makes retail bugs unreproducable. why is it dev only?
 		SetupInitialCamera()
 		terrain.UpdateTerrainDebugDraw()
 	end
@@ -31,10 +32,20 @@ function OnMsg.GatherSessionData()
 	gv_SaveCamera = CameraBeforeActionCamera or pack_params(GetCamera())
 end
 
+function dbgCamAngle()
+	local ptCamera, ptCameraLookAt = GetCamera()
+	local cameraVector = ptCameraLookAt - ptCamera
+	local _, r = GetAxisAngle(axis_z, cameraVector)
+	local ret = 180 - r/60
+	print(ret)
+	return ret
+end
+
 function OnMsg.LoadSessionData()
 	if gv_SaveCamera then
 		SetCamera(unpack_params(gv_SaveCamera))
-		cameraTac.SetOverview(false, true)
+		--make sure CameraTacLookAtAngle is obayed 
+		cameraTac.SetupLookAtAngle()
 	end
 end
 

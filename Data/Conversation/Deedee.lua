@@ -760,7 +760,7 @@ PlaceObj('Conversation', {
 						return not quest.Completed
 					end,
 				}),
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('UnitSquadHasMerc', {
 							HasStat = "Explosives",
@@ -916,7 +916,7 @@ PlaceObj('Conversation', {
 		}),
 		PlaceObj('ConversationPhrase', {
 			Conditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							Condition = "or",

@@ -261,6 +261,7 @@ function MeleeWeapon:GetAttackResults(action, attack_args)
 		attack_results[1] = hit
 		attack_results.hit_objs[#attack_results.hit_objs + 1] = target
 		attack_results.hit_objs[target] = true
+		attack_results.unit_damage = { [target] = hit.damage }
 		if IsKindOf(target, "Unit") and not target:IsDead() and hit.damage >= target:GetTotalHitPoints() then
 			attack_results.killed_units = {target}
 		end
@@ -298,7 +299,8 @@ DefineClass.StackableMeleeWeapon = {
 		{ id = "Condition" },
 		{ id = "RepairCost" },
 		{ id = "Repairable" },
-		{ id = "ScrapParts" },
+		{ category = "Scrap", id = "ScrapParts", name = "Scrap Parts", help = "The number for Parts that are given to the player when its scraped", 
+			editor = "number", default = 0, template = true, min = 0, max = 1000, },
 	}
 }
 

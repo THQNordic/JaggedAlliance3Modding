@@ -11,7 +11,7 @@ PlaceObj('InventoryItemCompositeDef', {
 	'Description', T(672223422197, --[[InventoryItemCompositeDef SkillMag_Wisdom Description]] "The latest pee-based recipes for your outdoor trips."),
 	'AdditionalHint', T(680885967646, --[[InventoryItemCompositeDef SkillMag_Wisdom AdditionalHint]] "<bullet_point> Used through the Item Menu\n<bullet_point> Single use\n<bullet_point> Increases Wisdom"),
 	'UnitStat', "Wisdom",
-	'is_valuable', true,
+	'Valuable', 1,
 	'effect_moment', "on_use",
 	'Effects', {
 		PlaceObj('UnitStatBoost', {

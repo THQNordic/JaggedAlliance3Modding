@@ -96,7 +96,7 @@ PlaceObj('XTemplate', {
 								if operation_id=="RepairItems" then
 									costs[#costs+1] = {{resource = "Parts", value= SectorOperation_ItemsCalcRes(sector_id, operation_id)}}
 								end	
-								if operation_id=="CraftAmmo" or operation_id=="CraftExplosives" then
+								if IsCraftOperationId(operation_id) then
 									costs[#costs+1] = {{resource = "Parts", value= SectorOperation_ItemsCalcRes(sector_id, operation_id)}}
 								end	
 								

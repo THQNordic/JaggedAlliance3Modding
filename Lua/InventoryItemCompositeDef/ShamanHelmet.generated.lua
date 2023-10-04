@@ -7,13 +7,13 @@ DefineClass.ShamanHelmet = {
 
 
 	object_class = "Armor",
-	Degradation = 4,
 	ScrapParts = 6,
+	Degradation = 4,
 	Icon = "UI/Icons/Items/shaman_helmet",
 	DisplayName = T(710411844643, --[[InventoryItemCompositeDef ShamanHelmet DisplayName]] "Deathsquad Helmet"),
 	DisplayNamePlural = T(722747917523, --[[InventoryItemCompositeDef ShamanHelmet DisplayNamePlural]] "Deathsquad Helmets"),
 	AdditionalHint = T(265230607158, --[[InventoryItemCompositeDef ShamanHelmet AdditionalHint]] "<bullet_point> Can't be combined with weave or ceramics"),
-	is_valuable = true,
+	Valuable = 1,
 	Slot = "Head",
 	PenetrationClass = 4,
 	AdditionalReduction = 40,

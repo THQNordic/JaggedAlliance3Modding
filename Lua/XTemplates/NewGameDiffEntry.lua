@@ -20,6 +20,7 @@ PlaceObj('XTemplate', {
 		'OnContextUpdate', function (self, context, ...)
 			if IsKindOf(self.context,"GameDifficultyDef") then
 				local gameObj = Game or NewGameObj
+				if not gameObj then return end
 				local difficultyKey = gameObj == Game and "game_difficulty" or "difficulty"
 				if self.context.id == gameObj[difficultyKey] then
 					self.idCheckmark:SetColumn(2)

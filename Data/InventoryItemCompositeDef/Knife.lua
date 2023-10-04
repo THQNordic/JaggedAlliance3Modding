@@ -4,6 +4,7 @@ PlaceObj('InventoryItemCompositeDef', {
 	'Group', "MeleeWeapon - Stackable",
 	'Id', "Knife",
 	'object_class', "StackableMeleeWeapon",
+	'ScrapParts', 1,
 	'Reliability', 50,
 	'Icon', "UI/Icons/Weapons/Combat Knife Balanced",
 	'DisplayName', T(778293748375, --[[InventoryItemCompositeDef Knife DisplayName]] "Combat Knife"),

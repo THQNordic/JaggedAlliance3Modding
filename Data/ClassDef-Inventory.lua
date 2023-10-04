@@ -425,12 +425,15 @@ PlaceObj('ClassDef', {
 		'max', 200,
 		'modifiable', true,
 	}),
-	PlaceObj('PropertyDefBool', {
+	PlaceObj('PropertyDefNumber', {
 		'category', "Caliber",
-		'id', "PointBlankRange",
-		'name', "Point Blank Range",
+		'id', "PointBlankBonus",
 		'help', "attacks get bonus CTH in point-blank range",
 		'template', true,
+		'default', 0,
+		'min', 0,
+		'max', 1,
+		'modifiable', true,
 	}),
 	PlaceObj('PropertyDefNumber', {
 		'category', "Caliber",
@@ -635,6 +638,12 @@ PlaceObj('ClassDef', {
 		'name', "GetDPS",
 		'code', function (self)
 			return self:GetProperty("Damage") * Max(0, GetRangeAccuracy(self, self:GetProperty("SetRange")*const.SlabSizeX)) / 100
+		end,
+	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "HasPointBlankBonus",
+		'code', function (self)
+			return self.PointBlankBonus ~= 0
 		end,
 	}),
 })
@@ -897,16 +906,25 @@ PlaceObj('ClassDef', {
 		'lines', 1,
 		'max_lines', 10,
 	}),
-	PlaceObj('PropertyDefBool', {
+	PlaceObj('PropertyDefNumber', {
 		'category', "General",
 		'id', "LargeItem",
-		'name', "Large",
 		'template', true,
+		'default', 0,
+		'slider', true,
+		'min', 0,
+		'max', 1,
+		'modifiable', true,
 	}),
-	PlaceObj('PropertyDefBool', {
+	PlaceObj('PropertyDefNumber', {
 		'category', "General",
 		'id', "Cumbersome",
 		'template', true,
+		'default', 0,
+		'slider', true,
+		'min', 0,
+		'max', 1,
+		'modifiable', true,
 	}),
 	PlaceObj('PropertyDefChoice', {
 		'category', "General",
@@ -916,12 +934,16 @@ PlaceObj('ClassDef', {
 		'template', true,
 		'items', function (self) return GetUnitStatsCombo() end,
 	}),
-	PlaceObj('PropertyDefBool', {
+	PlaceObj('PropertyDefNumber', {
 		'category', "General",
-		'id', "is_valuable",
+		'id', "Valuable",
 		'name', "Valuable Item (for VR only)",
 		'help', "Will check whether to play the ValuableItemFound VR",
 		'template', true,
+		'default', 0,
+		'min', 0,
+		'max', 1,
+		'modifiable', true,
 	}),
 	PlaceObj('PropertyDefButtons', {
 		'category', "General",
@@ -1012,7 +1034,7 @@ PlaceObj('ClassDef', {
 	PlaceObj('ClassMethodDef', {
 		'name', "GetUIWidth",
 		'code', function (self)
-			return self.LargeItem and 2 or 1
+			return self:IsLargeItem() and 2 or 1
 		end,
 	}),
 	PlaceObj('ClassMethodDef', {
@@ -1025,6 +1047,24 @@ PlaceObj('ClassDef', {
 		'name', "GetRolloverType",
 		'code', function (self)
 			return self.ItemType
+		end,
+	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "IsLargeItem",
+		'code', function (self)
+			return self.LargeItem ~= 0
+		end,
+	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "IsCumbersome",
+		'code', function (self)
+			return self.Cumbersome ~= 0
+		end,
+	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "IsValuable",
+		'code', function (self)
+			return self.Valuable ~= 0
 		end,
 	}),
 })
@@ -1041,6 +1081,10 @@ PlaceObj('ClassDef', {
 })
 
 PlaceObj('ClassDef', {
+	DefParentClassList = {
+		"PropertyObject",
+		"ScrapableItem",
+	},
 	group = "Inventory",
 	id = "ItemWithCondition",
 	PlaceObj('PropertyDefNumber', {
@@ -1099,22 +1143,6 @@ PlaceObj('ClassDef', {
 		'no_edit', true,
 		'template', true,
 		'default', 0,
-	}),
-	PlaceObj('PropertyDefNumber', {
-		'category', "Condition",
-		'id', "ScrapParts",
-		'name', "Scrap Parts",
-		'help', "The number for Parts that are given to the player when its scraped",
-		'template', true,
-		'default', 0,
-		'min', 0,
-		'max', 1000,
-	}),
-	PlaceObj('ClassMethodDef', {
-		'name', "GetScrapParts",
-		'code', function (self)
-			return self.ScrapParts
-		end,
 	}),
 	PlaceObj('ClassMethodDef', {
 		'name', "AmountOfScrapPartsFromItem",
@@ -1438,6 +1466,33 @@ PlaceObj('ClassDef', {
 PlaceObj('ClassDef', {
 	group = "Inventory",
 	id = "QuestItemProperties",
+})
+
+PlaceObj('ClassDef', {
+	group = "Inventory",
+	id = "ScrapableItem",
+	PlaceObj('PropertyDefNumber', {
+		'category', "Condition",
+		'id', "ScrapParts",
+		'name', "Scrap Parts",
+		'help', "The number for Parts that are given to the player when its scraped",
+		'template', true,
+		'default', 0,
+		'min', 0,
+		'max', 1000,
+	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "GetScrapParts",
+		'code', function (self)
+			return self.ScrapParts
+		end,
+	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "AmountOfScrapPartsFromItem",
+		'code', function (self)
+			return  self:GetScrapParts()
+		end,
+	}),
 })
 
 PlaceObj('ClassDef', {

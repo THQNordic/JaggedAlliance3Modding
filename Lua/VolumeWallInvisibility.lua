@@ -157,12 +157,14 @@ function StartWallInvisibilityThread(reason)
 	end
 	
 	WallInvisibilityThread = CreateRealTimeThread(WallInvisibilityThreadMethod)
+	ResetBlackPlaneVisibility()
 end
 
 function StopAllHiding(reason, delay, time)
 	StopWallInvisibilityThread(reason)
 	CMT_SetPause(true, reason)
 	C_CCMT_ShowAllAndReset(delay, time)
+	blackPlanesLastVisibleFloor = false
 end
 
 function ResumeAllHiding(reason)
@@ -177,8 +179,14 @@ function StopWallInvisibilityThread(reason)
 		for bld, floor in pairs(VT2TouchedBuildings) do
 			local meta = VolumeBuildingsMeta[bld]
 			local to = meta.maxFloor
-			for f = floor, to do
+			for f = floor + 1, to do
 				ShowRoomsOnFloor(bld, f)
+			end
+		end
+		
+		for r, sides in pairs(VT2CollapsedWalls) do
+			for side, some_val in pairs(sides) do
+				ShowWall(r, side)
 			end
 		end
 		
@@ -192,6 +200,8 @@ function StopWallInvisibilityThread(reason)
 		DeleteThread(WallInvisibilityThread)
 		WallInvisibilityThread = false
 	end
+	
+	ResetBlackPlaneVisibility()
 end
 
 function ResetWallInvisibilityThread()
@@ -252,7 +262,7 @@ function GetUnitFloor(unitPos)
 end
 
 function C_GetSlabFloor(slab)
-	return IsKindOf(slab, "Slab") and slab.room and slab.floor or WallInvisibilityGetCamFloor(slab:GetPos(), slab:GetPos():z())
+	return IsKindOf(slab, "Slab") and slab.room and slab.floor or WallInvisibilityGetCamFloor(slab:GetPos())
 end
 
 function WallInvisibilityGetCamFloor(pos, terrainZ)
@@ -995,9 +1005,9 @@ AppendClass.Room = {
 	hidden = false,
 }
 
-function ShowRoom(room)
+function ShowRoom(room, force)
 	--show all parts of a room
-	if not room.hidden then return end
+	if not room.hidden and not force then return end
 	room.hidden = false
 	ShowWall(room, "Floor")
 	ShowBaseWall(room, "North", "batch")
@@ -1044,15 +1054,13 @@ function HideRoomsOnFloor(bld, f)
 	end
 end
 
-function ShowRoomsOnFloor(bld, f, roofs)
+function ShowRoomsOnFloor(bld, f, force)
 	local floorT = bld[f]
 	for i = 1, #(floorT or "") do
 		local room = floorT[i]
-		--if roofs or not room:IsRoofOnly() then
-			if ShouldProcessRoom(room) then
-				ShowRoom(room)
-			end
-		--end
+		if ShouldProcessRoom(room) then
+			ShowRoom(room, force)
+		end
 	end
 end
 

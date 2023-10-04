@@ -18,28 +18,30 @@ PlaceObj('CharacterEffectCompositeDef', {
 	'Comment', "Used in Nazdarovya",
 	'object_class', "CharacterEffect",
 	'msg_reactions', {
-		PlaceObj('MsgReaction', {
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "attacker",
 			Event = "GatherCTHModifications",
-			Handler = function (self, attacker, cth_id, data)
-				local reaction_idx = table.find(self.msg_reactions or empty_table, "Event", "GatherCTHModifications")
-				if not reaction_idx then return end
+			Handler = function (self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
 				
-				local function exec(self, attacker, cth_id, data)
+				local function exec(self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
 				if cth_id == self.id and data.action.ActionType == "Ranged Attack" then
 					data.mod_add = data.mod_add + self:ResolveValue("range_cth_mod")
 					data.display_name = T{776394275735, "Perk: <name>", name = self.DisplayName}
 				end
 				end
-				local id = GetCharacterEffectId(self)
 				
-				if id then
-					if IsKindOf(attacker, "StatusEffectObject") and attacker:HasStatusEffect(id) then
-						exec(self, attacker, cth_id, data)
-					end
-				else
-					exec(self, attacker, cth_id, data)
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[1]
+				if not reaction_def or reaction_def.Event ~= "GatherCTHModifications" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
+					exec(self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
 				end
 				
+				if self:VerifyReaction("GatherCTHModifications", reaction_def, attacker, attacker, cth_id, action_id, target, weapon1, weapon2, data) then
+					exec(self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
+				end
 			end,
 			HandlerCode = function (self, attacker, cth_id, data)
 				if cth_id == self.id and data.action.ActionType == "Ranged Attack" then
@@ -48,19 +50,28 @@ PlaceObj('CharacterEffectCompositeDef', {
 				end
 			end,
 		}),
-		PlaceObj('MsgReaction', {
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "obj",
 			Event = "StatusEffectAdded",
 			Handler = function (self, obj, id, stacks)
-				local reaction_idx = table.find(self.msg_reactions or empty_table, "Event", "StatusEffectAdded")
-				if not reaction_idx then return end
 				
 				local function exec(self, obj, id, stacks)
 				obj:RemoveStatusEffect("Conscience_Sinful")
 				obj:RemoveStatusEffect("Conscience_Guilty")
 				end
-				local _id = GetCharacterEffectId(self)
-				if _id == id then exec(self, obj, id, stacks) end
 				
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[2]
+				if not reaction_def or reaction_def.Event ~= "StatusEffectAdded" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
+					exec(self, obj, id, stacks)
+				end
+				
+				if self:VerifyReaction("StatusEffectAdded", reaction_def, obj, obj, id, stacks) then
+					exec(self, obj, id, stacks)
+				end
 			end,
 			HandlerCode = function (self, obj, id, stacks)
 				obj:RemoveStatusEffect("Conscience_Sinful")

@@ -8,7 +8,7 @@ SetpiecePrgs.PortCacaoFirstEnter_LegionActor1 = function(seed, state, MainActor)
 	prgdbg(li, 1, 1) _, LegionActor1_Port = sprocall(SetpieceTeleport.Exec, SetpieceTeleport, state, MainActor, "LegionActor1_Port", true)
 	prgdbg(li, 1, 2) sprocall(SetpieceSetStance.Exec, SetpieceSetStance, state, rand, true, "", MainActor, "Standing", "Current Weapon", true)
 	local _, SP_LegionActor1_GoTo
-	prgdbg(li, 1, 3) _, SP_LegionActor1_GoTo = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, true, "", MainActor, "SP_LegionActor1_GoTo", true, false, false, "", false, false, "")
+	prgdbg(li, 1, 3) _, SP_LegionActor1_GoTo = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, true, "", MainActor, "SP_LegionActor1_GoTo", true, false, false, "", false, false, "", 1000)
 	prgdbg(li, 1, 4) sprocall(SetpieceWaitCheckpoint.Exec, SetpieceWaitCheckpoint, state, rand, "PortCacaoCity_FirstBanterDone")
 	prgdbg(li, 1, 5) sprocall(SetpieceSleep.Exec, SetpieceSleep, state, rand, true, "", 500)
 	prgdbg(li, 1, 6) sprocall(SetpieceSetStance.Exec, SetpieceSetStance, state, rand, true, "", MainActor, "Crouch", "Current Weapon", true)

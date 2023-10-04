@@ -75,7 +75,8 @@ end
 ChangeGameplayMaps_LastChangedToTest = 6
 
 function ViewRandomMapPositions(duration)
-	local bam = MapGetMarkers("BorderArea")[1]
+	local border_areas = MapGetMarkers("BorderArea")
+	local bam = border_areas and border_areas[1]
 	if bam then
 		local end_time = GetPreciseTicks() + (duration or 1500)
 		for _, pos in random_ipairs(bam:GetAreaPositions(), 0) do
@@ -177,8 +178,10 @@ function GameTests.Ladders()
 		return
 	end
 
-	local pos1, pos2 = ladder:GetTunnelPositions()
-	
+	local x1, y1, z1, x2, y2, z2 = ladder:GetTunnelPositions()
+	local pos1 = point(x1, y1, z1)
+	local pos2 = point(x2, y2, z2)
+
 	local Barry = g_Units.Barry
 	local Grizzly = g_Units.Grizzly
 	

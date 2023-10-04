@@ -12,11 +12,10 @@ PlaceObj('CharacterEffectCompositeDef', {
 	},
 	'object_class', "CharacterEffect",
 	'msg_reactions', {
-		PlaceObj('MsgReaction', {
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "obj",
 			Event = "StatusEffectAdded",
 			Handler = function (self, obj, id, stacks)
-				local reaction_idx = table.find(self.msg_reactions or empty_table, "Event", "StatusEffectAdded")
-				if not reaction_idx then return end
 				
 				local function exec(self, obj, id, stacks)
 				-- remove unit from Revealed tables (visible until end of turn mechanic, NOT Revealed status)
@@ -25,9 +24,19 @@ PlaceObj('CharacterEffectCompositeDef', {
 				end
 				Msg("UnitStealthChanged", obj) -- this will invalidate visibility and apply the removed reveals automatically
 				end
-				local _id = GetCharacterEffectId(self)
-				if _id == id then exec(self, obj, id, stacks) end
 				
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[1]
+				if not reaction_def or reaction_def.Event ~= "StatusEffectAdded" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
+					exec(self, obj, id, stacks)
+				end
+				
+				if self:VerifyReaction("StatusEffectAdded", reaction_def, obj, obj, id, stacks) then
+					exec(self, obj, id, stacks)
+				end
 			end,
 			HandlerCode = function (self, obj, id, stacks)
 				-- remove unit from Revealed tables (visible until end of turn mechanic, NOT Revealed status)
@@ -37,11 +46,10 @@ PlaceObj('CharacterEffectCompositeDef', {
 				Msg("UnitStealthChanged", obj) -- this will invalidate visibility and apply the removed reveals automatically
 			end,
 		}),
-		PlaceObj('MsgReaction', {
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "obj",
 			Event = "StatusEffectRemoved",
 			Handler = function (self, obj, id, stacks, reason)
-				local reaction_idx = table.find(self.msg_reactions or empty_table, "Event", "StatusEffectRemoved")
-				if not reaction_idx then return end
 				
 				local function exec(self, obj, id, stacks, reason)
 				if g_Combat and IsKindOf(obj, "Unit") then
@@ -54,9 +62,19 @@ PlaceObj('CharacterEffectCompositeDef', {
 				end
 				Msg("UnitStealthChanged", obj)
 				end
-				local _id = GetCharacterEffectId(self)
-				if _id == id then exec(self, obj, id, stacks, reason) end
 				
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[2]
+				if not reaction_def or reaction_def.Event ~= "StatusEffectRemoved" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
+					exec(self, obj, id, stacks, reason)
+				end
+				
+				if self:VerifyReaction("StatusEffectRemoved", reaction_def, obj, obj, id, stacks, reason) then
+					exec(self, obj, id, stacks, reason)
+				end
 			end,
 			HandlerCode = function (self, obj, id, stacks, reason)
 				if g_Combat and IsKindOf(obj, "Unit") then

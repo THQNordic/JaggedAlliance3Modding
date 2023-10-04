@@ -17,10 +17,10 @@ SetpiecePrgs.Trailer_01 = function(seed, state, TriggerUnits)
 	local _, GhostStartPos
 	prgdbg(li, 1, 10) _, GhostStartPos = sprocall(SetpieceTeleport.Exec, SetpieceTeleport, state, Ghost, "GhostStartPos", true)
 	local _, Hypo
-	prgdbg(li, 1, 11) _, Hypo = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, true, "", Ghost, "Hypo", true, true, false, "", false, false, "")
+	prgdbg(li, 1, 11) _, Hypo = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, true, "", Ghost, "Hypo", true, true, false, "", false, false, "", 1000)
 	prgdbg(li, 1, 12) sprocall(SetpieceAnimation.Exec, SetpieceAnimation, state, rand, true, "", Ghost, "", true, "civ_Open_Door", 1000, 0, range(1, 1), 0, false, true, false, "")
 	local _, TrapDoor
-	prgdbg(li, 1, 13) _, TrapDoor = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, true, "", Ghost, "TrapDoor", true, true, true, "", false, false, "")
+	prgdbg(li, 1, 13) _, TrapDoor = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, true, "", Ghost, "TrapDoor", true, true, true, "", false, false, "", 1000)
 	prgdbg(li, 1, 14) sprocall(SetpieceAnimation.Exec, SetpieceAnimation, state, rand, true, "", Ghost, "", true, "civ_Standing_To_Crouch", 1000, 0, range(1, 1), 0, false, true, false, "")
 	prgdbg(li, 1, 15) sprocall(SetpieceFadeIn.Exec, SetpieceFadeIn, state, rand, true, "", 400, 700)
 	prgdbg(li, 1, 16) sprocall(SetpieceDespawn.Exec, SetpieceDespawn, Ghost)

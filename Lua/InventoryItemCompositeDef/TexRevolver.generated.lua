@@ -7,9 +7,9 @@ DefineClass.TexRevolver = {
 
 
 	object_class = "Revolver",
+	ScrapParts = 8,
 	RepairCost = 50,
 	Reliability = 95,
-	ScrapParts = 8,
 	Icon = "UI/Icons/Weapons/TexRevolver",
 	DisplayName = T(520238058822, --[[InventoryItemCompositeDef TexRevolver DisplayName]] "Custom Six-Shooter"),
 	DisplayNamePlural = T(463004632034, --[[InventoryItemCompositeDef TexRevolver DisplayNamePlural]] "Custom Six-Shooters"),
@@ -23,7 +23,7 @@ DefineClass.TexRevolver = {
 	AimAccuracy = 5,
 	CritChanceScaled = 30,
 	MagazineSize = 6,
-	PointBlankRange = true,
+	PointBlankBonus = 1,
 	OverwatchAngle = 2160,
 	Entity = "Weapon_Colt",
 	ComponentSlots = {

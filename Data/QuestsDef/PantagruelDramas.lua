@@ -287,6 +287,13 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"H9",
+						"D6",
+						"C5",
+					},
+				}),
 				PlaceObj('UnitIsAroundOtherUnit', {
 					DisableContextModification = true,
 					Distance = 15,
@@ -310,6 +317,11 @@ PlaceObj('QuestsDef', {
 			Once = true,
 			ParamId = "TCE_AbusersPlayBanter",
 			QuestId = "PantagruelDramas",
+			requiredSectors = {
+				"H9",
+				"D6",
+				"C5",
+			},
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
@@ -435,12 +447,12 @@ PlaceObj('QuestsDef', {
 						return quest.ChimurengaEnemy
 					end,
 				}),
+				PlaceObj('SectorCheckOwner', {
+					sector_id = "C7",
+				}),
 				PlaceObj('QuestHasTimerPassed', {
 					QuestId = "PantagruelDramas",
 					TimerVariable = "SinceChimurengaSparedTimer",
-				}),
-				PlaceObj('SectorCheckOwner', {
-					sector_id = "C7",
 				}),
 			},
 			Effects = {
@@ -558,7 +570,7 @@ PlaceObj('QuestsDef', {
 					Negate = true,
 					sector_id = "D8",
 				}),
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('VillainIsDefeated', {
 							Group = "Chimurenga",
@@ -653,6 +665,11 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"D6",
+					},
+				}),
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "PantagruelDramas",
 					Vars = set({
@@ -680,6 +697,9 @@ PlaceObj('QuestsDef', {
 			Once = true,
 			ParamId = "TCE_ReleaseInfected",
 			QuestId = "PantagruelDramas",
+			requiredSectors = {
+				"D6",
+			},
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {

@@ -117,29 +117,29 @@ SetpiecePrgs.Dump_FirstEnter = function(seed, state, TriggerUnits)
 	local _, SP_Henri_ExitPort
 	prgdbg(li, 1, 79) _, SP_Henri_ExitPort = sprocall(SetpieceTeleport.Exec, SetpieceTeleport, state, Henri, "SP_Henri_ExitPort", true)
 	local _, SP_Henri_GoTo
-	prgdbg(li, 1, 80) _, SP_Henri_GoTo = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Henri, "SP_Henri_Exit", true, false, false, "Standing", false, false, "Walk_Slow_Neutral")
+	prgdbg(li, 1, 80) _, SP_Henri_GoTo = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Henri, "SP_Henri_Exit", true, false, false, "Standing", false, false, "Walk_Slow_Neutral", 1000)
 	local _
-	prgdbg(li, 1, 81) _, SP_Henri_GoTo = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", KnightsActor1, "SP_Henri_Exit", true, false, false, "", false, false, "Walk_Fast_Neutral")
+	prgdbg(li, 1, 81) _, SP_Henri_GoTo = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", KnightsActor1, "SP_Henri_Exit", true, false, false, "", false, false, "Walk_Fast_Neutral", 1000)
 	local _
-	prgdbg(li, 1, 82) _, SP_Henri_GoTo = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", KnightsActor2, "SP_Henri_Exit", true, false, false, "", false, false, "Walk_Fast_Paranoid")
+	prgdbg(li, 1, 82) _, SP_Henri_GoTo = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", KnightsActor2, "SP_Henri_Exit", true, false, false, "", false, false, "Walk_Fast_Paranoid", 1000)
 	local _, SP_Knights_Exit1
-	prgdbg(li, 1, 83) _, SP_Knights_Exit1 = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", KnightsActor3, "SP_Knights_Exit1", true, false, false, "", false, false, "Walk_Fast_Neutral")
+	prgdbg(li, 1, 83) _, SP_Knights_Exit1 = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", KnightsActor3, "SP_Knights_Exit1", true, false, false, "", false, false, "Walk_Fast_Neutral", 1000)
 	local _, SP_Knights_Exit2
-	prgdbg(li, 1, 84) _, SP_Knights_Exit2 = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", KnightsActor4, "SP_Knights_Exit2", true, false, false, "", false, false, "Walk_Fast_Paranoid")
-	prgdbg(li, 1, 85) sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", KnightsActor5, "SP_Knights_Exit1", true, false, false, "", false, false, "Walk_Slow_Neutral")
-	prgdbg(li, 1, 86) sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", KnightsActor6, "SP_Knights_Exit2", true, false, false, "", false, false, "Walk_Normal_Neutral")
-	prgdbg(li, 1, 87) sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", KnightsActor7, "SP_Knights_Exit2", true, false, false, "", false, false, "Walk_Slow_Neutral")
+	prgdbg(li, 1, 84) _, SP_Knights_Exit2 = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", KnightsActor4, "SP_Knights_Exit2", true, false, false, "", false, false, "Walk_Fast_Paranoid", 1000)
+	prgdbg(li, 1, 85) sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", KnightsActor5, "SP_Knights_Exit1", true, false, false, "", false, false, "Walk_Slow_Neutral", 1000)
+	prgdbg(li, 1, 86) sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", KnightsActor6, "SP_Knights_Exit2", true, false, false, "", false, false, "Walk_Normal_Neutral", 1000)
+	prgdbg(li, 1, 87) sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", KnightsActor7, "SP_Knights_Exit2", true, false, false, "", false, false, "Walk_Slow_Neutral", 1000)
 	local _, SP_Baronne_GoTo
-	prgdbg(li, 1, 88) _, SP_Baronne_GoTo = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Baronne, "SP_Baronne_Exit", true, false, false, "Standing", false, false, "Walk_Slow_Neutral")
+	prgdbg(li, 1, 88) _, SP_Baronne_GoTo = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", Baronne, "SP_Baronne_Exit", true, false, false, "Standing", false, false, "Walk_Slow_Neutral", 1000)
 	local _
-	prgdbg(li, 1, 89) _, SP_Baronne_GoTo = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", NoblesActor1, "SP_Baronne_Exit", true, false, false, "", false, false, "Walk_Slow_Neutral")
+	prgdbg(li, 1, 89) _, SP_Baronne_GoTo = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", NoblesActor1, "SP_Baronne_Exit", true, false, false, "", false, false, "Walk_Slow_Neutral", 1000)
 	local _
-	prgdbg(li, 1, 90) _, SP_Baronne_GoTo = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", NoblesActor2, "SP_Baronne_Exit", true, false, false, "", false, false, "Walk_Normal_Neutral")
+	prgdbg(li, 1, 90) _, SP_Baronne_GoTo = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", NoblesActor2, "SP_Baronne_Exit", true, false, false, "", false, false, "Walk_Normal_Neutral", 1000)
 	local _, SP_Nobles_Exit1
-	prgdbg(li, 1, 91) _, SP_Nobles_Exit1 = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", NoblesActor3, "SP_Nobles_Exit1", true, false, false, "", false, false, "Walk_Normal_Neutral")
-	prgdbg(li, 1, 92) sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", NoblesActor4, "SP_Nobles_Exit1", true, false, false, "", false, false, "Walk_Fast_Paranoid")
-	prgdbg(li, 1, 93) sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", NoblesActor5, "SP_Nobles_Exit1", true, false, false, "", false, false, "Walk_Normal_Neutral")
-	prgdbg(li, 1, 94) sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", NoblesActor6, "SP_Baronne_Exit", true, false, false, "", false, false, "Walk_Fast_Neutral")
+	prgdbg(li, 1, 91) _, SP_Nobles_Exit1 = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", NoblesActor3, "SP_Nobles_Exit1", true, false, false, "", false, false, "Walk_Normal_Neutral", 1000)
+	prgdbg(li, 1, 92) sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", NoblesActor4, "SP_Nobles_Exit1", true, false, false, "", false, false, "Walk_Fast_Paranoid", 1000)
+	prgdbg(li, 1, 93) sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", NoblesActor5, "SP_Nobles_Exit1", true, false, false, "", false, false, "Walk_Normal_Neutral", 1000)
+	prgdbg(li, 1, 94) sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, false, "", NoblesActor6, "SP_Baronne_Exit", true, false, false, "", false, false, "Walk_Fast_Neutral", 1000)
 	prgdbg(li, 1, 95) sprocall(SetpieceCamera.Exec, SetpieceCamera, state, rand, true, "", "Tac", "", "", "linear", 0, false, false, point(161666, 181293, 20836), point(162237, 183559, 22718), false, false, 4200, 2000, false, 0, 0, 0, 0, 0, 0, "Default", 100)
 	prgdbg(li, 1, 96) sprocall(SetpieceFadeIn.Exec, SetpieceFadeIn, state, rand, true, "", 100, 1500)
 	prgdbg(li, 1, 97) sprocall(SetpieceSleep.Exec, SetpieceSleep, state, rand, true, "", 2500)

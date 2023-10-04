@@ -434,7 +434,7 @@ function MoveItem(args)
 	--this can only be a second weapon when trying to equip large weap on 2 small ones;
 	--piggy back on item_at_dest and item checks and assume swap for scnd item is always possible;
 	local item_at_dest_2 = false 
-	if dest_x and item.LargeItem then
+	if dest_x and item:IsLargeItem() then
 		--check for other items underneath
 		local other_item_at_dest = dest_container:GetItemInSlot(dest_container_slot_name, nil, dest_x + 1, dest_y)
 		if other_item_at_dest == item then
@@ -451,7 +451,7 @@ function MoveItem(args)
 			item_at_dest = other_item_at_dest
 		end
 	end
-	if src_x and dest_x and not item.LargeItem and item_at_dest and item_at_dest.LargeItem then
+	if src_x and dest_x and not item:IsLargeItem() and item_at_dest and item_at_dest:IsLargeItem() then
 		local other_item_at_dest = dest_container:GetItemInSlot(dest_container_slot_name, nil, dest_x + 1, dest_y)
 		if other_item_at_dest ~= item_at_dest then
 			--small item dropping on large item second slot
@@ -595,7 +595,7 @@ function MoveItem(args)
 			x, y = point_unpack(p_pos)
 			if local_items_moved then
 				local_items_moved[xxhash(x, y)] = item
-				if item.LargeItem then
+				if item:IsLargeItem() then
 					local_items_moved[xxhash(x + 1, y)] = item
 				end
 			end
@@ -798,7 +798,7 @@ function MoveItem(args)
 	--in order to figure out whther items fit or are accepted in each other's places we would need to remove them first.
 	--this is tricky to do with current methods without changing the state..
 	local swap_src_x = src_x
-	if item.LargeItem and dest_container == src_container and dest_container_slot_name == src_container_slot_name and dest_x + 1 == src_x then
+	if item:IsLargeItem() and dest_container == src_container and dest_container_slot_name == src_container_slot_name and dest_x + 1 == src_x then
 		--this handles special case large with small swap where the small item is offset after swap because it feels more natural
 		swap_src_x = src_x + 1
 		assert(not item_at_dest_2)
@@ -839,10 +839,10 @@ function MoveItem(args)
 		--presumably, if item_at_dest_2 exists, then there is space for sure;
 		return "Could not swap items, item does not fit in dest container at the specified position"
 	end
-	if (item.LargeItem or item_at_dest.LargeItem) and src_container == dest_container and src_container_slot_name == dest_container_slot_name and dest_y == src_y then
+	if (item:IsLargeItem() or item_at_dest:IsLargeItem()) and src_container == dest_container and src_container_slot_name == dest_container_slot_name and dest_y == src_y then
 		--check if item_at_dest will fit after item has been placed
-		local occupied1, occupied2 = dest_x, item.LargeItem and (dest_x + 1) or dest_x
-		local needed1, needed2 = swap_src_x, item_at_dest.LargeItem and (swap_src_x + 1) or swap_src_x
+		local occupied1, occupied2 = dest_x, item:IsLargeItem() and (dest_x + 1) or dest_x
+		local needed1, needed2 = swap_src_x, item_at_dest:IsLargeItem() and (swap_src_x + 1) or swap_src_x
 		if needed1 == occupied1 or needed1 == occupied2 or needed2 == occupied1 or needed2 == occupied2 then
 			return "Could not swap items, items overlap after swap"
 		end

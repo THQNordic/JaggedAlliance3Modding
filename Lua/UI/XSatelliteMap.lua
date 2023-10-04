@@ -93,9 +93,12 @@ function XSatelliteViewMap:Init()
 	self.sector_size = campaign.sector_size
 	self:SetImage(campaign.map_file)
 	
-	self.playable_area = point(campaign.sector_columns * self.sector_size:x(), campaign.sector_rows * self.sector_size:y())
+	self.playable_area = point(campaign.sector_columns * self.sector_size:x(), (campaign.sector_rows - campaign.sector_rowsstart + 1) * self.sector_size:y())
 	self.clamp_box = sizebox(self.grid_start, self.playable_area)
 end
+
+SatelliteViewMoveTimeInterval = 25
+SatelliteViewMoveTimeAmount = 30
 
 function XSatelliteViewMap:Open()
 	g_SatelliteUI = self
@@ -147,8 +150,8 @@ function XSatelliteViewMap:Open()
 	
 	local dlg = GetDialog(self)
 	self:CreateThread("WASD-SatelliteMap", function()
-		local interval = 25
-		local moveAmount = 30
+		local interval = SatelliteViewMoveTimeInterval
+		local moveAmount = SatelliteViewMoveTimeAmount
 		while self.window_state == "open" do
 			
 			-- Prevent the zooming interpolation and the
@@ -175,21 +178,20 @@ function XSatelliteViewMap:Open()
 				self.translation_change_notWASD = false
 				
 				if gamepadState then
-					
-					local rtS = gamepadState.RightThumb
-					if rtS ~= point20 and rtS:Len2D() > XInput.ThumbsAsButtonsLevel then
-						local normalizedRtS = Normalize(rtS)
-						normalizedRtS = MulDivRound(normalizedRtS, moveAmount, 4096)
-						self:ScrollMap(-normalizedRtS:x(), normalizedRtS:y(), interval)
+					local stick = GetAccountStorageOptionValue("InvertPDAThumbs") and
+									gamepadState.LeftThumb or gamepadState.RightThumb
+					if stick ~= point20 and stick:Len2D() > XInput.ThumbsAsButtonsLevel / 2 then
+						local moveRts = MulDivRound(stick, moveAmount, XInput.ThumbsAsButtonsLevel * 2)
+						self:ScrollMap(-moveRts:x(), moveRts:y(), interval)
 					end
 				
 					local _, currentGamepadId = GetActiveGamepadState()
 					local dPadDown = XInput.IsCtrlButtonPressed(currentGamepadId, "DPadDown")
 					local dPadUp = XInput.IsCtrlButtonPressed(currentGamepadId, "DPadUp")
 					local ltHeld = XInput.IsCtrlButtonPressed(currentGamepadId, "LeftTrigger")
-					if dPadDown or dPadUp then
+					if ltHeld and (dPadDown or dPadUp) then
 						local center = self.box:Center()
-						self:ZoomMap(moveAmount * (dPadDown and -1 or 1) * (ltHeld and 1000 or 1), interval, center)
+						self:ZoomMap(moveAmount * (dPadDown and -1 or 1), interval, center)
 					end
 				end
 			end
@@ -479,9 +481,10 @@ function XSatelliteViewMap:ShowSectorIdUI(sector, show)
 		sectorIcon.ScaleWithMap = false
 		sectorIcon.UpdateZoom = function(self, prevZoom, newZoom, time)
 			local map = self.map
-			local maxZoom = map.max_zoom
+			local maxZoom = map:GetScaledMaxZoom()
 			local minZoom = Max(1000 * map.box:sizex() / map.map_size:x(), 1000 * map.box:sizey() / map.map_size:y())
-			newZoom = Clamp(newZoom, minZoom + 100, maxZoom)
+			local scaleAddition = MulDivRound(100, self.scale:x(), 1000)
+			newZoom = Clamp(newZoom, minZoom + scaleAddition, maxZoom)
 			XMapWindow.UpdateZoom(self, prevZoom, newZoom, time)
 		end
 		rawset(window, "idSectorIcon", sectorIcon)
@@ -1048,29 +1051,42 @@ local PushModifier = UIL.PushModifier
 
 function XSatelliteViewMap:DrawContent()
 	if self.Image == "" or not self.sector_visible_map then return end
-	local src = self:CalcSrcRect()
-	local width, height = src:sizexyz()
+
+	local image_src = self:CalcSrcRect()
+	local satview_image_size = image_src:size()
+
+	local src = box(0, 0, self.map_size:x(), self.map_size:y())
+	local width, height = self.map_size:xyz()
 	local color = self.ImageColor
 
 	local start_x = self.grid_start:x()
 	local start_y = self.grid_start:y()
 	local sector_size_x = self.sector_size:x()
 	local sector_size_y = self.sector_size:y()
+
+
+	local satviewSpaceToSrcrc = function(value)
+		if IsPoint(value) then
+			return MulDivRoundPoint(value, satview_image_size, self.map_size)
+		else
+			return box(MulDivRoundPoint(value:min(), satview_image_size, self.map_size),
+				MulDivRoundPoint(value:max(), satview_image_size, self.map_size))
+		end
+	end
 	
-	local dst_rect = box(0, 0, width, height)
-	local src_rect = box(0, 0, self.map_size:x(), self.map_size:y())
-	dst_rect = sizebox(start_x, start_y, sector_size_x * self.sector_max_x, sector_size_y * self.sector_max_y)
-	src_rect = dst_rect
+
+	local dst_rect = sizebox(start_x, start_y, sector_size_x * self.sector_max_x, sector_size_y * self.sector_max_y)
+	local src_rect = satviewSpaceToSrcrc(dst_rect)
 
 	local draw_as_paused = IsCampaignPaused()
 	--- DrawBackground
 	local top = XPushShaderEffectModifier(draw_as_paused and "SatelliteViewFog_Blur" or "SatelliteViewFog")
 	UIL.DrawXImage(self.Image,
-		box(0, 0, width, height), width, height, src,
+		box(0, 0, width, height), width, height, satviewSpaceToSrcrc(src),
 		color, color, color, color,
 		self:CalcDesaturation(), self.Angle, self.FlipX, self.FlipY,
 		self.EffectType, self.EffectPixels, self.EffectColor, true,
-		RGBA(255,255,255,0), src_rect:minx(), src_rect:miny(), width - src_rect:maxx(), height - src_rect:maxy())
+		RGBA(255,255,255,0), src_rect:minx(), src_rect:miny(), satview_image_size:x() - src_rect:maxx(), satview_image_size:y() - src_rect:maxy())
 	ModifiersSetTop(top)
 	--- EndDrawBackground
 
@@ -1587,6 +1603,8 @@ function XSatelliteViewMap:OnMouseButtonDown(pt, button, ...)
 		self:ExitTravelMode()
 		return "break"
 	end
+	
+	if GetUIStyleGamepad() then return end -- No dragging with gamepad mouse
 	XMap.OnMouseButtonDown(self, pt, button, ...)
 end
 
@@ -1977,4 +1995,22 @@ function OpenSectorStashUIForSector(sectorId)
 	end
 	local firstUnit = squadHere.units and squadHere.units[1]
 	OpenInventory(gv_UnitData[firstUnit], actualInventory)
+end
+
+function GenerateEmptySector(sector_id)
+	return SatelliteSector:new{
+		Id = sector_id,
+		Label1 = "Blocked",
+		Side = "neutral",
+		StickySide = true,
+		TerrainType = "Highlands",
+		Passability = "Blocked",
+		Intel = false,
+		MusicCombat = "Battle_Normal",
+		MusicConflict = "Cursed_Conflict",
+		MusicExploration = "Cursed_Exploration",
+		
+		name = sector_id,
+		generated = true, -- generated sectors won't be saved in the campaign, and are re-generated automatically upon load
+	}
 end

@@ -5,8 +5,55 @@ DefineClass.IModeCombatFreeAim = {
 	tile_free_attack = false,
 	fx_free_attack = false,
 	disable_mouse_indicator = true,
-	mouse_world_pos = false
+	mouse_world_pos = false,
+	
+	firing_modes = false,
+	current_firing_mode = false, -- separate just in case
+	meta_action = false,
 }
+
+function IModeCombatFreeAim:Open()
+	IModeCombatAttackBase.Open(self)
+
+	local action = self.action
+	local attacker = self.attacker
+	if action.group == "FiringModeMetaAction" then
+		local defaultMode, firingModes = GetUnitDefaultFiringModeActionFromMetaAction(attacker, action)
+		
+		local possibleOnes = {}
+		for i, fm in ipairs(firingModes) do
+			local actionEnabled = attacker.ui_actions[fm.id]
+			actionEnabled = actionEnabled == "enabled"
+			if actionEnabled then
+				possibleOnes[#possibleOnes + 1] = fm
+			end
+		end
+		if #possibleOnes > 1 then
+			self.current_firing_mode = defaultMode
+			self.firing_modes = possibleOnes
+			self.meta_action = self.action
+			self.action = self.current_firing_mode
+		end
+	end
+end
+
+function IModeCombatFreeAim:CycleFiringMode()
+	local firing_modes = self.firing_modes
+	if not firing_modes then return end
+
+	local id = self.current_firing_mode.id
+	local curTargetIdx = table.find(firing_modes, "id", id) or 0
+	curTargetIdx = curTargetIdx + 1
+	if curTargetIdx > #firing_modes then
+		curTargetIdx = 1
+	end
+	local action = firing_modes[curTargetIdx]
+	self.current_firing_mode = action
+	self.action = self.current_firing_mode
+	self.attacker.lastFiringMode = action.id
+	
+	self:UpdateTarget()
+end
 
 function IModeCombatFreeAim:Done()
 	if self.fx_free_attack then
@@ -99,7 +146,7 @@ function IModeCombatFreeAim:OnMouseButtonDown(pt, button)
 				if step_pos then
 					local args = {target = target_obj, goto_pos = step_pos, free_aim = true}
 					if CheckAndReportImpossibleAttack(self.attacker, self.action, args) == "enabled" then
-						if self.action.IsTargetableAttack then	
+						if self.action.IsTargetableAttack and IsKindOf(target_obj, "Unit") then	
 							self.action:UIBegin({self.attacker}, args)
 						else
 							self:StartMoveAndAttack(self.attacker, self.action, target_obj, step_pos, args)
@@ -116,7 +163,7 @@ function IModeCombatFreeAim:OnMouseButtonDown(pt, button)
 			end
 		end
 		if self.attacker ~= target then 
-			FreeAttack(SelectedObj, target, self.action, self.context.free_aim, self.target_as_pos)
+			FreeAttack(SelectedObj, target, self.action, self.context.free_aim, self.target_as_pos, self.meta_action)
 		else 
 			ReportAttackError(target or SelectedObj, AttackDisableReasons.InvalidSelfTarget)
 		end
@@ -140,7 +187,7 @@ function IModeCombatFreeAim:GetFreeAttackTarget(target, attackerPos)
 			local solid, transparent = GetPreciseCursorObj()
 			local obj = transparent or solid
 			obj = not IsKindOf(obj, "Slab") and SelectionPropagate(obj) or obj
-			if obj and not obj:IsInvulnerable() and (IsKindOf(obj, "CombatObject") and not obj.is_destroyed or ShouldDestroyObject(obj)) then
+			if IsKindOf(obj, "Object") and not obj:IsInvulnerable() and (IsKindOf(obj, "CombatObject") and not obj.is_destroyed or ShouldDestroyObject(obj)) then
 				target = obj
 			end
 		end
@@ -156,6 +203,8 @@ function IModeCombatFreeAim:GetFreeAttackTarget(target, attackerPos)
 		if IsKindOf(target, "DynamicSpawnLandmine") then
 			spawnFXObject = target
 			target = target:GetAttach(1)
+		elseif self.action.ActionType == "Melee Attack" then
+			spawnFXObject = target
 		end
 		
 		if target then
@@ -179,14 +228,10 @@ function IModeCombatFreeAim:GetFreeAttackTarget(target, attackerPos)
 		end 
 	end
 	
-	local parentObj = spawnFXObject or target
-	if parentObj and not parentObj:IsValidZ() then
-		parentObj = parentObj:SetTerrainZ()
-	end
 	return spawnFXObject or target, objForFX
 end
 
-function FreeAttack(unit, target, action, isFreeAim, target_as_pos)
+function FreeAttack(unit, target, action, isFreeAim, target_as_pos, meta_action_crosshair)
 	if not target then return end
 
 	unit = unit or SelectedObj	
@@ -194,11 +239,12 @@ function FreeAttack(unit, target, action, isFreeAim, target_as_pos)
 		return
 	end	
 	if not CanYield() then
-		return CreateRealTimeThread(FreeAttack, unit, target, action, isFreeAim, target_as_pos)
+		return CreateRealTimeThread(FreeAttack, unit, target, action, isFreeAim, target_as_pos, meta_action_crosshair)
 	end
 	
 	if IsKindOf(target, "Unit") then 
 		-- revert to normal attack mode to this unit
+		action = meta_action_crosshair or action
 		local args = {target = target, free_aim = isFreeAim}
 		local state, reason = action:GetUIState({unit}, args)--add free_aim
 		if state == "enabled" or (state == "disabled" and reason == AttackDisableReasons.InvalidTarget) then

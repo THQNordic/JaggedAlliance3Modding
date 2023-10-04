@@ -470,7 +470,7 @@ PlaceObj('Conversation', {
 					return not quest.BeastMet
 				end,
 			}),
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('UnitSquadHasMerc', {
 						Name = "Kalyna",

@@ -7,8 +7,8 @@ DefineClass.NightVisionGoggles = {
 
 
 	object_class = "Armor",
-	Degradation = 12,
 	ScrapParts = 2,
+	Degradation = 12,
 	Icon = "UI/Icons/Items/night_vision",
 	DisplayName = T(263962000489, --[[InventoryItemCompositeDef NightVisionGoggles DisplayName]] "Night Vision Goggles"),
 	DisplayNamePlural = T(940518526415, --[[InventoryItemCompositeDef NightVisionGoggles DisplayNamePlural]] "Night Vision Goggles"),

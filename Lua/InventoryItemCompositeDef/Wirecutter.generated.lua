@@ -7,8 +7,8 @@ DefineClass.Wirecutter = {
 
 
 	object_class = "WirecutterBase",
-	Repairable = false,
 	ScrapParts = 2,
+	Repairable = false,
 	Icon = "UI/Icons/Items/wire_cutters",
 	DisplayName = T(992794098066, --[[InventoryItemCompositeDef Wirecutter DisplayName]] "Wire Cutter"),
 	DisplayNamePlural = T(438312104079, --[[InventoryItemCompositeDef Wirecutter DisplayNamePlural]] "Wire Cutters"),

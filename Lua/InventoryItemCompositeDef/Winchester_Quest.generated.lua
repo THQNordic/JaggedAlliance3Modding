@@ -7,14 +7,14 @@ DefineClass.Winchester_Quest = {
 
 
 	object_class = "SniperRifle",
-	Reliability = 95,
 	ScrapParts = 8,
+	Reliability = 95,
 	Icon = "UI/Icons/Weapons/Winchester",
 	DisplayName = T(296944207700, --[[InventoryItemCompositeDef Winchester_Quest DisplayName]] "Confidante"),
 	DisplayNamePlural = T(811919268698, --[[InventoryItemCompositeDef Winchester_Quest DisplayNamePlural]] "Confidante"),
 	Description = T(784492395256, --[[InventoryItemCompositeDef Winchester_Quest Description]] "Reward for keeping a secret that is used for secret keeping."),
 	AdditionalHint = T(111789233685, --[[InventoryItemCompositeDef Winchester_Quest AdditionalHint]] "<bullet_point> Backstabby and Silent\n<bullet_point> High Crit chance\n<bullet_point> Very low attack costs\n<bullet_point> Short range\n<bullet_point> Limited ammo capacity"),
-	LargeItem = true,
+	LargeItem = 1,
 	UnitStat = "Marksmanship",
 	Cost = 1250,
 	Caliber = "44CAL",

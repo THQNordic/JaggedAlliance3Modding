@@ -1039,7 +1039,13 @@ function ConversationPlayer:WaitKeywordChoice(next_phrases, aggregated_tag)
 	if #left + #right > 6 then
 		local idx = #right
 		while idx > 1 and (right[idx].keyword == "Back" or right[idx].keyword == "Goodbye") do idx = idx - 1 end
+		idx = idx + 1
 		table.insert(right, idx, { keyword = "More", keyword_text = T(954617747960, --[[Conversation UI]] "More..."), visual_state = "dimmed" })
+		while idx > 1 do
+			idx = idx - 1
+			local choice = table.remove(right, idx)
+			table.insert(left, choice)
+		end
 	end
 	
 	-- navigate the resulting phrase tree, handling Back/More keywords	
@@ -1182,7 +1188,8 @@ function ConversationPlayer:ArrangeKeywordsTrivial(left, right, first_idx)
 			local rhombus_img, rhombus_img_flip = ConversationGetCircleImages(nLeft, nRight)
 			--rhombus:SetImage("UI/Conversation/T_WheelChoice_"..rhombus_img..".tga")
 			--rhombus:SetFlipX(rhombus_img_flip)
-			
+			if self.dlg.window_state == "destroying" then return end
+
 			self.dlg:ClearKeywords("phrase_choices_available")
 			self.dlg:FillKeywords("left", left,nLeft, nRight)
 			self.dlg:FillKeywords("right",right,nLeft,nRight)
@@ -1286,7 +1293,9 @@ function FindEnabledConversation(target, msg)
 			end
 		end
 	end
-	assert(not dbg_multiple_conversations, string.format("Multiple conversations are currently enabled for unit %s (%s)", target.unitdatadef_id, table.concat(dbg_multiple_conversations, ",")))
+	if dbg_multiple_conversations then
+		assert(not dbg_multiple_conversations, string.format("Multiple conversations are currently enabled for unit %s (%s)", target.unitdatadef_id, table.concat(dbg_multiple_conversations, ",")))
+	end
 	return conversation
 end
 
@@ -1618,8 +1627,11 @@ function ConversationDebugInfo:GetProperties()
 	end)
 
 	-- from markers
-	GatherMarkerScriptingData()
-	-- filter for current conversation
+	local map_name = GetMapName()
+	if not g_DebugMarkersInfo[map_name] then
+		GatherMarkerScriptingData()
+	end
+-- filter for current conversation
 	ForEachDebugMarkerData("conversation", self.id, function(marker_info, res_item_info) 
 		local element = {
 			id = "h_" .. marker_info.handle .. "_" .. #props,
@@ -1629,7 +1641,7 @@ function ConversationDebugInfo:GetProperties()
 			editor = "text",
 			read_only = true, 
 		}
-		local name = marker_info.map==GetMapName() and "View" or "View on other map"
+		local name = marker_info.map==map_name and "View" or "View on other map"
 		element.buttons = {
 				{
 					name = name, 
@@ -1932,7 +1944,7 @@ function GatherCharacters(obj, characters)
 	end
 end
 
-function PrintCharacterLines(obj, character, s, csv, already_reported)
+function PrintCharacterLines(obj, character, s, csv, already_reported, language)
 	local found = false
 	for _, sub in ipairs(obj.Lines) do
 		if HasCharacter(sub, character) then
@@ -1941,7 +1953,7 @@ function PrintCharacterLines(obj, character, s, csv, already_reported)
 	end
 	if found then
 		for _, sub in ipairs(obj.Lines) do
-			PrintCharacterPhrases(sub, character, s, csv, already_reported)
+			PrintCharacterPhrases(sub, character, s, csv, already_reported, language)
 		end
 		s:append("<br>\n")
 		csv[#csv+1] = {}
@@ -1958,11 +1970,12 @@ function InBracketsIfPresent(s)
 	end
 end
 
-function PrintCharacterPhrases(obj, character, s, csv, already_reported)
+function PrintCharacterPhrases(obj, character, s, csv, already_reported, language)
+	
 	if obj:IsKindOf("Conversation") then
 		for _, sub in ipairs(obj) do
 			if HasCharacter(sub, character) then
-				PrintCharacterPhrases(sub, character, s, csv, already_reported)
+				PrintCharacterPhrases(sub, character, s, csv, already_reported, language)
 			end
 		end
 	elseif obj:IsKindOf("ConversationPhrase") then
@@ -1970,18 +1983,18 @@ function PrintCharacterPhrases(obj, character, s, csv, already_reported)
 			s:append("<div><i>Keyword: ", obj.Keyword, "</i></div>\n")
 			csv.keyword = string.format("Keyword: %s%s", obj.Keyword, InBracketsIfPresent(obj.Comment))
 		end
-		PrintCharacterLines(obj, character, s, csv, already_reported)
+		PrintCharacterLines(obj, character, s, csv, already_reported, language)
 		for _, sub in ipairs(obj) do
 			if HasCharacter(sub, character) then
-				PrintCharacterPhrases(sub, character, s, csv, already_reported)
+				PrintCharacterPhrases(sub, character, s, csv, already_reported, language)
 			end
 		end
 	elseif obj:IsKindOf("ConversationInterjection") then
-		PrintCharacterLines(obj, character, s, csv, already_reported)
+		PrintCharacterLines(obj, character, s, csv, already_reported, language)
 	elseif obj:IsKindOf("ConversationInterjectionList") then
 		for _, sub in ipairs(obj.Interjections) do
 			if HasCharacter(sub, character) then
-				PrintCharacterPhrases(sub, character, s, csv, already_reported)
+				PrintCharacterPhrases(sub, character, s, csv, already_reported, language)
 			end
 		end
 	elseif obj:IsKindOf("ConversationLine") and obj.Text then
@@ -1997,23 +2010,26 @@ function PrintCharacterPhrases(obj, character, s, csv, already_reported)
 		local csv_annotation = {}
 		csv_annotation[#csv_annotation+1] = obj.Annotation or nil
 		csv_annotation = next(csv_annotation) and table.concat(csv_annotation, " ") or nil
+		
+		local tid = TGetID(obj.Text)
+		local loc_text = g_BuildLocTables and g_BuildLocTables[language][tid] or TDevModeGetEnglishText(obj.Text)
 		local csv_entry = { 
 			line_type = "Conversation",
 			direction = csv_annotation,			
-			actor = voice_id,
-			text = TDevModeGetEnglishText(obj.Text),
+			actor = voice_id,			
+			text = loc_text,
 			section = csv.caption or false,
 			keyword = csv.keyword or false,
 			caption = csv.caption or false,			
 		}
-		local tid = TGetID(obj.Text)
+		
 		assert(already_reported)
 		if obj.Character == character and not already_reported[tid] then
-			s:appendf([[<div style="background:lightgreen"><b>%s ID:%d:</b>%s<br><b>%s</b></div>]] .. "\n", voice_id, tid, annotation, TDevModeGetEnglishText(obj.Text))
+			s:appendf([[<div style="background:lightgreen"><b>%s ID:%d:</b>%s<br><b>%s</b></div>]] .. "\n", voice_id, tid, annotation, loc_text)
 			csv_entry.id = tid
 			already_reported[tid] = true
 		else
-			s:appendf("<div>%s:%s<br>%s</div>\n", voice_id, annotation, TDevModeGetEnglishText(obj.Text))
+			s:appendf("<div>%s:%s<br>%s</div>\n", voice_id, annotation, loc_text)
 		end
 		csv[#csv+1] = csv_entry
 		csv.keyword = false
@@ -2029,8 +2045,18 @@ local css = "<style>body{font-family:courier,monospace;background:white;color:bl
 -- lines for other characters have actor, direction, text
 -- lines for current voice_id have ID, actor, direction, text
 
-function GenerateConversationVoiceScripts()
+function GenerateConversationVoiceScripts(language)
 	local character_pstrs, character_csvs, character_already_reported = {}, {}, {}
+	
+	PauseInfiniteLoopDetection("GenerateConversationVoiceScripts")
+	
+	if language and language ~= "English" then
+		local loc_path = "svnProject"
+		g_BuildLocTables = false
+		LoadBuildLocTables(loc_path)			
+	end
+	
+	
 	for id, conversation in sorted_pairs(Conversations) do
 		if conversation.IncludeInVoiceScripts then
 			local characters = {}
@@ -2044,7 +2070,7 @@ function GenerateConversationVoiceScripts()
 				local already_reported = character_already_reported[voice_id] or {}
 				local p = character_pstrs[voice_id] or pstr(css)
 				p:appendf("<h1>Conversation %s</h1>\n", id)
-				PrintCharacterPhrases(conversation, character, p, csv, already_reported)
+				PrintCharacterPhrases(conversation, character, p, csv, already_reported, language)
 				p:append("<br>")
 				character_pstrs[voice_id] = p
 				character_csvs[voice_id] = csv
@@ -2052,22 +2078,24 @@ function GenerateConversationVoiceScripts()
 			end
 		end
 	end
-	AsyncCreatePath("svnProject/LocalizationDB/VoiceRecordings/html/")
-	AsyncCreatePath("svnAssets/tmp/VoiceRecordings/")
+	AsyncCreatePath("svnProject/LocalizationDB/VoiceRecordings/" .. language .. "/html/")
+	AsyncCreatePath("svnAssets/tmp/VoiceRecordings/".. language .. "/")
 	local ids_used_for_voice = {}
 	for voice_id, s in sorted_pairs(character_pstrs) do
 		voice_id = string.gsub(voice_id, '[/?<>\\:*|"]', "_")
-		AsyncStringToFile("svnProject/LocalizationDB/VoiceRecordings/html/" .. voice_id .. " conversations.html", s)
+		AsyncStringToFile("svnProject/LocalizationDB/VoiceRecordings/html/" .. language .. "/" .. voice_id .. " conversations.html", s)
 		for id in tostring(s):gmatch("ID:(%d+)") do
 			ids_used_for_voice[tonumber(id)] = true
 		end
-		AsyncStringToFile("svnAssets/tmp/VoiceRecordings/" .. voice_id .. " conversations.lua", "return " .. ValueToLuaCode(character_csvs[voice_id]))
+		AsyncStringToFile("svnAssets/tmp/VoiceRecordings/" .. language .. "/" .. voice_id .. " conversations.lua", "return " .. ValueToLuaCode(character_csvs[voice_id]))
 	end
-	AsyncStringToFile("svnAssets/tmp/VoiceRecordings/ids_used_in_conversations.lua", "return " .. ValueToLuaCode(ids_used_for_voice))
+	AsyncStringToFile("svnAssets/tmp/VoiceRecordings/" .. language .. "/ids_used_in_conversations.lua", "return " .. ValueToLuaCode(ids_used_for_voice))
 	
 	if not GetStack():find("ConsoleExec") then -- manually called from in-game console for debugging?
 		quit() -- no, probably EXE launched from build script just to do this, quit afterwards
 	end
+
+	ResumeInfiniteLoopDetection("GenerateConversationVoiceScripts")
 end
 
 function CheckExecutedPhraseForPsycho(phrase)
@@ -2076,7 +2104,7 @@ function CheckExecutedPhraseForPsycho(phrase)
 		for _, condition in ipairs(conditions) do
 			if condition.HasPerk == "Psycho" and not condition.Negate and EvalConditionList({condition}) then
 				psychoActivated = true
-			elseif condition.class == "OR" then
+			elseif condition.class == "CheckOR" then
 				psychoActivated = PsychoCheck(condition.Conditions)
 			end
 			

@@ -7,10 +7,10 @@ DefineClass.CrocodileHide = {
 
 
 	object_class = "Armor",
+	ScrapParts = 3,
 	RepairCost = 1000,
 	Repairable = false,
 	Degradation = 0,
-	ScrapParts = 3,
 	Icon = "UI/Icons/Items/kevlar_vest",
 	DisplayName = T(249222659070, --[[InventoryItemCompositeDef CrocodileHide DisplayName]] "Crocodile Hide"),
 	DisplayNamePlural = T(896093586841, --[[InventoryItemCompositeDef CrocodileHide DisplayNamePlural]] "Crocodile Hides"),

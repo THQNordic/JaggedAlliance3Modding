@@ -34,7 +34,7 @@ PlaceObj('BanterDef', {
 				"I18",
 			},
 		}),
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('CheckGameState', {
 					GameState = "Day",

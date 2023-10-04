@@ -71,8 +71,7 @@ end
 
 function RecalcRevealedSectors()
 	g_RevealedSectors = {}
-	local campaign = GetCurrentCampaignPreset()
-	local rows, columns = campaign.sector_rows, campaign.sector_columns
+	
 	-- player squads make adjacent sectors visible (guardpost grants vision within 2 sectors of it)
 	for _, squad in ipairs(GetPlayerMercSquads("include_militia")) do
 		local sector_id = squad.CurrentSector
@@ -90,7 +89,7 @@ function RecalcRevealedSectors()
 			AllowRevealAllSectors(sector_id, 1)
 		end
 	end
-
+	
 	for sector_id, sector in sorted_pairs(gv_Sectors) do
 		if sector.Guardpost and (sector.Side == "player1" or sector.Side == "player2") then
 			AllowRevealAllSectors(sector_id, 2)
@@ -103,7 +102,7 @@ function RecalcRevealedSectors()
 	for sector_id, val in pairs(gv_RevealedSectorsTemporarily) do
 		g_RevealedSectors[sector_id] = g_RevealedSectors[sector_id] and (not not val)
 	end
-
+	
 	DelayedCall(0, Msg, "RevealedSectorsUpdate")
 end
 
@@ -114,7 +113,7 @@ function ForEachSectorCardinal(sector_id, fn, ...)
 	if row + 1 <= rows then -- Down
 		if fn(sector_pack(row + 1, col), ...) == "break" then return end
 	end
-	if row - 1 >= 1 then -- Up
+	if row - 1 >= campaign.sector_rowsstart then -- Up
 		if fn(sector_pack(row - 1, col), ...) == "break" then return end
 	end
 	if col + 1 <= columns then -- Right
@@ -129,7 +128,7 @@ function ForEachSectorAround(center_sector_id, radius, fn, ... )
 	local campaign = GetCurrentCampaignPreset()
 	local rows, columns = campaign.sector_rows, campaign.sector_columns
 	local row, col = sector_unpack(center_sector_id)
-	for r = Max(1, row-radius), Min(rows, row+radius) do
+	for r = Max(campaign.sector_rowsstart, row-radius), Min(rows, row+radius) do
 		for c = Max(1, col-radius), Min(columns, col+radius) do
 			if fn(sector_pack(r, c),...) == "break" then return end
 		end
@@ -182,6 +181,10 @@ function SatelliteConflictClass:Open()
 		self:UpdatePowers()
 		self.playerPower = context.conflict.player_power or 0
 		self.enemyPower = context.conflict.enemy_power or 0
+	end
+	
+	if GetUIStyleGamepad() then
+		HideCombatLog()
 	end
 	
 	SetCampaignSpeed(0, GetUICampaignPauseReason("ConflictUI"))

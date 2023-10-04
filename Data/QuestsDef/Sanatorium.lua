@@ -116,7 +116,7 @@ PlaceObj('QuestsDef', {
 						"H12",
 					},
 				}),
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							Condition = "or",
@@ -144,7 +144,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableNum', {
 							AgainstVar = true,
@@ -166,7 +166,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			ShowConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							Condition = "or",
@@ -195,7 +195,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			CompletionConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableNum', {
 							AgainstVar = true,
@@ -259,224 +259,168 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('QuestNote', {
 			CompletionConditions = {
-				PlaceObj('OR', {
-					Conditions = {
-						PlaceObj('QuestIsVariableBool', {
-							QuestId = "Sanatorium",
-							Vars = set( "Clue_Radio" ),
-							__eval = function ()
-								local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
-								return quest.Clue_Radio
-							end,
-						}),
-					},
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "Sanatorium",
+					Vars = set( "Clue_Radio" ),
+					__eval = function ()
+						local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
+						return quest.Clue_Radio
+					end,
 				}),
 			},
 			Idx = 26,
 			ShowConditions = {
-				PlaceObj('OR', {
-					Conditions = {
-						PlaceObj('QuestIsVariableBool', {
-							QuestId = "Sanatorium",
-							Vars = set( "Clue_Radio" ),
-							__eval = function ()
-								local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
-								return quest.Clue_Radio
-							end,
-						}),
-					},
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "Sanatorium",
+					Vars = set( "Clue_Radio" ),
+					__eval = function ()
+						local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
+						return quest.Clue_Radio
+					end,
 				}),
 			},
 			Text = T(611873065039, --[[QuestsDef Sanatorium Text]] 'Clue: Someone has been hiring <em>"healthy subjects"</em> by Doctor\'s orders'),
 		}),
 		PlaceObj('QuestNote', {
 			CompletionConditions = {
-				PlaceObj('OR', {
-					Conditions = {
-						PlaceObj('QuestIsVariableBool', {
-							QuestId = "Sanatorium",
-							Vars = set( "Clue_BodyPile" ),
-							__eval = function ()
-								local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
-								return quest.Clue_BodyPile
-							end,
-						}),
-					},
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "Sanatorium",
+					Vars = set( "Clue_BodyPile" ),
+					__eval = function ()
+						local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
+						return quest.Clue_BodyPile
+					end,
 				}),
 			},
 			Idx = 27,
 			ShowConditions = {
-				PlaceObj('OR', {
-					Conditions = {
-						PlaceObj('QuestIsVariableBool', {
-							QuestId = "Sanatorium",
-							Vars = set( "Clue_BodyPile" ),
-							__eval = function ()
-								local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
-								return quest.Clue_BodyPile
-							end,
-						}),
-					},
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "Sanatorium",
+					Vars = set( "Clue_BodyPile" ),
+					__eval = function ()
+						local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
+						return quest.Clue_BodyPile
+					end,
 				}),
 			},
 			Text = T(180838293170, --[[QuestsDef Sanatorium Text]] "Clue: There are bodies of <em>infected</em> piled up by the Sanatorium walls - and some of the patients are still alive!"),
 		}),
 		PlaceObj('QuestNote', {
 			CompletionConditions = {
-				PlaceObj('OR', {
-					Conditions = {
-						PlaceObj('QuestIsVariableBool', {
-							QuestId = "Sanatorium",
-							Vars = set( "Clue_BodyTruck" ),
-							__eval = function ()
-								local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
-								return quest.Clue_BodyTruck
-							end,
-						}),
-					},
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "Sanatorium",
+					Vars = set( "Clue_BodyTruck" ),
+					__eval = function ()
+						local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
+						return quest.Clue_BodyTruck
+					end,
 				}),
 			},
 			Idx = 28,
 			ShowConditions = {
-				PlaceObj('OR', {
-					Conditions = {
-						PlaceObj('QuestIsVariableBool', {
-							QuestId = "Sanatorium",
-							Vars = set( "Clue_BodyTruck" ),
-							__eval = function ()
-								local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
-								return quest.Clue_BodyTruck
-							end,
-						}),
-					},
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "Sanatorium",
+					Vars = set( "Clue_BodyTruck" ),
+					__eval = function ()
+						local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
+						return quest.Clue_BodyTruck
+					end,
 				}),
 			},
 			Text = T(428019052508, --[[QuestsDef Sanatorium Text]] "Clue: There are bodies of infected piled up for <em>transportation</em> on a truck"),
 		}),
 		PlaceObj('QuestNote', {
 			CompletionConditions = {
-				PlaceObj('OR', {
-					Conditions = {
-						PlaceObj('QuestIsVariableBool', {
-							QuestId = "Sanatorium",
-							Vars = set( "Clue_Incinerator" ),
-							__eval = function ()
-								local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
-								return quest.Clue_Incinerator
-							end,
-						}),
-					},
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "Sanatorium",
+					Vars = set( "Clue_Incinerator" ),
+					__eval = function ()
+						local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
+						return quest.Clue_Incinerator
+					end,
 				}),
 			},
 			Idx = 29,
 			ShowConditions = {
-				PlaceObj('OR', {
-					Conditions = {
-						PlaceObj('QuestIsVariableBool', {
-							QuestId = "Sanatorium",
-							Vars = set( "Clue_Incinerator" ),
-							__eval = function ()
-								local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
-								return quest.Clue_Incinerator
-							end,
-						}),
-					},
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "Sanatorium",
+					Vars = set( "Clue_Incinerator" ),
+					__eval = function ()
+						local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
+						return quest.Clue_Incinerator
+					end,
 				}),
 			},
 			Text = T(869499160777, --[[QuestsDef Sanatorium Text]] "Clue: Some <em>recently infected</em> were prepared for <em>incineration</em>"),
 		}),
 		PlaceObj('QuestNote', {
 			CompletionConditions = {
-				PlaceObj('OR', {
-					Conditions = {
-						PlaceObj('QuestIsVariableBool', {
-							QuestId = "Sanatorium",
-							Vars = set( "Clue_DeadBodies" ),
-							__eval = function ()
-								local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
-								return quest.Clue_DeadBodies
-							end,
-						}),
-					},
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "Sanatorium",
+					Vars = set( "Clue_DeadBodies" ),
+					__eval = function ()
+						local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
+						return quest.Clue_DeadBodies
+					end,
 				}),
 			},
 			Idx = 31,
 			ShowConditions = {
-				PlaceObj('OR', {
-					Conditions = {
-						PlaceObj('QuestIsVariableBool', {
-							QuestId = "Sanatorium",
-							Vars = set( "Clue_DeadBodies" ),
-							__eval = function ()
-								local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
-								return quest.Clue_DeadBodies
-							end,
-						}),
-					},
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "Sanatorium",
+					Vars = set( "Clue_DeadBodies" ),
+					__eval = function ()
+						local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
+						return quest.Clue_DeadBodies
+					end,
 				}),
 			},
 			Text = T(158406253177, --[[QuestsDef Sanatorium Text]] "Clue: A group of infected patients were <em>euthanized</em> with <em>cyanide</em> before the infection progressed"),
 		}),
 		PlaceObj('QuestNote', {
 			CompletionConditions = {
-				PlaceObj('OR', {
-					Conditions = {
-						PlaceObj('QuestIsVariableBool', {
-							QuestId = "Sanatorium",
-							Vars = set( "Clue_Cabinet" ),
-							__eval = function ()
-								local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
-								return quest.Clue_Cabinet
-							end,
-						}),
-					},
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "Sanatorium",
+					Vars = set( "Clue_Cabinet" ),
+					__eval = function ()
+						local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
+						return quest.Clue_Cabinet
+					end,
 				}),
 			},
 			Idx = 32,
 			ShowConditions = {
-				PlaceObj('OR', {
-					Conditions = {
-						PlaceObj('QuestIsVariableBool', {
-							QuestId = "Sanatorium",
-							Vars = set( "Clue_Cabinet" ),
-							__eval = function ()
-								local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
-								return quest.Clue_Cabinet
-							end,
-						}),
-					},
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "Sanatorium",
+					Vars = set( "Clue_Cabinet" ),
+					__eval = function ()
+						local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
+						return quest.Clue_Cabinet
+					end,
 				}),
 			},
 			Text = T(362968409750, --[[QuestsDef Sanatorium Text]] "Clue: There is a startling supply of <em>cyanide</em> in the Doctor's cabinet"),
 		}),
 		PlaceObj('QuestNote', {
 			CompletionConditions = {
-				PlaceObj('OR', {
-					Conditions = {
-						PlaceObj('QuestIsVariableBool', {
-							QuestId = "Sanatorium",
-							Vars = set( "Clue_Dissection" ),
-							__eval = function ()
-								local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
-								return quest.Clue_Dissection
-							end,
-						}),
-					},
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "Sanatorium",
+					Vars = set( "Clue_Dissection" ),
+					__eval = function ()
+						local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
+						return quest.Clue_Dissection
+					end,
 				}),
 			},
 			Idx = 33,
 			ShowConditions = {
-				PlaceObj('OR', {
-					Conditions = {
-						PlaceObj('QuestIsVariableBool', {
-							QuestId = "Sanatorium",
-							Vars = set( "Clue_Dissection" ),
-							__eval = function ()
-								local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
-								return quest.Clue_Dissection
-							end,
-						}),
-					},
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "Sanatorium",
+					Vars = set( "Clue_Dissection" ),
+					__eval = function ()
+						local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
+						return quest.Clue_Dissection
+					end,
 				}),
 			},
 			Text = T(588132218433, --[[QuestsDef Sanatorium Text]] "Clue: Someone tried to do an <em>autopsy</em> of a patient who wasn't dead"),
@@ -719,7 +663,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							Condition = "or",
@@ -799,7 +743,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							Condition = "or",
@@ -919,7 +863,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							Condition = "or",
@@ -974,7 +918,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			CompletionConditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							Condition = "or",
@@ -1457,7 +1401,7 @@ PlaceObj('QuestsDef', {
 					Group = "InitialInfected",
 					Negate = true,
 				}),
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('GroupIsDead', {
 							Group = "QueueGuard",
@@ -1822,7 +1766,7 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('GroupIsDead', {
 							Group = "InfectedCorridor",
@@ -1925,7 +1869,7 @@ PlaceObj('QuestsDef', {
 						"H12_Underground",
 					},
 				}),
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							QuestId = "_GroupsAttacked",

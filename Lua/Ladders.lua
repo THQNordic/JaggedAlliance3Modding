@@ -36,26 +36,34 @@ end
 
 local voxel_z = const.SlabSizeZ
 local voxel_step = point(0, 0, voxel_z)
+local GetHeight = terrain.GetHeight
 
 function Ladder:GetTunnelPositions()
-	local pos = self:GetPos()
-	pos = pos:IsValidZ() and pos or pos:SetTerrainZ()
-	local first_attach = self.LadderParts > 0 and self:GetAttach(1)
-	local dir_z = first_attach and first_attach:GetAttachOffset() or point30
-	if dir_z == point30 then
+	if self.LadderParts <= 0 then
 		return
 	end
-	local pos1 = GetPassSlab(pos + dir_z)
-	local pos2 = GetPassSlab(RotateRadius(const.SlabSizeX, self:GetAngle(), pos))
-	if not pos1 or not pos2 or pos1 == pos2 then
+	local first_attach = self:GetAttach(1)
+	local offset = first_attach and first_attach:GetAttachOffset() or point30
+	if offset == point30 then
 		return
 	end
-	local z1 = pos1:z() or terrain.GetHeight(pos1)
-	local z2 = pos2:z() or terrain.GetHeight(pos2)
-	if abs(z1 - z2) < const.SlabSizeZ then
+	local offsetx, offsety, offsetz = offset:xyz()
+	local dx, dy = RotateRadius(const.SlabSizeX, self:GetAngle(), 0, true)
+	local posx, posy, posz = self:GetPosXYZ()
+	if not posz then
+		posz = GetHeight(posx, posY)
+	end
+	local x1, y1, z1 = GetPassSlabXYZ(posx + offsetx, posy + offsety, posz + offsetz)
+	local x2, y2, z2 = GetPassSlabXYZ(posx + dx, posy + dy, posz)
+	if not x1 or not x2 or x1 == x2 and y1 == y2 and z1 == z2 then
 		return
 	end
-	return pos1, pos2
+	local h1 = z1 or GetHeight(x1, y1)
+	local h2 = z2 or GetHeight(x2, y2)
+	if abs(h1 - h2) < const.SlabSizeZ then
+		return
+	end
+	return x1, y1, z1, x2, y2, z2
 end
 
 function Ladder:DestroySinkingParts()
@@ -154,12 +162,8 @@ function Ladder:UpdateTunnels()
 		end
 		self.tunnels = false
 	end
-	
-	local pos1, pos2 = self:GetTunnelPositions()
-	if not pos1 then return end
-	
-	local x1, y1, z1 = pos1:xyz()
-	local x2, y2, z2 = pos2:xyz()
+	local x1, y1, z1, x2, y2, z2 = self:GetTunnelPositions()
+	if not x1 then return end
 	local costAP = self:GetCost()
 	local tunnel = PlaceSlabTunnel("SlabTunnelLadder", costAP, x1, y1, z1, x2, y2, z2)
 	if tunnel then
@@ -287,8 +291,8 @@ function SlabTunnelLadder:TraverseTunnel(unit, pos1, pos2, quick_play)
 
 	local entrance_pos = self:GetEntrance()
 	local exit_pos = self:GetExit()
-	local z1 = entrance_pos:z() or terrain.GetHeight(entrance_pos)
-	local z2 = exit_pos:z() or terrain.GetHeight(exit_pos)
+	local z1 = entrance_pos:z() or GetHeight(entrance_pos)
+	local z2 = exit_pos:z() or GetHeight(exit_pos)
 
 	SetMercIndicatorsVisible(unit, false)
 	unit:PushDestructor(function(unit)

@@ -8,11 +8,10 @@ DefineClass.MakeThemBleed = {
 
 	object_class = "Perk",
 	msg_reactions = {
-		PlaceObj('MsgReaction', {
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "attacker",
 			Event = "OnAttack",
 			Handler = function (self, attacker, action, target, results, attack_args)
-				local reaction_idx = table.find(self.msg_reactions or empty_table, "Event", "OnAttack")
-				if not reaction_idx then return end
 				
 				local function exec(self, attacker, action, target, results, attack_args)
 				local kills = #(results.killed_units or empty_table)
@@ -20,16 +19,19 @@ DefineClass.MakeThemBleed = {
 					attacker:AddToInventory("Trophy", kills)
 				end
 				end
-				local id = GetCharacterEffectId(self)
 				
-				if id then
-					if IsKindOf(attacker, "StatusEffectObject") and attacker:HasStatusEffect(id) then
-						exec(self, attacker, action, target, results, attack_args)
-					end
-				else
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[1]
+				if not reaction_def or reaction_def.Event ~= "OnAttack" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
 					exec(self, attacker, action, target, results, attack_args)
 				end
 				
+				if self:VerifyReaction("OnAttack", reaction_def, attacker, attacker, action, target, results, attack_args) then
+					exec(self, attacker, action, target, results, attack_args)
+				end
 			end,
 			HandlerCode = function (self, attacker, action, target, results, attack_args)
 				local kills = #(results.killed_units or empty_table)
@@ -37,15 +39,13 @@ DefineClass.MakeThemBleed = {
 					attacker:AddToInventory("Trophy", kills)
 				end
 			end,
-			param_bindings = false,
 		}),
-		PlaceObj('MsgReaction', {
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "attacker",
 			Event = "GatherDamageModifications",
-			Handler = function (self, attacker, target, attack_args, hit_descr, mod_data)
-				local reaction_idx = table.find(self.msg_reactions or empty_table, "Event", "GatherDamageModifications")
-				if not reaction_idx then return end
+			Handler = function (self, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data)
 				
-				local function exec(self, attacker, target, attack_args, hit_descr, mod_data)
+				local function exec(self, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data)
 				if IsKindOf(target, "Unit") and (target.species ~= "Human" or attack_args.target_spot_group == "Groin") then
 					mod_data.effects[#mod_data.effects + 1] = "Bleeding"
 				end
@@ -65,16 +65,19 @@ DefineClass.MakeThemBleed = {
 				mod_data.base_damage = MulDivRound(mod_data.base_damage, 100 + damageBonus, 100)
 				mod_data.breakdown[#mod_data.breakdown + 1] = { name = self.DisplayName, value = damageBonus }
 				end
-				local id = GetCharacterEffectId(self)
 				
-				if id then
-					if IsKindOf(attacker, "StatusEffectObject") and attacker:HasStatusEffect(id) then
-						exec(self, attacker, target, attack_args, hit_descr, mod_data)
-					end
-				else
-					exec(self, attacker, target, attack_args, hit_descr, mod_data)
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[2]
+				if not reaction_def or reaction_def.Event ~= "GatherDamageModifications" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
+					exec(self, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data)
 				end
 				
+				if self:VerifyReaction("GatherDamageModifications", reaction_def, attacker, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data) then
+					exec(self, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data)
+				end
 			end,
 			HandlerCode = function (self, attacker, target, attack_args, hit_descr, mod_data)
 				if IsKindOf(target, "Unit") and (target.species ~= "Human" or attack_args.target_spot_group == "Groin") then
@@ -96,7 +99,6 @@ DefineClass.MakeThemBleed = {
 				mod_data.base_damage = MulDivRound(mod_data.base_damage, 100 + damageBonus, 100)
 				mod_data.breakdown[#mod_data.breakdown + 1] = { name = self.DisplayName, value = damageBonus }
 			end,
-			param_bindings = false,
 		}),
 	},
 	DisplayName = T(684856115226, --[[CharacterEffectCompositeDef MakeThemBleed DisplayName]] "Make Them Bleed"),

@@ -8,11 +8,10 @@ DefineClass.CageFighting = {
 
 	object_class = "CharacterEffect",
 	msg_reactions = {
-		PlaceObj('MsgReaction', {
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "target",
 			Event = "PreUnitDamaged",
 			Handler = function (self, attacker, target, data)
-				local reaction_idx = table.find(self.msg_reactions or empty_table, "Event", "PreUnitDamaged")
-				if not reaction_idx then return end
 				
 				local function exec(self, attacker, target, data)
 				if target:HasStatusEffect("CageFightingToTheDeath") then return end
@@ -28,16 +27,19 @@ DefineClass.CageFighting = {
 					data.dmg = dmg
 				end
 				end
-				local id = GetCharacterEffectId(self)
 				
-				if id then
-					if IsKindOf(target, "StatusEffectObject") and target:HasStatusEffect(id) then
-						exec(self, attacker, target, data)
-					end
-				else
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[1]
+				if not reaction_def or reaction_def.Event ~= "PreUnitDamaged" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
 					exec(self, attacker, target, data)
 				end
 				
+				if self:VerifyReaction("PreUnitDamaged", reaction_def, target, attacker, target, data) then
+					exec(self, attacker, target, data)
+				end
 			end,
 			HandlerCode = function (self, attacker, target, data)
 				if target:HasStatusEffect("CageFightingToTheDeath") then return end
@@ -53,7 +55,6 @@ DefineClass.CageFighting = {
 					data.dmg = dmg
 				end
 			end,
-			param_bindings = false,
 		}),
 	},
 }

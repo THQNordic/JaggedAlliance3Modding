@@ -10,7 +10,6 @@ DefineClass.FreeMoveOnCombatStart = {
 	Conditions = {
 		PlaceObj('CheckExpression', {
 			Expression = function (self, obj) return obj.Tiredness <= 0 end,
-			param_bindings = false,
 		}),
 	},
 	lifetime = "Until End of Turn",

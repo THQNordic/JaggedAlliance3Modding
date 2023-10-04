@@ -776,7 +776,7 @@ PlaceObj('Conversation', {
 					return not quest.Completed and not quest.Given and quest.SetpiecePlayed and not quest.WitchExposed
 				end,
 			}),
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('UnitSquadHasMerc', {
 						HasPerk = "Spiritual",
@@ -1633,7 +1633,7 @@ PlaceObj('Conversation', {
 		id = "Youareforcingthemen_failure",
 		PlaceObj('ConversationPhrase', {
 			Conditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('UnitSquadHasMerc', {
 							HasPerk = "Scoundrel",

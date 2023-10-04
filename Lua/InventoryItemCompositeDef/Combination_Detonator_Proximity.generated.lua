@@ -7,6 +7,7 @@ DefineClass.Combination_Detonator_Proximity = {
 
 
 	object_class = "MiscItem",
+	ScrapParts = 1,
 	Repairable = false,
 	Icon = "UI/Icons/Items/combination_detonator_proximity",
 	DisplayName = T(769361191527, --[[InventoryItemCompositeDef Combination_Detonator_Proximity DisplayName]] "Proximity Detonator"),

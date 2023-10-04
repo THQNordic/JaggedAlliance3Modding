@@ -68,7 +68,7 @@ PlaceObj('XTemplate', {
 				rollover = rollover or self:MouseInWindow(terminal.GetMousePos())
 				
 				if GetUIStyleGamepad() then
-					local igi = GetInGameInterfaceModeDlg()
+					local igi = GetDialog(self)
 					if igi and igi.target == unit then
 						rollover = true
 					end

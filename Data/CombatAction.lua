@@ -711,7 +711,7 @@ PlaceObj('CombatAction', {
 		end
 		if not weapon1 then return -1 end
 		local cost = unit:GetAttackAPCost(self, weapon1, false, args and args.aim or 0) 
-		return cost and cost + self.ActionPoints or -1
+		return cost and cost + self.ActionPointDelta or -1
 	end,
 	GetActionDamage = function (self, unit, target, args)
 		local weapon = self:GetAttackWeapons(unit, args)
@@ -2730,7 +2730,7 @@ PlaceObj('CombatAction', {
 		local unit = units[1]
 		local attacks, aim = unit:GetOverwatchAttacksAndAim(self, args)
 		args.num_attacks = attacks
-		args.aim_ap = aim
+		args.aim = aim
 		local ap = self:GetAPCost(unit, args)
 		NetStartCombatAction(self.id, unit, ap, args)
 	end,
@@ -2877,7 +2877,6 @@ PlaceObj('CombatAction', {
 		return state, reason
 	end,
 	Icon = "UI/Icons/Hud/overwatch",
-	IsAimableAttack = false,
 	KeybindingFromAction = "actionRedirectOverwatch",
 	MultiSelectBehavior = "first",
 	QueuedBadgeText = T(507392307526, --[[CombatAction Overwatch QueuedBadgeText]] "OVERWATCH"),
@@ -3777,6 +3776,7 @@ PlaceObj('CombatAction', {
 		unit:SetActionCommand("InteractWith", self.id, ap, args.goto_pos, args.goto_ap, args.target)
 	end,
 	ShowIn = false,
+	UseFreeMove = true,
 	group = "Interactions",
 	id = "Interact_Banter",
 })
@@ -3812,6 +3812,7 @@ PlaceObj('CombatAction', {
 		unit:SetActionCommand("InteractWith", self.id, ap, args.goto_pos, args.goto_ap, args.target)
 	end,
 	ShowIn = false,
+	UseFreeMove = true,
 	group = "Interactions",
 	id = "Interact_CustomInteractable",
 })
@@ -3857,11 +3858,13 @@ PlaceObj('CombatAction', {
 	end,
 	ShowIn = false,
 	SimultaneousPlay = true,
+	UseFreeMove = true,
 	group = "Interactions",
 	id = "Interact_Disarm",
 })
 
 PlaceObj('CombatAction', {
+	ActivePauseBehavior = "queue",
 	Comment = "Interaction for exiting a sector.",
 	ConfigurableKeybind = false,
 	Description = "",
@@ -3890,6 +3893,7 @@ PlaceObj('CombatAction', {
 		unit:SetActionCommand("InteractWith", self.id, ap, args.goto_pos, args.goto_ap, args.target)
 	end,
 	ShowIn = "Special",
+	UseFreeMove = true,
 	group = "Interactions",
 	id = "Interact_Exit",
 })
@@ -3919,6 +3923,7 @@ PlaceObj('CombatAction', {
 	end,
 	ShowIn = false,
 	SimultaneousPlay = true,
+	UseFreeMove = true,
 	group = "Interactions",
 	id = "Interact_LootContainer",
 })
@@ -3952,6 +3957,7 @@ PlaceObj('CombatAction', {
 	end,
 	ShowIn = false,
 	SimultaneousPlay = true,
+	UseFreeMove = true,
 	group = "Interactions",
 	id = "Interact_LootUnit",
 })
@@ -3994,6 +4000,7 @@ PlaceObj('CombatAction', {
 	end,
 	ShowIn = false,
 	SimultaneousPlay = true,
+	UseFreeMove = true,
 	group = "Interactions",
 	id = "Interact_ManEmplacement",
 })
@@ -4027,6 +4034,7 @@ PlaceObj('CombatAction', {
 	end,
 	ShowIn = false,
 	SimultaneousPlay = true,
+	UseFreeMove = true,
 	group = "Interactions",
 	id = "Interact_NotNow",
 })
@@ -4065,6 +4073,7 @@ PlaceObj('CombatAction', {
 		unit:SetActionCommand("InteractWith", self.id, ap, args.goto_pos, args.goto_ap, args.target)
 	end,
 	ShowIn = false,
+	UseFreeMove = true,
 	group = "Interactions",
 	id = "Interact_Talk",
 })
@@ -4116,6 +4125,7 @@ PlaceObj('CombatAction', {
 		unit:SetActionCommand("InteractWith", self.id, ap, args.goto_pos, args.goto_ap, args.target)
 	end,
 	ShowIn = false,
+	UseFreeMove = true,
 	group = "Interactions",
 	id = "Interact_UnitCustomInteraction",
 })
@@ -4230,6 +4240,7 @@ PlaceObj('CombatAction', {
 	end,
 	ShowIn = false,
 	SortKey = 11,
+	UseFreeMove = true,
 	group = "Interactions",
 	id = "Interact_DoorClose",
 })
@@ -4292,6 +4303,7 @@ PlaceObj('CombatAction', {
 	end,
 	ShowIn = false,
 	SortKey = 13,
+	UseFreeMove = true,
 	group = "Interactions",
 	id = "Interact_DoorOpen",
 })
@@ -4565,6 +4577,7 @@ PlaceObj('CombatAction', {
 	end,
 	ShowIn = false,
 	SortKey = 17,
+	UseFreeMove = true,
 	group = "Interactions",
 	id = "Interact_WindowBreak",
 })
@@ -4842,11 +4855,11 @@ PlaceObj('CombatAction', {
 	DisplayName = T(449333187481, --[[CombatAction Attack DisplayName]] "Attack"),
 	Execute = function (self, units, args)
 		local unit = units[1]
-		local defAction = unit.ui_actions[self.id .. "default"]
+		local defAction = unit.ui_actions[self.id .. "default"] or unit:ResolveDefaultFiringModeAction(self, true)
 		return CombatActions[defAction]:Execute(units, args)
 	end,
 	GetAPCost = function (self, unit, args)
-		local defAction = unit.ui_actions[self.id .. "default"]
+		local defAction = unit.ui_actions and unit.ui_actions[self.id .. "default"] or unit:ResolveDefaultFiringModeAction(self, true)
 		if not defAction then
 			assert(false) -- This unit's action caching did something weird?
 			return
@@ -4855,7 +4868,7 @@ PlaceObj('CombatAction', {
 		return CombatActions[defAction]:GetAPCost(unit, args)
 	end,
 	GetActionDamage = function (self, unit, target, args)
-		local defAction = unit.ui_actions[self.id .. "default"]
+		local defAction = unit.ui_actions and unit.ui_actions[self.id .. "default"] or unit:ResolveDefaultFiringModeAction(self, true)
 		return CombatActions[defAction]:GetActionDamage(unit, target, args)
 	end,
 	GetActionDescription = function (self, units)
@@ -4871,7 +4884,7 @@ PlaceObj('CombatAction', {
 		return CombatActionsAppendFreeAimActionName(self, unit, name)
 	end,
 	GetActionResults = function (self, unit, args)
-		local defAction = unit.ui_actions[self.id .. "default"]
+		local defAction = unit.ui_actions and unit.ui_actions[self.id .. "default"] or unit:ResolveDefaultFiringModeAction(self, true)
 		return CombatActions[defAction]:GetActionResults(unit, args)
 	end,
 	GetAttackWeapons = function (self, unit, args)
@@ -4890,7 +4903,7 @@ PlaceObj('CombatAction', {
 	RequireState = "any",
 	RequireWeapon = true,
 	Run = function (self, unit, ap, ...)
-		local defAction = unit.ui_actions[self.id .. "default"]
+		local defAction = unit.ui_actions and unit.ui_actions[self.id .. "default"] or unit:ResolveDefaultFiringModeAction(self, true)
 		return CombatActions[defAction]:Run(unit, ap, ...)
 	end,
 	ShowIn = "Special",
@@ -4916,15 +4929,15 @@ PlaceObj('CombatAction', {
 	DisplayNameShort = T(582378660435, --[[CombatAction AttackDual DisplayNameShort]] "Dual Shot"),
 	Execute = function (self, units, args)
 		local unit = units[1]
-		local defAction = unit.ui_actions[self.id .. "default"]
+		local defAction = unit.ui_actions and unit.ui_actions[self.id .. "default"] or unit:ResolveDefaultFiringModeAction(self, true)
 		return CombatActions[defAction]:Execute(units, args)
 	end,
 	GetAPCost = function (self, unit, args)
-		local defAction = unit.ui_actions[self.id .. "default"]
+		local defAction = unit.ui_actions and unit.ui_actions[self.id .. "default"] or unit:ResolveDefaultFiringModeAction(self, true)
 		return CombatActions[defAction]:GetAPCost(unit, args)
 	end,
 	GetActionDamage = function (self, unit, target, args)
-		local defAction = unit.ui_actions[self.id .. "default"]
+		local defAction = unit.ui_actions and unit.ui_actions[self.id .. "default"] or unit:ResolveDefaultFiringModeAction(self, true)
 		return CombatActions[defAction]:GetActionDamage(unit, target, args)
 	end,
 	GetActionDescription = function (self, units)
@@ -4940,7 +4953,7 @@ PlaceObj('CombatAction', {
 		return CombatActionsAppendFreeAimActionName(self, unit, name)
 	end,
 	GetActionResults = function (self, unit, args)
-		local defAction = unit.ui_actions[self.id .. "default"]
+		local defAction = unit.ui_actions and unit.ui_actions[self.id .. "default"] or unit:ResolveDefaultFiringModeAction(self, true)
 		return CombatActions[defAction]:GetActionResults(unit, args)
 	end,
 	GetAttackWeapons = function (self, unit, args)
@@ -4956,7 +4969,7 @@ PlaceObj('CombatAction', {
 	RequireState = "any",
 	RequireWeapon = true,
 	Run = function (self, unit, ap, ...)
-		local defAction = unit.ui_actions[self.id .. "default"]
+		local defAction = unit.ui_actions and unit.ui_actions[self.id .. "default"] or unit:ResolveDefaultFiringModeAction(self, true)
 		return CombatActions[defAction]:Run(unit, ap, ...)
 	end,
 	ShowIn = "Special",
@@ -4979,33 +4992,33 @@ PlaceObj('CombatAction', {
 	DisplayName = T(591280140960, --[[CombatAction AttackShotgun DisplayName]] "Shotgun Attack"),
 	Execute = function (self, units, args)
 		local unit = units[1]
-		local defAction = unit.ui_actions[self.id .. "default"]
+		local defAction = unit.ui_actions and unit.ui_actions[self.id .. "default"] or unit:ResolveDefaultFiringModeAction(self, true)
 		return CombatActions[defAction]:Execute(units, args)
 	end,
 	GetAPCost = function (self, unit, args)
-		local defAction = unit.ui_actions[self.id .. "default"]
+		local defAction = unit.ui_actions and unit.ui_actions[self.id .. "default"] or unit:ResolveDefaultFiringModeAction(self, true)
 		return CombatActions[defAction]:GetAPCost(unit, args)
 	end,
 	GetActionDamage = function (self, unit, target, args)
-		local defAction = unit.ui_actions[self.id .. "default"]
+		local defAction = unit.ui_actions and unit.ui_actions[self.id .. "default"] or unit:ResolveDefaultFiringModeAction(self, true)
 		return CombatActions[defAction]:GetActionDamage(unit, target, args)
 	end,
 	GetActionDescription = function (self, units)
 		local unit = units[1]
-		local defAction = unit.ui_actions[self.id .. "default"]
+		local defAction = unit.ui_actions and unit.ui_actions[self.id .. "default"] or unit:ResolveDefaultFiringModeAction(self, true)
 		return CombatActions[defAction]:GetActionDescription(units)
 	end,
 	GetActionDisplayName = function (self, units)
 		local unit = units[1]
-		local defAction = unit.ui_actions[self.id .. "default"]
+		local defAction = unit.ui_actions and unit.ui_actions[self.id .. "default"] or unit:ResolveDefaultFiringModeAction(self, true)
 		return CombatActions[defAction]:GetActionDisplayName(units)
 	end,
 	GetActionResults = function (self, unit, args)
-		local defAction = unit.ui_actions[self.id .. "default"]
+		local defAction = unit.ui_actions and unit.ui_actions[self.id .. "default"] or unit:ResolveDefaultFiringModeAction(self, true)
 		return CombatActions[defAction]:GetActionResults(unit, args)
 	end,
 	GetAimParams = function (self, unit, weapon)
-		local defAction = unit.ui_actions[self.id .. "default"]
+		local defAction = unit.ui_actions and unit.ui_actions[self.id .. "default"] or unit:ResolveDefaultFiringModeAction(self, true)
 		return CombatActions[defAction]:GetAimParams(unit, weapon)
 	end,
 	GetAttackWeapons = function (self, unit, args)
@@ -5016,7 +5029,7 @@ PlaceObj('CombatAction', {
 		return weapon.WeaponRange
 	end,
 	GetMinAimRange = function (self, unit, weapon)
-		local defAction = unit.ui_actions[self.id .. "default"]
+		local defAction = unit.ui_actions and unit.ui_actions[self.id .. "default"] or unit:ResolveDefaultFiringModeAction(self, true)
 		return CombatActions[defAction]:GetMinAimRange(unit, weapon)
 	end,
 	GetUIState = function (self, units, args)
@@ -5029,7 +5042,7 @@ PlaceObj('CombatAction', {
 	RequireState = "any",
 	RequireWeapon = true,
 	Run = function (self, unit, ap, ...)
-		local defAction = unit.ui_actions[self.id .. "default"]
+		local defAction = unit.ui_actions and unit.ui_actions[self.id .. "default"] or unit:ResolveDefaultFiringModeAction(self, true)
 		return CombatActions[defAction]:Run(unit, ap, ...)
 	end,
 	ShowIn = "Special",
@@ -6699,6 +6712,7 @@ PlaceObj('CombatAction', {
 	AlwaysHits = true,
 	ConfigurableKeybind = false,
 	Description = T(812548786196, --[[CombatAction RemoteDetonation Description]] "Detonate explosives with remote detonation in the area."),
+	DisableAimAnim = true,
 	DisplayName = T(189657731700, --[[CombatAction RemoteDetonation DisplayName]] "Remote Detonation"),
 	Execute = function (self, units, args)
 		local unit = units[1]
@@ -7518,7 +7532,7 @@ PlaceObj('CombatAction', {
 		local unit = units[1]
 		local attacks, aim = unit:GetOverwatchAttacksAndAim(self, args)
 		args.num_attacks = attacks
-		args.aim_ap = aim
+		args.aim = aim
 		local ap = self:GetAPCost(unit, args)
 		NetStartCombatAction(self.id, unit, ap, args)
 	end,
@@ -7582,7 +7596,6 @@ PlaceObj('CombatAction', {
 		return state, reason
 	end,
 	Icon = "UI/Icons/Hud/perk_dance_for_me",
-	IsAimableAttack = false,
 	KeybindingFromAction = "actionRedirectSignatureAbility",
 	MultiSelectBehavior = "first",
 	Parameters = {
@@ -8215,7 +8228,7 @@ PlaceObj('CombatAction', {
 		local unit = units[1]
 		local attacks, aim = unit:GetOverwatchAttacksAndAim(self, args)
 		args.num_attacks = attacks
-		args.aim_ap = aim
+		args.aim = aim
 		local ap = self:GetAPCost(unit, args)
 		NetStartCombatAction(self.id, unit, ap, args)
 	end,
@@ -8283,7 +8296,6 @@ PlaceObj('CombatAction', {
 		return state, reason
 	end,
 	Icon = "UI/Icons/Hud/perk_eyes_on_the_back",
-	IsAimableAttack = false,
 	KeybindingFromAction = "actionRedirectSignatureAbility",
 	MultiSelectBehavior = "first",
 	Parameters = {

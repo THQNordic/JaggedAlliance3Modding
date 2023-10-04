@@ -1,6 +1,7 @@
 if FirstLoad then
 	CCMT = true
 	C_CCMT = true
+	C_CMT_Async = false
 end
 MapVar("CMT_trigger_target_pairs", false)
 
@@ -19,11 +20,11 @@ function SetCCMT(val)
 end
 
 function OnMsg.GameEnterEditor()
-	CMT_SetPause(true, "Editor")
+	StopAllHiding("Editor")
 end
 
 function OnMsg.GameExitEditor()
-	CMT_SetPause(false, "Editor")
+	ResumeAllHiding("Editor")
 end
 
 function CObject:SetShadowOnly(bSet)
@@ -67,9 +68,10 @@ function ReloadTriggerTargetPairs()
 		return
 	end
 	if CCMT then
-		--0 dist check
-		--1 collision check
-		ReloadCMTTargets(Platform.switch and 0 or 1)
+		--CCMTMode
+		--0 dist check (UseDistCheckForNonTops)
+		--1 collision check (UseCollisionForNonTops)
+		ReloadCMTTargets((EngineOptions.ObjectDetail == "Low") and 0 or 1)
 	else
 		local border = GetBorderAreaLimits()
 		CMT_trigger_target_pairs = {}
@@ -117,7 +119,11 @@ MapRealTimeRepeat("CMT_Trigger_Thread", 0, function()
 	local hiding_pt = camera_pos + (lookAt - camera_pos)/2
 
 	if CCMT then
-		C_CMT_Thread_Func(SelectedObj)
+		if C_CMT_Async then
+			AsyncC_CMT_Thread_Func(SelectedObj)
+		else
+			async.AsyncC_CMT_Thread_Func(nil, SelectedObj)
+		end
 	else
 		local hide_collections = CMT_GetCollectionsToHide()
 		for trigger, objs in next, CMT_trigger_target_pairs do
@@ -250,28 +256,12 @@ function IsContourObject(obj)
 		
 		return true
 	end
+	if g_AdditionalContourObjects[obj] then 
+		return true
+	end
 	
 	return false
 end
-
---[[
-
-function OnMsg.SelectionAdded(obj)
-	SetContourOuterIDParams{[1] = {color = RGBA(255,0,0,192), size = 3}}
-	obj:SetContourOuterID(true, 1) 
-	obj:ForEachAttach(function(att)
-		att:SetContourOuterID(true, 1)
-	end)
-end
-
-function OnMsg.SelectionRemoved(obj)
-	obj:SetContourOuterID(false, 1) 
-	obj:ForEachAttach(function(att)
-		att:SetContourOuterID(false, 1)
-	end)
-end
-
---]]
 
 ------------------------------------------------------------------------------------
 --CMTPlane

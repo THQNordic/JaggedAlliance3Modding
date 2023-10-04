@@ -7,9 +7,9 @@ DefineClass.HiPower = {
 
 
 	object_class = "Pistol",
+	ScrapParts = 6,
 	RepairCost = 70,
 	Reliability = 50,
-	ScrapParts = 6,
 	Icon = "UI/Icons/Weapons/Browning HiPower",
 	DisplayName = T(796605924344, --[[InventoryItemCompositeDef HiPower DisplayName]] "Hi-Power"),
 	DisplayNamePlural = T(376748831554, --[[InventoryItemCompositeDef HiPower DisplayNamePlural]] "Hi-Powers"),
@@ -21,7 +21,7 @@ DefineClass.HiPower = {
 	Damage = 18,
 	MagazineSize = 15,
 	WeaponRange = 14,
-	PointBlankRange = true,
+	PointBlankBonus = 1,
 	OverwatchAngle = 2160,
 	Entity = "Weapon_Browning_HP",
 	ComponentSlots = {

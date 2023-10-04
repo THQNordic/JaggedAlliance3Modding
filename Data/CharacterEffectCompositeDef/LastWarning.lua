@@ -12,6 +12,54 @@ PlaceObj('CharacterEffectCompositeDef', {
 		}),
 	},
 	'object_class', "Perk",
+	'msg_reactions', {
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "attacker",
+			Event = "OnAttack",
+			Handler = function (self, attacker, action, target, results, attack_args)
+				
+				local function exec(self, attacker, action, target, results, attack_args)
+				local chance = self:ResolveValue("panic_chance")
+				if attacker.team.morale > 0 and attacker:Random(100) < chance then
+					for _, hit in ipairs(results) do
+						local unit = IsKindOf(hit.obj, "Unit") and not hit.obj:IsIncapacitated() and hit.obj
+						local damage = hit.damage or 0
+						if unit and unit:IsOnEnemySide(attacker) and (hit.aoe or not hit.stray) and (damage > 0) then
+							unit:AddStatusEffect("Panicked")
+							unit.ActionPoints = unit:GetMaxActionPoints()
+						end
+					end
+				end
+				end
+				
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[1]
+				if not reaction_def or reaction_def.Event ~= "OnAttack" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
+					exec(self, attacker, action, target, results, attack_args)
+				end
+				
+				if self:VerifyReaction("OnAttack", reaction_def, attacker, attacker, action, target, results, attack_args) then
+					exec(self, attacker, action, target, results, attack_args)
+				end
+			end,
+			HandlerCode = function (self, attacker, action, target, results, attack_args)
+				local chance = self:ResolveValue("panic_chance")
+				if attacker.team.morale > 0 and attacker:Random(100) < chance then
+					for _, hit in ipairs(results) do
+						local unit = IsKindOf(hit.obj, "Unit") and not hit.obj:IsIncapacitated() and hit.obj
+						local damage = hit.damage or 0
+						if unit and unit:IsOnEnemySide(attacker) and (hit.aoe or not hit.stray) and (damage > 0) then
+							unit:AddStatusEffect("Panicked")
+							unit.ActionPoints = unit:GetMaxActionPoints()
+						end
+					end
+				end
+			end,
+		}),
+	},
 	'DisplayName', T(665390097648, --[[CharacterEffectCompositeDef LastWarning DisplayName]] "Dire Warning"),
 	'Description', T(634333203160, --[[CharacterEffectCompositeDef LastWarning Description]] "When <GameTerm('Morale')> is <em>High</em> or <em>Very High</em>, gain <em><percent(panic_chance)> chance</em> to cause <GameTerm('Panic')> with each <em>attack</em> that deals damage. "),
 	'Icon', "UI/Icons/Perks/LastWarning",

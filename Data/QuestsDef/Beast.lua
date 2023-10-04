@@ -6,7 +6,7 @@ PlaceObj('QuestsDef', {
 	DevNotes = "When completed, Beast will randomly spawn in key sectors - scripted in CursedForestSideQuests.",
 	DisplayName = T(637310295369, --[[QuestsDef Beast DisplayName]] "The Beast"),
 	KillTCEsConditions = {
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('QuestIsVariableBool', {
 					Condition = "or",
@@ -951,6 +951,9 @@ PlaceObj('QuestsDef', {
 			Name = "Randomizer",
 			RandomRangeMax = 3,
 			Value = 1,
+		}),
+		PlaceObj('QuestVarBool', {
+			Name = "IlleMorat_FirstEnter",
 		}),
 	},
 	group = "CursedForest",

@@ -170,6 +170,13 @@ PlaceObj('XTemplate', {
 									else
 										unit = GetInventoryUnit() or SelectedObj
 									end
+									if not unit then
+										local satellite = GetSatelliteDialog()
+										local squad = satellite and satellite:HasMember("selected_squad") and satellite.selected_squad
+										if squad and #(squad.units or empty_table) > 0 then
+											unit = gv_UnitData[squad.units[1]]
+										end
+									end
 									if unit then
 										totalDmg, dmg = action:GetActionDamage(unit, false, { weapon = context })
 										dmg = dmg or totalDmg

@@ -73,7 +73,7 @@ end
 DefineClass.CombatLogAnchorAnimationWindow = {
 	__parents = { "XDialog" },
 	properties = {
-		{ editor = "bool", id = "flip_vertically", default = true }
+		{ editor = "bool", id = "flip_vertically", default = false }
 	},
 	popup_time = 200,
 	suppressesCombatLog = false,
@@ -257,17 +257,44 @@ DefineClass.CombatLogMessageFader = {
 	FocusOnOpen = "",
 	MinWidth = 500,
 	MaxWidth = 500,
-	MinHeight = 185,
-	MaxHeight = 185,
+
 	
 	Clip = "self",
 	HandleMouse = false,
 	ChildrenHandleMouse = false
 }
 
+local irInside = const.irInside
+local Intersect2D = empty_box.Intersect2D
+function CombatLogMessageFader:DrawChildren(clip_box)
+	local chidren_on_top
+	local UseClipBox = self.UseClipBox
+	for _, win in ipairs(self) do
+		if not win.visible or win.outside_parent then goto continue end
+		if win.DrawOnTop then
+			chidren_on_top = true
+			goto continue
+		end
+		
+		local intersection = Intersect2D(self.content_box, win.box)
+		if intersection == irInside then
+			win:DrawWindow(clip_box)
+		end
+
+		::continue::
+	end
+
+	if chidren_on_top then
+		for _, win in ipairs(self) do
+			if win.DrawOnTop and win.visible and not win.outside_parent and (not UseClipBox or Intersect2D(win.box, clip_box) ~= irOutside) then
+				win:DrawWindow(clip_box)
+			end
+		end
+	end
+end
+
 function CombatLogMessageFader:UpdateLayout()
 	if not self.layout_update then return end
-	
 	
 	if GetUIStyleGamepad() then
 		local bottomBar
@@ -296,14 +323,23 @@ function CombatLogMessageFader:UpdateLayout()
 	end
 	
 	local heightLimitPoint = GetCombatLogHeightLimit()
-	
+	local _, marginY = ScaleXY(self.scale, 0, 5)
+	if heightLimitPoint then
+		heightLimitPoint = heightLimitPoint - marginY
+	end
+
 	local x = CombatLogAnchorBox and CombatLogAnchorBox:minx() or 0
 	local y = CombatLogAnchorBox and CombatLogAnchorBox:maxy() or 0
-	local height = self.measure_height
+	local height = 0
+	for i, w in ipairs(self) do
+		height = height + w.measure_height
+		if i > 4 then break end
+	end
+
 	local yMax = y + height
 	if heightLimitPoint and yMax >= heightLimitPoint then
-		local diff = yMax - heightLimitPoint
-		y = y - height
+		local belowHeightPoint = yMax - heightLimitPoint
+		y = y - belowHeightPoint
 	end
 	
 	self:SetBox(x, y, self.measure_width, height)
@@ -316,8 +352,16 @@ DefineClass.CombatLogText = {
 	Padding = box(0, 0, 0, 0),
 	TextStyle = "CombatLog",
 	HAlign = "left",
-	VAlign = "top"
+	VAlign = "top",
+	
+	rendered_least_once = false
 }
+
+function CombatLogText:DrawWindow(...)
+	self.rendered_least_once = true
+	return XWindow.DrawWindow(self, ...)
+end
+
 
 DefineClass.CombatLogWindow = {
 	__parents = { "CombatLogAnchorAnimationWindow" },
@@ -387,6 +431,14 @@ function CombatLogWindow:OnScaleChanged()
 end
 
 function GetCombatLogHeightLimit()
+	if g_SatelliteUI then
+		local satDiag = GetDialog(g_SatelliteUI)
+		local startButton = satDiag and satDiag.idStartButton
+		if startButton then
+			return startButton.box:miny()
+		end
+	end
+
 	local pda = GetDialog("PDADialogSatellite")
 	if pda then
 		return pda.idDisplay.box:maxy()
@@ -394,13 +446,18 @@ function GetCombatLogHeightLimit()
 
 	local igi = GetInGameInterfaceModeDlg()
 	if not IsKindOf(igi, "IModeCommonUnitControl") then return end
+	
+	if igi and igi.idStartButton then
+		return igi.idStartButton.box:miny()
+	end
+	
 	local bottomLeftUI = igi.idLeft
 	if not bottomLeftUI then return end
 	local limitPoint = bottomLeftUI.box:miny()
 	
 	local weaponUI = igi.idWeaponUI
 	if weaponUI and weaponUI.idOtherSets then
-		limitPoint = weaponUI.idOtherSets.box:miny()
+		--limitPoint = weaponUI.idOtherSets.box:miny()
 	end
 	
 	return limitPoint
@@ -546,6 +603,9 @@ function CombatLog(actor, msg, dontTHN)
 			end)
 			
 			labelWindow:SetVisible(true, true)
+			while not labelWindow.rendered_least_once do
+				Sleep(5)
+			end
 			Sleep(10000)
 			labelWindow.FadeOutTime = 400
 			labelWindow:SetVisible(false)

@@ -31,6 +31,7 @@ const.TunnelMaskAIProne = const.TunnelMaskPlayerProne & ~const.TunnelTypeDoorBlo
 const.TunnelMaskCivilian = const.TunnelMaskPlayerStanding & ~(const.TunnelTypeDoorBlocked | const.TunnelTypeWindow | const.TunnelMaskClimbDrop)
 	| const.TunnelTypeDrop1 | const.TunnelTypeClimb1
 const.TunnelMaskMeleeRange = const.TunnelMaskWalk | const.TunnelTypeClimb1 | const.TunnelTypeDrop1 | const.TunnelTypeJumpOver1
+const.TunnelMaskClosedDoor = const.TunnelTypeDoor | const.TunnelTypeDoorBlocked
 
 const.TunnelMaskTraverseWait =
 	const.TunnelTypeLadder |

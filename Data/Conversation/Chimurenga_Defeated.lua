@@ -231,7 +231,7 @@ PlaceObj('Conversation', {
 			Align = "right",
 			AutoRemove = true,
 			Conditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
 							QuestId = "PantagruelDramas",
@@ -632,7 +632,7 @@ PlaceObj('Conversation', {
 			Align = "right",
 			AutoRemove = true,
 			Conditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('UnitSquadHasMerc', {
 							Name = "Ivan",

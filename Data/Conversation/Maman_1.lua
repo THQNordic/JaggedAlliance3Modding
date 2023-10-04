@@ -836,7 +836,7 @@ PlaceObj('Conversation', {
 			AutoRemove = true,
 			Comment = "You plan to sell the necklace to the Broker who asked you for it and is offering you a price",
 			Conditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('UnitSquadHasMerc', {
 							HasPerk = "Scoundrel",
@@ -1281,7 +1281,7 @@ PlaceObj('Conversation', {
 	PlaceObj('ConversationPhrase', {
 		Comment = "Repeated. The player has met Mollie but has not resolved her fate yet.",
 		Conditions = {
-			PlaceObj('OR', {
+			PlaceObj('CheckOR', {
 				Conditions = {
 					PlaceObj('QuestIsVariableBool', {
 						QuestId = "Smiley",

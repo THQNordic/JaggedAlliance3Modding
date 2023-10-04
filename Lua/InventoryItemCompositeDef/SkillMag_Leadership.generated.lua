@@ -14,7 +14,7 @@ DefineClass.SkillMag_Leadership = {
 	Description = T(437039053771, --[[InventoryItemCompositeDef SkillMag_Leadership Description]] "Why is issue six afraid of issue seven?"),
 	AdditionalHint = T(787629043274, --[[InventoryItemCompositeDef SkillMag_Leadership AdditionalHint]] "<bullet_point> Used through the Item Menu\n<bullet_point> Single use\n<bullet_point> Increases Leadership"),
 	UnitStat = "Leadership",
-	is_valuable = true,
+	Valuable = 1,
 	effect_moment = "on_use",
 	Effects = {
 		PlaceObj('UnitStatBoost', {

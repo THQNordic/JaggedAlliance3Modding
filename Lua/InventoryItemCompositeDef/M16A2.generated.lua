@@ -7,14 +7,14 @@ DefineClass.M16A2 = {
 
 
 	object_class = "AssaultRifle",
-	Reliability = 80,
 	ScrapParts = 10,
+	Reliability = 80,
 	Icon = "UI/Icons/Weapons/M16A2",
 	DisplayName = T(943266217115, --[[InventoryItemCompositeDef M16A2 DisplayName]] "M16A2"),
 	DisplayNamePlural = T(617921744433, --[[InventoryItemCompositeDef M16A2 DisplayNamePlural]] "M16A2s"),
 	Description = T(116000725238, --[[InventoryItemCompositeDef M16A2 Description]] "The most iconic firearm of the western world, the M16 introduced the 5.56 NATO cartridge which was made for its 20 inch barrel. It's higher bullet velocity improves accuracy at long range and auto-fire handling, though it has less stopping power than its main rival - the AK-47. Don't ask about the forward assist..."),
 	AdditionalHint = T(622886074467, --[[InventoryItemCompositeDef M16A2 AdditionalHint]] "<bullet_point> Increased bonus from Aiming\n<bullet_point> Low attack costs\n<bullet_point> No Auto firing mode with standard Stock"),
-	LargeItem = true,
+	LargeItem = 1,
 	UnitStat = "Marksmanship",
 	Cost = 1200,
 	Caliber = "556",

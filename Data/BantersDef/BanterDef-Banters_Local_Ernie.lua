@@ -343,7 +343,7 @@ PlaceObj('BanterDef', {
 				return quest.WorldFlipDone
 			end,
 		}),
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "Sanatorium",
@@ -664,7 +664,7 @@ PlaceObj('BanterDef', {
 				return not quest.Militia_Done
 			end,
 		}),
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "04_Betrayal",
@@ -735,7 +735,7 @@ PlaceObj('BanterDef', {
 				return quest.Militia_Done
 			end,
 		}),
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "04_Betrayal",
@@ -2777,7 +2777,7 @@ PlaceObj('BanterDef', {
 				return not quest.HangingActive
 			end,
 		}),
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "RescueHerMan",
@@ -2838,7 +2838,7 @@ PlaceObj('BanterDef', {
 				return not quest.HangingActive
 			end,
 		}),
-		PlaceObj('OR', {
+		PlaceObj('CheckOR', {
 			Conditions = {
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "RescueHerMan",
@@ -3607,42 +3607,101 @@ PlaceObj('BanterDef', {
 		}),
 	},
 	conditions = {
-		PlaceObj('QuestIsVariableBool', {
-			QuestId = "RescueHerMan",
-			Vars = {
-				HangingActive = false,
-			},
-			__eval = function ()
-				local quest = gv_Quests['RescueHerMan'] or QuestGetState('RescueHerMan')
-				return not quest.HangingActive
-			end,
-		}),
-		PlaceObj('QuestIsVariableBool', {
-			QuestId = "RescueHerMan",
-			Vars = {
-				HangNoOne = true,
-			},
-			__eval = function ()
-				local quest = gv_Quests['RescueHerMan'] or QuestGetState('RescueHerMan')
-				return quest.HangNoOne
-			end,
-		}),
-		PlaceObj('QuestIsVariableBool', {
-			QuestId = "TakeTheFortress",
-			Vars = {
-				PierreJoined = false,
-			},
-			__eval = function ()
-				local quest = gv_Quests['TakeTheFortress'] or QuestGetState('TakeTheFortress')
-				return not quest.PierreJoined
-			end,
-		}),
-		PlaceObj('PlayerIsInSectors', {
-			Sectors = {
-				"H2",
+		PlaceObj('CheckOR', {
+			Conditions = {
+				PlaceObj('CheckAND', {
+					Conditions = {
+						PlaceObj('QuestIsVariableBool', {
+							QuestId = "RescueHerMan",
+							Vars = {
+								HangingActive = false,
+							},
+							__eval = function ()
+								local quest = gv_Quests['RescueHerMan'] or QuestGetState('RescueHerMan')
+								return not quest.HangingActive
+							end,
+						}),
+						PlaceObj('QuestIsVariableBool', {
+							QuestId = "RescueHerMan",
+							Vars = {
+								HangNoOne = true,
+							},
+							__eval = function ()
+								local quest = gv_Quests['RescueHerMan'] or QuestGetState('RescueHerMan')
+								return quest.HangNoOne
+							end,
+						}),
+						PlaceObj('QuestIsVariableBool', {
+							QuestId = "TakeTheFortress",
+							Vars = {
+								PierreJoined = false,
+							},
+							__eval = function ()
+								local quest = gv_Quests['TakeTheFortress'] or QuestGetState('TakeTheFortress')
+								return not quest.PierreJoined
+							end,
+						}),
+						PlaceObj('PlayerIsInSectors', {
+							Sectors = {
+								"H2",
+							},
+						}),
+					},
+				}),
+				PlaceObj('CheckAND', {
+					Conditions = {
+						PlaceObj('QuestIsVariableBool', {
+							QuestId = "RescueHerMan",
+							Vars = set( "HermanRescued" ),
+							__eval = function ()
+								local quest = gv_Quests['RescueHerMan'] or QuestGetState('RescueHerMan')
+								return quest.HermanRescued
+							end,
+						}),
+						PlaceObj('QuestIsVariableBool', {
+							QuestId = "PierreDefeated",
+							Vars = set( "PierreJoined" ),
+							__eval = function ()
+								local quest = gv_Quests['PierreDefeated'] or QuestGetState('PierreDefeated')
+								return quest.PierreJoined
+							end,
+						}),
+						PlaceObj('PlayerIsInSectors', {
+							Sectors = {
+								"H2",
+							},
+						}),
+					},
+				}),
+				PlaceObj('CheckAND', {
+					Conditions = {
+						PlaceObj('QuestIsVariableBool', {
+							QuestId = "RescueHerMan",
+							Vars = set( "HermanRescued" ),
+							__eval = function ()
+								local quest = gv_Quests['RescueHerMan'] or QuestGetState('RescueHerMan')
+								return quest.HermanRescued
+							end,
+						}),
+						PlaceObj('QuestIsVariableBool', {
+							QuestId = "04_Betrayal",
+							Vars = set( "WorldFlipDone" ),
+							__eval = function ()
+								local quest = gv_Quests['04_Betrayal'] or QuestGetState('04_Betrayal')
+								return quest.WorldFlipDone
+							end,
+						}),
+						PlaceObj('PlayerIsInSectors', {
+							Sectors = {
+								"H2",
+							},
+						}),
+					},
+				}),
 			},
 		}),
 	},
+	disabledInConflict = true,
 	group = "Banters_Local_Ernie",
 	id = "Herman_04_PostLynch_NoOne",
 })

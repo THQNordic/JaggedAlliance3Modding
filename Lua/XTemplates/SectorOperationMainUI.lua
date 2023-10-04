@@ -71,9 +71,10 @@ PlaceObj('XTemplate', {
 					local start_time
 					local has_prev_data = sector.operations_prev_data and sector.operations_prev_data.operation_id==operation_id
 					local diff = has_prev_data and SectorOperations_DataHasDifference(sector.operations_prev_data, sector.operations_temp_data[operation_id], operation_id, sector)
-					if has_prev_data and not diff then
+					if has_prev_data then
 						start_time = sector.operations_prev_data.prev_start_time
 					end
+					local res
 					if has_prev_data and diff then
 						local qdlg = CreateQuestionBox(
 								GetDialog("PDADialog"),
@@ -81,7 +82,7 @@ PlaceObj('XTemplate', {
 								T(176326810773, "Do you want to start the operation? If confirmed, the operation will restart with the new parameters. Resources and end time may change based on this"),
 								T(1138, "Yes"), T(1139, "No"))
 							qdlg:SetModal()
-						local res = qdlg:Wait()== "ok"
+						res = qdlg:Wait()== "ok"
 						if not res and has_prev_data then
 						-- restore prev operation
 							SectorOperations_InterruptCurrent(sector, operation_id, "no log")
@@ -92,10 +93,13 @@ PlaceObj('XTemplate', {
 						end
 						sector.operations_prev_data = false
 					end
-					NetSyncEvent("LogOperationStart",operation_id, sector.Id)
+					NetSyncEvent("LogOperationStart",operation_id, sector.Id, (not has_prev_data or res) and  "log")
 					NetSyncEvent("StartOperation", sector.Id, operation_id, start_time or sector.started_operations[operation_id] or Game.CampaignTime,
 														sector.training_stat)
 					--host:Close()
+					if not start_time then
+						PlayFX("ActivityStarted", "start", operation_id)
+					end	
 					SetBackDialogMode(host)
 				end)
 			end,
@@ -165,15 +169,19 @@ PlaceObj('XTemplate', {
 								
 								local dlg = host.idBase.idMain
 								local ctxMenu = XTemplateSpawn("SectorOperationStatsPopupUI", host, dlg)
+								ctxMenu.Id = "idStatsPopup"
 								local action_bar = host.idActionBar
 								action_bar.OnUpdateActions = function(this)
 									XActionsView.OnUpdateActions(this)
 									local button = this[1][1]
 									button.OnLayoutComplete = function(t)
+										PDACommonButtonClass.OnLayoutComplete(t)
 										if ctxMenu then
-										ctxMenu:SetAnchor(t.box)
-										ctxMenu:InvalidateLayout()
-										end
+											if t.action.ActionId=="ChangeStat" then
+												ctxMenu:SetAnchor(t.box)
+												ctxMenu:InvalidateLayout()
+											end	
+										end		
 									end
 								end
 								local button = host.idActionBar[1][1]								
@@ -183,7 +191,7 @@ PlaceObj('XTemplate', {
 								
 								ctxMenu:Open()
 								ctxMenu:SetModal()								
-								ctxMenu:SetFocus()	
+								ctxMenu:SetFocus()
 							end,
 							'FXMouseIn', "activityAssignStartHover",
 							'FXPress', "activityAssignStartPress",
@@ -195,7 +203,7 @@ PlaceObj('XTemplate', {
 							'ActionName', T(723674552406, --[[XTemplate SectorOperationMainUI ActionName]] "Start"),
 							'ActionToolbar', "ActionBar",
 							'ActionShortcut', "S",
-							'ActionGamepad', "Start",
+							'ActionGamepad', "ButtonX",
 							'ActionState', function (self, host)
 								local operation_id = host.mode_param.operation
 								local sector = host.context
@@ -221,7 +229,6 @@ PlaceObj('XTemplate', {
 								if dlg then dlg:Close() end
 								
 								host.idBase.idMain:StartOperation(host)
-								PlayFX("ActivityStarted", "start", host.mode_param.operation)
 							end,
 							'FXMouseIn', "activityAssignStartHover",
 							'FXPressDisabled', "activityAssignStartDisabled",
@@ -265,10 +272,11 @@ PlaceObj('XTemplate', {
 									sector.operations_temp_data = sector.operations_temp_data or {}
 									sector.operations_temp_data[operation_id] = sector.operations_temp_data[operation_id] or {}
 									sector.operations_temp_data[operation_id].pick_item = true
-									if operation_id=="CraftAmmo" or operation_id=="CraftExplosives" then
+									if IsCraftOperationId(operation_id) then
 										SectorOperationValidateItemsToCraft(sector.Id, operation_id)
 										local qid, aid = GetCraftOperationListsIds(operation_id)
-										NetSyncEvent("ChangeSectorOperationItemsOrder",sector.Id, operation_id, TableWithItemsToNet(sector[aid]), TableWithItemsToNet(sector[qid] ))
+										local tbl = GetCraftOperationQueueTable(sector, operation_id)
+										NetSyncEvent("ChangeSectorOperationItemsOrder",sector.Id, operation_id, TableWithItemsToNet(sector[aid]), TableWithItemsToNet(tbl ))
 									end
 									dlg:SetMode("pick_item")
 								end
@@ -356,7 +364,7 @@ PlaceObj('XTemplate', {
 							'ActionName', T(723674552406, --[[XTemplate SectorOperationMainUI ActionName]] "Start"),
 							'ActionToolbar', "ActionBar",
 							'ActionShortcut', "S",
-							'ActionGamepad', "Start",
+							'ActionGamepad', "ButtonX",
 							'ActionState', function (self, host)
 								local operation_id = host.mode_param.operation
 								local sector = host.context
@@ -377,7 +385,6 @@ PlaceObj('XTemplate', {
 							end,
 							'OnAction', function (self, host, source, ...)
 								host.idBase.idMain:StartOperation(host)
-								PlayFX("ActivityStarted", "start", host.mode_param.operation)
 							end,
 							'FXMouseIn', "activityAssignStartHover",
 							'FXPressDisabled', "activityAssignStartDisabled",
@@ -400,7 +407,7 @@ PlaceObj('XTemplate', {
 							'ActionId', "Change",
 							'ActionName', T(790902536696, --[[XTemplate SectorOperationMainUI ActionName]] "Change"),
 							'ActionToolbar', "ActionBar",
-							'ActionGamepad', "Start",
+							'ActionGamepad', "ButtonX",
 							'OnAction', function (self, host, source, ...)
 								--TODO: not sync
 								local operation_id = host.mode_param.operation
@@ -422,12 +429,29 @@ PlaceObj('XTemplate', {
 								RemoveTimelineEvent("activity-temp")
 								RemoveTimelineEvent("sector-activity-" .. sector.Id .. "-" .. operation_id)
 								
-								for i, merc in ipairs(mercs) do
-									NetSyncEvent("RestoreOperationCost", merc.session_id, costs[i])
-								end
+								NetSyncEvent("ChangeSectorOperation",sector.Id,operation_id)
+								--								for i, merc in ipairs(mercs) do
+								--									NetSyncEvent("RestoreOperationCost", merc.session_id, costs[i])
+								--								end
 								local temp = table.copy(sector.operations_temp_data[operation_id] or empty_table)
-								NetSyncEvent("InterruptSectorOperation", sector.Id,operation_id)
+								--								NetSyncEvent("InterruptSectorOperation", sector.Id,operation_id)
 								
+								--[[function NetSyncEvents.InterruptSectorOperation(sector_id, operation, reason)
+									OperationsSync_SuspendObjModified()
+									local mercs = GetOperationProfessionals(sector_id, operation)
+									for _, merc in ipairs(mercs) do
+										local event_id =  GetOperationEventId(merc, operation)
+										RemoveTimelineEvent(event_id)
+										merc:SetCurrentOperation("Idle",false, false, false, reason or "interrupted")
+									end
+									local sector = gv_Sectors[sector_id]
+									if sector.started_operations then
+										sector.started_operations[operation] = false
+									end
+								
+									ObjModified(sector)
+								end
+								]]								
 								dlg:SetMode("change", {operation=operation_id})								
 								sector.operations_prev_data  = false
 								sector.operations_prev_data = table.copy(temp)
@@ -435,7 +459,7 @@ PlaceObj('XTemplate', {
 								sector.operations_prev_data.training_stat = sector.training_stat
 								sector.operations_prev_data.operation_id = operation_id
 								
-								CreateRealTimeThread(function(temp, host)
+								--[[								CreateRealTimeThread(function(temp, host)
 									for m_id, merc_data in pairs(temp) do
 										for i, m_prof_data in ipairs(merc_data) do
 											if SectorOperations_IsValidMercId(m_id) then
@@ -456,6 +480,7 @@ PlaceObj('XTemplate', {
 										NetSyncEvent("SectorOperationItemsUpdateLists", sector.Id,operation_id, TableWithItemsToNet(data.all_items),  TableWithItemsToNet(data.queued_items))
 									end
 								end, temp, host)
+								]]
 							end,
 							'FXMouseIn', "activityAssignChangeHover",
 							'FXPress', "activityAssignChangePress",

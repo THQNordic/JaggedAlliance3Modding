@@ -939,16 +939,18 @@ DefineClass.GroupSetBehaviorExit = {
 function GroupSetBehaviorExit:__exec(obj, context)
 	context = type(context) == "table" and context or {}
 	self:MatchMapUnits(obj, context)
-	local units = context.target_units
+	local units = context.target_units or empty_table
 	for i = #units, 1, -1 do
 		if not IsKindOf(units[i], "Unit") then
 			table.remove(units, i)
 		end
 	end
+	if #units == 0 then
+		return
+	end
 	local marker_group = not self.closest and self.MarkerGroup or ""
 	local markers = MapGetMarkers("Entrance", marker_group)
-	
-	if #(units or empty_table) == 0 or #markers == 0 then
+	if not markers or #markers == 0 then
 		return
 	end
 	
@@ -1301,18 +1303,17 @@ function GroupTeleport:__exec(obj, context)
 	context = type(context) == "table" and context or {}
 	self:MatchMapUnits(obj, context)
 	
-	local units = context.target_units
+	local units = context.target_units or empty_table
 	for i = #units, 1, -1 do
 		if not IsKindOf(units[i], "Unit") then
 			table.remove(units, i)
 		end
 	end
-	local markers = MapGetMarkers(nil, self.MarkerGroup)
-	
 	if #(units or empty_table) == 0 then
 		return string.format("No units from group '%s' to teleport", self.TargetUnit)
 	end
-	if #markers == 0 then
+	local markers = MapGetMarkers(nil, self.MarkerGroup)
+	if not markers or #markers == 0 then
 		return string.format("No markets in '%s' to teleport group '%s' to", self.MarkerGroup, self.TargetUnit)
 	end
 	
@@ -1649,7 +1650,7 @@ function LightsSetState:__exec(obj, context)
 	for _, marker in ipairs(markers) do
 		marker.lights_off = not self.TurnOn
 		for _, light in ipairs(lights) do	
-			if marker:IsInsideArea2D(light:GetPos()) then
+			if marker:IsInsideArea2D(light) then
 				if marker.lights_off then
 					marker:TurnLightOff(light)
 				else
@@ -4140,8 +4141,9 @@ DefineClass.SetTimer = {
 }
 
 function SetTimer:__exec(quest, context, TCE)
-	if not GameState.Conflict and not GameState.ConflictScripted then
-		StoreErrorSource("once", "SetTimer running in a sector without Conflict!")
+	if not (GameState.Conflict or GameState.ConflictScripted or GameState.Combat) then
+		-- NOTE: Combat can be started without going through Conflict first, e.g. Stealth Kill
+		StoreErrorSource("once", "SetTimer running in a sector without Conflict/Combat!")
 	end
 	TimerCreate(self.Name, self.Label, self.Time)
 end

@@ -27,7 +27,7 @@ PlaceObj('XTemplate', {
 				local units = table.ifilter(button.context, function(idx, unit) return IsValidTarget(unit) end)
 				local unit = units[1]
 				if not IsValid(unit) then return end
-				local combat_action = self.parent.context.action
+				local combat_action = button.context.action
 				local underlyingAction = combat_action:ResolveAction(unit)
 				if not underlyingAction then return end
 				local rolloverText = combat_action:GetActionDescription(units)
@@ -114,9 +114,6 @@ PlaceObj('XTemplate', {
 					return
 				end
 				
-				self:SetFocusedBackground(const.PDAUIColors.titleColor)
-				self:SetFocusedBorderColor(const.PDAUIColors.selBorderColor)
-				
 				local combat_action = self.context.action
 				local underlyingAction = combat_action:ResolveAction(unit)
 				
@@ -172,6 +169,12 @@ PlaceObj('XTemplate', {
 			end,
 		}),
 		PlaceObj('XTemplateFunc', {
+			'name', "OnSetRollover(self, rollover)",
+			'func', function (self, rollover)
+				self.idPrecalcObserver:OnContextUpdate()
+			end,
+		}),
+		PlaceObj('XTemplateFunc', {
 			'name', "OnKillFocus(self)",
 			'func', function (self)
 				self:SetSelected(false)
@@ -204,6 +207,8 @@ PlaceObj('XTemplate', {
 			'func', function (self, sel)
 				self.selected = sel
 				self.idPrecalcObserver:OnContextUpdate()
+				
+				self.idSelection:OnContextUpdate()
 			end,
 		}),
 		PlaceObj('XTemplateFunc', {
@@ -220,6 +225,10 @@ PlaceObj('XTemplate', {
 				self:SetRolloverBackground(sel and titleColor or noClr)
 				self:SetBorderColor(sel and selBorderColor or noClr)
 				self:SetRolloverBorderColor(sel and selBorderColor or noClr)
+				
+				self:SetFocusedBackground(const.PDAUIColors.titleColor)
+				self:SetFocusedBorderColor(const.PDAUIColors.selBorderColor)
+				
 				self.idText:SetTextStyle(sel and "HUDButtonKeybindActive" or "HUDButtonKeybind")
 			end,
 		}),
@@ -230,6 +239,27 @@ PlaceObj('XTemplate', {
 					return 2
 				end
 				return XTextButton.GetColumn(self)
+			end,
+		}),
+		PlaceObj('XTemplateWindow', {
+			'__class', "XContextFrame",
+			'Id', "idSelection",
+			'Visible', false,
+			'DisabledBackground', RGBA(255, 255, 255, 255),
+			'Image', "UI/Inventory/T_Backpack_Slot_Small_Hover",
+			'FrameBox', box(10, 10, 10, 10),
+			'ContextUpdateOnOpen', true,
+			'OnContextUpdate', function (self, context, ...)
+				local button = self.parent
+				self:SetVisible(button.selected or button.rollover)
+				self:SetDesaturation(button.enabled and 0 or 255)
+				self:SetTransparency(button.enabled and 0 or 125)
+			end,
+		}),
+		PlaceObj('XTemplateFunc', {
+			'name', "OnSetRollover(self, rollover)",
+			'func', function (self, rollover)
+				self.idSelection:OnContextUpdate()
 			end,
 		}),
 		}),

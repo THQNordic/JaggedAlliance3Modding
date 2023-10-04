@@ -169,7 +169,7 @@ PlaceObj('QuestsDef', {
 					QuestId = "HunterHunted",
 				}),
 			},
-			Text = T(998827780564, --[[QuestsDef HunterHunted Text]] "There may be <em>clues</em> that lead to <em>Flay's hideout</em>"),
+			Text = T(998827780564, --[[QuestsDef HunterHunted Text]] "There may be <em>clues</em> that lead to <em>Flay's hideout</em> across the <em>Savanna</em>"),
 		}),
 		PlaceObj('QuestNote', {
 			Badges = {
@@ -192,9 +192,12 @@ PlaceObj('QuestsDef', {
 			Idx = 7,
 			ShowConditions = {
 				PlaceObj('QuestIsVariableNum', {
+					AgainstVar = true,
 					Amount = 4,
 					Prop = "Clues",
+					Prop2 = "CluesRequired",
 					QuestId = "HunterHunted",
+					QuestId2 = "HunterHunted",
 				}),
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "HunterHunted",
@@ -228,9 +231,12 @@ PlaceObj('QuestsDef', {
 			Idx = 8,
 			ShowConditions = {
 				PlaceObj('QuestIsVariableNum', {
+					AgainstVar = true,
 					Amount = 4,
 					Prop = "Clues",
+					Prop2 = "CluesRequired",
 					QuestId = "HunterHunted",
+					QuestId2 = "HunterHunted",
 				}),
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "HunterHunted",
@@ -264,9 +270,12 @@ PlaceObj('QuestsDef', {
 			Idx = 9,
 			ShowConditions = {
 				PlaceObj('QuestIsVariableNum', {
+					AgainstVar = true,
 					Amount = 4,
 					Prop = "Clues",
+					Prop2 = "CluesRequired",
 					QuestId = "HunterHunted",
+					QuestId2 = "HunterHunted",
 				}),
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "HunterHunted",
@@ -554,6 +563,14 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
+				PlaceObj('QuestIsVariableNum', {
+					AgainstVar = true,
+					Amount = 4,
+					Prop = "Clues",
+					Prop2 = "CluesRequired",
+					QuestId = "HunterHunted",
+					QuestId2 = "HunterHunted",
+				}),
 				PlaceObj('UnitIsOnMap', {
 					TargetUnit = "FlayNPC",
 				}),
@@ -622,6 +639,21 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "HunterHunted",
+					Vars = set( "FlaySpawned" ),
+					__eval = function ()
+						local quest = gv_Quests['HunterHunted'] or QuestGetState('HunterHunted')
+						return quest.FlaySpawned
+					end,
+				}),
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"E6",
+						"C6",
+						"B4",
+					},
+				}),
 				PlaceObj('UnitIsAroundOtherUnit', {
 					SecondTargetUnit = "FlayNPC",
 					TargetUnit = "any merc",
@@ -646,6 +678,11 @@ PlaceObj('QuestsDef', {
 			Once = true,
 			ParamId = "TCE_FlayGreeting",
 			QuestId = "HunterHunted",
+			requiredSectors = {
+				"E6",
+				"C6",
+				"B4",
+			},
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {

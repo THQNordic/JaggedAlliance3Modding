@@ -7,5 +7,5 @@ SetpiecePrgs.FosseNoir_LegionActor3 = function(seed, state, MainActor, TargetAct
 	prgdbg(li, 1, 1) sprocall(SetpieceSleep.Exec, SetpieceSleep, state, rand, true, "", 900)
 	prgdbg(li, 1, 2) sprocall(SetpieceShoot.Exec, SetpieceShoot, state, rand, true, "", MainActor, "Unit", TargetActor, "Torso", "", 3, 400, 800, 130, 0, 1)
 	local _, SP_LegionActor3_goto2
-	prgdbg(li, 1, 3) _, SP_LegionActor3_goto2 = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, true, "", MainActor, "SP_LegionActor3_goto2", true, true, false, "Standing", false, false, "")
+	prgdbg(li, 1, 3) _, SP_LegionActor3_goto2 = sprocall(SetpieceGotoPosition.Exec, SetpieceGotoPosition, state, rand, true, "", MainActor, "SP_LegionActor3_goto2", true, true, false, "Standing", false, false, "", 1000)
 end

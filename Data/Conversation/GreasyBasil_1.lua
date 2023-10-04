@@ -79,7 +79,7 @@ PlaceObj('Conversation', {
 		PlaceObj('ConversationPhrase', {
 			Align = "right",
 			Conditions = {
-				PlaceObj('OR', {
+				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('UnitSquadHasMerc', {
 							HasPerk = "Negotiator",

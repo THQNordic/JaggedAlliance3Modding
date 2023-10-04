@@ -8,59 +8,88 @@ DefineClass.Marked = {
 
 	object_class = "StatusEffect",
 	msg_reactions = {
-		PlaceObj('MsgReaction', {
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "target",
 			Event = "DamageTaken",
 			Handler = function (self, attacker, target, dmg, hit_descr)
-				local reaction_idx = table.find(self.msg_reactions or empty_table, "Event", "DamageTaken")
-				if not reaction_idx then return end
 				
 				local function exec(self, attacker, target, dmg, hit_descr)
 				if IsKindOf(attacker, "Unit") and hit_descr.critical then
 					target:RemoveStatusEffect("Marked")
 				end
 				end
-				local id = GetCharacterEffectId(self)
 				
-				if id then
-					if IsKindOf(target, "StatusEffectObject") and target:HasStatusEffect(id) then
-						exec(self, attacker, target, dmg, hit_descr)
-					end
-				else
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[1]
+				if not reaction_def or reaction_def.Event ~= "DamageTaken" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
 					exec(self, attacker, target, dmg, hit_descr)
 				end
 				
+				if self:VerifyReaction("DamageTaken", reaction_def, target, attacker, target, dmg, hit_descr) then
+					exec(self, attacker, target, dmg, hit_descr)
+				end
 			end,
 			HandlerCode = function (self, attacker, target, dmg, hit_descr)
 				if IsKindOf(attacker, "Unit") and hit_descr.critical then
 					target:RemoveStatusEffect("Marked")
 				end
 			end,
-			param_bindings = false,
 		}),
-		PlaceObj('MsgReaction', {
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "unit",
 			Event = "UnitBeginTurn",
 			Handler = function (self, unit)
-				local reaction_idx = table.find(self.msg_reactions or empty_table, "Event", "UnitBeginTurn")
-				if not reaction_idx then return end
 				
 				local function exec(self, unit)
 				unit:RemoveStatusEffect("Marked")
 				end
-				local id = GetCharacterEffectId(self)
 				
-				if id then
-					if IsKindOf(unit, "StatusEffectObject") and unit:HasStatusEffect(id) then
-						exec(self, unit)
-					end
-				else
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[2]
+				if not reaction_def or reaction_def.Event ~= "UnitBeginTurn" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
 					exec(self, unit)
 				end
 				
+				if self:VerifyReaction("UnitBeginTurn", reaction_def, unit, unit) then
+					exec(self, unit)
+				end
 			end,
 			HandlerCode = function (self, unit)
 				unit:RemoveStatusEffect("Marked")
 			end,
-			param_bindings = false,
+		}),
+		PlaceObj('MsgActorReaction', {
+			ActorParam = "target",
+			Event = "GatherCritChanceModifications",
+			Handler = function (self, attacker, target, action_id, weapon, data)
+				
+				local function exec(self, attacker, target, action_id, weapon, data)
+				data.guaranteed_crit = true
+				end
+				
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[3]
+				if not reaction_def or reaction_def.Event ~= "GatherCritChanceModifications" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
+					exec(self, attacker, target, action_id, weapon, data)
+				end
+				
+				if self:VerifyReaction("GatherCritChanceModifications", reaction_def, target, attacker, target, action_id, weapon, data) then
+					exec(self, attacker, target, action_id, weapon, data)
+				end
+			end,
+			HandlerCode = function (self, attacker, target, data)
+				data.guaranteed_crit = true
+			end,
+			helpActor = "target",
 		}),
 	},
 	DisplayName = T(659013327758, --[[CharacterEffectCompositeDef Marked DisplayName]] "Marked"),

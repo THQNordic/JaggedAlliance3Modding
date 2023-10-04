@@ -13,7 +13,7 @@ DefineClass.GoldBar = {
 	DisplayNamePlural = T(139403300827, --[[InventoryItemCompositeDef GoldBar DisplayNamePlural]] "Gold Bars"),
 	Description = T(147062904895, --[[InventoryItemCompositeDef GoldBar Description]] "Gold - what can it not do, and undo?"),
 	AdditionalHint = T(260907109485, --[[InventoryItemCompositeDef GoldBar AdditionalHint]] "<bullet_point> <GameColorD>Can be cashed in for Money</GameColorD>"),
-	is_valuable = true,
+	Valuable = 1,
 	Cost = 3000,
 	MaxStacks = 5,
 }

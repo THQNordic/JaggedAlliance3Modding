@@ -7,8 +7,8 @@ DefineClass.Detonator = {
 
 
 	object_class = "TrapDetonator",
-	Repairable = false,
 	ScrapParts = 5,
+	Repairable = false,
 	Icon = "UI/Icons/Items/detonator",
 	DisplayName = T(747561295307, --[[InventoryItemCompositeDef Detonator DisplayName]] "Remote"),
 	DisplayNamePlural = T(428906062831, --[[InventoryItemCompositeDef Detonator DisplayNamePlural]] "Remotes"),

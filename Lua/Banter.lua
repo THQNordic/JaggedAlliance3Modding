@@ -1,18 +1,15 @@
 local function lResolveBanterActor(name, unit_list, playOnce, banterPreset, optionalLineId)
-	if name == "current unit" then
-		name = "any"
-	end
 	for i, u in ipairs(unit_list) do
 		if IsKindOf(u, "UnitMarker") then
 			u = u.objects and u.objects[1] or u
 		end
 		local is_unit = IsKindOf(u, "Unit")
 		if playOnce and is_unit and u.banters_played_lines and table.find(u.banters_played_lines, optionalLineId) then
-		elseif name == "<default>" or name == "any" then
+		elseif name == "<default>" or name == "any" or name == "current unit" then
 			return u
 		elseif is_unit and u:IsDead() then
 		elseif is_unit and IsSetpieceActor(u) and not u.visible then -- skip originals of impostor unit copies used for setpiece testing
-		elseif not UnitTarget.Match(nil, name, u, empty_table) then
+		elseif not UnitTarget.Match(nil, (name == "current unit") and "any" or name, u, empty_table) then
 		elseif not IsValid(u) then
 		elseif not u:IsValidPos() then
 		else
@@ -56,7 +53,7 @@ local function lGetActorsUsedInBanter(banterPreset, unit_list, findFirst)
 				return -- not all the lines are satisfied
 			end
 			all_lines_satisfied = false
-			BanterDebugLog(banterPreset.id, "couldn't find an actor for " .. l.Character)
+			dbg(BanterDebugLog(banterPreset.id, "couldn't find an actor for " .. l.Character))
 		end
 		
 		::continue::
@@ -380,7 +377,7 @@ function FilterAvailableBanters(banters, context, units, fallback, findFirst)
 					bantersFiltered[idx] = banter_id
 					banterActors[idx] = actors
 				else
-					BanterDebugLog(banter_id, "because actors missing.")
+					dbg(BanterDebugLog(banter_id, "because actors missing."))
 				end
 			end
 		end
@@ -575,18 +572,22 @@ function BanterPlayer:Run()
 end
 
 function NetSyncEvents.BanterStartEvent(banter_id, preset_id, group)
-	local banter_player = g_IdToBanter[banter_id]
-	
-	-- This would mean that the banter was ended before it started. Which is possible if
-	-- multiple banters are started referencing the same actors. Thread would have been killed so its fine.
-	if not banter_player then return end
-	
-	banter_player.started = true
-	if IsValid(banter_player) and banter_player.preset.isRadio then
-		-- open this dlg from sync context or it might only open on one client since it pauses the game;
-		OpenDialog("RadioBanterDialog", GetInGameInterface(), banter_player)
-	end
-	Msg("BanterStart", preset_id)
+	CreateMapRealTimeThread(function()
+		local banter_player = g_IdToBanter[banter_id]
+		
+		-- This would mean that the banter was ended before it started. Which is possible if
+		-- multiple banters are started referencing the same actors. Thread would have been killed so its fine.
+		if not banter_player then return end
+		
+		banter_player.started = true
+		if IsValid(banter_player) and banter_player.preset.isRadio then
+			-- open this dlg from sync context or it might only open on one client since it pauses the game;
+			local rbd = GetDialog("RadioBanterDialog")
+			if rbd then rbd:Wait() end
+			OpenDialog("RadioBanterDialog", GetInGameInterface(), banter_player)
+		end
+		Msg("BanterStart", preset_id)
+	end)
 end
 
 function NetSyncEvents.BanterLineStartEvent(id, line_idx)
@@ -1399,8 +1400,22 @@ function OnMsg.UnitDied(unit)
 	PlayVoiceResponseUnitDied(unit)
 end
 
+SuppressNextSelectionChangeVR = false
+
 function OnMsg.SelectionChange()
-	if #Selection < 1 or GetLoadingScreenDialog() or GetSatelliteDialog() or GetDialog("PDADialog") or IsInventoryOpened() then return end 
+	if #Selection < 1 or
+		GetLoadingScreenDialog() or
+		GetSatelliteDialog() or
+		GetDialog("PDADialog") or
+		IsInventoryOpened() then
+		return
+	end
+	
+	if SuppressNextSelectionChangeVR then
+		SuppressNextSelectionChangeVR = false
+		return
+	end
+	
 	local obj = Selection[1]
 	if IsKindOf(obj, "Unit") and obj:IsPlayerAlly() then
 		if (obj:IsThreatened(nil, "pindown") or obj:IsUnderBombard() or obj:IsUnderTimedTrap()) 
@@ -1488,7 +1503,7 @@ function OnMsg.UnitAwarenessChanged(unit)
 end
 
 function OnMsg.OperationCompleted(operation, mercs)
-	if operation.id == "Arriving" then return end
+	if operation.id == "Arriving" or operation.id == "RAndR" then return end
 
 	local voice_merc = table.interaction_rand(mercs, "Operation")
 	if voice_merc then
@@ -2339,8 +2354,7 @@ DefineClass.BanterDebugInfo = {
 	preset = false,
 }
 
-function BanterDebugInfo:GetProperties()
-	local conversation = Banters[self.id] or empty_table
+function BanterDebugInfo:GetProperties()	
 	local props = table.copy(PropertyObject.GetProperties(self))
 	-- from conversations
 	ForEachPreset("Conversation", function(preset)
@@ -2396,7 +2410,10 @@ function BanterDebugInfo:GetProperties()
 	end)
 
 	-- from markers
-	GatherMarkerScriptingData()
+	local map_name = GetMapName()
+	if not g_DebugMarkersInfo[map_name] then
+		GatherMarkerScriptingData()
+	end
 	-- filter for current banter
 	ForEachDebugMarkerData("banter", self.id, function(marker_info, res_item_info) 
 		local element = {
@@ -2407,7 +2424,7 @@ function BanterDebugInfo:GetProperties()
 			editor = "text",
 			read_only = true, 
 		}
-		local name = marker_info.map==GetMapName() and "View" or "View on other map"
+		local name = marker_info.map==map_name and "View" or "View on other map"
 		element.buttons = {
 				{
 					name = name, 
@@ -3206,11 +3223,10 @@ local function BoredBanterCheck()
 		return
 	end
 	
-	local mainMercs = {}
-	local allMercs = {}
+	local mainMercs, allMercs
 	for _, squad in ipairs(g_PlayerSquads) do
 		if squad.CurrentSector == gv_CurrentSectorId then
-			for _, merc in pairs(squad.units) do
+			for _, merc in ipairs(squad.units) do
 				local unitData = g_Units[merc]
 				if not unitData then goto continue end
 				
@@ -3231,10 +3247,13 @@ local function BoredBanterCheck()
 				
 				--Add only if all cond from above are met
 				if notMoved then
+					local unit = g_Units[merc]
 					if isVeteran then
-						table.insert(mainMercs, g_Units[merc])
+						mainMercs = mainMercs or {}
+						mainMercs[#mainMercs + 1] = unit
 					end
-					table.insert(allMercs, g_Units[merc])
+					allMercs = allMercs or {}
+					allMercs[#allMercs + 1] = unit
 				end
 				
 				::continue::

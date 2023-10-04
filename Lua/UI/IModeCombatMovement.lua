@@ -639,7 +639,11 @@ if FirstLoad then
 g_SkipNoApUnits = true
 end
 
-function IModeCombatMovement:UnitAvailableForNextUnitSelection(u)
+function IModeCombatMovement:UnitAvailableForNextUnitSelection(u, force)
+	if force then
+		return u:CanBeControlled()
+	end
+
 	local minAp = const["Action Point Costs"].Walk
 	return u:CanBeControlled() and (not g_SkipNoApUnits or u.ActionPoints >= minAp)
 end

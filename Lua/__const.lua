@@ -844,6 +844,13 @@ DefineConst{
 	value = -60,
 }
 DefineConst{
+	Comment = "Game speed change in combat during the enemy/ally turn, when the Fast Forward mode is checked.",
+	group = "Combat",
+	id = "FastForwardGameSpeed",
+	scale = "%",
+	value = 200,
+}
+DefineConst{
 	Comment = "Footsteps attack color",
 	group = "Combat",
 	id = "FootstepsAttackColor",

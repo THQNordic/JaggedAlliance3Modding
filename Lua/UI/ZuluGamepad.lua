@@ -5,7 +5,7 @@ function OnMsg.XInputInited()
 	local lock = GetUIStyleGamepad() and 0 or 1
 	hr.XBoxLeftThumbLocked = lock
 	hr.XBoxRightThumbLocked = lock
-	hr.GamepadMouseSensitivity = 10
+	hr.GamepadMouseSensitivity = GetAccountStorageOptionValue("GamepadCursorMoveSpeed") or 11
 	hr.GamepadMouseAcceleration = 400 -- in percent
 	hr.GamepadMouseAccelerationMax = 1000 --  in percent (unlimited)
 	hr.GamepadMouseAccelerationExponent = 200
@@ -23,11 +23,13 @@ end
 if FirstLoad then
 ZuluMouseViaGamepadDisableReasons = false
 ZuluMouseViaGamepadEnableReasons = false
+ZuluMouseViaGamepadDisableRightClickReasons = false
 end
 
 function OnMsg.NewGame()
 	ZuluMouseViaGamepadDisableReasons = GetUIStyleGamepad() and {} or { "UIStyle" }
 	ZuluMouseViaGamepadEnableReasons = {}
+	ZuluMouseViaGamepadDisableRightClickReasons = {}
 
 	-- Some popups transcend game barriers (controller disconnected)
 	local persistentDisablingPopups = {}
@@ -42,6 +44,7 @@ end
 function OnMsg.DoneGame()
 	ZuluMouseViaGamepadDisableReasons = false
 	ZuluMouseViaGamepadEnableReasons = false
+	ZuluMouseViaGamepadDisableRightClickReasons = false
 end
 
 function SetDisableMouseViaGamepad(disable, reason)
@@ -72,6 +75,17 @@ function SetEnabledMouseViaGamepad(enable, reason)
 	ShowMouseViaGamepad(isEnabled)
 end
 
+function SetDisableMouseRightClickReason(disable, reason)
+	if not ZuluMouseViaGamepadDisableRightClickReasons then ZuluMouseViaGamepadDisableRightClickReasons = {} end
+
+	local existingReasonIdx = table.find(ZuluMouseViaGamepadDisableRightClickReasons, reason)
+	if not existingReasonIdx and disable then
+		table.insert(ZuluMouseViaGamepadDisableRightClickReasons, reason)
+	elseif existingReasonIdx and not disable then
+		table.remove(ZuluMouseViaGamepadDisableRightClickReasons, existingReasonIdx)
+	end
+end
+
 function IsZuluMouseViaGamepadEnabled()
 	if ZuluMouseViaGamepadDisableReasons and #ZuluMouseViaGamepadDisableReasons > 0 then return false end
 	if not ZuluMouseViaGamepadEnableReasons or #ZuluMouseViaGamepadEnableReasons == 0 then return false end
@@ -82,11 +96,14 @@ DefineClass.ZuluMouseViaGamepad = {
 	__parents = { "MouseViaGamepad" },
 	
 	LeftClickButton = "ButtonA",
+	LeftClickButtonAlt = "TouchPadClick",
 	RightClickButton = "ButtonX",
-	DoubleClickTime = 200,
+	DoubleClickTime = 250,
 }
 
 local function IsRSScrollButton(button)
+	local button = GetInvertPDAThumbsShortcut(button)
+
 	return button=="RightThumbUp" or button=="RightThumbUpLeft" or button=="RightThumbUpRight"   
 		 or button=="RightThumbDown"  or button=="RightThumbDownLeft" or button=="RightThumbDownRight" 
 end
@@ -110,9 +127,14 @@ end
 
 function ZuluMouseViaGamepad:OnXButtonDown(button, controller_id)
 	if not self.enabled then return end
+	
+	if button == self.LeftClickButtonAlt then
+		button = self.LeftClickButton
+	end
 
 	local pt = GamepadMouseGetPos()
-	local target = terminal.desktop:UpdateMouseTarget(pt)
+	local trg = terminal.desktop:UpdateMouseTarget(pt)
+	local target = trg
 	if IsKindOf(target, "XDragAndDropControl") and target.drag_win then
 		target = target.drag_win
 		if ExecRSScrollFn(pt, "OnXButtonDown", button, controller_id )  then
@@ -127,11 +149,50 @@ function ZuluMouseViaGamepad:OnXButtonDown(button, controller_id)
 		target = target.parent
 	end
 	
-	return MouseViaGamepad.OnXButtonDown(self,button, controller_id)
+	if not self.visible then
+		ForceHideMouseCursor("MouseViaGamepad")
+		self:SetVisible(true)
+		GamepadMouseSetPos(terminal.GetMousePos())
+	end
+	
+	local mouse_btn = false
+	if button == self.LeftClickButton then
+		mouse_btn = "L"
+	elseif button == self.RightClickButton then
+		if #(ZuluMouseViaGamepadDisableRightClickReasons or empty_table) == 0 then
+			mouse_btn = "R"
+		end
+	end
+
+	if mouse_btn then
+		local now = now()
+		local last_click_time = self.LastClickTimes[mouse_btn]
+		self.LastClickTimes[mouse_btn] = now
+		local is_double_click = last_click_time and (now - last_click_time) <= self.DoubleClickTime
+		if is_double_click then
+			local target = trg
+			while target~=terminal.desktop do
+				local res = target:OnMouseButtonDoubleClick( pt, mouse_btn, "gamepad")
+				if res=="break" then
+					return "break"
+				end	
+				target = target.parent
+			end
+			return terminal.MouseEvent("OnMouseButtonDoubleClick", pt, mouse_btn, "gamepad")
+		else
+			return terminal.MouseEvent("OnMouseButtonDown", pt, mouse_btn, "gamepad")
+		end
+	end
+	
+	return "continue"
 end
 
 function ZuluMouseViaGamepad:OnXButtonUp(button, controller_id)
 	if not self.enabled then return end
+
+	if button == self.LeftClickButtonAlt then
+		button = self.LeftClickButton
+	end
 
 	local pt = GamepadMouseGetPos()
 	local target = terminal.desktop:UpdateMouseTarget(pt)
@@ -178,6 +239,7 @@ function ZuluMouseViaGamepad:OnMousePos(pt)
 end
 
 MouseViaGamepadHideSkipReasons["GamepadActive"] = true
+MouseViaGamepadHideSkipReasons["MouseDisconnected"] = true
 
 function ShowMouseViaGamepad(show)
 	local mouse_win = GetMouseViaGamepadCtrl()
@@ -187,8 +249,14 @@ function ShowMouseViaGamepad(show)
 	if mouse_win then
 		if show then
 			ForceHideMouseCursor("MouseViaGamepad")
-			GamepadMouseSetPos(terminal.GetMousePos())
-			mouse_win:SetCursorImage(GetMouseCursor())
+			
+			local _, val = terminal.desktop:GetMouseTarget(GamepadMouseGetPos())
+			local cursor = val
+			if (cursor or "") == "" then
+				cursor = const.DefaultMouseCursor
+			end
+
+			mouse_win:SetCursorImage(cursor)
 			mouse_win:SetEnabled(true)
 			
 			-- Consoles with no mouse attached will not have this thread active.
@@ -204,6 +272,7 @@ function ShowMouseViaGamepad(show)
 			UnforceHideMouseCursor("MouseViaGamepad")
 			XDestroyRolloverWindow(true)
 			terminal.desktop.last_mouse_pos = terminal.GetMousePos()
+			terminal.SetMousePos(GamepadMouseGetPos())
 		end
 		hr.GamepadMouseEnabled = show
 	end
@@ -249,23 +318,16 @@ function SplashText(...)
 end
 
 texts_to_add_in_loc = {
-	
-	
 	--Additional Options
-	T(357598959787, "Invert Satelite View controls"),
-	T(965509635524, "Allows you to use the left thumbstick to scroll the map and the right thumbstick to move the cursor."),
 	T(613515802678, "Hide selection helpers"),
 	T(498814044233, "Hides the selection helper texts in the center of the screen in Tactical View."),
-	T(447937688557, "Swap additional controls"),
-	T(699900566044, "Swaps the actions done with <LeftTrigger> and <RightTrigger>."),
-	
 }
 
 function WaitControllerDisconnectedMessage()
 	local dialog = CreateMessageBox(
 		terminal.desktop,
-		T{836013651979, "Active <controller> disconnected", controller = T(704811499954, "Controller")},
-		T(925406686039, "Please connect a controller to resume playing.")
+		T{836013651979, "Active <controller> disconnected", controller = Platform.playstation and g_PlayStationWirelessControllerText or T(704811499954, "Controller")},
+		Platform.playstation and T(306576723489, --[[PS controller message]] "Please connect a controller to resume playing.") or T(925406686039, "Please connect a controller to resume playing.")
 	)
 	dialog:SetZOrder(BaseLoadingScreen.ZOrder + 1)
 	dialog:SetModal(true)
@@ -296,4 +358,116 @@ function ConsolePlatformControllerDisconnected()
 			SetPauseLayerPause(false, "ControllerDisconnected")
 		end
 	end)
+end
+
+local function lGetMousePosVirtualAware()
+	if GetUIStyleGamepad() then
+		if IsMouseViaGamepadActive() then
+			return GamepadMouseGetPos()
+		else
+			return point20
+		end
+	end
+	return false
+end
+
+-- Prevent moving the hardware mouse from showing rollovers etc.
+local oldMouseEvent = XDesktop.MouseEvent
+function XDesktop:MouseEvent(event, pt, button, meta, ...)
+	if event == "OnMouseButtonDown" and GetUIStyleGamepad() and meta ~= "gamepad" then
+		SwitchControls(false)
+	end
+
+	pt = lGetMousePosVirtualAware() or pt
+	return oldMouseEvent(self, event, pt, button, meta, ...)
+end
+
+local function lMouseSwitchControlSwitchProc()
+	local currentTime = RealTime()
+	
+	local previous_hardwareMouse_pos = HardwareGetMousePos()
+	while true do
+		local hardwareMousePos = HardwareGetMousePos()
+
+		local scaledThreshold = MulDivRound(200, GetUIScale(), 1000)
+		if hardwareMousePos:Dist(previous_hardwareMouse_pos) > scaledThreshold then
+			DelayedCall(0, SwitchControls, false)
+			break
+		end
+		
+		if RealTime() - currentTime > 1000 then
+			previous_hardwareMouse_pos = hardwareMousePos
+		end
+		
+		Sleep(15)
+	end
+end
+
+if FirstLoad then
+	HardwareGetMousePos = terminal.GetMousePos
+	function terminal.GetMousePos()
+		return lGetMousePosVirtualAware() or HardwareGetMousePos()
+	end
+	
+	HardwareSetMousePos = terminal.SetMousePos
+	function terminal.SetMousePos(p)
+		local recreateSwitchThread = false
+		if IsValidThread(MouseMoveToSwitchControlsThread) then
+			DeleteThread(MouseMoveToSwitchControlsThread)
+			MouseMoveToSwitchControlsThread = false
+			recreateSwitchThread = true
+		end
+		
+		HardwareSetMousePos(p)
+		
+		if recreateSwitchThread then
+			MouseMoveToSwitchControlsThread = CreateRealTimeThread(lMouseSwitchControlSwitchProc)
+		end
+	end
+end
+
+function ZuluMouseViaGamepad:UpdateMousePosThread()
+	--GamepadMouseSetPos(GamepadMouseGetPos())
+
+	local previous_pos
+	while true do
+		WaitNextFrame()
+		local pos = GamepadMouseGetPos()
+		if pos ~= previous_pos then
+			--terminal.SetMousePos(pos)
+			self.parent:MouseEvent("OnMousePos", pos)
+			
+			previous_pos = pos
+		end
+	end
+end
+
+if FirstLoad then
+MouseMoveToSwitchControlsThread = false
+end
+
+function OnMsg.GamepadUIStyleChanged()
+	if IsValidThread(MouseMoveToSwitchControlsThread) then
+		DeleteThread(MouseMoveToSwitchControlsThread)
+	end
+	if not GetUIStyleGamepad() then return end
+	
+	GamepadMouseSetPos(HardwareGetMousePos())
+	MouseMoveToSwitchControlsThread = CreateRealTimeThread(lMouseSwitchControlSwitchProc)
+end
+
+function MouseViaGamepad:OnXNewPacket(_, controller_id, last_state, current_state)
+	--nop override common
+end
+
+function OnMsg.OnXInputControllerDisconnected(controller)
+	XInput.ControllerEnable("all", true)
+end
+
+function OnMsg.OnXInputControllerConnected(controller)
+	local _, id = GetActiveGamepadState()
+	if id then
+		XInput.ControllerEnable("all", false)
+		XInput.ControllerEnable(id, true)
+	end
 end

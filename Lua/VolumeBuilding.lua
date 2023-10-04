@@ -409,16 +409,6 @@ function ForEachRoomInBuilding(bld, func, ...)
 	end
 end
 
-DefineClass.BorderBuilding = {
-	__parents = {"AutoAttachObject"},
-}
-
-function BorderBuilding:OnAttachCreated(attach, spot)
-	if IsKindOfClasses(attach, "WindowTunnelObject", "Door") then
-		attach.AttachLight = false
-	end
-end
-
 function OnMsg.PreSaveMap()
 	EnumVolumes(function(room)
 		local ignore = room.ignore_zulu_invisible_wall_logic or room.outside_border

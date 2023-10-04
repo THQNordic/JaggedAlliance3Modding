@@ -3,6 +3,7 @@
 PlaceObj('XTemplate', {
 	Comment = "Game-specific shortcuts and Cheats",
 	RequireActionSortKeys = true,
+	SortKey = 300,
 	group = "Shortcuts",
 	id = "GameShortcuts",
 	PlaceObj('XTemplateAction', {
@@ -697,6 +698,46 @@ PlaceObj('XTemplate', {
 			'__condition', function (parent, context) return Platform.developer end,
 		}),
 		PlaceObj('XTemplateAction', {
+			'ActionId', "ToggleBorderBuildingEastWall",
+			'ActionMode', "Editor",
+			'ActionSortKey', "1401",
+			'ActionShortcut', "Alt-6",
+			'OnAction', function (self, host, source, ...)
+				SelectionBorderBuildingToggleWall("east")
+			end,
+			'__condition', function (parent, context) return Platform.developer end,
+		}),
+		PlaceObj('XTemplateAction', {
+			'ActionId', "ToggleBorderBuildingWestWall",
+			'ActionMode', "Editor",
+			'ActionSortKey', "1402",
+			'ActionShortcut', "Alt-7",
+			'OnAction', function (self, host, source, ...)
+				SelectionBorderBuildingToggleWall("west")
+			end,
+			'__condition', function (parent, context) return Platform.developer end,
+		}),
+		PlaceObj('XTemplateAction', {
+			'ActionId', "ToggleBorderBuildingSouthWall",
+			'ActionMode', "Editor",
+			'ActionSortKey', "1403",
+			'ActionShortcut', "Alt-8",
+			'OnAction', function (self, host, source, ...)
+				SelectionBorderBuildingToggleWall("south")
+			end,
+			'__condition', function (parent, context) return Platform.developer end,
+		}),
+		PlaceObj('XTemplateAction', {
+			'ActionId', "ToggleBorderBuildingNorthWall",
+			'ActionMode', "Editor",
+			'ActionSortKey', "1404",
+			'ActionShortcut', "Alt-9",
+			'OnAction', function (self, host, source, ...)
+				SelectionBorderBuildingToggleWall("north")
+			end,
+			'__condition', function (parent, context) return Platform.developer end,
+		}),
+		PlaceObj('XTemplateAction', {
 			'comment', "Show Grid Marker Areas (Alt-Shift-G)",
 			'RolloverText', "Show Grid Marker Areas (Alt-Shift-G)",
 			'ActionId', "E_ShowGridMarkersAreas",
@@ -1120,6 +1161,7 @@ PlaceObj('XTemplate', {
 			'ActionSortKey', "1600",
 			'ActionName', T(625126806199, --[[XTemplate GameShortcuts ActionName]] "Satellite View"),
 			'ActionShortcut', "M",
+			'ActionGamepad', "LeftTrigger-ButtonB",
 			'ActionBindable', true,
 			'ActionMouseBindable', false,
 			'ActionState', function (self, host)
@@ -1247,7 +1289,7 @@ PlaceObj('XTemplate', {
 			'ActionState', function (self, host)
 				if AnyPlayerControlStoppers() then return "disabled" end
 				if GetDialog("ModifyWeaponDlg") then return "disabled" end
-				if GetDialog("PDADialog") then return "disabled" end
+				if GetDialog("PDADialog") and GetDialog("PDADialog").idContent.Mode ~= "evaluation" then return "disabled" end
 				
 				if GameState.disable_pda then
 					return "disabled"
@@ -1264,6 +1306,11 @@ PlaceObj('XTemplate', {
 				if full_screen and full_screen:IsVisible() then
 					full_screen:Close()
 					return
+				end
+				
+				local pdaDialog = GetDialog("PDADialog")
+				if pdaDialog and pdaDialog.idContent.Mode == "evaluation" then
+					pdaDialog:Close("force")
 				end
 				
 				if not GetDialog("PDADialogSatellite") then
@@ -1473,6 +1520,7 @@ PlaceObj('XTemplate', {
 			'ActionSortKey', "1702",
 			'ActionGamepad', "LeftTrigger-DPadRight",
 			'ActionState', function (self, host)
+				if not netInGame then return "disabled" end
 				local justListed = #netGamePlayers<2 or not NetIsHost()
 				return justListed and "enabled" or "disabled"
 			end,
@@ -1486,6 +1534,7 @@ PlaceObj('XTemplate', {
 			'ActionSortKey', "1703",
 			'ActionGamepad', "LeftTrigger-DPadRight",
 			'ActionState', function (self, host)
+				if not netInGame then return "disabled" end
 				local inGame = #netGamePlayers>=2 and NetIsHost()
 				return inGame and "enabled" or "disabled"
 			end,
@@ -2020,10 +2069,31 @@ PlaceObj('XTemplate', {
 				return g_Combat and "enabled" or "disabled"
 			end,
 			'OnAction', function (self, host, source, ...)
+				if not HasEndTurnAnimationPassed() then return end
 				NetSyncEvent("EndTurn", netUniqueId)
 			end,
 			'IgnoreRepeated', true,
 			'__condition', function (parent, context) return Platform.developer end,
+		}),
+		PlaceObj('XTemplateAction', {
+			'ActionId', "CombatFastForward",
+			'ActionSortKey', "2041",
+			'ActionName', T(889392176160, --[[XTemplate GameShortcuts ActionName]] "Fast Forward"),
+			'ActionGamepad', "ButtonY",
+			'ActionBindable', true,
+			'BindingsMenuCategory', "CombatActions",
+			'ActionState', function (self, host)
+				if not g_Combat or g_Combat.is_player_control then return "disabled" end
+				return g_Combat and "enabled" or "disabled"
+			end,
+			'OnAction', function (self, host, source, ...)
+				if g_Combat and not g_Combat.is_player_control then
+					local value = (g_FastForwardGameSpeedLocal or g_FastForwardGameSpeed) == "Normal" and "Fast" or "Normal"
+					NetSyncEvent("SetFastForwardGameSpeed", value)
+					ObjModified("FastForwardButtonAnimation_GamepadWakeup")
+				end
+			end,
+			'IgnoreRepeated', true,
 		}),
 		PlaceObj('XTemplateAction', {
 			'ActionId', "DeploymentStartExploration",
@@ -2039,7 +2109,7 @@ PlaceObj('XTemplate', {
 		PlaceObj('XTemplateAction', {
 			'ActionId', "idRetreatAction",
 			'ActionSortKey', "2042",
-			'ActionGamepad', "LeftTrigger-ButtonB",
+			'ActionGamepad', "LeftTrigger-DPadLeft",
 			'OnAction', function (self, host, source, ...)
 				local unit = Selection and Selection[1]
 				if gv_RetreatOrTravelOption then
@@ -2059,6 +2129,7 @@ PlaceObj('XTemplate', {
 				return g_Combat and "enabled" or "disabled"
 			end,
 			'OnAction', function (self, host, source, ...)
+				if not HasEndTurnAnimationPassed() then return end
 				NetSyncEvent("EndTurn", netUniqueId)
 			end,
 			'IgnoreRepeated', true,
@@ -2114,7 +2185,11 @@ PlaceObj('XTemplate', {
 				if g_GamepadTarget then return "disabled" end
 				
 				local igiM = GetInGameInterfaceModeDlg()
-				return igiM and igiM.crosshair and "disabled" or "enabled"
+				if igiM and igiM.crosshair then return "disabled" end
+				
+				local state = CombatActions.Hide:GetUIState(Selection)
+				local action = state == "hidden" and CombatActions.Reveal or CombatActions.Hide
+				return action:GetUIState(Selection)
 			end,
 			'OnAction', function (self, host, source, ...)
 				local igiM = GetInGameInterfaceModeDlg()
@@ -2137,9 +2212,8 @@ PlaceObj('XTemplate', {
 			'ActionSortKey', "2069",
 			'ActionName', T(493248739492, --[[XTemplate GameShortcuts ActionName]] "Active Pause"),
 			'ActionShortcut', "Space",
-			'ActionGamepad', "Back",
+			'ActionGamepad', "DPadDown",
 			'ActionBindable', true,
-			'BindingsMenuCategory', "CombatActions",
 			'ActionState', function (self, host)
 				return IsActivePauseAvailable() and "enabled" or "disabled"
 			end,
@@ -2295,6 +2369,17 @@ PlaceObj('XTemplate', {
 			'replace_matching_id', true,
 		}),
 		PlaceObj('XTemplateAction', {
+			'ActionId', "actionRedeploy",
+			'ActionSortKey', "2130",
+			'ActionGamepad', "LeftTrigger-RightTrigger-DPadDown",
+			'ActionState', function (self, host)
+				return gv_Redeployment and "enabled" or "hidden"
+			end,
+			'OnAction', function (self, host, source, ...)
+				NetSyncEvent("StartRedeployDeployment")
+			end,
+		}),
+		PlaceObj('XTemplateAction', {
 			'comment', "Change Stance Down",
 			'RolloverText', T(813352149414, --[[XTemplate GameShortcuts RolloverText]] "Change Stance Down"),
 			'ActionId', "ChangeStanceDown",
@@ -2310,35 +2395,37 @@ PlaceObj('XTemplate', {
 		PlaceObj('XTemplateAction', {
 			'ActionId', "ChangeStanceUpGamepad",
 			'ActionSortKey', "1",
-			'ActionGamepad', "DPadUp",
+			'ActionGamepad', "RightTrigger-DPadUp",
 			'ActionState', function (self, host)
 				if not GetUIStyleGamepad() then return "disabled" end
 				if cameraTac.GetIsInOverview() then return "disabled" end
+				if cameraFly.IsActive() then return "disabled" end
 				
 				local igiM = GetInGameInterfaceModeDlg()
 				if igiM and igiM.crosshair then return "disabled" end
 				
-				return cameraFly.IsActive() and "disabled" or "enabled"
+				return "enabled"
 			end,
 			'OnAction', function (self, host, source, ...)
-				GamepadFocusStanceList()
+				ChangeStanceExploration("up")
 			end,
 		}),
 		PlaceObj('XTemplateAction', {
 			'ActionId', "ChangeStanceDownGamepad",
 			'ActionSortKey', "1",
-			'ActionGamepad', "DPadDown",
+			'ActionGamepad', "RightTrigger-DPadDown",
 			'ActionState', function (self, host)
 				if not GetUIStyleGamepad() then return "disabled" end
 				if cameraTac.GetIsInOverview() then return "disabled" end
+				if cameraFly.IsActive() then return "disabled" end
 				
 				local igiM = GetInGameInterfaceModeDlg()
 				if igiM and igiM.crosshair then return "disabled" end
 				
-				return cameraFly.IsActive() and "disabled" or "enabled"
+				return "enabled"
 			end,
 			'OnAction', function (self, host, source, ...)
-				GamepadFocusStanceList()
+				ChangeStanceExploration("down")
 			end,
 		}),
 		PlaceObj('XTemplateAction', {
@@ -2507,8 +2594,8 @@ PlaceObj('XTemplate', {
 				if #squads <= 1 then return end
 				
 				local currentSquadIdx = table.find(squads, g_CurrentSquad)
-				currentSquadIdx = currentSquadIdx + 1
-				if currentSquadIdx > #squads then currentSquadIdx = 1 end
+				currentSquadIdx = currentSquadIdx - 1
+				if currentSquadIdx < 1 then currentSquadIdx = #squads end
 				g_CurrentSquad = squads[currentSquadIdx]
 				Msg("CurrentSquadChanged")
 				
@@ -2541,8 +2628,8 @@ PlaceObj('XTemplate', {
 				if #squads <= 1 then return end
 				
 				local currentSquadIdx = table.find(squads, g_CurrentSquad)
-				currentSquadIdx = currentSquadIdx - 1
-				if currentSquadIdx < 1 then currentSquadIdx = #squads end
+				currentSquadIdx = currentSquadIdx + 1
+				if currentSquadIdx > #squads then currentSquadIdx = 1 end
 				g_CurrentSquad = squads[currentSquadIdx]
 				Msg("CurrentSquadChanged")
 				
@@ -2579,7 +2666,7 @@ PlaceObj('XTemplate', {
 			'ActionSortKey', "2250",
 			'ActionName', T(818860944721, --[[XTemplate GameShortcuts ActionName]] "Free Aim"),
 			'ActionShortcut', "F",
-			'ActionGamepad', "RightTrigger-ButtonA",
+			'ActionGamepad', "RightTrigger-LeftThumbClick",
 			'ActionBindable', true,
 			'ActionMouseBindable', false,
 			'ActionBindSingleKey', true,
@@ -2587,7 +2674,37 @@ PlaceObj('XTemplate', {
 				return Selection and #Selection > 0 and "enabled" or "disabled"
 			end,
 			'OnAction', function (self, host, source, ...)
+				local igi = GetInGameInterfaceModeDlg()
+				local IsInFreeAim = IsKindOf(igi, "IModeCombatFreeAim")
+				if IsInFreeAim then
+					igi:CycleFiringMode()
+					return
+				end
+				
 				EnterFreeAimWithDefaultCombatAction(Selection[1])
+			end,
+		}),
+		PlaceObj('XTemplateAction', {
+			'ActionId', "gamepadActionFreeAimToggle",
+			'ActionMode', "Game, UI",
+			'ActionSortKey', "2250",
+			'ActionShortcut', "F",
+			'ActionGamepad', "ButtonX",
+			'ActionMouseBindable', false,
+			'ActionState', function (self, host)
+				if not Selection or #Selection == 0 then return "disabled" end
+				
+				local igi = GetInGameInterfaceModeDlg()
+				local IsInFreeAim = IsKindOf(igi, "IModeCombatFreeAim")
+				return IsInFreeAim and "enabled" or "disabled"
+			end,
+			'OnAction', function (self, host, source, ...)
+				local igi = GetInGameInterfaceModeDlg()
+				local IsInFreeAim = IsKindOf(igi, "IModeCombatFreeAim")
+				if IsInFreeAim then
+					igi:CycleFiringMode()
+					return
+				end
 			end,
 		}),
 		PlaceObj('XTemplateAction', {
@@ -2972,13 +3089,13 @@ PlaceObj('XTemplate', {
 			end,
 			'OnAction', function (self, host, source, ...)
 				local mode = true
-				if GetAccountStorageOptionValue("InteractableHighlight") == "Toggle" then
+				if GetAccountStorageOptionValue("InteractableHighlight") == "Toggle" or GetUIStyleGamepad() then
 					mode = not interactablesOn
 				end
 				HighlightAllInteractables(mode)
 			end,
 			'OnShortcutUp', function (self, host, source, ...)
-				if GetAccountStorageOptionValue("InteractableHighlight") == "Hold" then
+				if GetAccountStorageOptionValue("InteractableHighlight") == "Hold" and not GetUIStyleGamepad() then
 					HighlightAllInteractables(false)
 				end
 			end,
@@ -3020,7 +3137,6 @@ PlaceObj('XTemplate', {
 			'ActionBindable', true,
 			'ActionBindSingleKey', true,
 			'ActionState', function (self, host)
-				if GetUIStyleGamepad() then return "hidden" end
 				return (g_Combat or gv_Deployment) and "disabled" or "enabled"
 			end,
 			'OnAction', function (self, host, source, ...)
@@ -3152,23 +3268,6 @@ PlaceObj('XTemplate', {
 			end,
 		}),
 		PlaceObj('XTemplateAction', {
-			'ActionId', "ExplorationSelectionToggle",
-			'ActionMode', "Game",
-			'ActionSortKey', "2450",
-			'ActionName', T(777099799450, --[[XTemplate GameShortcuts ActionName]] "Selection Toggle"),
-			'ActionGamepad', "ButtonX",
-			'ActionBindable', true,
-			'ActionBindSingleKey', true,
-			'ActionState', function (self, host)
-				if not GetUIStyleGamepad() then return "disabled" end
-				return g_Combat and "disabled" or "enabled"
-			end,
-			'OnAction', function (self, host, source, ...)
-				ToggleAllUnitsSelectionInSquad()
-			end,
-			'IgnoreRepeated', true,
-		}),
-		PlaceObj('XTemplateAction', {
 			'ActionId', "GamepadPrevUnit",
 			'ActionSortKey', "2460",
 			'ActionGamepad', "LeftShoulder",
@@ -3181,7 +3280,7 @@ PlaceObj('XTemplate', {
 				if IsKindOf(igi, "IModeCombatAttackBase") then
 					igi:PrevTarget()
 				elseif igi then
-					igi:NextUnit(nil, nil, nil, "prev")
+					igi:NextUnit(nil, "force", nil, "prev")
 				end
 			end,
 		}),
@@ -3198,7 +3297,7 @@ PlaceObj('XTemplate', {
 				if IsKindOf(igi, "IModeCombatAttackBase") then
 					igi:NextTarget()
 				elseif igi then
-					igi:NextUnit()
+					igi:NextUnit(false, "force")
 				end
 			end,
 		}),
@@ -3216,6 +3315,7 @@ PlaceObj('XTemplate', {
 				if rawget(igi, "crosshair") and not igi.crosshair.noAim then
 					igi.crosshair:ToggleAim()
 				elseif g_GamepadTarget then
+					-- Not used
 					local takeCoverAction = CombatActions.TakeCover
 					if takeCoverAction:GetUIState(Selection) == "enabled" then
 						takeCoverAction:UIBegin(Selection)
@@ -3232,6 +3332,11 @@ PlaceObj('XTemplate', {
 			'ActionState', function (self, host)
 				if not GetUIStyleGamepad() then return "disabled" end
 				if not cameraTac.IsActive() then return "disabled" end
+				
+				local unit = Selection and Selection[1]
+				local action = unit and unit:GetDefaultAttackAction()
+				local state = action and CheckImpossibleAttack(unit, action)
+				return state
 			end,
 			'OnAction', function (self, host, source, ...)
 				local igi = GetInGameInterfaceModeDlg()
@@ -3252,9 +3357,94 @@ PlaceObj('XTemplate', {
 			end,
 		}),
 		PlaceObj('XTemplateAction', {
+			'ActionId', "GamepadCheckMercUp",
+			'ActionSortKey', "2491",
+			'ActionGamepad', "LeftTrigger-DPadUp",
+			'ActionState', function (self, host)
+				
+			end,
+			'OnAction', function (self, host, source, ...)
+				local partyUI = GetPartyUI()
+				if not partyUI then return end
+				
+				local mercUIIdx = table.find(partyUI, "context", Selection and Selection[1])
+				mercUIIdx = mercUIIdx or #mercUIIdx
+				
+				
+				if mercUIIdx > 1 then
+					mercUIIdx = mercUIIdx - 1
+				else
+					mercUIIdx = #partyUI
+				end
+				
+				local mercUI = partyUI[mercUIIdx] or partyUI[1]
+				if not mercUI then return end
+				SuppressNextSelectionChangeVR = true
+				SelectObj(mercUI.context)
+				
+				-- Selection will rebuild
+				DelayedCall(0, function()
+					partyUI = GetPartyUI()
+					if not partyUI then return end
+					
+					mercUIIdx = table.find(partyUI, "context", Selection and Selection[1])
+					local mercUI = partyUI[mercUIIdx] or partyUI[1]
+					if not mercUI then return end
+					
+					mercUI:SetFocus(true)
+				end)
+			end,
+		}),
+		PlaceObj('XTemplateAction', {
+			'ActionId', "GamepadCheckMercDown",
+			'ActionSortKey', "2491",
+			'ActionGamepad', "LeftTrigger-DPadDown",
+			'OnAction', function (self, host, source, ...)
+				local partyUI = GetPartyUI()
+				if not partyUI then return end
+				
+				local mercUIIdx = table.find(partyUI, "context", Selection and Selection[1])
+				mercUIIdx = mercUIIdx or #mercUIIdx
+				
+				if mercUIIdx < #partyUI then
+					mercUIIdx = mercUIIdx + 1
+				else
+					mercUIIdx = 1
+				end
+				
+				local mercUI = partyUI[mercUIIdx] or partyUI[#partyUI]
+				if not mercUI then return end
+				SuppressNextSelectionChangeVR = true
+				SelectObj(mercUI.context)
+				
+				-- Selection will rebuild
+				DelayedCall(0, function()
+					partyUI = GetPartyUI()
+					if not partyUI then return end
+					
+					mercUIIdx = table.find(partyUI, "context", Selection and Selection[1])
+					local mercUI = partyUI[mercUIIdx] or partyUI[#partyUI]
+					if not mercUI then return end
+					
+					mercUI:SetFocus(true)
+				end)
+			end,
+		}),
+		PlaceObj('XTemplateAction', {
+			'ActionId', "GamepadCheckMercCancel",
+			'ActionSortKey', "2492",
+			'ActionGamepad', "ButtonB",
+			'ActionState', function (self, host)
+				return IsKindOf(terminal.desktop.keyboard_focus, "HUDMercClass") and "enabled" or "disabled"
+			end,
+			'OnAction', function (self, host, source, ...)
+				local keyboardFocus = terminal.desktop.keyboard_focus
+				keyboardFocus:SetFocus(false)
+			end,
+		}),
+		PlaceObj('XTemplateAction', {
 			'ActionId', "GamepadCameraToUnit",
 			'ActionSortKey', "2942",
-			'ActionShortcut', "RightThumbClick",
 			'ActionGamepad', "RightThumbClick",
 			'ActionBindSingleKey', true,
 			'OnAction', function (self, host, source, ...)
@@ -3334,6 +3524,14 @@ PlaceObj('XTemplate', {
 				igi:FocusActionBar("right")
 			end,
 		}),
+		PlaceObj('XTemplateAction', {
+			'ActionId', "GamepadPing",
+			'ActionSortKey', "799",
+			'ActionGamepad', "LeftTrigger-RightThumbClick",
+			'OnAction', function (self, host, source, ...)
+				PlayerPing()
+			end,
+		}),
 		}),
 	PlaceObj('XTemplateAction', {
 		'ActionId', "actionQuickSave",
@@ -3397,7 +3595,7 @@ PlaceObj('XTemplate', {
 			'ActionSortKey', "2520",
 			'ActionName', T(769454735094, --[[XTemplate GameShortcuts ActionName]] "Pause/Resume"),
 			'ActionShortcut', "Space",
-			'ActionGamepad', "Back",
+			'ActionGamepad', "DPadDown",
 			'ActionBindable', true,
 			'ActionState', function (self, host)
 				if GetUIStyleGamepad() and IsCampaignPaused() then
@@ -3420,7 +3618,7 @@ PlaceObj('XTemplate', {
 			'ActionMode', "Satellite",
 			'ActionSortKey', "2521",
 			'ActionName', T(660426612618, --[[XTemplate GameShortcuts ActionName]] "Pause/Resume"),
-			'ActionGamepad', "Back",
+			'ActionGamepad', "DPadDown",
 			'ActionState', function (self, host)
 				if not GetUIStyleGamepad() then return "disabled" end
 				if not IsCampaignPaused() then return "disabled" end
@@ -3465,6 +3663,28 @@ PlaceObj('XTemplate', {
 				CheatTeleportToCursor()
 			end,
 			'replace_matching_id', true,
+		}),
+		PlaceObj('XTemplateAction', {
+			'ActionId', "GamepadSatZoomIn",
+			'ActionSortKey', "2531",
+			'ActionGamepad', "LeftTrigger-DPadUp",
+			'ActionState', function (self, host)
+				return g_SatelliteUI and g_SatelliteUI:IsVisible() and "enabled" or "disabled"
+			end,
+			'OnAction', function (self, host, source, ...)
+				-- implemented in "WASD-SatelliteMap"
+			end,
+		}),
+		PlaceObj('XTemplateAction', {
+			'ActionId', "GamepadSatZoomOut",
+			'ActionSortKey', "2531",
+			'ActionGamepad', "LeftTrigger-DPadDown",
+			'ActionState', function (self, host)
+				return g_SatelliteUI and g_SatelliteUI:IsVisible() and "enabled" or "disabled"
+			end,
+			'OnAction', function (self, host, source, ...)
+				-- implemented in "WASD-SatelliteMap"
+			end,
 		}),
 		PlaceObj('XTemplateAction', {
 			'comment', "PDA actions",

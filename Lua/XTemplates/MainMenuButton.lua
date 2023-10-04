@@ -11,7 +11,7 @@ PlaceObj('XTemplate', {
 		'MinWidth', 355,
 		'MaxWidth', 355,
 		'OnLayoutComplete', function (self)
-			self:SetTransparency(self.enabled or self.focused and 0 or 178)
+			self.idTxtContainer:SetTransparency(self.enabled or self.focused and 0 or 178)
 		end,
 		'BorderColor', RGBA(0, 0, 0, 0),
 		'Background', RGBA(255, 255, 255, 0),

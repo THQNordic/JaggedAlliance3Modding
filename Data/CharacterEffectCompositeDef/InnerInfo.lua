@@ -6,13 +6,11 @@ PlaceObj('CharacterEffectCompositeDef', {
 	'Comment', "Livewire - Enemies revealed on sectors with Intel",
 	'object_class', "Perk",
 	'msg_reactions', {
-		PlaceObj('MsgReaction', {
+		PlaceObj('MsgActorReaction', {
 			Event = "OnEnterMapVisual",
 			Handler = function (self)
-				local reaction_idx = table.find(self.msg_reactions or empty_table, "Event", "OnEnterMapVisual")
-				if not reaction_idx then return end
 				
-				local function exec(self)
+				local function exec(self, reaction_actor)
 				CreateGameTimeThread(function()
 					local livewire = g_Units.Livewire
 					local sector = gv_Sectors[gv_CurrentSectorId]
@@ -36,25 +34,26 @@ PlaceObj('CharacterEffectCompositeDef', {
 					end
 				end)
 				end
-				local id = GetCharacterEffectId(self)
 				
-				if id then
-					local objs = {}
-					for session_id, data in pairs(gv_UnitData) do
-						local obj = g_Units[session_id] or data
-						if obj:HasStatusEffect(id) then
-							objs[session_id] = obj
-						end
-					end
-					for _, obj in sorted_pairs(objs) do
-						exec(self)
-					end
-				else
-					exec(self)
+				if not IsKindOf(self, "MsgReactionsPreset") then return end
+				
+				local reaction_def = (self.msg_reactions or empty_table)[1]
+				if not reaction_def or reaction_def.Event ~= "OnEnterMapVisual" then return end
+				
+				if not IsKindOf(self, "MsgActorReactionsPreset") then
+					local reaction_actor
+					exec(self, reaction_actor)
 				end
 				
+				
+				local actors = self:GetReactionActors("OnEnterMapVisual", reaction_def, nil)
+				for _, reaction_actor in ipairs(actors) do
+					if self:VerifyReaction("OnEnterMapVisual", reaction_def, reaction_actor, nil) then
+						exec(self, reaction_actor)
+					end
+				end
 			end,
-			HandlerCode = function (self)
+			HandlerCode = function (self, reaction_actor)
 				CreateGameTimeThread(function()
 					local livewire = g_Units.Livewire
 					local sector = gv_Sectors[gv_CurrentSectorId]

@@ -56,7 +56,7 @@ DefineClass.Gus = {
 				}),
 			},
 			'Conditions', {
-				PlaceObj('AND', {
+				PlaceObj('CheckAND', {
 					Conditions = {
 						PlaceObj('UnitHireStatus', {
 							Status = "Hired",
@@ -80,7 +80,7 @@ DefineClass.Gus = {
 				}),
 			},
 			'Conditions', {
-				PlaceObj('AND', {
+				PlaceObj('CheckAND', {
 					Conditions = {
 						PlaceObj('UnitHireStatus', {
 							Status = "Hired",

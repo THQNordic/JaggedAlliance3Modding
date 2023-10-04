@@ -74,10 +74,16 @@ function SneakProjector:Idle()
 		end
 	end
 
-	if anyLivingEnemies then
+	local showProjectors = 
+		(not gv_Sectors or	not gv_CurrentSectorId) or
+		(gv_Sectors[gv_CurrentSectorId] ~= "player1") and anyLivingEnemies
+	if showProjectors then
 		if self.attaches_destroyed then
 			self:AutoAttachObjects()
 			self:ForEachAttach("Light", Stealth_HandleLight)
+		end
+		if type(self.attaches_destroyed) == "table" then
+			self:SetSIModulation(self.attaches_destroyed.SIModulation)
 		end
 		self.attaches_destroyed = false
 	else
@@ -86,7 +92,8 @@ function SneakProjector:Idle()
 			KillStealthLightForLight(l)
 		end
 		self:DestroyAttaches()
-		self.attaches_destroyed = true
+		self.attaches_destroyed = {SIModulation = self:GetSIModulation()}
+		self:SetSIModulation(0)
 		
 		Halt()
 		return

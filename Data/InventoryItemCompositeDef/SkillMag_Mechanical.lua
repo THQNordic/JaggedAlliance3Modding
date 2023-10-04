@@ -11,7 +11,7 @@ PlaceObj('InventoryItemCompositeDef', {
 	'Description', T(882249328783, --[[InventoryItemCompositeDef SkillMag_Mechanical Description]] "Not to be confused with the NSFW magazine with the same name."),
 	'AdditionalHint', T(594623778604, --[[InventoryItemCompositeDef SkillMag_Mechanical AdditionalHint]] "<bullet_point> Used through the Item Menu\n<bullet_point> Single use\n<bullet_point> Increases Mechanical"),
 	'UnitStat', "Mechanical",
-	'is_valuable', true,
+	'Valuable', 1,
 	'effect_moment', "on_use",
 	'Effects', {
 		PlaceObj('UnitStatBoost', {
