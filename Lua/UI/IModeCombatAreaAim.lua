@@ -253,9 +253,10 @@ function Targeting_AOE_Cone(dialog, blackboard, command, pt)
 		--blackboard.movement_avatar_opacity = 0
 	end	
 
-	if attacker:GetDist(attack_data.step_pos) > const.SlabSizeX / 2 then
+	if not IsCloser(attacker, attack_data.step_pos, const.SlabSizeX / 2 + 1) then
 		UpdateMovementAvatar(dialog, attack_data.step_pos, false, "update_pos")
-		blackboard.movement_avatar:SetState(attacker:GetStateText())
+		local aim_anim = attacker:GetAimAnim(attack_data.action_id, attack_data.stance)
+		blackboard.movement_avatar:SetState(aim_anim, 0, 0)
 		blackboard.movement_avatar:Face(pt)
 		--blackboard.movement_avatar:SetVisible(true)
 		SetAreaMovementAvatarVisibile(dialog, blackboard, true, AreaTargetMoveAvatarVisibilityDelay)

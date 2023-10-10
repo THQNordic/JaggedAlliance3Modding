@@ -709,7 +709,7 @@ function Unit:SuspiciousRoutine()
 
 	local body = self.suspicious_body_seen and HandleToObject[self.suspicious_body_seen]
 	if IsValid(body) then
-		self:Face(body, 500)
+		self:Face(body, GameState.loading and 0 or 500)
 	end
 
 	local anim = self:TryGetActionAnim("Suspicious", "Standing")

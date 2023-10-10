@@ -1183,6 +1183,13 @@ function OnMsg.UnitDieStart(...)
 	-- Used by the "FullVisibility" cheat. We dont want dead units in visibility
 	g_VisibilityUpdated = false
 end
+
+function OnMsg.LoadSessionData()
+	g_VisibilityExplorationTick = true
+	InvalidateVisibility("force")
+	g_VisibilityExplorationTick = false
+end
+
 function OnMsg.OnPassabilityChanged()
 	-- Doors opening etc
 	if IsEditorActive() then return end

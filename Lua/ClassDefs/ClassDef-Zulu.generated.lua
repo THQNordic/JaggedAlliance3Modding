@@ -1013,7 +1013,7 @@ DefineClass.RadioPlaylistTrack = {
 
 	properties = {
 		{ id = "Track", name = "Track", 
-			editor = "browse", default = "Music", folder = "Music", filter = "WAV files|*.wav", force_extension = "", },
+			editor = "browse", default = "Music", folder = "Music", filter = "WAV or OPUS files|*.opus;*.wav", force_extension = "", },
 		{ id = "Frequency", name = "Weight", 
 			editor = "number", default = 100, },
 		{ id = "EmptyTrack", name = "Empty Track", 
@@ -1026,8 +1026,9 @@ DefineClass.RadioPlaylistTrack = {
 
 function RadioPlaylistTrack:GetError()
 	if not self.EmptyTrack then
-		local path = string.format("%s.wav", self.Track)
-		if not io.exists(path) then
+		local path_wav = string.format("%s.wav", self.Track)
+		local path_opus = string.format("%s.opus", self.Track)
+		if not io.exists(path_wav) and not io.exists(path_opus) then
 			return string.format("Missing '%s'", path)
 		end
 	end

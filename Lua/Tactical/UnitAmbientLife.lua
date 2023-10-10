@@ -423,7 +423,7 @@ function Unit:IdleRoutine_StandStill(timeout, dont_halt)
 		local anim = self:GetStateText()
 		if anim_style:HasAnimation(anim) or anim == anim_style.Start then
 			Sleep(self:TimeToAnimEnd())
-		else
+		elseif not GameState.loading then
 			if (anim_style.Start or "") ~= "" and IsValidAnim(self, anim_style.Start) then
 				self:PlayTransitionAnims(anim_style.Start) -- play possible another style End animation
 				self:SetState(anim_style.Start, const.eKeepComponentTargets)
@@ -435,6 +435,9 @@ function Unit:IdleRoutine_StandStill(timeout, dont_halt)
 		local start_time = GameTime()
 		while not timeout or GameTime() - start_time < timeout do
 			self:SetState(anim_style:GetRandomAnim(self), const.eKeepComponentTargets)
+			if GameState.loading then
+				self:RandomizeAnimPhase()
+			end
 			Sleep(self:TimeToAnimEnd())
 		end
 	end
@@ -444,6 +447,9 @@ function Unit:IdleRoutine_StandStill(timeout, dont_halt)
 			Sleep(self:TimeToAnimEnd())
 		end
 		self:SetState(base_idle, const.eKeepComponentTargets)
+		if GameState.loading then
+			self:RandomizeAnimPhase()
+		end
 	end
 	if self:GetVariationsCount(base_idle) <= 1 then
 		if dont_halt then
@@ -480,15 +486,19 @@ function Unit:IdleRoutine()
 			if #route == 0 then
 				StoreErrorSource(self.routine_spawner, string.format("Marker group %s referenced in Patrol routine - not found", self.routine_area))
 			else
-				local min_id, min_distance = -1, max_int
-				for i, node in ipairs(route) do
-					local distance = node[1]:Dist2D(self:GetPos())
-					if distance < min_distance then
-						min_id, min_distance = i, distance
+				local min_id = 1
+				local closest_pos = route[1][1]
+				for i = 2, #route do
+					local p = route[i][1]
+					if IsCloser2D(self, p, closest_pos) then
+						min_id = i
+						closest_pos = p
 					end
 				end
-				Sleep(self:TimeToAngleInterpolationEnd())
-				self:TakeSlabExploration()
+				if not GameState.loading then
+					Sleep(self:TimeToAngleInterpolationEnd())
+					self:TakeSlabExploration()
+				end
 				self:SetCommandParamValue("Patrol", "move_anim", "Walk")
 				self:SetCommand("Patrol", self.routine_area, min_id, "loop","end_orient")
 			end
@@ -665,7 +675,7 @@ function Unit:PlayRoamAnimation(marker)
 	end
 	if GameTime() - exec_time <= 0 then
 		-- at least play an "idle"
-		self:SetState("idle")
+		self:SetRandomAnim(self:GetIdleBaseAnim())
 		Sleep(self:TimeToAnimEnd())
 	end
 end
@@ -1089,7 +1099,7 @@ function Unit:Patrol(marker_group, next_id, loop, end_orient)
 		if not loop or next_id == 1 then
 			-- get the previous (last existing) marker to make the unit face in the way it points
 			if route[next_id - 1] and end_orient then
-				self:SetOrientationAngle(angle, 200)
+				self:SetOrientationAngle(angle, GameState.loading and 0 or 200)
 			end
 			self:SetBehavior()
 			self:SetCommand("Idle")

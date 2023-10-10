@@ -353,8 +353,16 @@ function Unit:InteractWith(action_id, cost_ap, pos, goto_ap, target, from_ui)
 	local can_interact = not (g_Combat and self:HasPreparedAttack()) and self:CanInteractWith(target, action_id, true, from_ui, "sync check")
 	NetUpdateHash("Unit_InteractWith", self, not not g_Combat, (g_Combat and self:HasPreparedAttack()), can_interact)
 	if target.being_interacted_with then
-		can_interact = false
-		print("interactable already being interacted with") -- temp (vlad)
+		local prevInteractUnit = g_Units[target.being_interacted_with]
+		if not g_Combat and
+			prevInteractUnit and
+			prevInteractUnit:IsLocalPlayerControlled() and
+			prevInteractUnit.goto_target then
+			prevInteractUnit:InterruptCommand("Idle")
+		else
+			can_interact = false
+			--print("interactable already being interacted with")
+		end
 	end
 	if not can_interact then
 		if g_Combat then

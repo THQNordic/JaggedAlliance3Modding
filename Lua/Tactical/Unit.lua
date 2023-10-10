@@ -1719,7 +1719,7 @@ function Unit:PlayDying(quick_play, end_combat_check, anim, pos, angle, break_ob
 	if not in_dead_anim and ShouldDoDestructionPass() then
 		WaitMsg("DestructionPassDone", 1000)
 	end
-	if not anim and not death_explosion then
+	if (not anim or not self:HasAnim(anim)) and not death_explosion then
 		anim, pos, angle, break_obj = GetRandomDeathAnim(self, { attacker = self.on_die_attacker, hit_descr = hit_descr } )
 	end
 	pos = pos or self:GetPos()
@@ -1902,7 +1902,7 @@ function Unit:Dead(anim, angle)
 	if not anim and self.behavior == "Dead" then
 		anim, angle = table.unpack(self.behavior_params or empty_table)
 	end
-	self:PlayDying(true, false, anim, self:GetPos(), angle)
+	self:PlayDying(true, false, anim, nil, angle)
 	self:PlaceALDeadMarkers()
 
 	Halt()
@@ -4263,9 +4263,6 @@ function Unit:GotoSlab(pos, distance, min_distance, move_anim_type, follow_targe
 	local is_moving = false
 
 	Msg("UnitGoToStart", self)
-	if IsActivePaused() then
-		Sleep(1)
-	end
 	while true do
 		self:TunnelsUnblock()
 		if follow_pos and IsValid(follow_target) then
@@ -4326,8 +4323,16 @@ function Unit:GotoSlab(pos, distance, min_distance, move_anim_type, follow_targe
 			local angle = next_pt and CalcOrientation(self.target_dummy or self, next_pt)
 			self:UpdateMoveAnim(nil, move_anim_type, next_pt)
 			local move_anim = GetStateName(self:GetMoveAnim())
-			self:PlayTransitionAnims(move_anim, angle)
-			self:GotoTurnOnPlace(next_pt) -- face next target point
+			if GameState.loading then
+				self:Face(next_pt)
+				if self:GetStateText() ~= move_anim then
+					self:SetState(move_anim, 0, 0)
+					self:RandomizeAnimPhase()
+				end
+			else
+				self:PlayTransitionAnims(move_anim, angle)
+				self:GotoTurnOnPlace(next_pt) -- face next target point
+			end
 		end
 		local target_distance, target_min_distance
 		if target == dest then
@@ -4348,7 +4353,7 @@ function Unit:GotoSlab(pos, distance, min_distance, move_anim_type, follow_targe
 					pfSleep(self, status)
 				end
 				self:GotoAction()
-				if follow_pos and IsValid(follow_target) and follow_target:GetDist(follow_pos) > 0 then
+				if follow_pos and IsValid(follow_target) and not follow_target:IsEqualPos(follow_pos) then
 					if IsKindOf(follow_target.traverse_tunnel, "SlabTunnelLadder") then
 						status = pfFinished
 						dest = self:GetPos()
@@ -4369,6 +4374,9 @@ function Unit:GotoSlab(pos, distance, min_distance, move_anim_type, follow_targe
 		elseif status == pfFinished and target_time ~= now() then
 			target = nil
 		elseif status == pfTunnel then
+			if IsActivePaused() then
+				Sleep(1)
+			end
 			self:ClearEnumFlags(const.efResting) -- resting flag block the later ClearPath()
 			local tunnel = pf.GetTunnel(self)
 			if not tunnel then
@@ -4418,7 +4426,7 @@ function Unit:GotoSlab(pos, distance, min_distance, move_anim_type, follow_targe
 					end
 				end
 			end
-			if target_pos and not target_pos:Equal2D(self:GetPosXYZ()) then
+			if target_pos and not self:IsEqualPos2D(target_pos) then
 				self:Face(target_pos)
 			end
 			if is_moving then
@@ -4614,20 +4622,25 @@ function Unit:IsEnemyPresent()
 end
 
 function Unit:GetVoxelSnapPos(pos, angle, stance)
-	pos = pos or self:GetPos()
-	if not pos or not pos:IsValid() then
+	if pos then
+		if not pos:IsValid() then
+			return
+		end
+	elseif not self:IsValidPos() then
 		return
 	end
-	stance = stance or self.stance
-	local face_pos = pos + RotateRadius(const.SlabSizeX, angle or self:GetAngle(), pos)
-	pos = SnapToPassSlabSegment(pos, face_pos, const.TunnelMaskWalk)
+	if not angle then
+		angle = self:GetOrientationAngle()
+	end
+	local face_posx, face_posy, face_posz = RotateRadius(const.SlabSizeX, angle, pos or self, true)
+	local pos = SnapToPassSlabSegment(pos or self, face_posx, face_posy, face_posz, const.TunnelMaskWalk)
 	if not pos then
 		return
-	elseif stance == "Prone" then
-		local prone_angle = FindProneAngle(self, pos, angle)
-		return pos, prone_angle
 	end
-	return pos, angle or self:GetAngle()
+	if (stance or self.stance) == "Prone" then
+		angle = FindProneAngle(self, pos, angle)
+	end
+	return pos, angle
 end
 
 function Unit:GetGridCoords()
@@ -4964,10 +4977,14 @@ function Unit:Idle()
 	end
 
 	-- orient
-	self:EndInterruptableMovement()
-	self:PlayTransitionAnims(base_idle, orientation_angle)
-	self:AnimatedRotation(orientation_angle, base_idle)
-	self:BeginInterruptableMovement()
+	if GameState.loading then
+		self:SetOrientationAngle(orientation_angle)
+	else
+		self:EndInterruptableMovement()
+		self:PlayTransitionAnims(base_idle, orientation_angle)
+		self:AnimatedRotation(orientation_angle, base_idle)
+		self:BeginInterruptableMovement()
+	end
 
 	self:SetCommandParamValue("Idle", "move_anim", "WalkSlow")
 	if self:ShouldBeIdle() then
@@ -4987,6 +5004,9 @@ function Unit:Idle()
 				Sleep(self:TimeToAnimEnd())
 			end
 			self:SetState(anim_style:GetRandomAnim(self), const.eKeepComponentTargets)
+			if GameState.loading then
+				self:RandomizeAnimPhase()
+			end
 		else
 			if self:GetAnimPhase(1) == 0 or self:IsAnimEnd() or not IsAnimVariant(self:GetStateText(), base_idle) then
 				self:SetRandomAnim(base_idle, const.eKeepComponentTargets, nil, true)
@@ -5028,10 +5048,12 @@ function Unit:TakeSlabExploration()
 	if not pos then
 		return
 	end
-	local vx, vy = SnapToVoxel(self:GetVisualPosXYZ())
-	if not pos:Equal2D(vx, vy) then
-		self:Goto(pos, "sl")
-		pos, angle = self:GetVoxelSnapPos()
+	if not GameState.loading then
+		local vx, vy = SnapToVoxel(self:GetVisualPosXYZ())
+		if not pos:Equal2D(vx, vy) then
+			self:Goto(pos, "sl")
+			pos, angle = self:GetVoxelSnapPos()
+		end
 	end
 	self:SetPos(pos)
 	self:SetOrientationAngle(angle)
@@ -5888,7 +5910,7 @@ function Unit:ChangeStance(action_id, cost_ap, stance, args)
 		angle = FindProneAngle(self, nil, angle)
 	end
 	if angle then
-		self:SetOrientationAngle(angle, 100)
+		self:SetOrientationAngle(angle, GameState.loading and 0 or 100)
 	end
 	self:DoChangeStance(stance)
 	self:PopAndCallDestructor() -- FX
@@ -6114,11 +6136,13 @@ function Unit:DoChangeStance(stance)
 	self:SetFootPlant(true)
 	self:SetTargetDummyFromPos()
 	self:UpdateMoveAnim()
-	local base_idle = self:GetIdleBaseAnim()
-	local angle = (self.target_dummy or self):GetAngle()
-	PlayTransitionAnims(self, base_idle, angle)
-	if not g_Combat and self.command ~= "ExitCombat" and self.command ~= "TakeCover" then
-		self:GotoSlab(self:GetPos())
+	if not GameState.loading then
+		local base_idle = self:GetIdleBaseAnim()
+		local angle = (self.target_dummy or self):GetAngle()
+		PlayTransitionAnims(self, base_idle, angle)
+		if not g_Combat and self.command ~= "ExitCombat" and self.command ~= "TakeCover" then
+			self:GotoSlab(self:GetPos())
+		end
 	end
 	self:UpdateHidden()
 	ObjModified(self)

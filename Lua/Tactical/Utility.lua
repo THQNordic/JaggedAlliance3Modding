@@ -1717,7 +1717,7 @@ function GetPlayerUnitsMaxDist()
 			for _, unit1 in ipairs(team.units) do
 				for _, unit2 in ipairs(team.units) do
 					if unit1 ~= unit2 then
-						max_dist = Max(max_dist, unit1:GetPos():Dist2D(unit2:GetPos()))
+						max_dist = Max(max_dist, unit1:GetDist2D(unit2))
 					end
 				end
 			end

@@ -198,6 +198,14 @@ function Unit:GetGender()
 	return "N/A"
 end
 
+function Unit:SetState(anim, flags, crossfade, ...)
+	AnimChangeHook.SetState(self, anim, flags or 0, not GameState.loading and crossfade or 0, ...)
+end
+
+function Unit:SetAnim(channel, anim, flags, crossfade, ...)
+	AnimChangeHook.SetAnim(self, channel, anim, flags or 0, not GameState.loading and crossfade or 0, ...)
+end
+
 function Unit:RotateAnim(angle, anim)
 	self:SetState(anim, const.eKeepComponentTargets, Presets.ConstDef.Animation.BlendTimeRotateOnSpot.value)
 	self:SetIK("AimIK", false)
@@ -348,19 +356,31 @@ function Unit:GetRotateAnim(angle_diff, base_idle)
 end
 
 function Unit:IdleRotation(angle, time)
-	time = time or 300
-	local start_angle = self:GetVisualOrientationAngle()
-	local angle_diff = AngleDiff(angle, start_angle)
-	local steps = self.ground_orient and 20 or 2
-	for i = 1, steps do
-		local a = start_angle + i * angle_diff / steps
-		local t = time * i / steps - time * (i - 1) / steps
-		self:SetOrientationAngle(a, t)
-		Sleep(t)
+	if GameState.loading then
+		time = 0
+	else
+		time = time or 300
+	end
+	if time > 0 then
+		local start_angle = self:GetVisualOrientationAngle()
+		local angle_diff = AngleDiff(angle, start_angle)
+		local steps = self.ground_orient and 20 or 2
+		for i = 1, steps do
+			local a = start_angle + i * angle_diff / steps
+			local t = time * i / steps - time * (i - 1) / steps
+			self:SetOrientationAngle(a, t)
+			Sleep(t)
+		end
+	else
+		self:SetOrientationAngle(angle)
 	end
 end
 
 function Unit:AnimatedRotation(angle, base_idle)
+	if GameState.loading then
+		self:SetOrientationAngle(angle)
+		return
+	end
 	local start_angle = self:GetVisualOrientationAngle()
 	if angle == start_angle then
 		return
@@ -1087,6 +1107,12 @@ end
 function Unit:AimIdle()
 	self.aim_rotate_last_angle = false
 	self.aim_rotate_cooldown_time = false
+	if not g_Combat then
+		local x, y, z = GetPassSlabXYZ(self)
+		if not x or not self:IsEqualPos(x, y, z) or not CanDestlock(self) then
+			self:GotoSlab()
+		end
+	end
 	while self.aim_action_id do
 		local time = GameTime()
 		local attack_args, attack_results = self:GetAimResults()
@@ -1146,6 +1172,7 @@ function Unit:AimTarget(attack_args, attack_results, prepare_to_attack)
 	local rotate_to_target = prepare_to_attack or IsValid(attack_args.target) and IsKindOf(attack_args.target, "Unit")
 	local aimIK = rotate_to_target and self:CanAimIK(weapon)
 	local stance = rotate_to_target and attack_args.stance or self.stance
+	local quick_play = GameState.loading or self:CanQuickPlayInCombat() 
 	local idle_aiming
 
 	if not rotate_to_target and self.stance == "Prone" and attack_args.stance ~= "Prone" then
@@ -1166,17 +1193,22 @@ function Unit:AimTarget(attack_args, attack_results, prepare_to_attack)
 	if idle_aiming then
 		local base_idle = self:GetIdleBaseAnim()
 		if not IsAnimVariant(self:GetStateText(), base_idle) then
-			local angle
 			if self.stance == "Prone" then
 				-- first rotate
 				local visual_stance = string.match(self:GetStateText(), "^%a+_(%a+)_")
 				if visual_stance == "Standing" or visual_stance == "Crouch" then
-					angle = self:GetPosOrientation()
-					self:AnimatedRotation(angle, self:GetIdleBaseAnim(visual_stance))
+					local angle = self:GetPosOrientation()
+					if quick_play then
+						self:SetOrientationAngle(angle)
+					else
+						self:AnimatedRotation(angle, self:GetIdleBaseAnim(visual_stance))
+					end
 				end
 				self:SetFootPlant(true)
 			end
-			PlayTransitionAnims(self, base_idle)
+			if not quick_play then
+				PlayTransitionAnims(self, base_idle)
+			end
 			self:SetRandomAnim(base_idle)
 		end
 		self:SetIK("AimIK", false)
@@ -1186,17 +1218,19 @@ function Unit:AimTarget(attack_args, attack_results, prepare_to_attack)
 		if (stance == "Standing" or stance == "Crouch") and self.stance == "Prone" then
 			local cur_anim = self:GetStateText()
 			if string.match(cur_anim, "%a+_(%a+).*") == "Prone" then
-				local base_idle = self:GetIdleBaseAnim(stance)
-				local angle = lof_data.angle or CalcOrientation(lof_data.step_pos, aim_pos)
 				self:SetFootPlant(true, nil, stance)
-				PlayTransitionAnims(self, base_idle, angle)
+				if not quick_play then
+					local base_idle = self:GetIdleBaseAnim(stance)
+					local angle = lof_data.angle or CalcOrientation(lof_data.step_pos, aim_pos)
+					PlayTransitionAnims(self, base_idle, angle)
+				end
 			end
 		end
 		self:AttachActionWeapon(action)
 		aim_anim = self:GetAimAnim(action_id, stance)
 	end
 
-	if self:CanQuickPlayInCombat() then
+	if quick_play then
 		if not self.return_pos and not IsCloser2D(self, lof_data.step_pos, const.SlabSizeX/2) and not attack_args.circular_overwatch then
 			self.return_pos = GetPassSlab(self)
 		end
@@ -1936,6 +1970,14 @@ function Unit:SetRandomAnim(base_anim, flags, crossfade, force)
 	anim = self:ModifyWeaponAnim(anim)
 	self:SetState(anim, flags or const.eKeepComponentTargets, crossfade or -1)
 	if phase > 0 then
+		self:SetAnimPhase(1, phase)
+	end
+end
+
+function Unit:RandomizeAnimPhase()
+	local duration = GetAnimDuration(self:GetEntity(), self:GetState())
+	if duration > 1 then
+		local phase = self:Random(duration - 1)
 		self:SetAnimPhase(1, phase)
 	end
 end

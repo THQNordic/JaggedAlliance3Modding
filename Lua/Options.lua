@@ -79,7 +79,7 @@ AppendClass.OptionsObject = {
 		{ category = "Gameplay", id = "ActivePauseMode",          name = T(133670189455, "Active Pause"),                   editor = "bool",   default = true,  storage = "account", no_edit = function (self) return not Game end, read_only = function() return netInGame and not NetIsHost() end, SortKey = -1590, help = T(466566359686, "Allows pausing the game in Exploration mode. Actions can be ordered while in pause but any attack will unpause the game.<newline><newline><flavor>You can change this option at any time during gameplay.</flavor>")},
 		{ category = "Display",  id = "AspectRatioConstraint",    name = T(125094445172, "UI Aspect Ratio"),                editor = "choice", default = 1, items = lAspectRatioItems, storage = "local", no_edit = Platform.console, help = T(433997797079, "Constrain UI elements like the HUD to the set aspect ratio. Useful for Ultra Wide and Super Ultra Wide resolutions.") },
 
-		{ category = "Audio", id = "MuteAll", name = T(757697767039, "Mute All"), storage = "local", editor = "bool", no_edit = true },
+		{ category = "Audio", id = "MuteAll", name = T(757697767039, "Mute All"), storage = "local", editor = "bool", no_edit = true, default = false },
 	},
 }
 

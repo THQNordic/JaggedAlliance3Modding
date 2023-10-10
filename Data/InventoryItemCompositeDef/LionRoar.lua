@@ -22,7 +22,6 @@ PlaceObj('InventoryItemCompositeDef', {
 	'WeaponRange', 16,
 	'PointBlankBonus', 1,
 	'OverwatchAngle', 1440,
-	'HandSlot', "TwoHanded",
 	'Entity', "Weapon_Uzi_LionsRoar",
 	'ComponentSlots', {
 		PlaceObj('WeaponComponentSlot', {

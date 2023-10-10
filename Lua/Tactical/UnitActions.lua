@@ -1204,19 +1204,21 @@ function Unit:MeleeAttack(action_id, cost_ap, args)
 			fx_actor = "fist"
 			base_anim = "inf_Standing_Attack"
 		else
-			local BodyParts = UnitColliders[target.species].BodyParts
-			local idx = table.find(BodyParts, "id", attack_args.target_spot_group)
-			if not idx then
-				if attack_args.target_spot_group == "Neck" then
-					idx = table.find(BodyParts, "id", "Head")
-				end
-			end
 			local spot_relative_z
-			local target_spot = idx and BodyParts[idx].TargetSpots[1]
-			if target_spot and target:HasSpot(target_spot) then
-				local spot_pos = target:GetSpotLocPos(target:GetSpotBeginIndex(target_spot))
-				local aposx, aposy, aposz = self:GetPosXYZ()
-				spot_relative_z = spot_pos:z() - (aposz or terrain.GetHeight(aposx, aposy))
+			if IsKindOf(target, "Unit") then
+				local BodyParts = UnitColliders[target.species].BodyParts
+				local idx = table.find(BodyParts, "id", attack_args.target_spot_group)
+				if not idx then
+					if attack_args.target_spot_group == "Neck" then
+						idx = table.find(BodyParts, "id", "Head")
+					end
+				end
+				local target_spot = idx and BodyParts[idx].TargetSpots[1]
+				if target_spot and target:HasSpot(target_spot) then
+					local spot_pos = target:GetSpotLocPos(target:GetSpotBeginIndex(target_spot))
+					local aposx, aposy, aposz = self:GetPosXYZ()
+					spot_relative_z = spot_pos:z() - (aposz or terrain.GetHeight(aposx, aposy))
+				end
 			end
 			local attach_forward = not spot_relative_z or spot_relative_z >= 700
 			if weapon.IsUnarmed then

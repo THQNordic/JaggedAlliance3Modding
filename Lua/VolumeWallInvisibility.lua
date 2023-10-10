@@ -172,6 +172,12 @@ function ResumeAllHiding(reason)
 	StartWallInvisibilityThreadWithChecks(reason)
 end
 
+local function ShouldProcessRoom(room)
+	if room.being_placed or room.ignore_zulu_invisible_wall_logic or room.outside_border then return false end
+	
+	return true
+end
+
 function StopWallInvisibilityThread(reason)
 	g_WITPauseReasons[reason or false] = true
 	
@@ -181,6 +187,15 @@ function StopWallInvisibilityThread(reason)
 			local to = meta.maxFloor
 			for f = floor + 1, to do
 				ShowRoomsOnFloor(bld, f)
+			end
+			
+			--rooms that are same floor but acutally roofs need to be processed since they are kind of on the next floor..
+			local floorT = bld[floor]
+			for i = 1, #(floorT or "") do
+				local room = floorT[i]
+				if room:IsRoofOnly() and ShouldProcessRoom(room) then
+					ShowRoom(room)
+				end
 			end
 		end
 		
@@ -447,12 +462,6 @@ local function RefreshCombatPath()
 	if d then
 		d:OnMousePos(terminal.GetMousePos())
 	end
-end
-
-local function ShouldProcessRoom(room)
-	if room.being_placed or room.ignore_zulu_invisible_wall_logic or room.outside_border then return false end
-	
-	return true
 end
 
 local cornerSideToWallSides = {

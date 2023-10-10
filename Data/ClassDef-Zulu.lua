@@ -1943,7 +1943,7 @@ PlaceObj('ClassDef', {
 		'name', "Track",
 		'default', "Music",
 		'folder', "Music",
-		'filter', "WAV files|*.wav",
+		'filter', "WAV or OPUS files|*.opus;*.wav",
 		'extension', "",
 	}),
 	PlaceObj('PropertyDefNumber', {
@@ -1966,8 +1966,9 @@ PlaceObj('ClassDef', {
 		'name', "GetError",
 		'code', function (self)
 			if not self.EmptyTrack then
-				local path = string.format("%s.wav", self.Track)
-				if not io.exists(path) then
+				local path_wav = string.format("%s.wav", self.Track)
+				local path_opus = string.format("%s.opus", self.Track)
+				if not io.exists(path_wav) and not io.exists(path_opus) then
 					return string.format("Missing '%s'", path)
 				end
 			end

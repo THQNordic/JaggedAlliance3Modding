@@ -91,7 +91,13 @@ function UpdateFastForwardGameSpeed()
 	else
 		time_factor = const.DefaultTimeFactor
 	end
-	SetTimeFactor(time_factor)
+
+	NetTimeFactor = time_factor
+	__SetTimeFactor(NetPause and 0 or NetTimeFactor)
+	if netInGame and NetIsHost() then
+		-- the server should know the time factor
+		NetChangeGameInfo({ time_factor = time_factor })
+	end
 end
 
 function NetSyncEvents.SetFastForwardGameSpeed(value)

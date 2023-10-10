@@ -45,6 +45,8 @@ function GetAvailableEntranceMarkers(arrival_dir)
 		markers = {}
 	end
 	if not g_GoingAboveground then
+		markers = markers or {}
+
 		-- Add alt entrance deployment markers.
 		local additionalEntrances = MapGetMarkers("DeployArea", arrival_dir, function(marker)
 			return marker:IsMarkerEnabled()
