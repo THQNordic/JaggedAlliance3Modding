@@ -444,6 +444,12 @@ function OnMsg.CombatStart()
 end
 
 function SetupDeployOrExploreUI(load_game)
+	-- Setpieces started via TCE right on sector enter (DocksLost)
+	-- will deadlock the game, so instead we make the deployment wait for them to finish.
+	while IsSetpiecePlaying() do
+		WaitMsg("SetpieceEnded", 500)
+	end
+
 	if gv_ActiveCombat ~= gv_CurrentSectorId and gv_CurrentSectorId then -- Loading a save in combat
 		local dep, autoStart = lWillThereBeDeployment()
 		if dep then

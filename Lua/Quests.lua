@@ -167,6 +167,10 @@ function InitQuests()
 	end	
 end
 
+if FirstLoad then
+QuestTCEEvalThread = false
+end
+
 function QuestTCEEvaluation(specificQuests)
 	TutorialHintVisibilityEvaluate()
 	

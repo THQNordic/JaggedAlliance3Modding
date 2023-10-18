@@ -676,7 +676,9 @@ function Unit:PlayRoamAnimation(marker)
 	if GameTime() - exec_time <= 0 then
 		-- at least play an "idle"
 		self:SetRandomAnim(self:GetIdleBaseAnim())
-		Sleep(self:TimeToAnimEnd())
+		local timeToEnd = self:TimeToAnimEnd()
+		timeToEnd = timeToEnd ~= 0 and timeToEnd or 500 -- Infinite loop prevention
+		Sleep(timeToEnd)
 	end
 end
 
