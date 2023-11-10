@@ -12,42 +12,12 @@ PlaceObj('CharacterEffectCompositeDef', {
 	},
 	'Comment', "Fauda - Machine gun bonuses; Grit when multiple enemies hit",
 	'object_class', "Perk",
-	'msg_reactions', {
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "attacker",
-			Event = "OnAttack",
-			Handler = function (self, attacker, action, target, results, attack_args)
+	'unit_reactions', {
+		PlaceObj('UnitReaction', {
+			Event = "OnUnitAttack",
+			Handler = function (self, target, attacker, action, attack_target, results, attack_args)
+				if target ~= attacker then return end
 				
-				local function exec(self, attacker, action, target, results, attack_args)
-				local enemiesHit = 0
-				if results and results.hit_objs then
-					for _, obj in ipairs(results.hit_objs) do
-						if IsKindOf(obj, "Unit") and obj:IsOnEnemySide(attacker) then
-							enemiesHit = enemiesHit + 1
-						end
-					end
-				end
-				
-				if enemiesHit >= 2 then
-					local grit = self:ResolveValue("gritPerEnemyHit") * enemiesHit
-					attacker:ApplyTempHitPoints(grit)
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "OnAttack" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, attacker, action, target, results, attack_args)
-				end
-				
-				if self:VerifyReaction("OnAttack", reaction_def, attacker, attacker, action, target, results, attack_args) then
-					exec(self, attacker, action, target, results, attack_args)
-				end
-			end,
-			HandlerCode = function (self, attacker, action, target, results, attack_args)
 				local enemiesHit = 0
 				if results and results.hit_objs then
 					for _, obj in ipairs(results.hit_objs) do

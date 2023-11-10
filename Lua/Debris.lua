@@ -25,3 +25,7 @@ function Debris:SetDynamicData(data)
 		self:SetColorization(p)
 	end
 end
+
+function Debris:ShouldBeVisibileWhileFading()
+	return not not GetPassSlab(self)
+end

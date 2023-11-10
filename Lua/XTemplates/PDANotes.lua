@@ -230,17 +230,17 @@ PlaceObj('XTemplate', {
 					'MinHeight', 60,
 				}, {
 					PlaceObj('XTemplateWindow', {
-						'Margins', box(20, 0, 0, 0),
 						'VAlign', "center",
 					}, {
 						PlaceObj('XTemplateTemplate', {
 							'__template', "PDAStartButton",
-							'Margins', box(0, 0, 0, 15),
+							'Margins', box(20, 0, 0, 0),
+							'VAlign', "center",
 						}),
 						PlaceObj('XTemplateWindow', {
-							'Margins', box(20, 10, 0, 0),
+							'Margins', box(20, 0, 0, 0),
 							'HAlign', "left",
-							'VAlign', "top",
+							'VAlign', "center",
 							'MinWidth', 390,
 						}, {
 							PlaceObj('XTemplateWindow', {

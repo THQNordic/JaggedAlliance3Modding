@@ -10,31 +10,11 @@ PlaceObj('CharacterEffectCompositeDef', {
 		}),
 	},
 	'object_class', "StatusEffect",
-	'msg_reactions', {
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "unit",
-			Event = "UnitBeginTurn",
-			Handler = function (self, unit)
-				
-				local function exec(self, unit)
-				unit:GainAP(self:ResolveValue("ap_gain") * const.Scale.AP)
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "UnitBeginTurn" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, unit)
-				end
-				
-				if self:VerifyReaction("UnitBeginTurn", reaction_def, unit, unit) then
-					exec(self, unit)
-				end
-			end,
-			HandlerCode = function (self, unit)
-				unit:GainAP(self:ResolveValue("ap_gain") * const.Scale.AP)
+	'unit_reactions', {
+		PlaceObj('UnitReaction', {
+			Event = "OnCalcStartTurnAP",
+			Handler = function (self, target, value)
+				return value + self:ResolveValue("ap_gain") * const.Scale.AP
 			end,
 		}),
 	},

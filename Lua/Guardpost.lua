@@ -280,6 +280,7 @@ end
 OnMsg.InitSatelliteView = InitializeGuardposts
 
 function MakeSectorGuardpost(sector_id)
+	if not gv_Sectors[sector_id] then return end
 	gv_Sectors[sector_id].Guardpost = true
 	gv_Sectors[sector_id].ImpassableForEnemies = false
 	InitializeGuardposts()
@@ -351,16 +352,7 @@ function GenerateRandEnemySquadUnits(enemy_squad_id)
 						weightList = table.copy(weightList)
 						copied = true
 					end
-					
-					local consider = true
-					for _, cond in ipairs(potentialUnit.conditions) do
-						if not cond:Evaluate(potentialUnit, unit) then
-							consider = false
-							break
-						end
-					end
-
-					if not consider then
+					if not EvalConditionList(potentialUnit.conditions, potentialUnit, unit) then
 						table.remove_value(weightList, potentialUnit)
 					end
 				end

@@ -12,6 +12,11 @@ PlaceObj('InventoryItemCompositeDef', {
 	'AdditionalHint', T(420149826572, --[[InventoryItemCompositeDef SkillMag_Medical AdditionalHint]] "<bullet_point> Used through the Item Menu\n<bullet_point> Single use\n<bullet_point> Increases Medical"),
 	'UnitStat', "Medical",
 	'Valuable', 1,
+	'Cost', 1500,
+	'CanAppearInShop', true,
+	'Tier', 2,
+	'MaxStock', 1,
+	'RestockWeight', 10,
 	'effect_moment', "on_use",
 	'Effects', {
 		PlaceObj('UnitStatBoost', {

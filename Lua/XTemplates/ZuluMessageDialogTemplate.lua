@@ -72,15 +72,6 @@ PlaceObj('XTemplate', {
 				'Margins', box(8, 0, 8, 0),
 				'Background', RGBA(32, 35, 47, 255),
 			}, {
-				PlaceObj('XTemplateWindow', {
-					'__class', "XZuluScroll",
-					'Id', "idScroll",
-					'Dock', "right",
-					'MouseCursor', "UI/Cursors/Hand.tga",
-					'Target', "idTextArea",
-					'SnapToItems', true,
-					'AutoHide', true,
-				}),
 				PlaceObj('XTemplateFunc', {
 					'name', "Measure(self, max_width, max_height)",
 					'func', function (self, max_width, max_height)
@@ -128,6 +119,15 @@ PlaceObj('XTemplate', {
 							target:ScrollUp()
 						end,
 						'FXPress', "none",
+					}),
+					PlaceObj('XTemplateWindow', {
+						'__class', "XZuluScroll",
+						'Id', "idScroll",
+						'Dock', "right",
+						'MouseCursor', "UI/Cursors/Hand.tga",
+						'Target', "idTextArea",
+						'SnapToItems', true,
+						'AutoHide', true,
 					}),
 					}),
 				}),

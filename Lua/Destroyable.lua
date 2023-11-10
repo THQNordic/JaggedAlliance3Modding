@@ -466,10 +466,14 @@ function OnMsg.ChangeMapDone()
 	if GetMapName() == "" then return end
 	if not mapdata.GameLogic then return end
 	MapForEach("map", "TwoPointsAttach", function(obj)
-		obj.obj1.children = obj.obj1.children or {}
-		table.insert(obj.obj1.children, obj)
-		obj.obj2.children = obj.obj2.children or {}
-		table.insert(obj.obj2.children, obj)
+		if IsValid(obj.obj1) then
+			obj.obj1.children = obj.obj1.children or {}
+			table.insert(obj.obj1.children, obj)
+		end
+		if IsValid(obj.obj2) then
+			obj.obj2.children = obj.obj2.children or {}
+			table.insert(obj.obj2.children, obj)
+		end
 	end)
 end
 
@@ -503,8 +507,8 @@ function TwoPointsAttachParent:UpdateChildrenStateFromSolidShadow(flags)
 		if band(const.gofSolidShadow, flags) ~= 0 then
 			--editor is hiding or showing us
 			for i, c in ipairs(self.children) do
-				if c.obj1:GetGameFlags(const.gofSolidShadow) ~= 0 or
-					c.obj2:GetGameFlags(const.gofSolidShadow) ~= 0 then
+				if (not IsValid(c.obj1) or c.obj1:GetGameFlags(const.gofSolidShadow) ~= 0) or
+					(not IsValid(c.obj2) or c.obj2:GetGameFlags(const.gofSolidShadow) ~= 0) then
 					c:SetVisible(false)
 				else
 					c:SetVisible(true)
@@ -530,8 +534,8 @@ function TwoPointsAttachParent:SetShadowOnly(bSet)
 	CObject.SetShadowOnly(self, bSet)
 		
 	for i, c in ipairs(self.children) do
-		if not CMT_IsObjVisible(c.obj1) or 
-			not CMT_IsObjVisible(c.obj2) then
+		if (not IsValid(c.obj1) or not CMT_IsObjVisible(c.obj1)) or 
+			(not IsValid(c.obj2) or not CMT_IsObjVisible(c.obj2)) then
 			c:SetVisible(false)
 		else
 			c:SetVisible(true)

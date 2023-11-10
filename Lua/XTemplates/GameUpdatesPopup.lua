@@ -73,7 +73,7 @@ PlaceObj('XTemplate', {
 			end,
 			'OnAction', function (self, host, source, ...)
 				for _, mod in ipairs(ModsLoaded) do
-					TurnModOff(mod.id)
+					TurnModOff(mod.id, "updatePreset")
 				end
 				CreateRealTimeThread( function()
 					ModsReloadItems(nil, "force_reload")

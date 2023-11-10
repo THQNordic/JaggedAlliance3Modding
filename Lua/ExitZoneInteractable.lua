@@ -468,7 +468,29 @@ function LeaveSectorExploration(sectorId, units, underground, skipNotify, localP
 	end
 			
 	local special_entrance = underground
+	
 	local squads = {}
+	local playerSquads = GetSquadsOnMap()
+	for i, squadId in ipairs(playerSquads) do
+		local squad = gv_Squads[squadId]
+		if not squad then goto continue end
+		
+		-- This squad initiated retreat but all the non-retreating units died.
+		local thisSquadHasLeavingUnit = false
+		for _, id in ipairs(squad.units or empty_table) do
+			local u = g_Units[id]
+			local ud = gv_UnitData[id]
+			if not u and ud and ud.retreat_to_sector then
+				thisSquadHasLeavingUnit = true
+			end
+		end
+		if thisSquadHasLeavingUnit then
+			table.insert_unique(squads, squadId)
+		end
+		
+		::continue::
+	end
+	
 	for i, u in ipairs(units) do
 		local unit = g_Units[u] or gv_UnitData[u]
 		local squadId = unit.Squad

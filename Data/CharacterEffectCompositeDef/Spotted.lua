@@ -4,82 +4,20 @@ PlaceObj('CharacterEffectCompositeDef', {
 	'Group', "System",
 	'Id', "Spotted",
 	'object_class', "CharacterEffect",
-	'msg_reactions', {
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "obj",
-			Event = "StatusEffectRemoved",
-			Handler = function (self, obj, id, stacks, reason)
-				
-				local function exec(self, obj, id, stacks, reason)
-				if IsKindOf(obj, "Unit") then
-					for _, team in ipairs(g_Teams) do
-						local key = "Spotted-" .. team.side
-						if obj:GetEffectValue(key) then
-							obj:SetEffectValue(key, nil)
-							team:OnEnemySighted(obj)
-							obj:RevealTo(team)
-						end
-					end
-					obj:UpdateHidden()
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "StatusEffectRemoved" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, obj, id, stacks, reason)
-				end
-				
-				if self:VerifyReaction("StatusEffectRemoved", reaction_def, obj, obj, id, stacks, reason) then
-					exec(self, obj, id, stacks, reason)
-				end
-			end,
-			HandlerCode = function (self, obj, id, stacks, reason)
-				if IsKindOf(obj, "Unit") then
-					for _, team in ipairs(g_Teams) do
-						local key = "Spotted-" .. team.side
-						if obj:GetEffectValue(key) then
-							obj:SetEffectValue(key, nil)
-							team:OnEnemySighted(obj)
-							obj:RevealTo(team)
-						end
-					end
-					obj:UpdateHidden()
-				end
-			end,
-		}),
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "unit",
-			Event = "UnitEndTurn",
-			Handler = function (self, unit)
-				
-				local function exec(self, unit)
-				unit:RemoveStatusEffect("Spotted")
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[2]
-				if not reaction_def or reaction_def.Event ~= "UnitEndTurn" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, unit)
-				end
-				
-				if self:VerifyReaction("UnitEndTurn", reaction_def, unit, unit) then
-					exec(self, unit)
-				end
-			end,
-			HandlerCode = function (self, unit)
-				unit:RemoveStatusEffect("Spotted")
-			end,
-		}),
-	},
 	'DisplayName', T(808653194642, --[[CharacterEffectCompositeDef Spotted DisplayName]] "Spotted"),
 	'Description', T(496089616387, --[[CharacterEffectCompositeDef Spotted Description]] "Spotted"),
 	'AddEffectText', T(886139698291, --[[CharacterEffectCompositeDef Spotted AddEffectText]] "Spotted"),
+	'OnRemoved', function (self, obj)
+		for _, team in ipairs(g_Teams) do
+			local key = "Spotted-" .. team.side
+			if obj:GetEffectValue(key) then
+				obj:SetEffectValue(key, nil)
+				team:OnEnemySighted(obj)
+				obj:RevealTo(team)
+			end
+		end
+		obj:UpdateHidden()
+	end,
+	'lifetime', "Until End of Turn",
 })
 

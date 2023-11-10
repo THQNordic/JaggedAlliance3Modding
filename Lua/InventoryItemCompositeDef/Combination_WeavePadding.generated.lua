@@ -12,5 +12,11 @@ DefineClass.Combination_WeavePadding = {
 	DisplayName = T(408170289965, --[[InventoryItemCompositeDef Combination_WeavePadding DisplayName]] "Weave Padding"),
 	DisplayNamePlural = T(186052695353, --[[InventoryItemCompositeDef Combination_WeavePadding DisplayNamePlural]] "Weave Padding"),
 	AdditionalHint = T(745822040566, --[[InventoryItemCompositeDef Combination_WeavePadding AdditionalHint]] "<bullet_point> Can be combined with Armor\n<bullet_point> Increases the additional Damage Reduction of the Armor"),
+	Cost = 1500,
+	CanAppearInShop = true,
+	Tier = 2,
+	MaxStock = 1,
+	RestockWeight = 15,
+	CategoryPair = "Components",
 }
 

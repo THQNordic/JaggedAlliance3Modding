@@ -54,6 +54,9 @@ PlaceObj('Conversation', {
 						return quest.Coin
 					end,
 				}),
+				PlaceObj('UnitSquadHasItem', {
+					ItemId = "Coin",
+				}),
 			},
 			GoTo = "GreetingResponse",
 			Keyword = "Take a look at this coin",

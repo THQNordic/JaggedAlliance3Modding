@@ -278,6 +278,11 @@ function ModifyWeaponDlg:SetWeapon(index, direction)
 		wnd:SetZOrder(idx)
 	end
 	self.spotToUI = spotToUI
+	RunWhenXWindowIsReady(self.idWeaponParts, function(self)
+		if GetUIStyleGamepad() then
+			self:SetSelection(1)
+		end
+	end, self.idWeaponParts)
 	
 	--[[local wnd = XTemplateSpawn("WeaponColorWindow", self.idWeaponParts, 
 	SubContext(weapon, 
@@ -1004,6 +1009,14 @@ end
 function WeaponComponentWindowClass:ToggleOptions()
 	local modifyWeaponDlg = self:ResolveId("node")
 	modifyWeaponDlg:CloseContextMenu()
+	
+	local parentList = self.parent
+	local myIdx = parentList and table.find(parentList, self)
+	if myIdx and GetUIStyleGamepad() then
+		parentList:SetSelection(myIdx)
+	else
+		parentList:SetSelection(false)
+	end
 	
 	local slotType = self.context.slot.SlotType
 	local ctxMenu = XTemplateSpawn("WeaponModChoicePopup", modifyWeaponDlg, self.context)

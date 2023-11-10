@@ -11,6 +11,7 @@ PlaceObj('InventoryItemCompositeDef', {
 	'DisplayNamePlural', T(722747917523, --[[InventoryItemCompositeDef ShamanHelmet DisplayNamePlural]] "Deathsquad Helmets"),
 	'AdditionalHint', T(265230607158, --[[InventoryItemCompositeDef ShamanHelmet AdditionalHint]] "<bullet_point> Can't be combined with weave or ceramics"),
 	'Valuable', 1,
+	'RestockWeight', 0,
 	'Slot', "Head",
 	'PenetrationClass', 4,
 	'AdditionalReduction', 40,

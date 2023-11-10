@@ -804,26 +804,25 @@ PlaceObj('ClassDef', {
 		'name', "OnVisitAnimEnded",
 		'params', "unit",
 		'code', function (self, unit)
-			local steal = false
-			self.corpse:ForEachItemInSlot("InventoryDead", "Valuables", function(item, slot_name)
-				if self:Random(100) >=item.drop_chance then
-					self.corpse:RemoveItem("InventoryDead", item)
-					unit:AddItem("Inventory", item)		
-					steal =  true
-					return "break"
-				end
-			end)
-			if not steal then
-				self.corpse:ForEachItemInSlot("InventoryDead", false, function(item, slot_name)
-					if not IsKindOf(item, "Valuables") and self:Random(100) >= item.drop_chance then
-						self.corpse:RemoveItem("InventoryDead", item)
-						unit:AddItem("Inventory", item)		
-						steal =  true
-						return "break"
+			local item = self.corpse:FindItemInSlot("InventoryDead", function(item, self)
+				if IsKindOf(item, "Valuables") then
+					if self:Random(100) < item.drop_chance then
+						return item
 					end
-				end)
+				end
+			end, self)
+			if not item then
+				item = self.corpse:FindItemInSlot("InventoryDead", function(item, self)
+					if not IsKindOf(item, "Valuables") then
+						if self:Random(100) < item.drop_chance then
+							return item
+						end
+					end
+				end, self)
 			end
-			if steal then
+			if item then
+				self.corpse:RemoveItem("InventoryDead", item)
+				unit:AddItem("Inventory", item)
 				CreateFloatingText(unit:GetVisualPos(),  T(911186423849, "Picked up something"))
 			end
 		end,

@@ -11,7 +11,12 @@ DefineClass.Parts = {
 	DisplayName = T(807651722561, --[[InventoryItemCompositeDef Parts DisplayName]] "Parts"),
 	DisplayNamePlural = T(476110713802, --[[InventoryItemCompositeDef Parts DisplayNamePlural]] "Parts"),
 	AdditionalHint = T(834615720383, --[[InventoryItemCompositeDef Parts AdditionalHint]] "<bullet_point> Used to modify weapons\n<bullet_point> Used by the Repair Items Operation in Sat View"),
-	Cost = 500,
+	Cost = 250,
+	CanAppearInShop = true,
+	MaxStock = 50,
+	RestockWeight = 150,
+	CategoryPair = "Resource",
+	ShopStackSize = 5,
 	MaxStacks = 500,
 }
 

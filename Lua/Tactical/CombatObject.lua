@@ -249,7 +249,13 @@ function CombatObject:TakeDamage(dmg, attacker, hit_descr)
 
 	self:TakeDirectDamage(dmg, nil, nil, nil, attacker, hit_descr)
 	Msg("DamageDone", attacker, self, dmg, hit_descr)
+	if IsKindOf(attacker, "Unit") then
+		attacker:CallReactions("OnDamageDone", self, dmg, hit_descr)
+	end
 	Msg("DamageTaken", attacker, self, dmg, hit_descr)
+	if IsKindOf(self, "Unit") then
+		self:CallReactions("OnDamageTaken", attacker, dmg, hit_descr)
+	end
 end
 
 function CombatObject:OnHPLoss(dmg, attacker)

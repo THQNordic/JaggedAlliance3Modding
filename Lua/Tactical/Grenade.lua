@@ -13,7 +13,7 @@ MapVar("MapSmokeZones", {})
 MapVar("MapFlareOnGround", {})
 
 DefineClass.Grenade = {
-	__parents = { "QuickSlotItem", "GrenadeProperties", "InventoryStack", "BaseWeapon" },
+	__parents = { "QuickSlotItem", "GrenadeProperties", "InventoryStack", "BaseWeapon", "BobbyRayShopOtherProperties" },
 	RolloverClassTemplate = "Throwables",
 	base_skill = "Dexterity",
 }
@@ -163,6 +163,7 @@ function ExplosionDamage(attacker, weapon, pos, fx_actor, force_flyoff, disableB
 	end
 	
 	local results = GetAreaAttackResults(aoe_params, 0, effects)
+	CompileKilledUnits(results)
 	
 	if original_mask then
 		collision.SetAllowedMask(attacker.spawned_by_explosive_object, original_mask)
@@ -393,7 +394,7 @@ function Grenade:ValidatePos(explosion_pos)
 	return explosion_pos
 end
 
-function Grenade:GetTrajectory(attack_args, attack_pos, target_pos)
+function Grenade:GetTrajectory(attack_args, attack_pos, target_pos, mishap)
 	if not attack_pos and attack_args.lof then
 		local lof_idx = table.find(attack_args.lof, "target_spot_group", attack_args.target_spot_group)
 		local lof_data = attack_args.lof[lof_idx or 1]
@@ -419,7 +420,7 @@ function Grenade:GetTrajectory(attack_args, attack_pos, target_pos)
 	-- try the different trajectories to pick a suitable one
 	local angles = {}
 		
-	if valid_target then
+	if valid_target or mishap then 
 		if target_pos:z() - attack_pos:z() >= 2*const.SlabSizeZ then
 			angles[1] = const.Combat.GrenadeLaunchAngle_Incline
 			angles[2] = const.Combat.GrenadeLaunchAngle
@@ -477,10 +478,9 @@ function Grenade:GetAttackResults(action, attack_args)
 				while validPositionTries < maxPositionTries do
 					local dv = self:GetMishapDeviationVector(attacker, target_pos)
 					local deviatePosition = target_pos + dv
-					local trajectory = self:CalcTrajectory(attack_args, deviatePosition)
+					local trajectory = self:GetTrajectory(attack_args, attack_pos, deviatePosition, "mishap")
 					local finalPos = #trajectory > 0 and trajectory[#trajectory].pos
 					if finalPos and self:ValidatePos(finalPos, attack_args) then
-						attack_pos = trajectory[1].pos
 						target_pos = deviatePosition
 						break
 					end
@@ -508,6 +508,7 @@ function Grenade:GetAttackResults(action, attack_args)
 			aoe_params.damage_mod = "no damage"
 		end
 		results = GetAreaAttackResults(aoe_params)
+		CompileKilledUnits(results)
 
 		local radius = aoe_params.max_range * const.SlabSizeX
 		local explosion_voxel_pos = SnapToVoxel(explosion_pos) + point(0, 0, const.SlabSizeZ / 2)
@@ -875,7 +876,8 @@ function EnvEffectBurningTick(unit, voxels, combat_moment)
 		local fire, dist = AreVoxelsInFireRange(voxels)
 		inside = fire and dist < const.SlabSizeX
 	end
-	if unit:HasStatusEffect("Burning") then
+	local effect = unit:GetStatusEffect("Burning")
+	if effect then
 		if not inside then
 			local x, y, z = unit:GetVisualPosXYZ()
 			if terrain.IsWater(x, y, z) then
@@ -892,7 +894,7 @@ function EnvEffectBurningTick(unit, voxels, combat_moment)
 			if g_Combat or g_StartingCombat then
 				return
 			end
-			start_time = unit:GetEffectValue("burning_start_time")
+			start_time = effect:ResolveValue("burning_start_time")
 			if GameTime() - start_time < 5000 then
 				return
 			end
@@ -903,9 +905,9 @@ function EnvEffectBurningTick(unit, voxels, combat_moment)
 			if g_Combat or g_StartingCombat then
 				start_time = GameTime()
 			else
-				start_time = (start_time or unit:GetEffectValue("burning_start_time")) + 5000
+				start_time = (start_time or effect:GetParameter("burning_start_time")) + 5000
 			end
-			unit:SetEffectValue("burning_start_time", start_time)
+			effect:SetParameter("burning_start_time", start_time)
 		else
 			unit:RemoveStatusEffect("Burning")
 		end
@@ -948,8 +950,9 @@ function EnvEffectToxicGasTick(unit, voxels, combat_moment)
 	
 	inside = inside and not protected
 	
-	if unit:HasStatusEffect("Choking") then
-		local start_time = unit:GetEffectValue("choking_start_time")
+	local effect = unit:GetStatusEffect("Choking")
+	if effect then
+		local start_time = effect:ResolveValue("choking_start_time")
 		if (combat_moment == "end turn") or (not g_Combat and not g_StartingCombat and GameTime() >= start_time + 5000) then			
 			local damage = Choking:ResolveValue("damage")
 			unit:TakeDirectDamage(damage, T{698692719911, "<damage> (Choking)", damage = damage})
@@ -960,7 +963,7 @@ function EnvEffectToxicGasTick(unit, voxels, combat_moment)
 				start_time = start_time + 5000
 			end
 			if inside then
-				unit:SetEffectValue("choking_start_time", start_time)
+				effect:SetParameter("choking_start_time", start_time)
 			else
 				unit:RemoveStatusEffect("Choking")
 			end
@@ -1006,8 +1009,9 @@ function EnvEffectTearGasTick(unit, voxels, combat_moment)
 	end
 	inside = inside and not protected
 	
-	if unit:HasStatusEffect("Blinded") then
-		local start_time = unit:GetEffectValue("blinded_start_time")
+	local effect = unit:GetStatusEffect("Blinded")
+	if effect then
+		local start_time = effect:ResolveValue("blinded_start_time")
 		if (combat_moment == "end turn") or (not g_Combat and not g_StartingCombat and GameTime() >= start_time + 5000) then
 			-- choking damage/end will happen on end turn in combat		
 			if g_Combat or g_StartingCombat then
@@ -1016,7 +1020,7 @@ function EnvEffectTearGasTick(unit, voxels, combat_moment)
 				start_time = start_time + 5000
 			end
 			if inside then
-				unit:SetEffectValue("blinded_start_time", start_time)
+				effect:SetParameter("blinded_start_time", start_time)
 			else
 				unit:RemoveStatusEffect("Blinded")
 			end
@@ -1046,8 +1050,9 @@ function EnvEffectSmokeTick(unit, voxels, combat_moment)
 		end
 	end
 	
-	if unit:HasStatusEffect("Smoked") then
-		local start_time = unit:GetEffectValue("smoked_start_time")
+	local effect = unit:GetStatusEffect("Smoked")
+	if effect then
+		local start_time = effect:ResolveValue("smoked_start_time")
 		if (combat_moment == "end turn") or (not g_Combat and not g_StartingCombat and GameTime() >= start_time + 5000) then
 			if g_Combat or g_StartingCombat then
 				start_time = GameTime()
@@ -1055,7 +1060,7 @@ function EnvEffectSmokeTick(unit, voxels, combat_moment)
 				start_time = start_time + 5000
 			end
 			if inside then
-				unit:SetEffectValue("smoked_start_time", start_time)
+				effect:SetParameter("smoked_start_time", start_time)
 			else
 				unit:RemoveStatusEffect("Smoked")
 			end

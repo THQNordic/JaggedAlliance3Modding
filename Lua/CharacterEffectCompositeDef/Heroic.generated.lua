@@ -7,97 +7,19 @@ DefineClass.Heroic = {
 
 
 	object_class = "CharacterEffect",
-	msg_reactions = {
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "attacker",
-			Event = "GatherCTHModifications",
-			Handler = function (self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
-				
-				local function exec(self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
-				if cth_id == self.id then
-					data.mod_add = data.mod_add + self:ResolveValue("bonus_cth")	
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "GatherCTHModifications" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
-				end
-				
-				if self:VerifyReaction("GatherCTHModifications", reaction_def, attacker, attacker, cth_id, action_id, target, weapon1, weapon2, data) then
-					exec(self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
-				end
-			end,
-			HandlerCode = function (self, attacker, cth_id, data)
-				if cth_id == self.id then
-					data.mod_add = data.mod_add + self:ResolveValue("bonus_cth")	
+	unit_reactions = {
+		PlaceObj('UnitReaction', {
+			Event = "OnCalcChanceToHit",
+			Handler = function (self, target, attacker, action, attack_target, weapon1, weapon2, data)
+				if target == attacker then
+					data.mod_add = data.mod_add +  self:ResolveValue("bonus_cth")
 				end
 			end,
 		}),
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "obj",
-			Event = "StatusEffectAdded",
-			Handler = function (self, obj, id, stacks)
-				
-				local function exec(self, obj, id, stacks)
-				if IsKindOf(obj, "Unit") then
-					local name = UnitsDisplayAlias({obj})
-					local notification = obj.team.player_team and "allyMoraleEffect" or "enemyMoraleEffect"
-					ShowTacticalNotification(notification, false, T{233709615153, "<name> is inspired to fight against all odds", name = name})
-					obj:GainAP(self:ResolveValue("ap_gain") * const.Scale.AP)
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[2]
-				if not reaction_def or reaction_def.Event ~= "StatusEffectAdded" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, obj, id, stacks)
-				end
-				
-				if self:VerifyReaction("StatusEffectAdded", reaction_def, obj, obj, id, stacks) then
-					exec(self, obj, id, stacks)
-				end
-			end,
-			HandlerCode = function (self, obj, id, stacks)
-				if IsKindOf(obj, "Unit") then
-					local name = UnitsDisplayAlias({obj})
-					local notification = obj.team.player_team and "allyMoraleEffect" or "enemyMoraleEffect"
-					ShowTacticalNotification(notification, false, T{233709615153, "<name> is inspired to fight against all odds", name = name})
-					obj:GainAP(self:ResolveValue("ap_gain") * const.Scale.AP)
-				end
-			end,
-		}),
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "unit",
-			Event = "UnitBeginTurn",
-			Handler = function (self, unit)
-				
-				local function exec(self, unit)
-				unit:GainAP(self:ResolveValue("ap_gain") * const.Scale.AP)
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[3]
-				if not reaction_def or reaction_def.Event ~= "UnitBeginTurn" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, unit)
-				end
-				
-				if self:VerifyReaction("UnitBeginTurn", reaction_def, unit, unit) then
-					exec(self, unit)
-				end
-			end,
-			HandlerCode = function (self, unit)
-				unit:GainAP(self:ResolveValue("ap_gain") * const.Scale.AP)
+		PlaceObj('UnitReaction', {
+			Event = "OnBeginTurn",
+			Handler = function (self, target)
+				target:GainAP(self:ResolveValue("ap_gain") * const.Scale.AP)
 			end,
 		}),
 	},
@@ -106,6 +28,12 @@ DefineClass.Heroic = {
 	},
 	DisplayName = T(625410806949, --[[CharacterEffectCompositeDef Heroic DisplayName]] "Heroic"),
 	Description = T(433739687794, --[[CharacterEffectCompositeDef Heroic Description]] "Inspired to fight against all odds. Gains Action Points and Accuracy."),
+	OnAdded = function (self, obj)
+		local name = UnitsDisplayAlias({obj})
+		local notification = obj.team.player_team and "allyMoraleEffect" or "enemyMoraleEffect"
+		ShowTacticalNotification(notification, false, T{233709615153, "<name> is inspired to fight against all odds", name = name})
+		obj:GainAP(self:ResolveValue("ap_gain") * const.Scale.AP)
+	end,
 	lifetime = "Until End of Next Turn",
 	Icon = "UI/Hud/Status effects/hero",
 	RemoveOnEndCombat = true,

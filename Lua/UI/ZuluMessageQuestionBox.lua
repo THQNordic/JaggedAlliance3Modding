@@ -180,10 +180,20 @@ function LoadAnyway(err, alt_option)
 	if default_load_anyway ~= nil then
 		return default_load_anyway
 	end
+
 	local parent = GetLoadingScreenDialog() or terminal.desktop
-	local dialog = CreateQuestionBox(parent, T(1000599, "Warning"), err, T(3686, "Load anyway"), T(1000246, "Cancel"))
-	local result, dataset, xInputStateAtClose = dialog:Wait() 
-	return result == "ok", dataset, xInputStateAtClose
+	local res = WaitPopupChoice(parent, {
+			translate = true,
+			text = err,
+			title = T(1000599, "Warning"),
+			choice1 = T(3686, "Load anyway"),
+			choice1_gamepad_shortcut = "ButtonA",
+			choice2 = T(1000246, "Cancel"),
+			choice2_gamepad_shortcut = "ButtonB",
+			choice3 = alt_option,
+			choice3_gamepad_shortcut = "ButtonY",
+		})
+	return res ~= 2, res == 3
 end
 
 ----- ZuluChoiceDialog
@@ -210,6 +220,8 @@ end
 
 local lGamepadShortcutToKeyboard = {
 	["ButtonB"] = "Escape",
+	["ButtonA"] = "Enter",
+	["ButtonY"] = "Space",
 }
 
 function CreateZuluPopupChoice(parent, context)

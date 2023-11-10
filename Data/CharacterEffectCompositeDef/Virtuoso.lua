@@ -12,6 +12,16 @@ PlaceObj('CharacterEffectCompositeDef', {
 		}),
 	},
 	'object_class', "Perk",
+	'unit_reactions', {
+		PlaceObj('UnitReaction', {
+			Event = "OnCalcStealthKillChance",
+			Handler = function (self, target, value, attacker, attack_target, weapon, target_spot_group, aim)
+				if target == attacker and IsFullyAimedAttack(aim) then
+					return value + self:ResolveValue("virtuosoStealthKillChance")
+				end
+			end,
+		}),
+	},
 	'DisplayName', T(273806123408, --[[CharacterEffectCompositeDef Virtuoso DisplayName]] "Assassination"),
 	'Description', T(368382559050, --[[CharacterEffectCompositeDef Virtuoso Description]] "Increased chance for <GameTerm('StealthKills')> for attacks with 3+ Aim levels made while <GameTerm('Sneaking')>."),
 	'Icon', "UI/Icons/Perks/Virtuoso",

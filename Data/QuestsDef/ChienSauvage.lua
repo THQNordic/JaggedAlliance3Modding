@@ -14,7 +14,7 @@ PlaceObj('QuestsDef', {
 		}),
 	},
 	NoteDefs = {
-		LastNoteIdx = 6,
+		LastNoteIdx = 7,
 		PlaceObj('QuestNote', {
 			Badges = {
 				PlaceObj('QuestBadgePlacement', {
@@ -143,6 +143,31 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			Text = T(350423453238, --[[QuestsDef ChienSauvage Text]] "<em>Outcome:</em> <em>Petta</em> was saved"),
+		}),
+		PlaceObj('QuestNote', {
+			AddInHistory = true,
+			CompletionConditions = {
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "ChienSauvage",
+					Vars = set( "CrocodileConverted" ),
+					__eval = function ()
+						local quest = gv_Quests['ChienSauvage'] or QuestGetState('ChienSauvage')
+						return quest.CrocodileConverted
+					end,
+				}),
+			},
+			Idx = 7,
+			ShowConditions = {
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "ChienSauvage",
+					Vars = set( "CrocodileConverted" ),
+					__eval = function ()
+						local quest = gv_Quests['ChienSauvage'] or QuestGetState('ChienSauvage')
+						return quest.CrocodileConverted
+					end,
+				}),
+			},
+			Text = T(369051353675, --[[QuestsDef ChienSauvage Text]] "<em>Outcome:</em> <em>Petta</em> converted the crocodile <em>Gena</em> to veganism"),
 		}),
 	},
 	QuestGroup = "Jungle",
@@ -285,12 +310,11 @@ PlaceObj('QuestsDef', {
 							Condition = "or",
 							QuestId = "ChienSauvage",
 							Vars = set({
-	HyenasDead = false,
 	LegionKilled = false,
 }),
 							__eval = function ()
 								local quest = gv_Quests['ChienSauvage'] or QuestGetState('ChienSauvage')
-								return not quest.HyenasDead or not quest.LegionKilled
+								return not quest.LegionKilled
 							end,
 						}),
 					},
@@ -532,14 +556,14 @@ PlaceObj('QuestsDef', {
 					searchInMap = true,
 					searchInMarker = false,
 				}),
-				PlaceObj('QuestSetVariableBool', {
-					Prop = "PetaLeft",
-					QuestId = "ChienSauvage",
-				}),
 				PlaceObj('GroupSetBehaviorExit', {
 					MarkerGroup = "North",
 					Running = true,
 					TargetUnit = "Peta",
+				}),
+				PlaceObj('QuestSetVariableBool', {
+					Prop = "PetaLeft",
+					QuestId = "ChienSauvage",
 				}),
 			},
 			Once = true,
@@ -638,6 +662,9 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('QuestVarBool', {
 			Name = "PetaLeftToDie",
+		}),
+		PlaceObj('QuestVarBool', {
+			Name = "CrocodileConverted",
 		}),
 		PlaceObj('QuestVarTCEState', {
 			Name = "TCE_PetaApproachBanters",

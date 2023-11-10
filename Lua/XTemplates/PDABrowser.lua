@@ -172,7 +172,7 @@ PlaceObj('XTemplate', {
 								local dlg = GetDialog(child)
 								child.selected = dlg.Mode == item.id
 								child.OnPress = function(self)
-									dlg:SetMode(item.id, PDABrowserTabState.banner_page.mode_param)
+									dlg:SetMode(item.id, PDABrowserTabState[item.id] and PDABrowserTabState[item.id].mode_param or "front")
 									SetPDAMessangerVisibleIfUp(item.id ~= "imp")
 								end
 								
@@ -259,6 +259,7 @@ PlaceObj('XTemplate', {
 			}, {
 				PlaceObj('XTemplateTemplate', {
 					'__template', "PDAAIMBrowser",
+					'Id', "idBrowserContent",
 				}),
 				}),
 			PlaceObj('XTemplateMode', {
@@ -337,6 +338,41 @@ PlaceObj('XTemplate', {
 				}),
 				PlaceObj('XTemplateTemplate', {
 					'__template', "PDABrowserError",
+				}),
+				}),
+			PlaceObj('XTemplateMode', {
+				'mode', "bobby_ray_shop",
+			}, {
+				PlaceObj('XTemplateAction', {
+					'ActionId', "idCloseAction",
+					'ActionName', T(190144345516, --[[XTemplate PDABrowser ActionName]] "Close"),
+					'ActionShortcut', "Escape",
+					'ActionGamepad', "ButtonB",
+					'OnAction', function (self, host, source, ...)
+						local pda = GetDialog("PDADialog")
+						pda:CloseAction(host)
+					end,
+					'FXMouseIn', "buttonRollover",
+					'FXPress', "buttonPress",
+					'FXPressDisabled', "IactDisabled",
+				}),
+				PlaceObj('XTemplateTemplate', {
+					'__condition', function (parent, context) return not GetDialog(parent).mode_param or GetDialog(parent).mode_param == "front" end,
+					'__template', "PDABrowserBobbyRay",
+					'IgnoreMissing', true,
+					'Id', "idBrowserContent",
+				}),
+				PlaceObj('XTemplateTemplate', {
+					'__condition', function (parent, context) return GetDialog(parent).mode_param == "store" end,
+					'__template', "PDABrowserBobbyRay_Store",
+					'IgnoreMissing', true,
+					'Id', "idBrowserContent",
+				}),
+				PlaceObj('XTemplateTemplate', {
+					'__condition', function (parent, context) return GetDialog(parent).mode_param == "cart" end,
+					'__template', "PDABrowserBobbyRay_Order",
+					'IgnoreMissing', true,
+					'Id', "idBrowserContent",
 				}),
 				}),
 			}),

@@ -51,6 +51,45 @@ PlaceObj('SatelliteTimelineEventDef', {
 
 PlaceObj('SatelliteTimelineEventDef', {
 	GetAssociatedMercs = function (self,eventCtx)
+		return false
+	end,
+	GetDescriptionText = function (self,eventCtx)
+		return self.Text, self.Title, self.Hint
+	end,
+	GetIcon = function (self,eventCtx)
+		return "UI/Icons/SateliteView/icon_ally", "UI/Icons/SateliteView/weapon_shipments"
+	end,
+	GetMapLocation = function (self,eventCtx)
+		local sectorId = eventCtx.sectorId
+		local sector = gv_Sectors[sectorId]
+		if sector then
+			return sector.XMapPosition
+		end
+	end,
+	OnClick = function (self,eventCtx)
+		return T(899709207412, "View e-mail"), (function()
+			-- order_id is not necessarily unique, so better couple it with arrival time just to be sure
+			local order_id = eventCtx.context.order_id
+			local due_time = eventCtx.due
+			for _, email in ipairs(GetReceivedEmails()) do
+				if email.id == "BobbyRayShopShipmentSent" then
+					local email_order_id = tonumber(_InternalTranslate(email.context.order_id))
+					local email_due_time = email.context.due_time
+					if email_due_time == due_time and email_order_id == order_id then
+						OpenEmail(email)
+					end
+				end
+			end
+		end)
+	end,
+	Text = T(941028342521, --[[SatelliteTimelineEventDef store_shipment Text]] "The shipment from Bobby Ray Guns and Things arrives."),
+	Title = T(770176635424, --[[SatelliteTimelineEventDef store_shipment Title]] "Shipment arrives"),
+	group = "Default",
+	id = "store_shipment",
+})
+
+PlaceObj('SatelliteTimelineEventDef', {
+	GetAssociatedMercs = function (self,eventCtx)
 		local operationId = eventCtx.operationId
 		if operationId == "Arriving" or operationId == "Idle" or operationId == "RAndR" then
 			return eventCtx.uId

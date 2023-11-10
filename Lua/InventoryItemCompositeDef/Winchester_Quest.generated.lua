@@ -17,6 +17,7 @@ DefineClass.Winchester_Quest = {
 	LargeItem = 1,
 	UnitStat = "Marksmanship",
 	Cost = 1250,
+	RestockWeight = 0,
 	Caliber = "44CAL",
 	Damage = 43,
 	AimAccuracy = 5,

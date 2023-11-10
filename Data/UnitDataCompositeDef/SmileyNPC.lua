@@ -44,6 +44,7 @@ PlaceObj('UnitDataCompositeDef', {
 	'Specialization', "Doctor",
 	'gender', "Male",
 	'PersistentSessionId', "NPC_Smiley",
+	'HealPersistentOnSpawn', true,
 	'VoiceResponseId', "Smiley",
 })
 

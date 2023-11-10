@@ -15,6 +15,8 @@ PlaceObj('InventoryItemCompositeDef', {
 	'AdditionalHint', T(997833648446, --[[InventoryItemCompositeDef Bereta92 AdditionalHint]] "<bullet_point> High Crit chance\n<bullet_point> Increased bonus from Aiming\n<bullet_point> Less noisy"),
 	'UnitStat', "Marksmanship",
 	'Cost', 700,
+	'CanAppearInShop', true,
+	'CategoryPair', "Handguns",
 	'Caliber', "9mm",
 	'Damage', 15,
 	'AimAccuracy', 6,

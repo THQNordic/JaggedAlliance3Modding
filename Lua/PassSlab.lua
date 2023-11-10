@@ -19,33 +19,52 @@ CursorPosFilter = function(o)
 end
 
 MapVar("LastCursorPos", false)
+MapVar("LastCursorObj", false)
 MapVar("CursorPosFrameNo", false)
 MapVar("LastWalkableCursorPos", false)
+MapVar("LastWalkableCursorObj", false)
 MapVar("WalkableCursorPosFrameNo", false)
 
 function GetCursorPos(walkable)
+	UpdateLastCursor(walkable)
+	if walkable then
+		return LastWalkableCursorPos
+	end
+	return LastCursorPos
+end
+
+function GetCursorObj()
+	UpdateLastCursor()
+	return LastCursorObj
+end
+
+function UpdateLastCursor(walkable)
 	local n = GetRenderFrame()
 	if walkable then
 		if n == WalkableCursorPosFrameNo then
-			return LastWalkableCursorPos
+			return
 		end
 	else
 		if n == CursorPosFrameNo then
-			return LastCursorPos
+			return
 		end
 	end
 	local src = camera.GetEye()
 	local dest = GetUIStyleGamepad() and GetTerrainGamepadCursor() or GetTerrainCursor()
-	local closest_obj, closest_pos = GetClosestRayObj(src, dest, walkable and flags_walkable or flags_enum, flags_game_ignore, CursorPosFilter, mask_all, flags_collision_mask)
+	local closest_obj, closest_pos
+	if src and dest then
+		closest_obj, closest_pos = GetClosestRayObj(src, dest, walkable and flags_walkable or flags_enum, flags_game_ignore, CursorPosFilter, mask_all, flags_collision_mask)
+	end
 	local pos = (closest_pos and not IsKindOf(closest_obj, "TerrainCollision")) and closest_pos or dest
 	if walkable then
-		LastWalkableCursorPos = pos
+		LastWalkableCursorPos = pos or false
+		LastWalkableCursorObj = closest_obj or false
 		WalkableCursorPosFrameNo = n
 	else
-		LastCursorPos = pos
+		LastCursorPos = pos or false
+		LastCursorObj = closest_obj or false
 		CursorPosFrameNo = n
 	end
-	return pos
 end
 
 function GetCursorPassSlab()
@@ -53,13 +72,21 @@ function GetCursorPassSlab()
 end
 
 function GetPackedPosAndStance(unit, stance)
-	stance = stance or unit.stance
-	local stance_idx = StancesList[stance]
-	local x, y, z = GetPassSlabXYZ(unit.target_dummy or unit)
-	if x then
-		return stance_pos_pack(x, y, z, stance_idx)
+	if IsValid(unit) then
+		stance = stance or unit.stance
+		local stance_idx = StancesList[stance]
+		if IsSittingUnit(unit) then
+			local x, y, z = GetPassSlabXYZ(unit.last_visit)
+			if x then
+				return stance_pos_pack(x, y, z, stance_idx)
+			end
+		end
+		local x, y, z = GetPassSlabXYZ(unit.target_dummy or unit)
+		if x then
+			return stance_pos_pack(x, y, z, stance_idx)
+		end
+		return stance_pos_pack(unit, stance_idx)
 	end
-	return stance_pos_pack(unit, stance_idx)
 end
 
 -- Slab spots can be 3 tiles aside from the object Origin
@@ -70,8 +97,6 @@ const.FloorSlabMaxRadius = 1 + sqrt(
 function SnapToVoxelZ(x, y, z)
 	return select(3, SnapToVoxel(x, y, (z or terrain.GetHeight(x, y)) + const.SlabSizeZ / 2))
 end
-
-local fall_down_flags = const.cqfSorted + const.cqfResultIfStartInside
 
 function FindFallDownPos(obj_or_pos)
 	local x, y, z
@@ -89,7 +114,7 @@ function FindFallDownPos(obj_or_pos)
 	end
 	if pass_x then
 		if z == pass_z then
-			return point(pass_x, pass_y, pass_z)
+			return pass_x, pass_y, pass_z
 		end
 		local stepz
 		if x == pass_x and y == pass_y then
@@ -99,31 +124,30 @@ function FindFallDownPos(obj_or_pos)
 		end
 		local posz = z or terrain.GetHeight(x, y)
 		if abs(posz - stepz) < 50*guic then
-			return point(pass_x, pass_y, pass_z)
+			return pass_x, pass_y, pass_z
 		end
 	end
 	local slab, step_z = WalkableSlabByPoint(x, y, z, "downward only")
-	local pass_pos = GetPassSlab(x, y, step_z)
-	if not pass_pos then
-		local pt = terrain.FindPassable(x, y, step_z, 0,  -1, -1, const.pfmVoxelAligned)
-		pass_pos = GetPassSlab(pt) -- adjust Z
+	pass_x, pass_y, pass_z = GetPassSlabXYZ(x, y, step_z)
+	if not pass_x then
+		pass_x, pass_y, pass_z = GetPassSlabXYZ(terrain.FindPassable(x, y, step_z, 0,  -1, -1, const.pfmVoxelAligned, true)) -- adjust Z
 	end
-	return pass_pos
+	return pass_x, pass_y, pass_z
 end
 
 function FallDownCheck(unit)
 	if unit.command == "FallDown" then return end
-	local fall_pos = FindFallDownPos(unit)
-	if not fall_pos or fall_pos:Equal(unit:GetPosXYZ()) then
+	local x, y, z = FindFallDownPos(unit)
+	if not x or unit:IsEqualPos(x, y, z) then
 		return
 	end
-	local unit_pos = unit:GetPos()
-	local _, fall_z = WalkableSlabByPoint(fall_pos, "downward only")
-	local _, unit_z = WalkableSlabByPoint(unit_pos, "downward only")
-	local current_z = unit_pos:z() or unit_z
+	local ux, uy, uz = unit:GetPosXYZ()
+	local _, fall_z = WalkableSlabByPoint(x, y, z, "downward only")
+	local _, unit_z = WalkableSlabByPoint(ux, uy, uz, "downward only")
+	local current_z = uz or unit_z
 	if fall_z ~= current_z then
-		if (not fall_z and current_z) or (fall_z and current_z and current_z - fall_z >= 35 * guic) then
-			unit:SetCommand("FallDown", fall_pos, unit.command == "Cower")
+		if current_z and (not fall_z or current_z - fall_z >= 35 * guic) then
+			unit:SetCommand("FallDown", point(x, y, z), unit.command == "Cower")
 		end
 	end
 end
@@ -132,7 +156,7 @@ function UnitsFallDown(clip)
 	WaitAllOtherThreads()
 	for _, unit in ipairs(g_Units) do
 		if IsValid(unit)
-			and (not clip or clip:Point2DInside(unit:GetPosXYZ()))
+			and (not clip or clip:Point2DInside(unit))
 			and unit.command ~= "FallDown"
 			and not unit.perpetual_marker
 			and not unit:GetParent()		-- e.g. Hanging Luc
@@ -141,15 +165,15 @@ function UnitsFallDown(clip)
 		end
 	end
 	MapGet(clip or "map", "ItemDropContainer", function(obj)
-		local fall_pos = FindFallDownPos(obj)
-		if not fall_pos then return end
-		CreateGameTimeThread(GravityFall, obj, fall_pos)
+		local x, y, z = FindFallDownPos(obj)
+		if not x then return end
+		CreateGameTimeThread(GravityFall, obj, point(x, y, z))
 	end)
 end
 
 function RebuildArea(clip)
 	if not mapdata.GameLogic then return end
-
+	clip = IsBox(clip) and clip or nil
 	--local t0 = GetPreciseTicks(1000)
 	RebuildSlabTunnels(clip)
 	RebuildCovers(clip)
@@ -179,7 +203,9 @@ function RebuildArea(clip)
 end
 
 OnMsg.OnPassabilityChanged = RebuildArea
-OnMsg.GameExitEditor = RebuildArea
+function OnMsg.GameExitEditor()
+	RebuildArea()
+end
 
 local formations =
 {	-- looking up

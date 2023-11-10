@@ -78,7 +78,7 @@ PlaceObj('XTemplate', {
 			'SafeSpace', 10,
 		}),
 		PlaceObj('XTemplateWindow', {
-			'__class', "XScrollThumb",
+			'__class', "SnappingScrollBar",
 			'Id', "idSlider",
 			'VAlign', "center",
 			'MinWidth', 200,

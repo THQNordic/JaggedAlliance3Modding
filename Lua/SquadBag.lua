@@ -235,12 +235,12 @@ function MoveItemsToSquadBag(unit_id,squad_id)
 	if type(unit_id)=="string" then
 		unit = gv_UnitData[unit_id] or g_Units[unit_id]
 	end
-	unit:ForEachItemInSlot("Inventory",function(item, slot, l, t, bag) 
+	unit:ForEachItemInSlot("Inventory",function(item, slot, l, t, unit, bag)
 		if item:IsKindOf("SquadBagItem") then
 			unit:RemoveItem("Inventory",item)
 			table.insert_unique(bag, item)
 		end
-	end, bag)	
+	end, unit, bag)	
 	SortItemsInBag(squad_id)
 	gv_Squads[squad_id].squad_bag = bag
 	

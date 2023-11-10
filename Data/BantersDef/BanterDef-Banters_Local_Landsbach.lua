@@ -110,15 +110,9 @@ PlaceObj('BanterDef', {
 		}),
 	},
 	conditions = {
-		PlaceObj('QuestIsVariableBool', {
-			QuestId = "Landsbach",
-			Vars = set({
-	Coin = false,
-}),
-			__eval = function ()
-				local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
-				return not quest.Coin
-			end,
+		PlaceObj('UnitSquadHasItem', {
+			ItemId = "Coin",
+			Negate = true,
 		}),
 	},
 	disabledInConflict = true,
@@ -152,15 +146,9 @@ PlaceObj('BanterDef', {
 		}),
 	},
 	conditions = {
-		PlaceObj('QuestIsVariableBool', {
-			QuestId = "Landsbach",
-			Vars = set({
-	Coin = false,
-}),
-			__eval = function ()
-				local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
-				return not quest.Coin
-			end,
+		PlaceObj('UnitSquadHasItem', {
+			ItemId = "Coin",
+			Negate = true,
 		}),
 		PlaceObj('BanterHasPlayed', {
 			Banters = {
@@ -200,15 +188,17 @@ PlaceObj('BanterDef', {
 		}),
 	},
 	conditions = {
+		PlaceObj('UnitSquadHasItem', {
+			ItemId = "Coin",
+		}),
 		PlaceObj('QuestIsVariableBool', {
 			QuestId = "Landsbach",
 			Vars = set({
-	Coin = true,
 	FightWon = false,
 }),
 			__eval = function ()
 				local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
-				return quest.Coin and not quest.FightWon
+				return not quest.FightWon
 			end,
 		}),
 	},
@@ -225,15 +215,17 @@ PlaceObj('BanterDef', {
 		}),
 	},
 	conditions = {
+		PlaceObj('UnitSquadHasItem', {
+			ItemId = "Coin",
+		}),
 		PlaceObj('QuestIsVariableBool', {
 			QuestId = "Landsbach",
 			Vars = set({
-	Coin = true,
 	FightWon = false,
 }),
 			__eval = function ()
 				local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
-				return quest.Coin and not quest.FightWon
+				return not quest.FightWon
 			end,
 		}),
 		PlaceObj('BanterHasPlayed', {
@@ -255,15 +247,17 @@ PlaceObj('BanterDef', {
 		}),
 	},
 	conditions = {
+		PlaceObj('UnitSquadHasItem', {
+			ItemId = "Coin",
+		}),
 		PlaceObj('QuestIsVariableBool', {
 			QuestId = "Landsbach",
 			Vars = set({
-	Coin = true,
 	FightWon = false,
 }),
 			__eval = function ()
 				local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
-				return quest.Coin and not quest.FightWon
+				return not quest.FightWon
 			end,
 		}),
 		PlaceObj('BanterHasPlayed', {
@@ -329,15 +323,9 @@ PlaceObj('BanterDef', {
 		}),
 	},
 	conditions = {
-		PlaceObj('QuestIsVariableBool', {
-			QuestId = "Landsbach",
-			Vars = set({
-	Coin = false,
-}),
-			__eval = function ()
-				local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
-				return not quest.Coin
-			end,
+		PlaceObj('UnitSquadHasItem', {
+			ItemId = "Coin",
+			Negate = true,
 		}),
 	},
 	disabledInConflict = true,
@@ -353,13 +341,8 @@ PlaceObj('BanterDef', {
 		}),
 	},
 	conditions = {
-		PlaceObj('QuestIsVariableBool', {
-			QuestId = "Landsbach",
-			Vars = set( "Coin" ),
-			__eval = function ()
-				local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
-				return quest.Coin
-			end,
+		PlaceObj('UnitSquadHasItem', {
+			ItemId = "Coin",
 		}),
 	},
 	disabledInConflict = true,

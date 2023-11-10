@@ -99,6 +99,496 @@ PlaceObj('ClassDef', {
 })
 
 PlaceObj('ClassDef', {
+	DefParentClassList = {
+		"BobbyRayShopItemProperties",
+	},
+	group = "Inventory",
+	id = "BobbyRayShopAmmoProperties",
+	PlaceObj('PropertyDefPresetId', {
+		'category', "BobbyRayShop",
+		'id', "CategoryPair",
+		'no_edit', "expression",
+		'no_edit_expression', function (self) return not self.CanAppearInShop end,
+		'template', true,
+		'preset_class', "BobbyRayShopSubCategory",
+		'preset_group', "Ammo",
+		'default', "12gauge",
+	}),
+	PlaceObj('PropertyDefFunc', {
+		'category', "BobbyRayShop",
+		'id', "GetShopStats",
+		'help', "returns an array of { statName, statValue }",
+		'no_edit', "CategoryPair.no_edit",
+		'template', true,
+		'params', "self, stacks",
+		'default', function (self, stacks)
+			return BobbyRayStoreGetStats_Ammo(self)
+		end,
+	}),
+})
+
+PlaceObj('ClassDef', {
+	DefParentClassList = {
+		"BobbyRayShopUsedItemProperties",
+	},
+	group = "Inventory",
+	id = "BobbyRayShopArmorProperties",
+	PlaceObj('PropertyDefPresetId', {
+		'category', "BobbyRayShop",
+		'id', "CategoryPair",
+		'no_edit', "expression",
+		'no_edit_expression', function (self) return self.CanAppearInShop end,
+		'template', true,
+		'preset_class', "BobbyRayShopSubCategory",
+		'preset_group', "Armor",
+		'default', "UtilityArmor",
+	}),
+	PlaceObj('PropertyDefFunc', {
+		'category', "BobbyRayShop",
+		'id', "GetShopStats",
+		'help', "returns an array of { statName, statValue }",
+		'no_edit', "CategoryPair.no_edit",
+		'template', true,
+		'params', "self, stacks",
+		'default', function (self, stacks)
+			return BobbyRayStoreGetStats_Armor(self)
+		end,
+	}),
+	PlaceObj('PropertyDefFunc', {
+		'category', "BobbyRayShop",
+		'id', "GetShopDescription",
+		'no_edit', "CategoryPair.no_edit",
+		'default', function (self)
+			local hasDesc = self.Description and self.Description ~= ""
+			local hasHint = self.AdditionalHint and self.AdditionalHint ~= ""
+			local protectedParts = {}
+			for part,val in sorted_pairs(self.ProtectedBodyParts) do
+				local preset= Presets.TargetBodyPart.Default[part]
+				table.insert(protectedParts, preset.display_name)
+			end
+			
+			local protectedPartsText = ""
+			if #protectedParts > 0 then 
+				protectedPartsText = T{378508273050, "<bullet_point> Body parts - <parts>", parts = table.concat(protectedParts, ", ")}
+			end
+			
+			--FindPreset("WeaponType", "Armor").Description
+			
+			local text = hasDesc and self.Description or hasHint and self.AdditionalHint or ""
+			return protectedPartsText .. "\n" .. text
+		end,
+	}),
+})
+
+PlaceObj('ClassDef', {
+	DefParentClassList = {
+		"BobbyRayShopWeaponProperties",
+	},
+	group = "Inventory",
+	id = "BobbyRayShopFirearmProperties",
+	PlaceObj('PropertyDefFunc', {
+		'category', "BobbyRayShop",
+		'id', "GetShopStats",
+		'help', "returns an array of { statName, statValue }",
+		'no_edit', "expression",
+		'no_edit_expression', function (self) return not self.CanAppearInShop end,
+		'template', true,
+		'params', "self, stacks",
+		'default', function (self, stacks)
+			return BobbyRayStoreGetStats_Firearm(self)
+		end,
+	}),
+	PlaceObj('PropertyDefFunc', {
+		'category', "BobbyRayShop",
+		'id', "GetShopSubIcon",
+		'no_edit', "GetShopStats.no_edit",
+		'default', function (self)
+			return CountWeaponUpgrades(self) > 0 and "UI/Inventory/w_mod" or ""
+		end,
+	}),
+	PlaceObj('PropertyDefFunc', {
+		'category', "BobbyRayShop",
+		'id', "GenerateInventoryEntries",
+		'no_edit', "expression",
+		'no_edit_expression', function (self) return not self.CanAppearInShop end,
+		'template', true,
+		'params', "self, stacks",
+		'default', function (self, stacks)
+			local items = {}
+			if self.Used then
+				local new_item = PlaceInventoryItem(self.class, self)
+				new_item.Condition = self.Condition
+				RestoreCloneWeaponComponents(new_item, self)
+				new_item.Cost = new_item.Cost
+				table.insert(items, new_item)
+			else
+				items = BobbyRayShopItemProperties.GenerateInventoryEntries(self, stacks)
+			end
+			
+			for _, weapon in ipairs(items) do
+				-- make sure all equipped firearms have ammo
+				local ammo = GetAmmosWithCaliber(weapon.Caliber, "sort")[1]
+				if ammo then
+					local tempAmmo = PlaceInventoryItem(ammo.id)
+					tempAmmo.Amount = tempAmmo.MaxStacks
+					weapon:Reload(tempAmmo, "suspend_fx")
+					DoneObject(tempAmmo)
+				end
+			end
+			
+			return items
+		end,
+	}),
+})
+
+PlaceObj('ClassDef', {
+	group = "Inventory",
+	id = "BobbyRayShopItemProperties",
+	PlaceObj('PropertyDefBool', {
+		'category', "BobbyRayShop",
+		'id', "CanAppearInShop",
+		'template', true,
+	}),
+	PlaceObj('PropertyDefCombo', {
+		'category', "BobbyRayShop",
+		'id', "Tier",
+		'name', "Tier",
+		'no_edit', "expression",
+		'no_edit_expression', function (self) return not self.CanAppearInShop end,
+		'template', true,
+		'default', 1,
+		'items', function (self) return { 1, 2, 3 } end,
+	}),
+	PlaceObj('PropertyDefNumber', {
+		'category', "BobbyRayShop",
+		'id', "MaxStock",
+		'no_edit', "Tier.no_edit",
+		'template', true,
+		'default', 3,
+		'min', 0,
+		'max', 99,
+	}),
+	PlaceObj('PropertyDefNumber', {
+		'category', "BobbyRayShop",
+		'id', "RestockWeight",
+		'no_edit', "Tier.no_edit",
+		'template', true,
+		'default', 100,
+		'min', 0,
+	}),
+	PlaceObj('PropertyDefNumber', {
+		'category', "BobbyRayShop",
+		'id', "Stock",
+		'no_edit', true,
+		'template', true,
+		'default', 0,
+		'min', 0,
+	}),
+	PlaceObj('PropertyDefFunc', {
+		'category', "BobbyRayShop",
+		'id', "GetShopDescription",
+		'no_edit', "Tier.no_edit",
+		'default', function (self)
+			return (self.Description and self.Description ~= "" and self.Description) or self.AdditionalHint
+		end,
+	}),
+	PlaceObj('PropertyDefFunc', {
+		'category', "BobbyRayShop",
+		'id', "GetShopSubIcon",
+		'no_edit', "Tier.no_edit",
+		'default', function (self)
+			return self.SubIcon
+		end,
+	}),
+	PlaceObj('PropertyDefFunc', {
+		'category', "BobbyRayShop",
+		'id', "GetShopStats",
+		'help', "returns an array of { statName, statValue }",
+		'no_edit', "Tier.no_edit",
+		'template', true,
+		'params', "self, stacks",
+		'default', function (self, stacks)
+			return {{ Untranslated("(design)"), Untranslated("Not implemented") }}
+		end,
+	}),
+	PlaceObj('PropertyDefFunc', {
+		'category', "BobbyRayShop",
+		'id', "GetCategory",
+		'no_edit', "Tier.no_edit",
+		'template', true,
+		'default', function (self)
+			return BobbyRayShopGetCategory(BobbyRayShopGetSubCategory(self.CategoryPair).Category)
+		end,
+	}),
+	PlaceObj('PropertyDefFunc', {
+		'category', "BobbyRayShop",
+		'id', "GetSubCategory",
+		'no_edit', "Tier.no_edit",
+		'template', true,
+		'default', function (self)
+			return BobbyRayShopGetSubCategory(self.CategoryPair)
+		end,
+	}),
+	PlaceObj('PropertyDefBool', {
+		'category', "BobbyRayShop",
+		'id', "New",
+		'no_edit', true,
+	}),
+	PlaceObj('PropertyDefBool', {
+		'category', "BobbyRayShop",
+		'id', "Seen",
+		'no_edit', true,
+	}),
+	PlaceObj('PropertyDefNumber', {
+		'category', "BobbyRayShop",
+		'id', "LastRestock",
+		'no_edit', true,
+		'template', true,
+		'default', -1,
+		'min', -1,
+	}),
+	PlaceObj('PropertyDefBool', {
+		'category', "BobbyRayShop",
+		'id', "CanBeConsumed",
+		'no_edit', "Tier.no_edit",
+		'template', true,
+		'default', true,
+	}),
+	PlaceObj('PropertyDefPresetId', {
+		'category', "BobbyRayShop",
+		'id', "CategoryPair",
+		'no_edit', "Tier.no_edit",
+		'template', true,
+		'preset_class', "BobbyRayShopSubCategory",
+		'preset_group', "_Missing",
+		'default', "Missing",
+	}),
+	PlaceObj('PropertyDefNumber', {
+		'category', "BobbyRayShop",
+		'id', "ShopStackSize",
+		'no_edit', "expression",
+		'no_edit_expression', function (self) return not (g_Classes[self.id] and g_Classes[self.id].MaxStacks) or not self.CanAppearInShop end,
+		'template', true,
+		'default', 1,
+		'min', 1,
+		'max', 99,
+	}),
+	PlaceObj('PropertyDefFunc', {
+		'category', "BobbyRayShop",
+		'id', "GenerateInventoryEntries",
+		'no_edit', "Tier.no_edit",
+		'template', true,
+		'params', "self, stacks",
+		'default', function (self, stacks)
+			local items = {}
+			if self.MaxStacks then
+				local total_amount = stacks * (self.ShopStackSize or 1)
+				local stacks = DivCeil(total_amount, self.MaxStacks)
+				local remainder = total_amount - (stacks - 1) * self.MaxStacks
+				for i = 1, stacks - 1 do
+					local item = PlaceInventoryItem(self.class, self)
+					item.Amount = item.MaxStacks
+					table.insert(items, item)
+				end
+				local item = PlaceInventoryItem(self.class, self)
+				item.Amount = remainder
+				table.insert(items, item)
+			else
+				for i = 1, stacks do
+					table.insert(items, PlaceInventoryItem(self.class, self))
+				end
+			end
+			return items
+		end,
+	}),
+	PlaceObj('PropertyDefBool', {
+		'category', "BobbyRayShop",
+		'id', "CanAppearStandard",
+		'read_only', true,
+		'no_edit', true,
+		'default', true,
+	}),
+})
+
+PlaceObj('ClassDef', {
+	DefParentClassList = {
+		"BobbyRayShopWeaponProperties",
+	},
+	group = "Inventory",
+	id = "BobbyRayShopMeleeWeaponProperties",
+	PlaceObj('PropertyDefFunc', {
+		'category', "BobbyRayShop",
+		'id', "GetShopStats",
+		'help', "returns an array of { statName, statValue }",
+		'no_edit', "expression",
+		'no_edit_expression', function (self) return not self.CanAppearInShop end,
+		'template', true,
+		'params', "self, stacks",
+		'default', function (self, stacks)
+			return BobbyRayStoreGetStats_MeleeWeapon(self)
+		end,
+	}),
+	PlaceObj('PropertyDefFunc', {
+		'category', "BobbyRayShop",
+		'id', "GetShopSubIcon",
+		'no_edit', "GetShopStats.no_edit",
+		'default', function (self)
+			return self.SubIcon
+		end,
+	}),
+})
+
+PlaceObj('ClassDef', {
+	DefParentClassList = {
+		"BobbyRayShopItemProperties",
+	},
+	group = "Inventory",
+	id = "BobbyRayShopOtherProperties",
+	PlaceObj('PropertyDefPresetId', {
+		'category', "BobbyRayShop",
+		'id', "CategoryPair",
+		'no_edit', "expression",
+		'no_edit_expression', function (self) return not self.CanAppearInShop end,
+		'template', true,
+		'preset_class', "BobbyRayShopSubCategory",
+		'preset_group', "Other",
+		'default', "Other",
+	}),
+	PlaceObj('PropertyDefFunc', {
+		'category', "BobbyRayShop",
+		'id', "GetShopDescription",
+		'no_edit', "CategoryPair.no_edit",
+		'default', function (self)
+			return self.AdditionalHint
+		end,
+	}),
+	PlaceObj('PropertyDefFunc', {
+		'category', "BobbyRayShop",
+		'id', "GetShopStats",
+		'help', "returns an array of { statName, statValue }",
+		'no_edit', "CategoryPair.no_edit",
+		'template', true,
+		'params', "self, stacks",
+		'default', function (self, stacks)
+			return BobbyRayStoreGetStats_Other(self)
+		end,
+	}),
+})
+
+PlaceObj('ClassDef', {
+	DefParentClassList = {
+		"BobbyRayShopItemProperties",
+	},
+	group = "Inventory",
+	id = "BobbyRayShopUsedItemProperties",
+	PlaceObj('PropertyDefFunc', {
+		'category', "BobbyRayShop",
+		'id', "GenerateInventoryEntries",
+		'no_edit', "expression",
+		'no_edit_expression', function (self) return not self.CanAppearInShop end,
+		'template', true,
+		'params', "self, stacks",
+		'default', function (self, stacks)
+			if self.Used then
+				local items = {}
+				local new_item = PlaceInventoryItem(self.class, self)
+				new_item.Condition = self.Condition
+				new_item.Cost = new_item.Cost
+				table.insert(items, new_item)
+				return items
+			else
+				return BobbyRayShopItemProperties.GenerateInventoryEntries(self, stacks)
+			end
+		end,
+	}),
+	PlaceObj('PropertyDefBool', {
+		'category', "BobbyRayShop",
+		'id', "CanAppearUsed",
+		'no_edit', "GenerateInventoryEntries.no_edit",
+		'template', true,
+		'default', true,
+	}),
+	PlaceObj('PropertyDefBool', {
+		'category', "BobbyRayShop",
+		'id', "CanAppearStandard",
+		'no_edit', "GenerateInventoryEntries.no_edit",
+		'template', true,
+		'default', true,
+	}),
+	PlaceObj('PropertyDefBool', {
+		'category', "BobbyRayShop",
+		'id', "Used",
+		'no_edit', true,
+	}),
+	PlaceObj('PropertyDefFunc', {
+		'category', "BobbyRayShop",
+		'id', "GetShopConditionPercent",
+		'help', "",
+		'no_edit', "GenerateInventoryEntries.no_edit",
+		'template', true,
+		'params', "self, stacks",
+		'default', function (self, stacks)
+			return Untranslated{"<percent(condPercent)>", condPercent = self:GetConditionPercent()}
+		end,
+	}),
+})
+
+PlaceObj('ClassDef', {
+	DefParentClassList = {
+		"BobbyRayShopUsedItemProperties",
+	},
+	group = "Inventory",
+	id = "BobbyRayShopWeaponProperties",
+	PlaceObj('PropertyDefPresetId', {
+		'category', "BobbyRayShop",
+		'id', "CategoryPair",
+		'no_edit', "expression",
+		'no_edit_expression', function (self) return not self.CanAppearInShop end,
+		'template', true,
+		'preset_class', "BobbyRayShopSubCategory",
+		'preset_group', "Weapons",
+		'default', "UtilityWeapons",
+	}),
+	PlaceObj('PropertyDefFunc', {
+		'category', "BobbyRayShop",
+		'id', "GetShopStats",
+		'help', "returns an array of { statName, statValue }",
+		'no_edit', "CategoryPair.no_edit",
+		'template', true,
+		'params', "self, stacks",
+		'default', function (self, stacks)
+			if self:GetSubCategory().id == "MeleeWeapons" then
+				return BobbyRayStoreGetStats_MeleeWeapon(self)
+			else
+				return BobbyRayStoreGetStats_Firearm(self)
+			end
+		end,
+	}),
+	PlaceObj('PropertyDefFunc', {
+		'category', "BobbyRayShop",
+		'id', "GetShopSubIcon",
+		'no_edit', "CategoryPair.no_edit",
+		'default', function (self)
+			if IsKindOf(self, "Firearm") then
+				return CountWeaponUpgrades(self) > 0 and "UI/Inventory/w_mod" or ""
+			else
+					return BobbyRayShopItemProperties.GetShopSubIcon(self)
+			end
+		end,
+	}),
+	PlaceObj('PropertyDefFunc', {
+		'category', "BobbyRayShop",
+		'id', "GetShopDescription",
+		'no_edit', "CategoryPair.no_edit",
+		'default', function (self)
+			local hasDesc = self.Description and self.Description ~= ""
+			local hasHint = self.AdditionalHint and self.AdditionalHint ~= ""
+			return hasDesc and self.Description or hasHint and self.AdditionalHint or FindPreset("WeaponType", self.WeaponType).Description
+		end,
+	}),
+})
+
+PlaceObj('ClassDef', {
 	group = "Inventory",
 	id = "CapacityItemProperties",
 	PlaceObj('PropertyDefNumber', {
@@ -957,7 +1447,7 @@ PlaceObj('ClassDef', {
 		'template', true,
 	}),
 	PlaceObj('PropertyDefNumber', {
-		'category', "General",
+		'category', "BobbyRayShop",
 		'id', "Cost",
 		'help', "How much this item costs to buy in $",
 		'template', true,
@@ -982,6 +1472,18 @@ PlaceObj('ClassDef', {
 		'name', "Locked",
 		'help', "Locked items cannot be moved from their slot. They also disappear when the bearer dies.",
 		'template', true,
+	}),
+	PlaceObj('PropertyDefFunc', {
+		'category', "Reactions",
+		'id', "OnItemGained",
+		'template', true,
+		'params', "self, owner, slot",
+	}),
+	PlaceObj('PropertyDefFunc', {
+		'category', "Reactions",
+		'id', "OnItemLost",
+		'template', true,
+		'params', "self, owner, slot",
 	}),
 	PlaceObj('PropertyDefText', {
 		'id', "owner",

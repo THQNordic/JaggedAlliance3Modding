@@ -6,6 +6,7 @@ PlaceObj('XTemplate', {
 	PlaceObj('XTemplateWindow', {
 		'comment', "hint",
 		'__context', function (parent, context) return "GamepadUIStyleChanged" end,
+		'__condition', function (parent, context) return not BobbyRayRolloverOverride() end,
 		'__class', "XContextWindowVisibleReasons",
 		'Id', "idMoreInfo",
 		'IdNode', true,

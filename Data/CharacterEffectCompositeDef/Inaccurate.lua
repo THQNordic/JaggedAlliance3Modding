@@ -10,34 +10,12 @@ PlaceObj('CharacterEffectCompositeDef', {
 		}),
 	},
 	'object_class', "StatusEffect",
-	'msg_reactions', {
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "attacker",
-			Event = "GatherCTHModifications",
-			Handler = function (self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
-				
-				local function exec(self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
-				if cth_id == self.id then
-						data.mod_add = self:ResolveValue("accuracy_modifier")
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "GatherCTHModifications" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
-				end
-				
-				if self:VerifyReaction("GatherCTHModifications", reaction_def, attacker, attacker, cth_id, action_id, target, weapon1, weapon2, data) then
-					exec(self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
-				end
-			end,
-			HandlerCode = function (self, attacker, cth_id, data)
-				if cth_id == self.id then
-						data.mod_add = self:ResolveValue("accuracy_modifier")
+	'unit_reactions', {
+		PlaceObj('UnitReaction', {
+			Event = "OnCalcChanceToHit",
+			Handler = function (self, target, attacker, action, attack_target, weapon1, weapon2, data)
+				if target == attacker then
+					ApplyCthModifier_Add(self, data, self:ResolveValue("accuracy_modifier"))
 				end
 			end,
 		}),

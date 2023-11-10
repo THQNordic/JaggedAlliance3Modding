@@ -54,6 +54,7 @@ PlaceObj('UnitDataCompositeDef', {
 	'pollyvoice', "Nicole",
 	'gender', "Female",
 	'PersistentSessionId', "NPC_Trudy",
+	'HealPersistentOnSpawn', true,
 	'VoiceResponseId', "GangTrudy",
 	'FallbackMissingVR', "AnneLeMitrailleur",
 })

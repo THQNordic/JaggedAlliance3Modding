@@ -94,12 +94,13 @@ PlaceObj('XTemplate', {
 							'LayoutMethod', "HList",
 						}, {
 							PlaceObj('XTemplateWindow', {
+								'VAlign', "center",
 								'MinWidth', 610,
 							}, {
 								PlaceObj('XTemplateTemplate', {
 									'__condition', function (parent, context) return not InitialConflictNotStarted() end,
 									'__template', "PDAStartButton",
-									'Margins', box(0, 0, 0, 15),
+									'Margins', box(0, 0, 0, 0),
 									'Dock', "left",
 									'VAlign', "center",
 									'MinWidth', 200,

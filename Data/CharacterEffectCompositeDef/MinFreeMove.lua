@@ -11,6 +11,14 @@ PlaceObj('CharacterEffectCompositeDef', {
 		}),
 	},
 	'object_class', "Perk",
+	'unit_reactions', {
+		PlaceObj('UnitReaction', {
+			Event = "OnCalcFreeMove",
+			Handler = function (self, target, data)
+				data.min = self:ResolveValue("minFreeMove")
+			end,
+		}),
+	},
 	'Description', T(813287134461, --[[CharacterEffectCompositeDef MinFreeMove Description]] "Always receive a minimum of <minFreeMove> Free Move when eligible."),
 	'Icon', "UI/Icons/Perks/Inescapable",
 })

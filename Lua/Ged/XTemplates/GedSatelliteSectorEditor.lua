@@ -21,6 +21,7 @@ PlaceObj('XTemplate', {
 				'__class', "GedPropPanel",
 				'Id', "idSectorsFilter",
 				'Dock', "bottom",
+				'Collapsible', true,
 				'Title', "Filter",
 				'EnableSearch', false,
 				'DisplayWarnings', false,
@@ -35,6 +36,7 @@ PlaceObj('XTemplate', {
 				'__class', "GedListPanel",
 				'Id', "idSectors",
 				'Title', "Satellite Sectors",
+				'Format', "<EditorView>",
 				'FilterName', "SectorsFilter",
 				'FilterClass', "SatelliteSectorGedFilter",
 				'SelectionBind', "SelectedObject",
@@ -49,6 +51,7 @@ PlaceObj('XTemplate', {
 			'ActionsClass', "PropertyObject",
 			'Copy', "GedOpPropertyCopy",
 			'Paste', "GedOpPropertyPaste",
+			'HideFirstCategory', true,
 		}),
 		PlaceObj('XTemplateAction', {
 			'ActionId', "Save",

@@ -51,6 +51,7 @@ DefineClass.GangHannah = {
 	pollyvoice = "Nicole",
 	gender = "Female",
 	PersistentSessionId = "NPC_Hannah",
+	HealPersistentOnSpawn = true,
 	VoiceResponseId = "GangTrudy",
 	FallbackMissingVR = "AnneLeMitrailleur",
 }

@@ -288,6 +288,9 @@ PlaceObj('XTemplate', {
 					
 					dmgWep1 = dmgWep1 / w1Shots
 					dmgWep2 = dmgWep2 / w2Shots
+				
+					self.idDamage2:SetVisible(true)
+					self.idCrit2:SetVisible(true)
 					
 					if w1Shots > 1 and dmgWep1 > 0 then
 						self.idDamage:SetText(T{190166169569, "<style PDARolloverHeaderBeige><shots>x<damage></style> <valign bottom -1>DMG", shots = w1Shots, damage = dmgWep1})
@@ -324,12 +327,18 @@ PlaceObj('XTemplate', {
 					end
 					
 					if shots > 1 and damage > 0 then
-						self.idDamage:SetText(T{190166169569, "<style PDARolloverHeaderBeige><shots>x<damage></style> <valign bottom -1>DMG", shots = shots, damage = perShot})
+						if aoeDamage > 0 then
+							self.idDamage:SetText(T{882880309841, "<style PDARolloverHeaderBeige><shots>x<damage>+<aoe></style> <valign bottom -1>DMG", shots = shots, damage = perShot, aoe = aoeDamage})
+						else
+							self.idDamage:SetText(T{190166169569, "<style PDARolloverHeaderBeige><shots>x<damage></style> <valign bottom -1>DMG", shots = shots, damage = perShot})
+						end
 					elseif aoeDamage > 0 then
 						self.idDamage:SetText(T{599365440266, "<style PDARolloverHeaderBeige><damage>+<aoeDamage></style> <valign bottom -1>DMG", aoeDamage = aoeDamage, damage = damage})
 					else
 						self.idDamage:SetText(T{443022842732, "<style PDARolloverHeaderBeige><damage></style> <valign bottom -1>DMG", damage = damage})
 					end
+					self.idDamage2:SetVisible(false)
+					self.idCrit2:SetVisible(false)
 					
 					self.idCrit:SetText(T{301737864898, "<style PDARolloverHeaderBeige><percent(crit)></style> <valign bottom -1>CRIT", crit = attackResult.crit_chance})
 				end
@@ -494,6 +503,7 @@ PlaceObj('XTemplate', {
 							'Id', "idCrit2",
 							'HAlign', "center",
 							'VAlign', "center",
+							'FoldWhenHidden', true,
 							'TextStyle', "PDAActivitiesButtonSmall",
 							'Translate', true,
 							'HideOnEmpty', true,

@@ -1,5 +1,5 @@
 DefineClass.InventoryItem = {
-	__parents = {"ZuluModifiable", "InventoryItemProperties", "ScrapableItem"},
+	__parents = {"ZuluModifiable", "InventoryItemProperties", "ScrapableItem", "BobbyRayShopItemProperties"},
 	properties = {
 		{ id = "id", editor = "number", default = false},
 	},
@@ -38,6 +38,8 @@ function InventoryItem:Done()
 		local owner = self.owner
 		self.owner = false
 	end
+	g_ItemIdToItem[self.id] = nil
+	NetUpdateHash("InventoryItem:Done",self.id, nextItemId,  self.class)
 end
 
 local function lInventoryItemInitializeItemId(self)
@@ -106,6 +108,7 @@ function InventoryItem:UIClone()
 	if not ok or not clonedItem or not clonedItem[1] then return false end
 	local clone = clonedItem[1]
 	rawset(clone, "is_clone", true)
+	clone.RegisterReactions = empty_func -- no reactions for cloned items; handle differently if they prove to be necessary for modify weapon dlg values
 	return clone
 end
 
@@ -134,13 +137,13 @@ function OnMsg.ClassesPreprocess(classdefs)
 end
 
 DefineClass.SquadBagItem = { __parents = { "InventoryStack"} }
-DefineClass.Armor = { __parents = { "InventoryItem", "ArmorProperties" } ,
+DefineClass.Armor = { __parents = { "InventoryItem", "ArmorProperties", "BobbyRayShopArmorProperties" } ,
 	properties = {{ id = "SumDamageReduction", name = "Damage Reduction", editor = "number", default = 0, no_edit = true, read_only = true},},
 	GetRolloverType = function() return "Armor" end,
 }
-DefineClass.Ammo = { __parents = { "SquadBagItem", "AmmoProperties"} }
+DefineClass.Ammo = { __parents = { "SquadBagItem", "AmmoProperties", "BobbyRayShopAmmoProperties" } }
 DefineClass.QuickSlotItem = { __parents = { "InventoryItem" } }
-DefineClass.Medicine = { __parents = { "InventoryItem"},
+DefineClass.Medicine = { __parents = { "InventoryItem", "BobbyRayShopOtherProperties"},
 	properties = {{ id = "max_meds_parts", name = "Max Meds Parts", template = true, category = "Condition", editor = "number", default = 0},},
 }
 
@@ -182,7 +185,7 @@ DefineClass.ValuableItemContainer = { __parents = { "InventoryItem" } }
 DefineClass.QuestItem = { __parents = { "InventoryItem", "QuestItemProperties" } }
 DefineClass.QuestStackItem = { __parents = { "QuestItem", "InventoryStack" } }
 DefineClass.QuestItemValuable = { __parents = { "QuestItem", "Valuables" } }
-DefineClass.ResourceItem = { __parents = { "SquadBagItem" } }
+DefineClass.ResourceItem = { __parents = { "SquadBagItem", "BobbyRayShopOtherProperties" } }
 
 DefineClass.TransmutedArmor   = { __parents = {"Armor","TransmutedItemProperties" }, RevertConditionCounter = const.Weapons.ItemDegradationCounter }
 DefineClass.TransmutedMachete = { __parents = {"MacheteWeapon","TransmutedItemProperties" }, RevertConditionCounter = const.Weapons.ItemDegradationCounter }
@@ -354,6 +357,24 @@ function TransformItemId(item_id)
 	return id
 end
 
+function InventoryItemCompositeDef:VerifyReaction(event, reaction, actor, ...)
+	if IsKindOf(actor, self.class) then
+		return true
+	end
+	if IsKindOfClasses(actor, "Unit", "UnitData") then
+		local equipped
+		actor:ForEachItemInSlot(self.Slot, actor.class, function()
+			equipped = true
+		end)
+		return equipped
+	end
+end
+
+function InventoryItemCompositeDef:GetReactionActors(event, reaction, ...)
+	return ZuluReactionGetReactionActors_Light(event, reaction, ...)
+end
+
+
 -- Overwrite of the old PlaceInventoryItem
 function PlaceInventoryItem(item_id, instance, ...)
 	local id = TransformItemId(item_id)
@@ -374,6 +395,10 @@ function PlaceInventoryItem(item_id, instance, ...)
 		SetObjPropertyList(obj, instance)
 		if not obj.id then -- Shouldn't happen (outside of Unarmed weapon creation on clear) but better than having items with no ids
 			obj:InitializeItemId()
+		end
+		
+		if #(obj.applied_modifiers or "") > 0 then
+			obj:ApplyModifiersList(obj.applied_modifiers)
 		end
 		
 		-- old save compat
@@ -551,9 +576,33 @@ function InventoryItem:SaveToLuaCode(indent, pstr, GetPropFunc, pos)
 	end
 end
 
-function InventoryItem:OnAdd(u, slot, pos, item) end
+function InventoryItem:RegisterReactions(owner)
+	owner = owner or ZuluReactionResolveUnitActorObj(self.owner)
+	if owner then
+		owner:AddReactions(self, self.unit_reactions)
+	end
+end
 
-function InventoryItem:OnRemove(u) end
+function InventoryItem:UnregisterReactions(owner)
+	owner = owner or ZuluReactionResolveUnitActorObj(self.owner)
+	if owner then
+		owner:AddReactions(self, self.unit_reactions)
+	end
+end
+
+function InventoryItem:OnAdd(u, slot, pos, item)
+	if IsKindOf(u, "UnitBase") and slot ~= "SetpieceWeapon" then
+		self:RegisterReactions(u)
+		self:OnItemGained(u, slot)
+	end
+end
+
+function InventoryItem:OnRemove(u, slot) 
+	if IsKindOf(u, "UnitBase") and slot ~= "SetpieceWeapon" then
+		self:UnregisterReactions(u)
+		self:OnItemLost(u, slot)
+	end
+end
 
 DefineClass.InventoryFilter = {
 	__parents = {"GedFilter"},
@@ -673,33 +722,9 @@ function Inventory:GetMaxTilesInSlot(slot_name)
 end
 
 function Inventory:ForEachItem(base_class, fn, ...)
-	local arg1
-	if type(base_class) == "function" then
-		arg1 = fn
-		fn = base_class
-		base_class = false
-	end
 	for _, slot_data in ipairs(self.inventory_slots) do
-		local slot_name = slot_data.slot_name
-		local items = self[slot_name]-- items and pos
-		local lbase_class = base_class or slot_data.base_class
-		local lcheck_slot_name = slot_data.check_slot_name
-		if next(items) then 
-			for i=#items,1, -2 do
-				local item, pos = items[i], items[i-1]
-				if item:IsKindOfClasses(lbase_class) and (not lcheck_slot_name or item.Slot==slot_name) then
-					local left, top = point_unpack(pos)
-					local res 
-					if arg1~=nil then
-						res = fn(item, slot_name, left, top, arg1, ...)
-					else
-						res = fn(item, slot_name, left, top, ...)
-					end
-					if res=="break" then
-						return "break"
-					end
-				end
-			end
+		if self:ForEachItemInSlot(slot_data.slot_name, base_class, fn, ...) == "break" then
+			return "break"
 		end
 	end
 end
@@ -707,49 +732,57 @@ end
 -- Does NOT override its inlined in ForEachItem... and GetItemInSlot functions 
 function Inventory:CheckClass(item, slot_name, base_class)
 	local slot_data = self:GetSlotData(slot_name)
-	local base_class = base_class or slot_data.base_class
-	if not base_class then 
-		return true 
+	if slot_data.check_slot_name and item.Slot ~= slot_name then
+		return false
 	end
-	return item:IsKindOfClasses(base_class) and (not slot_data.check_slot_name or item.Slot==slot_name)
+	local base_class = base_class or slot_data.base_class
+	if base_class and not item:IsKindOfClasses(base_class) then
+		return false
+	end
+	return true 
 end
 
 function Inventory:HasItem(class)
-	local res
-	self:ForEachItem(function(item, slot_name, left, top, ...)
-		if not class or item.class == class then
-			res = true
-			return "break"
+	if class then
+		for _, slot_data in ipairs(self.inventory_slots) do
+			local items = self[slot_data.slot_name]
+			for i = 2, items and #items or 0, 2 do
+				if items[i].class == class then
+					return true
+				end
+			end
 		end
-	end, res)
-	return res
+	else
+		for _, slot_data in ipairs(self.inventory_slots) do
+			local items = self[slot_data.slot_name]
+			if items and #items > 0 then
+				return true
+			end
+		end
+	end
 end
 
 function Inventory:HasItemInSlot(slot_name, search_item)
-	if not search_item then return false end
-	if not self[slot_name] then return false end
 	local items = self[slot_name]
-	for i=1,#items, 2 do
-		local pos, item = items[i], items[i+1]
-		if item==search_item then
-			return true
-		end	
-	end	
+	if items and search_item then
+		for i = 2, #items, 2 do
+			if items[i] == search_item then
+				return true
+			end	
+		end
+	end
 	return false
 end
 
-function Inventory:ForEachItemDef(item_class, fn,...)
+function Inventory:ForEachItemDef(item_class, fn, ...)
 	for _, slot_data in ipairs(self.inventory_slots) do
 		local slot_name = slot_data.slot_name
 		local items = self[slot_data.slot_name]
-		if next(items) then 
-			for i=#items,1, -2 do
-				local item, pos = items[i], items[i-1]
-				if item.class == item_class then
-					if fn(item, slot_name, ...)=="break" then
-						return "break"
-					end	
-				end
+		for i = (items and #items or 0), 1, -2 do
+			if items[i].class == item_class then
+				if fn(items[i], slot_name, ...) == "break" then
+					return "break"
+				end	
 			end
 		end
 	end
@@ -757,36 +790,49 @@ end
 
 function Inventory:IsEmpty(slot_name)
 	local items = self[slot_name]
-	if not next(items) then return true end
-	return false
+	return not items or #items == 0
 end
 
 --  ForEachItemInSlot(slot_name, [base_class], function(item, slot_name, left, top, ...) end, ...)
 function Inventory:ForEachItemInSlot(slot_name, base_class, fn, ...)
-	local arg1
-	if type(base_class) == "function" then
-		arg1 = fn
-		fn = base_class
-		base_class = false
-	end
 	local items = self[slot_name]
-	if not next(items) then return end
-	local slot_data = self:GetSlotData(slot_name)
-	local lbase_class = base_class or slot_data.base_class
-	local lcheck_slot_name = slot_data.check_slot_name
-	for i = #items, 1, -2 do
-		local item, pos = items[i], items[i-1]
-		if item:IsKindOfClasses(lbase_class) and (not lcheck_slot_name or item.Slot==slot_name) then		
-			local left, top = point_unpack(pos)
-			local res 
-			if arg1~=nil then
-				res = fn(item, slot_name, left, top, arg1, ...)
-			else
-				res = fn(item, slot_name, left, top, ...)
-			end
-			if res=="break" then
+	if not items or #items == 0 then
+		return
+	end
+	if not base_class then
+		for i = #items, 1, -2 do
+			local left, top = point_unpack(items[i-1])
+			if fn(items[i], slot_name, left, top, ...) == "break" then
 				return "break"
 			end
+		end
+	elseif type(base_class) == "function" then
+		local arg1 = fn
+		fn = base_class
+		for i = #items, 1, -2 do
+			local left, top = point_unpack(items[i-1])
+			if fn(items[i], slot_name, left, top, arg1, ...) == "break" then
+				return "break"
+			end
+		end
+	else
+		for i = #items, 1, -2 do
+			if IsKindOfClasses(items[i], base_class) then
+				local left, top = point_unpack(items[i-1])
+				if fn(items[i], slot_name, left, top, ...) == "break" then
+					return "break"
+				end
+			end
+		end
+	end
+end
+
+function Inventory:FindItemInSlot(slot_name, func, ...)
+	local items = self[slot_name]
+	for i = 2, items and #items or 0, 2 do
+		local value = func(items[i], ...)
+		if value then
+			return value
 		end
 	end
 end
@@ -797,7 +843,7 @@ function Inventory:GetItem(base_class, left, top)
 		local slot_name = slot_data.slot_name
 		local item, ileft, itop = self:GetItemInSlot(slot_name, base_class, left, top)
 		if item then 
-			return item ,ileft, itop
+			return item, ileft, itop
 		end
 	end
 	return false
@@ -805,39 +851,35 @@ end
 
 function Inventory:GetItems()
 	local items = {}
-	self:ForEachItem(function(item)
+	self:ForEachItem(function(item, slot_name, left, top, items)
 		items[#items+1] = item
-	end)
+	end, items)
 	return items
 end
 
 --GetItemInSlot(slot_name, base_class, [left, [top]])
 function Inventory:GetItemInSlot(slot_name, base_class, left, top)
 	local items = self[slot_name]
-
+	if not items or #items == 0 then
+		return
+	end
 	local slot_data = self:GetSlotData(slot_name)
 	local lbase_class = base_class or slot_data.base_class
 	local lcheck_slot_name = slot_data.check_slot_name
-	for i=1,#items, 2 do
-		local pos, item = items[i], items[i+1]
-		if item:IsKindOfClasses(lbase_class) and (not lcheck_slot_name or item.Slot==slot_name) then		
-			local ileft, itop = point_unpack(pos)
+	for i = 2, #items, 2 do
+		local item = items[i]
+		if (not lcheck_slot_name or item.Slot == slot_name) and item:IsKindOfClasses(lbase_class) then
+			local ileft, itop = point_unpack(items[i-1])
 			if left then
-				if top then
-					if ileft<=left and ileft+item:GetUIWidth()>left and itop<=top and itop+item:GetUIHeight()>top then
-						return item, ileft, itop
-					end	
-				else				
-					if ileft<=left and ileft+item:GetUIWidth()>left then
-						return item,ileft, itop
-					end	
+				if ileft <= left and (not top or itop <= top) and ileft + item:GetUIWidth() > left and (not top or itop + item:GetUIHeight() > top) then
+					return item, ileft, itop
 				end
 			elseif top then
-				if itop<=top and itop+item:GetUIHeight()>top then
-					return item,ileft, itop
+				if itop <= top and itop + item:GetUIHeight() > top then
+					return item, ileft, itop
 				end	
 			else 
-				return item,ileft, itop
+				return item, ileft, itop
 			end
 		end
 	end
@@ -846,38 +888,33 @@ end
 
 function Inventory:GetItemSlot(item)
 	for _, slot_data in ipairs(self.inventory_slots) do
-		local slot_name = slot_data.slot_name
-		if self:HasItemInSlot(slot_name, item) then
-			return slot_name
+		if self:HasItemInSlot(slot_data.slot_name, item) then
+			return slot_data.slot_name
 		end
 	end
 end
 
 function Inventory:GetItemPos(item)
 	for _, slot_data in ipairs(self.inventory_slots) do
-		local slot_name = slot_data.slot_name
-		local ileft, itop = self:GetItemPosInSlot(slot_name,item)
+		local ileft, itop = self:GetItemPosInSlot(slot_data.slot_name, item)
 		if ileft and itop then 
 			return ileft, itop
 		end
 	end
-	return false
 end
 
 function Inventory:GetItemPosInSlot(slot_name,item)
 	local slot_items = self[slot_name]
-	for i=1,#slot_items, 2 do
-		local pos, cur_item = slot_items[i], slot_items[i+1]
-		if item==cur_item then
-			return point_unpack(pos)
+	for i = 2, #slot_items, 2 do
+		if slot_items[i] == item then
+			return point_unpack(slot_items[i-1])
 		end	
 	end	
 end
 
 function Inventory:GetItemPackedPos(item)
 	for i, slot_data in ipairs(self.inventory_slots) do
-		local slot_name = slot_data.slot_name
-		local ileft, itop = self:GetItemPosInSlot(slot_name,item)
+		local ileft, itop = self:GetItemPosInSlot(slot_data.slot_name, item)
 		if ileft and itop then 
 			return point_pack(ileft, itop, i)
 		end
@@ -886,10 +923,9 @@ end
 
 function Inventory:GetItemWithId(slot_name, id)
 	local items = self[slot_name]
-	for i=1,#items, 2 do
-		local pos, item = items[i], items[i+1]
-		if item.id == id then
-			return item, pos --pos is packed?
+	for i = 2, #items, 2 do
+		if items[i].id == id then
+			return items[i], items[i-1] -- item, packed pos
 		end
 	end
 end
@@ -898,12 +934,11 @@ function Inventory:GetItemAtPos(slot_name, left, top)
 	--ATTN: this is not equivalent to GetItemInSlot(nil, left, top)
 	--the difference is that GetItemInSlot will return large items whos second part is in the slot
 	--and this method wont
-	local value = point_pack(left, top)
+	local pos = point_pack(left, top)
 	local items = self[slot_name]
-	for i=1,#items, 2 do
-		local pos, item = items[i], items[i+1]
-		if pos == value then
-			return item
+	for i = 1, #items, 2 do
+		if items[i] == pos then
+			return items[i+1]
 		end
 	end
 end
@@ -915,14 +950,9 @@ function Inventory:GetItemAtPackedPos(value)
 	return item
 end
 
-function Inventory:CountItemsInSlot(slot_name, filterfn)
-	local count = {count = 0}
-	self:ForEachItemInSlot(slot_name, function(slot_item, slot_name, item_left, item_top, count)
-		if not filterfn or filterfn(slot_item, slot_name, item_left, item_top) then
-			count.count = count.count + 1
-		end
-	end, count)
-	return count.count
+function Inventory:CountItemsInSlot(slot_name)
+	local items = self[slot_name]
+	return items and #items / 2 or 0
 end
 
 -- point_pack, reason = CanAddItem(slot_name, item, [left, top])
@@ -993,8 +1023,7 @@ function Inventory:AddItem(slot_name, item, left, top, local_execution)
 		local slot_items = self[slot_name]
 		local idx = #slot_items + 1
 		for i=1, #slot_items, 2 do
-			local cpos = slot_items[i]
-			if pos<=cpos then 
+			if pos <= slot_items[i] then
 				idx = i
 				break
 			end
@@ -1014,31 +1043,20 @@ end
 
 function Inventory:RemoveItem(slot_name, item, no_update)
 	if not self:CanRemoveItem(slot_name, item) then
-		return 
+		return
 	end
-		
 	local slot_items = self[slot_name]
-	if not slot_items then return end
-	
-	local pos
-	for i=#slot_items, 2, -2 do
-		local cur_item , cur_pos = slot_items[i], slot_items[i-1]
-		if item==cur_item then
-			pos = cur_pos
-			-- remove i-1 and i 
-			table.remove(slot_items, i-1)			
-			table.remove(slot_items, i-1)-- i is i-1 after first table remove
-			break
-		end	
-	end	
-	
-	self[slot_name] = slot_items
-	if not pos then return end	
-	if not no_update then
-		ObjModified(self)
+	for i = (slot_items and #slot_items or 0), 2, -2 do
+		if item == slot_items[i] then
+			local pos = slot_items[i-1]
+			table.remove(slot_items, i)
+			table.remove(slot_items, i-1)
+			if not no_update then
+				ObjModified(self)
+			end
+			return item, pos
+		end
 	end
-
-	return item, pos
 end
 
 function Inventory:ClearSlot(slot_name)
@@ -1090,14 +1108,14 @@ function Inventory:IsEmptyPosition(slot_name, item, left, top, ignore_item, loca
 	
 	--check for intersection with any item
 	local ibox = box(left, top, left+iwidth-1, top+iheight-1)
-	local res = self:ForEachItemInSlot(slot_name, function(slot_item, slot_name, item_left, item_top, ibox, item) 
+	local res = self:ForEachItemInSlot(slot_name, function(slot_item, slot_name, item_left, item_top, ibox, item, ignore_item)
 		if item ~= slot_item and slot_item ~= ignore_item then
 			local intersection = IntersectRects(ibox, box(item_left, item_top,item_left+slot_item:GetUIWidth()-1,item_top+slot_item:GetUIHeight()-1))
 			if intersection:IsValid() then
 				return "break"
 			end	
 		end
-	end, ibox, item)
+	end, ibox, item, ignore_item)
 	if res=="break" then
 		return false
 	end
@@ -1380,6 +1398,7 @@ function SectorOperationFillItemsToRepair(sector_id, mercs, check_only)
 	end	
 
 	local all_sector_mercs = GetPlayerSectorUnits(sector_id)	
+	all_sector_mercs = table.ifilter(all_sector_mercs, function(idx,m) return m.Operation~="Traveling" and m.Operation~= "Arriving" end)
 	--squadmates equipped weapons and armors 
 	for _, slot in ipairs(priority_slots) do
 		for _,merc in ipairs(mercs) do
@@ -2063,7 +2082,7 @@ function GetDropContainer(unit, pos, item_to_add)
 	return container
 end
 
-local function SquadBagAction(srcInventory, srcSlotName, itemId, squadId, actionName)
+function SquadBagAction(srcInventory, srcSlotName, itemId, squadId, actionName)
 	NetUpdateHash("SquadBagAction", srcSlotName, itemId, squadId, actionName)
 	local squadBag =squadId and GetSquadBagInventory(squadId)
 	
@@ -2084,39 +2103,40 @@ local function SquadBagAction(srcInventory, srcSlotName, itemId, squadId, action
 	end
 	
 	local item = g_ItemIdToItem[itemId]
-	if actionName == "unload" then
-		UnloadWeapon(item, squadBag)
-	elseif actionName == "unload underslung" then
-		if IsKindOf(item, "FirearmBase") then
-			item = item:GetSubweapon("Firearm")
-			if item then
-				UnloadWeapon(item, squadBag)
+	if item then
+		if actionName == "unload" then
+			UnloadWeapon(item, squadBag)
+		elseif actionName == "unload underslung" then
+			if IsKindOf(item, "FirearmBase") then
+				item = item:GetSubweapon("Firearm")
+				if item then
+					UnloadWeapon(item, squadBag)
+				end
 			end
+		elseif actionName == "scrap" then
+			ScrapItem(srcInventory, srcSlotName, item, 1, squadBag, squadId)
+		elseif actionName == "scrapall" then
+			ScrapItem(srcInventory, srcSlotName, item, false, squadBag, squadId)
+		elseif actionName == "salvage" then	
+			SalvageItem(srcInventory, srcSlotName, item, squadBag)
+		elseif actionName == "refill" then	
+			RefillMedsItem(srcInventory, srcSlotName, item, squadBag)	
+		elseif actionName == "cashin" then
+			CashInItem(srcInventory, srcSlotName, item, 1)
+		elseif actionName == "cashstack" or actionName == "cashstack-nolog" then
+			CashInItem(srcInventory, srcSlotName, item, false, actionName == "cashstack-nolog")
+		elseif actionName == "unpack" then
+			UnpackItem(srcInventory, srcSlotName, item, 1)
 		end
-	elseif actionName == "scrap" then
-		ScrapItem(srcInventory, srcSlotName, item, 1, squadBag, squadId)
-	elseif actionName == "scrapall" then
-		ScrapItem(srcInventory, srcSlotName, item, false, squadBag, squadId)
-	elseif actionName == "salvage" then	
-		SalvageItem(srcInventory, srcSlotName, item, squadBag)
-	elseif actionName == "refill" then	
-		RefillMedsItem(srcInventory, srcSlotName, item, squadBag)	
-	elseif actionName == "cashin" then
-		CashInItem(srcInventory, srcSlotName, item, 1)
-	elseif actionName == "cashstack" or actionName == "cashstack-nolog" then
-		CashInItem(srcInventory, srcSlotName, item, false, actionName == "cashstack-nolog")
-	elseif actionName == "unpack" then
-		UnpackItem(srcInventory, srcSlotName, item, 1)
+		Msg("InventoryChange", srcInventory)
+		Msg("InventoryChange", squadBag)
+		Msg("InventoryAddItem", squadBag)
+		Msg("InventoryRemoveItem", srcInventory)
+		ObjModified(srcInventory)
+		ObjModified(squadBag)
+		ObjModified("SquadBagAction")
+		if srcInventory:HasMember("CanBeControlled") and srcInventory:CanBeControlled() and not srcInventory:IsDead() then InventoryUpdate(srcInventory) end
 	end
-	
-	Msg("InventoryChange", srcInventory)
-	Msg("InventoryChange", squadBag)
-	Msg("InventoryAddItem", squadBag)
-	Msg("InventoryRemoveItem", srcInventory)
-	ObjModified(srcInventory)
-	ObjModified(squadBag)
-	ObjModified("SquadBagAction")
-	if srcInventory:HasMember("CanBeControlled") and srcInventory:CanBeControlled() and not srcInventory:IsDead() then InventoryUpdate(srcInventory) end
 end
 
 function NetSyncEvents.SquadBagAction(session_id, pack)
@@ -2430,7 +2450,7 @@ function CustomCombatActions.CombineItems(unit,ap,pack)
 end
 
 DefineClass.MiscItem = {
-	__parents = {"InventoryStack", "MiscItemProperties"}
+	__parents = {"InventoryStack", "MiscItemProperties", "BobbyRayShopOtherProperties" }
 }
 
 DefineClass.StatBoostItem = { 
@@ -2611,7 +2631,7 @@ function CashInItem(inventory, slot_name, item, amount, dontLog)
 		end
 	end
 	AddMoney(money, "deposit",true)
-	Msg("CashInItem", item)
+	Msg("CashInItem", item, amount, money)
 	if to_remove then
 		local removedItem, pos = inventory:RemoveItem(slot_name, item)
 		DoneObject(removedItem)
@@ -2889,7 +2909,9 @@ function NetSyncEvents.TakeLootFromAutoResolveNet(executingNetId, netUnits, netI
 		units[i] = GetContainerFromContainerNetId(unitId)
 	end
 	for i, itemId in ipairs(netItems) do
-		items[i] = g_ItemIdToItem[itemId]
+		if g_ItemIdToItem[itemId] then
+			items[#items+1] = g_ItemIdToItem[itemId]
+		end
 	end
 	local src_container = GetSectorInventory(sectorId)
 	local src_container_slot_name = "Inventory"

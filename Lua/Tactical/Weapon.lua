@@ -204,11 +204,11 @@ function BaseWeapon:PrecalcDamageAndStatusEffects(attacker, target, attack_pos, 
 		end
 
 		if not ignoreGrazing and not hit.aoe then
-			if target:IsConcealedFrom(attacker) then
+			if target:IsConcealedFrom(attack_pos or attacker) then
 				chance = chance + const.EnvEffects.FogGrazeChance
 				hit.grazing_reason = "fog"
 			end
-			if target:IsObscuredFrom(attacker) then
+			if target:IsObscuredFrom(attack_pos or attacker) then
 				chance = chance + const.EnvEffects.DustStormGrazeChance
 				hit.grazing_reason = "duststorm"
 			end
@@ -245,7 +245,16 @@ function BaseWeapon:PrecalcDamageAndStatusEffects(attacker, target, attack_pos, 
 				critical = hit.critical,
 				critical_damage = const.Weapons.CriticalDamage,
 			}
-			Msg("GatherDamageModifications", attacker, target, action and action.id, self, attack_args or {}, hit or {}, data) -- only called for non-stray hits (no misses)
+			local mod_attack_args = attack_args or {}
+			local mod_hit_data = hit or {}
+			local action_id = action and action.id
+			Msg("GatherDamageModifications", attacker, target, action_id, self, mod_attack_args, mod_hit_data, data) -- only called for non-stray hits (no misses)
+			if IsKindOf(attacker, "Unit") then
+				attacker:CallReactions("OnCalcDamageAndEffects", attacker, target, action, self, mod_attack_args, mod_hit_data, data)
+			end
+			if IsKindOf(target, "Unit") then
+				target:CallReactions("OnCalcDamageAndEffects", attacker, target, action, self, mod_attack_args, mod_hit_data, data)
+			end
 			damage = Max(0, MulDivRound(data.base_damage + data.damage_add, data.damage_percent, 100))
 			if data.critical then
 				damage = Max(0, MulDivRound(damage, 100 + data.critical_damage, 100))
@@ -472,6 +481,22 @@ function FirearmBase:GetAccuracy(distance, unit, action)
 	return GetRangeAccuracy(self, distance, unit, action)
 end
 
+function FirearmBase:RegisterReactions(owner)
+	owner = owner or ZuluReactionResolveUnitActorObj(self.owner)
+	if owner then
+		InventoryItem.RegisterReactions(self, owner)
+		for slot, component in sorted_pairs(self.components) do
+			local def = WeaponComponents[component]
+			for _, id in ipairs(def and def.ModificationEffects) do
+				local effect = WeaponComponentEffects[id]
+				if effect and #(effect.unit_reactions or empty_table) > 0 then
+					owner:AddReactions(self, effect.unit_reactions)
+				end
+			end
+		end
+	end
+end
+
 function FirearmBase:SetWeaponComponent(slot, id, is_init)
 	local def = WeaponComponents[id]
 	slot = slot or (def and def.Slot)
@@ -500,7 +525,10 @@ function FirearmBase:SetWeaponComponent(slot, id, is_init)
 			unload_weapon(self)
 		end
 	end
-	
+
+	-- unregister all reactions, change components, register reactions back
+	self:UnregisterReactions()
+
 	-- Remove old component
 	if self.components[slot] then
 		local component = self.components[slot]
@@ -541,6 +569,7 @@ function FirearmBase:SetWeaponComponent(slot, id, is_init)
 	end
 
 	self.components[slot] = id or ""
+	self:RegisterReactions()
 	self.visual_obj_dirty = true
 	
 	-- Attach new component if any
@@ -1031,7 +1060,7 @@ function FirearmBase:GetSpecialScrapItems()
 end
 
 DefineClass.Firearm = {
-	__parents = { "FirearmBase", "FirearmProperties" },
+	__parents = { "FirearmBase", "FirearmProperties", "BobbyRayShopFirearmProperties" },
 	ammo = false,
 	InaccurateSpreadModifier = 0,
 	power_loss_per_tile = 5,
@@ -1213,7 +1242,9 @@ function Firearm:BulletCalcDamage(hit_data, ricochet_idx)
 
 			if not prediction then
 				if hit_data.critical == nil and not stray then
-					local critChance = attacker:CalcCritChance(self, target, hit_data.aim, hit_data.step_pos, hit_data.target_spot_group or hit.spot_group, action)
+					hit_data.target_spot_group =	hit_data.target_spot_group or hit.spot_group
+					-- pass hit_data instead of attack_args, it has all the relevant data
+					local critChance = attacker:CalcCritChance(self, target, action, hit_data, hit_data.step_pos)--hit_data.aim, hit_data.step_pos, hit_data.target_spot_group or hit.spot_group, action)
 					local critRoll = attacker:Random(100)
 					hit_data.critical = critRoll < critChance
 				end
@@ -2002,12 +2033,7 @@ function Firearm:GetAttackResults(action, attack_args)
 		dmg_breakdown = shot_attack_args.damage_breakdown and {} or false
 	}
 
-	-- Crit disabled for Overwatch attacks if you don't have Opportunistic killer perk
-	if not shot_attack_args.opportunity_attack_type or HasPerk(attacker, "OpportunisticKiller") then
-		attack_results.crit_chance = attacker:CalcCritChance(self, target, shot_attack_args.aim, shot_attack_args.step_pos, shot_attack_args.target_spot_group, action) + shot_attack_args.stealth_bonus_crit_chance
-	else
-		attack_results.crit_chance = 0
-	end
+	attack_results.crit_chance = attacker:CalcCritChance(self, target, action, shot_attack_args, shot_attack_args.step_pos)
 
 	-- attack/crit rolls
 	if prediction then
@@ -2777,6 +2803,14 @@ function AttackReaction(action, attack_args, results, can_retaliate)
 	end
 	NetUpdateHash("AttackReaction_DelayAfterExplosion_End")
 	local teamPlaying = g_Combat and g_Teams[g_Combat.team_playing]
+	
+	if IsKindOf(attacker, "Unit") then
+		attacker:CallReactions("OnUnitAttackReaction", attacker, target, action, attack_args, results, can_retaliate)
+	end
+	if IsKindOf(target, "Unit") then
+		target:CallReactions("OnUnitAttackReaction", attacker, target, action, attack_args, results, can_retaliate)
+	end
+	
 	-- Retaliation (Hotblood)
 	if can_retaliate and IsKindOf(target, "Unit") and teamPlaying ~= target.team and results.miss and
 	not (results.melee_attack and HasPerk(attacker, "HardBlow")) and HasPerk(target, "Hotblood") and not target:HasStatusEffect("Protected") then
@@ -2934,8 +2968,7 @@ function OnMsg.CombatStarting()
 	for i = 1, #(g_AttackSpentAPQueue or empty_table) - 2, 3 do
 		local attacker, time, ap = g_AttackSpentAPQueue[i], g_AttackSpentAPQueue[i+1], g_AttackSpentAPQueue[i+2]
 		if GameTime() - time < 2000 then
-			attacker:AddStatusEffect("SpentAP")
-			attacker:SetEffectValue("spent_ap", ap)
+			attacker:AddStatusEffect("SpentAP", ap)
 		end
 	end
 	if #(g_AttackRevealQueue or empty_table) > 1 then
@@ -3199,11 +3232,13 @@ TFormat.bullets =  function(context_obj, bullets, max, icon)
 	end		 
 end
 
-function Firearm:GetItemSlotUI()
+function Firearm:GetItemSlotUI(main_only)
 	local text = T{414344497801, "<bullets()>", self}
-	local subweapon = self:GetSubweapon("Firearm")
-	if subweapon then
-		text = Untranslated(_InternalTranslate(T{975717474075, "<bullets()><newline>", subweapon})) .. text
+	if not main_only then
+		local subweapon = self:GetSubweapon("Firearm")
+		if subweapon then
+			text = Untranslated(_InternalTranslate(T{975717474075, "<bullets()><newline>", subweapon})) .. text
+		end
 	end
 	return text
 end

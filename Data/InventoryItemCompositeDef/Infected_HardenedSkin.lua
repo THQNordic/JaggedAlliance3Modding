@@ -14,6 +14,7 @@ PlaceObj('InventoryItemCompositeDef', {
 	'Description', "",
 	'AdditionalHint', "",
 	'Cost', 700,
+	'CategoryPair', "Medium",
 	'PenetrationClass', 3,
 	'DamageReduction', 0,
 	'AdditionalReduction', 50,

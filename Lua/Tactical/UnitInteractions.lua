@@ -117,11 +117,13 @@ end
 function Unit:GetInteractionPos(unit)
 	if not IsValid(self) then return false end
 	local x, y, z = SnapToPassSlabXYZ(self)
-	if x and (not unit or unit:GetDist(x, y, z) == 0) or (g_Combat and self:IsDead()) then
+	if x and (not unit or unit:IsEqualPos(x, y, z)) then
 		return point(x, y, z)
 	end
-
-	local closestMeleePos = unit and unit:GetClosestMeleeRangePos(self, false, "interaction")
+	if g_Combat and self:IsDead() then
+		return self:GetPos()
+	end
+	local closestMeleePos = unit and unit:GetClosestMeleeRangePos(self, nil, false, "interaction")
 	if closestMeleePos then return closestMeleePos end
 
 	-- Sitting units don't return valid melee pos
@@ -196,7 +198,14 @@ function Unit:CanInteractWith(target, action_id, skip_cost, from_ui, sync)
 		lSyncCheck(1, sync, target, action_id, skip_cost, from_ui)
 		return false
 	end
-
+	
+	local prevInteractUnit = g_Units[target.being_interacted_with]
+	if IsValid(prevInteractUnit) and prevInteractUnit:IsLocalPlayerControlled() ~= self:IsLocalPlayerControlled() then
+		--uninteractable while other player is interacting with it.
+		lSyncCheck(11, sync, target, action_id, skip_cost, from_ui)
+		return false
+	end
+	
 	if not SpawnedByEnabledMarker(target) or not target.enabled then
 		lSyncCheck(2, sync, target, action_id, skip_cost, from_ui, target.enabled, gv_CurrentSectorId, (gv_CurrentSectorId and gv_Sectors[gv_CurrentSectorId].intel_discovered))
 		return false
@@ -352,11 +361,11 @@ end
 function Unit:InteractWith(action_id, cost_ap, pos, goto_ap, target, from_ui)
 	local can_interact = not (g_Combat and self:HasPreparedAttack()) and self:CanInteractWith(target, action_id, true, from_ui, "sync check")
 	NetUpdateHash("Unit_InteractWith", self, not not g_Combat, (g_Combat and self:HasPreparedAttack()), can_interact)
-	if target.being_interacted_with then
+	if can_interact and target.being_interacted_with then
 		local prevInteractUnit = g_Units[target.being_interacted_with]
 		if not g_Combat and
 			prevInteractUnit and
-			prevInteractUnit:IsLocalPlayerControlled() and
+			self:IsLocalPlayerControlled() == prevInteractUnit:IsLocalPlayerControlled() and
 			prevInteractUnit.goto_target then
 			prevInteractUnit:InterruptCommand("Idle")
 		else
@@ -369,6 +378,7 @@ function Unit:InteractWith(action_id, cost_ap, pos, goto_ap, target, from_ui)
 			self:GainAP(cost_ap)
 			CombatActionInterruped(self)
 		end
+		PlayFX("IactDisabled", "start")
 		return
 	end
 	self:InterruptPreparedAttack()
@@ -410,7 +420,9 @@ function Unit:InteractWith(action_id, cost_ap, pos, goto_ap, target, from_ui)
 	end
 	
 	self:PushDestructor(function()
-		target.being_interacted_with = false
+		if target.being_interacted_with == self.session_id then
+			target.being_interacted_with = false
+		end
 	end)
 
 	-- approach target

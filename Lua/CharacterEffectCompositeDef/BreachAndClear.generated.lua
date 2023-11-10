@@ -7,40 +7,14 @@ DefineClass.BreachAndClear = {
 
 
 	object_class = "Perk",
-	msg_reactions = {
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "attacker",
-			Event = "Attack",
-			Handler = function (self, action, results, attack_args, combat_starting, attacker, target)
-				
-				local function exec(self, action, results, attack_args, combat_starting, attacker, target)
-				if IsKindOfClasses(results.weapon, "Grenade", "Shotgun") then
+	unit_reactions = {
+		PlaceObj('UnitReaction', {
+			Event = "OnUnitAttack",
+			Handler = function (self, target, attacker, action, attack_target, results, attack_args)
+				if target == attacker and IsKindOfClasses(results.weapon, "Grenade", "Shotgun") then
 					if g_Combat then
 						attacker:AddStatusEffect("FreeMove")
-					elseif combat_starting then
-						attacker:AddStatusEffect("FreeMoveOnCombatStart")
-					end
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "Attack" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, action, results, attack_args, combat_starting, attacker, target)
-				end
-				
-				if self:VerifyReaction("Attack", reaction_def, attacker, action, results, attack_args, combat_starting, attacker, target) then
-					exec(self, action, results, attack_args, combat_starting, attacker, target)
-				end
-			end,
-			HandlerCode = function (self, attacker, action, target, results, attack_args)
-				if IsKindOfClasses(results.weapon, "Grenade", "Shotgun") then
-					if g_Combat then
-						attacker:AddStatusEffect("FreeMove")
-					elseif combat_starting then
+					elseif g_StartingCombat then
 						attacker:AddStatusEffect("FreeMoveOnCombatStart")
 					end
 				end

@@ -599,24 +599,26 @@ local function add_weapon_attacks(actions, unit, weapon)
 	end
 end
 
+local l_get_throwable_knife
+
 function Unit:GetThrowableKnife()
-	local cur_set = self.current_weapon
-	local alt_set = cur_set == "Handheld A" and "Handheld B" or "Handheld A"
-	local weapon
-	self:ForEachItemInSlot(cur_set, function(item)
+	l_get_throwable_knife = nil
+	self:ForEachItemInSlot(self.current_weapon, function(item)
 		if IsKindOf(item, "MeleeWeapon") and item.CanThrow then
-			weapon = item
+			l_get_throwable_knife = item
 			return "break"
 		end
 	end)
-	if weapon then return weapon end
-	self:ForEachItemInSlot(alt_set, function(item)
-		if IsKindOf(item, "MeleeWeapon") and item.CanThrow then
-			weapon = item
-			return "break"
-		end
-	end)
-	return weapon
+	if not l_get_throwable_knife then
+		local alt_set = self.current_weapon == "Handheld A" and "Handheld B" or "Handheld A"
+		self:ForEachItemInSlot(alt_set, function(item)
+			if IsKindOf(item, "MeleeWeapon") and item.CanThrow then
+				l_get_throwable_knife = item
+				return "break"
+			end
+		end)
+	end
+	return l_get_throwable_knife
 end
 
 function Unit:EnumUIActions()

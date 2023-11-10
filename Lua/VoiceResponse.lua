@@ -480,5 +480,6 @@ function CreateOnEnterMapVisualMsg()
 	CreateGameTimeThread(function()
 		WaitSyncLoadingDone()
 		Msg("OnEnterMapVisual")
+		ListCallReactions(g_Units, "OnUnitEnterMapVisual")
 	end)
 end

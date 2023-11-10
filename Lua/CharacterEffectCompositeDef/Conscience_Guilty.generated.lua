@@ -7,129 +7,33 @@ DefineClass.Conscience_Guilty = {
 
 
 	object_class = "StatusEffect",
-	msg_reactions = {
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "obj",
-			Event = "StatusEffectAdded",
-			Handler = function (self, obj, id, stacks)
-				
-				local function exec(self, obj, id, stacks)
-				if IsKindOf(obj, "Unit") then
-					local effect = obj:GetStatusEffect(self.id)
-					effect:SetParameter("guilty_start_time", Game.CampaignTime)
-					
-					--local procentCalc = 1000-self:ResolveValue("decrease")*10
-					--local stats = UnitPropertiesStats:GetProperties()
-					--for i, stat in ipairs(stats) do
-						--obj:AddModifier("guilty_" .. stat.id, stat.id, procentCalc)
-					--end
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "StatusEffectAdded" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, obj, id, stacks)
-				end
-				
-				if self:VerifyReaction("StatusEffectAdded", reaction_def, obj, obj, id, stacks) then
-					exec(self, obj, id, stacks)
-				end
-			end,
-			HandlerCode = function (self, obj, id, stacks)
-				if IsKindOf(obj, "Unit") then
-					local effect = obj:GetStatusEffect(self.id)
-					effect:SetParameter("guilty_start_time", Game.CampaignTime)
-					
-					--local procentCalc = 1000-self:ResolveValue("decrease")*10
-					--local stats = UnitPropertiesStats:GetProperties()
-					--for i, stat in ipairs(stats) do
-						--obj:AddModifier("guilty_" .. stat.id, stat.id, procentCalc)
-					--end
-				end
+	unit_reactions = {
+		PlaceObj('UnitReaction', {
+			Event = "OnNewDay",
+			Handler = function (self, target)
+				Conscience_CheckExpiration(self, target, "guilty_start_time")
 			end,
 		}),
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "obj",
-			Event = "StatusEffectRemoved",
-			Handler = function (self, obj, id, stacks, reason)
-				
-				local function exec(self, obj, id, stacks, reason)
-				if IsKindOf(obj, "Unit") then
-					obj:SetEffectValue("guilty_start_time", false)
-					
-					-- Handles old guilty modifiers, new guilty applies morale modifier
-					local stats = UnitPropertiesStats:GetProperties()
-					for i, stat in ipairs(stats) do
-						obj:RemoveModifier("guilty_" .. stat.id, stat.id)
-					end
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[2]
-				if not reaction_def or reaction_def.Event ~= "StatusEffectRemoved" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, obj, id, stacks, reason)
-				end
-				
-				if self:VerifyReaction("StatusEffectRemoved", reaction_def, obj, obj, id, stacks, reason) then
-					exec(self, obj, id, stacks, reason)
-				end
-			end,
-			HandlerCode = function (self, obj, id, stacks, reason)
-				if IsKindOf(obj, "Unit") then
-					obj:SetEffectValue("guilty_start_time", false)
-					
-					-- Handles old guilty modifiers, new guilty applies morale modifier
-					local stats = UnitPropertiesStats:GetProperties()
-					for i, stat in ipairs(stats) do
-						obj:RemoveModifier("guilty_" .. stat.id, stat.id)
-					end
-				end
-			end,
-		}),
-		PlaceObj('MsgActorReactionEffects', {
-			Effects = {
-				PlaceObj('ConditionalEffect', {
-					'Effects', {
-						PlaceObj('ExecuteCode', {
-							Code = function (self, obj)
-								local effect = obj:GetStatusEffect("Conscience_Guilty")
-								local duration = effect:ResolveValue("days")
-								local startTime = effect:ResolveValue("guilty_start_time") or 0
-								
-								local dayStarted = GetTimeAsTable(startTime)
-								dayStarted = dayStarted and dayStarted.day
-								
-								local dayNow = GetTimeAsTable(Game.CampaignTime)
-								dayNow = dayNow and dayNow.day
-								
-								-- Intentionally check if days have passed calendar, and not time wise.
-								if dayNow - dayStarted >= duration then
-									obj:RemoveStatusEffect("Conscience_Guilty")
-								end
-							end,
-							FuncCode = 'local effect = obj:GetStatusEffect("Conscience_Guilty")\nlocal duration = effect:ResolveValue("days")\nlocal startTime = effect:ResolveValue("guilty_start_time") or 0\n\nlocal dayStarted = GetTimeAsTable(startTime)\ndayStarted = dayStarted and dayStarted.day\n\nlocal dayNow = GetTimeAsTable(Game.CampaignTime)\ndayNow = dayNow and dayNow.day\n\n-- Intentionally check if days have passed calendar, and not time wise.\nif dayNow - dayStarted >= duration then\n	obj:RemoveStatusEffect("Conscience_Guilty")\nend',
-							SaveAsText = false,
-						}),
-					},
-				}),
-			},
-			Event = "SatelliteTick",
-			Handler = function (self)
-				ExecReactionEffects(self, 3, "SatelliteTick", nil, self)
+		PlaceObj('UnitReaction', {
+			Event = "OnCalcPersonalMorale",
+			Handler = function (self, target, value)
+				return value - 1
 			end,
 		}),
 	},
 	DisplayName = T(374563958345, --[[CharacterEffectCompositeDef Conscience_Guilty DisplayName]] "Guilty"),
 	Description = T(117856843594, --[[CharacterEffectCompositeDef Conscience_Guilty Description]] "Morale decreased by 1 for a day."),
 	AddEffectText = T(446826511839, --[[CharacterEffectCompositeDef Conscience_Guilty AddEffectText]] "<em><DisplayName></em> is feeling guilty and lost Morale"),
+	OnAdded = function (self, obj)
+		self:SetParameter("guilty_start_time", Game.CampaignTime)
+	end,
+	OnRemoved = function (self, obj)
+		-- Handles old guilty modifiers, new guilty applies morale modifier
+		local stats = UnitPropertiesStats:GetProperties()
+		for i, stat in ipairs(stats) do
+			obj:RemoveModifier("guilty_" .. stat.id, stat.id)
+		end
+	end,
 	type = "Debuff",
 	Icon = "UI/Hud/Status effects/encumbered",
 	HasFloatingText = true,

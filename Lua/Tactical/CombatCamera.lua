@@ -69,7 +69,9 @@ function AdjustCombatCamera(state, instant, target, floor, sleepTime, noFitCheck
 			cameraTac.SetForceMaxZoom(true)
 		end
 		if target then 
-			floor = floor or GetFloorOfPos(SnapToPassSlab(target))
+			if not floor then
+				floor = GetStepFloor(target)
+			end
 			sleepTime = sleepTime or 1000
 			if noFitCheck or not DoPointsFitScreen({IsPoint(target) and target or target:GetVisualPos()}, nil, const.Camera.BufferSizeNoCameraMov) then
 				SnapCameraToObj(target, "force", floor, sleepTime)
@@ -90,7 +92,9 @@ function AdjustCombatCamera(state, instant, target, floor, sleepTime, noFitCheck
 			table.restore(hr, "Enemy turn TacCamera Height")
 		end
 		if target then 
-			floor = floor or GetFloorOfPos(SnapToPassSlab(target))
+			if not floor then
+				floor = GetStepFloor(target)
+			end
 			sleepTime = sleepTime or 1000
 			if noFitCheck or not DoPointsFitScreen({IsPoint(target) and target or target:GetVisualPos()}, nil, const.Camera.BufferSizeNoCameraMov) then
 				SnapCameraToObj(target, "force", floor, sleepTime)
@@ -357,12 +361,9 @@ function CombatCam_ShowAttack(attacker, target)
 		-- todo: maybe try to fit target in the zone instead
 	end
 	
-	local floor = GetFloorOfPos(SnapToPassSlab(attacker))
-	local pos = SnapToPassSlab(target)
-	if pos then
-		floor = Max(floor, GetFloorOfPos(pos))
-	end
-	
+	local floorAttacker = GetStepFloor(attacker)
+	local floorTarget = GetStepFloor(target)
+	floor = Max(floorAttacker, floorTarget)
 	SnapCameraToObj(lookat, "force", floor)
 	Sleep(500)
 end
@@ -393,7 +394,7 @@ function CombatCam_ShowAttackNew(attacker, target, willBeinterrupted, results, f
 				WaitMsg("ActionCameraRemoved", 100)
 			end
 			
-			local floor = GetFloorOfPos(SnapToPassSlab(target))
+			local floor = GetStepFloor(target)
 			local pos, look = cameraTac.GetPosLookAt()
 			local cameraInZone = DoPointsFitScreen({target}, look, const.Camera.BufferSizeNoCameraMov)
 			
@@ -1063,20 +1064,14 @@ local function __AIExecutionControllerExecute(self, units, reposition, played_un
 					pois[#pois + 1] = unit
 				end
 				
-				max_dest_floor = Max(max_dest_floor, GetFloorOfPos(step_pos))
+				max_dest_floor = Max(max_dest_floor, GetFloorOfPos(step_pos:xyz()))
 				--[[local volume = EnumVolumes(step_pos, "smallest")
 				if volume then
-					local floor = GetFloorOfPos(step_pos)
+					local floor = GetFloorOfPos(step_pos:xyz())
 					max_dest_floor = Max(max_dest_floor, floor)
 				end--]]
 			end
-			local pos = SnapToPassSlab(unit) or unit:GetPos()
-			max_dest_floor = Max(max_dest_floor, GetFloorOfPos(pos))
-			--[[local volume = pos and EnumVolumes(pos, "smallest")
-			if volume then
-				local floor = GetFloorOfPos(pos)
-				max_dest_floor = Max(max_dest_floor, floor)
-			end--]]
+			max_dest_floor = Max(max_dest_floor, GetStepFloor(unit))
 		end
 
 		-- destroy destlocks and apply efResting (before starting movement)
@@ -1338,7 +1333,7 @@ end
 MapVar("g_UnawareQueue", {})
 
 function AIExecutionController:Execute(units)
-	local is_player_control = g_Combat.is_player_control
+	local is_player_control = g_Combat and g_Combat.is_player_control
 	if is_player_control then
 		g_Combat:SetPlayerControl(false)
 	end
@@ -1346,12 +1341,15 @@ function AIExecutionController:Execute(units)
 	g_LastUnitToShoot = false
 	g_UnawareQueue = {}
 	sprocall(__AIExecutionControllerExecute, self, units, nil, played_units)
+	if g_Encounter then
+		g_Encounter:FinalizeTurn()
+	end
 	for _, unit in ipairs(played_units) do
 		unit.ai_context = nil
 	end
 	if is_player_control then
 		g_Combat:SetPlayerControl(true)
-	end
+	end	
 	local check
 	for _, unit in ipairs(g_UnawareQueue) do
 		unit:AddStatusEffect("Unaware")
@@ -1378,7 +1376,7 @@ function AIExecutionController:SelectPlayingUnits(units, zone)
 	--filter playing units by floor
 	local minFloor
 	for _, unit in ipairs(units) do
-		local unitFloor = GetFloorOfPos(SnapToPassSlab(unit)) or 0
+		local unitFloor = GetStepFloor(unit)
 		if not minFloor or minFloor > unitFloor then
 			minFloor = unitFloor
 		end
@@ -1386,7 +1384,7 @@ function AIExecutionController:SelectPlayingUnits(units, zone)
 	
 	local selected = table.copy(units or empty_table)
 	selected = table.ifilter(selected, function(idx, unit) 
-		local unitFloor = GetFloorOfPos(SnapToPassSlab(unit)) or 0
+		local unitFloor = GetStepFloor(unit)
 		return unit.team.side == side and unitFloor == minFloor
 	end)
 	selected = self:SelectObjsInZone(selected, zone)
@@ -1546,9 +1544,8 @@ end
 
 function StartCinematicCombatCamera(attacker, target)
 	local isNear = DoPointsFitScreen({attacker:GetVisualPos()}, nil, const.Camera.BufferSizeNoCameraMov)
-	
-	
-	AdjustCombatCamera("set", nil, not isNear and attacker, GetFloorOfPos(SnapToPassSlab(attacker)), not isNear and 1000 or 0)
+	local floor = GetStepFloor(attacker)
+	AdjustCombatCamera("set", nil, not isNear and attacker, floor, not isNear and 1000 or 0)
 	Sleep(not isNear and 1000 or 500)
 
 	AILockTarget(attacker)
@@ -1584,7 +1581,8 @@ local function AICinematicCombatCamera()
 	
 	local midPointX, midPointY, midPointZ = midpoint({g_AIExecutionController.attacker, g_AIExecutionController.target})
 	--maybe use the floor of the closer unit to the camera's current pos
-	SnapCameraToObj(point(midPointX, midPointY, midPointZ), "force", GetFloorOfPos(SnapToPassSlab(g_AIExecutionController.target)), 5000, "none")
+	local floor = GetStepFloor(g_AIExecutionController.target)
+	SnapCameraToObj(point(midPointX, midPointY, midPointZ), "force", floor, 5000, "none")
 end
 
 DefineConstInt("Camera", "MinTrackDistance", 3, "voxelSizeX", "The minimum distance (in slabs) required to active the tracking camera, else it will lock to init pos once. Also used for cinematic unit cond.")
@@ -1672,7 +1670,8 @@ local function TrackMeleeCharge()
 	if gv_DebugMeleeCharge then
 		print("tracking melee charge attacker")
 	end
-	SnapCameraToObj(g_TrackingChargeAttacker:GetVisualPos(), "force", GetFloorOfPos(SnapToPassSlab(g_TrackingChargeAttacker:GetVisualPos())))
+	local floor = GetStepFloor(g_TrackingChargeAttacker)
+	SnapCameraToObj(g_TrackingChargeAttacker:GetVisualPos(), "force", floor)
 end
 
 MapGameTimeRepeat("AIExecutionTracking", 50, AIExecutionTrackUnits)
@@ -1797,8 +1796,9 @@ function HighestFloorOfGroup(group)
 	if not next(group) then return cameraTac.IsActive() and cameraTac.GetFloor() end
 	local maxFloor
 	for _, unit in ipairs(group) do
-		if not maxFloor or maxFloor < (GetFloorOfPos(SnapToPassSlab(unit)) or GetFloorOfPos(unit:GetVisualPos())) then
-			maxFloor = GetFloorOfPos(SnapToPassSlab(unit))
+		local floor = GetStepFloor(unit)
+		if not maxFloor or maxFloor < floor then
+			maxFloor = floor
 		end
 	end
 	return maxFloor
@@ -1845,7 +1845,8 @@ function ShouldTrackMeleeCharge(attacker, target)
 	local midPoint = (attackerPos + targetPos) / 2
 	local secondFitCheck = DoPointsFitScreen({attackerPos, targetPos}, midPoint, const.Camera.BufferSizeNoCameraMov)
 	if secondFitCheck then
-		AdjustCombatCamera("set", nil, targetPos, GetFloorOfPos(SnapToPassSlab(targetPos)), nil, "NoFitCheck")
+		local floor = GetStepFloor(target)
+		AdjustCombatCamera("set", nil, targetPos, floor, nil, "NoFitCheck")
 		g_TrackingChargeAttacker = false
 		if gv_DebugMeleeCharge then
 			print("snap the camera to the target and don't do anything else (the action would be visible)")

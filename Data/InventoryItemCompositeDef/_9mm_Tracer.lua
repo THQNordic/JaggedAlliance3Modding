@@ -10,6 +10,13 @@ PlaceObj('InventoryItemCompositeDef', {
 	'colorStyle', "AmmoTracerColor",
 	'Description', T(605716564475, --[[InventoryItemCompositeDef _9mm_Tracer Description]] "9 mm ammo for Handguns and SMGs."),
 	'AdditionalHint', T(527792163999, --[[InventoryItemCompositeDef _9mm_Tracer AdditionalHint]] "<bullet_point> Hit enemies are <em>Exposed</em> and lose the benefits of Cover"),
+	'Cost', 60,
+	'CanAppearInShop', true,
+	'Tier', 2,
+	'MaxStock', 5,
+	'RestockWeight', 25,
+	'CategoryPair', "9mm",
+	'ShopStackSize', 30,
 	'MaxStacks', 500,
 	'Caliber', "9mm",
 	'AppliedEffects', {

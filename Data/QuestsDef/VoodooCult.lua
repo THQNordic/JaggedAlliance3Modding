@@ -16,7 +16,7 @@ PlaceObj('QuestsDef', {
 		}),
 	},
 	NoteDefs = {
-		LastNoteIdx = 8,
+		LastNoteIdx = 9,
 		PlaceObj('QuestNote', {
 			Badges = {
 				PlaceObj('QuestBadgePlacement', {
@@ -62,7 +62,56 @@ PlaceObj('QuestsDef', {
 					},
 				}),
 			},
-			Text = T(605903691398, --[[QuestsDef VoodooCult Text]] "There is a <em>voodoo cult</em> in <em><SectorName('F13')></em> that gathers every night to perform their rituals"),
+			Text = T(605903691398, --[[QuestsDef VoodooCult Text]] "There is a <em>voodoo cult</em> in <em><SectorName('F13')></em> led by Wanda"),
+		}),
+		PlaceObj('QuestNote', {
+			HideConditions = {
+				PlaceObj('OR', {
+					Conditions = {
+						PlaceObj('QuestIsVariableBool', {
+							Condition = "or",
+							QuestId = "VoodooCult",
+							Vars = set( "Completed", "Failed" ),
+							__eval = function ()
+								local quest = gv_Quests['VoodooCult'] or QuestGetState('VoodooCult')
+								return quest.Completed or quest.Failed
+							end,
+						}),
+						PlaceObj('QuestIsVariableBool', {
+							QuestId = "PaixDisease",
+							Vars = set( "herbToPlant", "herbgiven" ),
+							__eval = function ()
+								local quest = gv_Quests['PaixDisease'] or QuestGetState('PaixDisease')
+								return quest.herbToPlant and quest.herbgiven
+							end,
+						}),
+					},
+				}),
+			},
+			Idx = 9,
+			ShowConditions = {
+				PlaceObj('CheckOR', {
+					Conditions = {
+						PlaceObj('QuestIsVariableBool', {
+							QuestId = "PaixDisease",
+							Vars = set( "voodoo" ),
+							__eval = function ()
+								local quest = gv_Quests['PaixDisease'] or QuestGetState('PaixDisease')
+								return quest.voodoo
+							end,
+						}),
+						PlaceObj('SectorHasIntel', {
+							sector_id = "H14",
+						}),
+					},
+				}),
+				PlaceObj('BanterHasPlayed', {
+					Banters = {
+						"PaixDisease_Wanda06",
+					},
+				}),
+			},
+			Text = T(217967851811, --[[QuestsDef VoodooCult Text]] "<em>Wanda</em> will not talk to you while performing her rituals <em>at night</em>"),
 		}),
 		PlaceObj('QuestNote', {
 			Badges = {

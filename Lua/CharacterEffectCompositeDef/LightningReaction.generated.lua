@@ -7,6 +7,33 @@ DefineClass.LightningReaction = {
 
 
 	object_class = "Perk",
+	unit_reactions = {
+		PlaceObj('UnitReaction', {
+			Event = "OnFirearmAttackStart",
+			Handler = function (self, target, attacker, attack_target, action, attack_args)
+				if target == attack_target and not self:ResolveValue("used") then
+					if target:LightningReactionCheck(self) then
+						self:SetParameter("used", true)
+						attack_args.chance_to_hit = 0
+					end
+				end
+			end,
+		}),
+		PlaceObj('UnitReaction', {
+			Event = "OnCombatEnd",
+			Handler = function (self, target)
+				self:SetParameter("used", false)
+			end,
+		}),
+		PlaceObj('UnitReaction', {
+			Event = "OnCalcChanceToHit",
+			Handler = function (self, target, attacker, action, attack_target, weapon1, weapon2, data)
+				if target == attack_target and not self:ResolveValue("used") and action.ActionType == "Ranged Attack" then
+					data.mod_mul = 0
+				end
+			end,
+		}),
+	},
 	DisplayName = T(568315849808, --[[CharacterEffectCompositeDef LightningReaction DisplayName]] "Lightning Reactions"),
 	Description = T(751006584711, --[[CharacterEffectCompositeDef LightningReaction Description]] "<em>Dodge</em> the first successful enemy attack by falling <GameTerm('Prone')>.\n\nOnce per combat."),
 	Icon = "UI/Icons/Perks/LightningReaction",

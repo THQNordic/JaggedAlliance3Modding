@@ -6,6 +6,12 @@ They do not have allocated memory in the Lua side, and therefore cannot store an
 
 Reference: [CObject](LuaCObject.md.html)
 
+# Parent classes
+
+* ColorizableObject
+* FXObject
+* MapObject
+* [PropertyObject](LuaClasses.md.html#propertyobject)
 
 # CObject reference
 
@@ -787,6 +793,24 @@ int channel
 
 _returns_ bool
 : true if the current phase is the last anim phase
+
+
+## CObject:IsReachableFrom
+
+Checks if any of the source points can reach any of the approach points.
+
+The function makes a single path finding call. In order to work correctly, all pass tunnels have to be symetrical (no one way tunnels).
+
+
+bool **CObject:IsReachableFrom**(table sources, int pfclass = 0, int restrict_dist = 150*guim)
+table sources
+: Table with points or objects or a single object
+
+int pfclass
+: Optional pfclass
+
+int restrict_dist
+: Optional restrict distance
 
 
 ## CObject:IsSoundMuted

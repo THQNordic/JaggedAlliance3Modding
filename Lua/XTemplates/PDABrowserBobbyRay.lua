@@ -2,7 +2,7 @@
 
 PlaceObj('XTemplate', {
 	__is_kind_of = "XDialog",
-	group = "Zulu PDA",
+	group = "BobbyRayGunsShop",
 	id = "PDABrowserBobbyRay",
 	PlaceObj('XTemplateWindow', {
 		'comment', "Full page",
@@ -16,8 +16,18 @@ PlaceObj('XTemplate', {
 			'func', function (self, ...)
 				XDialog.Open(self, ...)
 				
-				AddPageToBrowserHistory("banner_page", "PDABrowserBobbyRay")
-				PDABrowserTabState["banner_page"].mode_param = "PDABrowserBobbyRay"
+				AddPageToBrowserHistory("bobby_ray_shop")
+				DockBrowserTab("bobby_ray_shop")
+				PDABrowserTabState["bobby_ray_shop"].mode_param = "front"
+				ObjModified("pda browser tabs")
+				
+				PauseCampaignTime(GetUICampaignPauseReason("PDABrowserBobbyRay"))
+			end,
+		}),
+		PlaceObj('XTemplateFunc', {
+			'name', "OnDelete",
+			'func', function (self, ...)
+				ResumeCampaignTime(GetUICampaignPauseReason("PDABrowserBobbyRay"))
 			end,
 		}),
 		PlaceObj('XTemplateWindow', {
@@ -64,6 +74,7 @@ PlaceObj('XTemplate', {
 				'MinWidth', 1112,
 				'MaxWidth', 1112,
 				'MaxHeight', 690,
+				'UseClipBox', false,
 				'HandleKeyboard', false,
 				'Image', "UI/PDA/WEBSites/Bobby Rays/main_page_background",
 			}, {
@@ -74,6 +85,7 @@ PlaceObj('XTemplate', {
 					'Padding', box(10, 10, 10, 10),
 					'HAlign', "center",
 					'VAlign', "top",
+					'Clip', false,
 					'HandleKeyboard', false,
 					'HandleMouse', false,
 					'TextStyle', "PDABobbyHighlight_Glow",
@@ -100,14 +112,21 @@ PlaceObj('XTemplate', {
 						'LayoutMethod', "Box",
 						'Background', RGBA(255, 255, 255, 0),
 						'MouseCursor', "UI/Cursors/Pda_Hand.tga",
+						'FXMouseIn', "buttonRollover",
+						'FXPress', "buttonPress",
 						'OnPress', function (self, gamepad)
-							self:ResolveId("PDABrowserBobbyPopUp").visible = true
+							if not BobbyRayShopIsUnlocked() then 
+								self:ResolveId("PDABrowserBobbyPopUp").visible = true
+								return
+							end
+							BobbyRayShopSetCategory("Weapons")
+							GetPDABrowserDialog():SetMode("bobby_ray_shop", "store")
 						end,
 						'RolloverBackground', RGBA(255, 255, 255, 0),
 						'PressedBackground', RGBA(255, 255, 255, 0),
 						'TextStyle', "PDABobbyButton",
 						'Translate', true,
-						'Text', T(570706532380, --[[XTemplate PDABrowserBobbyRay Text]] "GUNS"),
+						'Text', T(570706532380, --[[XTemplate PDABrowserBobbyRay Text]] "Weapons"),
 					}),
 					PlaceObj('XTemplateWindow', {
 						'__class', "XTextButton",
@@ -120,8 +139,15 @@ PlaceObj('XTemplate', {
 						'LayoutMethod', "Box",
 						'Background', RGBA(255, 255, 255, 0),
 						'MouseCursor', "UI/Cursors/Pda_Hand.tga",
+						'FXMouseIn', "buttonRollover",
+						'FXPress', "buttonPress",
 						'OnPress', function (self, gamepad)
-							self:ResolveId("PDABrowserBobbyPopUp").visible = true
+							if not BobbyRayShopIsUnlocked() then 
+								self:ResolveId("PDABrowserBobbyPopUp").visible = true
+								return
+							end
+							BobbyRayShopSetCategory("Ammo")
+							GetPDABrowserDialog():SetMode("bobby_ray_shop", "store")
 						end,
 						'RolloverBackground', RGBA(255, 255, 255, 0),
 						'PressedBackground', RGBA(255, 255, 255, 0),
@@ -140,8 +166,15 @@ PlaceObj('XTemplate', {
 						'LayoutMethod', "Box",
 						'Background', RGBA(255, 255, 255, 0),
 						'MouseCursor', "UI/Cursors/Pda_Hand.tga",
+						'FXMouseIn', "buttonRollover",
+						'FXPress', "buttonPress",
 						'OnPress', function (self, gamepad)
-							self:ResolveId("PDABrowserBobbyPopUp").visible = true
+							if not BobbyRayShopIsUnlocked() then 
+								self:ResolveId("PDABrowserBobbyPopUp").visible = true
+								return
+							end
+							BobbyRayShopSetCategory("Armor")
+							GetPDABrowserDialog():SetMode("bobby_ray_shop", "store")
 						end,
 						'RolloverBackground', RGBA(255, 255, 255, 0),
 						'PressedBackground', RGBA(255, 255, 255, 0),
@@ -160,8 +193,15 @@ PlaceObj('XTemplate', {
 						'LayoutMethod', "Box",
 						'Background', RGBA(255, 255, 255, 0),
 						'MouseCursor', "UI/Cursors/Pda_Hand.tga",
+						'FXMouseIn', "buttonRollover",
+						'FXPress', "buttonPress",
 						'OnPress', function (self, gamepad)
-							self:ResolveId("PDABrowserBobbyPopUp").visible = true
+							if not BobbyRayShopIsUnlocked() then 
+								self:ResolveId("PDABrowserBobbyPopUp").visible = true
+								return
+							end
+							BobbyRayShopSetCategory("Other")
+							GetPDABrowserDialog():SetMode("bobby_ray_shop", "store")
 						end,
 						'RolloverBackground', RGBA(255, 255, 255, 0),
 						'PressedBackground', RGBA(255, 255, 255, 0),
@@ -170,6 +210,52 @@ PlaceObj('XTemplate', {
 						'Text', T(253906787355, --[[XTemplate PDABrowserBobbyRay Text]] "OTHER"),
 					}),
 					}),
+				PlaceObj('XTemplateWindow', {
+					'comment', "Order Text",
+					'__context', function (parent, context) return "g_BobbyRayShop_UnlockedTier" end,
+					'__class', "XText",
+					'Margins', box(0, 0, 0, 55),
+					'Padding', box(10, 10, 10, 10),
+					'HAlign', "center",
+					'VAlign', "bottom",
+					'Clip', false,
+					'HandleKeyboard', false,
+					'HandleMouse', false,
+					'TextStyle', "PDABobbyHighlight_Glow_Small",
+					'ContextUpdateOnOpen', true,
+					'OnContextUpdate', function (self, context, ...)
+						if not BobbyRayShopIsUnlocked() then self:SetText("") return end
+						local shipment = GetClosestShipment()
+						self:SetText(shipment and T{678326606878, "Your order arrives in <GetShopTime(time)>", time = shipment.due_time - Game.CampaignTime} or T(333581904892, "No pending shipments"))
+					end,
+					'Translate', true,
+					'TextHAlign', "center",
+				}),
+				PlaceObj('XTemplateWindow', {
+					'comment', "Restock Text",
+					'__context', function (parent, context) return "g_BobbyRayShop_UnlockedTier" end,
+					'__condition', function (parent, context)
+						return true
+					end,
+					'__class', "XText",
+					'Margins', box(0, 0, 0, 5),
+					'Padding', box(10, 10, 10, 10),
+					'HAlign', "center",
+					'VAlign', "bottom",
+					'HandleKeyboard', false,
+					'HandleMouse', false,
+					'TextStyle', "PDABobbyHighlight_Glow_Small",
+					'ContextUpdateOnOpen', true,
+					'OnContextUpdate', function (self, context, ...)
+						if BobbyRayShopIsUnlocked() and BobbyRayShopGetRestockTime() <= Game.CampaignTime then
+							self:SetText(Untranslated("(DEV)No restock scheduled."))
+							return
+						end
+						self:SetText(BobbyRayShopIsUnlocked() and T{448259107376, "Next restock in <GetShopTime(time)>", time = BobbyRayShopGetRestockTime() - Game.CampaignTime} or "")
+					end,
+					'Translate', true,
+					'TextHAlign', "center",
+				}),
 				PlaceObj('XTemplateWindow', {
 					'Id', "PDABrowserBobbyPopUp",
 					'IdNode', true,
@@ -222,6 +308,8 @@ PlaceObj('XTemplate', {
 							'Id', "PDABrowserBobbyPopUpOK",
 							'Background', RGBA(255, 255, 255, 0),
 							'MouseCursor', "UI/Cursors/Pda_Hand.tga",
+							'FXMouseIn', "buttonRollover",
+							'FXPress', "buttonPress",
 							'FocusedBackground', RGBA(255, 255, 255, 0),
 							'OnPress', function (self, gamepad)
 								self:ResolveId("node").visible = false
@@ -258,6 +346,89 @@ PlaceObj('XTemplate', {
 					'TextHAlign', "center",
 				}),
 				}),
+			}),
+		}),
+	PlaceObj('XTemplateWindow', {
+		'__context', function (parent, context) return "BobbyRayShopFinishPurchaseUI" end,
+		'__class', "XContextWindow",
+		'Id', "idFinishOrder",
+		'Dock', "box",
+		'Visible', false,
+		'FoldWhenHidden', true,
+		'Background', RGBA(0, 0, 0, 160),
+		'HandleMouse', true,
+		'OnContextUpdate', function (self, context, ...)
+			self:SetVisible(true)
+			PlayFX("BobbyRayFinishPurchase", "start")
+		end,
+	}, {
+		PlaceObj('XTemplateWindow', {
+			'__class', "XImage",
+			'Image', "UI/PDA/WEBSites/Bobby Rays/order_finish.png",
+		}),
+		PlaceObj('XTemplateFunc', {
+			'name', "OnMouseButtonDown(self, pos, button)",
+			'func', function (self, pos, button)
+				self:SetVisible(false)
+			end,
+		}),
+		}),
+	PlaceObj('XTemplateWindow', {
+		'__condition', function (parent, context) return Platform.cheats end,
+		'Margins', box(50, 50, 50, 50),
+		'Padding', box(25, 25, 25, 25),
+		'HAlign', "left",
+		'VAlign', "top",
+		'MinWidth', 250,
+		'LayoutMethod', "VList",
+		'LayoutVSpacing', 10,
+		'Background', RGBA(255, 0, 0, 118),
+		'HandleMouse', true,
+	}, {
+		PlaceObj('XTemplateWindow', {
+			'__class', "XText",
+			'TextStyle', "PDABobbyHighlight",
+			'Text', "Dev Actions",
+			'TextHAlign', "center",
+			'TextVAlign', "center",
+		}),
+		PlaceObj('XTemplateWindow', {
+			'__context', function (parent, context) return "g_BobbyRayShop_UnlockedTier" end,
+			'__class', "XTextButton",
+			'Id', "idDevLockShopButton",
+			'OnContextUpdate', function (self, context, ...)
+				self:SetText((BobbyRayShopIsUnlocked() and "Lock shop" or "Unlock shop"))
+			end,
+			'OnPressEffect', "action",
+			'OnPress', function (self, gamepad)
+				local effect = self.OnPressEffect
+				if effect == "close" then
+					local win = self.parent
+					while win and not win:IsKindOf("XDialog") do
+						win = win.parent
+					end
+					if win then
+						win:Close(self.OnPressParam ~= "" and self.OnPressParam or nil)
+					end
+				elseif self.action then
+					local host = GetActionsHost(self, true)
+					if host then
+						host:OnAction(self.action, self, gamepad)
+					end
+				end
+			end,
+			'Image', "UI/PDA/os_system_buttons_yellow.png",
+			'FrameBox', box(8, 8, 8, 8),
+			'Columns', 3,
+			'ColumnsUse', "abcca",
+		}, {
+			PlaceObj('XTemplateAction', {
+				'comment', "un/lock shop",
+				'ActionId', "actionLock",
+				'OnAction', function (self, host, source, ...)
+					NetSyncEvent("Cheat_BobbyRayToggleLock")
+				end,
+			}),
 			}),
 		}),
 })

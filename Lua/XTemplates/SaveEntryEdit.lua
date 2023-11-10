@@ -62,6 +62,7 @@ PlaceObj('XTemplate', {
 		PlaceObj('XTemplateFunc', {
 			'name', "OnKillFocus",
 			'func', function (self, ...)
+				g_CurrentlyEditingName = false
 				CreateRealTimeThread(function()
 					Sleep(0)
 					--temp
@@ -84,6 +85,7 @@ PlaceObj('XTemplate', {
 					GetDialog(self).parent:SetHandleMouse(false)
 					self:SetVisible(false)
 					self:LockScrollWhileEdit(false)
+					ObjModified("NewSelectedSave")
 					XTextEditor.OnKillFocus(self)
 				end)
 			end,
@@ -132,6 +134,8 @@ PlaceObj('XTemplate', {
 			'func', function (self)
 				XTextEditor.OnSetFocus(self)
 				self:LockScrollWhileEdit(true)
+				g_CurrentlyEditingName = true
+				ObjModified("NewSelectedSave")
 			end,
 		}),
 		PlaceObj('XTemplateFunc', {

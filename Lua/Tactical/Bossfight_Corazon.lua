@@ -87,6 +87,7 @@ DefineClass.BossfightCorazon = {
 	left_engaged_units = false,
 	interceptors = false,
 	gunner = false,
+	doors_opened = false,
 }
 
 g_SectorEncounters.H4_Underground = "BossfightCorazon"
@@ -245,6 +246,7 @@ function BossfightCorazon:GetDynamicData(data)
 	for unit, _ in pairs(self.interceptors) do
 		table.insert(data.interceptors, unit:GetHandle())
 	end
+	data.doors_opened = self.doors_opened
 end
 
 function BossfightCorazon:SetDynamicData(data)
@@ -284,6 +286,7 @@ function BossfightCorazon:SetDynamicData(data)
 		local unit = HandleToObject[handle] or false
 		self.interceptors[unit] = true
 	end
+	self.doors_opened = data.doors_opened
 end
 
 function BossfightCorazon:GetUnitArea(unit)
@@ -500,6 +503,17 @@ function BossfightCorazon:UpdateUnitArchetypes()
 			end
 		end
 	end
+
+	if not use_tactics and not self.doors_opened then
+		local doors = MapGet("map", "Door")
+		for i, door in ipairs(doors) do
+			if door:CannotOpen() or door.lockpickState == "closed" then
+				door:SetLockpickState("open")
+			end
+		end
+		self.doors_opened = true
+	end
+	
 	g_Units.NPC_Corazon.archetype = "Corazon_BossRetreating" -- normally Early phase, will get auto delayed to Late if IsThreatened
 end
 
@@ -521,6 +535,10 @@ function BossfightCorazon:SelectSignatureActions(unit, context)
 	if archetype and #(archetype.SignatureActions or empty_table) > 0 then
 		return archetype.SignatureActions
 	end
+end
+
+function BossfightCorazon:FinalizeTurn()
+	table.clear(g_UnawareQueue) -- no unaware enemies in this fight
 end
 
 function CorazonGetAreaPositions(area)

@@ -290,7 +290,8 @@ function LocalDeployUnitsOnMarker(units, marker, show, slab_pos)
 		local pr_entr
 		local some_unit = units and units[1]
 		if some_unit and gv_Deployment == "attack" then
-			pr_entr = MapGetMarkers("Entrance", some_unit.arrival_dir)[1]
+			pr_entr = MapGetMarkers("Entrance", some_unit.arrival_dir)
+			pr_entr = pr_entr and pr_entr[1]
 		end
 		marker = marker or pr_entr or table.interaction_rand(GetAvailableDeploymentMarkers(some_unit))
 	end

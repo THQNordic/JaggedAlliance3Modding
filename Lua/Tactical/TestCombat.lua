@@ -2,7 +2,7 @@ DefineClass.TestTeamDef = {
 	__parents = { "PropertyObject" },
 	properties = {
 		{ id = "mercs", name = "Mercs", editor = "string_list", default = empty_table, item_default = "", items = function() return table.keys2(UnitDataDefs, "sorted", "") end },
-		{ id = "side", name = "Side", editor = "dropdownlist", default = false, items = function() return table.map(GetCurrentCampaignPreset().Sides, "Id") end },
+		{ id = "side", name = "Side", editor = "dropdownlist", default = false, items = function() return Sides end },
 		{ id = "ai_control", name = "AI", editor = "bool", default = false },
 		{ id = "team_color", name = "Team Color", editor = "color", default = RGB(100, 100, 100) },
 		{ id = "team_name", name = "Team Name", editor = "text", default = "", translate = true },

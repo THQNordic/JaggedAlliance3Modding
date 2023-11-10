@@ -14,5 +14,6 @@ DefineClass.VirusSample = {
 	Description = T(782277298539, --[[InventoryItemCompositeDef VirusSample Description]] "Contains vital information needed to break the virus genome. Handle with care."),
 	AdditionalHint = T(558239435671, --[[InventoryItemCompositeDef VirusSample AdditionalHint]] "<bullet_point> No bats were harmed while gathering this sample"),
 	Cost = 100,
+	RestockWeight = 0,
 }
 

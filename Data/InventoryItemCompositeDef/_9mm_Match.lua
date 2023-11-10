@@ -10,6 +10,13 @@ PlaceObj('InventoryItemCompositeDef', {
 	'colorStyle', "AmmoMatchColor",
 	'Description', T(539464011742, --[[InventoryItemCompositeDef _9mm_Match Description]] "9 mm ammo for Handguns and SMGs."),
 	'AdditionalHint', T(169874693254, --[[InventoryItemCompositeDef _9mm_Match AdditionalHint]] "<bullet_point> Increased bonus from Aiming"),
+	'Cost', 60,
+	'CanAppearInShop', true,
+	'Tier', 2,
+	'MaxStock', 5,
+	'RestockWeight', 25,
+	'CategoryPair', "9mm",
+	'ShopStackSize', 30,
 	'MaxStacks', 500,
 	'Caliber', "9mm",
 	'Modifications', {

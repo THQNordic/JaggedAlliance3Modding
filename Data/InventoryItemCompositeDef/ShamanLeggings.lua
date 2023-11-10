@@ -11,6 +11,7 @@ PlaceObj('InventoryItemCompositeDef', {
 	'DisplayNamePlural', T(652262649255, --[[InventoryItemCompositeDef ShamanLeggings DisplayNamePlural]] "Deathsquad Leggings"),
 	'AdditionalHint', T(526436429985, --[[InventoryItemCompositeDef ShamanLeggings AdditionalHint]] "<bullet_point> Can't be combined with weave or ceramics"),
 	'Valuable', 1,
+	'RestockWeight', 0,
 	'Slot', "Legs",
 	'PenetrationClass', 4,
 	'AdditionalReduction', 40,

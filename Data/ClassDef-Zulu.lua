@@ -348,6 +348,18 @@ PlaceObj('ClassDef', {
 		'help', "The merc object will be passed as context, use proper tags",
 		'template', true,
 	}),
+	PlaceObj('PropertyDefFunc', {
+		'category', "Reactions",
+		'id', "OnAdded",
+		'template', true,
+		'params', "self, obj",
+	}),
+	PlaceObj('PropertyDefFunc', {
+		'category', "Reactions",
+		'id', "OnRemoved",
+		'template', true,
+		'params', "self, obj",
+	}),
 	PlaceObj('PropertyDefCombo', {
 		'category', "Effect",
 		'id', "type",
@@ -590,17 +602,8 @@ PlaceObj('ClassDef', {
 		'name', "GetSpawnDespawnConditions",
 		'params', "marker,spawn_once",
 		'code', function (self, marker,spawn_once)
-			local bSpawnCond = true
-			local bDespawnCond = self.Despawn_Conditions and next(self.Despawn_Conditions)
-			for _, cond in ipairs(self.Spawn_Conditions or empty_table) do
-				bSpawnCond = cond:Evaluate(self) and bSpawnCond
-				if not bSpawnCond then break end
-			end
-			for _, cond in ipairs(self.Despawn_Conditions or empty_table) do
-				bDespawnCond = cond:Evaluate(self)  and bDespawnCond
-				if not bDespawnCond then break end
-			end
-			
+			local bSpawnCond = EvalConditionList(self.Spawn_Conditions, self)
+			local bDespawnCond = next(self.Despawn_Conditions) and EvalConditionList(self.Despawn_Conditions, self)
 			return bSpawnCond, bDespawnCond
 		end,
 	}),
@@ -2373,12 +2376,19 @@ PlaceObj('ClassDef', {
 			
 			if pts and #pts > 0 then
 				local idx = template_idx
-				local unit_template_id = self.UnitDataSpawnDefs[idx].UnitDataDefId
-				local name = self.UnitDataSpawnDefs[idx].Name
+				local spawnEntry = self.UnitDataSpawnDefs[idx]
+				local unit_template_id = spawnEntry.UnitDataDefId
+				local name = spawnEntry.Name
 				local pos = pts[1]
 				
 				-- check for existing UnitData for this session_id, if the unit has died skip the spawn
 				local unit_data = gv_UnitData and gv_UnitData[session_id]
+				
+				if unit_data and unit_data.HealPersistentOnSpawn and not unit_data:IsDead() then
+					unit_data:RemoveAllStatusEffects()
+					unit_data.HitPoints = unit_data.MaxHitPoints
+				end
+			
 				if not (unit_data and unit_data:IsDead()) then
 					-- If changing the template id of a unit we need to recreate the unit data.
 					if unit_data and unit_data.class ~= unit_template_id then
@@ -2710,7 +2720,7 @@ PlaceObj('ClassDef', {
 		'category', "Spawn Object",
 		'id', "Side",
 		'default', "neutral",
-		'items', function (self) return table.map(GetCurrentCampaignPreset().Sides, "Id") end,
+		'items', function (self) return Sides end,
 	}),
 	PlaceObj('PropertyDefBool', {
 		'id', "kill_on_spawn",
@@ -3442,19 +3452,19 @@ PlaceObj('ClassDef', {
 			end
 			
 			-- make sure all equipped firearms have ammo
-			for _, slot in ipairs({"Handheld A", "Handheld B"}) do
-				self:ForEachItemInSlot(slot, "Firearm", function(weapon)
-					if not weapon.ammo or weapon.ammo.Amount <= 0 then
-						local ammo = GetAmmosWithCaliber(weapon.Caliber, "sort")[1]
-						if ammo then
-							local tempAmmo = PlaceInventoryItem(ammo.id)
-							tempAmmo.Amount = tempAmmo.MaxStacks
-							weapon:Reload(tempAmmo, "suspend_fx")
-							DoneObject(tempAmmo)
-						end
+			local function reload_weapon(weapon)
+				if not weapon.ammo or weapon.ammo.Amount <= 0 then
+					local ammo = GetAmmosWithCaliber(weapon.Caliber, "sort")[1]
+					if ammo then
+						local tempAmmo = PlaceInventoryItem(ammo.id)
+						tempAmmo.Amount = tempAmmo.MaxStacks
+						weapon:Reload(tempAmmo, "suspend_fx")
+						DoneObject(tempAmmo)
 					end
-				end)
+				end
 			end
+			self:ForEachItemInSlot("Handheld A", "Firearm", reload_weapon)
+			self:ForEachItemInSlot("Handheld B", "Firearm", reload_weapon)
 			
 			-- place the rest in Inventory slot
 			for i, item in ipairs(items) do
@@ -3498,16 +3508,16 @@ PlaceObj('ClassDef', {
 				StoreErrorSource(self, string.format("Unit %s trying to load invalid ammo type '%s'", self.unitdatadef_id or self.class, ammo_id))
 				return
 			end
-			self:ForEachItemInSlot(slot, weapon_class, function(weapon)
-				if weapon.Caliber ~= ammo.Caliber then
+			self:ForEachItemInSlot(slot, weapon_class, function(weapon, slot_name, left, top, self, ammo_id, caliber)
+				if weapon.Caliber ~= caliber then
 					StoreErrorSource(self, string.format("Unit %s trying to load incompatible ammo type '%s' in their '%s'", self.unitdatadef_id or self.class, ammo_id, weapon.class))
 					return
 				end
 				local tempAmmo = PlaceInventoryItem(ammo_id)
 				tempAmmo.Amount = tempAmmo.MaxStacks
 				weapon:Reload(tempAmmo, "suspend_fx")
-				DoneObject(tempAmmo)	
-			end)
+				DoneObject(tempAmmo)
+			end, self, ammo_id, ammo.Caliber)
 		end,
 	}),
 	PlaceObj('PropertyDefNumber', {
@@ -4190,6 +4200,13 @@ PlaceObj('ClassDef', {
 		'template', true,
 		'translate', false,
 	}),
+	PlaceObj('PropertyDefBool', {
+		'category', "General",
+		'id', "HealPersistentOnSpawn",
+		'name', "Heal Persistent Unit On Spawn",
+		'help', "if this unit is a persistent unit, it will be healed once spawned from a unit marker",
+		'template', true,
+	}),
 	PlaceObj('PropertyDefPresetId', {
 		'category', "Voice",
 		'id', "VoiceResponseId",
@@ -4311,84 +4328,6 @@ PlaceObj('ClassDef', {
 		'name', "Perk Points",
 		'help', "Avaliable points to spend on unlocking perks.",
 		'default', 0,
-	}),
-	PlaceObj('ClassMethodDef', {
-		'name', "GetPersonalMorale",
-		'code', function (self)
-			local teamMorale = self.team and self.team.morale or 0
-			--modifiers to personal morale for each merc
-			local personalMorale = 0
-			--reduce morale for at least one disliked merc in team
-			local isDisliking = false
-			for _, dislikedMerc in ipairs(self.Dislikes) do
-				local dislikedIndex = table.find(self.team.units, "session_id", dislikedMerc)
-				if dislikedIndex and not self.team.units[dislikedIndex]:IsDead() then
-					personalMorale = personalMorale - 1
-					isDisliking = true
-					break
-				end
-			end
-			--increase morale for no disliked and at least one liked merc
-			if not isDisliking then
-				for _, likedMerc in ipairs(self.Likes) do
-					local likedIndex = table.find(self.team.units, "session_id", likedMerc)
-					if likedIndex and not self.team.units[likedIndex]:IsDead()  then
-						personalMorale = personalMorale + 1
-						break
-					end
-				end
-			end
-			--lower morale if below 50% or 3+ wounds (REVERT for psycho perk)
-			local isWounded = false
-			local idx = self:HasStatusEffect("Wounded")
-			if idx and self.StatusEffects[idx].stacks >= 3 then
-				isWounded = true
-			end
-			if self.HitPoints < MulDivRound(self.MaxHitPoints, 50, 100) or isWounded then
-				if HasPerk(self, "Psycho") then
-					personalMorale = personalMorale + 1
-				else
-					personalMorale = personalMorale - 1
-				end
-			end
-			--lower morale if liked merc has died recently
-			for _, likedMerc in ipairs(self.Likes) do
-				local ud = gv_UnitData[likedMerc]
-				if ud and ud.HireStatus == "Dead" then
-					local deathDay = ud.HiredUntil
-					if deathDay + 7 * const.Scale.day > Game.CampaignTime then
-						personalMorale = personalMorale - 1
-						break
-					end
-				end
-			end
-			--lower morale if claustrophobic or zoophobic perk is active
-			if self:HasStatusEffect("ZoophobiaChecked") then
-				personalMorale = personalMorale - 1
-			end
-			if self:HasStatusEffect("ClaustrophobiaChecked") then
-				personalMorale = personalMorale - 1
-			end
-			--lower morale if friendly fire
-			if self:HasStatusEffect("FriendlyFire") then
-				personalMorale = personalMorale - 1
-			end
-			--lower/increase if proud/guilty effect is on
-			if self:HasStatusEffect("Conscience_Guilty") then
-				personalMorale = personalMorale - 1
-			end
-			if self:HasStatusEffect("Conscience_Sinful") then
-				personalMorale = personalMorale - 2
-			end
-			if self:HasStatusEffect("Conscience_Proud") then
-				personalMorale = personalMorale + 1
-			end
-			if self:HasStatusEffect("Conscience_Righteous") then
-				personalMorale = personalMorale + 2
-			end
-			
-			return Clamp(personalMorale + teamMorale, -3, 3)
-		end,
 	}),
 	PlaceObj('ClassMethodDef', {
 		'name', "HasPassedTimeAfterDeath",

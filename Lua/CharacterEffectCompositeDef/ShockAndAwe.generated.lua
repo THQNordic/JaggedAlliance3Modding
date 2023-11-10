@@ -7,62 +7,23 @@ DefineClass.ShockAndAwe = {
 
 
 	object_class = "Perk",
-	msg_reactions = {
-		PlaceObj('MsgActorReactionEffects', {
-			Effects = {
-				PlaceObj('ConditionalEffect', {
-					'Effects', {
-						PlaceObj('ExecuteCode', {
-							Code = function (self, obj)
-								if IsKindOf(obj, "Unit") then
-									obj.team.morale = Max(1, obj.team.morale)
-								end
-							end,
-							FuncCode = 'if IsKindOf(obj, "Unit") then\n	obj.team.morale = Max(1, obj.team.morale)\nend',
-							SaveAsText = false,
-						}),
-					},
-				}),
-			},
-			Event = "EnterSector",
-			Handler = function (self, game_start, load_game)
-				ExecReactionEffects(self, 1, "EnterSector", nil, self, game_start, load_game)
+	unit_reactions = {
+		PlaceObj('UnitReaction', {
+			Event = "OnUnitEnterSector",
+			Handler = function (self, target, game_start, load_game)
+				if not load_game then
+					target.team.morale = Max(1, target.team.morale)
+				end
 			end,
 		}),
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "attacker",
-			Event = "GatherDamageModifications",
-			Handler = function (self, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data)
-				
-				local function exec(self, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data)
-				if not IsKindOf(attacker, "Unit") or not attacker.team or attacker.team.morale <= 0 then
-					return
+		PlaceObj('UnitReaction', {
+			Event = "OnCalcDamageAndEffects",
+			Handler = function (self, target, attacker, attack_target, action, weapon, attack_args, hit, data)
+				if attacker == target and attacker.team.morale > 0 then
+					local damageBonus = self:ResolveValue("highMoraledmgBuff") 
+					data.base_damage = MulDivRound(data.base_damage, 100 + damageBonus, 100)
+					data.breakdown[#data.breakdown + 1] = { name = self.DisplayName, value = damageBonus }
 				end
-				local damageBonus = self:ResolveValue("highMoraledmgBuff") 
-				mod_data.base_damage = MulDivRound(mod_data.base_damage, 100 + damageBonus, 100)
-				mod_data.breakdown[#mod_data.breakdown + 1] = { name = self.DisplayName, value = damageBonus }
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[2]
-				if not reaction_def or reaction_def.Event ~= "GatherDamageModifications" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data)
-				end
-				
-				if self:VerifyReaction("GatherDamageModifications", reaction_def, attacker, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data) then
-					exec(self, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data)
-				end
-			end,
-			HandlerCode = function (self, attacker, target, attack_args, hit_descr, mod_data)
-				if not IsKindOf(attacker, "Unit") or not attacker.team or attacker.team.morale <= 0 then
-					return
-				end
-				local damageBonus = self:ResolveValue("highMoraledmgBuff") 
-				mod_data.base_damage = MulDivRound(mod_data.base_damage, 100 + damageBonus, 100)
-				mod_data.breakdown[#mod_data.breakdown + 1] = { name = self.DisplayName, value = damageBonus }
 			end,
 		}),
 	},

@@ -7,76 +7,16 @@ DefineClass.SpentAP = {
 
 
 	object_class = "CharacterEffect",
-	msg_reactions = {
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "obj",
-			Event = "StatusEffectRemoved",
-			Handler = function (self, obj, id, stacks, reason)
-				
-				local function exec(self, obj, id, stacks, reason)
-				obj:SetEffectValue("spent_ap", nil)
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "StatusEffectRemoved" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, obj, id, stacks, reason)
-				end
-				
-				if self:VerifyReaction("StatusEffectRemoved", reaction_def, obj, obj, id, stacks, reason) then
-					exec(self, obj, id, stacks, reason)
-				end
-			end,
-			HandlerCode = function (self, obj, id, stacks, reason)
-				obj:SetEffectValue("spent_ap", nil)
-			end,
-		}),
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "unit",
-			Event = "UnitBeginTurn",
-			Handler = function (self, unit)
-				
-				local function exec(self, unit)
-				local ap = unit:GetEffectValue("spent_ap") or 0
-				if ap > 0 then
-					if unit:HasStatusEffect("FreeMoveOnCombatStart") then
-						unit:RemoveStatusEffect("FreeMoveOnCombatStart")
-					else
-						unit:RemoveStatusEffect("FreeMove")
-					end
-					unit:RemoveStatusEffect("Focused")
-					unit:ConsumeAP(ap)
-					unit:RemoveStatusEffect("SpentAP")
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[2]
-				if not reaction_def or reaction_def.Event ~= "UnitBeginTurn" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, unit)
-				end
-				
-				if self:VerifyReaction("UnitBeginTurn", reaction_def, unit, unit) then
-					exec(self, unit)
-				end
-			end,
-			HandlerCode = function (self, unit)
-				local ap = unit:GetEffectValue("spent_ap") or 0
-				if ap > 0 then
-					if unit:HasStatusEffect("FreeMoveOnCombatStart") then
-						unit:RemoveStatusEffect("FreeMoveOnCombatStart")
-					else
-						unit:RemoveStatusEffect("FreeMove")
-					end
-					unit:RemoveStatusEffect("Focused")
-					unit:ConsumeAP(ap)
-					unit:RemoveStatusEffect("SpentAP")
+	unit_reactions = {
+		PlaceObj('UnitReaction', {
+			Event = "OnBeginTurn",
+			Handler = function (self, target)
+				if self.stacks > 0 then
+					target:RemoveStatusEffect("FreeMoveOnCombatStart")
+					target:RemoveStatusEffect("FreeMove")
+					target:RemoveStatusEffect("Focused")
+					target:ConsumeAP(self.stacks)
+					target:RemoveStatusEffect(self.class, "all")
 				end
 			end,
 		}),
@@ -86,6 +26,10 @@ DefineClass.SpentAP = {
 			Expression = function (self, obj) return IsKindOf(obj, "Unit") end,
 		}),
 	},
+	OnRemoved = function (self, obj)  end,
+	max_stacks = 999000,
 	RemoveOnEndCombat = true,
+	RemoveOnSatViewTravel = true,
+	RemoveOnCampaignTimeAdvance = true,
 }
 

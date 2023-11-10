@@ -166,6 +166,7 @@ PlaceObj('BanterDef', {
 })
 
 PlaceObj('BanterDef', {
+	FX = "TradingNotEnough",
 	Lines = {
 		PlaceObj('BanterLine', {
 			'Text', T(959640718184, --[[BanterDef NotEnoughCash Text]] "Not enough cash"),
@@ -178,6 +179,7 @@ PlaceObj('BanterDef', {
 })
 
 PlaceObj('BanterDef', {
+	FX = "TradingNotEnough",
 	Lines = {
 		PlaceObj('BanterLine', {
 			'Text', T(565192937433, --[[BanterDef NotEnoughMeds Text]] "Not enough Meds"),
@@ -190,6 +192,7 @@ PlaceObj('BanterDef', {
 })
 
 PlaceObj('BanterDef', {
+	FX = "TradingNotEnough",
 	Lines = {
 		PlaceObj('BanterLine', {
 			'Text', T(968104362353, --[[BanterDef NotEnoughParts Text]] "Not enough parts"),
@@ -202,6 +205,7 @@ PlaceObj('BanterDef', {
 })
 
 PlaceObj('BanterDef', {
+	FX = "TradingPurchased",
 	Lines = {
 		PlaceObj('BanterLine', {
 			'Text', T(323836360710, --[[BanterDef Purchased Text]] "Purchased"),
@@ -214,6 +218,7 @@ PlaceObj('BanterDef', {
 })
 
 PlaceObj('BanterDef', {
+	FX = "TradingSold",
 	Lines = {
 		PlaceObj('BanterLine', {
 			'Text', T(806767012601, --[[BanterDef Sold Text]] "Sold"),

@@ -112,7 +112,7 @@ PlaceObj('XTemplate', {
 					end
 				end
 				local name = GetShortcutButtonT(self.action)
-				self.idBtnShortcut:SetText(T{775518317251, "[<name>]", name = name})
+				self.idBtnShortcut:SetText(name and T{775518317251, "[<name>]", name = name} or "")
 			end,
 		}),
 		PlaceObj('XTemplateFunc', {

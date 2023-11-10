@@ -7,34 +7,11 @@ DefineClass.DeathFromAbove = {
 
 
 	object_class = "Perk",
-	msg_reactions = {
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "attacker",
-			Event = "GatherCTHModifications",
-			Handler = function (self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
-				
-				local function exec(self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
-				if cth_id == "GroundDifference"  and data.base_chance > 0 and data.action.ActionType == "Ranged Attack" then
-					data.mod_add = data.mod_add + self:ResolveValue("highground_cth_bonus")
-					data.meta_text[#data.meta_text + 1] = T{776394275735, "Perk: <name>", name = self.DisplayName}
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "GatherCTHModifications" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
-				end
-				
-				if self:VerifyReaction("GatherCTHModifications", reaction_def, attacker, attacker, cth_id, action_id, target, weapon1, weapon2, data) then
-					exec(self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
-				end
-			end,
-			HandlerCode = function (self, attacker, cth_id, data)
-				if cth_id == "GroundDifference"  and data.base_chance > 0 and data.action.ActionType == "Ranged Attack" then
+	unit_reactions = {
+		PlaceObj('UnitReaction', {
+			Event = "OnModifyCTHModifier",
+			Handler = function (self, target, id, attacker, attack_target, action, weapon1, weapon2, data)
+				if target == attacker and id == "GroundDifference" and data.base_chance > 0 and action.ActionType == "Ranged Attack" then
 					data.mod_add = data.mod_add + self:ResolveValue("highground_cth_bonus")
 					data.meta_text[#data.meta_text + 1] = T{776394275735, "Perk: <name>", name = self.DisplayName}
 				end

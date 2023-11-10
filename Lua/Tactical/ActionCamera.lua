@@ -173,9 +173,10 @@ function _SetActionCameraDirect(attacker, target, new_pos, new_lookat, preset, d
 		CameraTacUseVoxelBorder = false,
 		EnableObjectMarking = 0,
 	})
-	local targetFloor = GetFloorOfPos(IsValid(target) and target:GetPos() or target)
-	local attackerFloor = GetFloorOfPos(IsValid(attacker) and attacker:GetPos() or attacker)
-	cameraTac.SetPosLookAtAndFloor(new_pos, new_lookat, Max(targetFloor, attackerFloor), interpolation_time)
+	local targetFloor = IsValid(target) and GetFloorOfPos(target:GetPosXYZ()) or IsPoint(target) and GetFloorOfPos(target:xyz()) or 0
+	local attackerFloor = IsValid(attacker) and GetFloorOfPos(attacker:GetPosXYZ()) or IsPoint(attacker) and GetFloorOfPos(attacker:xyz()) or 0
+	local floor = Max(targetFloor, attackerFloor)
+	cameraTac.SetPosLookAtAndFloor(new_pos, new_lookat, floor, interpolation_time)
 	cameraTac.SetZoom(1000, interpolation_time/10)
 	camera.SetFovX(preset.FovX, interpolation_time)
 	

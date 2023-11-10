@@ -1512,15 +1512,9 @@ PlaceObj('QuestsDef', {
 						}),
 						PlaceObj('ConditionalEffect', {
 							'Conditions', {
-								PlaceObj('QuestIsVariableBool', {
-									QuestId = "Landsbach",
-									Vars = set({
-	Coin = false,
-}),
-									__eval = function ()
-										local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
-										return not quest.Coin
-									end,
+								PlaceObj('UnitSquadHasItem', {
+									ItemId = "Coin",
+									Negate = true,
 								}),
 							},
 							'Effects', {
@@ -1541,17 +1535,23 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
-				PlaceObj('QuestIsVariableBool', {
-					Condition = "or",
-					QuestId = "Landsbach",
-					Vars = set({
-	Coin = true,
+				PlaceObj('OR', {
+					Conditions = {
+						PlaceObj('UnitSquadHasItem', {
+							ItemId = "Coin",
+						}),
+						PlaceObj('QuestIsVariableBool', {
+							Condition = "or",
+							QuestId = "Landsbach",
+							Vars = set({
 	Night = false,
 }),
-					__eval = function ()
-						local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
-						return quest.Coin or not quest.Night
-					end,
+							__eval = function ()
+								local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
+								return not quest.Night
+							end,
+						}),
+					},
 				}),
 				PlaceObj('PlayerIsInSectors', {
 					Sectors = {

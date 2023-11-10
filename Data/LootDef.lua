@@ -9835,6 +9835,19 @@ PlaceObj('LootDef', {
 })
 
 PlaceObj('LootDef', {
+	Comment = "container BioLab",
+	group = "MapContainers - Sector Specific",
+	id = "BioLabArchives",
+	loot = "all",
+	PlaceObj('LootEntryInventoryItem', {
+		dlc = "Hans",
+		item = "Meds",
+		stack_max = 30,
+		stack_min = 10,
+	}),
+})
+
+PlaceObj('LootDef', {
 	group = "MapContainers - Sector Specific",
 	id = "CacaoCityJunkShop_CraftingParts",
 	loot = "all",
@@ -15118,6 +15131,11 @@ PlaceObj('LootDef', {
 	group = "Vendors",
 	id = "PoacherCamp_Ammo",
 	loot = "all",
+	PlaceObj('LootEntryInventoryItem', {
+		item = "_762WP_AP",
+		stack_max = 30,
+		stack_min = 30,
+	}),
 	PlaceObj('LootEntryInventoryItem', {
 		item = "_762WP_AP",
 		stack_max = 30,

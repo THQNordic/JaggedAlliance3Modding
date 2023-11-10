@@ -7,7 +7,6 @@ end
 config.GameReplay_EventsDuringPlaybackExpected = true
 
 if FirstLoad then
-GameReplayCurrentRecordedTimeFactor = const.DefaultTimeFactor
 origSetTimeFactor = SetTimeFactor
 end
 
@@ -128,35 +127,11 @@ local function lReplayDesynced()
 	Msg("GameReplayEnd", GameReplay)
 end
 
-function GetSetpieceTimeFactor()
-	return IsGameReplayRunning() and GameReplayCurrentRecordedTimeFactor or GetTimeFactor()
-end
-
-function NetSyncEvents.RecordedTimeFactor(time_factor)
-	GameReplayCurrentRecordedTimeFactor = time_factor
-	if IsGameReplayRecording() then
-		origSetTimeFactor(time_factor)
-	end
-	--print("GameReplayCurrentRecordedTimeFactor", time_factor)
-end
-
-function CreateRecordingSetTimeFactorOverload()
-	_G["SetTimeFactor"] = function(time_factor)
-		if IsGameReplayRecording() then
-			--when recording, set tf trhough sync code so that GameReplayCurrentRecordedTimeFactor changes at the same precise time during playback;
-			NetSyncEvent("RecordedTimeFactor", time_factor)
-		else
-			origSetTimeFactor(time_factor)
-		end
-	end
-end
-
 function RegisterGameRecordOverrides()
 	for i, event_type in ipairs(_netFuncsToOverride) do
 		CreateRecordedEvent(event_type)
 	end
 	
-	CreateRecordingSetTimeFactorOverload()
 	CreateRecordedMapLoadRandom()
 	CreateRecordedGenerateHandle()
 

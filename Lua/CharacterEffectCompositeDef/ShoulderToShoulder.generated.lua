@@ -7,50 +7,19 @@ DefineClass.ShoulderToShoulder = {
 
 
 	object_class = "Perk",
-	msg_reactions = {
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "unit",
-			Event = "UnitEndTurn",
-			Handler = function (self, unit)
-				
-				local function exec(self, unit)
+	unit_reactions = {
+		PlaceObj('UnitReaction', {
+			Event = "OnEndTurn",
+			Handler = function (self, target)
 				local proc = false
-				local obj = unit
 				for _, unit in ipairs(g_Units) do
-					if obj.session_id ~= unit.session_id and obj:IsAdjacentTo(unit) and obj.team:IsAllySide(unit.team) then
+					if target ~= unit and target:IsAdjacentTo(unit) and target.team:IsAllySide(unit.team) then
 						unit:ApplyTempHitPoints(self:ResolveValue("tempHp"))
 						proc = true
 					end
 				end
 				if proc then
-					obj:ApplyTempHitPoints(self:ResolveValue("tempHp"))
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "UnitEndTurn" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, unit)
-				end
-				
-				if self:VerifyReaction("UnitEndTurn", reaction_def, unit, unit) then
-					exec(self, unit)
-				end
-			end,
-			HandlerCode = function (self, unit)
-				local proc = false
-				local obj = unit
-				for _, unit in ipairs(g_Units) do
-					if obj.session_id ~= unit.session_id and obj:IsAdjacentTo(unit) and obj.team:IsAllySide(unit.team) then
-						unit:ApplyTempHitPoints(self:ResolveValue("tempHp"))
-						proc = true
-					end
-				end
-				if proc then
-					obj:ApplyTempHitPoints(self:ResolveValue("tempHp"))
+					targetj:ApplyTempHitPoints(self:ResolveValue("tempHp"))
 				end
 			end,
 		}),

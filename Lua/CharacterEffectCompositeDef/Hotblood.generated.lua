@@ -8,7 +8,7 @@ DefineClass.Hotblood = {
 
 	object_class = "Perk",
 	DisplayName = T(191027194421, --[[CharacterEffectCompositeDef Hotblood DisplayName]] "Reactive Fire"),
-	Description = T(710792552808, --[[CharacterEffectCompositeDef Hotblood Description]] "Make an <GameTerm('Interrupt')> attack with firearms when an enemy attack misses you during the enemy turn (chance is based on an opposed Dexterity check).\n\nWill not trigger while <em>Taking Cover</em>."),
+	Description = T(710792552808, --[[CharacterEffectCompositeDef Hotblood Description]] "Make an <GameTerm('Interrupt')> attack with firearms when an enemy attack misses you during the enemy turn (chance is based on an opposed Dexterity check).\n\nWill not trigger while <em>Taking Cover</em> or being in <em>Overwatch</em>."),
 	Icon = "UI/Icons/Perks/Hotblood",
 	Tier = "Silver",
 	Stat = "Dexterity",

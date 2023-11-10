@@ -111,7 +111,7 @@ local sleep_time = CMT_OpacitySleep*4
 MapRealTimeRepeat("CMT_Trigger_Thread", 0, function()
 	assert(sleep_time % CMT_OpacitySleep == 0)
 	Sleep(sleep_time)
-	local startTs = GetPreciseTicks(1000)
+	-- local startTs = GetPreciseTicks(1000)
 	if g_CMTPaused then 
 		return 
 	end
@@ -130,8 +130,7 @@ MapRealTimeRepeat("CMT_Trigger_Thread", 0, function()
 			trigger:HandleCMTTrigger(camera_pos, lookAt, hiding_pt, objs, hide_collections)
 		end
 	end
-	local endTs = GetPreciseTicks(1000)
-	--print("CCMT", CCMT, "CMT_Trigger_Thread time", endTs - startTs)
+	-- print("CCMT", CCMT, "CMT_Trigger_Thread time", GetPreciseTicks(1000) - startTs)
 end)
 
 local col_mask_any = 2^32-1

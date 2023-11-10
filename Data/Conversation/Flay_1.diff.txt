@@ -63,7 +63,7 @@
 			Fidel: Why not kill the Legion guys? Always fun for Fidel!
 		FlayNPC: I would be lying to you if I said I have not thought about it. You have some experience with them? Are they a good hunt?
 			Meltdown: Hell, yeah! They scream like they did not expect to die!
-			Fidel: Eh. Dunno. Fidel no hunt. Fidel just blow things up..
+			Fidel: Eh. Dunno. Fidel no hunt. Fidel just blow things up.
 			Nails: Five out of seven.
 		FlayNPC: Ah, well. Time to move on and see what kind of trophies I can find in these <em>Legion camps</em>!
 	[Keyword: Just stop this madness]

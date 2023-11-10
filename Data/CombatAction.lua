@@ -20,7 +20,8 @@ PlaceObj('CombatAction', {
 		end
 		local aim = args and args.aim or 0
 		
-		return Max(unit:GetAttackAPCost(self, weapon1, false, aim), unit:GetAttackAPCost(self, weapon2, false, aim)) + self.ActionPointDelta
+		-- pass self.ActionPointDelta to both to allow the RainHeavy check to work correctly
+		return Max(unit:GetAttackAPCost(self, weapon1, false, aim, self.ActionPointDelta), unit:GetAttackAPCost(self, weapon2, false, aim, self.ActionPointDelta))
 	end,
 	GetActionDamage = function (self, unit, target, args)
 		local weapon1, weapon2 = self:GetAttackWeapons(unit, args)
@@ -109,6 +110,7 @@ PlaceObj('CombatAction', {
 	end,
 	Icon = "UI/Icons/Hud/dual_shot",
 	IconFiringMode = "UI/Hud/fm_dual_shot",
+	IdDefault = "DualShotdefault",
 	IsTargetableAttack = true,
 	KeybindingFromAction = "actionRedirectBasicAttack",
 	MultiSelectBehavior = "first",
@@ -146,7 +148,9 @@ PlaceObj('CombatAction', {
 	GetAPCost = function (self, unit, args)
 		local weapon = self:GetAttackWeapons(unit, args)
 		if not weapon then return -1 end
-		return unit:GetAttackAPCost(self, weapon, nil, args and args.aim or 0)
+		-- GetAttackAPCost returns aim cost as second value, while GetAPCost's second return value has a different semantic (display cost)
+		local cost = unit:GetAttackAPCost(self, weapon, nil, args and args.aim or 0)
+		return cost
 	end,
 	GetActionDamage = function (self, unit, target, args)
 		local weapon = args and args.weapon or self:GetAttackWeapons(unit, args)
@@ -219,6 +223,7 @@ PlaceObj('CombatAction', {
 		return CombatActionGenericAttackGetUIState(self, units, args)
 	end,
 	Icon = "UI/Icons/Hud/burst_fire",
+	IdDefault = "MGBurstFiredefault",
 	IsTargetableAttack = true,
 	KeybindingFromAction = "actionRedirectHeavyAttack",
 	KeybindingSortId = "2372",
@@ -271,6 +276,8 @@ PlaceObj('CombatAction', {
 	GetAPCost = function (self, unit, args)
 		local w1Attack, w2Attack, weapon1, weapon2 = GetDualShotAttacks(unit)
 		if not w1Attack then return -1 end
+		args = args and table.copy(args) or {}
+		args.weapon = weapon1
 		return w1Attack:GetAPCost(unit, args)
 	end,
 	GetActionDamage = function (self, unit, target, args)
@@ -322,6 +329,7 @@ PlaceObj('CombatAction', {
 	end,
 	Icon = "UI/Icons/Hud/attack",
 	IconFiringMode = "UI/Hud/fm_right_hand_shot",
+	IdDefault = "RightHandShotdefault",
 	IsTargetableAttack = true,
 	MultiSelectBehavior = "first",
 	RequireState = "any",
@@ -397,6 +405,7 @@ PlaceObj('CombatAction', {
 	end,
 	Icon = "UI/Icons/Hud/attack",
 	IconFiringMode = "UI/Hud/fm_single_shot",
+	IdDefault = "SingleShotdefault",
 	IsTargetableAttack = true,
 	KeybindingFromAction = "actionRedirectBasicAttack",
 	MultiSelectBehavior = "first",
@@ -467,6 +476,7 @@ PlaceObj('CombatAction', {
 		return CombatActionGenericAttackGetUIState(self, units, args)
 	end,
 	Icon = "UI/Icons/Hud/heavy_weapon_attack",
+	IdDefault = "Bombarddefault",
 	IsAimableAttack = false,
 	KeybindingFromAction = "actionRedirectHeavyAttack",
 	MultiSelectBehavior = "first",
@@ -560,6 +570,7 @@ PlaceObj('CombatAction', {
 	end,
 	Icon = "UI/Icons/Hud/shotgun_shot",
 	IconFiringMode = "UI/Hud/fm_buckshot",
+	IdDefault = "Buckshotdefault",
 	IsTargetableAttack = true,
 	KeybindingFromAction = "actionRedirectBasicAttack",
 	MultiSelectBehavior = "first",
@@ -663,6 +674,7 @@ PlaceObj('CombatAction', {
 	end,
 	Icon = "UI/Icons/Hud/shotgun_shot",
 	IconFiringMode = "UI/Hud/fm_buckshot_burst",
+	IdDefault = "BuckshotBurstdefault",
 	IsTargetableAttack = true,
 	MultiSelectBehavior = "first",
 	Parameters = {
@@ -765,6 +777,7 @@ PlaceObj('CombatAction', {
 	end,
 	Icon = "UI/Icons/Hud/double_barrel",
 	IconFiringMode = "UI/Hud/fm_double_barrel",
+	IdDefault = "DoubleBarreldefault",
 	IsTargetableAttack = true,
 	MultiSelectBehavior = "first",
 	Parameters = {
@@ -858,6 +871,7 @@ PlaceObj('CombatAction', {
 		return CombatActionGenericAttackGetUIState(self, units, args)
 	end,
 	Icon = "UI/Icons/Hud/heavy_weapon_attack",
+	IdDefault = "GrenadeLauncherFiredefault",
 	KeybindingFromAction = "actionRedirectHeavyAttack",
 	MultiSelectBehavior = "first",
 	RequireState = "any",
@@ -887,6 +901,8 @@ PlaceObj('CombatAction', {
 	GetAPCost = function (self, unit, args)
 		local w1Attack, w2Attack, weapon1, weapon2 = GetDualShotAttacks(unit)
 		if not w2Attack then return -1 end
+		args = args and table.copy(args) or {}
+		args.weapon = weapon2
 		return w2Attack:GetAPCost(unit, args)
 	end,
 	GetActionDamage = function (self, unit, target, args)
@@ -938,6 +954,7 @@ PlaceObj('CombatAction', {
 	end,
 	Icon = "UI/Icons/Hud/attack",
 	IconFiringMode = "UI/Hud/fm_left_hand_shot",
+	IdDefault = "LeftHandShotdefault",
 	IsTargetableAttack = true,
 	MultiSelectBehavior = "first",
 	RequireState = "any",
@@ -1021,6 +1038,7 @@ PlaceObj('CombatAction', {
 		return CombatActionGenericAttackGetUIState(self, units, args)
 	end,
 	Icon = "UI/Icons/Hud/heavy_weapon_attack",
+	IdDefault = "RocketLauncherFiredefault",
 	KeybindingFromAction = "actionRedirectHeavyAttack",
 	MultiSelectBehavior = "first",
 	RequireState = "any",
@@ -1145,6 +1163,7 @@ PlaceObj('CombatAction', {
 	end,
 	Icon = "UI/Icons/Hud/burst_fire",
 	IconFiringMode = "UI/Hud/fm_burst_fire",
+	IdDefault = "BurstFiredefault",
 	IsTargetableAttack = true,
 	MultiSelectBehavior = "first",
 	Parameters = {
@@ -1299,6 +1318,7 @@ PlaceObj('CombatAction', {
 		return "enabled"
 	end,
 	Icon = "UI/Icons/Hud/melee",
+	IdDefault = "MeleeAttackdefault",
 	IsTargetableAttack = true,
 	KeybindingFromAction = "actionRedirectBasicAttack",
 	MoveStep = true,
@@ -1370,6 +1390,7 @@ PlaceObj('CombatAction', {
 		return CombatActionGenericAttackGetUIState(self, units, args)
 	end,
 	Icon = "UI/Icons/Hud/mobile_shot",
+	IdDefault = "MobileShotdefault",
 	IsAimableAttack = false,
 	KeybindingSortId = "2371",
 	MultiSelectBehavior = "first",
@@ -1459,6 +1480,7 @@ PlaceObj('CombatAction', {
 		return CombatActionGenericAttackGetUIState(self, units, args)
 	end,
 	Icon = "UI/Icons/Hud/run_and_gun",
+	IdDefault = "RunAndGundefault",
 	IsAimableAttack = false,
 	KeybindingSortId = "2372",
 	MultiSelectBehavior = "first",
@@ -1596,6 +1618,7 @@ PlaceObj('CombatAction', {
 		return "enabled"
 	end,
 	Icon = "UI/Icons/Hud/melee",
+	IdDefault = "UnarmedAttackdefault",
 	IsTargetableAttack = true,
 	KeybindingFromAction = "actionRedirectBasicAttack",
 	MultiSelectBehavior = "first",
@@ -1718,6 +1741,7 @@ PlaceObj('CombatAction', {
 	end,
 	Icon = "UI/Icons/Hud/full_auto",
 	IconFiringMode = "UI/Hud/fm_autoshot",
+	IdDefault = "AutoFiredefault",
 	IsAimableAttack = false,
 	IsTargetableAttack = true,
 	MultiSelectBehavior = "first",
@@ -1818,6 +1842,7 @@ PlaceObj('CombatAction', {
 		return CombatActionGenericAttackGetUIState(self, units, args)
 	end,
 	Icon = "UI/Icons/Hud/distracting_shot",
+	IdDefault = "CancelShotdefault",
 	IsTargetableAttack = true,
 	KeybindingFromAction = "actionRedirectCancelShot",
 	MultiSelectBehavior = "first",
@@ -1902,6 +1927,7 @@ PlaceObj('CombatAction', {
 		return CombatActionGenericAttackGetUIState(self, units, args)
 	end,
 	Icon = "UI/Icons/Hud/distracting_shot",
+	IdDefault = "CancelShotConedefault",
 	IsTargetableAttack = true,
 	KeybindingFromAction = "actionRedirectCancelShot",
 	MultiSelectBehavior = "first",
@@ -2025,6 +2051,7 @@ PlaceObj('CombatAction', {
 		return "enabled"
 	end,
 	Icon = "UI/Icons/Hud/melee",
+	IdDefault = "Chargedefault",
 	IsAimableAttack = false,
 	KeybindingSortId = "2380",
 	MultiSelectBehavior = "first",
@@ -2120,6 +2147,7 @@ PlaceObj('CombatAction', {
 		return CombatActionGenericAttackGetUIState(self, units, args)
 	end,
 	Icon = "UI/Icons/Hud/fire_flare",
+	IdDefault = "FireFlaredefault",
 	IsAimableAttack = false,
 	KeybindingFromAction = "actionRedirectBasicAttack",
 	MultiSelectBehavior = "first",
@@ -2154,6 +2182,7 @@ PlaceObj('CombatAction', {
 		return results, attack_args
 	end,
 	Icon = "UI/Icons/Hud/melee",
+	IdDefault = "CrocodileBitedefault",
 	IsAimableAttack = false,
 	MultiSelectBehavior = "hidden",
 	RequireState = "any",
@@ -2187,6 +2216,7 @@ PlaceObj('CombatAction', {
 		return results, attack_args
 	end,
 	Icon = "UI/Icons/Hud/melee",
+	IdDefault = "HyenaBitedefault",
 	IsAimableAttack = false,
 	MultiSelectBehavior = "hidden",
 	RequireState = "any",
@@ -2245,6 +2275,7 @@ PlaceObj('CombatAction', {
 		return "enabled"
 	end,
 	Icon = "UI/Icons/Hud/melee",
+	IdDefault = "HyenaChargedefault",
 	IsAimableAttack = false,
 	MultiSelectBehavior = "hidden",
 	Parameters = {
@@ -2365,6 +2396,7 @@ PlaceObj('CombatAction', {
 		return CombatActions.MeleeAttack.GetUIState(self, units, args)
 	end,
 	Icon = "UI/Icons/Hud/brutalize_attack",
+	IdDefault = "Brutalizedefault",
 	IsAimableAttack = false,
 	KeybindingSortId = "2376",
 	MoveStep = true,
@@ -2451,6 +2483,7 @@ PlaceObj('CombatAction', {
 		return CombatActionGenericAttackGetUIState(self, units, args)
 	end,
 	Icon = "UI/Icons/Hud/throw_knife",
+	IdDefault = "KnifeThrowdefault",
 	IsTargetableAttack = true,
 	KeybindingSortId = "2375",
 	MultiSelectBehavior = "first",
@@ -2473,6 +2506,7 @@ PlaceObj('CombatAction', {
 	Description = T(488417500972, --[[CombatAction Fanning Description]] "Shoots <em><num> bullets</em> at slightly increased AP cost. Lower accuracy against distant enemies."),
 	DisplayName = T(386523063486, --[[CombatAction Fanning DisplayName]] "Fanning"),
 	Icon = "UI/Icons/Hud/burst_fire",
+	IdDefault = "Fanningdefault",
 	IsTargetableAttack = true,
 	RequireState = "any",
 	ShowIn = false,
@@ -2529,6 +2563,7 @@ PlaceObj('CombatAction', {
 		return "enabled"
 	end,
 	Icon = "UI/Icons/Hud/placeholder",
+	IdDefault = "Movedefault",
 	InterruptInExploration = true,
 	IsAimableAttack = false,
 	MultiSelectBehavior = "hidden",
@@ -2592,6 +2627,7 @@ PlaceObj('CombatAction', {
 		return "enabled"
 	end,
 	Icon = "UI/Icons/Hud/reload",
+	IdDefault = "ReloadMultiSelectiondefault",
 	IsAimableAttack = false,
 	QueuedBadgeText = T(533763685831, --[[CombatAction ReloadMultiSelection QueuedBadgeText]] "RELOAD"),
 	RequireState = "exploration",
@@ -2634,6 +2670,7 @@ PlaceObj('CombatAction', {
 		return "hidden"
 	end,
 	Icon = "UI/Icons/Hud/stop_bandaging_downed",
+	IdDefault = "StopBandagingdefault",
 	IsAimableAttack = false,
 	KeybindingFromAction = "actionRedirectBandage",
 	MultiSelectBehavior = "first",
@@ -2706,6 +2743,7 @@ PlaceObj('CombatAction', {
 		return "enabled"
 	end,
 	Icon = "UI/Icons/Hud/repair_weapon",
+	IdDefault = "Unjamdefault",
 	IsAimableAttack = false,
 	KeybindingSortId = "2505",
 	MultiSelectBehavior = "first",
@@ -2877,6 +2915,7 @@ PlaceObj('CombatAction', {
 		return state, reason
 	end,
 	Icon = "UI/Icons/Hud/overwatch",
+	IdDefault = "Overwatchdefault",
 	KeybindingFromAction = "actionRedirectOverwatch",
 	MultiSelectBehavior = "first",
 	QueuedBadgeText = T(507392307526, --[[CombatAction Overwatch QueuedBadgeText]] "OVERWATCH"),
@@ -2962,6 +3001,7 @@ PlaceObj('CombatAction', {
 		return CombatActionGenericAttackGetUIState(self, units, args)
 	end,
 	Icon = "UI/Icons/Hud/steady_does_it",
+	IdDefault = "PinDowndefault",
 	IsTargetableAttack = true,
 	KeybindingSortId = "2353",
 	MultiSelectBehavior = "first",
@@ -2999,6 +3039,7 @@ PlaceObj('CombatAction', {
 		return has_overwatch and "enabled" or "hidden"
 	end,
 	Icon = "UI/Icons/Hud/cancel_overwatch",
+	IdDefault = "CancelOverwatchdefault",
 	IsAimableAttack = false,
 	RequireState = "exploration",
 	Run = function (self, unit, ap, ...)
@@ -3018,6 +3059,7 @@ PlaceObj('CombatAction', {
 		return 0
 	end,
 	Icon = "UI/Icons/Hud/placeholder",
+	IdDefault = "Despawndefault",
 	IsAimableAttack = false,
 	MultiSelectBehavior = "hidden",
 	RequireState = "any",
@@ -3067,6 +3109,7 @@ PlaceObj('CombatAction', {
 		return "enabled"
 	end,
 	Icon = "UI/Icons/Hud/stealth_off",
+	IdDefault = "Hidedefault",
 	InterruptInExploration = true,
 	IsAimableAttack = false,
 	QueuedBadgeText = T(288854857786, --[[CombatAction Hide QueuedBadgeText]] "HIDE"),
@@ -3117,6 +3160,7 @@ PlaceObj('CombatAction', {
 		return "enabled"
 	end,
 	Icon = "UI/Icons/Hud/stealth_on",
+	IdDefault = "Revealdefault",
 	IsAimableAttack = false,
 	RequireState = "any",
 	Run = function (self, unit, ap, ...)
@@ -3181,6 +3225,7 @@ PlaceObj('CombatAction', {
 		return "disabled", AttackDisableReasons.NotInCover
 	end,
 	Icon = "UI/Icons/Hud/take_cover",
+	IdDefault = "TakeCoverdefault",
 	IsAimableAttack = false,
 	KeybindingSortId = "2325",
 	QueuedBadgeText = T(659947635353, --[[CombatAction TakeCover QueuedBadgeText]] "TAKE COVER"),
@@ -3200,6 +3245,7 @@ PlaceObj('CombatAction', {
 	Comment = "dummy action used to facilitate Reposition queueing when needed",
 	ConfigurableKeybind = false,
 	DisplayName = T(890398580666, --[[CombatAction Reposition DisplayName]] "Reposition"),
+	IdDefault = "Repositiondefault",
 	Run = function (self, unit, ap, ...)
 		unit:SetActionCommand("Reposition", ...)
 	end,
@@ -3212,6 +3258,7 @@ PlaceObj('CombatAction', {
 	Comment = "dummy action used for opening attack in reposition",
 	ConfigurableKeybind = false,
 	DisplayName = T(165860894460, --[[CombatAction RepositionOpeningAttack DisplayName]] "Opening Attack"),
+	IdDefault = "RepositionOpeningAttackdefault",
 	Run = function (self, unit, ap, ...)
 		unit:SetActionCommand("RepositionOpeningAttack", ...)
 	end,
@@ -3247,6 +3294,7 @@ PlaceObj('CombatAction', {
 		return "enabled"
 	end,
 	Icon = "UI/Icons/Hud/cancel_mark",
+	IdDefault = "CancelMarkdefault",
 	IsAimableAttack = false,
 	KeybindingFromAction = "actionRedirectTakedown",
 	RequireState = "exploration",
@@ -3293,14 +3341,11 @@ PlaceObj('CombatAction', {
 	end,
 	GetActionResults = function (self, unit, args)
 		local args = table.copy(args)
-		args.num_shots = 0
-		args.weapon = args.weapon or self:GetAttackWeapons(unit)
-		if IsKindOf(args.weapon, "GutHookKnife") then
-			args.applied_status = { "Bleeding" }
+		if args.target then
+			args.step_pos = unit:GetClosestMeleeRangePos(args.target)
 		end
-		local attack_args = unit:PrepareAttackArgs(self.id, args)
-		local results = attack_args.weapon:GetAttackResults(self, attack_args)
-		return results, attack_args
+		args.weapon = args.weapon or self:GetAttackWeapons(unit)
+		return CombatActions.MeleeAttack:GetActionResults(unit, args)
 	end,
 	GetAnyTarget = function (self, units)
 		local unit = units[1]
@@ -3334,6 +3379,7 @@ PlaceObj('CombatAction', {
 		return CombatActionGenericAttackGetUIState(self, units, args)
 	end,
 	Icon = "UI/Icons/Hud/mark_enemy",
+	IdDefault = "MarkTargetdefault",
 	IsTargetableAttack = true,
 	KeybindingFromAction = "actionRedirectTakedown",
 	MultiSelectBehavior = "first",
@@ -3360,9 +3406,11 @@ PlaceObj('CombatAction', {
 		local weapon
 		if args and args.item_id then
 			local alt_set = (unit.current_weapon == "Handheld A") and "Handheld B" or "Handheld A"
-			weapon = FindWeaponInSlotById(unit, unit.current_weapon, args.item_id) or FindWeaponInSlotById(unit, alt_set, args.item_id) or FindWeaponInSlotById(unit, "Inventory", args.item_id)
+			weapon =
+				unit:FindWeaponInSlotById(unit.current_weapon, args.item_id) or
+				unit:FindWeaponInSlotById(alt_set, args.item_id) or
+				unit:FindWeaponInSlotById("Inventory", args.item_id)
 		end
-		
 		if not weapon then
 			if args and args.pos then
 				weapon = unit:GetItemAtPackedPos(args.pos)			
@@ -3434,6 +3482,7 @@ PlaceObj('CombatAction', {
 		return "enabled"
 	end,
 	Icon = "UI/Icons/Hud/reload",
+	IdDefault = "Reloaddefault",
 	IsAimableAttack = false,
 	QueuedBadgeText = T(871510388525, --[[CombatAction Reload QueuedBadgeText]] "RELOAD"),
 	RequireState = "any",
@@ -3516,13 +3565,9 @@ PlaceObj('CombatAction', {
 		if unit and unit.current_weapon == "Handheld A" then
 			otherSet = "Handheld B"
 		end
-		local weapons = unit:GetEquippedWeapons(otherSet)
-		for _, weapon in ipairs(weapons) do
-			if weapon:HasComponent("FreeWeaponSwap") then
-				return 0
-			end
+		if unit:FindItemInSlot(otherSet, function(weapon) return weapon:IsWeapon() and weapon:HasComponent("FreeWeaponSwap") end) then
+			return 0
 		end
-		
 		return self.ActionPoints
 	end,
 	GetActionDescription = function (self, units)
@@ -3550,6 +3595,7 @@ PlaceObj('CombatAction', {
 		return "enabled" -- always available to allow switching to unarmed attacks
 	end,
 	Icon = "UI/Icons/Hud/change_weapon_set",
+	IdDefault = "ChangeWeapondefault",
 	IsAimableAttack = false,
 	KeybindingSortId = "2295",
 	MultiSelectBehavior = "first",
@@ -3571,6 +3617,7 @@ PlaceObj('CombatAction', {
 	Description = T(365505233508, --[[CombatAction ExplorationOverwatch Description]] "Can be used out of combat to set up an ambush. Enemies do not provoke <GameTerm('Interrupt')> <em>attacks</em> until combat starts.\nMercs in <em>Overwatch</em> start combat <em>without AP</em>."),
 	DisplayName = T(398975828612, --[[CombatAction ExplorationOverwatch DisplayName]] "Overwatch"),
 	Icon = "UI/Icons/Hud/overwatch",
+	IdDefault = "ExplorationOverwatchdefault",
 	KeybindingFromAction = "actionRedirectOverwatch",
 	QueuedBadgeText = T(302085333903, --[[CombatAction ExplorationOverwatch QueuedBadgeText]] "OVERWATCH"),
 	SortKey = 20,
@@ -3610,6 +3657,7 @@ PlaceObj('CombatAction', {
 		return "enabled"
 	end,
 	Icon = "UI/Icons/Hud/inventory",
+	IdDefault = "Inventorydefault",
 	IsAimableAttack = false,
 	KeybindingFromAction = "idInventory",
 	MultiSelectBehavior = "first",
@@ -3631,6 +3679,7 @@ PlaceObj('CombatAction', {
 	GetDefaultTarget = function (self, unit)
 		return false
 	end,
+	IdDefault = "ItemSkillsdefault",
 	IsAimableAttack = false,
 	QueuedBadgeText = T(820113998923, --[[CombatAction ItemSkills QueuedBadgeText]] "USE ITEM"),
 	RequireState = "any",
@@ -3678,6 +3727,7 @@ PlaceObj('CombatAction', {
 	GetDefaultTarget = function (self, unit)
 		return false
 	end,
+	IdDefault = "ChangeStancedefault",
 	IsAimableAttack = false,
 	QueuedBadgeText = T(827612796111, --[[CombatAction ChangeStance QueuedBadgeText]] "CHANGE STANCE"),
 	RequireState = "any",
@@ -3735,6 +3785,7 @@ PlaceObj('CombatAction', {
 		return CombatActionGetAttackableEnemies(self, units and units[1])
 	end,
 	Icon = "UI/Hud/iw_attack",
+	IdDefault = "Interact_Attackdefault",
 	MultiSelectBehavior = "first",
 	QueuedBadgeText = T(574905632012, --[[CombatAction Interact_Attack QueuedBadgeText]] "INTERACT"),
 	RequireState = "any",
@@ -3767,6 +3818,7 @@ PlaceObj('CombatAction', {
 		return "hidden"
 	end,
 	Icon = "UI/Hud/iw_speak",
+	IdDefault = "Interact_Banterdefault",
 	InterruptInExploration = true,
 	IsAimableAttack = false,
 	QueuedBadgeText = T(755005650995, --[[CombatAction Interact_Banter QueuedBadgeText]] "INTERACT"),
@@ -3803,6 +3855,7 @@ PlaceObj('CombatAction', {
 		return args and args.target:GetUIState(units, args) or "disabled"
 	end,
 	Icon = "UI/Hud/iw_examine",
+	IdDefault = "Interact_CustomInteractabledefault",
 	InterruptInExploration = true,
 	IsAimableAttack = false,
 	QueuedBadgeText = T(695484031538, --[[CombatAction Interact_CustomInteractable QueuedBadgeText]] "INTERACT"),
@@ -3845,6 +3898,7 @@ PlaceObj('CombatAction', {
 		return units[1]:GetReachableObjects("Trap")
 	end,
 	Icon = "UI/Hud/iw_disarm",
+	IdDefault = "Interact_Disarmdefault",
 	InteractionLoadingBar = true,
 	InterruptInExploration = true,
 	IsAimableAttack = false,
@@ -3886,6 +3940,7 @@ PlaceObj('CombatAction', {
 		return CombatActionGetAttackableEnemies(self, units)
 	end,
 	Icon = "UI/Hud/iw_travel",
+	IdDefault = "Interact_Exitdefault",
 	InterruptInExploration = true,
 	RequireState = "any",
 	Run = function (self, unit, ap, ...)
@@ -3912,6 +3967,7 @@ PlaceObj('CombatAction', {
 		return units[1]:GetReachableObjects("ItemContainer")
 	end,
 	Icon = "UI/Hud/iw_loot",
+	IdDefault = "Interact_LootContainerdefault",
 	InterruptInExploration = true,
 	IsAimableAttack = false,
 	LocalChoiceAction = true,
@@ -3946,6 +4002,7 @@ PlaceObj('CombatAction', {
 		return CombatAction.GetUIState(self, units, args)
 	end,
 	Icon = "UI/Hud/iw_loot",
+	IdDefault = "Interact_LootUnitdefault",
 	InterruptInExploration = true,
 	IsAimableAttack = false,
 	LocalChoiceAction = true,
@@ -3988,6 +4045,7 @@ PlaceObj('CombatAction', {
 		return "enabled"
 	end,
 	Icon = "UI/Hud/iw_operate",
+	IdDefault = "Interact_ManEmplacementdefault",
 	InterruptInExploration = true,
 	IsAimableAttack = false,
 	LocalChoiceAction = true,
@@ -4025,6 +4083,7 @@ PlaceObj('CombatAction', {
 		return GetReachableObjects(units, "Unit")
 	end,
 	Icon = "UI/Hud/iw_speak",
+	IdDefault = "Interact_NotNowdefault",
 	InterruptInExploration = true,
 	IsAimableAttack = false,
 	QueuedBadgeText = T(305159927540, --[[CombatAction Interact_NotNow QueuedBadgeText]] "INTERACT"),
@@ -4064,6 +4123,7 @@ PlaceObj('CombatAction', {
 		return "hidden"
 	end,
 	Icon = "UI/Hud/iw_speak",
+	IdDefault = "Interact_Talkdefault",
 	InterruptInExploration = true,
 	IsAimableAttack = false,
 	QueuedBadgeText = T(865614171711, --[[CombatAction Interact_Talk QueuedBadgeText]] "INTERACT"),
@@ -4116,6 +4176,7 @@ PlaceObj('CombatAction', {
 		return "hidden"
 	end,
 	Icon = "UI/Hud/iw_speak",
+	IdDefault = "Interact_UnitCustomInteractiondefault",
 	InterruptInExploration = true,
 	IsAimableAttack = false,
 	QueuedBadgeText = T(380543262427, --[[CombatAction Interact_UnitCustomInteraction QueuedBadgeText]] "INTERACT"),
@@ -4166,6 +4227,7 @@ PlaceObj('CombatAction', {
 		return CombatAction.GetUIState(self, units, args)
 	end,
 	Icon = "UI/Hud/iw_wire_cut",
+	IdDefault = "Cutdefault",
 	InteractionLoadingBar = true,
 	InterruptInExploration = true,
 	IsAimableAttack = false,
@@ -4229,6 +4291,7 @@ PlaceObj('CombatAction', {
 		return "hidden"
 	end,
 	Icon = "UI/Hud/iw_close_door",
+	IdDefault = "Interact_DoorClosedefault",
 	InterruptInExploration = true,
 	IsAimableAttack = false,
 	MultiSelectBehavior = "nearest",
@@ -4292,6 +4355,7 @@ PlaceObj('CombatAction', {
 		return "hidden"
 	end,
 	Icon = "UI/Hud/iw_open_door",
+	IdDefault = "Interact_DoorOpendefault",
 	InterruptInExploration = true,
 	IsAimableAttack = false,
 	MultiSelectBehavior = "nearest",
@@ -4318,6 +4382,7 @@ PlaceObj('CombatAction', {
 		CombatActionExecuteWithMove(self, units, args)
 	end,
 	Icon = "UI/Hud/iw_broken_lock",
+	IdDefault = "LockImpossibledefault",
 	IsAimableAttack = false,
 	QueuedBadgeText = T(836721737447, --[[CombatAction LockImpossible QueuedBadgeText]] "INTERACT"),
 	RequireState = "any",
@@ -4392,6 +4457,7 @@ PlaceObj('CombatAction', {
 		return "enabled"
 	end,
 	Icon = "UI/Hud/iw_lockpick",
+	IdDefault = "Lockpickdefault",
 	InteractionLoadingBar = true,
 	InterruptInExploration = true,
 	IsAimableAttack = false,
@@ -4419,6 +4485,7 @@ PlaceObj('CombatAction', {
 		CombatActionExecuteWithMove(self, units, args)
 	end,
 	Icon = "UI/Hud/iw_lockpick",
+	IdDefault = "NoToolsLockeddefault",
 	IsAimableAttack = false,
 	QueuedBadgeText = T(693029676179, --[[CombatAction NoToolsLocked QueuedBadgeText]] "INTERACT"),
 	RequireState = "any",
@@ -4493,6 +4560,7 @@ PlaceObj('CombatAction', {
 		return "enabled"
 	end,
 	Icon = "UI/Hud/iw_break_lock",
+	IdDefault = "Breakdefault",
 	InteractionLoadingBar = true,
 	InterruptInExploration = true,
 	IsAimableAttack = false,
@@ -4520,6 +4588,7 @@ PlaceObj('CombatAction', {
 		CombatActionExecuteWithMove(self, units, args)
 	end,
 	Icon = "UI/Hud/iw_break_lock",
+	IdDefault = "NoToolsBlockeddefault",
 	IsAimableAttack = false,
 	QueuedBadgeText = T(807947680083, --[[CombatAction NoToolsBlocked QueuedBadgeText]] "INTERACT"),
 	RequireState = "any",
@@ -4566,6 +4635,7 @@ PlaceObj('CombatAction', {
 		return "hidden"
 	end,
 	Icon = "UI/Hud/iw_break_lock",
+	IdDefault = "Interact_WindowBreakdefault",
 	InterruptInExploration = true,
 	IsAimableAttack = false,
 	MultiSelectBehavior = "first",
@@ -4599,6 +4669,7 @@ PlaceObj('CombatAction', {
 		return self.ActionPoints
 	end,
 	Icon = "UI/Icons/Hud/dash",
+	IdDefault = "MGLeavedefault",
 	QueuedBadgeText = T(877939170118, --[[CombatAction MGLeave QueuedBadgeText]] "LEAVE"),
 	RequireState = "any",
 	Run = function (self, unit, ap, ...)
@@ -4631,6 +4702,7 @@ PlaceObj('CombatAction', {
 		return self.ActionPoints
 	end,
 	Icon = "UI/Icons/Hud/dash",
+	IdDefault = "MGPackdefault",
 	KeybindingSortId = "2375",
 	QueuedBadgeText = T(841179028797, --[[CombatAction MGPack QueuedBadgeText]] "PACK UP"),
 	RequireState = "any",
@@ -4713,6 +4785,7 @@ PlaceObj('CombatAction', {
 		return "enabled"
 	end,
 	Icon = "UI/Icons/Hud/bullet_hell",
+	IdDefault = "MGRotatedefault",
 	IsAimableAttack = false,
 	KeybindingFromAction = "actionRedirectOverwatch",
 	KeybindingSortId = "2371",
@@ -4811,6 +4884,7 @@ PlaceObj('CombatAction', {
 		return "enabled"
 	end,
 	Icon = "UI/Icons/Hud/SetMachineGun ",
+	IdDefault = "MGSetupdefault",
 	IsAimableAttack = false,
 	KeybindingFromAction = "actionRedirectOverwatch",
 	KeybindingSortId = "2370",
@@ -4855,11 +4929,11 @@ PlaceObj('CombatAction', {
 	DisplayName = T(449333187481, --[[CombatAction Attack DisplayName]] "Attack"),
 	Execute = function (self, units, args)
 		local unit = units[1]
-		local defAction = unit.ui_actions[self.id .. "default"] or unit:ResolveDefaultFiringModeAction(self, true)
+		local defAction = unit.ui_actions[self.IdDefault] or unit:ResolveDefaultFiringModeAction(self, true)
 		return CombatActions[defAction]:Execute(units, args)
 	end,
 	GetAPCost = function (self, unit, args)
-		local defAction = unit.ui_actions and unit.ui_actions[self.id .. "default"] or unit:ResolveDefaultFiringModeAction(self, true)
+		local defAction = unit.ui_actions and unit.ui_actions[self.IdDefault] or unit:ResolveDefaultFiringModeAction(self, true)
 		if not defAction then
 			assert(false) -- This unit's action caching did something weird?
 			return
@@ -4868,7 +4942,7 @@ PlaceObj('CombatAction', {
 		return CombatActions[defAction]:GetAPCost(unit, args)
 	end,
 	GetActionDamage = function (self, unit, target, args)
-		local defAction = unit.ui_actions and unit.ui_actions[self.id .. "default"] or unit:ResolveDefaultFiringModeAction(self, true)
+		local defAction = unit.ui_actions and unit.ui_actions[self.IdDefault] or unit:ResolveDefaultFiringModeAction(self, true)
 		return CombatActions[defAction]:GetActionDamage(unit, target, args)
 	end,
 	GetActionDescription = function (self, units)
@@ -4884,7 +4958,7 @@ PlaceObj('CombatAction', {
 		return CombatActionsAppendFreeAimActionName(self, unit, name)
 	end,
 	GetActionResults = function (self, unit, args)
-		local defAction = unit.ui_actions and unit.ui_actions[self.id .. "default"] or unit:ResolveDefaultFiringModeAction(self, true)
+		local defAction = unit.ui_actions and unit.ui_actions[self.IdDefault] or unit:ResolveDefaultFiringModeAction(self, true)
 		return CombatActions[defAction]:GetActionResults(unit, args)
 	end,
 	GetAttackWeapons = function (self, unit, args)
@@ -4896,6 +4970,7 @@ PlaceObj('CombatAction', {
 		return CombatActionGenericAttackGetUIState(self, units, args)
 	end,
 	Icon = "UI/Icons/Hud/attack",
+	IdDefault = "Attackdefault",
 	InterruptInExploration = true,
 	IsTargetableAttack = true,
 	KeybindingFromAction = "actionRedirectBasicAttack",
@@ -4903,7 +4978,7 @@ PlaceObj('CombatAction', {
 	RequireState = "any",
 	RequireWeapon = true,
 	Run = function (self, unit, ap, ...)
-		local defAction = unit.ui_actions and unit.ui_actions[self.id .. "default"] or unit:ResolveDefaultFiringModeAction(self, true)
+		local defAction = unit.ui_actions and unit.ui_actions[self.IdDefault] or unit:ResolveDefaultFiringModeAction(self, true)
 		return CombatActions[defAction]:Run(unit, ap, ...)
 	end,
 	ShowIn = "Special",
@@ -4929,15 +5004,15 @@ PlaceObj('CombatAction', {
 	DisplayNameShort = T(582378660435, --[[CombatAction AttackDual DisplayNameShort]] "Dual Shot"),
 	Execute = function (self, units, args)
 		local unit = units[1]
-		local defAction = unit.ui_actions and unit.ui_actions[self.id .. "default"] or unit:ResolveDefaultFiringModeAction(self, true)
+		local defAction = unit.ui_actions and unit.ui_actions[self.IdDefault] or unit:ResolveDefaultFiringModeAction(self, true)
 		return CombatActions[defAction]:Execute(units, args)
 	end,
 	GetAPCost = function (self, unit, args)
-		local defAction = unit.ui_actions and unit.ui_actions[self.id .. "default"] or unit:ResolveDefaultFiringModeAction(self, true)
+		local defAction = unit.ui_actions and unit.ui_actions[self.IdDefault] or unit:ResolveDefaultFiringModeAction(self, true)
 		return CombatActions[defAction]:GetAPCost(unit, args)
 	end,
 	GetActionDamage = function (self, unit, target, args)
-		local defAction = unit.ui_actions and unit.ui_actions[self.id .. "default"] or unit:ResolveDefaultFiringModeAction(self, true)
+		local defAction = unit.ui_actions and unit.ui_actions[self.IdDefault] or unit:ResolveDefaultFiringModeAction(self, true)
 		return CombatActions[defAction]:GetActionDamage(unit, target, args)
 	end,
 	GetActionDescription = function (self, units)
@@ -4953,7 +5028,7 @@ PlaceObj('CombatAction', {
 		return CombatActionsAppendFreeAimActionName(self, unit, name)
 	end,
 	GetActionResults = function (self, unit, args)
-		local defAction = unit.ui_actions and unit.ui_actions[self.id .. "default"] or unit:ResolveDefaultFiringModeAction(self, true)
+		local defAction = unit.ui_actions and unit.ui_actions[self.IdDefault] or unit:ResolveDefaultFiringModeAction(self, true)
 		return CombatActions[defAction]:GetActionResults(unit, args)
 	end,
 	GetAttackWeapons = function (self, unit, args)
@@ -4963,13 +5038,14 @@ PlaceObj('CombatAction', {
 		return CombatActionGenericAttackGetUIState(self, units, args)
 	end,
 	Icon = "UI/Icons/Hud/attack",
+	IdDefault = "AttackDualdefault",
 	IsTargetableAttack = true,
 	KeybindingFromAction = "actionRedirectBasicAttack",
 	MultiSelectBehavior = "first",
 	RequireState = "any",
 	RequireWeapon = true,
 	Run = function (self, unit, ap, ...)
-		local defAction = unit.ui_actions and unit.ui_actions[self.id .. "default"] or unit:ResolveDefaultFiringModeAction(self, true)
+		local defAction = unit.ui_actions and unit.ui_actions[self.IdDefault] or unit:ResolveDefaultFiringModeAction(self, true)
 		return CombatActions[defAction]:Run(unit, ap, ...)
 	end,
 	ShowIn = "Special",
@@ -4992,33 +5068,33 @@ PlaceObj('CombatAction', {
 	DisplayName = T(591280140960, --[[CombatAction AttackShotgun DisplayName]] "Shotgun Attack"),
 	Execute = function (self, units, args)
 		local unit = units[1]
-		local defAction = unit.ui_actions and unit.ui_actions[self.id .. "default"] or unit:ResolveDefaultFiringModeAction(self, true)
+		local defAction = unit.ui_actions and unit.ui_actions[self.IdDefault] or unit:ResolveDefaultFiringModeAction(self, true)
 		return CombatActions[defAction]:Execute(units, args)
 	end,
 	GetAPCost = function (self, unit, args)
-		local defAction = unit.ui_actions and unit.ui_actions[self.id .. "default"] or unit:ResolveDefaultFiringModeAction(self, true)
+		local defAction = unit.ui_actions and unit.ui_actions[self.IdDefault] or unit:ResolveDefaultFiringModeAction(self, true)
 		return CombatActions[defAction]:GetAPCost(unit, args)
 	end,
 	GetActionDamage = function (self, unit, target, args)
-		local defAction = unit.ui_actions and unit.ui_actions[self.id .. "default"] or unit:ResolveDefaultFiringModeAction(self, true)
+		local defAction = unit.ui_actions and unit.ui_actions[self.IdDefault] or unit:ResolveDefaultFiringModeAction(self, true)
 		return CombatActions[defAction]:GetActionDamage(unit, target, args)
 	end,
 	GetActionDescription = function (self, units)
 		local unit = units[1]
-		local defAction = unit.ui_actions and unit.ui_actions[self.id .. "default"] or unit:ResolveDefaultFiringModeAction(self, true)
+		local defAction = unit.ui_actions and unit.ui_actions[self.IdDefault] or unit:ResolveDefaultFiringModeAction(self, true)
 		return CombatActions[defAction]:GetActionDescription(units)
 	end,
 	GetActionDisplayName = function (self, units)
 		local unit = units[1]
-		local defAction = unit.ui_actions and unit.ui_actions[self.id .. "default"] or unit:ResolveDefaultFiringModeAction(self, true)
+		local defAction = unit.ui_actions and unit.ui_actions[self.IdDefault] or unit:ResolveDefaultFiringModeAction(self, true)
 		return CombatActions[defAction]:GetActionDisplayName(units)
 	end,
 	GetActionResults = function (self, unit, args)
-		local defAction = unit.ui_actions and unit.ui_actions[self.id .. "default"] or unit:ResolveDefaultFiringModeAction(self, true)
+		local defAction = unit.ui_actions and unit.ui_actions[self.IdDefault] or unit:ResolveDefaultFiringModeAction(self, true)
 		return CombatActions[defAction]:GetActionResults(unit, args)
 	end,
 	GetAimParams = function (self, unit, weapon)
-		local defAction = unit.ui_actions and unit.ui_actions[self.id .. "default"] or unit:ResolveDefaultFiringModeAction(self, true)
+		local defAction = unit.ui_actions and unit.ui_actions[self.IdDefault] or unit:ResolveDefaultFiringModeAction(self, true)
 		return CombatActions[defAction]:GetAimParams(unit, weapon)
 	end,
 	GetAttackWeapons = function (self, unit, args)
@@ -5029,20 +5105,21 @@ PlaceObj('CombatAction', {
 		return weapon.WeaponRange
 	end,
 	GetMinAimRange = function (self, unit, weapon)
-		local defAction = unit.ui_actions and unit.ui_actions[self.id .. "default"] or unit:ResolveDefaultFiringModeAction(self, true)
+		local defAction = unit.ui_actions and unit.ui_actions[self.IdDefault] or unit:ResolveDefaultFiringModeAction(self, true)
 		return CombatActions[defAction]:GetMinAimRange(unit, weapon)
 	end,
 	GetUIState = function (self, units, args)
 		return CombatActionGenericAttackGetUIState(self, units, args)
 	end,
 	Icon = "UI/Icons/Hud/attack",
+	IdDefault = "AttackShotgundefault",
 	IsTargetableAttack = true,
 	KeybindingFromAction = "actionRedirectBasicAttack",
 	MultiSelectBehavior = "first",
 	RequireState = "any",
 	RequireWeapon = true,
 	Run = function (self, unit, ap, ...)
-		local defAction = unit.ui_actions and unit.ui_actions[self.id .. "default"] or unit:ResolveDefaultFiringModeAction(self, true)
+		local defAction = unit.ui_actions and unit.ui_actions[self.IdDefault] or unit:ResolveDefaultFiringModeAction(self, true)
 		return CombatActions[defAction]:Run(unit, ap, ...)
 	end,
 	ShowIn = "Special",
@@ -5097,6 +5174,7 @@ PlaceObj('CombatAction', {
 		return canSwitch and "enabled" or "disabled", reason
 	end,
 	Icon = "UI/Hud/stances_up",
+	IdDefault = "StanceStandingdefault",
 	InterruptInExploration = true,
 	IsAimableAttack = false,
 	QueuedBadgeText = T(700088630352, --[[CombatAction StanceStanding QueuedBadgeText]] "CHANGE STANCE"),
@@ -5154,6 +5232,7 @@ PlaceObj('CombatAction', {
 		return canSwitch and "enabled" or "disabled", reason
 	end,
 	Icon = "UI/Hud/stances_middle",
+	IdDefault = "StanceCrouchdefault",
 	InterruptInExploration = true,
 	IsAimableAttack = false,
 	QueuedBadgeText = T(114028599146, --[[CombatAction StanceCrouch QueuedBadgeText]] "CHANGE STANCE"),
@@ -5215,6 +5294,7 @@ PlaceObj('CombatAction', {
 		return canSwitch and "enabled" or "disabled", reason
 	end,
 	Icon = "UI/Hud/stances_down",
+	IdDefault = "StancePronedefault",
 	InterruptInExploration = true,
 	IsAimableAttack = false,
 	QueuedBadgeText = T(438930896929, --[[CombatAction StanceProne QueuedBadgeText]] "CHANGE STANCE"),
@@ -5238,6 +5318,7 @@ PlaceObj('CombatAction', {
 	Comment = 'Placeholder action to allow controllable beasts who are in stance ""',
 	ConfigurableKeybind = false,
 	DisplayName = T(417850002799, --[[CombatAction Stance DisplayName]] "StanceStanding"),
+	IdDefault = "Stancedefault",
 	InterruptInExploration = true,
 	QueuedBadgeText = T(562909457289, --[[CombatAction Stance QueuedBadgeText]] "CHANGE STANCE"),
 	ShowIn = false,
@@ -5337,6 +5418,7 @@ PlaceObj('CombatAction', {
 		end
 		return "hidden"
 	end,
+	IdDefault = "Action1default",
 	IsAimableAttack = false,
 	RequireState = "any",
 	ResolveAction = function (self, context)
@@ -5449,6 +5531,7 @@ PlaceObj('CombatAction', {
 		end
 		return "hidden"
 	end,
+	IdDefault = "Action2default",
 	IsAimableAttack = false,
 	RequireState = "any",
 	ResolveAction = function (self, context)
@@ -5561,6 +5644,7 @@ PlaceObj('CombatAction', {
 		end
 		return "hidden"
 	end,
+	IdDefault = "Action3default",
 	IsAimableAttack = false,
 	RequireState = "any",
 	ResolveAction = function (self, context)
@@ -5673,6 +5757,7 @@ PlaceObj('CombatAction', {
 		end
 		return "hidden"
 	end,
+	IdDefault = "Action4default",
 	IsAimableAttack = false,
 	RequireState = "any",
 	ResolveAction = function (self, context)
@@ -5785,6 +5870,7 @@ PlaceObj('CombatAction', {
 		end
 		return "hidden"
 	end,
+	IdDefault = "Action5default",
 	IsAimableAttack = false,
 	RequireState = "any",
 	ResolveAction = function (self, context)
@@ -5898,6 +5984,7 @@ PlaceObj('CombatAction', {
 		end
 		return "hidden"
 	end,
+	IdDefault = "Action6default",
 	IsAimableAttack = false,
 	RequireState = "any",
 	ResolveAction = function (self, context)
@@ -6010,6 +6097,7 @@ PlaceObj('CombatAction', {
 		end
 		return "hidden"
 	end,
+	IdDefault = "Action7default",
 	IsAimableAttack = false,
 	RequireState = "any",
 	ResolveAction = function (self, context)
@@ -6122,6 +6210,7 @@ PlaceObj('CombatAction', {
 		end
 		return "hidden"
 	end,
+	IdDefault = "Action8default",
 	IsAimableAttack = false,
 	RequireState = "any",
 	ResolveAction = function (self, context)
@@ -6234,6 +6323,7 @@ PlaceObj('CombatAction', {
 		end
 		return "hidden"
 	end,
+	IdDefault = "Action9default",
 	IsAimableAttack = false,
 	RequireState = "any",
 	ResolveAction = function (self, context)
@@ -6346,6 +6436,7 @@ PlaceObj('CombatAction', {
 		end
 		return "hidden"
 	end,
+	IdDefault = "Action10default",
 	IsAimableAttack = false,
 	RequireState = "any",
 	ResolveAction = function (self, context)
@@ -6458,6 +6549,7 @@ PlaceObj('CombatAction', {
 		end
 		return "hidden"
 	end,
+	IdDefault = "Action11default",
 	IsAimableAttack = false,
 	RequireState = "any",
 	ResolveAction = function (self, context)
@@ -6570,6 +6662,7 @@ PlaceObj('CombatAction', {
 		end
 		return "hidden"
 	end,
+	IdDefault = "Action12default",
 	IsAimableAttack = false,
 	RequireState = "any",
 	ResolveAction = function (self, context)
@@ -6682,6 +6775,7 @@ PlaceObj('CombatAction', {
 		end
 		return "hidden"
 	end,
+	IdDefault = "Action13default",
 	IsAimableAttack = false,
 	KeybindingFromAction = "actionRedirectSignatureAbility",
 	RequireState = "any",
@@ -6759,6 +6853,7 @@ PlaceObj('CombatAction', {
 		return CombatActionGenericAttackGetUIState(self, units, args)
 	end,
 	Icon = "UI/Icons/Hud/remote_detonation",
+	IdDefault = "RemoteDetonationdefault",
 	IsAimableAttack = false,
 	KeybindingFromAction = "actionRedirectThrowGrenade",
 	MultiSelectBehavior = "first",
@@ -6843,6 +6938,7 @@ PlaceObj('CombatAction', {
 		return CombatActionGenericAttackGetUIState(self, units, args)
 	end,
 	Icon = "UI/Icons/Hud/throw_grenade",
+	IdDefault = "ThrowGrenadeAdefault",
 	IsAimableAttack = false,
 	KeybindingFromAction = "actionRedirectThrowGrenade",
 	MultiSelectBehavior = "first",
@@ -6918,6 +7014,7 @@ PlaceObj('CombatAction', {
 		return CombatActions.ThrowGrenadeA.GetUIState(self, units, args)
 	end,
 	Icon = "UI/Icons/Hud/throw_grenade",
+	IdDefault = "ThrowGrenadeBdefault",
 	IsAimableAttack = false,
 	KeybindingFromAction = "actionRedirectThrowGrenade",
 	MultiSelectBehavior = "first",
@@ -6993,6 +7090,7 @@ PlaceObj('CombatAction', {
 		return CombatActions.ThrowGrenadeA.GetUIState(self, units, args)
 	end,
 	Icon = "UI/Icons/Hud/throw_grenade",
+	IdDefault = "ThrowGrenadeCdefault",
 	IsAimableAttack = false,
 	KeybindingFromAction = "actionRedirectThrowGrenade",
 	MultiSelectBehavior = "first",
@@ -7068,6 +7166,7 @@ PlaceObj('CombatAction', {
 		return CombatActions.ThrowGrenadeA.GetUIState(self, units, args)
 	end,
 	Icon = "UI/Icons/Hud/throw_grenade",
+	IdDefault = "ThrowGrenadeDdefault",
 	IsAimableAttack = false,
 	KeybindingFromAction = "actionRedirectThrowGrenade",
 	MultiSelectBehavior = "first",
@@ -7144,6 +7243,7 @@ PlaceObj('CombatAction', {
 		return "enabled"
 	end,
 	Icon = "UI/Icons/Hud/stop_bleeding",
+	IdDefault = "Bandagedefault",
 	IsAimableAttack = false,
 	KeybindingFromAction = "actionRedirectBandage",
 	MoveStep = true,
@@ -7318,6 +7418,7 @@ PlaceObj('CombatAction', {
 		return "enabled"
 	end,
 	Icon = "UI/Icons/Hud/interact",
+	IdDefault = "Interactdefault",
 	InterruptInExploration = true,
 	IsAimableAttack = false,
 	QueuedBadgeText = T(560853521122, --[[CombatAction Interact QueuedBadgeText]] "INTERACT"),
@@ -7359,6 +7460,7 @@ PlaceObj('CombatAction', {
 		return "enabled"
 	end,
 	Icon = "UI/Icons/Hud/perk_building_confidence",
+	IdDefault = "BuildingConfidencedefault",
 	KeybindingFromAction = "actionRedirectSignatureAbility",
 	RequireState = "any",
 	Run = function (self, unit, ap, ...)
@@ -7456,6 +7558,7 @@ PlaceObj('CombatAction', {
 		return "enabled"
 	end,
 	Icon = "UI/Icons/Hud/perk_bullet_hell",
+	IdDefault = "BulletHelldefault",
 	IsAimableAttack = false,
 	KeybindingFromAction = "actionRedirectSignatureAbility",
 	MultiSelectBehavior = "first",
@@ -7509,6 +7612,7 @@ PlaceObj('CombatAction', {
 		return "enabled"
 	end,
 	Icon = "UI/Icons/Hud/perk_buns_perk",
+	IdDefault = "BunsPerkdefault",
 	KeybindingFromAction = "actionRedirectSignatureAbility",
 	RequireState = "any",
 	Run = function (self, unit, ap, ...)
@@ -7576,6 +7680,10 @@ PlaceObj('CombatAction', {
 		return weapon:GetOverwatchConeParam("MinRange")
 	end,
 	GetUIState = function (self, units, args)
+		if not g_Combat then
+			return "disabled", AttackDisableReasons.CombatOnly
+		end
+		
 		local unit = units[1]
 		local recharge = unit:GetSignatureRecharge(self.id)
 		if recharge then
@@ -7596,6 +7704,7 @@ PlaceObj('CombatAction', {
 		return state, reason
 	end,
 	Icon = "UI/Icons/Hud/perk_dance_for_me",
+	IdDefault = "DanceForMedefault",
 	KeybindingFromAction = "actionRedirectSignatureAbility",
 	MultiSelectBehavior = "first",
 	Parameters = {
@@ -7638,6 +7747,7 @@ PlaceObj('CombatAction', {
 		return "enabled"
 	end,
 	Icon = "UI/Icons/Hud/perk_danger_close",
+	IdDefault = "DangerClosedefault",
 	KeybindingFromAction = "actionRedirectSignatureAbility",
 	RequireState = "any",
 	Run = function (self, unit, ap, ...)
@@ -7669,6 +7779,7 @@ PlaceObj('CombatAction', {
 		return "enabled"
 	end,
 	Icon = "UI/Icons/Hud/perk_dedicated_camper",
+	IdDefault = "DedicatedCamperdefault",
 	KeybindingFromAction = "actionRedirectSignatureAbility",
 	RequireState = "any",
 	Run = function (self, unit, ap, ...)
@@ -7700,6 +7811,7 @@ PlaceObj('CombatAction', {
 		return "enabled"
 	end,
 	Icon = "UI/Icons/Hud/perk_designer_explosives",
+	IdDefault = "DesignerExplosivesdefault",
 	KeybindingFromAction = "actionRedirectSignatureAbility",
 	RequireState = "any",
 	Run = function (self, unit, ap, ...)
@@ -7815,6 +7927,7 @@ PlaceObj('CombatAction', {
 		return CombatActionGenericAttackGetUIState(self, units, args)
 	end,
 	Icon = "UI/Icons/Hud/perk_double_toss",
+	IdDefault = "DoubleTossAdefault",
 	IsAimableAttack = false,
 	KeybindingFromAction = "actionRedirectSignatureAbility",
 	MultiSelectBehavior = "first",
@@ -7902,6 +8015,7 @@ PlaceObj('CombatAction', {
 		return CombatActions.DoubleTossA.GetUIState(self, units, args)
 	end,
 	Icon = "UI/Icons/Hud/perk_double_toss",
+	IdDefault = "DoubleTossBdefault",
 	IsAimableAttack = false,
 	KeybindingFromAction = "actionRedirectSignatureAbility",
 	MultiSelectBehavior = "first",
@@ -7989,6 +8103,7 @@ PlaceObj('CombatAction', {
 		return CombatActions.DoubleTossA.GetUIState(self, units, args)
 	end,
 	Icon = "UI/Icons/Hud/perk_double_toss",
+	IdDefault = "DoubleTossCdefault",
 	IsAimableAttack = false,
 	KeybindingFromAction = "actionRedirectSignatureAbility",
 	MultiSelectBehavior = "first",
@@ -8076,6 +8191,7 @@ PlaceObj('CombatAction', {
 		return CombatActions.DoubleTossA.GetUIState(self, units, args)
 	end,
 	Icon = "UI/Icons/Hud/perk_double_toss",
+	IdDefault = "DoubleTossDdefault",
 	IsAimableAttack = false,
 	KeybindingFromAction = "actionRedirectSignatureAbility",
 	MultiSelectBehavior = "first",
@@ -8189,6 +8305,7 @@ PlaceObj('CombatAction', {
 		return "enabled"
 	end,
 	Icon = "UI/Icons/Hud/perk_exploding_palm",
+	IdDefault = "ExplodingPalmdefault",
 	IsTargetableAttack = true,
 	KeybindingFromAction = "actionRedirectSignatureAbility",
 	MoveStep = true,
@@ -8296,6 +8413,7 @@ PlaceObj('CombatAction', {
 		return state, reason
 	end,
 	Icon = "UI/Icons/Hud/perk_eyes_on_the_back",
+	IdDefault = "EyesOnTheBackdefault",
 	KeybindingFromAction = "actionRedirectSignatureAbility",
 	MultiSelectBehavior = "first",
 	Parameters = {
@@ -8339,6 +8457,7 @@ PlaceObj('CombatAction', {
 		return "enabled"
 	end,
 	Icon = "UI/Icons/Hud/perk_fleeting_shadow",
+	IdDefault = "FleetingShadowdefault",
 	KeybindingFromAction = "actionRedirectSignatureAbility",
 	RequireState = "any",
 	Run = function (self, unit, ap, ...)
@@ -8370,6 +8489,7 @@ PlaceObj('CombatAction', {
 		return "enabled"
 	end,
 	Icon = "UI/Icons/Hud/perk_fox_perk",
+	IdDefault = "FoxPerkdefault",
 	KeybindingFromAction = "actionRedirectSignatureAbility",
 	RequireState = "any",
 	Run = function (self, unit, ap, ...)
@@ -8494,6 +8614,7 @@ PlaceObj('CombatAction', {
 		return "enabled"
 	end,
 	Icon = "UI/Icons/Hud/perk_glory_hog",
+	IdDefault = "GloryHogdefault",
 	IsAimableAttack = false,
 	KeybindingFromAction = "actionRedirectSignatureAbility",
 	MultiSelectBehavior = "first",
@@ -8581,6 +8702,7 @@ PlaceObj('CombatAction', {
 		return CombatActionGenericAttackGetUIState(self, units, args)
 	end,
 	Icon = "UI/Icons/Hud/perk_grizzly_perk",
+	IdDefault = "GrizzlyPerkdefault",
 	IsTargetableAttack = true,
 	KeybindingFromAction = "actionRedirectSignatureAbility",
 	MultiSelectBehavior = "first",
@@ -8643,6 +8765,7 @@ PlaceObj('CombatAction', {
 		return "enabled"
 	end,
 	Icon = "UI/Icons/Hud/perk_grunty_perk",
+	IdDefault = "GruntyPerkdefault",
 	KeybindingFromAction = "actionRedirectSignatureAbility",
 	RequireState = "any",
 	Run = function (self, unit, ap, ...)
@@ -8679,6 +8802,7 @@ PlaceObj('CombatAction', {
 		return "enabled"
 	end,
 	Icon = "UI/Icons/Hud/perk_have_a_blast",
+	IdDefault = "HaveABlastdefault",
 	IsToggledOn = function (self, unit)
 		return unit and unit:GetEffectValue("HaveABlast") or false
 	end,
@@ -8715,6 +8839,7 @@ PlaceObj('CombatAction', {
 		return "enabled"
 	end,
 	Icon = "UI/Icons/Hud/perk_hawks_eye",
+	IdDefault = "HawksEyedefault",
 	KeybindingFromAction = "actionRedirectSignatureAbility",
 	RequireState = "any",
 	Run = function (self, unit, ap, ...)
@@ -8782,6 +8907,7 @@ PlaceObj('CombatAction', {
 		return CombatActionGenericAttackGetUIState(self, units, args)
 	end,
 	Icon = "UI/Icons/Hud/perk_hundred_knives",
+	IdDefault = "HundredKnivesdefault",
 	IsAimableAttack = false,
 	KeybindingFromAction = "actionRedirectSignatureAbility",
 	MultiSelectBehavior = "first",
@@ -8863,6 +8989,7 @@ PlaceObj('CombatAction', {
 		return CombatActionGenericAttackGetUIState(self, units, args)
 	end,
 	Icon = "UI/Icons/Hud/perk_ice_perk",
+	IdDefault = "IcePerkdefault",
 	KeybindingFromAction = "actionRedirectSignatureAbility",
 	MultiSelectBehavior = "first",
 	Parameters = {
@@ -8912,6 +9039,7 @@ PlaceObj('CombatAction', {
 		return "enabled"
 	end,
 	Icon = "UI/Icons/Hud/perk_inners_info",
+	IdDefault = "InnerInfodefault",
 	KeybindingFromAction = "actionRedirectSignatureAbility",
 	RequireState = "any",
 	Run = function (self, unit, ap, ...)
@@ -8943,6 +9071,7 @@ PlaceObj('CombatAction', {
 		return "enabled"
 	end,
 	Icon = "UI/Icons/Hud/perk_jack_of_all_trades",
+	IdDefault = "JackOfAllTradesdefault",
 	KeybindingFromAction = "actionRedirectSignatureAbility",
 	RequireState = "any",
 	Run = function (self, unit, ap, ...)
@@ -9001,6 +9130,7 @@ PlaceObj('CombatAction', {
 		return CombatActionGenericAttackGetUIState(self, units, args)
 	end,
 	Icon = "UI/Icons/Hud/perk_kalyna_perk",
+	IdDefault = "KalynaPerkdefault",
 	IsTargetableAttack = true,
 	KeybindingFromAction = "actionRedirectSignatureAbility",
 	MultiSelectBehavior = "first",
@@ -9045,6 +9175,7 @@ PlaceObj('CombatAction', {
 		return "enabled"
 	end,
 	Icon = "UI/Icons/Hud/perk_killing_wind",
+	IdDefault = "KillingWinddefault",
 	KeybindingFromAction = "actionRedirectSignatureAbility",
 	RequireState = "any",
 	Run = function (self, unit, ap, ...)
@@ -9076,6 +9207,7 @@ PlaceObj('CombatAction', {
 		return "enabled"
 	end,
 	Icon = "UI/Icons/Hud/perk_light_step",
+	IdDefault = "LightStepdefault",
 	KeybindingFromAction = "actionRedirectSignatureAbility",
 	RequireState = "any",
 	Run = function (self, unit, ap, ...)
@@ -9107,6 +9239,7 @@ PlaceObj('CombatAction', {
 		return "enabled"
 	end,
 	Icon = "UI/Icons/Hud/perk_make_them_bleed",
+	IdDefault = "MakeThemBleeddefault",
 	KeybindingFromAction = "actionRedirectSignatureAbility",
 	RequireState = "any",
 	Run = function (self, unit, ap, ...)
@@ -9138,6 +9271,7 @@ PlaceObj('CombatAction', {
 		return "enabled"
 	end,
 	Icon = "UI/Icons/Hud/perk_nails_perk",
+	IdDefault = "NailsPerkdefault",
 	KeybindingFromAction = "actionRedirectSignatureAbility",
 	RequireState = "any",
 	Run = function (self, unit, ap, ...)
@@ -9169,6 +9303,7 @@ PlaceObj('CombatAction', {
 		return "enabled"
 	end,
 	Icon = "UI/Icons/Hud/perk_natural_healing",
+	IdDefault = "NaturalHealingdefault",
 	KeybindingFromAction = "actionRedirectSignatureAbility",
 	RequireState = "any",
 	Run = function (self, unit, ap, ...)
@@ -9207,6 +9342,7 @@ PlaceObj('CombatAction', {
 		return "enabled"
 	end,
 	Icon = "UI/Icons/Hud/perk_nazdarovya",
+	IdDefault = "Nazdarovyadefault",
 	IsAimableAttack = false,
 	KeybindingFromAction = "actionRedirectSignatureAbility",
 	MultiSelectBehavior = "first",
@@ -9289,6 +9425,7 @@ PlaceObj('CombatAction', {
 		return CombatActionGenericAttackGetUIState(self, units, args)
 	end,
 	Icon = "UI/Icons/Hud/perk_on_my_target",
+	IdDefault = "OnMyTargetdefault",
 	IsAimableAttack = false,
 	KeybindingFromAction = "actionRedirectSignatureAbility",
 	MultiSelectBehavior = "first",
@@ -9365,6 +9502,7 @@ PlaceObj('CombatAction', {
 		return CombatActionGenericAttackGetUIState(self, units, args)
 	end,
 	Icon = "UI/Icons/Hud/perk_reckless_assault",
+	IdDefault = "RecklessAssaultdefault",
 	IsAimableAttack = false,
 	KeybindingFromAction = "actionRedirectSignatureAbility",
 	MultiSelectBehavior = "first",
@@ -9413,6 +9551,7 @@ PlaceObj('CombatAction', {
 		return "enabled"
 	end,
 	Icon = "UI/Icons/Hud/perk_second_man_story",
+	IdDefault = "SecondStoryMandefault",
 	KeybindingFromAction = "actionRedirectSignatureAbility",
 	RequireState = "any",
 	Run = function (self, unit, ap, ...)
@@ -9444,6 +9583,7 @@ PlaceObj('CombatAction', {
 		return "enabled"
 	end,
 	Icon = "UI/Icons/Hud/perk_shoulder_to_shoulder",
+	IdDefault = "ShoulderToShoulderdefault",
 	KeybindingFromAction = "actionRedirectSignatureAbility",
 	RequireState = "any",
 	Run = function (self, unit, ap, ...)
@@ -9475,6 +9615,7 @@ PlaceObj('CombatAction', {
 		return "enabled"
 	end,
 	Icon = "UI/Icons/Hud/perk_sidney_perk",
+	IdDefault = "SidneyPerkdefault",
 	KeybindingFromAction = "actionRedirectSignatureAbility",
 	RequireState = "any",
 	Run = function (self, unit, ap, ...)
@@ -9506,6 +9647,7 @@ PlaceObj('CombatAction', {
 		return "enabled"
 	end,
 	Icon = "UI/Icons/Hud/perk_spotter",
+	IdDefault = "Spotterdefault",
 	KeybindingFromAction = "actionRedirectSignatureAbility",
 	RequireState = "any",
 	Run = function (self, unit, ap, ...)
@@ -9600,6 +9742,7 @@ PlaceObj('CombatAction', {
 		return "enabled"
 	end,
 	Icon = "UI/Icons/Hud/perk_steroid_punch",
+	IdDefault = "SteroidPunchdefault",
 	IsTargetableAttack = true,
 	KeybindingFromAction = "actionRedirectSignatureAbility",
 	MoveStep = true,
@@ -9651,6 +9794,7 @@ PlaceObj('CombatAction', {
 		return "enabled"
 	end,
 	Icon = "UI/Icons/Hud/perk_tag_team",
+	IdDefault = "TagTeamdefault",
 	KeybindingFromAction = "actionRedirectSignatureAbility",
 	RequireState = "any",
 	Run = function (self, unit, ap, ...)
@@ -9709,6 +9853,7 @@ PlaceObj('CombatAction', {
 		return CombatActionGenericAttackGetUIState(self, units, args)
 	end,
 	Icon = "UI/Icons/Hud/perk_the_grim",
+	IdDefault = "TheGrimdefault",
 	IsTargetableAttack = true,
 	KeybindingFromAction = "actionRedirectSignatureAbility",
 	MultiSelectBehavior = "first",
@@ -9746,6 +9891,7 @@ PlaceObj('CombatAction', {
 		return "enabled"
 	end,
 	Icon = "UI/Icons/Hud/perk_vengeful_temperament",
+	IdDefault = "VengefulTemperamentdefault",
 	KeybindingFromAction = "actionRedirectSignatureAbility",
 	RequireState = "any",
 	Run = function (self, unit, ap, ...)
@@ -9777,6 +9923,7 @@ PlaceObj('CombatAction', {
 		return "enabled"
 	end,
 	Icon = "UI/Icons/Hud/perk_we_got_this",
+	IdDefault = "WeGotThisdefault",
 	KeybindingFromAction = "actionRedirectSignatureAbility",
 	RequireState = "any",
 	Run = function (self, unit, ap, ...)
@@ -9808,6 +9955,7 @@ PlaceObj('CombatAction', {
 		return "enabled"
 	end,
 	Icon = "UI/Icons/Hud/perk_weapon_personalization",
+	IdDefault = "WeaponPersonalizationdefault",
 	KeybindingFromAction = "actionRedirectSignatureAbility",
 	RequireState = "any",
 	Run = function (self, unit, ap, ...)
@@ -9839,6 +9987,7 @@ PlaceObj('CombatAction', {
 		return "enabled"
 	end,
 	Icon = "UI/Icons/Hud/perk_you_see_igor",
+	IdDefault = "YouSeeIgordefault",
 	KeybindingFromAction = "actionRedirectSignatureAbility",
 	RequireState = "any",
 	Run = function (self, unit, ap, ...)

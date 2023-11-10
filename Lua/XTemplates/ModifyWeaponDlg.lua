@@ -516,6 +516,7 @@ PlaceObj('XTemplate', {
 									'Id', "idCondition",
 									'IdNode', true,
 									'Margins', box(0, 1, 0, 0),
+									'HAlign', "left",
 									'LayoutMethod', "VList",
 									'ContextUpdateOnOpen', true,
 									'OnContextUpdate', function (self, context, ...)
@@ -623,6 +624,20 @@ PlaceObj('XTemplate', {
 								'LeftThumbScroll', false,
 								'SetFocusOnOpen', true,
 							}),
+							PlaceObj('XTemplateWindow', {
+								'comment', "controller hint",
+								'__context', function (parent, context) return "GamepadUIStyleChanged" end,
+								'__class', "XContextWindow",
+								'OnContextUpdate', function (self, context, ...)
+									local node = self:ResolveId("node")
+									local list = node.idWeaponParts
+									if GetUIStyleGamepad() then
+										list:SetSelection(1)
+									else
+										list:SetSelection(false)
+									end
+								end,
+							}),
 							}),
 						PlaceObj('XTemplateWindow', {
 							'__class', "XToolBarList",
@@ -632,6 +647,7 @@ PlaceObj('XTemplate', {
 							'Dock', "bottom",
 							'HAlign', "center",
 							'VAlign', "bottom",
+							'MinHeight', 50,
 							'LayoutHSpacing', 50,
 							'Background', RGBA(255, 255, 255, 0),
 							'Toolbar', "ActionBar",

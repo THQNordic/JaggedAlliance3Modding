@@ -199,11 +199,11 @@ function Unit:GetGender()
 end
 
 function Unit:SetState(anim, flags, crossfade, ...)
-	AnimChangeHook.SetState(self, anim, flags or 0, not GameState.loading and crossfade or 0, ...)
+	AnimChangeHook.SetState(self, anim, flags or 0, GameState.sync_loading and 0 or crossfade, ...)
 end
 
 function Unit:SetAnim(channel, anim, flags, crossfade, ...)
-	AnimChangeHook.SetAnim(self, channel, anim, flags or 0, not GameState.loading and crossfade or 0, ...)
+	AnimChangeHook.SetAnim(self, channel, anim, flags or 0, GameState.sync_loading and 0 or crossfade, ...)
 end
 
 function Unit:RotateAnim(angle, anim)
@@ -377,7 +377,7 @@ function Unit:IdleRotation(angle, time)
 end
 
 function Unit:AnimatedRotation(angle, base_idle)
-	if GameState.loading then
+	if GameState.sync_loading then
 		self:SetOrientationAngle(angle)
 		return
 	end
@@ -736,12 +736,10 @@ function AttachVisualItems(obj, attaches, crossfading, holster, avatar)
 			spot = GetItemAttachSpot(obj, item, attach.equip_index, holster, avatar) or cur_spot
 		end
 		if spot then
-			if spot ~= cur_spot then
-				if crossfading and not HolsterAttachSpots[spot] then
-					wait_crossfade = true
-				else
-					AttachVisualItem(obj, spot, attach)
-				end
+			if spot ~= cur_spot and crossfading and not HolsterAttachSpots[spot] then
+				wait_crossfade = true
+			else
+				AttachVisualItem(obj, spot, attach)
 			end
 			spot_attach[spot] = attach -- prefer displaying the other set weapon attaches
 			if item and item.class == "Gewehr98" and spot == "Weaponr" then
@@ -1172,7 +1170,7 @@ function Unit:AimTarget(attack_args, attack_results, prepare_to_attack)
 	local rotate_to_target = prepare_to_attack or IsValid(attack_args.target) and IsKindOf(attack_args.target, "Unit")
 	local aimIK = rotate_to_target and self:CanAimIK(weapon)
 	local stance = rotate_to_target and attack_args.stance or self.stance
-	local quick_play = GameState.loading or self:CanQuickPlayInCombat() 
+	local quick_play = GameState.sync_loading or self:CanQuickPlayInCombat() 
 	local idle_aiming
 
 	if not rotate_to_target and self.stance == "Prone" and attack_args.stance ~= "Prone" then
@@ -1388,6 +1386,11 @@ function Unit:AimTarget(attack_args, attack_results, prepare_to_attack)
 			if aimIK then
 				self:SetIK("AimIK", aim_pos)
 			end
+		end
+	else
+		if self.return_pos then
+			local prefix = string.match(aim_anim, "^(%a+_).*") or self:GetWeaponAnimPrefix()
+			self:ReturnToCover(prefix)
 		end
 	end
 
@@ -1913,7 +1916,11 @@ function Unit:TryGetActionAnim(action, stance, action_suffix)
 			prefix = action_prefix_map[prefix]
 		end
 	else
-		stance = ""
+		if stance == "Downed" then
+			action = "Downed"
+		else
+			stance = ""
+		end
 		if action == "Idle" then
 			if self.species == "Hyena" then
 				action_full = "idle_Combat"
@@ -1933,7 +1940,10 @@ function Unit:TryGetActionAnim(action, stance, action_suffix)
 	end
 	-- fallback
 	if action == "Downed" then
-		return "civ_DeathOnSpot_F"
+		if self.species == "Human" then
+			return "civ_DeathOnSpot_F"
+		end
+		return "death"
 	end
 	local fallback_prefix = self:GetWeaponAnimPrefixFallback()
 	if fallback_prefix ~= prefix then

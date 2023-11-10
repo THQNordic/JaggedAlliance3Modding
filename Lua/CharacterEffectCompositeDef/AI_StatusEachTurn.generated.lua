@@ -7,31 +7,11 @@ DefineClass.AI_StatusEachTurn = {
 
 
 	object_class = "Perk",
-	msg_reactions = {
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "unit",
-			Event = "UnitBeginTurn",
-			Handler = function (self, unit)
-				
-				local function exec(self, unit)
-				unit:AddStatusEffect("AI_AdditionalAP")
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "UnitBeginTurn" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, unit)
-				end
-				
-				if self:VerifyReaction("UnitBeginTurn", reaction_def, unit, unit) then
-					exec(self, unit)
-				end
-			end,
-			HandlerCode = function (self, unit)
-				unit:AddStatusEffect("AI_AdditionalAP")
+	unit_reactions = {
+		PlaceObj('UnitReaction', {
+			Event = "OnBeginTurn",
+			Handler = function (self, target)
+				target:AddStatusEffect("AI_AdditionalAP")
 			end,
 		}),
 	},

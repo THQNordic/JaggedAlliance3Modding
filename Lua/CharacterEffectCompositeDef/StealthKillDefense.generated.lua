@@ -7,6 +7,16 @@ DefineClass.StealthKillDefense = {
 
 
 	object_class = "Perk",
+	unit_reactions = {
+		PlaceObj('UnitReaction', {
+			Event = "OnCalcStealthKillChance",
+			Handler = function (self, target, value, attacker, attack_target, weapon, target_spot_group, aim)
+				if target == attack_target then
+					return value - self:ResolveValue("kill_chance_mod")
+				end
+			end,
+		}),
+	},
 	DisplayName = T(244885740800, --[[CharacterEffectCompositeDef StealthKillDefense DisplayName]] "Stealth Kill Defense"),
 	Description = T(357534233574, --[[CharacterEffectCompositeDef StealthKillDefense Description]] "Stealth Kill chance against this character reduced by <percent(kill_chance_mod)>."),
 	Icon = "UI/Icons/Perks/Inescapable",

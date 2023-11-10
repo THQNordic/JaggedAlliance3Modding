@@ -1185,12 +1185,13 @@ PlaceObj('Conversation', {
 			PlaceObj('QuestIsVariableBool', {
 				QuestId = "Smiley",
 				Vars = set({
+	BossDead = false,
 	MollieDead = false,
 	Mollie_stay = true,
 }),
 				__eval = function ()
 					local quest = gv_Quests['Smiley'] or QuestGetState('Smiley')
-					return not quest.MollieDead and quest.Mollie_stay
+					return not quest.BossDead and not quest.MollieDead and quest.Mollie_stay
 				end,
 			}),
 		},

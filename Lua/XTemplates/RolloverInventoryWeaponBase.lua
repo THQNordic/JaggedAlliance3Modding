@@ -390,7 +390,7 @@ PlaceObj('XTemplate', {
 							self.idWeaponTypeCaliber:SetText(T{106798463585, "Empty <name>", name = Presets.Caliber.Default[cnt.Caliber].Name})
 						end
 						self.idAmount:SetContext(cnt)
-						self.idAmount:SetText(cnt:GetItemSlotUI())
+						self.idAmount:SetText(cnt:GetItemSlotUI("main only"))
 					end,
 				}, {
 					PlaceObj('XTemplateWindow', {
@@ -448,7 +448,7 @@ PlaceObj('XTemplate', {
 							self.idWeaponTypeCaliber:SetText(T{106798463585, "Empty <name>", name = Presets.Caliber.Default[cnt.Caliber].Name})
 						end
 						self.idAmount:SetContext(cnt)
-						self.idAmount:SetText(cnt:GetItemSlotUI())
+						self.idAmount:SetText(cnt:GetItemSlotUI("main only"))
 					end,
 				}, {
 					PlaceObj('XTemplateWindow', {

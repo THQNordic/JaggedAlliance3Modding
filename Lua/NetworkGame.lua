@@ -1,7 +1,7 @@
 local old_NetWaitGameStart = NetWaitGameStart
 g_dbgFasterNetJoin = false --Platform.developer
 function NetWaitGameStart(timeout)
-	if not NetIsConnected() then return "disconnected" end
+	if not netInGame then return "disconnected" end
 	if netGamePlayers and table.count(netGamePlayers) <= 1 then
 		--something fucks up in this scenario, when a player has left and we try to load a new game
 		--server never starts the game even though we say we are ready
@@ -91,7 +91,7 @@ end
 
 function LoadNetGame(game_type, game_data, metadata)
 	local success, err = sprocall(_LoadNetGame, game_type, game_data, metadata)
-	return not success and err or false
+	return not success and "failed sprocall" or err -- or false
 end
 
 function _LoadNetGame(game_type, game_data, metadata)
@@ -102,7 +102,7 @@ function _LoadNetGame(game_type, game_data, metadata)
 	--this seems the easiest solution in this case, to wait for sync part to finish up and then load
 	NetSyncEventFence()
 	
-	SectorLoadingScreenOpen(GetLoadingScreenParamsFromMetadata(metadata))
+	SectorLoadingScreenOpen(GetLoadingScreenParamsFromMetadata(metadata, "load net game"))
 	WaitChangeMapDone()
 	
 	Msg("PreLoadNetGame")
@@ -118,7 +118,8 @@ function _LoadNetGame(game_type, game_data, metadata)
 	if not err then
 		Msg("NetGameLoaded")
 	end
-	SectorLoadingScreenClose(GetLoadingScreenParamsFromMetadata(metadata))
+	SectorLoadingScreenClose(GetLoadingScreenParamsFromMetadata(metadata, "load net game"))
+	return err
 end
 
 function NetEvents.LoadGame(game_type, game_data, metadata)
@@ -129,6 +130,8 @@ function NetEvents.LoadGame(game_type, game_data, metadata)
 		local err
 		if metadata and metadata.campaign and not CampaignPresets[metadata.campaign] then
 			err = "missing campaign"
+		elseif not IsInMultiplayerGame() then
+			err = "connection lost before load game"
 		else
 			err = LoadNetGame(game_type, Decompress(game_data), metadata)
 		end
@@ -138,21 +141,7 @@ function NetEvents.LoadGame(game_type, game_data, metadata)
 		if err then
 			print("NetWaitGameStart failed:", err)
 			NetLeaveGame(err)
-			
-			-- force close loading screen (it fails to be closed under normal circumstances with reason "sync")
-			while #LoadingScreenLog > 0 do
-				local dlg = GetDialog(LoadingScreenLog[#LoadingScreenLog])
-				local id = dlg:GetId()
-				local reason = false
-				for r, _ in pairs(dlg:GetOpenReasons()) do
-					reason = r
-				end
-				-- print("Forcing close open dialog. Id: " .. tostring(id or "") .. " reason: " .. tostring(reason or ""))
-				LoadingScreenClose(id, reason)
-			end
-			Sleep(10)
 			OpenPreGameMainMenu("")
-			WaitLoadingScreenClose()
 			ShowMPLobbyError("disconnect-after-leave-game", err)
 		end
 	end)
@@ -170,7 +159,8 @@ function OnMsg.NetGameJoined(game_id, unique_id)
 end
 
 function StartHostedGame(game_type, game_data, metadata)
-	if not netInGame then 
+	local wasInMultiplayerGame = IsInMultiplayerGame()
+	if not netInGame then
 		OpenPreGameMainMenu("")
 		WaitLoadingScreenClose() 
 		ShowMPLobbyError("connect", "disconnected")
@@ -187,40 +177,18 @@ function StartHostedGame(game_type, game_data, metadata)
 		game_data = "return " .. game_data
 	end
 	local err = NetEvent("LoadGame", game_type, Compress(game_data), metadata)
-	if err then
-		print("NetEvent failed:", err)
-	else
-		err = LoadNetGame(game_type, game_data, metadata)
-		if err then
-			print("LoadNetGame failed:", err)
-			OpenPreGameMainMenu("")
-		else
-			--TODO: enter sector already calls this, so if it timeouted there its gona have to timeout here as well before we actually do something
-			err = NetWaitGameStart()
-			if err then
-				print("NetWaitGameStart failed:", err)
-				NetLeaveGame(err)
-				
-				-- force close loading screen (it fails to be closed under normal circumstances with reason "sync")
-				while #LoadingScreenLog > 0 do
-					local dlg = GetDialog(LoadingScreenLog[#LoadingScreenLog])
-					local id = dlg:GetId()
-					local reason = false
-					for r, _ in pairs(dlg:GetOpenReasons()) do
-						reason = r
-					end
-					-- print("Forcing close open dialog. Id: " .. tostring(id or "") .. " reason: " .. tostring(reason or ""))
-					LoadingScreenClose(id, reason)
-				end
-				Sleep(10)
-				
-				OpenPreGameMainMenu("")
-				WaitLoadingScreenClose()
-				ShowMPLobbyError("disconnect-after-leave-game", err)
-			end
-		end
+	if err then print("NetEvent failed:", err)
+	elseif not netInGame or wasInMultiplayerGame ~= IsInMultiplayerGame() then
+		err = "connection lost before load game"
 	end
-	if err then NetLeaveGame("host error") end
+	err = err or LoadNetGame(game_type, game_data, metadata)
+	--TODO: enter sector already calls this, so if it timeouted there its gona have to timeout here as well before we actually do something
+	err = err or NetWaitGameStart()
+	if err then
+		NetLeaveGame(err)
+		OpenPreGameMainMenu("")
+		ShowMPLobbyError("disconnect-after-leave-game", err)
+	end
 	Resume("net")
 	LoadingScreenClose(GetLoadingScreenParamsFromMetadata(metadata, "host game"))
 	return err
@@ -816,6 +784,14 @@ if FirstLoad then
 	g_NetSyncFenceWaiting = false
 	g_NetSyncFenceInitBuffer = false
 end
+
+function OnMsg.DoneGame()
+	--the fenced thread, if any, should be killed by its handlers, so we just need to clean up
+	g_NetSyncFence = false
+	g_NetSyncFenceWaiting = false
+	g_NetSyncFenceInitBuffer = false
+end
+
 function OnMsg.SyncLoadingDone()
 	if g_NetSyncFenceWaiting then
 		return
@@ -1535,4 +1511,20 @@ function OnMsg.NetGameJoined()
 	if dlg and (dlg.window_state == "open" or dlg.window_state == "closing") then
 		dlg:Close()
 	end
+end
+------------------------------wind
+--override from common wind.lua
+function UpdateWindAffected(sync)
+	if IsInMultiplayerGame() and not sync then
+		FireNetSyncEventOnHost("UpdateWindAffected")
+		return
+	end
+
+	MapForEach("map", "WindAffected", function(obj)
+		obj:UpdateWind(sync)
+	end)
+end
+
+function NetSyncEvents.UpdateWindAffected()
+	UpdateWindAffected("sync")
 end

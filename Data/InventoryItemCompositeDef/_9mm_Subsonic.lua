@@ -10,6 +10,13 @@ PlaceObj('InventoryItemCompositeDef', {
 	'colorStyle', "AmmoMatchColor",
 	'Description', T(571319448676, --[[InventoryItemCompositeDef _9mm_Subsonic Description]] "9 mm ammo for Handguns and SMGs."),
 	'AdditionalHint', T(368177980365, --[[InventoryItemCompositeDef _9mm_Subsonic AdditionalHint]] "<bullet_point> Less noisy"),
+	'Cost', 45,
+	'CanAppearInShop', true,
+	'Tier', 3,
+	'MaxStock', 5,
+	'RestockWeight', 25,
+	'CategoryPair', "9mm",
+	'ShopStackSize', 30,
 	'MaxStacks', 500,
 	'Caliber', "9mm",
 	'Modifications', {

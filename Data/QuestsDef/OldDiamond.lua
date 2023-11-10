@@ -232,6 +232,9 @@ PlaceObj('QuestsDef', {
 						}),
 					},
 				}),
+				PlaceObj('UnitIsOnMap', {
+					TargetUnit = "LegionImpostors",
+				}),
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "OldDiamond",
 					Vars = set({

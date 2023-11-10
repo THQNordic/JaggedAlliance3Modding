@@ -10,5 +10,10 @@ PlaceObj('InventoryItemCompositeDef', {
 	'DisplayName', T(769361191527, --[[InventoryItemCompositeDef Combination_Detonator_Proximity DisplayName]] "Proximity Detonator"),
 	'DisplayNamePlural', T(987265330942, --[[InventoryItemCompositeDef Combination_Detonator_Proximity DisplayNamePlural]] "Proximity Detonators"),
 	'AdditionalHint', T(109181575240, --[[InventoryItemCompositeDef Combination_Detonator_Proximity AdditionalHint]] "<bullet_point> Can be combined with TNT, C4, and PETN\n<bullet_point> Proximity explosives detonate when an enemy moves nearby"),
+	'Cost', 400,
+	'CanAppearInShop', true,
+	'Tier', 2,
+	'RestockWeight', 30,
+	'CategoryPair', "Components",
 })
 

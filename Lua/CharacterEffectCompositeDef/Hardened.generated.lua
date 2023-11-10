@@ -7,40 +7,15 @@ DefineClass.Hardened = {
 
 
 	object_class = "Perk",
-	msg_reactions = {
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "unit",
-			Event = "UnitEndTurn",
-			Handler = function (self, unit)
-				
-				local function exec(self, unit)
-				local ap = Min(self:ResolveValue("maxReservedAP"), unit:GetUIScaledAP())
+	unit_reactions = {
+		PlaceObj('UnitReaction', {
+			Event = "OnEndTurn",
+			Handler = function (self, target)
+				local ap = Min(self:ResolveValue("maxReservedAP"), target:GetUIScaledAP())
 				if ap > 0 then
-					unit:ApplyTempHitPoints(ap * self:ResolveValue("tempHPperAP"))
-					unit:AddStatusEffect("ReservedAP")
-					unit:SetEffectValue("reserved_ap", ap * const.Scale.AP)
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "UnitEndTurn" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, unit)
-				end
-				
-				if self:VerifyReaction("UnitEndTurn", reaction_def, unit, unit) then
-					exec(self, unit)
-				end
-			end,
-			HandlerCode = function (self, unit)
-				local ap = Min(self:ResolveValue("maxReservedAP"), unit:GetUIScaledAP())
-				if ap > 0 then
-					unit:ApplyTempHitPoints(ap * self:ResolveValue("tempHPperAP"))
-					unit:AddStatusEffect("ReservedAP")
-					unit:SetEffectValue("reserved_ap", ap * const.Scale.AP)
+					target:ApplyTempHitPoints(ap * self:ResolveValue("tempHPperAP"))
+					target:AddStatusEffect("ReservedAP")
+					target:SetEffectValue("reserved_ap", ap * const.Scale.AP)
 				end
 			end,
 		}),

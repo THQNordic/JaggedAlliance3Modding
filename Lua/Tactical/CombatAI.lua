@@ -2225,9 +2225,10 @@ function AIPrecalcLandmineZones(context)
 	end
 	if not context.mine_zones then
 		local unit = context.unit
-		local max_range = weapon.WeaponRange * const.SlabSizeX
-		local landmines = MapGet(unit, unit:GetSightRadius(), "Landmine", function(o, unit) 
-			return IsCloser(o, unit, max_range + 1) and o:SeenBy(unit)
+		local sight = unit:GetSightRadius()
+		local max_range = Min(weapon.WeaponRange * const.SlabSizeX, sight)
+		local landmines = MapGet(unit, max_range, "Landmine", function(o, unit) 
+			return o:SeenBy(unit)
 		end, unit)
 		local zones = {}
 		for _, mine in ipairs(landmines) do
@@ -2341,6 +2342,7 @@ function AIGetNextPhaseUnits(units, max)
 end
 
 function IsMeleeRangeTarget(attacker, attack_pos, attack_stance, target, target_pos, target_stance, attacker_face_angle)
+	if not IsValidTarget(target) then return end
 	if IsSittingUnit(target) then
 		target_pos = target_pos or target.last_visit:GetPos()
 		target_stance = "Crouch"

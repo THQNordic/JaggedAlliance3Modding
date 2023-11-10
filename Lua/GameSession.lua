@@ -55,7 +55,6 @@ GameVar("gv_SatelliteView", false)
 GameVar("gv_Sectors", {})
 GameVar("gv_ConflictSectorIds", {})
 GameVar("gv_Cities", {})
-GameVar("gv_Sides", {})
 GameVar("gv_Squads", {})
 GameVar("gv_UnitData", {})
 GameVar("gv_Quests", {})
@@ -282,7 +281,7 @@ end
 function ClearAllSuffixReasons(reasons)
 	local suffixReasons = GetAllSuffixReasons(reasons)
 	for i, sR in ipairs(suffixReasons) do
-		reasons[sR] = false
+		reasons[sR] = nil
 	end
 end
 
@@ -333,6 +332,20 @@ function DoPauseReasonsContainRemotePlayerOnlyPause(reasons)
 		return has_his and not has_mine, his_reason
 	end
 	return false
+end
+
+function IsCampaignPausedByRemoteBobbyRayOnly()
+	if not netInGame then return false end
+	local his_suffix = NetIsHost() and guest_suffix or host_suffix
+	local my_suffix = NetIsHost() and host_suffix or guest_suffix
+	for k, v in pairs(CampaignPauseReasons) do
+		if v and type(k) == "string" then
+			if not string.match(k, "PDABrowserBobbyRay") and string.match(k, his_suffix) then
+				return false
+			end
+		end
+	end
+	return true
 end
 
 function NetSyncEvents.SetCampaignSpeed(speed, reason)
@@ -505,6 +518,7 @@ function GenerateMultiplayerGuestCampaignName()
 end
 
 function LoadGameSessionData(data, metadata)
+	local wasInMultiplayerGame = IsInMultiplayerGame()
 	collectgarbage("stop")
 	SkipAnySetpieces()
 	ChangeGameState( { loading_savegame = true } )
@@ -606,8 +620,17 @@ function LoadGameSessionData(data, metadata)
 			OpenSatelliteView(nil, (InitialConflictNotStarted() and not AnyPlayerSquads()) and "openLandingPage", "force_loading", "wait")
 		end
 		
+		local abort_threshold = 5 * 40 -- 40 seconds eyeballed
+		local count = 0
 		while IsChangingMap() or GetMap() == "" do
 			WaitMsg("ChangeMapDone", 200)
+			if GetMap() == "" and (IsInMultiplayerGame() ~= wasInMultiplayerGame or count >= abort_threshold) then
+				ChangeGameState( { loading_savegame = false } )
+				collectgarbage("collect")
+				collectgarbage("restart")
+				return "lost connection or timed out during LoadGameSessionData"
+			end
+			count = count + 1
 		end
 		Msg("LoadSessionData")
 	end
@@ -632,13 +655,36 @@ function LoadGameSessionData(data, metadata)
 	return err
 end
 
+function CreateSessionCampaignObject(obj, class, session_objs, template_key)
+	local id = obj.Id
+	if not session_objs[id] then
+		session_objs[id] = class:new{template_key = template_key}
+		session_objs[id]:SetId(id)
+	end
+end
+
+function DeleteSessionCampaignObject(obj, class, session_objs)
+	local id = obj.Id
+	if session_objs[id] then
+		session_objs[id]:delete()
+		session_objs[id] = nil
+	end
+end
+
 function InitSessionCampaignObjects(class, session_objs, template_key)
-	local campaign_objs = CampaignPresets[Game.Campaign][template_key]
+	local campaign_objs = CampaignPresets[Game.Campaign][template_key] or empty_table
 	for i = 1, #campaign_objs do
-		local id = campaign_objs[i].Id
+		CreateSessionCampaignObject(campaign_objs[i], class, session_objs, template_key)
+	end
+end
+
+function PatchSessionCampaignObjects(class, session_objs, template_key)
+	local campaign_objs = CampaignPresets[Game.Campaign][template_key] or empty_table
+	for i = 1, #campaign_objs do
+		local obj = campaign_objs[i]
+		local id = obj.Id
 		if not session_objs[id] then
-			session_objs[id] = class:new{template_key = template_key}
-			session_objs[id]:SetId(id)
+			CreateSessionCampaignObject(obj, class, session_objs, template_key)
 		end
 	end
 end
@@ -702,7 +748,6 @@ function NewGameSession(campaign, new_game_params)
 
 	InitSessionCampaignObjects(SatelliteSector, gv_Sectors, "Sectors")
 	InitSessionCampaignObjects(CampaignCity, gv_Cities, "Cities")
-	InitSessionCampaignObjects(CampaignSide, gv_Sides, "Sides")
 	ForEachMerc(function(mId)
 		CreateUnitData(mId, mId, InteractionRand())
 	end)
@@ -737,16 +782,18 @@ function StartCampaign(campaign_id, new_game_params)
 	LoadingScreenClose("idLoadingScreen", "new game")
 end
 
-function QuickStartCampaign(campaign_id, new_game_params)
+function QuickStartCampaign(campaign_id, new_game_params, initSector)
+	EditorDeactivate()
+	
 	local campaign = CampaignPresets[campaign_id or false] or GetCurrentCampaignPreset()
-	local init_sector = campaign.InitialSector
+	local init_sector = initSector or campaign.InitialSector
 	ClearItemIdData()
 	NewGameSession(campaign, new_game_params)
 	ForEachPreset("GameRuleDef", function(rule)
 		if rule.init_as_active then
 			Game:AddGameRule(rule.id)
 		end
-	end)	
+	end)
 	SectorLoadingScreenOpen("idQuickStartCampaign", "quick start", init_sector)
 	MapForEach("map", "Unit", DoneObject)
 	Game.Money = const.Satellite.StartingMoneyQuickStart
@@ -755,6 +802,7 @@ function QuickStartCampaign(campaign_id, new_game_params)
 	CreateNewSatelliteSquad({Side = "player1", CurrentSector = init_sector, Name = SquadName:GetNewSquadName("player1")}, unit_ids, 14, 1234567)
 	for _, unitId in ipairs(unit_ids) do
 		Msg("MercHired", unitId, 1234, 14)
+		gv_UnitData[unitId]:CallReactions("OnMercHired", 1234, 14)
 		SetMercStateFlag(unitId, "CurrentDailySalary", DivRound(1234, 14))
 	end
 	
@@ -796,6 +844,10 @@ function CanLoadGame()
 		or IsGameReplayRecording()
 		or AutosaveRequest
 		or GetGameBlockingLoadingScreen()
+		or g_PhotoMode
+		or GetDialog("Intro")
+		or GetDialog("Outro")
+		or GetDialog("DemoOutro")
 	then 
 		return false 
 	end
@@ -1412,7 +1464,7 @@ function TimersUpdateTime(delta)
 end
 
 function OnMsg.CombatStart()
-	TimersUpdateTime()
+	TimersUpdateTime(0)
 end
 
 function OnMsg.CombatEnd()

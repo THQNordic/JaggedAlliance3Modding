@@ -13,9 +13,14 @@ DefineClass.Knife_Sharpened = {
 	SubIcon = "UI/Icons/Weapons/sharpened",
 	DisplayName = T(103890682555, --[[InventoryItemCompositeDef Knife_Sharpened DisplayName]] "Sharpened Knife"),
 	DisplayNamePlural = T(827013008238, --[[InventoryItemCompositeDef Knife_Sharpened DisplayNamePlural]] "Sharpened Knives"),
+	Description = T(532298495145, --[[InventoryItemCompositeDef Knife_Sharpened Description]] "Nothing like being up close and personal."),
 	AdditionalHint = T(851425884559, --[[InventoryItemCompositeDef Knife_Sharpened AdditionalHint]] "<bullet_point> Sharpened - high damage\n<bullet_point> Low attack costs"),
 	UnitStat = "Dexterity",
-	Cost = 200,
+	Cost = 1200,
+	CanAppearInShop = true,
+	Tier = 2,
+	MaxStock = 1,
+	RestockWeight = 15,
 	BaseChanceToHit = 100,
 	BaseDamage = 18,
 	AimAccuracy = 15,
@@ -27,5 +32,6 @@ DefineClass.Knife_Sharpened = {
 	Noise = 1,
 	Entity = "Weapon_FC_AMZ_Knife_01",
 	HolsterSlot = "Leg",
+	CanAppearUsed = false,
 }
 

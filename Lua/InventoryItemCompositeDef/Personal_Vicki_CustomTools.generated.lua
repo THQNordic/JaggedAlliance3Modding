@@ -14,6 +14,7 @@ DefineClass.Personal_Vicki_CustomTools = {
 	AdditionalHint = T(144173216875, --[[InventoryItemCompositeDef Personal_Vicki_CustomTools AdditionalHint]] "<bullet_point> Unlocks doors and containers (based on Mechanical)\n<bullet_point> Bonus to skill checks for picking locks\n<bullet_point> Loses Condition after each use\n<bullet_point> Can be repaired\n<bullet_point> Used automatically from the Inventory"),
 	UnitStat = "Mechanical",
 	locked = true,
+	RestockWeight = 0,
 	skillCheckPenalty = -10,
 }
 

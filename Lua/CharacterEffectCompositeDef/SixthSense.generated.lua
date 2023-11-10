@@ -7,42 +7,16 @@ DefineClass.SixthSense = {
 
 
 	object_class = "Perk",
-	msg_reactions = {
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "unit",
-			Event = "UnitEndTurn",
-			Handler = function (self, unit)
-				
-				local function exec(self, unit)
+	unit_reactions = {
+		PlaceObj('UnitReaction', {
+			Event = "OnEndTurn",
+			Handler = function (self, target)
 				local cover_id
-				if g_Combat and unit:IsAware() then
-					cover_id = GetHighestCover(unit)
+				if g_Combat and target:IsAware() then
+					cover_id = GetHighestCover(target)
 				end
 				if not cover_id and g_Combat:AreEnemiesAware(g_CurrentTeam) then
-					unit:ApplyTempHitPoints(self:ResolveValue("tempHitPoints"))
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "UnitEndTurn" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, unit)
-				end
-				
-				if self:VerifyReaction("UnitEndTurn", reaction_def, unit, unit) then
-					exec(self, unit)
-				end
-			end,
-			HandlerCode = function (self, unit)
-				local cover_id
-				if g_Combat and unit:IsAware() then
-					cover_id = GetHighestCover(unit)
-				end
-				if not cover_id and g_Combat:AreEnemiesAware(g_CurrentTeam) then
-					unit:ApplyTempHitPoints(self:ResolveValue("tempHitPoints"))
+					target:ApplyTempHitPoints(self:ResolveValue("tempHitPoints"))
 				end
 			end,
 		}),

@@ -271,67 +271,73 @@ function OnMsg.GameExitEditor()
 	end
 end
 
-function GetUnitFloor(unitPos)
-	local tile, z = WalkableSlabByPoint(unitPos)
-	return IsKindOf(tile, "Slab") and tile.room and tile.floor or WallInvisibilityGetCamFloor(unitPos, z)
+function GetUnitFloor(posx, posy, posz)
+	local tile, z = WalkableSlabByPoint(posx, posy, posz)
+	return IsKindOf(tile, "Slab") and tile.room and tile.floor or WallInvisibilityGetCamFloor(posx, posy, posz, z)
 end
 
 function C_GetSlabFloor(slab)
-	return IsKindOf(slab, "Slab") and slab.room and slab.floor or WallInvisibilityGetCamFloor(slab:GetPos())
+	return IsKindOf(slab, "Slab") and slab.room and slab.floor or WallInvisibilityGetCamFloor(slab:GetPosXYZ())
 end
 
-function WallInvisibilityGetCamFloor(pos, terrainZ)
-	terrainZ = terrainZ or terrain.GetHeight(pos)
-	return ((pos:z() or terrainZ) - terrainZ) / hr.CameraTacFloorHeight + 1
+function WallInvisibilityGetCamFloor(posx, posy, posz, terrainZ)
+	local h = posz and posz - (terrainZ or terrain.GetHeight(posx, posy)) or 0
+	return h > 0 and h / hr.CameraTacFloorHeight + 1 or 1
 end
 
-function WallInvisibilityGetCamFloorRounded(pos)
-	local terrainZ = terrain.GetHeight(pos)
-	return ((pos:z() or terrainZ) - terrainZ + hr.CameraTacFloorHeight / 2) / hr.CameraTacFloorHeight + 1
+function WallInvisibilityGetCamFloorRounded(posx, posy, posz, terrainZ)
+	local h = posz and posz - (terrainZ or terrain.GetHeight(posx, posy)) or 0
+	return h > 0 and DivRound(h, hr.CameraTacFloorHeight) + 1 or 1
 end
 
-function GetFloorOfPos(pos)
-	if not pos then return end
-	local z
-	if pos:IsValidZ() then
-		local tile
-		tile, z = WalkableSlabByPoint(pos, true)
-		--camera floor is zero based and tile floor is not, thats why there is -1 everywhere;
+function GetStepFloor(obj_or_pos)
+	if not obj_or_pos then
+		return 0
+	end
+	local x, y, z = SnapToPassSlabXYZ(obj_or_pos)
+	if x then
+		return GetFloorOfPos(x, y, z)
+	end
+	if IsPoint(obj_or_pos) then
+		return GetFloorOfPos(obj_or_pos:xyz()) or 0
+	end
+	return GetFloorOfPos(obj_or_pos:GetVisualPosXYZ())
+end
+
+function GetFloorOfPos(posx, posy, posz)
+	if not posz then
+		return 0
+	end
+	local tile, step_z = WalkableSlabByPoint(posx, posy, posz, true)
+	--camera floor is zero based and tile floor is not, thats why there is -1 everywhere;
+	if tile then
 		if IsKindOf(tile, "RoofPlaneSlab") and tile.floor then
 			local room = tile.room
 			if room and room.ignore_zulu_invisible_wall_logic and not room:IsRoofOnly() then
 				return Max(0, tile.floor - 1) --this is a hack for 0172933
 			end
-			
 			return tile.floor --roof floor should be +1 because cam needs to be above roof floor in order for it to be visible;
 		end
 		if IsKindOf(tile, "Slab") and tile.floor then
 			local room = tile.room
-			if tile.room then
+			if room then
 				if room:IsRoofOnly() then
 					return Max(0, tile.floor) --if its the floor tile of a roof room treat as roof;
 				else
 					return Max(0, tile.floor - 1)
 				end
 			end
-		
 			-- If not inside a room, check for terrain level
-			local terrainZ = terrain.GetHeight(pos)
-			if abs(terrainZ - z) > guim then --if tile is very close to ground lvl assume its ground floor (0)
+			local terrainZ = terrain.GetHeight(posx, posy)
+			if abs(terrainZ - step_z) > guim then --if tile is very close to ground lvl assume its ground floor (0)
 				return Max(0, tile.floor - 1)
 			end
-
 			return 0
 		end
-		local stairs = MapGetFirst(pos, 1, "StairSlab")
-		if stairs then return Max(0, stairs.floor - 1) end
-		
-		z = nil --assume its a walkable obj without floor member, measure floor from ground
-	else
-		pos = pos:SetTerrainZ()
 	end
-	
-	return Max(0, WallInvisibilityGetCamFloor(pos, z) - 1)
+	-- assume its a walkable obj without floor member, measure floor from ground
+	local floor = WallInvisibilityGetCamFloor(posx, posy, posz)
+	return Max(0, floor - 1)
 end
 
 DefineClass.HideTop = {
@@ -507,6 +513,7 @@ local function ProcessCorners(corners, hide, shouldProcess, clear_countour, ...)
 						if not edit then
 							w1 = rawget(c, "nbr1") --10-20ms faster with caching
 							w2 = rawget(c, "nbr2")
+							w1 = IsValid(w1) and IsValid(w2) and w1 or nil --reget them if they dead
 						else
 							rawset(c, "nbr1", nil)
 							rawset(c, "nbr2", nil)
@@ -526,8 +533,8 @@ local function ProcessCorners(corners, hide, shouldProcess, clear_countour, ...)
 								w1 = MapGetFirst(x, y + halfVoxelSizeY, z, 0, "WallSlab", visibleWallTest)
 								w2 = MapGetFirst(x - halfVoxelSizeX, y, z, 0, "WallSlab", visibleWallTest)
 							end
-							w1 = w1 and (w1.isVisible and w1 or w1.wall_obj)
-							w2 = w2 and (w2.isVisible and w2 or w2.wall_obj)
+							w1 = w1 and (w1.isVisible and w1 or IsValid(w1.wall_obj) and w1.wall_obj)
+							w2 = w2 and (w2.isVisible and w2 or IsValid(w2.wall_obj) and w2.wall_obj)
 							
 							if not edit then
 								rawset(c, "nbr1", w1)
@@ -1148,8 +1155,8 @@ function WallInvisibilityThreadMethod_V2_PlanA()
 		end
 		
 		local camPos, lookAt = cameraTac.GetZoomedPosLookAt()
-		local camFloor = cameraTac.GetFloor() + 1--WallInvisibilityGetCamFloor(lookAt)
-		local camRoundedFloor = WallInvisibilityGetCamFloorRounded(lookAt)
+		local camFloor = cameraTac.GetFloor() + 1--WallInvisibilityGetCamFloor(lookAt:xyz())
+		local camRoundedFloor = WallInvisibilityGetCamFloorRounded(lookAt:xyz())
 		local hideAll = terminal.IsShortcutPressed("actionHideAll") or not WallVisibilityMode
 		if hideAll then
 			local focus = terminal.desktop.keyboard_focus
@@ -1410,7 +1417,7 @@ function WallInvisibilityThreadMethod_V2_PlanA()
 			if not new then
 				local bld = r.building
 				local f = touchedBldsThisPass[bld]
-				if not f or r.floor < f then
+				if not f or r.floor <= f then
 					for side, old_data in pairs(old or empty_table) do
 						wallsToShow[r] = wallsToShow[r] or {}
 						table.insert_unique(wallsToShow[r], side)

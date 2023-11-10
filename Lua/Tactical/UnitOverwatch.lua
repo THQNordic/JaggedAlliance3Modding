@@ -635,7 +635,7 @@ end
 function Unit:HolsterBombardWeapon()
 	if IsValid(self.bombard_weapon) then
 		local item = self.bombard_weapon.weapon
-		if not item or table.find(self:GetEquippedWeapons("Handheld A"), item) or table.find(self:GetEquippedWeapons("Handheld B"), item) then
+		if not item or self:GetEquippedWeaponSlot(item) then
 			AttachVisualItems(self, { self.bombard_weapon }, 0, true)
 		else
 			DoneObject(self.bombard_weapon)
@@ -827,7 +827,7 @@ function Unit:InterruptPreparedAttack(begin_turn)
 		if self:GetStatusEffect("EyesOnTheBack") and self.signature_recharge then
 			self:RechargeSignature("EyesOnTheBack")
 		end
-		self:RemoveStatusEffect("SpentAP")
+		self:RemoveStatusEffect("SpentAP", "all")
 	end
 end
 
@@ -1456,7 +1456,7 @@ function Unit:ProvokeOpportunityAttack_Overwatch(obj, attack_args, target_dummy)
 
 	for i = 1, num_attacks do
 		local weapon = obj:GetActiveWeapons("Firearm")
-		local default_action = obj:GetDefaultAttackAction("ranged", "ungrouped", nil, true, "ignore")
+		local default_action = obj:GetDefaultAttackAction("ranged", "ungrouped", nil, true, "ignore", {skip_ap_check = true})
 		if not weapon or not default_action or not obj:CanAttack(self, weapon, default_action, 0, nil, "skip_ap_check") then
 			break
 		end
@@ -1722,7 +1722,9 @@ function Unit:UpdateNumOverwatchAttacks()
 end
 
 function OnMsg.UnitAPChanged(unit)
-	unit:UpdateNumOverwatchAttacks()
+	if g_Combat and g_Teams[g_Combat.team_playing] == unit.team then
+		unit:UpdateNumOverwatchAttacks()
+	end
 end
 
 

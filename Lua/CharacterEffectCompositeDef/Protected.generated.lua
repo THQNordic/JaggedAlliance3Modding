@@ -7,86 +7,33 @@ DefineClass.Protected = {
 
 
 	object_class = "CharacterEffect",
-	msg_reactions = {
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "obj",
-			Event = "StatusEffectAdded",
-			Handler = function (self, obj, id, stacks)
-				
-				local function exec(self, obj, id, stacks)
-				if IsKindOf(obj, "Unit") and (g_Combat or g_StartingCombat or g_TestingSaveLoadSystem) then
-					obj:RemoveStatusEffect("FreeMove")
-					local ap_carry = Min(self:ResolveValue("max_ap_carried")*const.Scale.AP, obj.ActionPoints)
-					obj:SetEffectValue("protected_ap_carry", ap_carry)
-					if not obj.infinite_ap then
-						obj.ActionPoints = 0
-					end
-					ObjModified(obj)
-				end
-				UpdateTakeCoverAction()
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "StatusEffectAdded" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, obj, id, stacks)
-				end
-				
-				if self:VerifyReaction("StatusEffectAdded", reaction_def, obj, obj, id, stacks) then
-					exec(self, obj, id, stacks)
-				end
-			end,
-			HandlerCode = function (self, obj, id, stacks)
-				if IsKindOf(obj, "Unit") and (g_Combat or g_StartingCombat or g_TestingSaveLoadSystem) then
-					obj:RemoveStatusEffect("FreeMove")
-					local ap_carry = Min(self:ResolveValue("max_ap_carried")*const.Scale.AP, obj.ActionPoints)
-					obj:SetEffectValue("protected_ap_carry", ap_carry)
-					if not obj.infinite_ap then
-						obj.ActionPoints = 0
-					end
-					ObjModified(obj)
-				end
-				UpdateTakeCoverAction()
-			end,
-		}),
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "obj",
-			Event = "StatusEffectRemoved",
-			Handler = function (self, obj, id, stacks, reason)
-				
-				local function exec(self, obj, id, stacks, reason)
-				if IsKindOf(obj, "Unit") then
-					obj:SetEffectValue("protected_ap_carry")
-				end
-				UpdateTakeCoverAction()
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[2]
-				if not reaction_def or reaction_def.Event ~= "StatusEffectRemoved" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, obj, id, stacks, reason)
-				end
-				
-				if self:VerifyReaction("StatusEffectRemoved", reaction_def, obj, obj, id, stacks, reason) then
-					exec(self, obj, id, stacks, reason)
-				end
-			end,
-			HandlerCode = function (self, obj, id, stacks, reason)
-				if IsKindOf(obj, "Unit") then
-					obj:SetEffectValue("protected_ap_carry")
-				end
-				UpdateTakeCoverAction()
+	unit_reactions = {
+		PlaceObj('UnitReaction', {
+			Event = "OnCalcStartTurnAP",
+			Handler = function (self, target, value)
+				value = value + (self:ResolveValue("ap_carried") or 0) -- can be nil if added out of combat
+				target:RemoveStatusEffect(self.class) -- remove immediately to unblock AP gain
+				return value
 			end,
 		}),
 	},
 	DisplayName = T(569020076106, --[[CharacterEffectCompositeDef Protected DisplayName]] "Taking cover"),
 	Description = T(682670978880, --[[CharacterEffectCompositeDef Protected Description]] "While coming from the <em>other side</em> of the <em>Cover</em> attacks against this unit have a high chance to become <em>Grazing hits</em> and the targeted body part is selected automatically."),
+	OnAdded = function (self, obj)
+		if g_Combat or g_StartingCombat or g_TestingSaveLoadSystem then
+			obj:RemoveStatusEffect("FreeMove")
+			local ap_carry = Min(self:ResolveValue("max_ap_carried")*const.Scale.AP, obj.ActionPoints)
+			self:SetParameter("ap_carried", ap_carry)
+			if not obj.infinite_ap then
+				obj.ActionPoints = 0
+			end
+			ObjModified(obj)
+		end
+		UpdateTakeCoverAction()
+	end,
+	OnRemoved = function (self, obj)
+		UpdateTakeCoverAction()
+	end,
 	type = "Buff",
 	Icon = "UI/Hud/Status effects/protected",
 	RemoveOnEndCombat = true,

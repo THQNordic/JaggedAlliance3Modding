@@ -13,6 +13,7 @@ PlaceObj('InventoryItemCompositeDef', {
 	'DisplayNamePlural', T(580167933429, --[[InventoryItemCompositeDef Super_HE_Grenade DisplayNamePlural]] "Demo Charges"),
 	'UnitStat', "Explosives",
 	'Cost', 1500,
+	'CategoryPair', "Grenade",
 	'MinMishapChance', -2,
 	'MaxMishapChance', 18,
 	'MaxMishapRange', 6,

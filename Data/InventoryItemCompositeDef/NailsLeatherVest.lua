@@ -12,6 +12,7 @@ PlaceObj('InventoryItemCompositeDef', {
 	'DisplayNamePlural', T(634761929616, --[[InventoryItemCompositeDef NailsLeatherVest DisplayNamePlural]] "Leather Vests"),
 	'AdditionalHint', T(974688132374, --[[InventoryItemCompositeDef NailsLeatherVest AdditionalHint]] "<bullet_point> Sporting the Death Rider crest\n<bullet_point> Attracts women and fights"),
 	'locked', true,
+	'RestockWeight', 0,
 	'DamageReduction', 20,
 	'AdditionalReduction', 0,
 	'ProtectedBodyParts', set( "Torso" ),

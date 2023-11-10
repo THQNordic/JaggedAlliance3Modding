@@ -12,6 +12,8 @@ PlaceObj('InventoryItemCompositeDef', {
 	'AdditionalHint', T(550723540825, --[[InventoryItemCompositeDef Unarmed AdditionalHint]] "<bullet_point> Low Damage\n<bullet_point> Increased damage bonus from Strength\n<bullet_point> Very High Crit chance\n<bullet_point> Greatly increased bonus from Aiming"),
 	'UnitStat', "Dexterity",
 	'Cost', 0,
+	'RestockWeight', 0,
+	'CategoryPair', "MeleeWeapons",
 	'BaseChanceToHit', 100,
 	'CritChanceScaled', 50,
 	'BaseDamage', 5,

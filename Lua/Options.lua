@@ -78,8 +78,6 @@ AppendClass.OptionsObject = {
 		{ category = "Gameplay", id = "ForgivingModeToggle",      name = T(836950884858, "Forgiving Mode"),                 editor = "bool",   default = false, storage = "account", no_edit = function (self) return not Game end, read_only = function() return netInGame and not NetIsHost() end, SortKey = -1600, help = T(210522024503, "<ForgivingModeText()>")},
 		{ category = "Gameplay", id = "ActivePauseMode",          name = T(133670189455, "Active Pause"),                   editor = "bool",   default = true,  storage = "account", no_edit = function (self) return not Game end, read_only = function() return netInGame and not NetIsHost() end, SortKey = -1590, help = T(466566359686, "Allows pausing the game in Exploration mode. Actions can be ordered while in pause but any attack will unpause the game.<newline><newline><flavor>You can change this option at any time during gameplay.</flavor>")},
 		{ category = "Display",  id = "AspectRatioConstraint",    name = T(125094445172, "UI Aspect Ratio"),                editor = "choice", default = 1, items = lAspectRatioItems, storage = "local", no_edit = Platform.console, help = T(433997797079, "Constrain UI elements like the HUD to the set aspect ratio. Useful for Ultra Wide and Super Ultra Wide resolutions.") },
-
-		{ category = "Audio", id = "MuteAll", name = T(757697767039, "Mute All"), storage = "local", editor = "bool", no_edit = true, default = false },
 	},
 }
 
@@ -113,12 +111,21 @@ function SyncCameraControllerSpeedOptions()
 	DelayedCall(1000, SaveAccStorageAfterCameraSpeedOptionChange)
 end
 
+local ultraPresetWaringT = T{393813156807, --[[Warning popup on changing to 'Ultra' settings preset]] "You have selected the '<ultra_preset>' video preset! This choice is extremely demanding on the hardware and may strain even configurations well above the recommended system requirements.", ultra_preset = T(3551, "Ultra") }
+local ultraPresetConfirmationT = T{782520163252, --[[Warning popup on changing to 'Ultra' settings preset]] "Are you certain you want to change the video preset to '<ultra_preset>'?", ultra_preset = T(3551, "Ultra") }
+
 function ApplyOptions(host, next_mode)
 	CreateRealTimeThread(function(host)
 		local obj = ResolvePropObj(host:ResolveId("idScrollArea").context)
 		local original_obj = ResolvePropObj(host.idOriginalOptions.context)
 		local category = host:GetCategoryId()
-		if not obj:WaitApplyOptions(original_obj) then
+		
+		local ultraPresetCheck = UltraPresetWarning(obj, original_obj, category)
+		if ultraPresetCheck == "revert" then
+			return
+		end
+
+		if not obj:WaitApplyOptions() then
 			WaitMessage(terminal.desktop, T(824112417429, "Warning"), T(862733805364, "Changes could not be applied and will be reverted."), T(325411474155, "OK"))
 		else
 			local object_detail_changed = obj.ObjectDetail ~= original_obj.ObjectDetail
@@ -137,7 +144,6 @@ function ApplyOptions(host, next_mode)
 				end
 			end
 			if category == obj:GetPropertyMetadata("UIScale").category then
-				print("ApplyOptions")
 				terminal.desktop:OnSystemSize(UIL.GetScreenSize()) -- force refresh, UIScale might be changed
 			end
 			Msg("GameOptionsChanged", category)
@@ -446,4 +452,28 @@ local s_oldHideObjectsByDetailClass = HideObjectsByDetailClass
 
 function HideObjectsByDetailClass(optionals, future_extensions, eye_candies, ...)
 	return s_oldHideObjectsByDetailClass(optionals, future_extensions, eye_candies, true)
+end
+
+function UltraPresetWarning(new_obj, original_obj, category)
+	if new_obj.VideoPreset ~= original_obj.VideoPreset and new_obj.VideoPreset == "Ultra" and not LocalStorage.ShowedUltraWarning then
+		local ok = WaitQuestion(
+			terminal.desktop, 
+			T(145768933497, "Video mode change"), 
+			T{"<ultraPresetWaringT>\n\n<ultraPresetConfirmationT>", ultraPresetWaringT = ultraPresetWaringT, ultraPresetConfirmationT = ultraPresetConfirmationT},
+			T(689884995409, "Yes"), 
+			T(782927325160, "No")) == "ok"
+		if not LocalStorage.ShowedUltraWarning then
+			LocalStorage.ShowedUltraWarning = true
+		end
+		SaveLocalStorage()
+		if not ok then -- revert the ultra preset changes
+			original_obj:CopyCategoryTo(new_obj, "Video")
+			ObjModified(new_obj)
+			return "revert"
+		else
+			return "ok"
+		end
+	end
+	
+	return "ok"
 end

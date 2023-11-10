@@ -28,7 +28,7 @@ function GetCameraSnapToObjectParams(pos, floor)
 			ptCamera = ptCameraLookAt - cameraVector
 	end)
 	
-	return ptCamera, ptCameraLookAt, floor or GetFloorOfPos(pos)
+	return ptCamera, ptCameraLookAt, floor or GetFloorOfPos(pos:xyz())
 end
 
 --Similar to GetCameraSnapToObjectParams, but it is only used for determining camera pos/lookat (with zoom taken into account) for DoPointsFitScreen
@@ -90,7 +90,7 @@ function SnapCameraToObjFloor(obj, force)
 	if not g_SnapCameraEnabled or cameraTac.GetIsInOverview() then return end
 	if not cameraTac.IsActive() then return end
 	if IsValid(obj) and (not IsCameraLocked() or force) then 
-		local floor = GetFloorOfPos(obj:GetPos())
+		local floor = GetFloorOfPos(obj:GetPosXYZ())
 		cameraTac.SetFloor(floor, hr.CameraTacInterpolatedMovementTime * 10, hr.CameraTacInterpolatedVerticalMovementTime * 10)
 	end
 end
@@ -131,7 +131,8 @@ function CameraPositionFromUnitOrientation(unit, time)
 		local cameraVector = RotateAxis(cameraVector, axis, marker_orient - cam_orient)
 		ptCamera = pos - cameraVector
 		ptCameraLookAt = pos
-		cameraTac.SetPosLookAtAndFloor(ptCamera, ptCameraLookAt, GetFloorOfPos(pos), time or 1)
+		local floor = GetFloorOfPos(pos:xyz())
+		cameraTac.SetPosLookAtAndFloor(ptCamera, ptCameraLookAt, floor, time or 1)
 	elseif time then -- use interpolation
 		local ptCamera, ptCameraLookAt = GetCamera()
 		if not ptCamera then
@@ -141,10 +142,10 @@ function CameraPositionFromUnitOrientation(unit, time)
 		if not pos:IsValidZ() then
 			pos = pos:SetTerrainZ()
 		end
-		
 		ptCamera = pos - cameraVector
 		ptCameraLookAt = pos
-		cameraTac.SetPosLookAtAndFloor(ptCamera, ptCameraLookAt, GetFloorOfPos(ptCameraLookAt), time or 1)
+		local floor = GetFloorOfPos(ptCameraLookAt:xyz())
+		cameraTac.SetPosLookAtAndFloor(ptCamera, ptCameraLookAt, floor, time or 1)
 	else
 		ViewPos(unit:GetPos())
 		cameraTac.Rotate(-mapdata.MapOrientation * 60)
@@ -205,7 +206,7 @@ OnMsg.TacCamFloorChanged = lClearFollowRecord
 local function lFloorFollowRecord(unit)
 	if not table.find(Selection, unit) then return end
 	local currentFloor = cameraTac.GetFloor()
-	local movementStartFloor = GetFloorOfPos(unit:GetPos())
+	local movementStartFloor = GetFloorOfPos(unit:GetPosXYZ())
 	if movementStartFloor ~= currentFloor then return end
 	floorFollowData = {
 		unit = unit

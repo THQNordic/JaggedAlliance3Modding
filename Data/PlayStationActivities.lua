@@ -49,6 +49,7 @@ PlaceObj('PlayStationActivities', {
 				while not CanLoadGame() do
 					Sleep(1)
 				end
+				g_AutoClickLoadingScreenStart = 0
 				save_load_obj:Load(nil, latest_saves[self.id], Platform.developer)
 				return
 			end

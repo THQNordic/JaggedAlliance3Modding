@@ -12,5 +12,6 @@ PlaceObj('InventoryItemCompositeDef', {
 	'AdditionalHint', T(682491878825, --[[InventoryItemCompositeDef TheGreenDiamond AdditionalHint]] "<bullet_point> <GameColorD>Can be cashed in for a ridiculous amount of Money</GameColorD>"),
 	'Valuable', 1,
 	'Cost', 50000,
+	'RestockWeight', 0,
 })
 

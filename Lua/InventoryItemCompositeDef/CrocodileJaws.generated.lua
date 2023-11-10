@@ -9,6 +9,7 @@ DefineClass.CrocodileJaws = {
 	object_class = "CrocodileWeapon",
 	DisplayName = T(144930352145, --[[InventoryItemCompositeDef CrocodileJaws DisplayName]] "Jaws"),
 	DisplayNamePlural = T(961842439993, --[[InventoryItemCompositeDef CrocodileJaws DisplayNamePlural]] "Jaws"),
+	CategoryPair = "MeleeWeapons",
 	BaseChanceToHit = 100,
 	CritChance = 2,
 	BaseDamage = 20,

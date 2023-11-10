@@ -181,7 +181,8 @@ hr.HairMetallic = 50
 
 function LimitTextureMips()
 	local resources = {
-		"UI/SatelliteView/SatView.dds"
+		{res = "UI/SatelliteView/SatView.dds", MinLevel = 1},
+		{res = "Textures/2216029.dds", MinLevel = 2},
 	}
 	local folders = {
 		"UI/Mercs/",
@@ -191,12 +192,12 @@ function LimitTextureMips()
 	for _,folder in ipairs(folders) do
 		local err, files = AsyncListFiles(folder, "*", "")
 		for _,file in ipairs(files) do
-			resources[#resources+1] = file
+			resources[#resources+1] = {res = file, MinLevel = 1}
 		end
 	end
 
 	for _,res in ipairs(resources) do
-		local updated = ResourceManager.SetMetadataField(ResourceManager.GetResourceID(res), "MinLevel", 1)
+		local updated = ResourceManager.SetMetadataField(ResourceManager.GetResourceID(res.res), "MinLevel", res.MinLevel)
 		assert(updated)
 	end
 end

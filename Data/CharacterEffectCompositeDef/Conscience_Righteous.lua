@@ -16,127 +16,26 @@ PlaceObj('CharacterEffectCompositeDef', {
 	},
 	'Comment', "conversations related",
 	'object_class', "StatusEffect",
-	'msg_reactions', {
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "obj",
-			Event = "StatusEffectAdded",
-			Handler = function (self, obj, id, stacks)
-				
-				local function exec(self, obj, id, stacks)
-				if IsKindOf(obj, "Unit") then
-					local effect = obj:GetStatusEffect(self.id)
-					effect:SetParameter("proud_start_time", Game.CampaignTime)
-					
-					--local procentCalc = 1000+self:ResolveValue("increase")*10
-					--local stats = UnitPropertiesStats:GetProperties()
-					--for i, stat in ipairs(stats) do
-						--obj:AddModifier("proud_" .. stat.id, stat.id, procentCalc)
-					--end
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "StatusEffectAdded" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, obj, id, stacks)
-				end
-				
-				if self:VerifyReaction("StatusEffectAdded", reaction_def, obj, obj, id, stacks) then
-					exec(self, obj, id, stacks)
-				end
-			end,
-			HandlerCode = function (self, obj, id, stacks)
-				if IsKindOf(obj, "Unit") then
-					local effect = obj:GetStatusEffect(self.id)
-					effect:SetParameter("proud_start_time", Game.CampaignTime)
-					
-					--local procentCalc = 1000+self:ResolveValue("increase")*10
-					--local stats = UnitPropertiesStats:GetProperties()
-					--for i, stat in ipairs(stats) do
-						--obj:AddModifier("proud_" .. stat.id, stat.id, procentCalc)
-					--end
-				end
+	'unit_reactions', {
+		PlaceObj('UnitReaction', {
+			Event = "OnNewDay",
+			Handler = function (self, target)
+				Conscience_CheckExpiration(self, target, "proud_start_time")
 			end,
 		}),
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "obj",
-			Event = "StatusEffectRemoved",
-			Handler = function (self, obj, id, stacks, reason)
-				
-				local function exec(self, obj, id, stacks, reason)
-				if IsKindOf(obj, "Unit") then
-					obj:SetEffectValue("proud_start_time", false)
-					
-					--local stats = UnitPropertiesStats:GetProperties()
-					--for i, stat in ipairs(stats) do
-						--obj:RemoveModifier("proud_" .. stat.id, stat.id)
-					--end
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[2]
-				if not reaction_def or reaction_def.Event ~= "StatusEffectRemoved" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, obj, id, stacks, reason)
-				end
-				
-				if self:VerifyReaction("StatusEffectRemoved", reaction_def, obj, obj, id, stacks, reason) then
-					exec(self, obj, id, stacks, reason)
-				end
-			end,
-			HandlerCode = function (self, obj, id, stacks, reason)
-				if IsKindOf(obj, "Unit") then
-					obj:SetEffectValue("proud_start_time", false)
-					
-					--local stats = UnitPropertiesStats:GetProperties()
-					--for i, stat in ipairs(stats) do
-						--obj:RemoveModifier("proud_" .. stat.id, stat.id)
-					--end
-				end
-			end,
-		}),
-		PlaceObj('MsgActorReactionEffects', {
-			Effects = {
-				PlaceObj('ConditionalEffect', {
-					'Effects', {
-						PlaceObj('ExecuteCode', {
-							Code = function (self, obj)
-								local effect = obj:GetStatusEffect("Conscience_Righteous")
-								local duration = effect:ResolveValue("days")
-								local startTime = effect:ResolveValue("proud_start_time") or 0
-								
-								local dayStarted = GetTimeAsTable(startTime)
-								dayStarted = dayStarted and dayStarted.day
-								
-								local dayNow = GetTimeAsTable(Game.CampaignTime)
-								dayNow = dayNow and dayNow.day
-								
-								-- Intentionally check if days have passed calendar, and not time wise.
-								if dayNow - dayStarted >= duration then
-									obj:RemoveStatusEffect("Conscience_Righteous")
-								end
-							end,
-							FuncCode = 'local effect = obj:GetStatusEffect("Conscience_Righteous")\nlocal duration = effect:ResolveValue("days")\nlocal startTime = effect:ResolveValue("proud_start_time") or 0\n\nlocal dayStarted = GetTimeAsTable(startTime)\ndayStarted = dayStarted and dayStarted.day\n\nlocal dayNow = GetTimeAsTable(Game.CampaignTime)\ndayNow = dayNow and dayNow.day\n\n-- Intentionally check if days have passed calendar, and not time wise.\nif dayNow - dayStarted >= duration then\n	obj:RemoveStatusEffect("Conscience_Righteous")\nend',
-							SaveAsText = false,
-						}),
-					},
-				}),
-			},
-			Event = "SatelliteTick",
-			Handler = function (self)
-				ExecReactionEffects(self, 3, "SatelliteTick", nil, self)
+		PlaceObj('UnitReaction', {
+			Event = "OnCalcPersonalMorale",
+			Handler = function (self, target, value)
+				return value + 2
 			end,
 		}),
 	},
 	'DisplayName', T(288530724490, --[[CharacterEffectCompositeDef Conscience_Righteous DisplayName]] "Righteous"),
 	'Description', T(186533285685, --[[CharacterEffectCompositeDef Conscience_Righteous Description]] "Gained 2 Morale for a day."),
 	'AddEffectText', T(825628234125, --[[CharacterEffectCompositeDef Conscience_Righteous AddEffectText]] "<em><DisplayName></em> is feeling righteous and gained Morale"),
+	'OnAdded', function (self, obj)
+		self:SetParameter("proud_start_time", Game.CampaignTime)
+	end,
 	'type', "Buff",
 	'Icon', "UI/Hud/Status effects/well_rested",
 	'HasFloatingText', true,

@@ -1044,8 +1044,8 @@ PlaceObj('XTemplate', {
 									end
 									
 									if selectedUnit == SelectedObj and not IsPointInsidePoly2D(selectedUnit:GetVisualPos(), CalcCombatZone()) or
-										cameraTac.GetFloor() ~= GetFloorOfPos(SnapToPassSlab(selectedUnit)) then
-										SnapCameraToObj(selectedUnit, nil, GetFloorOfPos(SnapToPassSlab(selectedUnit)))
+										cameraTac.GetFloor() ~= GetStepFloor(selectedUnit) then
+										SnapCameraToObj(selectedUnit, nil, GetStepFloor(selectedUnit))
 									end
 									
 									if g_Combat and not gv_DeploymentStarted and not IsKindOf(igim, "IModeCombatMovement") then
@@ -1085,7 +1085,7 @@ PlaceObj('XTemplate', {
 										local selectedUnit = self.context
 										if not IsKindOf(selectedUnit, "Unit") or ActionCameraPlaying then return end
 										
-										SnapCameraToObj(selectedUnit, "force", GetFloorOfPos(SnapToPassSlab(selectedUnit)))
+										SnapCameraToObj(selectedUnit, "force", GetStepFloor(selectedUnit))
 									end,
 								}),
 								PlaceObj('XTemplateFunc', {
@@ -1258,7 +1258,7 @@ PlaceObj('XTemplate', {
 													if not lastTarget or lastTarget == #enemies then lastTarget = 0 end
 													lastTarget = lastTarget + 1
 													rawset(self, "target", lastTarget)
-													SnapCameraToObj(enemies[lastTarget], nil, GetFloorOfPos(SnapToPassSlab(enemies[lastTarget])))
+													SnapCameraToObj(enemies[lastTarget], nil, GetStepFloor(enemies[lastTarget]))
 													return "break"
 												end,
 											}),

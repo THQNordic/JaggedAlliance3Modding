@@ -882,25 +882,6 @@ PlaceObj('XTemplate', {
 				end,
 			}),
 			PlaceObj('XTemplateForEach', {
-				'comment', "body part: create a fake action triggered by gamepad",
-				'array', function (parent, context) return parent.context.body_parts end,
-				'run_after', function (child, context, item, i, n, last)
-					child.OnAction = function(self, host, source)
-						local slot = item.id
-						local preset = item
-						local crosshair = host.crosshair
-						if not crosshair then return end
-						local button = crosshair:ResolveId("idButton" .. slot)
-						if button and button.visible and crosshair.targetPart ~= preset then
-							crosshair:SetSelectedPart(preset)
-						end
-					end
-					child:SetActionShortcuts(child.ActionShortcut, child.ActionShortcut2, CrosshairBodyPartDirections[i])
-				end,
-			}, {
-				PlaceObj('XTemplateAction', nil),
-				}),
-			PlaceObj('XTemplateForEach', {
 				'comment', "firing mode: create a fake action triggered by gamepad",
 				'array', function (parent, context) return parent.context.firingModes or empty_table end,
 				'run_after', function (child, context, item, i, n, last)

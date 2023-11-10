@@ -69,6 +69,8 @@ function Encounter:OnDamageDone(attacker, target, dmg, hit_descr)
 end
 function Encounter:Setup()
 end
+function Encounter:FinalizeTurn()
+end
 
 function OnMsg.UnitDied(unit)
 	if g_Encounter and not g_Encounter:ShouldStart() then

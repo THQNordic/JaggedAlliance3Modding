@@ -1410,9 +1410,16 @@ PlaceObj('SectorOperation', {
 			local teachers = GetOperationProfessionals(sector.Id, self.id, "Teacher")
 			local teacher = teachers[1]
 			if not teacher then return false end
-			return  teacher[stat]>merc[stat]
+			local max_learned_stat = self:ResolveValue("max_learned_stat")
+			return  teacher[stat]>merc[stat] and merc[stat]<=max_learned_stat
 		else-- teacher
-			return stat and  merc[sector.training_stat] >= self.min_requirement_stat_value
+			local students = GetOperationProfessionals(sector.Id, self.id, "Student")
+			for i_, st in ipairs(students) do
+				if st[stat]>=merc[stat] then
+					return false
+				end	
+			end
+			return stat and  merc[stat] >= self.min_requirement_stat_value
 		end
 	end,
 	GetRelatedStat = function (self, merc)
@@ -1709,7 +1716,18 @@ PlaceObj('SectorOperation', {
 		return -1
 	end,
 	GetTimelineEventDescription = function (self, sector_id, eventcontext)
-		return T(300844268409, "<em><Nick></em> will finish resting.")
+		if eventcontext.uId then
+			return T(300844268409, "<em><Nick></em> will finish resting.")
+		end	
+		local mercs
+		if eventcontext.mercs then
+			mercs = table.map(eventcontext.mercs, function(id) return gv_UnitData[id].Nick end)
+		else
+			mercs = GetOperationProfessionals(sector_id, self.id)
+			mercs = table.map(professionId and mercs[professionId] or mercs, "Nick")
+		end
+		mercs = ConcatListWithAnd(mercs)
+		return T{451827023939, "<em><mercs></em> will finish resting.", mercs = mercs}
 	end,
 	HasOperation = function (self, sector)
 		return sector.RAndRAllowed

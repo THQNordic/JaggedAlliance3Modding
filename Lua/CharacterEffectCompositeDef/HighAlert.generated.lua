@@ -7,5 +7,15 @@ DefineClass.HighAlert = {
 
 
 	object_class = "CharacterEffect",
+	unit_reactions = {
+		PlaceObj('UnitReaction', {
+			Event = "OnCalcSightModifier",
+			Handler = function (self, target, value, observer, other, step_pos, darkness)
+				if target == observer then
+					return value + Suspicious:ResolveValue("sight_modifier_max")
+				end
+			end,
+		}),
+	},
 }
 

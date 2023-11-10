@@ -328,6 +328,42 @@ PlaceObj('HistoryOccurence', {
 })
 
 PlaceObj('HistoryOccurence', {
+	GetText = function (self, context)
+		return T{self.text, order_id = Untranslated(context.order_id), sector_id = context.sector_id}
+	end,
+	group = "Repeatable",
+	id = "BobbyRayShopShipmentArrival",
+	msg_reactions = {
+		PlaceObj('MsgReaction', {
+			Event = "BobbyRayShopShipmentArrived",
+			Handler = function (self, shipment_details)
+				LogHistoryOccurence(self.id, {order_id = tostring(shipment_details.order_id), sector_id = shipment_details.sector_id })
+			end,
+		}),
+	},
+	repeatable = true,
+	text = T(812268206457, --[[HistoryOccurence BobbyRayShopShipmentArrival text]] "<em>Bobby Ray's</em> shipment <em><order_id></em> has arrived at <em><SectorName(sector_id)></em>."),
+})
+
+PlaceObj('HistoryOccurence', {
+	GetText = function (self, context)
+		return T{self.text, order_id = Untranslated(context.order_id), sector_id = context.sector_id}
+	end,
+	group = "Repeatable",
+	id = "BobbyRayShopShipmentSent",
+	msg_reactions = {
+		PlaceObj('MsgReaction', {
+			Event = "BobbyRayShopShipmentSent",
+			Handler = function (self, shipment_details)
+				LogHistoryOccurence(self.id, {order_id = tostring(shipment_details.order_id), sector_id = shipment_details.sector_id })
+			end,
+		}),
+	},
+	repeatable = true,
+	text = T(750659132025, --[[HistoryOccurence BobbyRayShopShipmentSent text]] "<em>Bobby Ray's</em> shipment <em><order_id></em> was dispatched to <em><SectorName(sector_id)></em>."),
+})
+
+PlaceObj('HistoryOccurence', {
 	group = "Repeatable",
 	id = "CombatTaskCompleted",
 	msg_reactions = {

@@ -27,7 +27,7 @@ PlaceObj('XTemplate', {
 				child.ActionName = item.Name
 				child.OnAction = function(...)
 					if Platform.developer then
-						g_DbgAutoClickLoadingScreenStart =  false
+						g_AutoClickLoadingScreenStart =  false
 					end
 					item.func()
 				end
@@ -66,7 +66,7 @@ PlaceObj('XTemplate', {
 			'ActionToolbar', "mainmenu",
 			'OnAction', function (self, host, source, ...)
 				if Platform.developer then
-					g_DbgAutoClickLoadingScreenStart =  false
+					g_AutoClickLoadingScreenStart =  false
 				end
 				MultiplayerLobbySetUI("multiplayer")
 			end,
@@ -186,6 +186,7 @@ PlaceObj('XTemplate', {
 						LoadingScreenOpen("idLoadingScreen", "load mods")	
 						ModsUIObjectCreateAndLoad()
 						g_ModsUIContextObj:SetInstalledSortMethod("enabled_desc")
+						g_ModsUIContextObj.cant_load_on_top = true
 						LoadingScreenClose("idLoadingScreen", "load mods")
 						Sleep(1)
 						host:SetMode(param)

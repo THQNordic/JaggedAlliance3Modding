@@ -7,150 +7,12 @@ DefineClass.FreeMove = {
 
 
 	object_class = "CharacterEffect",
-	msg_reactions = {
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "obj",
-			Event = "StatusEffectAdded",
-			Handler = function (self, obj, id, stacks)
-				
-				local function exec(self, obj, id, stacks)
-				local cur_free_ap = obj.free_move_ap
-				local free_ap = Max(0, MulDivRound(obj.Agility - 40, const.Scale.AP, 10))
-				if HasPerk(obj, "MinFreeMove") then free_ap = Max(free_ap, CharacterEffectDefs.MinFreeMove:ResolveValue("minFreeMove") * const.Scale.AP) end
-				if HasPerk(obj, "SteadyBreathing") then
-					local proc = true
-					local armourItems = obj:GetEquipedArmour()
-					for _, item in ipairs(armourItems) do
-						if item.PenetrationClass > 2 then
-							proc = false
-						end
-					end
-					if proc then
-						free_ap = free_ap + CharacterEffectDefs.SteadyBreathing:ResolveValue("freeMoveBonusAp") * const.Scale.AP
-					end
-				end
-				if HasPerk(obj, "RelentlessAdvance") and obj:IsUsingCover() then free_ap = free_ap * CharacterEffectDefs.RelentlessAdvance:ResolveValue("free_move_mult") end
-				
-				local diffFreeMoveChangePerc = PercentModifyByDifficulty(GameDifficulties[Game.game_difficulty]:ResolveValue("freeMoveBonus"))
-				if obj.team and obj.team.player_enemy then 
-					free_ap = MulDivRound(free_ap, diffFreeMoveChangePerc, 100)
-				end
-				local prev_ap = obj.ActionPoints
-				obj:GainAP(free_ap - cur_free_ap)
-				if obj.ActionPoints > prev_ap then
-					-- gain can be blocked by certain statuses and conditions
-					obj.free_move_ap = free_ap
-					Msg("UnitAPChanged", obj)
-					ObjModified(obj)
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "StatusEffectAdded" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, obj, id, stacks)
-				end
-				
-				if self:VerifyReaction("StatusEffectAdded", reaction_def, obj, obj, id, stacks) then
-					exec(self, obj, id, stacks)
-				end
-			end,
-			HandlerCode = function (self, obj, id, stacks)
-				local cur_free_ap = obj.free_move_ap
-				local free_ap = Max(0, MulDivRound(obj.Agility - 40, const.Scale.AP, 10))
-				if HasPerk(obj, "MinFreeMove") then free_ap = Max(free_ap, CharacterEffectDefs.MinFreeMove:ResolveValue("minFreeMove") * const.Scale.AP) end
-				if HasPerk(obj, "SteadyBreathing") then
-					local proc = true
-					local armourItems = obj:GetEquipedArmour()
-					for _, item in ipairs(armourItems) do
-						if item.PenetrationClass > 2 then
-							proc = false
-						end
-					end
-					if proc then
-						free_ap = free_ap + CharacterEffectDefs.SteadyBreathing:ResolveValue("freeMoveBonusAp") * const.Scale.AP
-					end
-				end
-				if HasPerk(obj, "RelentlessAdvance") and obj:IsUsingCover() then free_ap = free_ap * CharacterEffectDefs.RelentlessAdvance:ResolveValue("free_move_mult") end
-				
-				local diffFreeMoveChangePerc = PercentModifyByDifficulty(GameDifficulties[Game.game_difficulty]:ResolveValue("freeMoveBonus"))
-				if obj.team and obj.team.player_enemy then 
-					free_ap = MulDivRound(free_ap, diffFreeMoveChangePerc, 100)
-				end
-				local prev_ap = obj.ActionPoints
-				obj:GainAP(free_ap - cur_free_ap)
-				if obj.ActionPoints > prev_ap then
-					-- gain can be blocked by certain statuses and conditions
-					obj.free_move_ap = free_ap
-					Msg("UnitAPChanged", obj)
-					ObjModified(obj)
-				end
-			end,
-		}),
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "obj",
-			Event = "StatusEffectRemoved",
-			Handler = function (self, obj, id, stacks, reason)
-				
-				local function exec(self, obj, id, stacks, reason)
-				if IsKindOf(obj, "Unit") then --check to prevent effects that call this onremove and the obj is UnitData
-					obj:ConsumeAP(obj.free_move_ap)
-					obj.free_move_ap = 0
-					Msg("UnitAPChanged", obj, self.class)
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[2]
-				if not reaction_def or reaction_def.Event ~= "StatusEffectRemoved" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, obj, id, stacks, reason)
-				end
-				
-				if self:VerifyReaction("StatusEffectRemoved", reaction_def, obj, obj, id, stacks, reason) then
-					exec(self, obj, id, stacks, reason)
-				end
-			end,
-			HandlerCode = function (self, obj, id, stacks, reason)
-				if IsKindOf(obj, "Unit") then --check to prevent effects that call this onremove and the obj is UnitData
-					obj:ConsumeAP(obj.free_move_ap)
-					obj.free_move_ap = 0
-					Msg("UnitAPChanged", obj, self.class)
-				end
-			end,
-		}),
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "unit",
-			Event = "CombatActionEnd",
-			Handler = function (self, unit)
-				
-				local function exec(self, unit)
-				if unit.free_move_ap <= 0 then
-					unit:RemoveStatusEffect("FreeMove")
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[3]
-				if not reaction_def or reaction_def.Event ~= "CombatActionEnd" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, unit)
-				end
-				
-				if self:VerifyReaction("CombatActionEnd", reaction_def, unit, unit) then
-					exec(self, unit)
-				end
-			end,
-			HandlerCode = function (self, unit)
-				if unit.free_move_ap <= 0 then
-					unit:RemoveStatusEffect("FreeMove")
+	unit_reactions = {
+		PlaceObj('UnitReaction', {
+			Event = "OnCombatActionEnd",
+			Handler = function (self, target)
+				if target.free_move_ap <= 0 then
+					target:RemoveStatusEffect("FreeMove")
 				end
 			end,
 		}),
@@ -162,6 +24,32 @@ DefineClass.FreeMove = {
 	},
 	DisplayName = T(574672731472, --[[CharacterEffectCompositeDef FreeMove DisplayName]] "Free Move"),
 	Description = T(824694494336, --[[CharacterEffectCompositeDef FreeMove Description]] "Move without spending AP. Removed after attacking or after moving the allowed distance (based on <agility>)."),
+	OnAdded = function (self, obj)
+		local cur_free_ap = obj.free_move_ap
+		local free_ap = Max(0, MulDivRound(obj.Agility - 40, const.Scale.AP, 10))
+		local data = {min = 0, max = 999, add = 0, mul = 100}
+		if obj.team and obj.team.player_enemy then 
+			data.mul = PercentModifyByDifficulty(GameDifficulties[Game.game_difficulty]:ResolveValue("freeMoveBonus"))
+		end
+		obj:CallReactions("OnCalcFreeMove", data)
+		free_ap = MulDivRound(free_ap + data.add * const.Scale.AP, data.mul, 100)
+		free_ap = Clamp(free_ap, data.min*const.Scale.AP, data.max*const.Scale.AP)
+		
+		local prev_ap = obj.ActionPoints
+		obj:GainAP(free_ap - cur_free_ap)
+		if obj.ActionPoints > prev_ap then -- gain can be blocked by certain statuses and conditions
+			obj.free_move_ap = free_ap
+			Msg("UnitAPChanged", obj)
+			ObjModified(obj)
+		end
+	end,
+	OnRemoved = function (self, obj)
+		if IsKindOf(obj, "Unit") then --check to prevent effects that call this onremove and the obj is UnitData
+			obj:ConsumeAP(obj.free_move_ap)
+			obj.free_move_ap = 0
+			Msg("UnitAPChanged", obj, self.class)
+		end
+	end,
 	type = "Buff",
 	Icon = "UI/Hud/Status effects/mobility",
 	RemoveOnEndCombat = true,

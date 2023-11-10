@@ -108,8 +108,12 @@ local lconversionTable = {
 }
 
 function CustomInteractable:GetInteractionVisuals()
+	local trapAction, boobyTrapIcon = BoobyTrappable.GetInteractionCombatAction(self, Selection and Selection[1])
+	if trapAction and boobyTrapIcon then return boobyTrapIcon end
+
 	local legacyIcon = lconversionTable[self.Visuals]
 	if legacyIcon then return legacyIcon end
+	
 	return self.Visuals
 end
 
@@ -180,14 +184,14 @@ function RangeGrantMarker:GetDynamicData(data)
 	if self.RandomDifficulty then
 		data.additional_difficulty = self.additional_difficulty
 	end
-	data.activated = self.activated
-	data.granted = self.granted
+	data.activated = self.activated or nil
+	data.granted = self.granted or nil
 end
 
 function RangeGrantMarker:SetDynamicData(data)
 	self.additional_difficulty = data.additional_difficulty or 0
-	self.activated = data.activated
-	self.granted = data.granted
+	self.activated = data.activated or false
+	self.granted = data.granted or false
 end
 
 function RangeGrantMarker:GetInteractionPos(unit)
@@ -397,7 +401,7 @@ function HackMarker:CheckDiscovered(unit)
 		difficulty = difficulty - CharacterEffectDefs.MrFixit:ResolveValue("mrfixit_bonus")
 	end
 	
-	local result = SkillCheck(unit, self.SkillRequired, difficulty)
+	local result = SkillCheck(unit, self.SkillRequired, difficulty, true)
 	if result == "success" then
 		self:Activate(unit)
 	end

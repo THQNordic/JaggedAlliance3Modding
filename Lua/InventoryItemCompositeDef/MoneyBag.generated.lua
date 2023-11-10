@@ -14,5 +14,6 @@ DefineClass.MoneyBag = {
 	Description = T(918652184810, --[[InventoryItemCompositeDef MoneyBag Description]] "A whole bag of local currency. Almost like real money."),
 	AdditionalHint = T(877464419573, --[[InventoryItemCompositeDef MoneyBag AdditionalHint]] "<bullet_point> <GameColorD>Can not be cashed in for real Money</GameColorD>"),
 	Cost = 500,
+	RestockWeight = 0,
 }
 

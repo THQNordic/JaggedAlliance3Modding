@@ -11,5 +11,6 @@ PlaceObj('InventoryItemCompositeDef', {
 	'Description', T(405152148318, --[[InventoryItemCompositeDef CustomPDA Description]] "Useful for accessing the web and hacking military grade computers."),
 	'AdditionalHint', T(826132472047, --[[InventoryItemCompositeDef CustomPDA AdditionalHint]] "<bullet_point> Grants additional Intel when hacking\n<bullet_point> Has cute stickers on it"),
 	'locked', true,
+	'RestockWeight', 0,
 })
 

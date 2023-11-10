@@ -76,9 +76,10 @@ function SneakProjector:Idle()
 
 	local showProjectors = 
 		(not gv_Sectors or	not gv_CurrentSectorId) or
-		(gv_Sectors[gv_CurrentSectorId] ~= "player1") and anyLivingEnemies
+		(gv_Sectors[gv_CurrentSectorId].Side ~= "player1" and anyLivingEnemies) 
 	if showProjectors then
 		if self.attaches_destroyed then
+			assert(self:IsValidPos(), "SneakProjector tries to create auto attaches while still invalid!")
 			self:AutoAttachObjects()
 			self:ForEachAttach("Light", Stealth_HandleLight)
 		end
@@ -171,14 +172,13 @@ function SneakProjector:Sweep(length)
 	local finalAngle = atan(p)
 	local prevTime = GameTime()
 	local sweepDuration = self.SweepDuration
+	local lerpFunc = AngleLerp(startingYaw, finalAngle, sweepDuration, true)
 	while sweepDuration >= timePassed do
 		local deltaTime = (GameTime() - prevTime)
 		timePassed = timePassed + deltaTime
 		prevTime = GameTime()
 		self.time_passed = timePassed
-		
-		local currentYaw = self:GetYaw()
-		local lerpFunc = AngleLerp(startingYaw, finalAngle, sweepDuration, true)
+
 		local angle = lerpFunc(EaseCoeff(easingIndex, timePassed, sweepDuration))
 
 		-- Rotate only around Z (yaw) and keep the roll and pitch level designers placed it with.

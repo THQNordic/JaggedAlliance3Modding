@@ -269,7 +269,7 @@ PlaceObj('QuestsDef', {
 					end,
 				}),
 			},
-			Text = T(983930517317, --[[QuestsDef TwinManors Text]] 'Clue: The "potion" drank by one of the actors during the performance contained <em>real poison</em>'),
+			Text = T(983930517317, --[[QuestsDef TwinManors Text]] 'Clue: The "potion" drunk by one of the actors during the performance contained <em>real poison</em>'),
 		}),
 		PlaceObj('QuestNote', {
 			CompletionConditions = {

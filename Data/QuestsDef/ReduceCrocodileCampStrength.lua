@@ -207,20 +207,25 @@ PlaceObj('QuestsDef', {
 						return quest.PatrolArrivedToHelp
 					end,
 				}),
-				PlaceObj('CombatIsActive', {
-					Negate = true,
-				}),
-				PlaceObj('UnitIsOnMap', {
-					TargetUnit = "PatrolReinforcements",
-				}),
 			},
 			Effects = {
-				PlaceObj('SectorEnterConflict', {
-					conflict_mode = false,
-					sector_id = "H14",
+				PlaceObj('CustomCodeEffect', {
+					custom_code = "if gv_Sectors.H14.conflict then gv_Sectors.H14.conflict.locked = false end",
 				}),
-				PlaceObj('GroupAlert', {
-					TargetUnit = "PatrolReinforcements",
+				PlaceObj('ConditionalEffect', {
+					'Conditions', {
+						PlaceObj('UnitIsOnMap', {
+							TargetUnit = "PatrolReinforcements",
+						}),
+						PlaceObj('CombatIsActive', {
+							Negate = true,
+						}),
+					},
+					'Effects', {
+						PlaceObj('GroupAlert', {
+							TargetUnit = "PatrolReinforcements",
+						}),
+					},
 				}),
 			},
 			Once = true,

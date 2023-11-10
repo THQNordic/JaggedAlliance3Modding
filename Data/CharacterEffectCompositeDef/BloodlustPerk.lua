@@ -12,102 +12,35 @@ PlaceObj('CharacterEffectCompositeDef', {
 		}),
 	},
 	'object_class', "Perk",
-	'msg_reactions', {
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "unit",
-			Event = "UnitBeginTurn",
-			Handler = function (self, unit)
-				
-				local function exec(self, unit)
-				unit:SetEffectValue("bloodlust_last_target", nil)
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "UnitBeginTurn" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, unit)
-				end
-				
-				if self:VerifyReaction("UnitBeginTurn", reaction_def, unit, unit) then
-					exec(self, unit)
-				end
-			end,
-			HandlerCode = function (self, unit)
-				unit:SetEffectValue("bloodlust_last_target", nil)
+	'unit_reactions', {
+		PlaceObj('UnitReaction', {
+			Event = "OnBeginTurn",
+			Handler = function (self, target)
+				self:SetParameter("target", false)
 			end,
 		}),
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "attacker",
-			Event = "OnAttack",
-			Handler = function (self, attacker, action, target, results, attack_args)
-				
-				local function exec(self, attacker, action, target, results, attack_args)
-				if action.ActionType ~= "Melee Attack" or not IsValid(target) or not IsKindOf(target, "Unit") then
-					attacker:SetEffectValue("bloodlust_last_target", nil)
-					return
+		PlaceObj('UnitReaction', {
+			Event = "OnUnitAttack",
+			Handler = function (self, target, attacker, action, attack_target, results, attack_args)
+				if target == attacker then
+					if action.ActionType ~= "Melee Attack" or not IsKindOf(attack_target, "Unit") then
+						self:SetParameter("target", false)
+					else
+						self:SetParameter("target", attack_target.handle)
+					end
 				end
-				attacker:SetEffectValue("bloodlust_last_target", target.handle)
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[2]
-				if not reaction_def or reaction_def.Event ~= "OnAttack" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, attacker, action, target, results, attack_args)
-				end
-				
-				if self:VerifyReaction("OnAttack", reaction_def, attacker, attacker, action, target, results, attack_args) then
-					exec(self, attacker, action, target, results, attack_args)
-				end
-			end,
-			HandlerCode = function (self, attacker, action, target, results, attack_args)
-				if action.ActionType ~= "Melee Attack" or not IsValid(target) or not IsKindOf(target, "Unit") then
-					attacker:SetEffectValue("bloodlust_last_target", nil)
-					return
-				end
-				attacker:SetEffectValue("bloodlust_last_target", target.handle)
 			end,
 		}),
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "attacker",
-			Event = "GatherDamageModifications",
-			Handler = function (self, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data)
-				
-				local function exec(self, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data)
-				local last_target = attacker:GetEffectValue("bloodlust_last_target")
-				local action = CombatActions[mod_data.action_id or false]
-				if action and action.ActionType == "Melee Attack" and last_target and IsKindOf(target, "Unit") and target.handle ~= last_target then
-					local bonus = MulDivRound(attacker.Strength, BloodlustPerk:ResolveValue("Str_to_bonus_dmg_conversion"), 100)
-					mod_data.base_damage = MulDivRound(mod_data.base_damage, 100 + bonus, 100)
-					mod_data.breakdown[#mod_data.breakdown + 1] = { name = self.DisplayName, value = bonus }
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[3]
-				if not reaction_def or reaction_def.Event ~= "GatherDamageModifications" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data)
-				end
-				
-				if self:VerifyReaction("GatherDamageModifications", reaction_def, attacker, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data) then
-					exec(self, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data)
-				end
-			end,
-			HandlerCode = function (self, attacker, target, attack_args, hit_descr, mod_data)
-				local last_target = attacker:GetEffectValue("bloodlust_last_target")
-				local action = CombatActions[mod_data.action_id or false]
-				if action and action.ActionType == "Melee Attack" and last_target and IsKindOf(target, "Unit") and target.handle ~= last_target then
-					local bonus = MulDivRound(attacker.Strength, BloodlustPerk:ResolveValue("Str_to_bonus_dmg_conversion"), 100)
-					mod_data.base_damage = MulDivRound(mod_data.base_damage, 100 + bonus, 100)
-					mod_data.breakdown[#mod_data.breakdown + 1] = { name = self.DisplayName, value = bonus }
+		PlaceObj('UnitReaction', {
+			Event = "OnCalcDamageAndEffects",
+			Handler = function (self, target, attacker, attack_target, action, weapon, attack_args, hit, data)
+				if target == attacker and action then
+					local last_target = self:ResolveValue("target")
+					if action.ActionType == "Melee Attack" and last_target and IsKindOf(attack_target, "Unit") and attack_target.handle ~= last_target then
+						local bonus = MulDivRound(attacker.Strength, self:ResolveValue("Str_to_bonus_dmg_conversion"), 100)
+						data.base_damage = MulDivRound(data.base_damage, 100 + bonus, 100)
+						data.breakdown[#data.breakdown + 1] = { name = self.DisplayName, value = bonus }
+					end
 				end
 			end,
 		}),

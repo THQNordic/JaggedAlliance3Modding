@@ -51,12 +51,8 @@ end
 function SetDontHideToRoomsOutsideBorderArea()
 	local border = GetBorderAreaLimits()
 	if not border then return end
-	
 	MapForEach("map", "Room", function(r)
-		local min = r.box:min()
-		local max = r.box:max()
-		if min:x() < border:minx() or min:y() < border:miny() or
-			max:x() > border:maxx() or max:y() > border:maxy() then
+		if border:Intersect2D(r.box) == const.irOutside then
 			r.outside_border = true
 		else
 			r.outside_border = false
@@ -191,19 +187,61 @@ function StairSlab:ComputeVisibility(passed)
 	end
 end
 
-DefineClass.BlackPlane = {
-	__parents = { "Mesh" },
+DefineClass.BlackPlaneBase = {
+	__parents = {"Object"},
 	flags = { gofPermanent = true },
 	properties = {
 		{ id = "sizex", editor = "number", default = 0 },
 		{ id = "sizey", editor = "number", default = 0 },
 		{ id = "depth", editor = "number", default = 0 },
-		{ id = "floor", editor = "number", default = 0 },
+		{ id = "floor", editor = "number", default = 1 },
 	},
+}
+
+function BlackPlaneBase:GetBBox2D()
+	return self:GetBBox():SetInvalidZ()
+end
+
+function BlackPlaneBase:GetBBox()
+	return self:GetObjectBBox()
+end
+
+DefineClass.BlackPlane = {
+	__parents = { "BlackPlaneBase", "Mesh", "AlignedObj" },
+	flags = { gofPermanent = true },
+	
+	--wallbox = false,
+	original_pos = false, -- snap according to this
 }
 
 function BlackPlane:GameInit()
 	self:Setup()
+	self.original_pos = self:GetPos()
+end
+
+function BlackPlane:AlignObj(pos, angle)
+	if IsChangingMap() then return end --initial allign, we should be already aligned.
+	local op = self.original_pos
+	local x, y, z
+	
+	if pos then
+		x, y, z = pos:xyz() 
+	else
+		x, y, z = self:GetPosXYZ()
+	end
+	
+	if op then
+		local ox, oy, oz = op:xyz()
+		local sox, soy, soz = VoxelToWorld(WorldToVoxel(ox, oy, oz))
+		local sx, sy, sz = VoxelToWorld(WorldToVoxel(x, y, z))
+		x = sx + (ox - sox)
+		y = sy + (oy - soy)
+		z = sz + (oz - soz)
+	end
+	self:SetPosAngle(x, y, z, angle or self:GetAngle())
+	
+	DbgClear()
+	DbgAddBox(self:GetBBox())
 end
 
 function BlackPlane:GetBBox2D()
@@ -212,6 +250,15 @@ function BlackPlane:GetBBox2D()
 	local ret = box(0, 0, -1, sx, sy, 0)
 	local x, y, z = self:GetPosXYZ()
 	return Offset(ret, point(x - sx / 2, y - sy / 2, z))
+end
+
+function BlackPlane:GetBBox()
+	local sx = self.sizex
+	local sy = self.sizey
+	local sz = self.depth
+	local ret = box(0, 0, 0, sx, sy, sz)
+	local x, y, z = self:GetPosXYZ()
+	return Offset(ret, point(x - sx / 2, y - sy / 2, z - sz))
 end
 
 function BlackPlane:Setup()
@@ -300,6 +347,23 @@ function testingMesh()
 	return mesh
 end
 
+DefineClass.BlackPlaneThatCanBePlacedByHand = {
+	__parents = { "BlackPlaneBase", "AlignedObj" },
+	flags = { gofPermanent = true },
+	entity = "CMTPlane"
+}
+
+function BlackPlaneThatCanBePlacedByHand:GameInit()
+	self:SetColorModifier(RGBRM(0, 0, 0, 127, 127))
+end
+
+function BlackPlaneThatCanBePlacedByHand:AlignObj(...)
+	return FloorAlignedObj.AlignObj(self, ...)
+end
+
+function BlackPlaneThatCanBePlacedByHand:Setup()
+end
+
 --table.set_ival(t, "key1", "key2", v) => table.insert(t[key1][key2], v) with checks and new t creation
 function table.set_ival(t, ...)
 	local c = select('#', ...)
@@ -315,6 +379,8 @@ function table.set_ival(t, ...)
 end
 
 function AnalyseRoomsAndPlaceBlackPlanesOnEdges()
+	CleanBlackPlanes()
+	
 	--this works for concrete mat, for other mats it will spill over and needs to be adjusted
 	local xAxisMinY = {}
 	local xAxisMaxY = {}
@@ -326,7 +392,7 @@ function AnalyseRoomsAndPlaceBlackPlanesOnEdges()
 		if v.spawned_corners[side] then
 			local t = v.spawned_corners[side]
 			local cs = t[Max(#t - 1, 1)]
-			if cs and cs.isVisible then--and cs.material == "Concrete" then
+			if cs and cs.isVisible and cs.material == "Concrete" then
 				return true
 			end
 		end
@@ -335,14 +401,37 @@ function AnalyseRoomsAndPlaceBlackPlanesOnEdges()
 	local function figureOutZ(x, y, f)
 		local z = 0
 		MapForEach(x, y, 0, halfVoxelSizeX + 1, "WallSlab", "RoomCorner", nil, const.efVisible, function(s, f)
-			if s.floor == f and not rawget(s, "isPlug") then
+			if s.floor == f and not rawget(s, "isPlug") and
+				(not IsKindOf(s, "RoomCorner") or s.material == "Concrete") then --only fat corners bump z
 				local sz = s:GetPos():z()
 				if sz > z then
 					z = sz
 				end
 			end
 		end, f)
-		return z + voxelSizeZ
+		if z ~= 0 then
+			return z + voxelSizeZ
+		end
+	end
+	
+	local function findZY(x, sy, y, f)
+		if x then
+			for ssy = sy, y, voxelSizeY do
+				local ret = figureOutZ(x, ssy, f)
+				if ret then return ret end
+			end
+		end
+		return nil
+	end
+	
+	local function findZX(sx, x, y, f)
+		if y then
+			for ssx = sx, x, voxelSizeX do
+				local ret = figureOutZ(ssx, y, f)
+				if ret then return ret end
+			end
+		end
+		return nil
 	end
 	
 	local function figureOutDepth(last, z)
@@ -352,6 +441,21 @@ function AnalyseRoomsAndPlaceBlackPlanesOnEdges()
 				return z - lz
 			elseif lz > z then
 				last.depth = Max(last.depth, lz - z)
+			end
+		end
+		
+		return 0
+	end
+	
+	local function getSpecialCornerOffset(qx, qy, qz, offset)
+		local c = MapGetFirst(qx, qy, qz, voxelSizeY - 1, "RoomCorner", function(o) return o.isVisible end)
+		--print(c and c.material)
+		if c then
+			--DbgAddVector(point(qx, qy, qz))
+			if c.material == "Concrete" then
+				return -offset
+			else
+				return offset
 			end
 		end
 		
@@ -426,7 +530,6 @@ function AnalyseRoomsAndPlaceBlackPlanesOnEdges()
 			end
 		end
 		
-		
 		local startX = x + halfVoxelSizeX
 		local mint = xAxisMinY[floor] or {}
 		xAxisMinY[floor] = mint
@@ -471,6 +574,8 @@ function AnalyseRoomsAndPlaceBlackPlanesOnEdges()
 		end
 	end)
 	
+	local noZFightingOffset = 5
+	local offset = guim / 10 + 1
 	local objs = {}
 	local twidth, theight = terrain.GetMapSize()
 	local lastYMin = {}
@@ -480,126 +585,175 @@ function AnalyseRoomsAndPlaceBlackPlanesOnEdges()
 	local lastPlacedMin = {}
 	local lastPlacedMax = {}
 	
-	for i = 0, (twidth / voxelSizeX) do
-		local x = halfVoxelSizeX + i * voxelSizeX
-		
-		for f, t in pairs(xAxisMinY) do			
-			if lastYMin[f] ~= t[x] then
-				local sx = lastXMin[f]
-				local y = lastYMin[f]
-
-				lastYMin[f] = t[x]
-				lastXMin[f] = x
+	local function lProcessYAxis(y, yAxisMult, container, lastX, lastY, lastPlaced)
+		for f, t in pairs(container) do
+			local x = lastX[f]
+			local sy = lastY[f]
+			local z = findZY(x, sy, y, f)
+			local nextZ = x and figureOutZ(x, y, f) or z
+			
+			if x ~= t[y] or nextZ ~= z then
+				lastX[f] = t[y]
+				lastY[f] = y
 				
-				if y then
-					local ex = x - voxelSizeX
-					local z = figureOutZ(sx, y, f)
-					local offset = guim / 10 + 1
-					local offset2 = voxelSizeX - offset
-					local width = ex - sx + offset2 * 2
-					local height = y - offset
-					local depth = figureOutDepth(lastPlacedMin[f], z)
-					local pos = point(sx + width / 2 - offset2, y - height / 2 - offset, z)
-					local plane = PlaceObject("BlackPlane", {sizex = width + voxelSizeX, sizey = height, depth = depth, floor = f})
+				if x and z then
+					local ey = y - voxelSizeY
+					local offset2 = voxelSizeY - offset
+					local width = twidth - x - offset
+					if yAxisMult < 0 then
+						width = x - offset
+					end
+					local height = ey - sy + offset2 * 2
+					local lastPlane = lastPlaced[f]
+					local depth = figureOutDepth(lastPlane, z)
+					
+					--this handles when walls are different height but one line
+					if nextZ < z then
+						height = height - voxelSizeY + offset + noZFightingOffset
+					end
+					if lastPlane and lastPlane.x == x and lastPlane.z < z then
+						local offset3 = voxelSizeY - (offset + noZFightingOffset)
+						sy = sy + offset3
+						height = height - offset3
+					end
+					
+					--further fine tuning.........
+					--adjusts plane to be very close to the corner permutation
+					if nextZ < z then
+						height = height + getSpecialCornerOffset(x, sy + height - offset2*2 + voxelSizeY, z, offset)
+					elseif lastPlane and lastPlane.x == x and lastPlane.z < z then
+						local offset4 = getSpecialCornerOffset(x, sy - voxelSizeY, z, offset)
+						height = height + offset4
+						sy = sy - offset4
+					end
+					
+					local pos = point(x + yAxisMult * width / 2 + yAxisMult * offset, sy + height / 2 - offset2, z)
+					local plane = PlaceObject("BlackPlane", {
+					sizex = width, 
+					sizey = height + voxelSizeY, 
+					depth = depth, 
+					floor = f,
+					x = x,
+					y = y,
+					z = z,
+					})
+					
 					plane:SetPos(pos)
-					table.set_ival(objs, f, "xAxisMinY", plane)
-					lastPlacedMin[f] = plane
-				end
-			end
-		end
-		
-		for f, t in pairs(xAxisMaxY) do
-			--[[if f == 1 and t[x] then
-				DbgAddVector(point(x, t[x], 9000))
-			end]]
-			if lastYMax[f] ~= t[x] then
-				local sx = lastXMax[f]
-				local y = lastYMax[f]
-
-				lastYMax[f] = t[x]
-				lastXMax[f] = x
-				
-				if y then
-					local ex = x - voxelSizeX
-					local z = figureOutZ(sx, y, f)
-					local offset = guim / 10 + 1
-					local offset2 = voxelSizeX - offset
-					local width = ex - sx + offset2 * 2
-					local height = (theight - y) - offset
-					local depth = figureOutDepth(lastPlacedMax[f], z)
-					local pos = point(sx + width / 2 - offset2, y + height / 2 + offset, z)
-					local plane = PlaceObject("BlackPlane", {sizex = width + voxelSizeX, sizey = height, depth = depth, floor = f})
-					plane:SetPos(pos)
-					table.set_ival(objs, f, "xAxisMaxY", plane)
-					lastPlacedMax[f] = plane
+					local key = yAxisMult > 0 and "yAxisMaxX" or "yAxisMinX"
+					table.set_ival(objs, f, key, plane)
+					lastPlaced[f] = plane
+					
+					--[[local pbb = plane:GetBBox()
+					local wallbox
+					if yAxisMult < 0 then
+						wallbox = box(pbb:maxx() - 600, pbb:miny(), pbb:minz(), pbb:maxx(), pbb:maxy(), pbb:maxz())
+					else
+						wallbox = box(pbb:minx(), pbb:miny(), pbb:minz(), pbb:minx() + 600, pbb:maxy(), pbb:maxz())
+					end
+					--DbgAddBox(wallbox)
+					plane.wallbox = wallbox --for pp
+					plane:Setup()]]
 				end
 			end
 		end
 	end
+	
+	local function lProcessXAxis(x, xAxisMult, container, lastX, lastY, lastPlaced)
+		for f, t in pairs(container) do
+			local sx = lastX[f]
+			local y = lastY[f]
+			local z = findZX(sx, x, y, f)
+			local nextZ = y and figureOutZ(x, y, f) or z
+			
+			if y ~= t[x] or nextZ ~= z then
+				lastX[f] = x
+				lastY[f] = t[x]
+				
+				if y and z then
+					local ex = x - voxelSizeX
+					assert(offset == guim / 10 + 1)
+					local offset2 = voxelSizeX - offset
+					local width = ex - sx + offset2 * 2
+					local height = (theight - y) - offset
+					if xAxisMult < 0 then
+						height = y - offset
+					end
+					local lastPlane = lastPlaced[f]
+					local depth = figureOutDepth(lastPlane, z)
+					
+					--this handles when walls are different height but one line
+					if nextZ < z then
+						width = width - voxelSizeX + offset + noZFightingOffset
+					end
+					if lastPlane and lastPlane.y == y and lastPlane.z < z then
+						local offset3 = voxelSizeX - (offset + noZFightingOffset)
+						sx = sx + offset3
+						width = width - offset3
+					end
+					
+					--further fine tuning.........
+					--adjusts plane to be very close to the corner permutation
+					if nextZ < z then
+						width = width + getSpecialCornerOffset(sx + width - offset2*2 + voxelSizeX, y, z, offset)
+					elseif lastPlane and lastPlane.y == y and lastPlane.z < z then
+						local offset4 = getSpecialCornerOffset(sx - voxelSizeX, y, z, offset)
+						width = width + offset4
+						sx = sx - offset4
+					end
+					
+					local pos = point(sx + width / 2 - offset2,	y + xAxisMult * (height / 2) + xAxisMult * offset, z)
+					local plane = PlaceObject("BlackPlane", {
+					sizex = width + voxelSizeX, 
+					sizey = height, 
+					depth = depth, 
+					floor = f,
+					x = x,
+					y = y,
+					z = z
+					})
+					
+					plane:SetPos(pos)
+					local key = xAxisMult > 0 and "xAxisMaxY" or "xAxisMinY"
+					table.set_ival(objs, f, key, plane)
+					lastPlaced[f] = plane
+					
+					
+					--[[local pbb = plane:GetBBox()
+					local wallbox
+					if xAxisMult < 0 then
+						wallbox = box(pbb:minx(), pbb:maxy() - 600, pbb:minz(), pbb:maxx(), pbb:maxy(), pbb:maxz())
+					else
+						wallbox = box(pbb:minx(), pbb:miny(), pbb:minz(), pbb:maxx(), pbb:miny() + 600, pbb:maxz())
+					end
+					--DbgAddBox(wallbox)
+					plane.wallbox = wallbox --for pp
+					
+					plane:Setup()  --for debugging, itll setup itself]]
+				end
+			end
+		end
+	end
+	
+	for i = 0, (twidth / voxelSizeX) do
+		local x = halfVoxelSizeX + i * voxelSizeX
+		
+		lProcessXAxis(x, -1, xAxisMinY, lastXMin, lastYMin, lastPlacedMin)
+		lProcessXAxis(x, 1, xAxisMaxY, lastXMax, lastYMax, lastPlacedMax)
+	end
+	
+	--reset helpers
 	lastYMin = {}
 	lastYMax = {}
 	lastXMin = {}
 	lastXMax = {}
 	lastPlacedMin = {}
 	lastPlacedMax = {}
+
 	for j = 0, (theight / voxelSizeY) - 1 do
 		local y = halfVoxelSizeY + j * voxelSizeY
 		
-		for f, t in pairs(yAxisMinX) do
-			--[[if t[y] then
-				DbgAddVector(point(t[y],y, 9000))
-			end]]
-			if lastXMin[f] ~= t[y] then
-				local sy = lastYMin[f]
-				local x = lastXMin[f]
-
-				lastXMin[f] = t[y]
-				lastYMin[f] = y
-				
-				if x then
-					local ey = y - voxelSizeY
-					local z = figureOutZ(x, sy, f)
-					local offset = guim / 10 + 1
-					local offset2 = voxelSizeY - offset
-					local width = x - offset
-					local height = ey - sy + offset2 * 2
-					local depth = figureOutDepth(lastPlacedMin[f], z)
-					local pos = point(x - width / 2 - offset, sy + height / 2 - offset2, z)
-					local plane = PlaceObject("BlackPlane", {sizex = width, sizey = height + voxelSizeY, depth = depth, floor = f})
-					plane:SetPos(pos)
-					table.set_ival(objs, f, "yAxisMinX", plane)
-					lastPlacedMin[f] = plane
-				end
-			end
-		end
-		
-		for f, t in pairs(yAxisMaxX) do
-		--[[	if t[y] then
-				DbgAddVector(point(t[y],y, 9000))
-			end]]
-			if lastXMax[f] ~= t[y] then
-				local sy = lastYMax[f]
-				local x = lastXMax[f]
-
-				lastXMax[f] = t[y]
-				lastYMax[f] = y
-				
-				if x then
-					local ey = y - voxelSizeY
-					local z = figureOutZ(x, sy, f)
-					local offset = guim / 10 + 1
-					local offset2 = voxelSizeY - offset
-					local width = twidth - x - offset
-					local height = ey - sy + offset2 * 2
-					local depth = figureOutDepth(lastPlacedMax[f], z)
-					local pos = point(x + width / 2 + offset, sy + height / 2 - offset2, z)
-					local plane = PlaceObject("BlackPlane", {sizex = width, sizey = height + voxelSizeY, depth = depth, floor = f})
-					plane:SetPos(pos)
-					table.set_ival(objs, f, "yAxisMaxX", plane)
-					lastPlacedMax[f] = plane
-				end
-			end
-		end
+		lProcessYAxis(y, -1, yAxisMinX, lastXMin, lastYMin, lastPlacedMin)
+		lProcessYAxis(y, 1, yAxisMaxX, lastXMax, lastYMax, lastPlacedMax)
 	end
 	
 	local function processFirstLast(first, last, f, func)
@@ -628,8 +782,8 @@ function AnalyseRoomsAndPlaceBlackPlanesOnEdges()
 					local z = Max(fbz, lbz)
 					local d = z - Min(fbz - first.depth, lbz - last.depth)
 					local x, y, w, h = func(first, last, ib, z, d)
-					local plane = PlaceObject("BlackPlane", {sizex = w, sizey = h, depth = d, floor = f})
-					plane:SetPos(x, y, z)
+					local plane = PlaceObject("BlackPlane", {sizex = w, sizey = h, depth = 0, floor = f})
+					plane:SetPos(x, y, z - d)
 					table.set_ival(objs, f, "corners", plane)
 					--DbgAddBox(Offset(plane:GetBBox2D(), 0, 0, 10000))
 				end
@@ -687,11 +841,145 @@ function AnalyseRoomsAndPlaceBlackPlanesOnEdges()
 			end
 		end
 	end
+	
+	local function lPPPlaneHeightsNextToWalls()
+		--pp part 2, reduce box height if possible next to walls
+		local bps = MapGet("map", "BlackPlane", function(o) return o.wallbox and o.wallbox:IsValid() end) or {} --skip corners
+		--TODO: make less boxes
+		--TODO: after corners boot up it fucks up
+		local i = 1
+		while i <= #bps do
+			local bp1 = bps[i]
+			i = i + 1
+			if IsValid(bp1) and bp1.wallbox then
+				local bp1bb = bp1:GetBBox()
+				DbgAddBox(bp1bb)
+				local dbging = 5
+				for j = 1, #bps do
+					local bp2 = bps[j]
+					if IsValid(bp2) and bp2.wallbox and bp2.floor == bp1.floor then
+						local bp2bb = bp2:GetBBox()
+						if bp1bb:Intersect2D(bp2bb) ~= const.irOutside
+							and (bp1.wallbox:Intersect2D(bp2bb) ~= const.irOutside or
+								bp2.wallbox:Intersect2D(bp1bb) ~= const.irOutside)
+							and bp1.wallbox:Intersect2D(bp2.wallbox) == const.irOutside then
+							
+							DbgClear()
+							DbgAddBox(bp1.wallbox)
+							DbgAddBox(bp2.wallbox)
+							local childBoxes = SplitBoxes(bp1bb, bp2bb)
+							for k = 1, #childBoxes do
+								local cb = childBoxes[k]
+								DbgAddBox(cb)
+								local i1 = bp1.wallbox:Intersect2D(cb) ~= const.irOutside
+								local i2 = bp2.wallbox:Intersect2D(cb) ~= const.irOutside
+								if not i1 and not i2 then
+									if bp1bb:Point2DInside(cb:Center()) then
+										i1 = true
+									else
+										i2 = true
+									end
+								end
+								
+								if i1 and i2 then
+									goto cont
+								elseif i1 then
+									childBoxes[k] = box(cb:minx(), cb:miny(), bp1bb:minz(),
+																cb:maxx(), cb:maxy(), bp1bb:maxz())
+								elseif i2 then
+									childBoxes[k] = box(cb:minx(), cb:miny(), bp2bb:minz(),
+																cb:maxx(), cb:maxy(), bp2bb:maxz())
+								end
+							end
+							
+							local f = bp1.floor
+							local wb1 = bp1.wallbox
+							local wb2 = bp2.wallbox
+							DoneObject(bp1)
+							DoneObject(bp2)
+
+							for k = 1, #childBoxes do
+								local cb = childBoxes[k]
+								DbgAddBox(cb)
+								local plane = PlaceObject("BlackPlane", {sizex = cb:sizex(), sizey = cb:sizey(), depth = cb:sizez(), floor = f})
+								plane:SetPos(cb:Center():SetZ(cb:maxz()))
+								if cb:Intersect2D(wb1) ~= const.irOutside then
+									plane.wallbox = wb1
+								elseif cb:Intersect2D(wb2) ~= const.irOutside then
+									plane.wallbox = wb2
+								end
+								table.insert(bps, plane)
+								plane:Setup()
+							end
+						end
+					end
+					::cont::
+					if not IsValid(bp1) then
+						break
+					end
+				end
+			end
+		end
+	end
+	
+	--lPPPlaneHeightsNextToWalls()
+	
 	return objs
 end
 
+function SplitBoxes(b1, b2)
+	DbgClear()
+	DbgAddBox(b1)
+	DbgAddBox(b2)
+	local xAxis = {b1:minx(), b1:maxx(), b2:minx(), b2:maxx()}
+	local yAxis = {b1:miny(), b1:maxy(), b2:miny(), b2:maxy()}
+	table.sort(xAxis)
+	table.sort(yAxis)
+	
+	
+	local ret = {}
+	local minx, maxx, miny, maxy
+	for i, x in ipairs(xAxis) do
+		maxx = minx and x
+		minx = minx or x
+		if minx and maxx then
+			for j, y in ipairs(yAxis) do
+				maxy = miny and y
+				miny = miny or y
+				if miny and maxy then
+					local rb = box(minx, miny, maxx, maxy)
+					if rb:IsValid() and (b1:Point2DInside(rb:Center()) or b2:Point2DInside(rb:Center())) then
+						table.insert(ret, rb)
+						--DbgAddBox(rb)
+					end
+					miny = maxy
+					maxy = nil
+				end
+			end
+			
+			minx = maxx
+			maxx = nil
+		end
+	end
+	
+	return ret
+end
+
+function dbg1()
+	DbgClear()
+	MapForEach("map", "BlackPlaneBase", function(o) DbgAddBox(o:GetBBox()) end)
+end
+
+function dbg2()
+	MapForEach("map", "BlackPlaneBase", function(o) o:SetEnumFlags(const.efSelectable) end)
+end
+
+function dbg3()
+	return MapGetFirst("map", "BlackPlaneBase")
+end
+
 function CleanBlackPlanes(floor)
-	DoneObjects(MapGet("map", "BlackPlane", function(o) return not floor or floor == o.floor end))
+	DoneObjects(MapGet("map", "BlackPlaneBase", function(o) return not floor or floor == o.floor end))
 end
 
 AppendClass.MapDataPreset = { properties = {
@@ -712,7 +1000,7 @@ function HideBlackPlanesNotOnFloor(floor)
 		return
 	end
 	
-	MapForEach("map", "BlackPlane", function(o, edit, floor)
+	MapForEach("map", "BlackPlaneBase", function(o, edit, floor)
 		local hide = o.floor ~= floor
 		if edit then
 			o:SetShadowOnlyImmediate(hide)
@@ -754,7 +1042,7 @@ function UpdateBlackPlaneVisibilityOnFloorChange()
 end
 
 function ShowAllBlackPlanes()
-	MapForEach("map", "BlackPlane", function(o)
+	MapForEach("map", "BlackPlaneBase", function(o)
 		o:SetOpacity(100)
 	end)
 	blackPlanesLastVisibleFloor = false
@@ -808,3 +1096,96 @@ function lvl_design_01_ResaveAllMaps()
 		end)
 	end)
 end
+
+----------------------------------------------------------------------
+--blk plane selection
+----------------------------------------------------------------------
+DefineClass.XBlackPlaneSelectionTool = {
+	__parents = { "XEditorTool" },
+	
+	ToolTitle = "Black Plane Selection Tool",
+	ToolSection = "Misc",
+	Description = {
+		"When toggled you can select code renderable Black Planes."
+	},
+	ActionSortKey = "7",
+	ActionIcon = "CommonAssets/UI/Editor/Tools/HideCodeRenderables.tga", 
+	ActionShortcut = "Shift-X",
+	ActionMode = "Editor",
+	ToolKeepSelection = true,
+
+	time_activated = false,
+}
+
+function XBlackPlaneSelectionTool:Init()
+	--print("XBlackPlaneSelectionTool:Init")
+	self.time_activated = now()
+	editor.ClearSel()
+end
+
+function XBlackPlaneSelectionTool:CheckStartOperation(pt)
+	print("XBlackPlaneSelectionTool:CheckStartOperation")
+end
+
+function XBlackPlaneSelectionTool:OnShortcut(shortcut, source, repeated)
+	local released1 = string.format("-%s", self.ActionShortcut)
+	local released2 = string.format("-%s", self.ActionShortcut2)
+	if shortcut == self.ActionShortcut or shortcut == self.ActionShortcut2 then
+		XEditorSetDefaultTool()
+		return "break"
+	elseif (shortcut == released1 or shortcut == released2) and (now() - self.time_activated > 300) then
+		XEditorSetDefaultTool()
+		return "break"
+	elseif shortcut == "Delete" then
+		local selection = editor.GetSel()
+		editor.ClearSel()
+		DoneObjects(selection)
+		DbgClear()
+	elseif shortcut == "W" then
+		local selection = editor.GetSel()
+		if #selection > 0 then
+			XEditorSetDefaultTool("MoveGizmo")
+		end
+	end
+end
+
+function XBlackPlaneSelectionTool:OnMouseButtonDown(pt, button)
+	if button == "L" then
+		--print("XBlackPlaneSelectionTool:OnMouseButtonDown")
+		local selection = editor.GetSel()
+		local closestPt, closestObj;
+		local eye, cursor = camera.GetEye(), GetTerrainCursor()
+		local vec = cursor - eye
+		cursor = eye + vec * 3
+		DbgAddVector(eye, cursor - eye)
+		MapForEach("map", "BlackPlaneBase", function(o, eye, cursor, selection)
+			if not table.find(selection, o) then
+				local bb = o:GetBBox()
+				if bb:sizez() == 0 then
+					bb = bb:grow(0, 0, 1) --this func doesn't see zero height bbs
+				end
+				local rez, pt1, pt2 = IntersectSegmentBoxInt(eye, cursor, bb)
+				if rez then
+					local closest = IsCloser(eye, pt1, pt2) and pt1 or pt2
+					if not closestPt or IsCloser(eye, closest, closestPt) then
+						closestObj = o
+						closestPt = closest
+					end
+				end
+			end
+		end, eye, cursor, selection)
+		
+		if closestObj then
+			--print("great successs")
+			editor.ClearSel()
+			DbgClear()
+			editor.AddToSel({closestObj})
+			DbgAddBox(closestObj:GetBBox())
+		end
+	elseif button == "R" then
+		editor.ClearSel()
+		DbgClear()
+	end
+end
+
+UndefineClass("CompositeBodyPresetColor")

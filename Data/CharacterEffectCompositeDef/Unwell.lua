@@ -12,33 +12,11 @@ PlaceObj('CharacterEffectCompositeDef', {
 	},
 	'Comment', "Used in Camp Barrierre guardpost objective",
 	'object_class', "CharacterEffect",
-	'msg_reactions', {
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "attacker",
-			Event = "GatherCTHModifications",
-			Handler = function (self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
-				
-				local function exec(self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
-				if cth_id == self.id and data.action.ActionType == "Ranged Attack" then
-					data.mod_add = data.mod_add + self:ResolveValue("range_cth_mod")
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "GatherCTHModifications" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
-				end
-				
-				if self:VerifyReaction("GatherCTHModifications", reaction_def, attacker, attacker, cth_id, action_id, target, weapon1, weapon2, data) then
-					exec(self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
-				end
-			end,
-			HandlerCode = function (self, attacker, cth_id, data)
-				if cth_id == self.id and data.action.ActionType == "Ranged Attack" then
+	'unit_reactions', {
+		PlaceObj('UnitReaction', {
+			Event = "OnCalcChanceToHit",
+			Handler = function (self, target, attacker, action, attack_target, weapon1, weapon2, data)
+				if action.ActionType == "Ranged Attack" then
 					data.mod_add = data.mod_add + self:ResolveValue("range_cth_mod")
 				end
 			end,

@@ -56,6 +56,7 @@ DefineClass.XSatelliteViewMap = {
 	-- runtime state
 	sector_to_wnd = false,
 	squad_to_wnd = false,
+	shipment_to_wnd = false,
 	travel_mode = false,
 	selected_squad = false,
 	selected_sector = false,
@@ -64,6 +65,8 @@ DefineClass.XSatelliteViewMap = {
 	playable_area = false,
 	clamp_box = false,
 	translation_change_notWASD = false,
+	
+	layer_mode = "satellite",
 	
 	-- UI stuff
 	context_menu = false,
@@ -88,13 +91,25 @@ DefineClass.XSatelliteViewMap = {
 
 function XSatelliteViewMap:Init()
 	local campaign = GetCurrentCampaignPreset()
-	self.map_size = campaign.map_size
-	self.grid_start = campaign.sectors_offset
-	self.sector_size = campaign.sector_size
+	self:ValidateAndInitSizes(campaign)
 	self:SetImage(campaign.map_file)
 	
 	self.playable_area = point(campaign.sector_columns * self.sector_size:x(), (campaign.sector_rows - campaign.sector_rowsstart + 1) * self.sector_size:y())
 	self.clamp_box = sizebox(self.grid_start, self.playable_area)
+end
+
+function XSatelliteViewMap:ValidateAndInitSizes(campaign)
+	local gx, gy = campaign.sectors_offset:xy()
+	self.grid_start = point(Max(gx, 0), Max(gy, 0))
+	
+	local sx, sy = campaign.sector_size:xy()
+	self.sector_size = point(Max(sx, 50), Max(sy, 50))
+	
+	local minx, miny =
+		campaign.sector_columns * self.sector_size:x() + self.grid_start:x(),
+		(campaign.sector_rows - campaign.sector_rowsstart + 1) * self.sector_size:y() + self.grid_start:y()
+	local mx, my = campaign.map_size:xy()
+	self.map_size = point(Max(mx, minx), Max(my, miny))
 end
 
 SatelliteViewMoveTimeInterval = 25
@@ -114,6 +129,7 @@ function XSatelliteViewMap:Open()
 	self:InitCacheOfShortcutSquads()
 	self:GenerateSectorGrid()
 	self:GenerateSquadWindows()
+	self:GenerateShipmentWindows()
 	self:UpdateAllSectorVisuals()
 	NetUpdateHash("OpenSatelliteView")
 	Msg("OpenSatelliteView")
@@ -185,13 +201,15 @@ function XSatelliteViewMap:Open()
 						self:ScrollMap(-moveRts:x(), moveRts:y(), interval)
 					end
 				
-					local _, currentGamepadId = GetActiveGamepadState()
-					local dPadDown = XInput.IsCtrlButtonPressed(currentGamepadId, "DPadDown")
-					local dPadUp = XInput.IsCtrlButtonPressed(currentGamepadId, "DPadUp")
-					local ltHeld = XInput.IsCtrlButtonPressed(currentGamepadId, "LeftTrigger")
-					if ltHeld and (dPadDown or dPadUp) then
-						local center = self.box:Center()
-						self:ZoomMap(moveAmount * (dPadDown and -1 or 1), interval, center)
+					local gamepadState, currentGamepadId = GetActiveGamepadState()
+					if gamepadState then
+						local dPadDown = XInput.IsCtrlButtonPressed(currentGamepadId, "DPadDown")
+						local dPadUp = XInput.IsCtrlButtonPressed(currentGamepadId, "DPadUp")
+						local ltHeld = XInput.IsCtrlButtonPressed(currentGamepadId, "LeftTrigger")
+						if ltHeld and (dPadDown or dPadUp) then
+							local center = self.box:Center()
+							self:ZoomMap(moveAmount * (dPadDown and -1 or 1), interval, center)
+						end
 					end
 				end
 			end
@@ -260,20 +278,13 @@ function XSatelliteViewMap:SetMapScroll(transX, transY, time, int)
 	self.translation_change_notWASD = true
 end
 
+SatelliteLayers = { "satellite", "underground" }
+
+function IsSectorLayerDefaultVisible(layerName)
+	return false
+end
+
 function XSatelliteViewMap:GenerateSectorGrid()
-	-- Fx visibility map
-	if not self.sector_visible_map then
-		self.sector_visible_map = {}
-	end
-	if not self.sector_player then
-		self.sector_player = {}
-	end
-	if not self.sector_enemy then
-		self.sector_enemy = {}
-	end
-	if not self.sector_neutral then
-		self.sector_neutral = {}
-	end
 	local size_x, size_y = 0, 0
 	for id, s in pairs(gv_Sectors) do
 		local y, x = sector_unpack(id)
@@ -282,13 +293,31 @@ function XSatelliteViewMap:GenerateSectorGrid()
 	end
 	self.sector_max_x = size_x
 	self.sector_max_y = size_y
-	for i = 1, size_x * size_y do
-		if type(self.sector_visible_map[i]) == "nil" then
-			self.sector_visible_map[i] = false
-			self.sector_player[i] = false
-			self.sector_enemy[i] = false
-			self.sector_neutral[i] = false
+	
+	-- Fx visibility map
+	self.sector_visible_map = {}
+	self.sector_player = {}
+	self.sector_enemy = {}
+	self.sector_neutral = {}
+	for i, layerName in ipairs(SatelliteLayers) do
+		local defaultVisible = IsSectorLayerDefaultVisible(layerName)
+		local visibleMap = {}
+		local player = {}
+		local enemy = {}
+		local neutral = {}
+	
+		for i = 1, size_x * size_y do
+			assert(type(self.sector_visible_map[i]) == "nil")
+			visibleMap[i] = defaultVisible
+			player[i] = false
+			enemy[i] = false
+			neutral[i] = false
 		end
+		
+		self.sector_visible_map[layerName] = visibleMap
+		self.sector_player[layerName] = player
+		self.sector_enemy[layerName] = enemy
+		self.sector_neutral[layerName] = neutral
 	end
 
 	-- Sector window objects.
@@ -343,6 +372,17 @@ function XSatelliteViewMap:GenerateSectorGrid()
 	end
 end
 
+-- slow, to be used from Satellite Sector editor onlyfunction XSatelliteViewMap:RebuildSectorGrid()
+	for _, win in pairs(self.sector_to_wnd) do
+		win:delete()
+	end
+	self:GenerateSectorGrid()
+	for id, win in pairs(self.sector_to_wnd) do
+		win:Open()
+		self:UpdateSectorVisuals(id)
+	end	
+end
+
 -- Visualizations
 ------
 
@@ -357,6 +397,31 @@ function XSatelliteViewMap:GenerateSquadWindows()
 			squad_to_wnd[squad_id] = win
 		end
 	end
+end
+
+function XSatelliteViewMap:GenerateShipmentWindows()
+	local shipment_to_wnd = {}
+	self.shipment_to_wnd = shipment_to_wnd
+	
+	for _, shipment_details in pairs(g_BobbyRay_CurrentShipments) do
+		shipment_to_wnd[shipment_details] = CreateBobbyRayShipmentSquad(shipment_details)
+	end
+end
+
+function OnMsg.BobbyRayShopShipmentSent(shipment_details)
+	if not (g_SatelliteUI and g_SatelliteUI.shipment_to_wnd) then return end
+	g_SatelliteUI.shipment_to_wnd[shipment_details] = CreateBobbyRayShipmentSquad(shipment_details)
+	if g_SatelliteUI.window_state == "open" then g_SatelliteUI.shipment_to_wnd[shipment_details]:Open() end
+end
+
+function OnMsg.BobbyRayShopShipmentArrived(shipment_details)
+	if not (g_SatelliteUI and g_SatelliteUI.shipment_to_wnd) then return end
+	
+	local shipment_window = g_SatelliteUI.shipment_to_wnd[shipment_details]
+	if not shipment_window then return end
+	
+	g_SatelliteUI.shipment_to_wnd[shipment_details] = nil
+	shipment_window:Close()
 end
 
 function OnMsg.ActiveQuestChanged()
@@ -408,6 +473,7 @@ function XSatelliteViewMap:UpdateAllSectorVisuals()
 	for id, _ in pairs(self.sector_to_wnd) do
 		self:UpdateSectorVisuals(id)
 	end
+	self:UpdateShipmentsVisibility()
 end
 
 function TFormat.SatelliteFilterMode()
@@ -420,6 +486,17 @@ function TFormat.SatelliteFilterMode()
 		return T(210514527844, "Tasks")
 	elseif mode == "buildings" then
 		return T(491601259257, "Buildings")
+	end
+end
+
+function XSatelliteViewMap:UpdateShipmentsVisibility()
+	for _, shipment_details in pairs(g_BobbyRay_CurrentShipments) do
+		local window = self.sector_to_wnd[shipment_details.sector_id]
+		local shipWin = self.shipment_to_wnd[shipment_details]
+		if shipWin then
+			local visible = window.visible and (not self.filter_info_mode or self.filter_info_mode == "stash")
+			shipWin:SetVisible(visible)
+		end
 	end
 end
 
@@ -456,7 +533,6 @@ function XSatelliteViewMap:ToggleFilterMode(mode)
 		
 		::continue::
 	end
-	
 	XUpdateRolloverWindow(RolloverControl)
 	g_SatelliteUI:UpdateAllSectorVisuals()
 	ObjModified("satellite_filters")
@@ -587,26 +663,46 @@ function XSatelliteViewMap:UpdateSectorVisuals(sector_id)
 	window:SetSectorVisible(sectorVisible)
 	
 	-- Drawing data
+	local windowLayer = window.layer
+	local visibleMap = self.sector_visible_map[windowLayer]
+	local playerMask = self.sector_player[windowLayer]
+	local enemyMask = self.sector_enemy[windowLayer]
+	local neutralMask = self.sector_neutral[windowLayer]
+	
 	local pos_y, pos_x = sector_unpack(sector_id)
 	local mapIdx = 1 + pos_x - 1 + (pos_y - 1) * self.sector_max_x
-	self.sector_visible_map[mapIdx] = not not sectorVisible -- the C++ side needs strictly true/false here
-	if window.visible then
-		local side = sector.Side
-		if (side == "player1" or side == "player2") and not sector.ForceConflict and sector.Passability ~= "Water" then
-			self.sector_player[mapIdx] = true
-			self.sector_enemy[mapIdx] = false
-			self.sector_neutral[mapIdx] = false
-		elseif side == "enemy1" and sector.Passability ~= "Water" then
-			self.sector_enemy[mapIdx] = true
-			self.sector_player[mapIdx] = false
-			self.sector_neutral[mapIdx] = false
-		elseif side == "neutral" and sector.Passability ~= "Water" and sector.Passability ~= "Blocked" then
-			self.sector_neutral[mapIdx] = true
-			self.sector_enemy[mapIdx] = false
-			self.sector_player[mapIdx] = false
-		end
+	local visibleFx = sectorVisible or IsSectorLayerDefaultVisible(windowLayer)
+	visibleMap[mapIdx] = not not visibleFx -- the C++ side needs strictly true/false here
+	
+	local side = sector.Side
+	if (side == "player1" or side == "player2") and not sector.ForceConflict and sector.Passability ~= "Water" then
+		playerMask[mapIdx] = true
+		enemyMask[mapIdx] = false
+		neutralMask[mapIdx] = false
+	elseif side == "enemy1" and sector.Passability ~= "Water" then
+		enemyMask[mapIdx] = true
+		playerMask[mapIdx] = false
+		neutralMask[mapIdx] = false
+	elseif side == "neutral" and sector.Passability ~= "Water" and sector.Passability ~= "Blocked" then
+		neutralMask[mapIdx] = true
+		enemyMask[mapIdx] = false
+		playerMask[mapIdx] = false
+	else
+		neutralMask[mapIdx] = false
+		enemyMask[mapIdx] = false
+		playerMask[mapIdx] = false
 	end
 	
+	if windowLayer == "underground" then
+		local groundSectorId = sector.GroundSector
+		local groundSector = gv_Sectors[groundSectorId]
+		if groundSector and groundSector.HideUnderground then
+			neutralMask[mapIdx] = false
+			enemyMask[mapIdx] = false
+			playerMask[mapIdx] = false
+		end
+	end
+
 	local questMode = self.filter_info_mode == "quests"
 	local buildingMode = self.filter_info_mode == "buildings"
 	local stashMode = self.filter_info_mode == "stash"
@@ -626,7 +722,7 @@ function XSatelliteViewMap:UpdateSectorVisuals(sector_id)
 	local top_priority_shown = false -- set top priority visible and delete all the others
 	local sel_id = false
 	
-	-- Count non traveling squads to display multi-squad image.
+	-- Count non travelling squads to display multi-squad image.
 	local nonTravellingSquadCount = 0
 	for i = 1, playerSquadCount + enemySquadCount do
 		local squad = i > playerSquadCount and enemySquads[i - playerSquadCount] or playerSquads[i]
@@ -674,7 +770,7 @@ function XSatelliteViewMap:UpdateSectorVisuals(sector_id)
 	for i, s in ipairs(enemySquadsInShortcuts) do
 		local squadWin = self.squad_to_wnd[s.UniqueId]
 		if squadWin then
-			squadWin:SetVisible(filterShowSquads)
+			squadWin:SetVisible(windowIsVisible and filterShowSquads)
 			squadWin:SetAnim(squadWin.rollover)
 			squadWin.idMoreSquads:SetVisible(false)
 		end
@@ -704,6 +800,8 @@ function XSatelliteViewMap:UpdateSectorVisuals(sector_id)
 		local vis = (sectorVisible or squad.always_visible or squad.arrival_squad or nonPlayerTravelling) and
 						(not top_priority_shown or travelling) and
 						filterShowSquads
+		vis = vis and windowIsVisible
+						
 		local showRouteEvenIfInvisible = sectorVisible and not vis and filterShowSquads
 		squadWin:SetVisible(vis, showRouteEvenIfInvisible and "iconOnly")
 		local visConflict = sectorVisible and not top_priority_shown and squadInConflict
@@ -957,6 +1055,7 @@ function OnMsg.SquadStartedTravelling(squad)
 end
 
 function OnMsg.SquadFinishedTraveling(squad)
+	print(OnMsg.SquadFinishedTraveling)
 	local squadWin = g_SatelliteUI.squad_to_wnd[squad.UniqueId]
 	squadWin:SetAnim(false)
 end
@@ -1050,7 +1149,7 @@ local ModifiersGetTop = UIL.ModifiersGetTop
 local PushModifier = UIL.PushModifier
 
 function XSatelliteViewMap:DrawContent()
-	if self.Image == "" or not self.sector_visible_map then return end
+	if not self.Image or self.Image == "" or not self.sector_visible_map then return end
 
 	local image_src = self:CalcSrcRect()
 	local satview_image_size = image_src:size()
@@ -1064,7 +1163,6 @@ function XSatelliteViewMap:DrawContent()
 	local sector_size_x = self.sector_size:x()
 	local sector_size_y = self.sector_size:y()
 
-
 	local satviewSpaceToSrcrc = function(value)
 		if IsPoint(value) then
 			return MulDivRoundPoint(value, satview_image_size, self.map_size)
@@ -1073,7 +1171,6 @@ function XSatelliteViewMap:DrawContent()
 				MulDivRoundPoint(value:max(), satview_image_size, self.map_size))
 		end
 	end
-	
 
 	local dst_rect = sizebox(start_x, start_y, sector_size_x * self.sector_max_x, sector_size_y * self.sector_max_y)
 	local src_rect = satviewSpaceToSrcrc(dst_rect)
@@ -1095,20 +1192,38 @@ function XSatelliteViewMap:DrawContent()
 	local shader_params = XSatelliteViewParams:GetActiveInstance() or XSatelliteViewParams
 	local shader_buf = pstr()
 
-	local visible_sectors = table.copy(self.sector_visible_map)
-	local player_sectors = table.copy(self.sector_player)
-	local enemy_sectors = table.copy(self.sector_enemy)
-	local neutral_sectors = table.copy(self.sector_neutral)
+	local currentLayer = self.layer_mode
+	local visible_sectors = table.copy(self.sector_visible_map[currentLayer])
+	local player_sectors = table.copy(self.sector_player[currentLayer])
+	local enemy_sectors = table.copy(self.sector_enemy[currentLayer])
+	local neutral_sectors = table.copy(self.sector_neutral[currentLayer])
+	
+	local width, height = 	self.sector_max_x, self.sector_max_y
 	local selected_sectors, rollover_sectors = {}, {}
-	for id, s in pairs(gv_Sectors) do
-		local underground = IsSectorUnderground(id)
-		if not underground then 
-			local side = s.Side
-			local y, x = sector_unpack(id)
-			local idx = 1 + (x - 1) + (y - 1) * self.sector_max_x
-			selected_sectors[idx] = self.selected_sector_fx == s
-			rollover_sectors[idx] = self.rollover_sector_fx == s or self.blinking_sector_fx == s
-		end
+	for i = 1, width * height do
+		selected_sectors[i] = false
+		rollover_sectors[i] = false
+	end
+	
+	if self.selected_sector_fx then
+		local id = self.selected_sector_fx.Id
+		local y, x = sector_unpack(id)
+		local idx = 1 + (x - 1) + (y - 1) * self.sector_max_x
+		selected_sectors[idx] = true
+	end
+	
+	if self.rollover_sector_fx then
+		local id = self.rollover_sector_fx.Id
+		local y, x = sector_unpack(id)
+		local idx = 1 + (x - 1) + (y - 1) * self.sector_max_x
+		rollover_sectors[idx] = true
+	end
+	
+	if self.blinking_sector_fx then
+		local id = self.blinking_sector_fx.Id
+		local y, x = sector_unpack(id)
+		local idx = 1 + (x - 1) + (y - 1) * self.sector_max_x
+		rollover_sectors[idx] = true
 	end
 
 	local vision_mask_id = draw_as_paused and shader_params.vision_blur_id or shader_params.vision_id
@@ -1117,7 +1232,7 @@ function XSatelliteViewMap:DrawContent()
 	UILDrawSatelliteViewMap(self.Image, white, dst_rect, src_rect, point(self.sector_max_x, self.sector_max_y), selected_sectors, shader_buf)
 	UILDrawSatelliteViewMap(self.Image, white, dst_rect, src_rect, point(self.sector_max_x, self.sector_max_y), rollover_sectors, shader_buf)
 
-	UILDrawSatelliteViewLines( dst_rect, point(self.sector_max_x, self.sector_max_y), self.sector_visible_map,
+	UILDrawSatelliteViewLines( dst_rect, point(self.sector_max_x, self.sector_max_y), self.sector_visible_map[currentLayer],
 		shader_params.visible_grid_color, shader_params.invisible_grid_color, shader_params.grid_width)
 
 	shader_buf = (UIFxModifierPresets[shader_params.neutral_id] or XSatelliteViewMapBaseParams):ComposeBuffer(shader_buf)
@@ -1403,7 +1518,7 @@ function XSatelliteViewMap:OnSectorRollover(wnd, sector, rollover)
 	self.mouse_cursor = self:IsRolloverSectorImpassable() and "UI/Cursors/Pda_Impassable.tga"
 
 	self.rollover_sector = rollover and sector
-	self.rollover_sector_fx = rollover and (gv_Sectors[sector.GroundSector] or sector)
+	self.rollover_sector_fx = rollover and sector
 	if self.rollover_sector ~= sector then
 		self:Invalidate()
 	end
@@ -1419,8 +1534,7 @@ function XSatelliteViewMap:SetTravelWaypoint()
 	assert(travelCtx)
 	if not travelCtx then return end
 	local route = travelCtx.route
-	assert(route)
-	if not route then return end
+	if not route then return end -- No valid route to that sector (shift-click on impassable adjacent sector)
 
 	local forbidden, _, _, canPlaceWaypoint = IsRouteForbidden(route)
 	if forbidden and not canPlaceWaypoint then

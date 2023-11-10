@@ -7,5 +7,6 @@ PlaceObj('InventoryItemCompositeDef', {
 	'Icon', "UI/Icons/Items/ancient_coin",
 	'DisplayName', T(969825908487, --[[InventoryItemCompositeDef Coin DisplayName]] "Siegfried's Coin"),
 	'Description', T(741112096594, --[[InventoryItemCompositeDef Coin Description]] "Siegfried told you that this coin will give you access to the Night Club."),
+	'RestockWeight', 0,
 })
 

@@ -65,9 +65,27 @@ PlaceObj('XTemplate', {
 						PlaceObj('XTemplateWindow', {
 							'__class', "XImage",
 							'Id', "idSelectedSectorImage",
+							'IdNode', false,
 							'VAlign', "top",
 							'Image', "UI/PDA/ss_b2",
-						}),
+						}, {
+							PlaceObj('XTemplateWindow', {
+								'Id', "idSelectedSectorLabel",
+								'Margins', box(0, 0, 80, 85),
+								'HAlign', "center",
+								'VAlign', "center",
+								'MinWidth', 40,
+							}, {
+								PlaceObj('XTemplateWindow', {
+									'__class', "XText",
+									'Id', "idSelectedSectorLabelText",
+									'TextStyle', "PDASatelliteRollover_SectorTitle",
+									'Translate', true,
+									'TextHAlign', "center",
+									'TextVAlign', "center",
+								}),
+								}),
+							}),
 						}),
 					PlaceObj('XTemplateWindow', {
 						'comment', "left content",
@@ -191,12 +209,16 @@ PlaceObj('XTemplate', {
 										'func', function (self, rollover)
 											if not rollover then return end
 											
-											local sectorId = self.context.Id
+											local sector = self.context
 											local node = self:ResolveId("node")
+											node.idSelectedSectorImage:SetImage(sector.SectorImagePreview)
 											
-											local sectorIdLower = string.lower(sectorId)
-											local image = "UI/PDA/ss_" .. sectorIdLower
-											node.idSelectedSectorImage:SetImage(image or "UI/PDA/ss_i1")
+											local color, _, _, textColor = GetSectorControlColor(sector.Side)
+											local text = textColor .. sector.Id .. "</color>"
+											local label = self:ResolveId("node"):ResolveId("idSelectedSectorLabel")
+											local labelText = self:ResolveId("node"):ResolveId("idSelectedSectorLabelText")
+											label:SetBackground(color)
+											labelText:SetText(T{764093693143, "<SectorIdColored(id)>", id = sector.Id})
 										end,
 									}),
 									PlaceObj('XTemplateFunc', {

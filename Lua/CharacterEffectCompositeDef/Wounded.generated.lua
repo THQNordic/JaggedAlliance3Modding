@@ -7,120 +7,64 @@ DefineClass.Wounded = {
 
 
 	object_class = "StatusEffect",
-	msg_reactions = {
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "obj",
-			Event = "StatusEffectAdded",
-			Handler = function (self, obj, id, stacks)
-				
-				local function exec(self, obj, id, stacks)
-				RecalcMaxHitPoints(obj)
-				
-				if not IsKindOf(obj, "Unit") then
-					return
+	msg_reactions = {},
+	unit_reactions = {
+		PlaceObj('UnitReaction', {
+			Event = "OnStatusEffectAdded",
+			Handler = function (self, target, id, stacks)
+				if self.class == id then
+					-- handle add/remove stacks
+					RecalcMaxHitPoints(target)
 				end
-				
-				if not obj:HasStainType("Blood") then
-					local spot = obj:GetEffectValue("wounded_stain_spot")
-					if spot then
-						obj:AddStain("Blood", spot)
-					end
-				end
-				
-				if not obj.wounded_this_turn and GameState.Heat then
-					if not RollSkillCheck(obj, "Health") then
-						obj:ChangeTired(1)
-					end
-				end
-				local attackObj = obj.hit_this_turn and obj.hit_this_turn[#obj.hit_this_turn]
-				local friendlyFire = attackObj and attackObj.team and obj.team and attackObj.team :IsAllySide(obj.team)
-				local effect = obj:GetStatusEffect("Wounded")
-				if effect.stacks >= 4 and obj:IsMerc() and not friendlyFire then
-					PlayVoiceResponse(obj, "SeriouslyWounded")
-				elseif not friendlyFire then
-					PlayVoiceResponse(obj, "Wounded")
-				end
-				obj.wounded_this_turn = true
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "StatusEffectAdded" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, obj, id, stacks)
-				end
-				
-				if self:VerifyReaction("StatusEffectAdded", reaction_def, obj, obj, id, stacks) then
-					exec(self, obj, id, stacks)
-				end
-			end,
-			HandlerCode = function (self, obj, id, stacks)
-				RecalcMaxHitPoints(obj)
-				
-				if not IsKindOf(obj, "Unit") then
-					return
-				end
-				
-				if not obj:HasStainType("Blood") then
-					local spot = obj:GetEffectValue("wounded_stain_spot")
-					if spot then
-						obj:AddStain("Blood", spot)
-					end
-				end
-				
-				if not obj.wounded_this_turn and GameState.Heat then
-					if not RollSkillCheck(obj, "Health") then
-						obj:ChangeTired(1)
-					end
-				end
-				local attackObj = obj.hit_this_turn and obj.hit_this_turn[#obj.hit_this_turn]
-				local friendlyFire = attackObj and attackObj.team and obj.team and attackObj.team :IsAllySide(obj.team)
-				local effect = obj:GetStatusEffect("Wounded")
-				if effect.stacks >= 4 and obj:IsMerc() and not friendlyFire then
-					PlayVoiceResponse(obj, "SeriouslyWounded")
-				elseif not friendlyFire then
-					PlayVoiceResponse(obj, "Wounded")
-				end
-				obj.wounded_this_turn = true
 			end,
 		}),
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "obj",
-			Event = "StatusEffectRemoved",
-			Handler = function (self, obj, id, stacks, reason)
-				
-				local function exec(self, obj, id, stacks, reason)
-				RecalcMaxHitPoints(obj)
-				if obj:IsKindOf("Unit") and not obj:IsDead() then
-					obj:ClearStains("Blood")
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[2]
-				if not reaction_def or reaction_def.Event ~= "StatusEffectRemoved" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, obj, id, stacks, reason)
-				end
-				
-				if self:VerifyReaction("StatusEffectRemoved", reaction_def, obj, obj, id, stacks, reason) then
-					exec(self, obj, id, stacks, reason)
-				end
-			end,
-			HandlerCode = function (self, obj, id, stacks, reason)
-				RecalcMaxHitPoints(obj)
-				if obj:IsKindOf("Unit") and not obj:IsDead() then
-					obj:ClearStains("Blood")
+		PlaceObj('UnitReaction', {
+			Event = "OnStatusEffectRemoved",
+			Handler = function (self, target, id, stacks_remaining)
+				if self.class == id and stacks_remaining > 0 then
+					-- handle add/remove stacks
+					RecalcMaxHitPoints(target)	
 				end
 			end,
 		}),
 	},
 	DisplayName = T(646181611891, --[[CharacterEffectCompositeDef Wounded DisplayName]] "Wounded"),
 	Description = T(625596846196, --[[CharacterEffectCompositeDef Wounded Description]] "Maximum <em>HP reduced by <MaxHpReductionPerStack></em> per wound. Cured by the <em>Treat Wounds</em> Operation in the Sat View"),
+	OnAdded = function (self, obj)
+		RecalcMaxHitPoints(obj)
+		
+		if not IsKindOf(obj, "Unit") then
+			return
+		end
+		
+		if not obj:HasStainType("Blood") then
+			local spot = obj:GetEffectValue("wounded_stain_spot")
+			if spot then
+				obj:AddStain("Blood", spot)
+			end
+		end
+		
+		if not obj.wounded_this_turn and GameState.Heat then
+			if not RollSkillCheck(obj, "Health") then
+				obj:ChangeTired(1)
+			end
+		end
+		local attackObj = obj.hit_this_turn and obj.hit_this_turn[#obj.hit_this_turn]
+		local friendlyFire = attackObj and attackObj.team and obj.team and attackObj.team :IsAllySide(obj.team)
+		local effect = obj:GetStatusEffect("Wounded")
+		if effect.stacks >= 4 and obj:IsMerc() and not friendlyFire then
+			PlayVoiceResponse(obj, "SeriouslyWounded")
+		elseif not friendlyFire then
+			PlayVoiceResponse(obj, "Wounded")
+		end
+		obj.wounded_this_turn = true
+	end,
+	OnRemoved = function (self, obj)
+		RecalcMaxHitPoints(obj)
+		if obj:IsKindOf("Unit") and not obj:IsDead() then
+			obj:ClearStains("Blood")
+		end
+	end,
 	type = "Debuff",
 	Icon = "UI/Hud/Status effects/wounded",
 	max_stacks = 999,

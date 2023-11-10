@@ -12,31 +12,25 @@ PlaceObj('CharacterEffectCompositeDef', {
 		}),
 	},
 	'object_class', "Perk",
-	'msg_reactions', {
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "target",
-			Event = "DamageTaken",
-			Handler = function (self, attacker, target, dmg, hit_descr)
-				
-				local function exec(self, attacker, target, dmg, hit_descr)
-				target:AddStatusEffect("BattleFocusBuff")
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "DamageTaken" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, attacker, target, dmg, hit_descr)
-				end
-				
-				if self:VerifyReaction("DamageTaken", reaction_def, target, attacker, target, dmg, hit_descr) then
-					exec(self, attacker, target, dmg, hit_descr)
-				end
+	'unit_reactions', {
+		PlaceObj('UnitReaction', {
+			Event = "OnDamageTaken",
+			Handler = function (self, target, attacker, dmg, hit_descr)
+				self:SetParameter("activated", true)
 			end,
-			HandlerCode = function (self, attacker, target, dmg, hit_descr)
-				target:AddStatusEffect("BattleFocusBuff")
+		}),
+		PlaceObj('UnitReaction', {
+			Event = "OnCombatEnd",
+			Handler = function (self, target)
+				self:SetParameter("activated", false)
+			end,
+		}),
+		PlaceObj('UnitReaction', {
+			Event = "OnCalcStartTurnAP",
+			Handler = function (self, target, value)
+				if self:ResolveValue("activated") then
+					return value + self:ResolveValue("battleFocusAP") * const.Scale.AP
+				end
 			end,
 		}),
 	},

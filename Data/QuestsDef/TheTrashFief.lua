@@ -469,6 +469,16 @@ PlaceObj('QuestsDef', {
 						}),
 					},
 				}),
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "TheTrashFief",
+					Vars = set({
+	LegionResolutionTriggered = false,
+}),
+					__eval = function ()
+						local quest = gv_Quests['TheTrashFief'] or QuestGetState('TheTrashFief')
+						return not quest.LegionResolutionTriggered
+					end,
+				}),
 				PlaceObj('SectorIsInConflict', {
 					Negate = true,
 				}),
@@ -747,16 +757,6 @@ PlaceObj('QuestsDef', {
 				}),
 				PlaceObj('GroupIsDead', {
 					Group = "LegionResolution_AllLegionEnemies",
-				}),
-				PlaceObj('QuestIsVariableBool', {
-					QuestId = "TheTrashFief",
-					Vars = set({
-	Completed = false,
-}),
-					__eval = function ()
-						local quest = gv_Quests['TheTrashFief'] or QuestGetState('TheTrashFief')
-						return not quest.Completed
-					end,
 				}),
 			},
 			Effects = {

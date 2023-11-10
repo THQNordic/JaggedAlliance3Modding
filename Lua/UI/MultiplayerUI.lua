@@ -53,6 +53,14 @@ function RefreshMercSelection()
 	end
 end
 
+function OnMsg.Resume()
+	if SelectedObj then
+		--while game is paused ui actions are disabled (this was due to players being able to shoot during pause in coop)
+		--if last ui action recalc was during pause all actions for the selected unit would be greyed out
+		SelectedObj:RecalcUIActions()
+	end
+end
+
 if FirstLoad then
 	CloseCoopMercsManagement_watchdog = false
 end
@@ -102,12 +110,17 @@ local function lOpenCoOpManagementDialog()
 	end
 end
 
-function NetSyncEvents.OpenCoopMercsManagement()
+function NetSyncEvents.OpenCoopMercsManagement(onlyIfNoMercs)
 	if IsValidThread(CloseCoopMercsManagement_watchdog) then
 		DeleteThread(CloseCoopMercsManagement_watchdog)
 		CloseCoopMercsManagement_watchdog = false
 	end
-	lOpenCoOpManagementDialog()
+	if mapdata.GameLogic and HasGameSession() and IsCoOpGame() then
+		if onlyIfNoMercs and CountCoopUnits(2) > 0 then
+			return
+		end
+		lOpenCoOpManagementDialog()
+	end
 end
 
 local function lOpenCoOpSquadControlWhenGameTimeStarts()
@@ -133,10 +146,7 @@ local function lOpenCoOpSquadControlWhenGameTimeStarts()
 			WaitMsg("SetpieceEnded", 1000)
 			dlg = GetDialog("XSetpieceDlg")
 		end
-		WaitAllOtherThreads()
-		if mapdata.GameLogic and HasGameSession() and IsCoOpGame() and CountCoopUnits(2) <= 0 then
-			lOpenCoOpManagementDialog()
-		end
+		FireNetSyncEventOnHostOnce("OpenCoopMercsManagement", "onlyIfNoMercs")
 	end)
 end
 OnMsg.NetGameLoaded = lOpenCoOpSquadControlWhenGameTimeStarts
@@ -327,7 +337,7 @@ function ShowMPLobbyError(context, err)
 	else
 		context_string = T(141784216225, "Error.")
 	end
-	if err then error_string = Untranslated{"<MPError(err)>", err = err} end
+	if err then error_string = Untranslated{"<MPError(err)>", err = tostring(err)} end
 	msg = msg or CreateMessageBox(parent, T(634182240966, "Error"), context_string .. error_string, T(325411474155, "OK"))
 	msg.obj = "mp-error"
 	return msg
@@ -425,6 +435,23 @@ function GetMultiplayerLobbyDialog(skip_mode_check)
 	if not subMenu then return false end
 	
 	return subMenu:ResolveId("idMultiplayer") and dlg or false
+end
+
+function LeaveMultiplayer(reason)
+	local multiplayer_game = IsInMultiplayerGame()
+	local is_host = not multiplayer_game or NetIsHost()
+	local multiplayer_ui = GetMultiplayerLobbyDialog(true)
+	multiplayer_ui = multiplayer_ui and multiplayer_ui.Mode == "Multiplayer"
+	
+	NetLeaveGame()
+	if not is_host then 
+		OnGuestForceLeaveGame(reason) 
+	else
+		MultiplayerLobbySetUI("empty")
+		if reason and (multiplayer_ui or multiplayer_game) then
+			ShowMPLobbyError("disconnect-after-leave-game", reason)
+		end
+	end
 end
 
 function MultiplayerLobbySetUI(mode, param) -- todo: check if param actually does anything
@@ -712,26 +739,6 @@ local function lReceiveLobbyInfo(name, player_id, msg, other)
 		NewGameObj.campaign_name = GenerateMultiplayerGuestCampaignName()
 	end
 	
-	-- CancelOptions creates its own thread, unlike CancelDisplayOptions; we need to wait for the options menu to be fully closed before we try to setup the multiplayer lobby
-	local dlg = GetDialog("PreGameMenu")
-	if dlg then
-		local mode = dlg:GetMode()
-		if mode == "Options" then
-			dlg:ResolveId("idSubMenuTittle"):SetText(T(""))
-			local currentOpened = GetDialogModeParam(dlg:ResolveId("idSubContent"))
-			if currentOpened then
-				if currentOpened["optObj"].id == "Display" then
-					CancelDisplayOptions(dlg:ResolveId("idSubMenu"), "clear")
-				else
-					local thread = CancelOptions(dlg:ResolveId("idSubMenu"), "clear")
-					while GetThreadStatus(thread) do
-						Sleep(1)
-					end
-				end
-			end
-		end
-	end
-	
 	if other.no_menu then return end
 	
 	local multiplayerAbleUI = GetMultiplayerLobbyDialog(true)
@@ -940,7 +947,7 @@ function UIReceiveInvite(name, host_id, game_id, gameType, gameName)
 	
 	if g_ForceLeaveGameDialog then
 		g_ForceLeaveGameDialog:Close()
-		WaitMsg("ForceLeaveGameEndEnd")
+		WaitMsg("ForceLeaveGameEnd")
 	end
 	
 	-- If already joining a game, then cancel the invite as busy.
@@ -977,6 +984,12 @@ function UIReceiveInvite(name, host_id, game_id, gameType, gameName)
 			g_DisclaimerSplashScreen:Close("net join")
 		end
 		OpenPreGameMainMenu()
+	else
+		local pgmmDlg = GetDialog("PreGameMenu")
+		if pgmmDlg then
+			pgmmDlg:Close()
+			OpenDialog("PreGameMenu")
+		end
 	end
 
 	-- don't actually need host_id or gameName, only game_id
@@ -1102,6 +1115,7 @@ function TryNetJoinGame(game_id, host_id, game_name)
 	if result == "rejected" then
 		return "rejected"
 	elseif result == "ok" then -- cancelled by user
+		print("---------- Sent cancel")
 		return NetSend("rfnPlayerMessage", host_id, "request_cancel", game_id)
 	end
 end
@@ -1514,6 +1528,8 @@ function OnMsg.GameDesynced(desync_path, desync_data)
 
 		WaitPlayerControl()
 		
+		if not IsInMultiplayerGame() then return end
+		
 		local titleT = T(581122640598, "Game Desynchronized")
 		local choiceResyncT = T(610827620841, "Resync")
 		local choiceCloseT = T(175313021861, "Close")
@@ -1615,5 +1631,15 @@ function GetSteamLobbyVisibility()
 		return "friendsonly"
 	else
 		return "invisible"
+	end
+end
+
+function OnMsg.ZuluGameLoaded(name)
+	if NetIsHost() then --update game info when loading save
+		NetChangeGameInfo({ 
+			map = GetMapName(),
+			campaign = Game and Game.Campaign,
+			day = Game and TFormat.day() or 1,
+		})
 	end
 end

@@ -371,6 +371,10 @@ PDABrowserTabData = {
 	{
 		id = "landing",
 		DisplayName = T(750064110101, "A.I.M. Database"),
+	},
+	{
+		id = "bobby_ray_shop",
+		DisplayName = T(478086245074, "Bobby Ray's"),
 	}
 }
 
@@ -382,6 +386,7 @@ GameVar("PDABrowserTabState", function ()
 		imp = { locked = g_TestCombat },
 		banner_page = {locked = true},
 		page_error = {locked = true},
+		bobby_ray_shop = { locked = true },
 	}
 end)
 
@@ -433,6 +438,11 @@ end
 function PDABrowser:SetMode(mode, context)
 	if not TutorialHintsState.LandingPageShown then
 		mode = "landing"
+	end
+	
+	if mode == "banner_page" and context == "PDABrowserBobbyRay" then
+		mode = "bobby_ray_shop"
+		context = "front"
 	end
 	
 	local browserContent = self:ResolveId("idBrowserContent")
@@ -533,7 +543,7 @@ function SpecifyMercSectorPopup(mercs)
 	local sector_posibilities = { initial_sector }
 	for id, sector in pairs(gv_Sectors) do
 		-- Sectors marked as "arrivable" and that the player has owned at any point.
-		if sector.Side == "player1" and sector.CanBeUsedForArrival and sector.last_own_campaign_time ~= 0 and id ~= initial_sector then
+		if sector.Side == "player1" and not sector.PortLocked and sector.CanBeUsedForArrival and sector.last_own_campaign_time ~= 0 and id ~= initial_sector then
 			sector_posibilities[#sector_posibilities + 1] = id
 		end
 	end
@@ -1992,6 +2002,20 @@ TFormat.PDAUrl = function(context_obj)
 		return sitePreset and sitePreset.url or Untranslated("ERROR - ID (".. (content.BannerPageId or "") .. ") not found in PDABrowserSites LUA table.")
 	elseif mercBrowser:GetMode() == "page_error" then
 		return T(734463588909, "oops.error.net")
+	elseif mercBrowser:GetMode() == "bobby_ray_shop" then
+		local site = GetDialog(mercBrowser).mode_param
+		local base_string = PDABrowserSites["PDABrowserBobbyRay"].url
+		local extra_string = ""
+		if site == "front" then
+			-- do nothing
+		elseif site == "store" then
+			local cat = BobbyRayShopGetCategory(BobbyRayShopGetActiveCategoryPair())
+			assert(cat)
+			extra_string = Untranslated(cat.UrlSuffix)
+		elseif site == "cart" then
+			extra_string = Untranslated("/cart") -- url suffix
+		end
+		return base_string .. extra_string
 	end
 	return T(456922836254, "http://www.aimmercs.net/")
 end
@@ -2206,6 +2230,28 @@ function OpenIMPPage()
 	if dlg and dlg.Mode ~= "imp" then
 		dlg:SetMode("imp")
 	end
+end
+
+function IsBobbyRayOpen(mode)
+	local pda = GetDialog("PDADialog")
+	if not pda or pda.Mode ~= "browser" or not pda.idContent or not pda.idContent.Mode == "bobby_ray_shop" then return false end
+	
+	if not mode then return true end
+	
+	return pda.idContent.mode_param == mode
+end
+
+function OpenBobbyRayPage()
+	local pda = GetDialog("PDADialog")
+	if not pda then
+		pda = OpenDialog("PDADialog", GetInGameInterface(), { Mode = "browser"})
+	end
+
+	if pda.Mode ~= "browser" then
+		pda:SetMode("browser")
+	end
+	local dlg =  pda.idContent
+	if dlg then dlg:SetMode("bobby_ray_shop", "front") end
 end
 
 function OpenAIMAndSelectMerc(id)

@@ -214,14 +214,6 @@ PlaceObj('XTemplate', {
 			end,
 		}),
 		PlaceObj('XTemplateAction', {
-			'ActionId', "ShowChanceToHit",
-			'ActionTranslate', false,
-			'ActionName', "Show Chance To Hit (toggle)",
-			'OnAction', function (self, host, source, ...)
-				host:Op("GedOpTriggerCheat", "root", "CheatEnable", "ShowCth")
-			end,
-		}),
-		PlaceObj('XTemplateAction', {
 			'ActionId', "SpawnEnemy",
 			'ActionTranslate', false,
 			'ActionName', "Spawn Enemy",

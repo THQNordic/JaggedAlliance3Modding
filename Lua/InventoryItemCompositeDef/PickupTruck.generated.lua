@@ -9,6 +9,7 @@ DefineClass.PickupTruck = {
 	object_class = "Grenade",
 	Repairable = false,
 	Reliability = 100,
+	RestockWeight = 0,
 	CenterUnitDamageMod = 130,
 	CenterObjDamageMod = 500,
 	AreaOfEffect = 4,

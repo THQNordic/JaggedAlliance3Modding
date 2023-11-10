@@ -13,7 +13,7 @@ PlaceObj('XTemplate', {
 		'DrawOnTop', true,
 		'OnContextUpdate', function (self, context, ...)
 			if context.loaded then
-				self.idStart:SetVisible(true)
+				self.idStart:SetVisible(not (Platform.ps5 and g_AutoClickLoadingScreenStart == 0))
 				self.idStart:SetEnabled(true)
 				
 				if IsInMultiplayerGame() then
@@ -38,7 +38,7 @@ PlaceObj('XTemplate', {
 				local sector
 				local sector_id
 				local loadingReason = self.context.reason
-				if self.context.metadata and self.context.metadata.sector and (loadingReason == "load savegame" or loadingReason == "host game") then
+				if self.context.metadata and self.context.metadata.sector and (loadingReason == "load savegame" or loadingReason == "host game" or loadingReason == "zulu load savegame") then
 					sector = {}
 					sector.Intel = self.context.metadata.intel
 					sector.intel_discovered = self.context.metadata.intel_discovered
@@ -229,16 +229,18 @@ PlaceObj('XTemplate', {
 			'func', function (self, context)
 				local id = context.id
 				local sector_id = context.sector or context.info_text
-				
-				if Platform.developer and g_DbgAutoClickLoadingScreenStart and context.loaded then
+				if Platform.ps5 and g_AutoClickLoadingScreenStart == 0 then
+					self.idStart:Press()
+					g_AutoClickLoadingScreenStart = Platform.developer and 1000 or false
+				elseif Platform.developer and g_AutoClickLoadingScreenStart and context.loaded then
 					self:DeleteThread("autoclick")
 					self:CreateThread("autoclick",function()
-						Sleep(g_DbgAutoClickLoadingScreenStart)
+						Sleep(g_AutoClickLoadingScreenStart)
 						self.idStart:Press()
 					end)
 				end
 				
-				if config.AutorunLoadingScreenProgressDuration and context and context.reason and context.reason == "autorun" then
+				if config.AutorunLoadingScreenProgressDuration and RealTime() < 40 * 1000 then
 					self.idLoadingAnim:SetEnabled(false)
 					self.idProgressAnim:SetFPS(0)
 					self.idProgressAnim:SetAnimDuration(config.AutorunLoadingScreenProgressDuration)
@@ -252,6 +254,7 @@ PlaceObj('XTemplate', {
 		PlaceObj('XTemplateFunc', {
 			'name', "OnShortcut(self, shortcut, source, ...)",
 			'func', function (self, shortcut, source, ...)
+				if string.sub(shortcut, 1, 1) == "+" then return end
 				if not self:GetContext().loaded then return "break" end
 				
 				if shortcut == "+ButtonB" or shortcut == "ButtonB" or shortcut == "-ButtonB" then
@@ -451,24 +454,8 @@ PlaceObj('XTemplate', {
 							'TextStyle', "LoadingHint",
 							'Translate', true,
 						}),
-						PlaceObj('XTemplateWindow', {
-							'__class', "XTextButton",
-							'Id', "idStart",
-							'Margins', box(0, 0, 30, 0),
-							'Padding', box(5, 0, 5, 0),
-							'Dock', "right",
-							'HAlign', "right",
-							'VAlign', "center",
-							'MinWidth', 154,
-							'MinHeight', 60,
-							'MaxHeight', 60,
-							'Visible', false,
-							'FoldWhenHidden', true,
-							'Background', RGBA(52, 55, 61, 255),
-							'Enabled', false,
-							'FXMouseIn', "buttonRollover",
-							'FXPressDisabled', "IactDisabled",
-							'FocusedBackground', RGBA(52, 55, 61, 255),
+						PlaceObj('XTemplateTemplate', {
+							'__template', "LoadingScreenStartButton",
 							'OnPress', function (self, gamepad)
 								if GetDialog(self).used_input then
 									return
@@ -484,33 +471,7 @@ PlaceObj('XTemplate', {
 									end)
 								end
 							end,
-							'RolloverBackground', RGBA(215, 159, 80, 255),
-							'PressedBackground', RGBA(215, 159, 80, 255),
-							'TextStyle', "LoadingButton",
-							'Translate', true,
-							'Text', T(500700649684, --[[XTemplate XZuluLoadingScreen Text]] "Start"),
-						}, {
-							PlaceObj('XTemplateWindow', {
-								'comment', "controller hint",
-								'__context', function (parent, context) return "GamepadUIStyleChanged" end,
-								'__class', "XText",
-								'ZOrder', 0,
-								'HAlign', "left",
-								'VAlign', "center",
-								'FoldWhenHidden', true,
-								'TextStyle', "HUDHeaderBig",
-								'ContextUpdateOnOpen', true,
-								'OnContextUpdate', function (self, context, ...)
-									local gamepad = GetUIStyleGamepad()
-									self:SetVisible(gamepad)
-									self.parent:SetLayoutMethod(gamepad and "HList" or "Box")
-									XText.OnContextUpdate(self, context, ...)
-								end,
-								'Translate', true,
-								'Text', T(581873934479, --[[XTemplate XZuluLoadingScreen Text]] "<ButtonA>"),
-								'TextVAlign', "center",
-							}),
-							}),
+						}),
 						PlaceObj('XTemplateWindow', {
 							'__class', "XTextButton",
 							'Id', "idTimeoutLeave",
@@ -631,7 +592,7 @@ PlaceObj('XTemplate', {
 										'Text', T(665087177892, --[[XTemplate XZuluLoadingScreen Text]] "Loading"),
 									}),
 									PlaceObj('XTemplateWindow', {
-										'__condition', function (parent, context) return config.AutorunLoadingScreenProgressDuration and context and context.reason and context.reason == "autorun" end,
+										'__condition', function (parent, context) return config.AutorunLoadingScreenProgressDuration and RealTime() < 120 * 1000 end,
 										'__class', "XImage",
 										'Id', "idProgressAnim",
 										'Image', "UI/PDA/Loading14",

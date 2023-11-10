@@ -161,7 +161,7 @@ function IModeCombatAttack:SetTarget(target, dontMove)
 					-- This effectively makes it so the action camera is removed and the target is snapped to.
 					if CurrentActionCamera and CameraBeforeActionCamera then
 						CurrentActionCamera[1] = target
-						CameraBeforeActionCamera[5] = { floor = GetFloorOfPos(target:GetPos()) }
+						CameraBeforeActionCamera[5] = { floor = GetFloorOfPos(target:GetPosXYZ()) }
 						RemoveActionCamera(false, default_interpolation_time)
 					end
 				end)

@@ -373,9 +373,9 @@ function IModeExploration:OnMousePos(pt, button)
 		local voxel = point_pack(vx, vy, vz)
 		if voxel ~= self.cursor_voxel then
 			self.cursor_voxel = voxel
-			if self.drag_start_pos and pt then
-				self:MultiselectionUpdateRect(pt)
-			end
+		end
+		if self.drag_start_pos and pt then
+			self:MultiselectionUpdateRect(pt, voxel ~= self.cursor_voxel)
 		end
 	end
 
@@ -421,7 +421,7 @@ end
 
 --- Selection
 
-function IModeExploration:MultiselectionUpdateRect(pt)
+function IModeExploration:MultiselectionUpdateRect(pt, update_selection)
 	local UIScale = GetUIScale()
 	local start_x, start_y = MulDivRound(self.drag_start_pos, 1000, UIScale):xy()
 
@@ -444,15 +444,17 @@ function IModeExploration:MultiselectionUpdateRect(pt)
 	rect_element:SetMinWidth(right - left)
 	rect_element:SetMinHeight(bottom - top)
 	
-	local start_pos = self.drag_start_pos
-	local max_step = 12 * guim --PATH_EXEC_STEP
-	local temp_objects = GatherObjectsInScreenRect(start_pos, pt, "Unit", max_step)
-	if next(temp_objects) and self:CanSelectObj(temp_objects[1]) then
-		local first_obj = temp_objects[1]
-		self.drag_selection_obj = first_obj
-	else
-		self.drag_selection_obj = false
-	end	
+	if update_selection then
+		local start_pos = self.drag_start_pos
+		local max_step = 12 * guim --PATH_EXEC_STEP
+		local temp_objects = GatherObjectsInScreenRect(start_pos, pt, "Unit", max_step)
+		if next(temp_objects) and self:CanSelectObj(temp_objects[1]) then
+			local first_obj = temp_objects[1]
+			self.drag_selection_obj = first_obj
+		else
+			self.drag_selection_obj = false
+		end	
+	end
 end
 
 function IModeExploration:OnKillFocus()
@@ -921,6 +923,7 @@ function IsActivePauseAvailable()
 	return IsGameRuleActive("ActivePause") 
 		and (not gv_UnitsBlockingPause or (next(gv_UnitsBlockingPause) == nil)) and 
 		not g_Combat and 
+		not g_StartingCombat and
 		not GetDialog("ConversationDialog") and
 		not GetDialog("PhotoMode") and
 		(gv_ActivePause or not IsSetpiecePlaying())

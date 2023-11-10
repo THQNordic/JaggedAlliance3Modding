@@ -793,10 +793,10 @@ PlaceObj('XTemplate', {
 			'HAlign', "right",
 			'VAlign', "bottom",
 			'LayoutMethod', "HList",
+			'LayoutHSpacing', 5,
 		}, {
 			PlaceObj('XTemplateTemplate', {
 				'__template', "CoOpButton",
-				'Margins', box(0, 0, 5, 0),
 			}),
 			PlaceObj('XTemplateWindow', {
 				'__context', function (parent, context) return "satellite_filters" end,

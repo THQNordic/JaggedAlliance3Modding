@@ -306,6 +306,15 @@ PlaceObj('XTemplate', {
 																		else
 																			NetSyncEvent("MercSetOperation", merc.session_id, "Idle")
 																		end	
+																		local mercs = GetOperationProfessionals(sector.Id, operation,prof, merc.session_id)																		
+																		local timeLeft = mercs[1] and GetOperationTimeLeft(mercs[1], operation, {sector = sector,prediction = true, list_as_prof = prof})
+																		if timeLeft and timeLeft>0 then
+																		----	print("timeleft", "activity-temp", timeLeft)
+																			AddTimelineEvent("activity-temp", GameTime() + timeLeft, "operation", {profession = prof,  operationId = operation, sectorId = sector.Id, mercs = table.map(mercs, "session_id")})
+																		else
+																			RemoveTimelineEvent("activity-temp")
+																		end
+																		
 																		NetSyncEvent("RestoreOperationCost", merc.session_id, cost)																		
 																		local d = host.idBase.idMain
 																		if IsCraftOperation(operation) then

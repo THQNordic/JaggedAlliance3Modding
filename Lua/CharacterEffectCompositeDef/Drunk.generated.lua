@@ -7,65 +7,13 @@ DefineClass.Drunk = {
 
 
 	object_class = "CharacterEffect",
-	msg_reactions = {
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "attacker",
-			Event = "GatherCTHModifications",
-			Handler = function (self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
-				
-				local function exec(self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
-				if cth_id == self.id and data.action.ActionType == "Ranged Attack" then
-					data.mod_add = data.mod_add + self:ResolveValue("range_cth_mod")
-					data.display_name = T{776394275735, "Perk: <name>", name = self.DisplayName}
+	unit_reactions = {
+		PlaceObj('UnitReaction', {
+			Event = "OnCalcChanceToHit",
+			Handler = function (self, target, attacker, action, attack_target, weapon1, weapon2, data)
+				if target == attacker and action.ActionType == "Ranged Attack" then
+					ApplyCthModifier_Add(self, data, self:ResolveValue("range_cth_mod"), T{776394275735, "Perk: <name>", name = self.DisplayName})
 				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "GatherCTHModifications" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
-				end
-				
-				if self:VerifyReaction("GatherCTHModifications", reaction_def, attacker, attacker, cth_id, action_id, target, weapon1, weapon2, data) then
-					exec(self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
-				end
-			end,
-			HandlerCode = function (self, attacker, cth_id, data)
-				if cth_id == self.id and data.action.ActionType == "Ranged Attack" then
-					data.mod_add = data.mod_add + self:ResolveValue("range_cth_mod")
-					data.display_name = T{776394275735, "Perk: <name>", name = self.DisplayName}
-				end
-			end,
-		}),
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "obj",
-			Event = "StatusEffectAdded",
-			Handler = function (self, obj, id, stacks)
-				
-				local function exec(self, obj, id, stacks)
-				obj:RemoveStatusEffect("Conscience_Sinful")
-				obj:RemoveStatusEffect("Conscience_Guilty")
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[2]
-				if not reaction_def or reaction_def.Event ~= "StatusEffectAdded" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, obj, id, stacks)
-				end
-				
-				if self:VerifyReaction("StatusEffectAdded", reaction_def, obj, obj, id, stacks) then
-					exec(self, obj, id, stacks)
-				end
-			end,
-			HandlerCode = function (self, obj, id, stacks)
-				obj:RemoveStatusEffect("Conscience_Sinful")
-				obj:RemoveStatusEffect("Conscience_Guilty")
 			end,
 		}),
 	},
@@ -73,6 +21,10 @@ DefineClass.Drunk = {
 	Description = T(948415774949, --[[CharacterEffectCompositeDef Drunk Description]] "Increased <em>Damage</em> with <em>Melee Attacks</em>\n\nLower <em>Accuracy</em> with <em>Ranged Attacks</em>\n"),
 	AddEffectText = T(464514537198, --[[CharacterEffectCompositeDef Drunk AddEffectText]] "<DisplayName> is drunk"),
 	RemoveEffectText = T(456783400197, --[[CharacterEffectCompositeDef Drunk RemoveEffectText]] "<DisplayName> is no longer drunk"),
+	OnAdded = function (self, obj)
+		obj:RemoveStatusEffect("Conscience_Sinful")
+		obj:RemoveStatusEffect("Conscience_Guilty")
+	end,
 	Icon = "UI/Hud/Status effects/drunk",
 	RemoveOnEndCombat = true,
 	Shown = true,

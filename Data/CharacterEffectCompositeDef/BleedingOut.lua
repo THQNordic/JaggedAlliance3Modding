@@ -12,44 +12,17 @@ PlaceObj('CharacterEffectCompositeDef', {
 	},
 	'Comment', "replaces Downed if not treated",
 	'object_class', "CharacterEffect",
-	'msg_reactions', {
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "unit",
-			Event = "UnitEndTurn",
-			Handler = function (self, unit)
-				
-				local function exec(self, unit)
+	'unit_reactions', {
+		PlaceObj('UnitReaction', {
+			Event = "OnEndTurn",
+			Handler = function (self, target)
 				if not IsInCombat() then return end
-				if not RollSkillCheck(unit, "Health", nil, unit.downed_check_penalty) then
-					CombatLog("important", T{290150299208, "<em><LogName></em> has <em>bled out</em>", unit})
-					unit:TakeDirectDamage(unit:GetTotalHitPoints())
+				if not RollSkillCheck(target, "Health", nil, target.downed_check_penalty) then
+					CombatLog("important", T{290150299208, "<em><LogName></em> has <em>bled out</em>", target})
+					target:TakeDirectDamage(target:GetTotalHitPoints())
 				else
-					unit.downed_check_penalty = unit.downed_check_penalty + self:ResolveValue("add_penalty")
-					CombatLog("short", T{333799512710, "<em><LogName></em> is <em>bleeding</em>", unit})
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "UnitEndTurn" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, unit)
-				end
-				
-				if self:VerifyReaction("UnitEndTurn", reaction_def, unit, unit) then
-					exec(self, unit)
-				end
-			end,
-			HandlerCode = function (self, unit)
-				if not IsInCombat() then return end
-				if not RollSkillCheck(unit, "Health", nil, unit.downed_check_penalty) then
-					CombatLog("important", T{290150299208, "<em><LogName></em> has <em>bled out</em>", unit})
-					unit:TakeDirectDamage(unit:GetTotalHitPoints())
-				else
-					unit.downed_check_penalty = unit.downed_check_penalty + self:ResolveValue("add_penalty")
-					CombatLog("short", T{333799512710, "<em><LogName></em> is <em>bleeding</em>", unit})
+					target.downed_check_penalty = target.downed_check_penalty + self:ResolveValue("add_penalty")
+					CombatLog("short", T{333799512710, "<em><LogName></em> is <em>bleeding</em>", target})
 				end
 			end,
 		}),
@@ -59,6 +32,7 @@ PlaceObj('CharacterEffectCompositeDef', {
 	},
 	'DisplayName', T(833314215129, --[[CharacterEffectCompositeDef BleedingOut DisplayName]] "Downed"),
 	'Description', T(588355193847, --[[CharacterEffectCompositeDef BleedingOut Description]] "This character is in <em>Critical condition</em> and will bleed out unless treated with the <em>Bandage</em> action. The character remains alive if a successful check against Health is made next turn."),
+	'OnAdded', function (self, obj)  end,
 	'Icon', "UI/Hud/Status effects/bleedingout",
 	'Shown', true,
 })

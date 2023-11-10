@@ -42569,6 +42569,15 @@ PlaceObj('ActionFXSound', {
 })
 
 PlaceObj('ActionFXSound', {
+	Action = "BobbyRayFinishPurchase",
+	Moment = "start",
+	Sound = "ui_BobbyRayPurchase-completed",
+	Source = "UI",
+	group = "UI",
+	id = "5psF3kbG",
+})
+
+PlaceObj('ActionFXSound', {
 	Action = "Cashin",
 	Moment = "start",
 	Sound = "ui_CashIn",

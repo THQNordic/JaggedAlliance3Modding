@@ -17,41 +17,22 @@ PlaceObj('CharacterEffectCompositeDef', {
 		}),
 	},
 	'object_class', "Perk",
-	'msg_reactions', {
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "attacker",
-			Event = "OnAttack",
-			Handler = function (self, attacker, action, target, results, attack_args)
-				
-				local function exec(self, attacker, action, target, results, attack_args)
-				if IsKindOf(target, "Unit") and results.total_damage and results.total_damage >= self:ResolveValue("damageTreshold") then
-					if attacker.team:IsPlayerControlled() and not attacker:HasStatusEffect("LeadFromTheFrontFlag") then
+	'unit_reactions', {
+		PlaceObj('UnitReaction', {
+			Event = "OnUnitAttack",
+			Handler = function (self, target, attacker, action, attack_target, results, attack_args)
+				if attacker == target and IsKindOf(attack_target, "Unit") and results.total_damage and results.total_damage >= self:ResolveValue("damageTreshold") then
+					if attacker.team:IsPlayerControlled() and not self:ResolveValue("applied") then
 						attacker.team:ChangeMorale(self:ResolveValue("moraleBonus"), self.DisplayName)
-						attacker:AddStatusEffect("LeadFromTheFrontFlag")
+						self:SetParameter("applied", true)
 					end
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "OnAttack" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, attacker, action, target, results, attack_args)
-				end
-				
-				if self:VerifyReaction("OnAttack", reaction_def, attacker, attacker, action, target, results, attack_args) then
-					exec(self, attacker, action, target, results, attack_args)
 				end
 			end,
-			HandlerCode = function (self, attacker, action, target, results, attack_args)
-				if IsKindOf(target, "Unit") and results.total_damage and results.total_damage >= self:ResolveValue("damageTreshold") then
-					if attacker.team:IsPlayerControlled() and not attacker:HasStatusEffect("LeadFromTheFrontFlag") then
-						attacker.team:ChangeMorale(self:ResolveValue("moraleBonus"), self.DisplayName)
-						attacker:AddStatusEffect("LeadFromTheFrontFlag")
-					end
-				end
+		}),
+		PlaceObj('UnitReaction', {
+			Event = "OnBeginTurn",
+			Handler = function (self, target)
+				self:SetParameter("applied", false)
 			end,
 		}),
 	},

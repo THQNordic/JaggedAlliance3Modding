@@ -238,7 +238,7 @@ end
 function OpenTutorialPopup(onWindow, parent, preset, textContext)
 	local onWindow = onWindow or false
 	if not preset then return false end
-	local enabled_option = GetAccountStorageOptionValue("HintsEnabled")
+	local enabled_option = GetAccountStorageOptionValue("HintsEnabled") and GetCurrentCampaignPreset().id == "HotDiamonds"
 	if not enabled_option then
 		return false
 	end
@@ -296,7 +296,7 @@ end
 
 function OpenTutorialPopupSatelliteMap(onWindow, parent, preset, textContext)
 	if not preset then return false end
-	local enabled_option = GetAccountStorageOptionValue("HintsEnabled")
+	local enabled_option = GetAccountStorageOptionValue("HintsEnabled") and GetCurrentCampaignPreset().id == "HotDiamonds"
 	if not enabled_option then
 		return false
 	end
@@ -305,7 +305,7 @@ function OpenTutorialPopupSatelliteMap(onWindow, parent, preset, textContext)
 		return
 	end
 	
-	--do not show popup tutorial if dissmised or special cases like Aiming
+	--do not show popup tutorial if dismissed or special cases like Aiming
 	local state = TutorialHintsState.mode[preset.id]
 	if preset.id ~= "Aiming" and state == "dismissed" then
 		return false
@@ -501,7 +501,8 @@ function OnMsg.OpenSatelliteView()
 	end)
 	
 	if not TutorialHintsState.TravelPlaced then
-		local canShow = gv_InitialHiringDone and gv_Sectors and not gv_Sectors.I1.conflict and gv_Sectors.I1.Side == "player1"
+		local canShow = GetCurrentCampaignPreset().id == "HotDiamonds" and
+			gv_InitialHiringDone and gv_Sectors and not gv_Sectors.I1.conflict and gv_Sectors.I1.Side == "player1"
 		if not canShow then return end
 		
 		local preset = TutorialHints.SatelliteTravelToErnie

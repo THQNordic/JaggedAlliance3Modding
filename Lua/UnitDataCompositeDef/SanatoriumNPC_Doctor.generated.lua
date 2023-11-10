@@ -21,6 +21,9 @@ DefineClass.SanatoriumNPC_Doctor = {
 	Name = T(313977334522, --[[UnitDataCompositeDef SanatoriumNPC_Doctor Name]] "Doctor"),
 	Randomization = true,
 	Affiliation = "Civilian",
+	AIKeywords = {
+		"Heal",
+	},
 	archetype = "Medic",
 	role = "Medic",
 	MaxAttacks = 2,

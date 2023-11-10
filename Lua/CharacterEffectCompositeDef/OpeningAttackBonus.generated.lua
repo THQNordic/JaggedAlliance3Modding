@@ -7,6 +7,16 @@ DefineClass.OpeningAttackBonus = {
 
 
 	object_class = "CharacterEffect",
+	unit_reactions = {
+		PlaceObj('UnitReaction', {
+			Event = "OnCalcOpeningAttackChance",
+			Handler = function (self, target, value, attacker, attack_target)
+				if target == attacker then
+					return value + self:ResolveValue("bonus_chance")
+				end
+			end,
+		}),
+	},
 	RemoveOnEndCombat = true,
 	HideOnBadge = true,
 }

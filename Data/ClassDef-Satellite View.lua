@@ -54,49 +54,6 @@ PlaceObj('ClassDef', {
 })
 
 PlaceObj('ClassDef', {
-	DefParentClassList = {
-		"CampaignObject",
-	},
-	group = "Satellite View",
-	id = "CampaignSide",
-	PlaceObj('PropertyDefText', {
-		'id', "Id",
-		'translate', false,
-	}),
-	PlaceObj('PropertyDefText', {
-		'id', "DisplayName",
-		'name', "Display Name",
-	}),
-	PlaceObj('PropertyDefNumber', {
-		'id', "Standing",
-		'default', 0,
-		'min', -100,
-		'max', 100,
-	}),
-	PlaceObj('PropertyDefBool', {
-		'id', "StickyStanding",
-		'name', "Sticky Standing",
-	}),
-	PlaceObj('PropertyDefText', {
-		'id', "template_key",
-		'no_edit', true,
-		'translate', false,
-	}),
-	PlaceObj('ClassMethodDef', {
-		'name', "GetEditorView",
-		'code', function (self)
-			return self.DisplayName or Untranslated(self.Id or "(unnamed side)")
-		end,
-	}),
-	PlaceObj('PropertyDefBool', {
-		'id', "Player",
-	}),
-	PlaceObj('PropertyDefBool', {
-		'id', "Enemy",
-	}),
-})
-
-PlaceObj('ClassDef', {
 	group = "Satellite View",
 	id = "EnemySquadUnit",
 	PlaceObj('ClassMethodDef', {
@@ -296,7 +253,6 @@ PlaceObj('ClassDef', {
 		'params', "self, id",
 		'default', function (self, id)
 			self.name = id
-			self.NPCs = table.copy(self.NPCs)
 			CampaignObject.SetId(self, id)
 		end,
 	}),
@@ -318,12 +274,55 @@ PlaceObj('ClassDef', {
 		'no_edit', true,
 		'params', "self, prop_id",
 		'default', function (self, prop_id)
-			if prop_id == "Roads" or prop_id == "BlockTravel"then
+			if prop_id == "Roads" or prop_id == "BlockTravel" then
 				SatelliteSectorSetDirectionsProp(self, prop_id)
 			end
-			-- allow the sector to be saved in the campaign
-			-- (it strips generated sectors before saving)
+			if g_SatelliteUI then
+				g_SatelliteUI:UpdateSectorVisuals(self.Id)
+			end
+		end,
+	}),
+	PlaceObj('PropertyDefHelp', {
+		'category', "Data",
+		'id', "generated_hint",
+		'help', "<center>This is an automatically-generated empty sector.",
+		'no_edit', "expression",
+		'no_edit_expression', function (self) return not self.generated end,
+	}),
+	PlaceObj('PropertyDefHelp', {
+		'category', "Data",
+		'id', "inherited_hint",
+		'help', "<center>This is an inherited sector - use the button below to override it in this DLC.",
+		'no_edit', "expression",
+		'no_edit_expression', function (self) return not self.inherited end,
+	}),
+	PlaceObj('PropertyDefButtons', {
+		'category', "Data",
+		'id', "edit_sector_button",
+		'buttons', {
+			PlaceObj('PropertyDefPropButton', {
+				'Name', "Edit sector",
+				'FuncName', "EditGeneratedSector",
+				'IsHidden', function (self)
+					if IsKindOf(self, "ModItem") then return true end
+					
+					return IsKindOf(self, "GedMultiSelectAdapter") or not self.inherited and not self.generated
+				end,
+			}),
+		},
+	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "EditGeneratedSector",
+		'params', "root, prop_id, ged",
+		'code', function (self, root, prop_id, ged)
+			self.inherited = nil
 			self.generated = nil
+			ObjModified(self)
+			ged:SetUiStatus("editing_sector", "Editing sector...")
+			if g_SatelliteUI then
+				g_SatelliteUI:RebuildSectorGrid()
+			end
+			ged:SetUiStatus("editing_sector")
 		end,
 	}),
 	PlaceObj('PropertyDefText', {
@@ -332,6 +331,115 @@ PlaceObj('ClassDef', {
 		'help', "",
 		'read_only', true,
 		'translate', false,
+	}),
+	PlaceObj('ClassConstDef', {
+		'name', "EditorView",
+		'type', "translate",
+		'value', T(153688941226, --[[ClassDef Satellite View SatelliteSector value]] "<if_any(inherited,generated)><color 128 128 128></if><Id><opt(u(display_name),' ','')><if(inherited)> [inherited]</if><if(generated)> [generated - empty]</if>"),
+		'untranslated', true,
+	}),
+	PlaceObj('PropertyDefButtons', {
+		'id', "underground_sector_buttons",
+		'buttons', {
+			PlaceObj('PropertyDefPropButton', {
+				'Name', "Add underground sector",
+				'FuncName', "AddUndergroundSector",
+				'IsHidden', function (self)
+					if IsKindOf(self, "GedMultiSelectAdapter") then return true end
+					
+					if IsKindOf(self, "ModItem") then return true end
+					
+					local campaign = GetParentTableOfKind(self, "CampaignPreset")
+					return not self.Id or
+								self.Id:ends_with("_Underground") or
+							(campaign and table.find(campaign.Sectors, "Id", self.Id .. "_Underground"))
+				end,
+			}),
+			PlaceObj('PropertyDefPropButton', {
+				'Name', "Select underground sector",
+				'FuncName', "SelectUndergroundSector",
+				'IsHidden', function (self)
+					if IsKindOf(self, "GedMultiSelectAdapter") then return true end
+					
+					if IsKindOf(self, "ModItem") then return true end
+					
+					local campaign = GetParentTableOfKind(self, "CampaignPreset")
+					return not self.Id or
+								self.Id:ends_with("_Underground") or
+							not (campaign and table.find(campaign.Sectors, "Id", self.Id .. "_Underground"))
+				end,
+			}),
+			PlaceObj('PropertyDefPropButton', {
+				'Name', "Remove sector",
+				'FuncName', "RemoveSector",
+				'IsHidden', function (self)
+					if IsKindOf(self, "ModItem") then return true end
+					
+					return IsKindOf(self, "GedMultiSelectAdapter") or not self.Id or self.inherited or not self.Id:ends_with("_Underground")
+				end,
+			}),
+		},
+	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "AddUndergroundSector",
+		'params', "root, prop_id, ged",
+		'code', function (self, root, prop_id, ged)
+			CreateRealTimeThread(function()
+				local id = self.Id .. "_Underground"
+				local sector = PlaceObject("SatelliteSector")
+				sector.GroundSector = self.Id
+				sector:SetId(id)
+				
+				local sectors = GetParentTable(self)
+				local idx = table.find(sectors, "Id", self.Id) + 1
+				table.insert(sectors, idx, sector)
+				UpdateParentTable(sector, sectors)
+				
+				ged:SetUiStatus("add_sector", "Adding sector...")
+				CreateSessionCampaignObject(sector, SatelliteSector, gv_Sectors, "Sectors")
+				if g_SatelliteUI then
+					g_SatelliteUI:RebuildSectorGrid()
+				end
+				ObjModified(sectors)
+				Sleep(100)
+				ged:SetSelection("root", { idx }, nil, "notify")
+				ged:SetUiStatus("add_sector")
+			end)
+		end,
+	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "SelectUndergroundSector",
+		'params', "root, prop_id, ged",
+		'code', function (self, root, prop_id, ged)
+			CreateRealTimeThread(function()
+				ged:ResetFilter("root")
+				Sleep(100)
+				ged:SetSelection("root", { table.find(GetParentTable(self), "Id", self.Id .. "_Underground") }, nil, "notify")
+			end)
+		end,
+	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "RemoveSector",
+		'params', "root, prop_id, ged",
+		'code', function (self, root, prop_id, ged)
+			CreateRealTimeThread(function()
+				local sectors = GetParentTable(self)
+				table.remove_value(sectors, self)
+				GetParentTableOfKind(self, "CampaignPreset"):PostLoad() -- rerun sector inheritance
+				if not table.find(sectors, "Id", self.Id) then
+					DeleteSessionCampaignObject(self, SatelliteSector, gv_Sectors)
+				end
+				
+				ged:SetUiStatus("remove_sector", "Removing sector...")
+				if g_SatelliteUI then
+					g_SatelliteUI:RebuildSectorGrid()
+				end
+				ObjModified(sectors)
+				Sleep(100)
+				ged:SetSelection("root", { table.find(GetParentTable(self), "Id", self.Id:gsub("_Underground", "")) }, nil, "notify")
+				ged:SetUiStatus("remove_sector")
+			end)
+		end,
 	}),
 	PlaceObj('PropertyDefPoint', {
 		'id', "MapPosition",
@@ -372,58 +480,19 @@ PlaceObj('ClassDef', {
 		'name', "Label 2",
 		'translate', false,
 	}),
-	PlaceObj('PropertyDefCombo', {
-		'id', "ExplorePopup",
-		'default', "",
-		'items', function (self) return PresetGroupCombo("PopupNotification", "Sectors") end,
-	}),
-	PlaceObj('PropertyDefBool', {
-		'id', "HasUnderground",
-		'extra_code', "no_edit = function(self) return self.GroundSector end",
-	}),
 	PlaceObj('PropertyDefBool', {
 		'id', "HideUnderground",
 		'no_edit', "expression",
-		'no_edit_expression', function (self) return not self.HasUnderground end,
-		'extra_code', "no_edit = function(self) return self.GroundSector end",
+		'no_edit_expression', function (self) return self.GroundSector end,
 	}),
 	PlaceObj('PropertyDefText', {
 		'id', "GroundSector",
-		'name', "",
 		'help', "",
-		'read_only', true,
 		'no_edit', true,
 		'translate', false,
 	}),
-	PlaceObj('ClassMethodDef', {
-		'name', "SetHasUnderground",
-		'params', "value",
-		'code', function (self, value)
-			self.HasUnderground = value
-			if not GetCurrentCampaignPreset() then return end
-			local sectors = GetSatelliteSectors()
-			local id = self.Id .. "_Underground"
-			local u_sector = table.find_value(sectors, "Id", id)
-			if value then
-				if not u_sector then
-					local sector = PlaceObject("SatelliteSector")
-					sector.GroundSector = self.Id
-					sector:SetId(id)
-					table.insert(sectors, table.find(sectors, "Id", self.Id) + 1, sector)
-					ObjModified(GetSatelliteSectors())
-				end
-			else
-				if u_sector then
-					table.remove_value(sectors, u_sector)
-					DoneObject(u_sector)
-					ObjModified(GetSatelliteSectors())
-				end
-			end
-		end,
-	}),
 	PlaceObj('PropertyDefText', {
 		'id', "template_key",
-		'name', "",
 		'help', "",
 		'read_only', true,
 		'no_edit', true,
@@ -431,29 +500,30 @@ PlaceObj('ClassDef', {
 	}),
 	PlaceObj('PropertyDefText', {
 		'id', "display_name",
-		'name', "DisplayName",
+		'name', "Display name",
 		'context', "SatelliteSectorLocContext()",
 	}),
 	PlaceObj('PropertyDefCombo', {
 		'id', "Side",
 		'default', "enemy1",
-		'items', function (self) return table.map(GetCurrentCampaignPreset().Sides, "Id") end,
+		'items', function (self) return Sides end,
 	}),
 	PlaceObj('PropertyDefBool', {
 		'id', "StickySide",
-		'name', "Sticky Side",
+		'name', "Sticky side",
 	}),
 	PlaceObj('PropertyDefPresetId', {
 		'category', "Travel",
 		'id', "TerrainType",
-		'name', "Terrain Type",
+		'name', "Terrain type",
+		'help', "Terrain type modifies the travel time",
 		'extra_code', "no_edit = function(self) return self.GroundSector end",
 		'preset_class', "SectorTerrain",
 		'default', "Savanna",
 	}),
 	PlaceObj('PropertyDefText', {
 		'id', "WeatherZone",
-		'name', "Weather Zone",
+		'name', "Weather zone",
 		'help', "Weather Zone the sector belongs to. Sectors within the same Weather Zone have the same weather conditions.",
 		'translate', false,
 	}),
@@ -467,18 +537,17 @@ PlaceObj('ClassDef', {
 	PlaceObj('PropertyDefCombo', {
 		'category', "City",
 		'id', "City",
-		'name', "Associated City",
+		'name', "Associated city",
 		'default', "none",
 		'items', function (self) return table.iappend({"none"}, table.map(GetCurrentCampaignPreset().Cities, "Id")) end,
 	}),
 	PlaceObj('PropertyDefBool', {
 		'category', "City",
 		'id', "ShowCity",
-		'name', "Show City Name",
+		'name', "Show city name",
 		'help', "Whether to show the city name on the sector",
 	}),
 	PlaceObj('PropertyDefBool', {
-		'category', "",
 		'id', "reveal_allowed",
 		'help', "Treat sector as revealed even if there are no player squads nearby",
 		'no_edit', true,
@@ -566,7 +635,7 @@ PlaceObj('ClassDef', {
 	PlaceObj('PropertyDefNumber', {
 		'category', "Guardpost",
 		'id', "PatrolRespawnTime",
-		'name', "Attack Spawn (+ 24h Preparation)",
+		'name', "Attack spawn (+24h preparation)",
 		'extra_code', "no_edit = function(self) return not self.Guardpost end",
 		'default', 172800,
 		'scale', "h",
@@ -589,7 +658,7 @@ PlaceObj('ClassDef', {
 	PlaceObj('PropertyDefPresetIdList', {
 		'category', "Guardpost",
 		'id', "ExtraDefenderSquads",
-		'name', "Extra Defender Squads",
+		'name', "Extra defender squads",
 		'help', "Squads that will be spawned as extra defenders (4th shield)",
 		'extra_code', "no_edit = function(self) return not self.Guardpost end",
 		'preset_class', "EnemySquads",
@@ -597,7 +666,7 @@ PlaceObj('ClassDef', {
 	PlaceObj('PropertyDefPresetIdList', {
 		'category', "Guardpost",
 		'id', "EnemySquadsList",
-		'name', "Enemy Squads List",
+		'name', "Enemy squads list",
 		'help', "A random squad from the list will be chosen on guardpost spawn time",
 		'extra_code', "no_edit = function(self) return not self.Guardpost end",
 		'preset_class', "EnemySquads",
@@ -605,7 +674,7 @@ PlaceObj('ClassDef', {
 	PlaceObj('PropertyDefPresetIdList', {
 		'category', "Guardpost",
 		'id', "StrongEnemySquadsList",
-		'name', "Strong Enemy Squads List",
+		'name', "Strong enemy squads list",
 		'help', 'When the guardpost performs a "strong attack" it will swap the currently primed squad with one from this array.',
 		'extra_code', "no_edit = function(self) return not self.Guardpost end",
 		'preset_class', "EnemySquads",
@@ -626,7 +695,7 @@ PlaceObj('ClassDef', {
 	PlaceObj('PropertyDefNumber', {
 		'category', "Militia",
 		'id', "MilitiaTrainingCost",
-		'name', "Training Cost",
+		'name', "Training cost",
 		'extra_code', "no_edit = function(self) return not self.Militia end",
 		'default', 750,
 		'min', 1,
@@ -639,13 +708,13 @@ PlaceObj('ClassDef', {
 	PlaceObj('PropertyDefStringList', {
 		'category', "Conflict",
 		'id', "InitialSquads",
-		'name', "InitialSquads",
+		'name', "Initial squads",
 		'items', function (self) return table.keys(EnemySquadDefs, true) end,
 	}),
 	PlaceObj('PropertyDefCombo', {
 		'category', "Conflict",
 		'id', "CustomConflictDescr",
-		'name', "Custom Conflict Description",
+		'name', "Custom conflict description",
 		'help', "The first time a conflict is initiated in this sector, this description preset will be shown.",
 		'items', function (self) return PresetGroupCombo("ConflictDescription", "Default") end,
 	}),
@@ -691,12 +760,10 @@ PlaceObj('ClassDef', {
 	}),
 	PlaceObj('PropertyDefBool', {
 		'id', "Intel",
-		'name', "Intel",
 		'default', true,
 	}),
 	PlaceObj('PropertyDefBool', {
 		'id', "intel_discovered",
-		'name', "Intel",
 		'no_edit', true,
 	}),
 	PlaceObj('PropertyDefBool', {
@@ -706,12 +773,11 @@ PlaceObj('ClassDef', {
 	}),
 	PlaceObj('PropertyDefBool', {
 		'id', "autoresolve_disabled",
-		'name', "Intel",
 		'no_edit', true,
 	}),
 	PlaceObj('PropertyDefBool', {
 		'id', "InterestingSector",
-		'name', "Interesting Sector",
+		'name', "Interesting sector",
 		'help', "Marks whether a sector has something interesting in it",
 	}),
 	PlaceObj('PropertyDefNumber', {
@@ -735,49 +801,45 @@ PlaceObj('ClassDef', {
 	}),
 	PlaceObj('PropertyDefBool', {
 		'id', "RAndRAllowed",
-		'name', "R&R Allowed",
+		'name', "R&R allowed",
 		'help', "R&R operation is available in this sector",
 	}),
 	PlaceObj('PropertyDefBool', {
 		'id', "RepairShop",
-		'name', "Repair Shop",
+		'name', "Repair shop",
 		'help', "Allows Craft Ammo, Craft Explosives operations in this sector",
 	}),
 	PlaceObj('PropertyDefDirectionsSet', {
 		'category', "Travel",
 		'id', "Roads",
 		'name', "Roads",
+		'help', "Roads only improve the quality of travel and lack of a road doesn't prevent travel between sectors",
 		'extra_code', "no_edit = function(self) return self.GroundSector end",
 	}),
 	PlaceObj('PropertyDefBool', {
 		'category', "Travel",
 		'id', "ImpassableForEnemies",
-		'name', "Impassable for Enemies",
+		'name', "Impassable for enemies",
 		'help', "Enemy squads can't pass through this sector",
 	}),
 	PlaceObj('PropertyDefBool', {
 		'category', "Diamond Briefcase",
 		'id', "ImpassableForDiamonds",
-		'name', "Impassable for Diamonds",
+		'name', "Impassable for diamonds",
 		'help', "Diamond shipments can't pass through this sector",
 	}),
 	PlaceObj('PropertyDefDirectionsSet', {
 		'category', "Travel",
 		'id', "BlockTravel",
-		'name', "Block Travel",
+		'name', "Block travel",
+		'help', "Blocks travel and adds ui indication for that in the satellite view (red/white line)",
 		'extra_code', "no_edit = function(self) return self.GroundSector end",
 	}),
 	PlaceObj('PropertyDefDirectionsSet', {
 		'category', "Travel",
 		'id', "BlockTravelRiver",
-		'name', "Block Travel River",
+		'name', "Block travel - invisible",
 		'help', "Blocks travel without displaying it on the sat view",
-		'extra_code', "no_edit = function(self) return self.GroundSector end",
-	}),
-	PlaceObj('PropertyDefDirectionsSet', {
-		'category', "Travel",
-		'id', "BridgeCrossing",
-		'name', "Bridge Crossing",
 		'extra_code', "no_edit = function(self) return self.GroundSector end",
 	}),
 	PlaceObj('PropertyDefText', {
@@ -816,12 +878,6 @@ PlaceObj('ClassDef', {
 		'no_edit', true,
 		'base_class', "InventoryItem",
 	}),
-	PlaceObj('PropertyDefPresetIdList', {
-		'id', "NPCs",
-		'name', "NPCs",
-		'help', "List of NPCs placed here using the AssociateNPCWithSector effect.",
-		'preset_class', "UnitDataCompositeDef",
-	}),
 	PlaceObj('PropertyDefTable', {
 		'id', "conflict",
 		'no_edit', true,
@@ -850,11 +906,6 @@ PlaceObj('ClassDef', {
 		'id', "ExecutedEvents",
 		'no_edit', true,
 	}),
-	PlaceObj('PropertyDefUIImage', {
-		'id', "CustomIcon",
-		'name', "Custom Building Icon",
-		'help', "A custom icon to show in the rollover along with other buildings.",
-	}),
 	PlaceObj('PropertyDefBool', {
 		'category', "Port",
 		'id', "Port",
@@ -863,23 +914,36 @@ PlaceObj('ClassDef', {
 	PlaceObj('PropertyDefBool', {
 		'category', "Port",
 		'id', "PortLocked",
-		'name', "PortLocked",
+		'name', "Port locked",
 	}),
 	PlaceObj('PropertyDefBool', {
 		'category', "Port",
 		'id', "CanBeUsedForArrival",
-		'name', "CanBeUsedForArrival",
+	}),
+	PlaceObj('PropertyDefNumber', {
+		'category', "Port",
+		'id', "BobbyRayDeliveryCostMultiplier",
+		'no_edit', "expression",
+		'no_edit_expression', function (self) return not self.CanBeUsedForArrival end,
+		'default', 100,
+		'scale', "%",
+	}),
+	PlaceObj('PropertyDefUIImage', {
+		'category', "Port",
+		'id', "SectorImagePreview",
+		'no_edit', "BobbyRayDeliveryCostMultiplier.no_edit",
+		'default', "UI/PDA/ss_i1.png",
 	}),
 	PlaceObj('PropertyDefBool', {
 		'category', "Diamond Briefcase",
 		'id', "DBSourceSector",
-		'name', "Source Sector",
+		'name', "Source sector",
 		'help', "Travelling squads carrying diamond shipments will spawn on this sector.",
 	}),
 	PlaceObj('PropertyDefBool', {
 		'category', "Diamond Briefcase",
 		'id', "DBDestinationSector",
-		'name', "Destination Sector",
+		'name', "Destination sector",
 		'help', "Travelling squads carrying diamond shipments will path to this sector.",
 	}),
 	PlaceObj('PropertyDefButtons', {
@@ -943,7 +1007,7 @@ PlaceObj('ClassDef', {
 	}),
 	PlaceObj('PropertyDefChoice', {
 		'id', "awareness_sequence",
-		'name', "Awareness Sequence",
+		'name', "Awareness sequence",
 		'default', "Standard",
 		'items', function (self) return { "Standard", "Skip Setpiece", "Skip All" } end,
 	}),
@@ -962,23 +1026,23 @@ PlaceObj('ClassDef', {
 		'id', "MusicCombat",
 		'name', "Music Combat",
 		'help', "Music in turn based mode",
-		'default', "Combat_Dramatic",
+		'default', "Battle_Easy",
 		'items', function (self) return PresetsCombo("RadioStationPreset") end,
 	}),
 	PlaceObj('PropertyDefCombo', {
 		'category', "Music",
 		'id', "MusicConflict",
-		'name', "Music Conflict",
+		'name', "Music conflict",
 		'help', "In real time exploration but the sector is still in conflict",
-		'default', "Enemy_Territory",
+		'default', "Village_Conflict",
 		'items', function (self) return PresetsCombo("RadioStationPreset") end,
 	}),
 	PlaceObj('PropertyDefCombo', {
 		'category', "Music",
 		'id', "MusicExploration",
-		'name', "Music Exploration",
+		'name', "Music exploration",
 		'help', "Real time exploration and there is no conflict in the sector",
-		'default', "Exploration_Jungle",
+		'default', "Jungle_Exploration",
 		'items', function (self) return PresetsCombo("RadioStationPreset") end,
 	}),
 	PlaceObj('ClassConstDef', {
@@ -1024,25 +1088,24 @@ PlaceObj('ClassDef', {
 	PlaceObj('PropertyDefBool', {
 		'category', "Warning State",
 		'id', "warningStateEnabled",
-		'name', "Enable Warning State",
+		'name', "Enable warning state",
 		'help', "If enabled the first time you are discovered by enemies you will enter a Warning State.\nA timer is set. Enemies become neutral until the timer expires. And effects can be executed.",
 	}),
 	PlaceObj('PropertyDefBool', {
 		'category', "Warning State",
 		'id', "warningReceived",
-		'name', "Warning Received",
+		'name', "Warning received",
 		'no_edit', true,
 	}),
 	PlaceObj('PropertyDefBool', {
 		'category', "Warning State",
 		'id', "inWarningState",
-		'name', "In Warning State",
 		'no_edit', true,
 	}),
 	PlaceObj('PropertyDefText', {
 		'category', "Warning State",
 		'id', "warningTimerText",
-		'name', "Warning Timer Text",
+		'name', "Warning timer text",
 		'help', "Text to display when the Warning State is active.",
 		'no_edit', "expression",
 		'no_edit_expression', function (self) return not self.warningStateEnabled end,
@@ -1051,7 +1114,7 @@ PlaceObj('ClassDef', {
 	PlaceObj('PropertyDefNumber', {
 		'category', "Warning State",
 		'id', "warningStateTimer",
-		'name', "Warning State Timer",
+		'name', "Warning state timer",
 		'help', "How long (sec) will the Warning State hold.",
 		'no_edit', "expression",
 		'no_edit_expression', function (self) return not self.warningStateEnabled end,
@@ -1062,7 +1125,7 @@ PlaceObj('ClassDef', {
 	PlaceObj('PropertyDefPresetIdList', {
 		'category', "Warning State",
 		'id', "warningBanters",
-		'name', "Warning Banters",
+		'name', "Warning banters",
 		'help', "List of banters from which to choose one to play when spotted by the nearest enemy.",
 		'no_edit', "expression",
 		'no_edit_expression', function (self) return not self.warningStateEnabled end,
@@ -1071,7 +1134,7 @@ PlaceObj('ClassDef', {
 	PlaceObj('PropertyDefChoice', {
 		'category', "Combat Tasks",
 		'id', "combatTaskGenerate",
-		'name', "When to Generate",
+		'name', "When to generate",
 		'help', "When to generate Combat Tasks. Chances and cooldowns are independant and are always taken into account.",
 		'default', "always",
 		'items', function (self) return {"always", "afterFirstConflict", "never"} end,
@@ -1079,7 +1142,7 @@ PlaceObj('ClassDef', {
 	PlaceObj('PropertyDefNumber', {
 		'category', "Combat Tasks",
 		'id', "combatTaskAmount",
-		'name', "Maximum Amount",
+		'name', "Maximum amount",
 		'help', "Maximum Combat Tasks that can be given.",
 		'default', 1,
 		'min', 0,
@@ -1097,6 +1160,16 @@ PlaceObj('ClassDef', {
 	PlaceObj('ClassConstDef', {
 		'name', "generated",
 	}),
+	PlaceObj('ClassConstDef', {
+		'name', "inherited",
+	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "IsReadOnly",
+		'comment', "for GED",
+		'code', function (self)
+			return self.generated or self.inherited
+		end,
+	}),
 })
 
 PlaceObj('ClassDef', {
@@ -1110,6 +1183,7 @@ PlaceObj('ClassDef', {
 		'name', "FilterObject",
 		'params', "sector",
 		'code', function (self, sector)
+			if self.HideGenerated and (sector.inherited or sector.generated) then return false end
 			if self.Mine ~= "don't care" and self.Mine ~= sector.Mine then return false end
 			if self.Guardpost ~= "don't care" and self.Guardpost ~= sector.Guardpost then return false end
 			if self.City == "any" then
@@ -1151,6 +1225,10 @@ PlaceObj('ClassDef', {
 			
 			return true
 		end,
+	}),
+	PlaceObj('PropertyDefBool', {
+		'id', "HideGenerated",
+		'name', "Hide inherited/empty",
 	}),
 	PlaceObj('PropertyDefChoice', {
 		'id', "City",
@@ -1203,7 +1281,7 @@ PlaceObj('ClassDef', {
 	PlaceObj('PropertyDefCombo', {
 		'id', "Side",
 		'default', "enemy1",
-		'items', function (self) return table.map(GetCurrentCampaignPreset().Sides, "Id") end,
+		'items', function (self) return Sides end,
 	}),
 	PlaceObj('PropertyDefText', {
 		'id', "Name",

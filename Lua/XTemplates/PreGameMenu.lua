@@ -27,7 +27,6 @@ PlaceObj('XTemplate', {
 						OpenPreGameMainMenu("")
 					end)
 				end
-				RemoveOutdatedMods(self)
 				ChangeMap(GetMainMenuMapName())
 				CreateRealTimeThread( function()
 					WaitNextFrame()

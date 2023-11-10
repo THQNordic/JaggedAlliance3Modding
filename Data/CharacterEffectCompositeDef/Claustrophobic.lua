@@ -5,99 +5,45 @@ PlaceObj('CharacterEffectCompositeDef', {
 	'Id', "Claustrophobic",
 	'SortKey', 1000,
 	'object_class', "Perk",
-	'msg_reactions', {
-		PlaceObj('MsgActorReaction', {
-			Event = "CombatStart",
-			Handler = function (self, dynamic_data)
-				
-				local function exec(self, reaction_actor, dynamic_data)
-				if IsSectorUnderground(gv_CurrentSectorId) then
-					for _, unit in ipairs(g_Units) do
-						if HasPerk(unit, self.id) and not unit:HasStatusEffect("ClaustrophobiaChecked") then
-							CombatLog("debug", T{Untranslated("<em>Claustrophobic</em> proc on <unit>"), unit = unit.Name})
-							unit:AddStatusEffect("ClaustrophobiaChecked")
-						end
-					end
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "CombatStart" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					local reaction_actor
-					exec(self, reaction_actor, dynamic_data)
-				end
-				
-				
-				local actors = self:GetReactionActors("CombatStart", reaction_def, dynamic_data)
-				for _, reaction_actor in ipairs(actors) do
-					if self:VerifyReaction("CombatStart", reaction_def, reaction_actor, dynamic_data) then
-						exec(self, reaction_actor, dynamic_data)
-					end
-				end
-			end,
-			HandlerCode = function (self, reaction_actor, dynamic_data)
-				if IsSectorUnderground(gv_CurrentSectorId) then
-					for _, unit in ipairs(g_Units) do
-						if HasPerk(unit, self.id) and not unit:HasStatusEffect("ClaustrophobiaChecked") then
-							CombatLog("debug", T{Untranslated("<em>Claustrophobic</em> proc on <unit>"), unit = unit.Name})
-							unit:AddStatusEffect("ClaustrophobiaChecked")
-						end
-					end
+	'unit_reactions', {
+		PlaceObj('UnitReaction', {
+			Event = "OnCombatStarted",
+			Handler = function (self, target, load_game)
+				if not target:HasStatusEffect("ClaustrophobiaChecked") then
+					CombatLog("debug", T{Untranslated("<em>Claustrophobic</em> proc on <unit>"), unit = target.Name})
+					self:SetParameter("active", true)
 				end
 			end,
 		}),
-		PlaceObj('MsgActorReaction', {
-			Event = "OnEnterMapVisual",
-			Handler = function (self)
-				
-				local function exec(self, reaction_actor)
-				if IsSectorUnderground(gv_CurrentSectorId) then
-					CreateGameTimeThread(function()
-						while GetInGameInterfaceMode() == "IModeDeployment" do
-							Sleep(20)
-						end
-						for _, unit in ipairs(g_Units) do
-							if HasPerk(unit, self.id) and not unit:HasStatusEffect("ClaustrophobiaChecked") then
-								PlayVoiceResponse(unit, "Claustrophobic")
-							end
-						end
-					end)
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[2]
-				if not reaction_def or reaction_def.Event ~= "OnEnterMapVisual" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					local reaction_actor
-					exec(self, reaction_actor)
-				end
-				
-				
-				local actors = self:GetReactionActors("OnEnterMapVisual", reaction_def, nil)
-				for _, reaction_actor in ipairs(actors) do
-					if self:VerifyReaction("OnEnterMapVisual", reaction_def, reaction_actor, nil) then
-						exec(self, reaction_actor)
-					end
+		PlaceObj('UnitReaction', {
+			Event = "OnCalcPersonalMorale",
+			Handler = function (self, target, value)
+				if self:ResolveValue("active") then
+					return value - 1
 				end
 			end,
-			HandlerCode = function (self, reaction_actor)
-				if IsSectorUnderground(gv_CurrentSectorId) then
+		}),
+		PlaceObj('UnitReaction', {
+			Event = "OnCombatEnd",
+			Handler = function (self, target)
+				self:SetParameter("active", false)
+			end,
+		}),
+		PlaceObj('UnitReaction', {
+			Event = "OnSatelliteTick",
+			Handler = function (self, target)
+				self:SetParameter("active", false)
+			end,
+		}),
+		PlaceObj('UnitReaction', {
+			Event = "OnUnitEnterMapVisual",
+			Handler = function (self, target)
+				if IsSectorUnderground(gv_CurrentSectorId) and not target:HasStatusEffect("ClaustrophobiaChecked") then
 					CreateGameTimeThread(function()
 						while GetInGameInterfaceMode() == "IModeDeployment" do
 							Sleep(20)
 						end
-						for _, unit in ipairs(g_Units) do
-							if HasPerk(unit, self.id) and not unit:HasStatusEffect("ClaustrophobiaChecked") then
-								PlayVoiceResponse(unit, "Claustrophobic")
-							end
-						end
+						PlayVoiceResponse(target, "Claustrophobic")
 					end)
 				end
 			end,

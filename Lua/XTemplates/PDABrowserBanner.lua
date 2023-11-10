@@ -20,9 +20,11 @@ PlaceObj('XTemplate', {
 		'HAlign', "center",
 		'VAlign', "center",
 		'MouseCursor', "UI/Cursors/Pda_Hand.tga",
+		'FXMouseIn', "buttonRollover",
+		'FXPress', "buttonPress",
+		'FXPressDisabled', "IactDisabled",
 		'OnPress', function (self, gamepad)
 			local mode = self.LinkId:starts_with("Error") and "page_error" or "banner_page"
-			DockBrowserTab(mode)
 			GetPDABrowserDialog():SetMode(mode, self.LinkId)
 		end,
 	}, {

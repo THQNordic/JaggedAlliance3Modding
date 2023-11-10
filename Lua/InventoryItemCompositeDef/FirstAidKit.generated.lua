@@ -14,6 +14,10 @@ DefineClass.FirstAidKit = {
 	DisplayNamePlural = T(941665857371, --[[InventoryItemCompositeDef FirstAidKit DisplayNamePlural]] "First Aid Kits"),
 	AdditionalHint = T(735742619435, --[[InventoryItemCompositeDef FirstAidKit AdditionalHint]] "<bullet_point> Restores lost HP and stabilizes dying characters\n<bullet_point> Required to use Bandage\n<bullet_point> Loses Condition after each use but can be refilled with Meds\n<bullet_point> Used automatically from the Inventory"),
 	UnitStat = "Medical",
+	Cost = 300,
+	CanAppearInShop = true,
+	RestockWeight = 150,
+	CategoryPair = "Medicine",
 	max_meds_parts = 8,
 }
 

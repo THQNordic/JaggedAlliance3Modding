@@ -38,7 +38,7 @@ PlaceObj('XTemplate', {
 				local action = context.action:ResolveAction(unit)
 				if not unit or not action then return end
 				
-				local units = Selection
+				local units = {unit} -- don't use Selection here as it might lead to different results when the update happens during a selection change
 				local target = action:GetAnyTarget(units)
 				local apCost, displayCost, apCostAimMax, displayCostMax = 0, 0, 0, 0
 				
@@ -160,10 +160,10 @@ PlaceObj('XTemplate', {
 						if self.window_state == "open" then weaponShow:Open() end
 					end
 					
-					local crit = params and params.critChance or SelectedObj:CalcCritChance(wep, GetCurrentUITarget(), aim)
+					local crit = params and params.critChance or SelectedObj:CalcCritChance(wep, GetCurrentUITarget(), nil, {aim = aim})
 					self.idCrit:SetText(T{938096896940, "<style PDARolloverHeaderBeige><percent(crit)></style> <valign bottom -2>CRIT", crit = crit})
 					if wep2 then					
-						local crit2 = SelectedObj:CalcCritChance(wep2, GetCurrentUITarget(), crosshair and crosshair.aim)
+						local crit2 = SelectedObj:CalcCritChance(wep2, GetCurrentUITarget(), nil, {aim = crosshair and crosshair.aim})
 						self.idCrit2:SetText(T{938096896940, "<style PDARolloverHeaderBeige><percent(crit)></style> <valign bottom -2>CRIT", crit = crit2})
 						
 						-- Assume that if either attack has multiple shots, both do.
@@ -204,7 +204,11 @@ PlaceObj('XTemplate', {
 					end
 				
 					if shots > 1 then
-						self.idDamage:SetText(T{615590050799, "<style PDARolloverHeaderBeige><shots>x<damage></style> <valign bottom -2>DMG", shots = shots, damage = perShot})
+						if aoeDamage > 0 then
+							self.idDamage:SetText(T{152807335227, "<style PDARolloverHeaderBeige><shots>x<damage>+<aoe></style> <valign bottom -2>DMG", shots = shots, damage = perShot, aoe = aoeDamage})
+						else
+							self.idDamage:SetText(T{615590050799, "<style PDARolloverHeaderBeige><shots>x<damage></style> <valign bottom -2>DMG", shots = shots, damage = perShot})
+						end						
 					elseif aoeDamage > 0 then
 						self.idDamage:SetText(T{921704709268, "<style PDARolloverHeaderBeige><damage>+<aoeDamage></style> <valign bottom -2>DMG", damage = damage, aoeDamage = aoeDamage})
 					else
@@ -322,7 +326,7 @@ PlaceObj('XTemplate', {
 						PlaceObj('XTemplateWindow', {
 							'__class', "XText",
 							'Id', "idCrit",
-							'HAlign', "center",
+							'HAlign', "right",
 							'VAlign', "bottom",
 							'TextStyle', "PDAActivitiesButtonSmall",
 							'Translate', true,
@@ -331,7 +335,7 @@ PlaceObj('XTemplate', {
 						PlaceObj('XTemplateWindow', {
 							'__class', "XText",
 							'Id', "idExtraProperty",
-							'HAlign', "right",
+							'HAlign', "center",
 							'VAlign', "bottom",
 							'TextStyle', "PDAActivitiesButtonSmall",
 							'Translate', true,

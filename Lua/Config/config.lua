@@ -375,6 +375,8 @@ config.PhotoMode_DisableBloomStrength = true
 hr.EnablePreciseSelection = 1
 --config.PhotoMode_DisableDOF = true
 
-if Platform.ps4 or Platform.xbox_one then
-	config.AutorunLoadingScreenProgressDuration = 80 * 1000
+if Platform.ps4 then
+	config.AutorunLoadingScreenProgressDuration = 70 * 1000
 end
+
+config.PhotoMode_SlidersDpadOnly = false

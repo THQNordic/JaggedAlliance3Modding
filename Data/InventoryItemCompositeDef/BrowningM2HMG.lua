@@ -3,7 +3,7 @@
 PlaceObj('InventoryItemCompositeDef', {
 	'Group', "Firearm - MG",
 	'Id', "BrowningM2HMG",
-	'Comment', "tier 5",
+	'Comment', "tier 5, only used for Emplacements",
 	'object_class', "MachineGun",
 	'ScrapParts', 20,
 	'Reliability', 80,
@@ -17,6 +17,8 @@ PlaceObj('InventoryItemCompositeDef', {
 	'UnitStat', "Marksmanship",
 	'Valuable', 1,
 	'Cost', 4200,
+	'Tier', 3,
+	'CategoryPair', "MachineGuns",
 	'Caliber', "50BMG",
 	'Damage', 30,
 	'MagazineSize', 100,

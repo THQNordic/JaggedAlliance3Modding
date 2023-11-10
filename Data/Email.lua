@@ -112,6 +112,84 @@ PlaceObj('Email', {
 })
 
 PlaceObj('Email', {
+	body = T(446017521635, --[[Email BobbyRayShopNowOpen body]] "Howdy partner,\n\nWe're excited to share the news that our online emporium for virtual weapons, explosives, and various tools of war is now open for business in the following new countries and territories: Metavira Island, Grand Chien, and the Vatican!\n\nCome visit <h OpenBobbyRayPage><underline><em>our website</em></underline></h>, ogle our fine guns, and expand your deadly arsenal!\n\nThe best BANG for your buck,\n<h OpenBobbyRayPage><underline><em>Bobby Ray's Guns and Things</em></underline></h>"),
+	group = "BobbyRay",
+	id = "BobbyRayShopNowOpen",
+	label = "Important",
+	sender = T(136302129512, --[[Email BobbyRayShopNowOpen sender]] "no-reply@bobbyraysgunsandthings.net"),
+	title = T(896101029556, --[[Email BobbyRayShopNowOpen title]] "Bobby Ray's Guns and Things now open!"),
+})
+
+PlaceObj('Email', {
+	body = T(203339960799, --[[Email BobbyRayShopShipmentArrived body]] "Howdy partner,\n\nYour order with the ID <em><order_id></em> has successfully landed and is now securely stashed in <em><SectorName(delivery_sector)></em>.\n\nLocked, loaded, and at your service,\n<h OpenBobbyRayPage><underline><em>Bobby Ray's Guns and Things</em></underline></h>"),
+	group = "BobbyRay",
+	id = "BobbyRayShopShipmentArrived",
+	msg_reactions = {
+		PlaceObj('MsgReaction', {
+			Event = "BobbyRayShopShipmentArrived",
+			Handler = function (self, shipment_details)
+				local context = {
+					order_id = Untranslated(shipment_details.order_id),
+					items = shipment_details.items,
+					delivery_cost = FindPreset("BobbyRayShopDeliveryDef", shipment_details.delivery_option).Price,
+					delivery_sector = shipment_details.sector_id,
+					delivery_time = FindPreset("BobbyRayShopDeliveryDef", shipment_details.delivery_option).TimeDescription,
+					total_cost = shipment_details.total_cost,
+				}
+				ReceiveEmail(self.id, context)
+			end,
+		}),
+	},
+	repeatable = true,
+	sender = T(987221019403, --[[Email BobbyRayShopShipmentArrived sender]] "no-reply@bobbyraysgunsandthings.net"),
+	title = T(775026103256, --[[Email BobbyRayShopShipmentArrived title]] "Bobby Ray's - Shipment Arrival (OrderID: <order_id>)"),
+})
+
+PlaceObj('Email', {
+	body = T(730480663522, --[[Email BobbyRayShopShipmentSent body]] "Howdy partner,\n\nWe're saddling up to share the details you've been waiting for. Enclosed is the invoice for your order with the ID <em><order_id></em>:\n\n<BobbyRayEmailItemList(items)>\nTotal cost: <em>$<total_cost></em>\n\nThe shipment is en route to <em><SectorName(delivery_sector)></em> , scheduled to touch down at <em><time(due_time)></em> on <em><date(due_time)></em>.\n\nGet ready to gear up!\n<h OpenBobbyRayPage><underline><em>Bobby Ray's Guns and Things</em></underline></h>"),
+	group = "BobbyRay",
+	id = "BobbyRayShopShipmentSent",
+	msg_reactions = {
+		PlaceObj('MsgReaction', {
+			Event = "BobbyRayShopShipmentSent",
+			Handler = function (self, shipment_details)
+				local context = {
+					order_id = Untranslated(shipment_details.order_id),
+					items = shipment_details.items,
+					delivery_cost = FindPreset("BobbyRayShopDeliveryDef", shipment_details.delivery_option).Price,
+					delivery_sector = shipment_details.sector_id,
+					delivery_time = FindPreset("BobbyRayShopDeliveryDef", shipment_details.delivery_option).TimeDescription,
+					total_cost = shipment_details.total_cost,
+					due_time = shipment_details.due_time,
+				}
+				ReceiveEmail(self.id, context)
+			end,
+		}),
+	},
+	repeatable = true,
+	sender = T(371754805124, --[[Email BobbyRayShopShipmentSent sender]] "no-reply@bobbyraysgunsandthings.net"),
+	title = T(693353779040, --[[Email BobbyRayShopShipmentSent title]] "Bobby Ray's - Shipment Details (OrderID: <order_id>)"),
+})
+
+PlaceObj('Email', {
+	body = T(116193971524, --[[Email BobbyRayShopTier2Unlocked body]] "Howdy partner,\n\nWe're downright thrilled to share the good news-our arsenal just got a whole lot deadlier! Swing by our online emporium and explore the latest additions to our catalog of lethal tools.\n\nThe best BANG for buck,\n<h OpenBobbyRayPage><underline><em>Bobby Ray's Guns and Things</em></underline></h>"),
+	group = "BobbyRay",
+	id = "BobbyRayShopTier2Unlocked",
+	label = "Important",
+	sender = T(250790134106, --[[Email BobbyRayShopTier2Unlocked sender]] "no-reply@bobbyraysgunsandthings.net"),
+	title = T(961625656761, --[[Email BobbyRayShopTier2Unlocked title]] "Bobby Ray's - new Guns and Things are now in stock!"),
+})
+
+PlaceObj('Email', {
+	body = T(989749088596, --[[Email BobbyRayShopTier3Unlocked body]] "Howdy partner,\n\nWe've been burning the midnight oil at Bobby Ray's to bring you an even grander selection of toys for your war games! It's our biggest collection yet, and we can't wait for you to dive in.\n\nThe best BANG for buck,\n<h OpenBobbyRayPage><underline><em>Bobby Ray's Guns and Things</em></underline></h>"),
+	group = "BobbyRay",
+	id = "BobbyRayShopTier3Unlocked",
+	label = "Important",
+	sender = T(469989453300, --[[Email BobbyRayShopTier3Unlocked sender]] "no-reply@bobbyraysgunsandthings.net"),
+	title = T(623445361967, --[[Email BobbyRayShopTier3Unlocked title]] "Bobby Ray's - new Guns and Things are now in stock!"),
+})
+
+PlaceObj('Email', {
 	body = T(445418729868, --[[Email ContractEnd_Dead body]] "Hello,\n\nPlease find attached your invoice for <Nick(unitId)>:\nMerc Name: <Nick(unitId)>\nStatus: Dead\n\nDuration of contract: <totalDuration> d - contract terminated due to merc's demise\nSalary Paid: <money(moneyPaid)>\nCommendations: <tasksDone>\n\nThe next of kin of <Nick(unitId)> have been notified of their demise.\n\nThank you for your continued support and cooperation,\nA.I.M. Recruitment Team"),
 	group = "ContractTermination",
 	id = "ContractEnd_Dead",

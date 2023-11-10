@@ -1,5 +1,5 @@
 DefineClass.MeleeWeapon = {
-	__parents = { "InventoryItem", "MeleeWeaponProperties", "BaseWeapon" },
+	__parents = { "InventoryItem", "MeleeWeaponProperties", "BaseWeapon", "BobbyRayShopMeleeWeaponProperties" },
 	WeaponType = "MeleeWeapon",
 	ImpactForce = 2,
 	base_skill = "Dexterity",
@@ -75,7 +75,7 @@ function MeleeWeapon:GetAttackResults(action, attack_args)
 
 	-- attack/crit rolls
 	local attack_results = {}
-	attack_results.crit_chance = attacker:CalcCritChance(self, target, attack_args.aim, attack_pos, attack_args.target_spot_group) + stealth_crit_chance
+	attack_results.crit_chance = attacker:CalcCritChance(self, target, attack_args, attack_pos)
 	
 	if action.AlwaysHits then
 		attack_results.chance_to_hit = 100

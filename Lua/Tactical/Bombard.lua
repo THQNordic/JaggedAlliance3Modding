@@ -1,4 +1,4 @@
-DefineClass.Ordnance = { __parents = { "SquadBagItem", "OrdnanceProperties", "InventoryStack"} }
+DefineClass.Ordnance = { __parents = { "SquadBagItem", "OrdnanceProperties", "InventoryStack", "BobbyRayShopAmmoProperties"} }
 
 MapVar("g_Bombard", {})
 PersistableGlobals.g_Bombard = false
@@ -400,7 +400,7 @@ DefineClass.BombardMarker = {
 	__parents = { "GridMarker" },
 	
 	properties = {
-		{ category = "Bombard", id = "Side", editor = "dropdownlist", items = function() return table.map(GetCurrentCampaignPreset().Sides, "Id") end, default = "enemy1", },
+		{ category = "Bombard", id = "Side", editor = "dropdownlist", items = function() return Sides end, default = "enemy1", },
 		{ category = "Bombard", id = "Ordnance", editor = "preset_id", default = false, preset_class = "InventoryItemCompositeDef", preset_filter = function (preset, obj) return preset.object_class == "Ordnance" end, },
 		{ category = "Bombard", id = "AreaRadius", name = "Area Radius", editor = "number", min = 1, max = 99, default = 3, },
 		{ category = "Bombard", id = "NumShots", name = "Num Shells", editor = "number", min = 1, default = 1, },
@@ -468,7 +468,7 @@ DefineClass.BombardEffect = {
 	__parents = { "Effect" },
 	properties = {
 		{ id = "BombardId", editor = "text", default = "", },
-		{ id = "Side", editor = "dropdownlist", items = function() return table.map(GetCurrentCampaignPreset().Sides, "Id") end, default = "enemy1", },
+		{ id = "Side", editor = "dropdownlist", items = function() return Sides end, default = "enemy1", },
 		{ id = "Ordnance", editor = "preset_id", default = false, preset_class = "InventoryItemCompositeDef", preset_filter = function (preset, obj) return preset.object_class == "Ordnance" end, },
 		{ id = "AreaRadius", name = "Area Radius", editor = "number", min = 1, max = 99, default = 3, },
 		{ id = "NumShots", name = "Num Shells", editor = "number", min = 1, default = 1, },

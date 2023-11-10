@@ -2083,7 +2083,7 @@ function GenerateConversationVoiceScripts(language)
 	local ids_used_for_voice = {}
 	for voice_id, s in sorted_pairs(character_pstrs) do
 		voice_id = string.gsub(voice_id, '[/?<>\\:*|"]', "_")
-		AsyncStringToFile("svnProject/LocalizationDB/VoiceRecordings/html/" .. language .. "/" .. voice_id .. " conversations.html", s)
+		AsyncStringToFile("svnProject/LocalizationDB/VoiceRecordings/" .. language .. "/html/" .. voice_id .. " conversations.html", s)
 		for id in tostring(s):gmatch("ID:(%d+)") do
 			ids_used_for_voice[tonumber(id)] = true
 		end

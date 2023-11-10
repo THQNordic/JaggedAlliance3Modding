@@ -675,6 +675,19 @@ PlaceObj('XTemplate', {
 				NetSyncEvent("CheatEnable", "ShowSquadsPower")
 			end,
 		}),
+		PlaceObj('XTemplateAction', {
+			'ActionId', "LightmodelPreview",
+			'ActionSortKey', "1375",
+			'ActionTranslate', false,
+			'ActionName', "Lightmodel Preview",
+			'ActionShortcut', "Ctrl-Alt-L",
+			'OnAction', function (self, host, source, ...)
+				CreateRealTimeThread(function()
+					local ged = OpenPresetEditor("LightmodelSelectionRule")
+					ged:SetSearchString(mapdata.Region)
+				end)
+			end,
+		}),
 		}),
 	PlaceObj('XTemplateAction', {
 		'ActionId', "Editors.Game",
@@ -1165,6 +1178,7 @@ PlaceObj('XTemplate', {
 			'ActionBindable', true,
 			'ActionMouseBindable', false,
 			'ActionState', function (self, host)
+				if gv_SatelliteView and not AnyPlayerSquads() then return  "disabled" end
 				return SatelliteToggleActionState()
 			end,
 			'OnAction', function (self, host, source, ...)
@@ -1294,6 +1308,7 @@ PlaceObj('XTemplate', {
 				if GameState.disable_pda then
 					return "disabled"
 				end
+				if not AnyPlayerSquads() then return "disabled" end
 				
 				if not GetDialog("PDADialogSatellite") then
 					return CombatActions.Inventory:GetUIState(Selection)
@@ -1500,7 +1515,7 @@ PlaceObj('XTemplate', {
 				if GameState.disable_pda then
 					return "disabled"
 				end
-				
+				if not AnyPlayerSquads() then return "disabled" end
 				return not GetDialog("PDADialog") and not GetMercInventoryDlg() and "enabled" or "disabled"
 			end,
 			'OnAction', function (self, host, source, ...)
@@ -1520,6 +1535,13 @@ PlaceObj('XTemplate', {
 			'ActionSortKey', "1702",
 			'ActionGamepad', "LeftTrigger-DPadRight",
 			'ActionState', function (self, host)
+				if AnyPlayerControlStoppers({ skip_pause = true }) then
+					return "disabled"
+				end
+				if GetDialog("ModifyWeaponDlg") or GetDialog("PDADialog") then
+					return "disabled"
+				end
+				
 				if not netInGame then return "disabled" end
 				local justListed = #netGamePlayers<2 or not NetIsHost()
 				return justListed and "enabled" or "disabled"
@@ -1534,6 +1556,13 @@ PlaceObj('XTemplate', {
 			'ActionSortKey', "1703",
 			'ActionGamepad', "LeftTrigger-DPadRight",
 			'ActionState', function (self, host)
+				if AnyPlayerControlStoppers({ skip_pause = true }) then
+					return "disabled"
+				end
+				if GetDialog("ModifyWeaponDlg") or GetDialog("PDADialog") then
+					return "disabled"
+				end
+				
 				if not netInGame then return "disabled" end
 				local inGame = #netGamePlayers>=2 and NetIsHost()
 				return inGame and "enabled" or "disabled"
@@ -1596,13 +1625,28 @@ PlaceObj('XTemplate', {
 			'ActionId', "ShowCoversInRange",
 			'ActionSortKey', "1750",
 			'ActionTranslate', false,
-			'ActionName', "Covers Around Cursor",
+			'ActionName', "Show Covers Around Cursor",
 			'ActionIcon', "CommonAssets/UI/Menu/object_options.tga",
 			'ActionShortcut', "Ctrl-Alt-H",
 			'OnAction', function (self, host, source, ...)
 				-- NOTE: 1 voxel around cursor since it can be on impassable and we'll not see
 				-- the covers on the voxels around(symmetry breaks on passability borders)
-				DbgDrawCovers("box", GetVoxelBox(0, GetCursorPos()), nil, "hide floors")
+				DbgDrawCovers("box", GetVoxelBox(0, GetCursorPos()), nil, "don't rebuild")
+			end,
+			'replace_matching_id', true,
+		}),
+		PlaceObj('XTemplateAction', {
+			'comment', "Rebuilds Debug Covers around Cursor",
+			'ActionId', "RebuildCoversInRange",
+			'ActionSortKey', "1751",
+			'ActionTranslate', false,
+			'ActionName', "Rebuild Covers Around Cursor",
+			'ActionIcon', "CommonAssets/UI/Menu/object_options.tga",
+			'ActionShortcut', "Ctrl-Alt-N",
+			'OnAction', function (self, host, source, ...)
+				-- NOTE: 1 voxel around cursor since it can be on impassable and we'll not see
+				-- the covers on the voxels around(symmetry breaks on passability borders)
+				DbgDrawCovers("box", GetVoxelBox(0, GetCursorPos()))
 			end,
 			'replace_matching_id', true,
 		}),
@@ -2009,6 +2053,7 @@ PlaceObj('XTemplate', {
 				if CurrentActionCamera then return "disabled" end
 				if IsCameraLocked() then return "disabled" end
 				cameraTac.SetOverview(not cameraTac.GetIsInOverview())
+				ObjModified("cameraTac.SetOverview")
 			end,
 			'IgnoreRepeated', true,
 		}),

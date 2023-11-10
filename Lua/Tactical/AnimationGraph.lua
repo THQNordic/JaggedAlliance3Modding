@@ -21,6 +21,7 @@ local s_TransitionRules = {
 		{ "%s_Crouch_To_Prone", moment = "any" },
 		{ "%s_TakeCover_Idle", moment = "any" },
 		{ "gr_Standing_Aim", moment = "any" },
+		{ "nw_Bandaging_Start", moment = "any" },
 	},
 	["%s_Prone_Idle"] = {
 		{ "%s_Prone_To_Standing", moment = "any" },
@@ -59,6 +60,12 @@ local s_TransitionRules = {
 		{ "%s_Standing_Idle", moment = "any" },
 		{ "%s_Crouch_Idle", moment = "any" },
 	},
+	["nw_Bandaging_Start"] = { { "%s_Crouch_Idle" } },
+	["nw_Bandaging_Self_Start"] = { { "%s_Crouch_Idle" } },
+	["nw_Bandaging_Idle"] = { { "%s_Crouch_Idle" } },
+	["nw_Bandaging_Self_Idle"] = { { "%s_Crouch_Idle" } },
+	["nw_Bandaging_End"] = { { "%s_Crouch_Idle" } },
+	["nw_Bandaging_Self_End"] = { { "%s_Crouch_Idle" } },
 	["nw_Standing_MortarIdle"] = {
 		{ "nw_Standing_MortarEnd", moment = "any" },
 	},
@@ -294,6 +301,9 @@ function PlayTransitionAnims(obj, target_anim, angle, aim_pos)
 		if prefix and not string.starts_with(start_anim, prefix) then
 			local stance = string.match(start_anim, "^%a+_(%a+)_")
 			if stance then
+				if stance == "Bandaging" then
+					stance = "Crouch"
+				end
 				local closest = string.format("%s%s_Idle", prefix, stance)
 				path = GetAnimPath(obj, closest, target_anim)
 			end
@@ -627,7 +637,11 @@ function GetDeathBaseAnim(unit, context)
 	context = context or {}
 	context.unit = context.unit or unit
 	if not context.pos then
-		context.pos = context.hit_descr and context.hit_descr.die_pos or FindFallDownPos(unit) or GetPassSlab(unit) or unit:GetPos()
+		context.pos = context.hit_descr and context.hit_descr.die_pos
+		if not context.pos then
+			local x, y, z = FindFallDownPos(unit)
+			context.pos = x and point(x, y, z) or GetPassSlab(unit) or unit:GetPos()
+		end
 	end
 	if not context.angle then
 		if context.target_pos then

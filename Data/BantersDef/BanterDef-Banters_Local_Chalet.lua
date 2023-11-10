@@ -985,6 +985,16 @@ PlaceObj('BanterDef', {
 				}),
 			},
 		}),
+		PlaceObj('QuestIsVariableBool', {
+			QuestId = "PaixDisease",
+			Vars = set({
+	night = false,
+}),
+			__eval = function ()
+				local quest = gv_Quests['PaixDisease'] or QuestGetState('PaixDisease')
+				return not quest.night
+			end,
+		}),
 	},
 	disabledInConflict = true,
 	group = "Banters_Local_Chalet",

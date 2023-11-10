@@ -580,18 +580,14 @@ function IModeCommonUnitControl:GetInteractableUnderCursor()
 		self.potential_interactable_gamepad_resolved = resolvedObjectsGamepad
 
 		-- Extra precision: skip interactables further away than the closest voxel center.
-		local passX, passY, passZ = SnapToPassSlabXYZ(cursor_pos)
-		local passSlabDistToCursor = passX and cursor_pos:Dist(passX, passY, passZ) or 99999999
-
-		local vAround = GetVoxelBBox(cursor_pos, 0.5, "with_z", "dont_snap")
-		MapForEach(vAround, "CObject", const.efSelectable + const.efVisible, function(obj, resolvedObjectsGamepad, vAround, cursor_pos, passSlabDistToCursor)
+		local snappedVoxel = SnapToVoxel(cursor_pos)
+		local vAround = GetVoxelBBox(snappedVoxel, 0.5, "with_z", "dont_snap")
+		MapForEach(vAround, "CObject", const.efSelectable + const.efVisible, function(obj, resolvedObjectsGamepad, vAround, cursor_pos)
 			-- We need to recheck bounds as mapget is 2D
 			if not vAround:PointInside(obj:GetPosXYZ()) then
 				return
 			end
-			if not IsCloser(obj, cursor_pos, passSlabDistToCursor + 1) then
-				return
-			end
+
 			local int, all = ResolveInteractableObject(obj)
 			if all and #all > 0 then
 				for i, int in ipairs(all) do
@@ -614,7 +610,7 @@ function IModeCommonUnitControl:GetInteractableUnderCursor()
 					resolvedObjectsGamepad[int] = obj
 				end
 			end
-		end, resolvedObjectsGamepad, vAround, cursor_pos, passSlabDistToCursor)
+		end, resolvedObjectsGamepad, vAround, cursor_pos)
 
 		if next(resolvedObjectsGamepad) then
 			-- Sort interactables by distance from cursor pos
@@ -632,7 +628,7 @@ function IModeCommonUnitControl:GetInteractableUnderCursor()
 
 	-- Cursor pos ray
 	local camera_pos = camera.GetEye()
-	local rayObj, pt, normal = GetClosestVisibleRayObj(camera_pos, cursor_pos)
+	local rayObj, ray_hit, normal = GetClosestVisibleRayObj(camera_pos, cursor_pos)
 	if rayObj and not IsKindOf(rayObj, "TerrainCollision") then
 		local interactable, all = ResolveInteractableObject(rayObj)
 		if all and #all > 0 then -- Ray collision takes precedence
@@ -646,14 +642,14 @@ function IModeCommonUnitControl:GetInteractableUnderCursor()
 	
 	-- Unit collisions are done through a separate function.
 	--if #interactables == 0 then
-		MapForEach(cursor_pos, guim * 3, "Unit", function(u, camera_pos, cursor_pos, interactables)
+		MapForEach(cursor_pos, guim * 3, "Unit", function(u, camera_pos, cursor_pos, ray_hit, interactables)
 			if u:IsDead() and u:GetItemInSlot("InventoryDead") then
-				local collided = GetBodyHitArea(camera_pos, cursor_pos, u)
-				if collided then
+				local collided, hit_pos = GetBodyHitArea(camera_pos, cursor_pos, u)
+				if collided and (not ray_hit or IsCloser(camera_pos, hit_pos, ray_hit)) then
 					table.insert(interactables, u)
 				end
 			end
-		end, camera_pos, cursor_pos, interactables)
+		end, camera_pos, cursor_pos, ray_hit, interactables)
 	--end
 	if #interactables == 0 then
 		return
@@ -794,7 +790,7 @@ function HighlightAllInteractables(setOn)
 	TutorialHintsState.HighlightItems = TutorialHintsState.HighlightItemsShown and true
 	interactableHighlightThread = CreateMapRealTimeThread(function()
 		local interactables = MapGet("map", "Interactable", function(o)
-			return not IsKindOf(o, "Door")
+			return not IsKindOf(o, "Door") and not o.spawned_by_explosive_object
 		end)
 
 		while true do
@@ -864,67 +860,77 @@ function OnMsg.SelectionRemoved(obj)
 end
 
 function PreciseCursorObjAreaClosestOfType(classFilter, priorityList)
-	assert(classFilter or priorityList)
-
 	local objs, distances, _ = GetPreciseCursorObjsArea()
-	objs = objs or empty_table
+	if not objs then
+		return
+	end
 	distances = distances or empty_table
-	
 	assert(#objs == #distances)
-	local found, dist, foundPriority = false, false, false
+	assert(classFilter or priorityList)
+	local found, dist, foundPriority
 	for i, obj in ipairs(objs) do
 		local distanceToObj = distances[i] or 0
-		local closer = not found or distanceToObj < dist
-		
-		if priorityList and closer then
-			local thisObjPriority = priorityList[obj.class] or -1
-			local higherPriority = not foundPriority or thisObjPriority > foundPriority
-			
-			found = obj
-			dist = distanceToObj
-			foundPriority = thisObjPriority
-		elseif classFilter and IsKindOf(obj, classFilter) and closer then
-			found = obj
-			dist = distanceToObj
+		if not found or distanceToObj < dist then
+			if priorityList then
+				local thisObjPriority = priorityList[obj.class] or -1
+				if not foundPriority or thisObjPriority >= foundPriority then
+					found = obj
+					dist = distanceToObj
+					foundPriority = thisObjPriority
+				end
+			elseif classFilter and IsKindOf(obj, classFilter) then
+				found = obj
+				dist = distanceToObj
+			end
 		end
 	end
 	return found
 end
 
-function IModeCommonUnitControl:GetUnitUnderMouse()
+local _closest_unit_under_cursor
+
+function IModeCommonUnitControl:GetUnitUnderMouse(cursorPos)
 	local unit = PreciseCursorObjAreaClosestOfType("Unit")
 	if unit then
 		return unit
 	end
-	
-	local unitInVoxel = GetUnitInVoxel()
+	if not cursorPos then
+		cursorPos = GetCursorPos()
+	end
+	local unitInVoxel = GetUnitInVoxel(cursorPos)
 	if unitInVoxel then
 		return unitInVoxel
 	end
-	
+
 	if GetUIStyleGamepad() then
 		if g_Combat then return end
-	
-		local u = false
-		local cursorPos = GetCursorPos()
 		local vAround = GetVoxelBBox(cursorPos, 0.5, "with_z", "dont_snap")
-		MapForEach(vAround, "Unit", const.efVisible, function(obj)
-			if IsMerc(obj) then return false end
-		
-			if vAround:PointInside(obj:GetPos()) and (not u or IsCloser(obj, cursorPos, u)) then -- We need to recheck bounds as mapget is 2D
-				u = obj
+		_closest_unit_under_cursor = nil
+		MapForEach(vAround, "Unit", const.efVisible, function(obj, cursorPos, vAround)
+			if vAround:PointInside(obj) -- We need to recheck bounds as mapget is 2D
+				and (not _closest_unit_under_cursor or IsCloser(obj, cursorPos, _closest_unit_under_cursor))
+				and not IsMerc(obj)
+			then
+				_closest_unit_under_cursor = obj
 			end
-		end)
-		return u
+		end, cursorPos, vAround)
+		if _closest_unit_under_cursor then
+			return _closest_unit_under_cursor
+		end
 	else
 		-- Selection through walls.
 		local camera = camera.GetEye()
 		local cursor = GetTerrainCursor()
+		local closest, closest_hit
 		for i, u in ipairs(g_Units) do
-			local collided = GetBodyHitArea(camera, cursor, u)
-			if collided then
-				return u
+			local collided, hit_pos = GetBodyHitArea(camera, cursor, u)
+			if collided and (not closest or IsCloser(camera, hit_pos, closest_hit)) then
+				closest = u
+				closest_hit = hit_pos
 			end
+		end
+		if closest then
+			return closest
 		end
 	end
 end
@@ -957,46 +963,45 @@ function IModeCommonUnitControl:FloorChangeTooltipLogic(deleteOnly)
 		SetAPIndicator(false, "floor-change", false, "appending", true)
 		return
 	end
+	local lowestPointFloor, highestPointFloor
 
-	_highestPointX, _highestPointY, _highestPointZ = nil, nil, nil
-	_lowestPointX, _lowestPointY, _lowestPointZ = nil, nil, nil
+	local cursor_obj = GetCursorObj()
+	if cursor_obj and IsKindOf(cursor_obj, "RoofPlaneSlab") and cursor_obj.room and cursor_obj.room.is_roof_visible then
+		lowestPointFloor = -1
+	else
+		_highestPointX, _highestPointY, _highestPointZ = nil, nil, nil
+		_lowestPointX, _lowestPointY, _lowestPointZ = nil, nil, nil
 
-	local px, py, pz = SnapToVoxel(GetCursorPos():xyz())
-	ForEachPassSlabStep(px, py, pz, const.TunnelTypeLadder, function(x, y, z, tunnel)
-		if not tunnel then return end
-		lGetHigherLowerTunnelPositions(tunnel:GetPosXYZ())
-		lGetHigherLowerTunnelPositions(tunnel.end_point:xyz())
-	end)
+		local px, py, pz = SnapToVoxel(GetCursorPos():xyz())
+		ForEachPassSlabStep(px, py, pz, const.TunnelTypeLadder, function(x, y, z, tunnel)
+			if not tunnel then return end
+			lGetHigherLowerTunnelPositions(tunnel:GetPosXYZ())
+			lGetHigherLowerTunnelPositions(tunnel.end_point:xyz())
+		end)
 
-	local eye = camera.GetEye()
-	local obj = MapGetFirst(eye, point(px, py, pz), guim, "Ladder")
-	if obj then
-		local x1, y1, z1, x2, y2, z2 = obj:GetTunnelPositions()
-		if x1 then
-			lGetHigherLowerTunnelPositions(x1, y1, z1)
-			lGetHigherLowerTunnelPositions(x2, y2, z2)
+		local eye = camera.GetEye()
+		local obj = MapGetFirst(eye, point(px, py, pz), guim, "Ladder")
+		if obj then
+			local x1, y1, z1, x2, y2, z2 = obj:GetTunnelPositions()
+			if x1 then
+				lGetHigherLowerTunnelPositions(x1, y1, z1)
+				lGetHigherLowerTunnelPositions(x2, y2, z2)
+			end
+		end
+
+		if _highestPointX then
+			highestPointFloor = GetFloorOfPos(_highestPointX, _highestPointY, _highestPointZ)
+			lowestPointFloor = GetFloorOfPos(_lowestPointX, _lowestPointY, _lowestPointZ)
 		end
 	end
 
-	local highestPointFloor = _highestPointX and GetFloorOfPos(point(_highestPointX, _highestPointY, _highestPointZ))
-	local lowestPointFloor = _lowestPointX and GetFloorOfPos(point(_lowestPointX, _lowestPointY, _lowestPointZ))
-
-	local dest = GetUIStyleGamepad() and GetTerrainGamepadCursor() or GetTerrainCursor()
-	local roofPlaneSlab = GetClosestRayObj(eye, dest, const.efVisible, 0, function(obj)
-		return IsKindOf(obj, "RoofPlaneSlab")
-	end)
-	if roofPlaneSlab and roofPlaneSlab.room and roofPlaneSlab.room.is_roof_visible then
-		lowestPointFloor = -1
-	end
-
-	local text = false
+	local text
 	if highestPointFloor ~= lowestPointFloor then
 		local floor = cameraTac.GetFloor()
-		if highestPointFloor and highestPointFloor > floor then
-			text = T(399501620165, "(<ShortcutButton('actionCamFloorUp')>) Floor Up")
-		end
 		if lowestPointFloor and lowestPointFloor < floor then
 			text = T(509798634721, "(<ShortcutButton('actionCamFloorDown')>) Floor Down")
+		elseif highestPointFloor and highestPointFloor > floor then
+			text = T(399501620165, "(<ShortcutButton('actionCamFloorUp')>) Floor Up")
 		end
 	end
 	if text then
@@ -1047,15 +1052,15 @@ function IModeCommonUnitControl:UpdateTarget(pos)
 	if not camera.GetEye():IsValid() then
 		local any_unit = SelectedObj or g_Units[1]
 		if not restore_cam_thread and any_unit then
-			restore_cam_thread = CreateRealTimeThread(function()
-				cameraTac.SetFollowTarget(any_unit)
+			restore_cam_thread = CreateRealTimeThread(function(unit)
+				cameraTac.SetFollowTarget(unit)
 				WaitNextFrame(2)
 				cameraTac.SetFollowTarget(false)
 				cameraTac.SetOverview(true)
 				WaitNextFrame(2)
 				cameraTac.SetOverview(false)
 				restore_cam_thread = false
-			end)
+			end, any_unit)
 		end
 		return
 	end
@@ -1064,7 +1069,7 @@ function IModeCommonUnitControl:UpdateTarget(pos)
 	-- If there is a combat object on the voxel selection it must also be considered "targetted"
 	-- If the cursor is over a badge (or UI which has highlit a badge), we treat it as if it is over the object.
 	local enemy_pos
-	local mouse_obj = pos and self:GetUnitUnderMouse()
+	local mouse_obj = pos and self:GetUnitUnderMouse(pos)
 	local freeAimDlg = IsKindOf(self, "IModeCombatFreeAim")
 	local freeAimMode = not self.crosshair and (freeAimDlg or IsKindOf(self, "IModeCombatAreaAim"))
 	freeAimMode = freeAimMode or self.crosshair and self.crosshair.context.free_aim
@@ -1104,6 +1109,8 @@ function IModeCommonUnitControl:UpdateTarget(pos)
 				self.potential_target = unit
 				self.potential_target_is_enemy = lShouldBeHighlightedEnemy(unit)
 				self.potential_target_via_voxel = true
+				
+				mouse_obj = self.potential_target
 			end
 		end
 	end
@@ -1114,28 +1121,30 @@ function IModeCommonUnitControl:UpdateTarget(pos)
 								(self.target and not self.potential_target) -- In attack mode
 	local freeAttackTarget
 	if pos and SelectedObj and updatePenalty then
-		if IsKindOf(SelectedObj:GetActiveWeapons(), "MeleeWeapon") and self.action and self.action.id == "KnifeThrow" then
-			local target = self.potential_target or self.target or GetUnitInVoxel(GetPassSlab(pos))
-			if freeAimMode and SelectedObj:GetPos():Dist(target and target:GetPos() or pos) > CombatActions.KnifeThrow:GetMaxAimRange(SelectedObj, SelectedObj:GetActiveWeapons()) * const.SlabSizeX then
-				self.penalty = -100
-			else
-				self.penalty = 0
+		local weapon = SelectedObj:GetActiveWeapons()
+		if IsKindOf(weapon, "MeleeWeapon") and self.action and self.action.id == "KnifeThrow" then
+			self.penalty = 0
+			if freeAimMode then
+				local target = self.potential_target or self.target or GetUnitInVoxel(GetPassSlab(pos))
+				if not IsCloser(SelectedObj, target or pos, CombatActions.KnifeThrow:GetMaxAimRange(SelectedObj, weapon) * const.SlabSizeX + 1) then
+					self.penalty = -100
+				end
 			end
-		elseif IsKindOf(SelectedObj:GetActiveWeapons(), "MeleeWeapon") or not SelectedObj:GetActiveWeapons() then
-			local action = rawget(self, "action") or SelectedObj:GetDefaultAttackAction()
-			local weapon = action:GetAttackWeapons(SelectedObj) 
-			local target = self.potential_target or self.target or GetUnitInVoxel(GetPassSlab(pos))
+		elseif not weapon or IsKindOf(weapon, "MeleeWeapon") then
 			if IsKindOf(self, "IModeCombatFreeAim") then
-				local _, target_obj = self:GetFreeAttackTarget(self.potential_target, self.attacker:GetPos()) 
-				target = IsValid(target_obj) and target_obj
+				local _, target_obj = self:GetFreeAttackTarget(self.potential_target, self.attacker)
+				if target_obj and IsValid(target_obj) then
+					freeAttackTarget = target_obj
+				end
+			else
+				freeAttackTarget = self.potential_target or self.target or GetUnitInVoxel(GetPassSlab(pos))
 			end
-			freeAttackTarget = target
-			local inRange = SelectedObj:CanAttack(target or pos, weapon, action, 0, nil, nil, freeAimMode)
+			local action = rawget(self, "action") or SelectedObj:GetDefaultAttackAction()
+			local action_weapon = action:GetAttackWeapons(SelectedObj) 
+			local inRange = SelectedObj:CanAttack(freeAttackTarget or pos, action_weapon, action, 0, nil, nil, freeAimMode)
 			if not inRange then
 				self.penalty = -100 
 			end
-		elseif not SelectedObj:GetActiveWeapons() then
-			self.penalty = 0
 		else
 			local target_pos
 			local target_unit = self.potential_target or self.target
@@ -1144,9 +1153,8 @@ function IModeCommonUnitControl:UpdateTarget(pos)
 				target_unit = GetUnitInVoxel(target_pos)
 			end
 			local distanceToUnit = SelectedObj:GetVisualDist(target_unit or target_pos:IsValidZ() and target_pos or target_pos:SetTerrainZ())
-			local wep =  SelectedObj:GetActiveWeapons()
-			self.penalty = wep:GetAccuracy(distanceToUnit) - 100
-			if self.action and IsValid(target_unit) and not freeAimMode then
+			self.penalty = weapon:GetAccuracy(distanceToUnit) - 100
+			if self.action and target_unit and not freeAimMode then
 				if self.action_targets then
 					self.action_targets = self.action:GetTargets({SelectedObj}) or empty_table
 				end
@@ -1166,9 +1174,9 @@ function IModeCommonUnitControl:UpdateTarget(pos)
 			action = CombatActions.MarkTarget
 		end
 		
-		local apCost = action:GetAPCost(SelectedObj, { target = mouse_obj })
 		if not rawget(self, "disable_mouse_indicator") and (freeAimMode or lShouldBeHighlightedEnemy(mouse_obj)) then
 			if freeAimMode then
+				local apCost = action:GetAPCost(SelectedObj, { target = mouse_obj })
 				if self.action and self.action.id == "Overwatch" then
 					SetAPIndicator(apCost > 0 and apCost or false, "attack")
 				else
@@ -1210,6 +1218,7 @@ function IModeCommonUnitControl:UpdateTarget(pos)
 					end
 				end
 			elseif action.id == "MeleeAttack" and IsKindOf(self, "IModeExploration") then
+				local apCost = action:GetAPCost(SelectedObj, { target = mouse_obj })
 				local weapon = action:GetAttackWeapons(SelectedObj)
 				local can_attack, reason = SelectedObj:CanAttack(mouse_obj, weapon, action)
 				if can_attack then
@@ -1221,6 +1230,7 @@ function IModeCommonUnitControl:UpdateTarget(pos)
 			elseif action.id == "MarkTarget" then
 				SetAPIndicator(1, "attack", T(163504056969, "Prepare Takedown"), "appending")
 			elseif not action or action.AimType ~= "melee-charge" then
+				local apCost = action:GetAPCost(SelectedObj, { target = mouse_obj })
 				SetAPIndicator(apCost > 0 and apCost or false, "attack")
 			end
 			self.penalty = self.penalty or 0

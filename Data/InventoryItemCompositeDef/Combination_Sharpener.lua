@@ -9,5 +9,11 @@ PlaceObj('InventoryItemCompositeDef', {
 	'DisplayName', T(418077809565, --[[InventoryItemCompositeDef Combination_Sharpener DisplayName]] "Blade Sharpener"),
 	'DisplayNamePlural', T(948648494757, --[[InventoryItemCompositeDef Combination_Sharpener DisplayNamePlural]] "Blade Sharpeners"),
 	'AdditionalHint', T(935951494911, --[[InventoryItemCompositeDef Combination_Sharpener AdditionalHint]] "<bullet_point> Can be combined with Melee Weapons\n<bullet_point> Sharpened weapons have increased damage"),
+	'Cost', 900,
+	'CanAppearInShop', true,
+	'Tier', 2,
+	'MaxStock', 1,
+	'RestockWeight', 15,
+	'CategoryPair', "Components",
 })
 

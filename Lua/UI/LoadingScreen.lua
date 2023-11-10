@@ -13,18 +13,18 @@ GameVar("g_LoadingHintsSeen",{})
 GameVar("g_LoadingHintsNextIdx",1)
 
 if FirstLoad then
-	g_DbgAutoClickLoadingScreenStart = Platform.developer and 1000 or false
+	g_AutoClickLoadingScreenStart = Platform.developer and 1000 or false
 	g_SplashScreen = "UI/SplashScreen"
 	g_LoadingScreen = "UI/LoadingScreens/LoadingScreen"
 	g_DefaultLoadingScreen = g_SplashScreen	
 end	
 
 function OnMsg.GameTestsBegin()
-	g_DbgAutoClickLoadingScreenStart = Platform.developer and 1
+	g_AutoClickLoadingScreenStart = Platform.developer and 1
 end
 
 function OnMsg.GameTestsEnd()
-	g_DbgAutoClickLoadingScreenStart = Platform.developer and 1000 or false
+	g_AutoClickLoadingScreenStart = Platform.developer and 1000 or false
 end
 
 --loading screen sync
@@ -33,6 +33,7 @@ local function OnLocalPlayerClicked()
 	local dlg = GetDialog("XZuluLoadingScreen")
 	if dlg then
 		dlg.idStart:SetText(T(797976655881, "Ready"))
+		dlg.idStart.idCheck:SetVisible(true)
 		PlayFX("Loadingscreen","StartPopup")
 	end
 end
@@ -41,7 +42,7 @@ local function InitLSClickSync()
 	InitPlayersClickedSync("LoadingScreen", 
 		function() --on done waiting
 			--LoadingScreenClose sleeps, which can pause the event dispatcher, hence in sep thread
-			CreateGameTimeThread(LoadingScreenClose, "idLoadedLoadingScreen", "sync")
+			CreateRealTimeThread(LoadingScreenClose, "idLoadedLoadingScreen", "sync")
 		end,
 		function(player_id) --on player clicked
 			if player_id == netUniqueId then
@@ -88,7 +89,7 @@ local old_LoadingScreenClose = LoadingScreenClose
 function LoadingScreenClose(id, reason)
 	if reason == "pregame menu" then
 		g_DefaultLoadingScreen = g_LoadingScreen
-		g_DbgAutoClickLoadingScreenStart = false
+		g_AutoClickLoadingScreenStart = false
 	elseif reason == "loaded" then
 		LocalPlayerClickedReady("LoadingScreen")
 	end
@@ -136,5 +137,5 @@ end
 function GetLoadingScreenParamsFromMetadata(metadata, reason)
 	local id = metadata and metadata.satellite and "idSatelliteView" or "idLoadingSavegame"
 	local tip = metadata and not metadata.satellite and metadata.sector
-	return id, reason or "load savegame", tip, metadata
+	return id, reason or "zulu load savegame", tip, metadata
 end

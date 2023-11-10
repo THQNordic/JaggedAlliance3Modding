@@ -7,68 +7,34 @@ DefineClass.SingularPurpose = {
 
 
 	object_class = "Perk",
-	msg_reactions = {
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "attacker",
-			Event = "OnKill",
-			Handler = function (self, attacker, killedUnits)
-				
-				local function exec(self, attacker, killedUnits)
-				if g_Combat then
-					attacker:AddStatusEffect("SingularPurposeBuff")
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "OnKill" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, attacker, killedUnits)
-				end
-				
-				if self:VerifyReaction("OnKill", reaction_def, attacker, attacker, killedUnits) then
-					exec(self, attacker, killedUnits)
-				end
+	unit_reactions = {
+		PlaceObj('UnitReaction', {
+			Event = "OnCombatEnd",
+			Handler = function (self, target)
+				self:SetParameter("bonus_active", false)
 			end,
-			HandlerCode = function (self, attacker, killedUnits)
-				if g_Combat then
-					attacker:AddStatusEffect("SingularPurposeBuff")
+		}),
+		PlaceObj('UnitReaction', {
+			Event = "OnUnitAttack",
+			Handler = function (self, target, attacker, action, attack_target, results, attack_args)
+				if target == attacker and results.miss then
+					self:SetParameter("bonus_active", false)
 				end
 			end,
 		}),
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "attacker",
-			Event = "GatherDamageModifications",
-			Handler = function (self, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data)
-				
-				local function exec(self, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data)
-				if attacker:HasStatusEffect("SingularPurposeBuff") then 
-					local damageBonus = self:ResolveValue("damageBonus")
-					mod_data.base_damage = MulDivRound(mod_data.base_damage, 100 + damageBonus, 100)
-					mod_data.breakdown[#mod_data.breakdown + 1] = { name = self.DisplayName, value = damageBonus }
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[2]
-				if not reaction_def or reaction_def.Event ~= "GatherDamageModifications" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data)
-				end
-				
-				if self:VerifyReaction("GatherDamageModifications", reaction_def, attacker, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data) then
-					exec(self, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data)
-				end
+		PlaceObj('UnitReaction', {
+			Event = "OnUnitKill",
+			Handler = function (self, target, killedUnits)
+				self:SetParameter("bonus_active", true)
 			end,
-			HandlerCode = function (self, attacker, target, attack_args, hit_descr, mod_data)
-				if attacker:HasStatusEffect("SingularPurposeBuff") then 
+		}),
+		PlaceObj('UnitReaction', {
+			Event = "OnCalcDamageAndEffects",
+			Handler = function (self, target, attacker, attack_target, action, weapon, attack_args, hit, data)
+				if self:ResolveValue("bonus_active") then
 					local damageBonus = self:ResolveValue("damageBonus")
-					mod_data.base_damage = MulDivRound(mod_data.base_damage, 100 + damageBonus, 100)
-					mod_data.breakdown[#mod_data.breakdown + 1] = { name = self.DisplayName, value = damageBonus }
+					data.base_damage = MulDivRound(data.base_damage, 100 + damageBonus, 100)
+					data.breakdown[#data.breakdown + 1] = { name = self.DisplayName, value = damageBonus }
 				end
 			end,
 		}),

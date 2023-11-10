@@ -12,6 +12,11 @@ DefineClass._9mm_Basic = {
 	DisplayNamePlural = T(363994540714, --[[InventoryItemCompositeDef _9mm_Basic DisplayNamePlural]] "9 mm Standard"),
 	colorStyle = "AmmoBasicColor",
 	Description = T(667953407193, --[[InventoryItemCompositeDef _9mm_Basic Description]] "9 mm ammo for Handguns and SMGs."),
+	Cost = 30,
+	CanAppearInShop = true,
+	MaxStock = 10,
+	CategoryPair = "9mm",
+	ShopStackSize = 30,
 	MaxStacks = 500,
 	Caliber = "9mm",
 }

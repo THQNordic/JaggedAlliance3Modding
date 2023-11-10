@@ -94,9 +94,11 @@ function ReceiveEmail(emailId, context)
 	end
 end
 
+local nolog = { no_log = true }
+
 function CheckConditionsAndReceiveEmail(emailId, context)
 	local preset = Emails[emailId]
-	local check = preset.sendConditions and #preset.sendConditions > 0 and EvalConditionList(preset.sendConditions, preset, {no_log = true})
+	local check = preset.sendConditions and #preset.sendConditions > 0 and EvalConditionList(preset.sendConditions, preset, nolog)
 	if check then
 		ReceiveEmail(emailId, context)
 	end
@@ -106,7 +108,7 @@ function EmailsSendConditionEvaluation()
 	local emailPresets = PresetArray("Email")
 	local n = #emailPresets
 	for i, preset in ipairs(emailPresets) do
-		if not gv_ReceivedEmails[preset.id] and not gv_DelayedEmails[preset.id] and preset.sendConditions and #preset.sendConditions > 0 and EvalConditionList(preset.sendConditions, preset, {no_log = true}) then
+		if not gv_ReceivedEmails[preset.id] and not gv_DelayedEmails[preset.id] and preset.sendConditions and #preset.sendConditions > 0 and EvalConditionList(preset.sendConditions, preset, nolog) then
 			Sleep(const.EmailWaitTime)
 			ReceiveEmail(preset.id)
 		end
@@ -195,10 +197,18 @@ DefineClass.PDAEmailsClass = {
 function PDAEmailsClass:Open()
 	self:SelectLabel("AllMessages")
 	
-	local openNewest = GetDialog("PDADialog").context.openNewestEmail
-	if openNewest then
+	local openSpecific = GetDialog("PDADialog").context.openSpecificOrNewestEmail
+	if openSpecific == "openNewest" then
 		self:SelectEmail(gv_ReceivedEmails[#gv_ReceivedEmails])
-		GetDialog("PDADialog").context.openNewestEmail = false
+		GetDialog("PDADialog").context.openSpecificOrNewestEmail = false
+	elseif openSpecific then
+		-- we could open a non-existing e-mail, if its formatting is correct (the contents would be displayed, but no e-mail selected), but safer this way
+		-- we can also open newest e-mail if the one received does not exist?
+		local email_exists = table.find(gv_ReceivedEmails, openSpecific)
+		if email_exists then
+			self:SelectEmail(openSpecific)
+		end
+		GetDialog("PDADialog").context.openSpecificOrNewestEmail = false
 	end
 
 	XDialog.Open(self)
@@ -288,7 +298,7 @@ function PDAEmailsClass:OpenEmailAttachment(attachment)
 	attachmentWindow:Open()
 end
 
-function OpenEmail(openNewest)
+function OpenEmail(emailOrNewest)
 	local full_screen = GetDialog("FullscreenGameDialogs")
 	if full_screen and full_screen.window_state == "open" then
 		full_screen:Close()
@@ -298,14 +308,14 @@ function OpenEmail(openNewest)
 	
 	-- Not currently in the PDA or quests tab.
 	if not dlg or dlg.Mode ~= "quests" then
-		OpenDialog("PDADialog", GetInGameInterface(), { Mode = "quests", sub_tab = "email", openNewestEmail = openNewest })
+		OpenDialog("PDADialog", GetInGameInterface(), { Mode = "quests", sub_tab = "email", openSpecificOrNewestEmail = emailOrNewest })
 		return
 	end
 	
 	-- Change tab to email if on another tab
 	local notesDlg = dlg.idContent.idSubContent
 	if notesDlg.Mode ~= "email" then
-		notesDlg:SetMode("email", { openNewestEmail = openNewest })
+		notesDlg:SetMode("email", { openSpecificOrNewestEmail = emailOrNewest })
 		return
 	end
 	

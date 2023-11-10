@@ -14,7 +14,7 @@ function SetupInitialCamera(dont_move_camera)
 		
 		--make the cam calc its pos
 		cameraTac.Normalize()
-		cameraTac.SetLookAtAngle(hr.CameraTacLookAtAngle)
+		cameraTac.SetLookAtAngle(not cameraTac.GetIsInOverview() and hr.CameraTacLookAtAngle or hr.CameraTacLookAtAngleInOverview)
 		cameraTac.SetFloor(0)
 		--cameraTac.SetZoom(1000)
 	end
@@ -23,6 +23,7 @@ end
 function OnMsg.NewMap()
 	if Platform.developer then
 		--this makes retail bugs unreproducable. why is it dev only?
+		--note that in dev == false CloseMapLoadingScreen calls SetupInitialCamera :|, so results are similar
 		SetupInitialCamera()
 		terrain.UpdateTerrainDebugDraw()
 	end

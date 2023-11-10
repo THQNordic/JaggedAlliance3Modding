@@ -487,18 +487,6 @@ PlaceObj('XTemplate', {
 		}),
 		PlaceObj('XTemplateAction', {
 			'comment', "cheat",
-			'ActionId', "idToggleVisibleCth",
-			'ActionName', T(273270532651, --[[XTemplate IGMainActions ActionName]] "Show Chance to Hit (toggle)"),
-			'ActionToolbar', "cheats",
-			'ActionToolbarSection', "COMBAT",
-			'OnAction', function (self, host, source, ...)
-				NetSyncEvent("CheatEnable", "ShowCth")
-				CloseMenuDialogs()
-			end,
-			'__condition', function (parent, context) return Platform.developer end,
-		}),
-		PlaceObj('XTemplateAction', {
-			'comment', "cheat",
 			'ActionId', "idToggleBigGuns",
 			'ActionName', T(606913569390, --[[XTemplate IGMainActions ActionName]] "Big Guns (toggle)"),
 			'ActionToolbar', "cheats",

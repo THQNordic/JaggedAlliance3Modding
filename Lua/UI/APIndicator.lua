@@ -102,7 +102,7 @@ function APPrediction:OnContextUpdate(context, ...)
 			local target = igiBlackboard.shot_targets
 			target = target and target[1]
 			if CthVisible() then
-				local crit = weapon and SelectedObj:CalcCritChance(weapon, target, aim, nil, nil, action)
+				local crit = weapon and SelectedObj:CalcCritChance(weapon, target, action, {aim = aim})
 				if crit then
 					apIndicatorText = apIndicatorText .. "<newline>" .. T{Untranslated("<percent(Crit)> CRIT"), Crit = crit}
 				end

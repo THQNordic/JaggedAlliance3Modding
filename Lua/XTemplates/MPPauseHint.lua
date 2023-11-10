@@ -21,11 +21,16 @@ PlaceObj('XTemplate', {
 			
 			local paused, reason = IsCampaignOrGamePausedByRemotePlayerOnly()
 			local isSaveReason = paused and string.match(reason or "", "SavingGame")
+			local isBobbyRayOnlyReason = IsCampaignPausedByRemoteBobbyRayOnly()
+			
 			local msg = self.idMsg
 			if not not paused == not not msg then
 				if msg then UpdateMsgText(msg, isSaveReason) end
 				return
 			end
+			
+			-- !TODO: added GetDialog("PDADialog") because the message doesn't block input, so the player is able to open the PDA on top of the message anyway (or close and reopen in case th message opened on top of the PDA)
+			paused = paused and not isBobbyRayOnlyReason and not GetDialog("PDADialog")
 			
 			if paused then
 				local insidePDA = GetParentOfKind(self, "PDAClass")
@@ -40,7 +45,7 @@ PlaceObj('XTemplate', {
 				msg.OnShortcut = function() end
 				if self.window_state == "open" then msg:Open() end
 			else
-				msg:Close()
+				if msg then msg:Close() end
 			end
 			
 			self:SetVisible(paused)

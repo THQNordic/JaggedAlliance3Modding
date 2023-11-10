@@ -7,46 +7,6 @@ DefineClass.Panicked = {
 
 
 	object_class = "CharacterEffect",
-	msg_reactions = {
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "obj",
-			Event = "StatusEffectAdded",
-			Handler = function (self, obj, id, stacks)
-				
-				local function exec(self, obj, id, stacks)
-				obj:RemoveStatusEffect("Berserk")
-				if IsKindOf(obj, "Unit") then
-					obj:InterruptPreparedAttack()
-					if g_Teams[g_CurrentTeam] == obj.team then
-						ScheduleMoraleActions()
-					end
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "StatusEffectAdded" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, obj, id, stacks)
-				end
-				
-				if self:VerifyReaction("StatusEffectAdded", reaction_def, obj, obj, id, stacks) then
-					exec(self, obj, id, stacks)
-				end
-			end,
-			HandlerCode = function (self, obj, id, stacks)
-				obj:RemoveStatusEffect("Berserk")
-				if IsKindOf(obj, "Unit") then
-					obj:InterruptPreparedAttack()
-					if g_Teams[g_CurrentTeam] == obj.team then
-						ScheduleMoraleActions()
-					end
-				end
-			end,
-		}),
-	},
 	Conditions = {
 		PlaceObj('CombatIsActive', {}),
 	},
@@ -54,6 +14,13 @@ DefineClass.Panicked = {
 	Description = T(583680307590, --[[CharacterEffectCompositeDef Panicked Description]] "Uncontrollable. Runs away from the enemies."),
 	AddEffectText = T(629484886928, --[[CharacterEffectCompositeDef Panicked AddEffectText]] "<em><DisplayName></em> panicked"),
 	RemoveEffectText = T(633681873712, --[[CharacterEffectCompositeDef Panicked RemoveEffectText]] "<em><DisplayName></em> calmed down from the Panic"),
+	OnAdded = function (self, obj)
+		obj:RemoveStatusEffect("Berserk")
+		obj:InterruptPreparedAttack()
+		if g_Teams[g_CurrentTeam] == obj.team then
+			ScheduleMoraleActions()
+		end
+	end,
 	lifetime = "Until End of Next Turn",
 	Icon = "UI/Hud/Status effects/panic",
 	RemoveOnEndCombat = true,

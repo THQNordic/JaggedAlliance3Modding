@@ -7,178 +7,61 @@ DefineClass.Bleeding = {
 
 
 	object_class = "StatusEffect",
-	msg_reactions = {
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "obj",
-			Event = "StatusEffectAdded",
-			Handler = function (self, obj, id, stacks)
-				
-				local function exec(self, obj, id, stacks)
-				if g_Teams[g_CurrentTeam] == obj.team and not obj:HasStatusEffect("BeingBandaged") then
-					obj:ConsumeAP(-self:ResolveValue("APLoss") * const.Scale.AP)
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "StatusEffectAdded" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, obj, id, stacks)
-				end
-				
-				if self:VerifyReaction("StatusEffectAdded", reaction_def, obj, obj, id, stacks) then
-					exec(self, obj, id, stacks)
-				end
-			end,
-			HandlerCode = function (self, obj, id, stacks)
-				if g_Teams[g_CurrentTeam] == obj.team and not obj:HasStatusEffect("BeingBandaged") then
-					obj:ConsumeAP(-self:ResolveValue("APLoss") * const.Scale.AP)
-				end
-			end,
-		}),
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "obj",
-			Event = "StatusEffectRemoved",
-			Handler = function (self, obj, id, stacks, reason)
-				
-				local function exec(self, obj, id, stacks, reason)
-				if g_Combat and not obj:HasStatusEffect("BeingBandaged") then
-					obj:ConsumeAP(self:ResolveValue("APLoss") * const.Scale.AP)
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[2]
-				if not reaction_def or reaction_def.Event ~= "StatusEffectRemoved" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, obj, id, stacks, reason)
-				end
-				
-				if self:VerifyReaction("StatusEffectRemoved", reaction_def, obj, obj, id, stacks, reason) then
-					exec(self, obj, id, stacks, reason)
-				end
-			end,
-			HandlerCode = function (self, obj, id, stacks, reason)
-				if g_Combat and not obj:HasStatusEffect("BeingBandaged") then
-					obj:ConsumeAP(self:ResolveValue("APLoss") * const.Scale.AP)
-				end
-			end,
-		}),
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "unit",
-			Event = "UnitEndTurn",
-			Handler = function (self, unit)
-				
-				local function exec(self, unit)
+	unit_reactions = {
+		PlaceObj('UnitReaction', {
+			Event = "OnEndTurn",
+			Handler = function (self, target)
 				if not IsInCombat() then return end
-				if unit:HasStatusEffect("BeingBandaged") then
-					unit:RemoveStatusEffect("Bleeding")
+				if target:HasStatusEffect("BeingBandaged") then
+					target:RemoveStatusEffect("Bleeding")
 					return
 				end
 				local value = self:ResolveValue("DamagePerTurn")
 				local floating_text = T{193053798048, "<num> (bleeding)", num = value}
 				local pov_team = GetPoVTeam()
-				local has_visibility = HasVisibilityTo(pov_team, unit)
-				local log_msg = T{729241506274, "<name> bleeds for <em><num> damage</em>", name = unit:GetLogName(), num = value}
-				unit:TakeDirectDamage(value, has_visibility and floating_text or false, "short", log_msg)
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[3]
-				if not reaction_def or reaction_def.Event ~= "UnitEndTurn" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, unit)
-				end
-				
-				if self:VerifyReaction("UnitEndTurn", reaction_def, unit, unit) then
-					exec(self, unit)
-				end
-			end,
-			HandlerCode = function (self, unit)
-				if not IsInCombat() then return end
-				if unit:HasStatusEffect("BeingBandaged") then
-					unit:RemoveStatusEffect("Bleeding")
-					return
-				end
-				local value = self:ResolveValue("DamagePerTurn")
-				local floating_text = T{193053798048, "<num> (bleeding)", num = value}
-				local pov_team = GetPoVTeam()
-				local has_visibility = HasVisibilityTo(pov_team, unit)
-				local log_msg = T{729241506274, "<name> bleeds for <em><num> damage</em>", name = unit:GetLogName(), num = value}
-				unit:TakeDirectDamage(value, has_visibility and floating_text or false, "short", log_msg)
+				local has_visibility = HasVisibilityTo(pov_team, target)
+				local log_msg = T{729241506274, "<name> bleeds for <em><num> damage</em>", name = target:GetLogName(), num = value}
+				target:TakeDirectDamage(value, has_visibility and floating_text or false, "short", log_msg)
 			end,
 		}),
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "attacker",
-			Event = "GatherCTHModifications",
-			Handler = function (self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
-				
-				local function exec(self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
-				if cth_id == self.id then
-					data.mod_add = data.mod_add + self:ResolveValue("cth_penalty")
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[4]
-				if not reaction_def or reaction_def.Event ~= "GatherCTHModifications" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
-				end
-				
-				if self:VerifyReaction("GatherCTHModifications", reaction_def, attacker, attacker, cth_id, action_id, target, weapon1, weapon2, data) then
-					exec(self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
-				end
-			end,
-			HandlerCode = function (self, attacker, cth_id, data)
-				if cth_id == self.id then
-					data.mod_add = data.mod_add + self:ResolveValue("cth_penalty")
+		PlaceObj('UnitReaction', {
+			Event = "OnCalcChanceToHit",
+			Handler = function (self, target, attacker, action, attack_target, weapon1, weapon2, data)
+				if target == attacker then
+					ApplyCthModifier_Add(self, data, self:ResolveValue("cth_penalty"))
 				end
 			end,
 		}),
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "target",
-			Event = "GatherCritChanceModifications",
-			Handler = function (self, attacker, target, action_id, weapon, data)
-				
-				local function exec(self, attacker, target, action_id, weapon, data)
-				if IsKindOf(data.weapon, "GutHookKnife") then
-					data.guaranteed_crit = true
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[5]
-				if not reaction_def or reaction_def.Event ~= "GatherCritChanceModifications" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, attacker, target, action_id, weapon, data)
-				end
-				
-				if self:VerifyReaction("GatherCritChanceModifications", reaction_def, target, attacker, target, action_id, weapon, data) then
-					exec(self, attacker, target, action_id, weapon, data)
-				end
-			end,
-			HandlerCode = function (self, attacker, target, data)
-				if IsKindOf(data.weapon, "GutHookKnife") then
+		PlaceObj('UnitReaction', {
+			Event = "OnCalcCritChance",
+			Handler = function (self, target, attacker, attack_target, action, weapon, data)
+				if target == attack_target and IsKindOf(data.weapon, "GutHookKnife") then
 					data.guaranteed_crit = true
 				end
 			end,
-			helpActor = "target",
+		}),
+		PlaceObj('UnitReaction', {
+			Event = "OnUnitBandaged",
+			Handler = function (self, target, healer, patient, hp_restored)
+				if target == patient then
+					target:RemoveStatusEffect(self.class)
+				end
+			end,
 		}),
 	},
 	DisplayName = T(779855732255, --[[CharacterEffectCompositeDef Bleeding DisplayName]] "Bleeding"),
 	Description = T(303094247377, --[[CharacterEffectCompositeDef Bleeding Description]] "This character will <em>take <DamagePerTurn> damage</em> each turn until they are <em>bandaged</em>. Maximum <em>AP decreased by <APLoss></em>."),
 	AddEffectText = T(902710213609, --[[CharacterEffectCompositeDef Bleeding AddEffectText]] "<em><DisplayName></em> is bleeding"),
+	OnAdded = function (self, obj)
+		if g_Teams[g_CurrentTeam] == obj.team and not obj:HasStatusEffect("BeingBandaged") then
+			obj:ConsumeAP(-self:ResolveValue("APLoss") * const.Scale.AP)
+		end
+	end,
+	OnRemoved = function (self, obj)
+		if g_Combat and not obj:HasStatusEffect("BeingBandaged") then
+			obj:ConsumeAP(self:ResolveValue("APLoss") * const.Scale.AP)
+		end
+	end,
 	type = "Debuff",
 	Icon = "UI/Hud/Status effects/bleeding",
 	RemoveOnEndCombat = true,

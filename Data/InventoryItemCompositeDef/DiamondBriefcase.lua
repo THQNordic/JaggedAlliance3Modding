@@ -12,5 +12,6 @@ PlaceObj('InventoryItemCompositeDef', {
 	'AdditionalHint', T(952083748618, --[[InventoryItemCompositeDef DiamondBriefcase AdditionalHint]] "<bullet_point> <GameColorD>Can be cashed in for Money</GameColorD>"),
 	'Valuable', 1,
 	'Cost', 12000,
+	'RestockWeight', 0,
 })
 

@@ -7,31 +7,11 @@ DefineClass.ColdHeart = {
 
 
 	object_class = "Perk",
-	msg_reactions = {
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "attacker",
-			Event = "GatherDamageModifications",
-			Handler = function (self, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data)
-				
-				local function exec(self, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data)
-				mod_data.critical_damage = mod_data.critical_damage + self:ResolveValue("crit_bonus")
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "GatherDamageModifications" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data)
-				end
-				
-				if self:VerifyReaction("GatherDamageModifications", reaction_def, attacker, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data) then
-					exec(self, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data)
-				end
-			end,
-			HandlerCode = function (self, attacker, target, attack_args, hit_descr, mod_data)
-				mod_data.critical_damage = mod_data.critical_damage + self:ResolveValue("crit_bonus")
+	unit_reactions = {
+		PlaceObj('UnitReaction', {
+			Event = "OnCalcDamageAndEffects",
+			Handler = function (self, target, attacker, attack_target, action, weapon, attack_args, hit, data)
+				data.critical_damage = data.critical_damage + self:ResolveValue("crit_bonus")
 			end,
 		}),
 	},

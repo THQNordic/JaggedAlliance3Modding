@@ -46,7 +46,7 @@ PlaceObj('QuestsDef', {
 							Amount = 1,
 							Prop = "spam_chance",
 							QuestId = "Emails",
-							RandomRangeMax = 5,
+							RandomRangeMax = 2,
 						}),
 					},
 				}),
@@ -65,7 +65,6 @@ PlaceObj('QuestsDef', {
 							RandomRangeMax = 14,
 						}),
 						PlaceObj('QuestSetVariableNum', {
-							Amount = 5,
 							Operation = "set",
 							Prop = "spam_chance",
 							QuestId = "Emails",

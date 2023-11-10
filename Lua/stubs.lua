@@ -2,6 +2,9 @@ function OnMsg.NewMap()
 	ShowMouseCursor("ingame")
 end
 
+StoryBitActivate.EditorExcludeAsNested = true
+StoryBitEnableRandom.EditorExcludeAsNested = true
+
 g_CurrentMissionParams = {}
 const.HoursPerDay = 24
 const.HourDuration = 30000
@@ -124,20 +127,6 @@ end
 
 config.DefaultAppearanceBody = "Male"
 
-function MsgReactionsPreset:OnPreSave()
-	for _, reaction in ipairs(self.msg_reactions) do
-		reaction.HandlerCode = reaction.HandlerCode or reaction.Handler
-		reaction.Handler = reaction.HandlerCode
-	end
-end
-
-function MsgReactionsPreset:PostLoad()
-	Preset.PostLoad(self)
-	for _, reaction in ipairs(self.msg_reactions) do
-		reaction.HandlerCode = reaction.HandlerCode or reaction.Handler
-	end
-end
-
 function SatelliteSectorLocContext()
 	return function(obj, prop_meta, parent)
 		return "Sector name for " .. obj.Id
@@ -223,6 +212,8 @@ function OnMsg.NewMapLoaded()
 		SetSunShadowCasters(false)
 	end
 end
+
+PlayStationDefaultBackgroundExecutionHandler = empty_func
 
 function EngineOptionFixups.DisableUpscalingIfNotAvailable(engine_options, last_applied_fixup_revision)
 	local upscaling = engine_options.Upscaling

@@ -89,16 +89,16 @@ DefineClass.SlabTunnel = {
 	base_cost = false,
 	modifier = 0,
 	traverse_params = false,
+	exploration_additional_cost = false,
 }
 
 function SlabTunnel:AddPFTunnel()
 	local pos1 = self:GetEntrance()
 	local pos2 = self:GetExit()
-	local exploration_additional_cost = GetSpecialMoveAPCost(TunnelExplorationAdditionalCosts[self.class]) or 0
-	if exploration_additional_cost > 0 then
-		exploration_additional_cost = exploration_additional_cost * (GetSpecialMoveAPCost("Walk") or 0)
+	if not self.exploration_additional_cost then
+		self.exploration_additional_cost = GetSpecialMoveAPCost(TunnelExplorationAdditionalCosts[self.class]) or 0
 	end
-	local exploration_cost = self.base_cost * (100 + self.modifier) / 100 + exploration_additional_cost
+	local exploration_cost = self.base_cost * (100 + self.modifier) / 100 + self.exploration_additional_cost * (GetSpecialMoveAPCost("Walk") or 0)
 	pf.AddTunnel(self, pos1, pos2, exploration_cost, self.tunnel_type, -1)
 end
 
@@ -163,13 +163,13 @@ function GetSpecialMoveAPCost(id)
 	return id and Presets.ConstDef["Action Point Costs"][id].value
 end
 
-function PlaceSlabTunnel(classname, costAP, x1, y1, z1, x2, y2, z2)
+function PlaceSlabTunnel(classname, costAP, luaobj, x1, y1, z1, x2, y2, z2)
 	if not costAP then
 		return
 	end
-	local pt1 = point(x1, y1, z1 or nil)
-	local pt2 = point(x2, y2, z2 or nil)
-	local tunnel = pf.GetTunnel(pt1, pt2)
+	if z1 == false then z1 = nil end
+	if z2 == false then z2 = nil end
+	local tunnel = pf.GetTunnel(x1, y1, z1, x2, y2, z2)
 	if tunnel then
 		if tunnel.base_cost < costAP then
 			return
@@ -177,8 +177,11 @@ function PlaceSlabTunnel(classname, costAP, x1, y1, z1, x2, y2, z2)
 		tunnel:RemovePFTunnel()
 		DoneObject(tunnel)
 	end
-	local obj = PlaceObject(classname, { end_point = pt2, base_cost = costAP })
-	obj:SetPos(x1, y1, z1 or nil)
+	luaobj = luaobj or {}
+	luaobj.end_point = point(x2, y2, z2)
+	luaobj.base_cost = costAP
+	local obj = PlaceObject(classname, luaobj)
+	obj:SetPos(x1, y1, z1)
 	obj:AddPFTunnel()
 	return obj
 end
@@ -575,22 +578,23 @@ local function AddTunnelPoints(points, x1, y1, x2, y2, voxelz, minz, vinfo)
 	local voxelz2, z2, stepz2 = FindPassVoxelZ(x2, y2, voxelz, minz, vinfo)
 	if voxelz1 and voxelz2 then
 		local ztiles = (abs(stepz1 - stepz2) + tilez/2) / tilez
-		local insert = table.insert
 		if voxelz - voxelz1 <= tilez and (ztiles < 2 or CheckHeroPassLine(x2, y2, stepz1, x2, y2, stepz2 + tilez)) then
-			insert(points, x1)
-			insert(points, y1)
-			insert(points, z1 or false)
-			insert(points, x2)
-			insert(points, y2)
-			insert(points, z2 or false)
+			local idx = #points
+			points[idx+1] = x1
+			points[idx+2] = y1
+			points[idx+3] = z1 or false
+			points[idx+4] = x2
+			points[idx+5] = y2
+			points[idx+6] = z2 or false
 		end
 		if voxelz - voxelz2 <= tilez and (ztiles < 2 or CheckHeroPassLine(x1, y1, stepz2, x1, y1, stepz1 + tilez)) then
-			insert(points, x2)
-			insert(points, y2)
-			insert(points, z2 or false)
-			insert(points, x1)
-			insert(points, y1)
-			insert(points, z1 or false)
+			local idx = #points
+			points[idx+1] = x2
+			points[idx+2] = y2
+			points[idx+3] = z2 or false
+			points[idx+4] = x1
+			points[idx+5] = y1
+			points[idx+6] = z1 or false
 		end
 	end
 end
@@ -603,7 +607,7 @@ local function GetMovePassThroughObjSpots(obj, vinfo, max_drop_tiles)
 
 	-- spots replace the default placement
 	if obj:HasSpot("Tunnel") then
-		local dx, dy = RotateAxis(point(tilex / 2, 0, 0), obj:GetAxis(), obj:GetAngle()):xy()
+		local dx, dy = RotateRadius(tilex / 2, obj:GetOrientationAngle(), 0, true)
 		local first_spot, last_spot = obj:GetSpotRange("Tunnel")
 		for spot = first_spot, last_spot do
 			local x, y, z = obj:GetSpotPosXYZ(spot)
@@ -619,9 +623,9 @@ local function GetMovePassThroughObjSpots(obj, vinfo, max_drop_tiles)
 	local width = Max(1, obj:GetWidthForTunnels())
 
 	--account for art being offset for some objs and not others.
-	local _center_x, _center_y = obj:GetEntityBBox("idle"):Center():xy()
-	local _x1 = _center_x - tilex / 2
-	local _y1 = _center_y - tiley * (width - 1) / 2
+	local minx, miny, maxx, maxy = obj:GetEntityBBox("idle"):xyxy()
+	local _x1 = (minx + maxx) / 2 - tilex / 2
+	local _y1 = (miny + maxy) / 2 - tiley * (width - 1) / 2
 	local x1, y1, z1 = SnapToVoxel(obj:GetRelativePointXYZ(_x1, _y1, 0))
 	local x2, y2, z2 = SnapToVoxel(obj:GetRelativePointXYZ(_x1 + tilex, _y1, 0))
 	if not (x1 == x2 and abs(y1 - y2) == tiley or y1 == y2 and abs(x1 - x2) == tilex) then
@@ -781,18 +785,32 @@ function Door:PlaceTunnels(slab_pass)
 		if isBlocked then
 			tunnel_class = "SlabTunnelDoorBlocked"
 		end
+		local isDiscoveredTrapped = self.boobyTrapType ~= const.BoobyTrapNone and not self.done and self.discovered_trap
+		local exploration_additional_cost = isDiscoveredTrapped and GetSpecialMoveAPCost("ExplorationActionMovesModifierStrong")
 		for i = 1, count, 6 do
 			local cost, interact_cost, move_cost = self:GetTunnelCost(table.unpack(points, i, i + 5))
 			if cost then
-				local tunnel = PlaceSlabTunnel(tunnel_class, cost, table.unpack(points, i, i + 5))
-				if tunnel then
-					assert(IsKindOf(tunnel, "SlabTunnelPassThroughObj"))
-					tunnel.pass_through_obj = self
-					tunnel.base_interact_cost = interact_cost
-					tunnel.base_move_cost = move_cost
-				end
+				local luaobj = {
+					pass_through_obj = self,
+					base_interact_cost = interact_cost,
+					base_move_cost = move_cost,
+					exploration_additional_cost = exploration_additional_cost,
+				}
+				PlaceSlabTunnel(tunnel_class, cost, luaobj, table.unpack(points, i, i + 5))
 			end
 		end
+	end
+end
+
+function OnMsg.TrapDiscovered(trap)
+	if IsKindOfClasses(trap, "Door") then
+		DelayedCall(0, RebuildSlabTunnels, trap:GetObjectBBox())
+	end
+end
+
+function OnMsg.TrapDisarm(trap)
+	if IsKindOf(trap, "Door") then
+		DelayedCall(0, RebuildSlabTunnels, trap:GetObjectBBox())
 	end
 end
 
@@ -1215,14 +1233,13 @@ function WindowTunnelObject:PlaceTunnels(slab_pass)
 		if CheckPassCapsule(centerX, centerY, centerZ, halfExtentX, halfExtentY, halfExtentZ, radius, self) then
 			local cost, interact_cost, move_cost, drop_cost = self:GetTunnelCost(table.unpack(points, i, i + 5))
 			if cost then
-				local tunnel = PlaceSlabTunnel(self.tunnel_class, cost, table.unpack(points, i, i + 5))
-				if tunnel then
-					assert(IsKindOf(tunnel, "SlabTunnelPassThroughObj"))
-					tunnel.pass_through_obj = self
-					tunnel.base_interact_cost = interact_cost
-					tunnel.base_move_cost = move_cost
-					tunnel.base_drop_cost = drop_cost
-				end
+				local luaobj = {
+					pass_through_obj = self,
+					base_interact_cost = interact_cost,
+					base_move_cost = move_cost,
+					base_drop_cost = drop_cost,
+				}
+				PlaceSlabTunnel(self.tunnel_class, cost, luaobj, table.unpack(points, i, i + 5))
 			end
 		end
 	end
@@ -1338,9 +1355,13 @@ function SlabWallWindow:GetOpenAPCost()
 end
 
 function SlabWallWindow:GetTunnelCost(...)
+	local cost, interact_cost, move_cost, drop_cost = WindowTunnelObject.GetTunnelCost(self, ...)
 	local openAP = self:GetOpenAPCost() or 0
-	local moveAP = WindowTunnelObject.GetTunnelCost(self, ...) or 0
-	return openAP + moveAP
+	if openAP > 0 then
+		cost = cost + openAP
+		interact_cost = interact_cost + openAP
+	end
+	return cost, interact_cost, move_cost, drop_cost
 end
 
 function SlabWallWindow:SetWindowState(window_state, no_fx)

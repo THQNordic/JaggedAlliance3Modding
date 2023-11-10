@@ -2177,6 +2177,17 @@ EntityData["BunkerInterior_ComRadio_01"] = {
 	},
 }
 EntityData["BunkerInterior_Desk_01"] = {
+	default_colors = {
+		EditableColor1 = 4280691739,
+		EditableColor2 = 4280691739,
+		EditableColor3 = 4280033046,
+		EditableMetallic1 = 0,
+		EditableMetallic2 = 0,
+		EditableMetallic3 = 0,
+		EditableRoughness1 = 0,
+		EditableRoughness2 = 0,
+		EditableRoughness3 = 0,
+	},
 	editor_artset = "Bunker",
 	editor_category = "Prop",
 	editor_subcategory = "Furniture",

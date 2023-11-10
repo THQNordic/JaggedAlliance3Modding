@@ -189,9 +189,9 @@ PlaceObj('QuestsDef', {
 			Text = T(902632541998, --[[QuestsDef TheGoodPlace Text]] "<em>Jackhammer</em> is using <em><SectorName('L6')></em> prison to sell inmates into indentured servitude at the Legion mines"),
 		}),
 		PlaceObj('QuestNote', {
-			Badges = {
-				PlaceObj('QuestBadgePlacement', {
-					Sector = "L6",
+			CompletionConditions = {
+				PlaceObj('GroupIsDead', {
+					Group = "PrisonerRioter",
 				}),
 			},
 			HideConditions = {
@@ -216,14 +216,25 @@ PlaceObj('QuestsDef', {
 					Sector = "L6",
 				}),
 			},
+			CompletionConditions = {
+				PlaceObj('QuestIsVariableBool', {
+					Condition = "or",
+					QuestId = "Luigi",
+					Vars = set( "JackhammerMet" ),
+					__eval = function ()
+						local quest = gv_Quests['Luigi'] or QuestGetState('Luigi')
+						return quest.JackhammerMet
+					end,
+				}),
+			},
 			HideConditions = {
 				PlaceObj('QuestIsVariableBool', {
 					Condition = "or",
 					QuestId = "Luigi",
-					Vars = set( "JackhammerDead", "JackhammerExecution", "JackhammerMet", "JackhammerPrisoner", "JackhammerRelease" ),
+					Vars = set( "JackhammerDead", "JackhammerExecution", "JackhammerPrisoner", "JackhammerRelease" ),
 					__eval = function ()
 						local quest = gv_Quests['Luigi'] or QuestGetState('Luigi')
-						return quest.JackhammerDead or quest.JackhammerExecution or quest.JackhammerMet or quest.JackhammerPrisoner or quest.JackhammerRelease
+						return quest.JackhammerDead or quest.JackhammerExecution or quest.JackhammerPrisoner or quest.JackhammerRelease
 					end,
 				}),
 			},

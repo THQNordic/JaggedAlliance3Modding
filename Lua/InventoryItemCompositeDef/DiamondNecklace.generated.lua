@@ -15,5 +15,6 @@ DefineClass.DiamondNecklace = {
 	AdditionalHint = T(220266976707, --[[InventoryItemCompositeDef DiamondNecklace AdditionalHint]] "<bullet_point> <GameColorD>Can be cashed in for Money</GameColorD>"),
 	Valuable = 1,
 	Cost = 9000,
+	RestockWeight = 0,
 }
 

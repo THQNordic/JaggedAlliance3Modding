@@ -646,9 +646,11 @@ PlaceObj('XTemplate', {
 								if resp ~= "ok" then
 									return
 								else
+									local item = context.item
+									if not g_ItemIdToItem[item.id] then return end 
+									
 									local unit = context.unit
 									local container = context.context
-									local item = context.item
 									local slot_name = context.slot_wnd.slot_name
 									
 									NetSquadBagAction(unit, container, slot_name, item, gv_SquadBag, "salvage", 0)
@@ -697,6 +699,12 @@ PlaceObj('XTemplate', {
 						'__template', "ContextMenuButton",
 						'Id', "refill",
 						'FocusOrder', point(1, 12),
+						'OnContextUpdate', function (self, context, ...)
+							local container = context.context
+							local item = context.item
+							local medsNeeded = AmountOfMedsToFill(item)
+							self:SetEnabled(HasItemInSquad(context.unit.session_id, "Meds", medsNeeded))
+						end,
 						'OnPress', function (self, gamepad)
 							local context = self:ResolveId("node").context
 							if not context then return end
@@ -903,11 +911,12 @@ PlaceObj('XTemplate', {
 						if resp ~= "ok" then
 							return
 						else
+							local item = context.item
+							if not g_ItemIdToItem[item.id] then return end 
+					
 							local unit = context.unit
 							local container = context.context
-							local item = context.item
 							local slot_name = context.slot_wnd.slot_name
-							
 							NetSquadBagAction(unit, container, slot_name, item, gv_SquadBag, "scrap", 0)
 							PlayFX("Scrap", "start", item)							
 						end
@@ -947,7 +956,7 @@ PlaceObj('XTemplate', {
 				}),
 			PlaceObj('XTemplateTemplate', {
 				'comment', "scrap all",
-				'__condition', function (parent, context) return context and InventoryIsContainerOnSameSector(context) and context.item and context.item.ScrapParts and context.item.ScrapParts > 0 and context.item.object_class~="Medicine" and IsKindOf(context.item, "InventoryStack") end,
+				'__condition', function (parent, context) return context and InventoryIsContainerOnSameSector(context) and context.item and context.item.ScrapParts and context.item.ScrapParts > 0 and context.item.object_class~="Medicine" and IsKindOf(context.item, "InventoryStack") and context.item.Amount>1 end,
 				'__template', "ContextMenuButton",
 				'Id', "scrapall",
 				'FocusOrder', point(1, 11),
@@ -971,9 +980,11 @@ PlaceObj('XTemplate', {
 						if resp ~= "ok" then
 							return
 						else
+							local item = context.item
+							if not g_ItemIdToItem[item.id] then return end
+							
 							local unit = context.unit
 							local container = context.context
-							local item = context.item
 							local slot_name = context.slot_wnd.slot_name
 							
 							NetSquadBagAction(unit, container, slot_name, item, gv_SquadBag, "scrapall", 0)
@@ -1046,7 +1057,7 @@ PlaceObj('XTemplate', {
 						end
 					end
 					
-					local actionName = T(692159353735, --[[XTemplate InventoryContextMenu Text]] "DROP")
+					local actionName = T(550910414883, --[[XTemplate InventoryContextMenu Text]] "DROP")
 					if type(err) == "boolean" then
 						self:SetText(actionName)
 						self:SetEnabled(not err)
@@ -1117,10 +1128,11 @@ PlaceObj('XTemplate', {
 						if resp ~= "ok" then
 							return
 						end
+						local item = context.item
+						if not g_ItemIdToItem[item.id] then return end 
 						
 						local unit = context.unit
 						local container = context.context
-						local item = context.item
 						local slot_name = context.slot_wnd.slot_name
 						
 						NetSquadBagAction(unit, container, slot_name, item, false, "cashin", 0)

@@ -5,9 +5,6 @@ local function lRespawnContours(dialog, mover, blackboard)
 	blackboard.combat_path = combatPath
 	
 	local action = dialog.action or mover:GetDefaultAttackAction("ranged")
-	if action.id == "MGBurstFire" and not mover:HasStatusEffect("StationedMachineGun") then
-		action = CombatActions.MGSetup
-	end
 	local borderline_attack, borderline_attack_voxels, borderline_turns, borderline_turns_voxels, attackAp =
 		GenerateAttackContour(action, mover, combatPath, blackboard.custom_combat_path)
 	dialog.borderline_attack = borderline_attack
@@ -314,7 +311,8 @@ function UpdateMovementAvatar(dialog, target_pos, stanceChange, command, special
 
 		-- set weapons (UpdateAttachedWeapon() should be called after animation set)
 		mov_avatar:DestroyAttaches("WeaponVisual")
-		local attaches = attacker:GetAttaches("WeaponVisual")
+		local bandage = special_args and special_args.bandage
+		local attaches = not bandage and attacker:GetAttaches("WeaponVisual")
 		if attaches then
 			for i = #attaches, 1, -1 do
 				local attach = attaches[i]
@@ -1049,7 +1047,7 @@ end
 g_MercKeepStanceOption = false
 
 function OnMsg.CombatStart()
-	g_MercKeepStanceOption = {}
+	g_MercKeepStanceOption = g_MercKeepStanceOption or {}
 end
 
 function OnMsg.CombatEnd()
@@ -1177,11 +1175,16 @@ function GetCombatPathKeepStanceAware(mover, stance_at_end, ap)
 end
 
 function MovementAvatar_PlayAnim(dialog, attacker, blackboard)
-	local anim = attacker:GetAttackAnim(dialog.action.id, attacker.stance)
+	local action = dialog.action.id
+	local anim = attacker:GetAttackAnim(action, attacker.stance)
 	blackboard.loopAnimThread = blackboard.loopAnimThread or CreateGameTimeThread(function(mov_avatar, anim) 
 	  while mov_avatar do
+		if action == "Bandage" then
+			UpdateMovementAvatar(dialog, nil, nil, "update_weapon", {bandage = true})
+		end
 		mov_avatar:SetState(anim)
 		Sleep(mov_avatar:TimeToAnimEnd())
+		UpdateMovementAvatar(dialog, nil, nil, "update_weapon")
 		mov_avatar:SetState(attacker:GetIdleBaseAnim("Standing"))
 		Sleep(1500)
 	 end

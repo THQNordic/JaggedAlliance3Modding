@@ -195,6 +195,7 @@ PlaceObj('QuestsDef', {
 			},
 			ParamId = "TCE_WaterWellSpawn",
 			QuestId = "ReduceSavannaCampStrength",
+			SequentialEffects = false,
 			Trigger = "change",
 		}),
 		PlaceObj('TriggeredConditionalEvent', {

@@ -108,7 +108,7 @@ function GatherGameMetadata()
 	metadata.intel = next(gv_Sectors) and gv_CurrentSectorId and gv_Sectors[gv_CurrentSectorId].Intel
 	metadata.intel_discovered = next(gv_Sectors) and gv_CurrentSectorId and gv_Sectors[gv_CurrentSectorId].intel_discovered
 	metadata.ground_sector = next(gv_Sectors) and gv_CurrentSectorId and gv_Sectors[gv_CurrentSectorId].GroundSector
-	metadata.mapName = next(gv_Sectors) and gv_CurrentSectorId and TGetID(gv_Sectors[gv_CurrentSectorId].display_name)
+	metadata.mapName = next(gv_Sectors) and gv_CurrentSectorId and TGetID(gv_Sectors[gv_CurrentSectorId].display_name or "")
 	metadata.demoSave = Platform.demo
 	
 	--store quest notes data as strings instead of T id's as some of the notes use T.Format which will not be displayed properly
@@ -160,7 +160,8 @@ function GameSpecificSaveCallback(folder, metadata)
 	local save_data = GatherSessionData()
 	local err = AsyncStringToFile(folder .. "game_session", save_data, nil, nil, "zstd", 12)
 	if s_GameSessionExport then
-		AsyncStringToFile(s_GameSessionSavedFilename, save_data)
+		local lua_data = string.gsub(save_data:__tostring(), "\\n", "\n")
+		AsyncStringToFile(s_GameSessionSavedFilename, lua_data, -2, nil, "none")
 	end
 	save_data:free()
 	if metadata and (not metadata.autosave and not metadata.quicksave) then
@@ -170,21 +171,22 @@ function GameSpecificSaveCallback(folder, metadata)
 end
 
 function GameSpecificLoadCallback(folder, metadata)
-	local err, data = AsyncFileToString(folder .. "game_session")
+	local err, load_data = AsyncFileToString(folder .. "game_session")
 	if err then
 		return err
 	end
-	if not string.starts_with(data, "return") then
-		data = "return " .. data
+	if not string.starts_with(load_data, "return") then
+		load_data = "return " .. load_data
 	end
 	if s_GameSessionExport then
-		AsyncStringToFile(s_GameSessionLoadedFilename, select(1, string.gsub(data, "\\n", "\n")))
+		local lua_data = string.gsub(load_data, "\\n", "\n")
+		AsyncStringToFile(s_GameSessionLoadedFilename, lua_data, -2, nil, "none")
 	end
 	if NetIsHost() then
-		StartHostedGame("CoOp", data, metadata)
+		StartHostedGame("CoOp", load_data, metadata)
 		return
 	end
-	err = LoadGameSessionData(data, metadata)
+	err = LoadGameSessionData(load_data, metadata)
 	return err
 end
 
@@ -221,6 +223,7 @@ if FirstLoad then
 	AutosaveRequestsThread = false
 	AutosaveRequest = false
 	ShowIncompatableSaves = false
+	CorruptedSavesShown = false
 end
 
 function IsAutosaveScheduled()
@@ -242,7 +245,7 @@ end
 function IsZuluLoadingScreenLoadSavegameOpen()
 	local loadingScreenDlg = GetDialog("XZuluLoadingScreen")
 	local reasonsOpen = loadingScreenDlg and loadingScreenDlg:GetOpenReasons()
-	if reasonsOpen and reasonsOpen["load savegame"] then
+	if reasonsOpen and (reasonsOpen["load savegame"] or reasonsOpen["zulu load savegame"]) then
 		return true
 	end
 end
@@ -407,6 +410,12 @@ function FixupSessionData(metadata, session_data)
 end
 
 function FixupSectorData(sector_data, handle_data)
+	-- Apply missing sectors from loaded DLC and/or mods.
+	-- It is assumed that they have been merged into the
+	-- campaign preset by the modding/dlc magic.
+	PatchSessionCampaignObjects(SatelliteSector, gv_Sectors, "Sectors")
+	PatchSessionCampaignObjects(CampaignCity, gv_Cities, "Cities")
+
 	local applied_sector_fixups = sector_data.applied_sector_fixups or {}
 	local start_time, count = GetPreciseTicks(), 0
 	for fixup, func in sorted_pairs(SavegameSectorDataFixups) do
@@ -884,7 +893,9 @@ function ShowSavegameDescription(item, dialog)
 						break
 					end
 					table.insert(mods_list, mod.title or (local_mod and local_mod.title))
-					if not local_mod or not table.find(AccountStorage.LoadMods, mod.id or mod) then
+					local is_blacklisted = GetModBlacklistedReason(mod.id)
+					local is_deprecated = is_blacklisted and is_blacklisted == "deprecate"
+					if not is_deprecated and (not local_mod or not table.find(AccountStorage.LoadMods, mod.id or mod)) then
 						mods_missing = true
 					end
 				end
@@ -933,16 +944,7 @@ function ShowSavegameDescription(item, dialog)
 end
 
 function SaveLoadObject:Delete(dlg, list)
-	local item
-	if GetUIStyleGamepad() then
-		item = g_SelectedSave
-	else
-		local list = list or dlg:ResolveId("idList")
-		if not list or not list.focused_item then return end
-		local ctrl = list[list.focused_item]:ResolveId("idNewSave") or list[list.focused_item]
-		if not ctrl then return end
-		item = ctrl and not ctrl.context.saves and ctrl.context
-	end
+	local item = g_SelectedSave
 	if item then
 		local savename = item.metadata.savename
 		CreateRealTimeThread(function(dlg, item, savename)
@@ -1115,140 +1117,57 @@ function CanDeleteSave(selectedSave)
 	return selectedSave and not selectedSave.newSave and not g_CurrentlyEditingName
 end
 
---override common function to have specific behavior for Zulu
-function LoadMetadataCallback(folder, params)
-	local st = GetPreciseTicks()
-	
-	local err, metadata = LoadMetadata(folder)
-	if err then return err end
-	
-	DebugPrint("Load Game:",
-		"\n\tlua_revision:", metadata.lua_revision,
-		"\n\tassets_revision:", metadata.assets_revision,
-	"\n")
-	if metadata.dlcs and #metadata.dlcs > 0 then
-		DebugPrint("\n\tdlcs:", table.concat(table.map(metadata.dlcs, "id"), ", "), "\n")
-	end
-	if metadata.active_mods and #metadata.active_mods > 0 then
-		DebugPrint("\n\tmods:", table.concat(table.map(metadata.active_mods, "id"), ", "), "\n")
-	end
-	
-	local broken, change_current_map
-	local map_name = RemapMapName(metadata.map)
-	config.BaseMapFolder = ""
-	if map_name and metadata.BaseMapNetHash then
-		local map_meta = MapData[map_name]
-		local terrain_hash = metadata.TerrainHash
-		local requested_map_hash = terrain_hash or metadata.BaseMapNetHash
-		local different_map = requested_map_hash ~= (terrain_hash and map_meta.TerrainHash or map_meta.NetHash)
-		if different_map and config.TryRestoreMapVersionOnLoad then
-			for map_id, map_data in pairs(MapData) do
-				local map_data_hash = terrain_hash and map_data.TerrainHash or map_data.NetHash
-				if map_data_hash == requested_map_hash and (not config.CompatibilityMapTest or map_data.ForcePackOld) then
-					map_name = map_id
-					different_map = false
-					change_current_map = true
-					break
-				end
-			end
-		end
-		if different_map then
-			if not LoadAnyway(T(840159075107, "The game cannot be loaded because it requires a map that is not present or has a different version.")) then
-				return "different map"
-			end
-			broken = table.create_set(broken, "DifferentMap", true)
-		end
-		config.BaseMapFolder = GetMapFolder(map_name)
-		if CurrentMapFolder ~= "" then
-			UnmountByPath(CurrentMapFolder)
-		end
-		CurrentMapFolder = config.BaseMapFolder
-		local err = PreloadMap(map_name)
-		CurrentMapFolder = "" -- so that ChangeMap("") will not unmount the map we just mounted
-		if err then
-			return err
-		end
-	end
-	
+function GameSpecificValidateSaveMetadata(metadata, broken, missing_mods_list)
 	if metadata.campaign and not CampaignPresets[metadata.campaign] then
 		return "missing campaign"
 	end
 	
-	if metadata.dlcs then
-		local missing_dlc_shown = false
-		for _, dlc in ipairs(metadata.dlcs) do
-			if not IsDlcAvailable(dlc.id) then
-				if Platform.developer then
-					if not missing_dlc_shown then
-						if not LoadAnyway(T(1000849, "The game cannot be loaded because some required downloadable content is not installed.")) then
-							return "missing dlc"
-						end
-						missing_dlc_shown = true
-					end
-				else
-					WaitMessage(GetLoadingScreenDialog() or terminal.desktop,
-						T(1000599, "Warning"),
-						T(1000849, "The game cannot be loaded because some required downloadable content is not installed."),
-						T(1000136, "OK"))
-					return "missing dlc"
-				end
-				broken = table.create_set(broken, "MissingDLC", true)
-			end
-		end
-	end
-	if (metadata.lua_revision or 0) < config.SupportedSavegameLuaRevision then
-		if not LoadAnyway(T(3685, "This savegame is from an old version and may not function properly.")) then
-			return "old version"
-		end
-		broken = table.create_set(broken, "WrongLuaRevision", true)
-	end
-	local mods_list, more = GetMissingMods(metadata.active_mods, 5)
-	if #mods_list > 0 then
-		local mods_string = table.concat(mods_list, "\n")
-		if more then
-			mods_string = mods_string .. "\n..."
-		end
-		local mods_err = T{632339072080, "Cannot load the game. The following mods are missing or outdated:\n\n<mods>\n\n", mods = Untranslated(mods_string)}
+	GetMissingMods(metadata.active_mods, missing_mods_list)
+	if #missing_mods_list > 0 then
+		local missing_mods_titles = table.concat(table.map(missing_mods_list, "title"), "\n")
+		local mods_err = T{632339072080, "Cannot load the game. The following mods are missing or outdated:\n\n<mods>\n\n", mods = Untranslated(missing_mods_titles)}
 		
 		if not IsInMultiplayerGame() then
-			if not LoadAnyway(mods_err) then
-				return "missing mods"
+			if Platform.steam and IsSteamAvailable() and Platform.developer then
+				local ok, alt = LoadAnyway(mods_err, Untranslated("Download and Enable Missing Mods"))
+				if alt then
+					DebugDownloadSavegameMods(missing_mods_list)
+					--update again the missing mods after the download attemp
+					table.clear(missing_mods_list)
+					GetMissingMods(metadata.active_mods, missing_mods_list)
+					missing_mods_titles = table.concat(table.map(missing_mods_list, "title"), "\n")
+					if next(missing_mods_list) then
+						local dlg = GetDialog("XZuluLoadingScreen")
+						WaitMessage(
+							dlg or terminal.desktop, 
+							Untranslated("Warning - Developer only pop-up"), 
+							Untranslated{"Some of the mods failed to download and will be consider as ignored:\n\n<u(mod_list)>", mod_list = missing_mods_titles}, 
+							Untranslated("Ok")
+						)
+					end
+				elseif not ok then
+					return "missing mods"
+				end
+			else
+				if not LoadAnyway(mods_err) then
+					return "missing mods"
+				end
 			end
 		else
-			WaitMessage(GetLoadingScreenDialog() or terminal.desktop,
+			local dlg = GetDialog("XZuluLoadingScreen")
+			WaitMessage(dlg or terminal.desktop,
 				T(1000599, "Warning"),
 				mods_err,
 				T(1000136, "OK"))
-			return "missing dlc"
-		end
-		
-		broken = table.create_set(broken, "MissingMods", true)
-	end
-	if not broken and metadata.broken then
-		if not LoadAnyway(T(1000851, "This savegame was loaded in the past without required mods or with an incompatible game version. It may not function properly.")) then
-			return "saved broken"
+			return "missing mods"
 		end
 	end
-	
-	err = GameSpecificLoadCallback(folder, metadata, params)
-	if err then return err end
-	
-	if change_current_map then
-		CurrentMap = map_name
-		CurrentMapFolder = GetMapFolder(map_name)
-		_G.mapdata = MapData[map_name]
-	end
-
-	metadata.broken = metadata.broken or broken or false
-	SavegameMeta = metadata
-	LoadedRealTime = RealTime()
-	
-	DebugPrint("Game Loaded in", GetPreciseTicks() - st, "ms\n")
 end
 
 function GetLatestSave()
 	local saves = g_SaveGameObj or SaveLoadObjectCreateAndLoad()
 	local incompatableSaves = {}
+	local corruptedSaves = {}
 	saves:WaitGetSaveItems()
 	if #saves.items > 0 then
 		local latestSave = false
@@ -1258,6 +1177,9 @@ function GetLatestSave()
 			local oldGameVerSave = save.metadata.lua_revision and save.metadata.lua_revision < config.SupportedSavegameLuaRevision
 			if not ShowIncompatableSaves and oldGameVerSave then
 				table.insert(incompatableSaves, save)
+			end
+			if not CorruptedSavesShown and save.metadata.corrupt then
+				corruptedSaves[#corruptedSaves + 1] = save
 			end
 			if not save.metadata.corrupt and not oldGameVerSave and demoSaveCheck and not endDemoSave then
 				if not latestSave then
@@ -1295,6 +1217,41 @@ function GetLatestSave()
 		end
 		ShowIncompatableSaves = true
 	end
+	if next(corruptedSaves) then
+		local resp = WaitQuestion(terminal.desktop, T(731748227212, "Corrupted save data"), 
+				T(461184328777, "Some saves are corrupted and cannot be loaded."), 
+				T(413525748743, "Ok"), 
+				T(579030110403, "Delete saves"))
+		if resp ~= "ok" then
+			LoadingScreenOpen("idDeleteScreen", "deleting corrupted saves")
+			local err
+			for _, save in ipairs(corruptedSaves) do
+				if not err then
+					local savename = save.metadata.savename
+					err = DeleteGame(savename)
+				end
+			end
+			LoadingScreenClose("idDeleteScreen", "deleting corrupted saves")
+			CreateMessageBox(terminal.desktop,
+				T(731748227212, "Corrupted save data"),
+				not err and T(982853716478, "Corrupted saves deleted.") or T(324352888406, "Failed to delete corrupted saves."),
+				T(413525748743, "Ok")
+			)
+		end
+		CorruptedSavesShown = true
+	end
+end
+
+--fix focus with gamepad after the error
+function GamepadFocusAfterLoadErrorWorkaround()
+	if not GetUIStyleGamepad() then return end
+
+	local parent = GetPreGameMainMenu() or GetInGameMainMenu() or (dlg and dlg.parent) or terminal.desktop
+	local subMenu = parent and parent:ResolveId("idSubMenu")
+	local scrollArea = subMenu and subMenu:ResolveId("idScrollArea")
+	if scrollArea then
+		scrollArea:SelectFirstValidItem()
+	end
 end
 
 function SaveLoadObject:Load(dlg, item, skipAreYouSure)
@@ -1313,15 +1270,11 @@ function SaveLoadObject:Load(dlg, item, skipAreYouSure)
 					or "ok"
 					
 				SkipAnySetpieces()
+
 				-- not valid to load game anymore, something changed while we were for the user to close the message box above	
 				if not CanLoadGame() then
 					CloseMenuDialogs()
-					-- parent might have been destroyed
-					parent = GetPreGameMainMenu() or GetInGameMainMenu() or (dlg and dlg.parent) or terminal.desktop
-					if GetUIStyleGamepad() then
-						if not parent or not parent:ResolveId("idSubMenu") or not parent:ResolveId("idSubMenu"):ResolveId("idScrollArea") then return end
-						parent:ResolveId("idSubMenu"):ResolveId("idScrollArea"):SelectFirstValidItem()--fix focus with gamepad after the error
-					end
+					GamepadFocusAfterLoadErrorWorkaround()
 					return
 				end
 				
@@ -1336,12 +1289,8 @@ function SaveLoadObject:Load(dlg, item, skipAreYouSure)
 			else
 				err = metadata and metadata.incompatible and "incompatible" or "corrupt"
 			end
-			if err then 
-				-- parent might have been destroyed
-				parent = GetPreGameMainMenu() or GetInGameMainMenu() or (dlg and dlg.parent) or terminal.desktop
-				if GetUIStyleGamepad() then
-					parent:ResolveId("idSubMenu"):ResolveId("idScrollArea"):SelectFirstValidItem()--fix focus with gamepad after the error
-				end
+			if err then
+				GamepadFocusAfterLoadErrorWorkaround()
 				CreateErrorMessageBox(err, "loadgame", nil, parent, {name = '"' .. Untranslated(item.text) .. '"'})
 			end
 		end, dlg, savename)

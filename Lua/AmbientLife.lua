@@ -456,6 +456,7 @@ function AmbientLifeMarker:SpawnTool(unit, tool_orient_time)
 		end
 	end
 	self.tool_attached:SetApplyToGrids(false)
+	self.tool_attached:ClearEnumFlags(const.efCollision)
 	unit:Attach(self.tool_attached, spot)
 	self.tool_attached:SetAttachAngle(attach_angle)
 	if self.ToolAttachOffset then

@@ -834,6 +834,9 @@ end
 
 function OnMsg.CanSaveGameQuery(query)
 	query.cage_fighting = IsCageFighting() or nil
+	query.intro = GetDialog("Intro") and true
+	query.outro = GetDialog("Outro") and true
+	query.demo_outro = GetDialog("DemoOutro") and true
 end
 
 local function lCageFightingEndCombat()

@@ -7,37 +7,20 @@ DefineClass.StressManagement = {
 
 
 	object_class = "Perk",
-	msg_reactions = {
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "obj",
-			Event = "StatusEffectAdded",
-			Handler = function (self, obj, id, stacks)
-				
-				local function exec(self, obj, id, stacks)
-				if HasPerk(obj, self.id) and CharacterEffectDefs[id].type == "Debuff" and not obj:HasStatusEffect("StressManagementCounter") then
-					obj:AddStatusEffect("Inspired")
-					obj:AddStatusEffect("StressManagementCounter")
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "StatusEffectAdded" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, obj, id, stacks)
-				end
-				
-				if self:VerifyReaction("StatusEffectAdded", reaction_def, obj, obj, id, stacks) then
-					exec(self, obj, id, stacks)
+	unit_reactions = {
+		PlaceObj('UnitReaction', {
+			Event = "OnStatusEffectAdded",
+			Handler = function (self, target, id, stacks)
+				if CharacterEffectDefs[id].type == "Debuff" and not self:ResolveValue("activated") then
+					target:AddStatusEffect("Inspired")
+					self:SetParameter("activated", true)
 				end
 			end,
-			HandlerCode = function (self, obj, id, stacks)
-				if HasPerk(obj, self.id) and CharacterEffectDefs[id].type == "Debuff" and not obj:HasStatusEffect("StressManagementCounter") then
-					obj:AddStatusEffect("Inspired")
-					obj:AddStatusEffect("StressManagementCounter")
-				end
+		}),
+		PlaceObj('UnitReaction', {
+			Event = "OnCombatEnd",
+			Handler = function (self, target)
+				self:SetParameter("activated", false)
 			end,
 		}),
 	},

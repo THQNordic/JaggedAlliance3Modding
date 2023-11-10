@@ -44,6 +44,7 @@ function Unit:OnAttack(action, target, results, attack_args, holdXpLog)
 	
 	if kill then
 		Msg("OnKill", self, results.killed_units)
+		self:CallReactions("OnUnitKill", results.killed_units)
 	end
 	
 	-- singatures can't recharge themselves
@@ -62,6 +63,10 @@ function Unit:OnAttack(action, target, results, attack_args, holdXpLog)
 	end
 	
 	Msg("OnAttack", self, action, target, results, attack_args)
+	self:CallReactions("OnUnitAttack", self, action, target, results, attack_args)
+	if IsKindOf(target, "Unit") then
+		target:CallReactions("OnUnitAttack", self, action, target, results, attack_args)
+	end
 	
 	local hitUnitFromAttack = false
 	for _, hit in ipairs(results.hit_objs) do
@@ -165,31 +170,21 @@ function Unit:FirearmAttack(action_id, cost_ap, args, applied_status) -- SingleS
 		NetUpdateHash("Unit:FirearmAttack", action_id, cost_ap, self, effects, args.target, target_effects)
 	end -- end net debug code
 	local target = args.target
+	self:CallReactions("OnFirearmAttackStart", self, target, CombatActions[action_id], args)
+	if IsKindOf(target, "Unit") then
+		target:CallReactions("OnFirearmAttackStart", self, target, CombatActions[action_id], args)
+	end
+	if args.replace_action then
+		action_id = args.replace_action
+	end
+	
 	if IsPoint(target) or IsValidTarget(target) then
 		local action = CombatActions[action_id]
-
-		if HasPerk(self, "Psycho") and (action_id == "SingleShot" or action_id == "BurstFire") then
-			local chance = CharacterEffectDefs.Psycho:ResolveValue("procChance")
-			local roll = InteractionRand(100, "Psycho")
-			if roll < chance then
-				local weapon = action:GetAttackWeapons(self)
-				if action_id == "SingleShot" and table.find(weapon.AvailableAttacks, "BurstFire") then
-					action = CombatActions["BurstFire"]
-					PlayVoiceResponse(self, "Psycho")
-				elseif action_id == "BurstFire" and table.find(weapon.AvailableAttacks, "AutoFire") then
-					action = CombatActions["AutoFire"]
-					PlayVoiceResponse(self, "Psycho")
-				end
-			end
-		end
 		
 		if action.StealthAttack then
 			args.stealth_kill_roll = 1 + self:Random(100)
 		end
 		args.prediction = false
-		if IsKindOf(target, "Unit") and target:LightningReaction() then
-			args.chance_to_hit = 0
-		end
 		
 		local units_waiting = {}
 		
@@ -242,6 +237,10 @@ function Unit:ExecFirearmAttacks(action, cost_ap, attack_args, results)
 			RemoveActionCamera(true)
 			WaitMsg("ActionCameraRemoved", 5000)
 		end
+		self:PushDestructor(function()
+			Msg("InterruptAttackEnd") 
+		end)
+
 		Msg("InterruptAttackStart", self, target_unit, action) 
 	end
 	
@@ -318,7 +317,6 @@ function Unit:ExecFirearmAttacks(action, cost_ap, attack_args, results)
 			ObjModified(target)
 		end
 		
-		if interrupt then Msg("InterruptAttackEnd") end
 		table.remove(g_CurrentAttackActions) -- pop the pushed attack action
 	end)
 	
@@ -508,6 +506,9 @@ function Unit:ExecFirearmAttacks(action, cost_ap, attack_args, results)
 	end
 	
 	self:PopAndCallDestructor()
+	if interrupt then
+		self:PopAndCallDestructor()
+	end
 end
 
 function Unit:MGSetup(action_id, cost_ap, args)
@@ -559,6 +560,10 @@ end
 
 function Unit:RetaliationAttack(target, target_spot_group, action)
 	-- does basically nothing on its own but changes the name of the current command
+	self:CallReactions("OnUnitRetaliation", self, target, action, target_spot_group)
+	if IsKindOf(target, "Unit") then
+		target:CallReactions("OnUnitRetaliation", self, target, action, target_spot_group)
+	end
 	self:AddStatusEffect("RetaliationCounter")
 	PlayFX("OpportunityAttack", "start", self)
 	local args = { target = target, target_spot_group = target_spot_group, interrupt = true, opportunity_attack = true, opportunity_attack_type = "Retaliation" }
@@ -1017,6 +1022,7 @@ function Unit:ThrowGrenade(action_id, cost_ap, args)
 		end
 	end)
 
+	Msg("ThrowGrenade", self, grenade, #attacks)
 	-- throw anim
 	self:SetState("gr_Standing_Attack", const.eKeepComponentTargets)
 	-- pre-create visual objs and play activate fx 
@@ -1304,7 +1310,7 @@ function Unit:MeleeAttack(action_id, cost_ap, args)
 		local targetPos = target:GetVisualPos()
 		local cameraIsNear = DoPointsFitScreen({targetPos}, nil, const.Camera.BufferSizeNoCameraMov)
 		if not cameraIsNear then
-			AdjustCombatCamera("set", nil, targetPos, GetFloorOfPos(SnapToPassSlab(targetPos)), nil, "NoFitCheck")
+			AdjustCombatCamera("set", nil, targetPos, GetStepFloor(targetPos), nil, "NoFitCheck")
 		end
 	end
 	
@@ -1669,7 +1675,7 @@ function Unit:Bandage(action_id, cost_ap, args)
 	local target = args.target
 	local sat_view = args.sat_view or false -- in sat_view form inventory, skip all sleeps and anims
 	local target_self = target == self
-	
+		
 	if g_Combat then
 		if goto_ap > 0 then
 			self:PushDestructor(function(self)
@@ -1722,19 +1728,15 @@ function Unit:Bandage(action_id, cost_ap, args)
 		if self.stance ~= "Crouch" then
 			self:ChangeStance(false, 0, "Crouch")
 		end
-		
-		if target_self then
-			self:SetState("nw_Bandaging_Self_Start")
-			Sleep(self:TimeToAnimEnd() or 100)
-			self:ProvokeOpportunityAttacks("attack interrupt")	
-			self:SetState("nw_Bandaging_Self_Idle")
-		else
-			self:SetState("nw_Bandaging_Start")
-			Sleep(self:TimeToAnimEnd() or 100)
-			self:ProvokeOpportunityAttacks("attack interrupt")	
-			self:SetState("nw_Bandaging_Idle")
+		self:SetState(target_self and "nw_Bandaging_Self_Start" or "nw_Bandaging_Start")
+		Sleep(self:TimeToAnimEnd() or 100)
+		if not args.provoked then
+			self:ProvokeOpportunityAttacks("attack interrupt")
+			args.provoked = true
+			self:SetBehavior("Bandage", {action_id, cost_ap, args})
+			self:SetCombatBehavior("Bandage", {action_id, cost_ap, args})
 		end
-		
+		self:SetState(target_self and "nw_Bandaging_Self_Idle" or "nw_Bandaging_Idle")
 		if not g_Combat and not GetMercInventoryDlg() then
 			SetInGameInterfaceMode("IModeExploration")
 		end
@@ -1806,7 +1808,7 @@ function Unit:CombatBandage(target, medicine)
 			Sleep(5000)
 			target:GetBandaged(medicine, self)
 		end
-		self:SetState("nw_Bandaging_End")
+		self:SetState(self == target and "nw_Bandaging_Self_End" or "nw_Bandaging_End")
 		Sleep(self:TimeToAnimEnd() or 100)
 		self:PopAndCallDestructor()
 	end
@@ -1888,6 +1890,10 @@ function Unit:DownedRally(medic, medicine)
 	CreateFloatingText(self, T(979333850225, "Recovered"))
 	PlayFX("UnitDownedRally", "start", self)
 	Msg("OnDownedRally", medic, self)
+	self:CallReactions("OnUnitRallied", medic, self)
+	if medic ~= self and IsKindOf(medic, "Unit") then
+		medic:CallReactions("OnUnitRallied", medic, self)
+	end
 	self:SetCommand("Idle")
 end
 
@@ -2007,10 +2013,13 @@ function NetSyncEvents.InvetoryAction_UseItem(session_id, item_id)
 	end	
 
 	local item = g_ItemIdToItem[item_id]
+	if not item then return end 
+	
 	if combat_mode then
 		unit:ConsumeAP(item.APCost * const.Scale.AP)
 	end
 	ExecuteEffectList(item.Effects, unit)
+	unit:CallReactions("OnItemUsed", item)
 
 	if combat_mode and gv_SatelliteView then 
 		unit:SyncWithSession("map")
@@ -2072,11 +2081,7 @@ function Unit:UnjamWeapon(action_id, cost_ap, args)
 end
 
 function Unit:EnterEmplacement(obj, instant)
-	local visual = obj.weapon and obj.weapon:GetVisualObj()
-	if not visual then return end
-
-	local fire_spot = visual:GetSpotBeginIndex("Unit")
-	local fire_pos = visual:GetSpotPos(fire_spot)
+	local fire_pos = obj:GetOperatePos()
 	if not instant then
 		if self.stance == "Prone" then
 			self:DoChangeStance("Standing")
@@ -2169,24 +2174,15 @@ function Unit:ExplorationStartCombatAction(action_id, ap, args)
 	
 	self.ActionPoints = self:GetMaxActionPoints() -- always start combat actions out of combat at max ap
 	ap = action:GetAPCost(self, args)
-	self:AddStatusEffect("SpentAP")
-	self:SetEffectValue("spent_ap", ap)
+	self:AddStatusEffect("SpentAP", ap)
 end
 
-function Unit:LightningReaction()
+function Unit:LightningReactionCheck(effect)
 	if g_Combat and g_Teams[g_Combat.team_playing] == self.team then return end -- Don't proc in your turn
 	if self.stance == "Prone" or self:HasStatusEffect("ManningEmplacement") then return end
-	if self:HasStatusEffect("LightningReactionCounter") then return end
 	
-	local proc = HasPerk(self, "LightningReaction")
-	if not proc and HasPerk(self, "LightningReactionNPC") then
-		local chance = CharacterEffectDefs["LightningReactionNPC"]:ResolveValue("chance")
-		local roll = InteractionRand(100, "LightningReaction")
-		proc = roll < chance
-	end
-	
-	if proc then
-		self:AddStatusEffect("LightningReactionCounter")
+	local chance = effect:ResolveValue("chance")
+	if not chance or (self:Random(100) < chance) then
 		self:SetActionCommand("ChangeStance", nil, nil, "Prone")
 		CreateFloatingText(self, T(726050447294, "Lightning Reaction"), nil, nil, true)
 		return true
@@ -2708,7 +2704,7 @@ function Unit:IceAttack(action_id, cost_ap, args)
 	local bodyParts = target:GetBodyParts(weapon)
 	
 	for i=#bodyParts, 1, -1 do
-		if weapon.ammo.Amount < 1 then break end
+		if not self:CanUseWeapon(weapon, 1) then break end
 		local bodyPart = bodyParts[i]
 		args.target_spot_group = bodyPart.id
 		args.ice_attack_num = i

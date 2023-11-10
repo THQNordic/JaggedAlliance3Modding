@@ -110,7 +110,7 @@ compressed_data
 : string to be decompressed.
 
 _returns_ original_data
-: the descompressed data as a string.
+: the decompressed data as a string.
 
 
 ## AsyncWebSocketConnect
@@ -127,6 +127,25 @@ _returns_ string err
 
 _returns_ string connection
 : WebSocket object.
+
+
+## CalcTimeToReach
+
+Returns the time when the object will reach the sphere, but only within a maximum time.
+
+
+int **CalcTimeToReach**(obj, center, radius, max_time)
+CObject object
+: Object or source position.
+
+Point center
+: Center of the sphere.
+
+int radius
+: Radius of the sphere - if the object doesn't reach this range, the function will return nil.
+
+int max_time
+: Maximum time whitin which the object must reach the sphere. Otherwise returns nil.
 
 
 ## Compress
@@ -166,6 +185,27 @@ _returns_ bool connectivity
 : True if there is connectivity to any of the destination points.
 
 
+## CreateActivityObject
+
+Creates an activity object of class and attaches it to target. Every activity object must be created using this function!
+
+
+object **CreateActivityObject**(class, luaobj, target, attach_offset, ...)
+table luaobj
+: - table used to create the object
+
+object target
+: - the target object, to which the activity will be attached or point to use as position
+
+point attach_offset
+: - optional attach offset when target is an object
+
+...
+: - optional values to pass to ActivityObject:SetParams
+
+@return object
+
+
 ## DecodeURL
 
 Decodes a given URL. Compatible with the RFC 3986 standart.
@@ -178,15 +218,18 @@ decodedUrl **DecodeURL**(url)
 Decompresses a string generated using [Compress](#Compress) and returns the original value.
 
 
-string original_data **Decompress**(compressed_data, int offset = 0)
+string original_data **Decompress**(compressed_data, int offset = 0, int max_decompressed_size = 140MB)
 compressed_data
 : string to be decompressed.
 
 offset
 : 1 based offset in the string to begin decompressing from.
 
-_returns_ original_data
-: the descompressed data as a string.
+max_decompressed_size
+: maximum size of buffer to decompress into, to prevent huge allocation if data is uncompressed or invalid format.
+
+_returns_ original_data, error
+: the decompressed data as a string, or nil and a string error.
 
 
 ## DivRound
@@ -338,6 +381,15 @@ point pos
 : position to check.
 
 
+## GetMinMaxVoxelHeight
+
+Gets the min/max terrain height for points aligned to the voxel grid.
+
+
+int, int **GetMinMaxVoxelHeight**(x, y, round)
+
+int, int **GetMinMaxVoxelHeight**(pt, round)
+
 ## GetPassablePointNearby
 
 Searches around and returns the nearest passable/walkable point.
@@ -349,6 +401,20 @@ point pt
 
 _returns_ point
 : nearest passable point or an *invalid* point, if none was found.
+
+
+## GetPosHash
+
+Returns a position hash
+
+
+int **GetPosHash**(point pt [, int seed])
+
+int **GetPosHash**(object obj [, int seed])
+
+int **GetPosHash**(int x, int y [, int z, int seed])
+_returns_ int
+: position hash
 
 
 ## GetUniqueGridValues
@@ -373,6 +439,15 @@ HSL::data_t max_values
 _returns_ std::vector<HSL::data_t> unique_values
 : the unique values in the grid
 
+
+## GetVoxelHeight
+
+Gets the terrain height for points aligned to the voxel grid.
+
+
+int **GetVoxelHeight**(x, y, round)
+
+int **GetVoxelHeight**(pt, round)
 
 ## GridWaterArea
 
@@ -440,6 +515,15 @@ int nErrPct
 _returns_ int
 : computed water surface level (scaled in meters)
 
+
+## IntersectObjWithBox
+
+Check for intersection between a box and the object's collision mesh.
+
+Performs a rough estimate - could return false positive results
+
+
+intersect **IntersectObjWithBox**(obj, box)
 
 ## IsDlcAvailable
 

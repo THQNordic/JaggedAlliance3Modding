@@ -12,54 +12,18 @@ PlaceObj('CharacterEffectCompositeDef', {
 	},
 	'Comment', "Scope - PinDown bonuses; Cookies",
 	'object_class', "Perk",
-	'msg_reactions', {
-		PlaceObj('MsgActorReaction', {
-			Event = "MercHired",
-			Handler = function (self, mercId, price, days, alreadyHired)
-				
-				local function exec(self, reaction_actor, mercId, price, days, alreadyHired)
-				-- add cookies
-				local unit = gv_UnitData[mercId]
-				if unit and HasPerk(unit, self.id) and days > 0 then
-					local canPlaceError = CanPlaceItemInInventory("Cookie", days, unit)
+	'unit_reactions', {
+		PlaceObj('UnitReaction', {
+			Event = "OnMercHired",
+			Handler = function (self, target, price, days, alreadyHired)
+				if days > 0 then
+					local canPlaceError = CanPlaceItemInInventory("Cookie", days, target)
 					if canPlaceError then
 						CombatLog("important", T(667077082306, "Scope has baked some biscuits. Unfortunately the inventory is full. "))
 						return
 					end
 					CombatLog("important",T(754424382903, "Scope has baked some biscuits"))
-					PlaceItemInInventory("Cookie", days, unit)
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "MercHired" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					local reaction_actor
-					exec(self, reaction_actor, mercId, price, days, alreadyHired)
-				end
-				
-				
-				local actors = self:GetReactionActors("MercHired", reaction_def, mercId, price, days, alreadyHired)
-				for _, reaction_actor in ipairs(actors) do
-					if self:VerifyReaction("MercHired", reaction_def, reaction_actor, mercId, price, days, alreadyHired) then
-						exec(self, reaction_actor, mercId, price, days, alreadyHired)
-					end
-				end
-			end,
-			HandlerCode = function (self, reaction_actor, mercId, price, days, alreadyHired)
-				-- add cookies
-				local unit = gv_UnitData[mercId]
-				if unit and HasPerk(unit, self.id) and days > 0 then
-					local canPlaceError = CanPlaceItemInInventory("Cookie", days, unit)
-					if canPlaceError then
-						CombatLog("important", T(667077082306, "Scope has baked some biscuits. Unfortunately the inventory is full. "))
-						return
-					end
-					CombatLog("important",T(754424382903, "Scope has baked some biscuits"))
-					PlaceItemInInventory("Cookie", days, unit)
+					PlaceItemInInventory("Cookie", days, target)
 				end
 			end,
 		}),

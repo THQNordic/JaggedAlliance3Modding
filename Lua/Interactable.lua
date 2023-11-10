@@ -71,7 +71,7 @@ function Interactable:GameInit()
 	-- the room of their volume(if any) is hidden.
 	if IsKindOf(self, "SlabWallDoor") then
 		self.volume_checking_thread = CreateGameTimeThread(function(self)
-			local myFloor = WallInvisibilityGetCamFloor(self:GetPos())
+			local myFloor = WallInvisibilityGetCamFloor(self:GetPosXYZ())
 			while IsValid(self) do
 				Sleep(500)
 				if IsEditorActive() or not self.interactable_badge then goto continue end
@@ -473,8 +473,14 @@ end
 
 function Interactable:UpdateInteractableBadge(visible, image)
 	local badge = self.interactable_badge
-	if badge and visible and badge.target == self and IsKindOf(badge.ui, "XImage") and badge.ui.Image == image then return end
-	if not not badge == not not visible then return end
+	if badge and visible then
+		if badge.target == self and IsKindOf(badge.ui, "XImage") and badge.ui.Image == image then return end
+		if not badge.ui.idImage or badge.ui.idImage:GetImage() == image then
+			return
+		end
+	elseif not badge and not visible then
+		return
+	end
 
 	if badge and not visible then
 		badge:delete()
@@ -494,7 +500,6 @@ function Interactable:UpdateInteractableBadge(visible, image)
 		end
 	end
 	badge.ui.idImage:SetImage(image)
-	assert(not self.interactable_badge)
 	self.interactable_badge = badge
 end
 
@@ -611,7 +616,6 @@ function Interactable:HighlightIntensely(visible, reason)
 		else
 			table.remove_value(highlight_reasons, reason)
 			if #highlight_reasons > 0 then
-				noChangeNeeded = true
 				visible = true
 			end
 		end
@@ -716,9 +720,8 @@ end
 
 function Interactable:SetDynamicData(data)
 	self.interaction_log = data.interaction_log
-	if data.enabled ~= nil then self.enabled = data.enabled end
-	if data.discovered then self.discovered = data.discovered end
-	
+	self.enabled = data.enabled or false
+	self.discovered = data.discovered or false	
 	if data.until_interacted_with_highlight then
 		self:InteractableHighlightUntilInteractedWith(true)
 	end
@@ -728,9 +731,8 @@ function Interactable:GetDynamicData(data)
 	if #(self.interaction_log or "") > 0 then
 		data.interaction_log = self.interaction_log
 	end
-	data.enabled = self.enabled
-	if self.discovered then data.discovered = self.discovered end
-	
+	data.enabled = self.enabled or nil
+	data.discovered = self.discovered or nil	
 	if self.until_interacted_with_highlight then
 		data.until_interacted_with_highlight = self.until_interacted_with_highlight
 	end
@@ -1171,31 +1173,32 @@ function InteractableVisibilityUpdate(units)
 	table.iclear(__InteractableVisibility_Targets)
 	table.iclear(__InteractableVisibility_TargetsLOSCheck)
 	table.iclear(__InteractableVisibility_CanNoLongerInteractWith)
-	for i, unit in ipairs(units) do
-		if IsValid(unit) and unit:CanBeControlled(-1) then
+	local controlled_untis, los_count, discovered_count = 0, 0, 0
+	for _, unit in ipairs(units) do
+		if IsValid(unit) and unit:CanBeControlled("sync_code") then
+			controlled_untis = controlled_untis + 1
 			MapForEach(unit, lInteractableVisibilityRange, "Interactable", function(o, unit)
-				local checkLos = true
-				local checkCanStillInteract = o.until_interacted_with_highlight
-				
-				if o.discovered then
-					checkCanStillInteract = true
-				end
-				
-				if IsKindOf(i, "Unit") then
+				local checkLos, canInteractWith
+				if IsKindOf(o, "Unit") then
 					checkLos = not not o:IsDead()
 				elseif IsKindOf(o, "ExitZoneInteractable") then
 					checkLos = false
+				else
+					checkLos = true
 				end
-				
-				local canInteractWith = false
+				local checkCanStillInteract = o.discovered or o.until_interacted_with_highlight
 				if checkLos or checkCanStillInteract then
 					canInteractWith = unit:CanInteractWith(o)
 				end
-			
 				if checkLos and canInteractWith then
 					table.insert(__InteractableVisibility_Units, unit)
 					table.insert(__InteractableVisibility_Targets, o)
-					table.insert(__InteractableVisibility_TargetsLOSCheck, o.los_check_obj or o)
+					table.insert(__InteractableVisibility_TargetsLOSCheck, o)
+					if o.los_check_obj and o.los_check_obj ~= o then
+						table.insert(__InteractableVisibility_Units, unit)
+						table.insert(__InteractableVisibility_Targets, o)
+						table.insert(__InteractableVisibility_TargetsLOSCheck, o.los_check_obj)
+					end
 				elseif checkCanStillInteract and not canInteractWith then
 					table.insert_unique(__InteractableVisibility_CanNoLongerInteractWith, o)
 				end
@@ -1220,8 +1223,10 @@ function InteractableVisibilityUpdate(units)
 			local voice_response_idx, voice_response_type
 			for i, los_value in ipairs(losData) do
 				if los_value then
+					los_count = los_count + 1
 					local o = __InteractableVisibility_Targets[i]
 					if not o.discovered then
+						discovered_count = discovered_count + 1
 						o.discovered = true
 						if not g_Combat and voice_response_type ~= "LootFound" then
 							if IsKindOfClasses(o, "Unit", "ItemContainer") then
@@ -1245,6 +1250,7 @@ function InteractableVisibilityUpdate(units)
 		table.iclear(__InteractableVisibility_Targets)
 		table.iclear(__InteractableVisibility_TargetsLOSCheck)
 	end
+	NetUpdateHash("InteractableVisibilityUpdate", #(units or empty_table), controlled_untis, #__InteractableVisibility_TargetsLOSCheck, los_count, discovered_count)
 end
 
 function OnMsg.UnitDied(unit)

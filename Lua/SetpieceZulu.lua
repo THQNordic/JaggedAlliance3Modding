@@ -766,6 +766,10 @@ function SetpieceShoot.ExecThread(state, Actors, TargetType, TargetUnits, Target
 	
 	local threads = SetpieceShootThreads
 	for _, actor in ipairs(Actors) do
+		if IsValidThread(threads[actor]) then
+			DeleteThread(threads[actor])
+			threads[actor] = nil
+		end
 		threads[actor] = CreateGameTimeThread(function()
 			local weapon = actor:GetActiveWeapons("Firearm") or actor:GetActiveWeapons("RocketLauncher")
 			local zooka = IsKindOf(weapon, "RocketLauncher")
@@ -922,22 +926,24 @@ function SetpieceShoot.ExecThread(state, Actors, TargetType, TargetUnits, Target
 			if IsValid(actor) then
 				actor:SetAnimSpeedModifier(1000)
 			end
-			threads[actor] = false
+			threads[actor] = nil
 			Msg("SetpieceShootDone")
 		end)
 	end
 	
-	repeat
+	while true do
 		local all_done = true
 		for _, actor in ipairs(Actors) do
 			local thread = threads[actor]
 			if IsValidThread(thread) then
-				WaitMsg("SetpieceShootDone", 100)
 				all_done = false
 				break
 			end
 		end
-	until all_done
+		if all_done then break end
+		WaitMsg("SetpieceShootDone", 100)
+	end
+	threads[actor] = nil
 	
 	-- go back to aiming anims
 	for _, actor in ipairs(Actors) do
@@ -1254,10 +1260,9 @@ function SetStartCombatAnim.ExecThread(state, Actors, AnimObj, Anim, AnimDuratio
 	state.animObj = animObj
 	local unit = table.rand(Actors, InteractionRand(1000000, "StartCombat"))
 	state.unit = unit
-	animObj:SetPos(unit:GetVisualPos())
+	animObj:SetPos(unit:GetVisualPosXYZ())
 	animObj:SetAngle(unit:GetAngle())
-	local originalAngle = animObj:GetAngle()
-	
+
 	local anim
 	if Anim and Anim ~= "" then
 		anim = Anim
@@ -1283,8 +1288,9 @@ function SetStartCombatAnim.ExecThread(state, Actors, AnimObj, Anim, AnimDuratio
 	else
 		anim = "camera_Standing_CombatBegin_Fallback"
 	end
-	
-	SnapCameraToObj(unit, "force", GetFloorOfPos(SnapToPassSlab(unit)), 0, "none")
+
+	local floor = GetStepFloor(unit)
+	SnapCameraToObj(unit, "force", floor, 0, "none")
 	local camera = { GetCamera() }
 	state.camera = camera
 	
@@ -1319,7 +1325,8 @@ function SetStartCombatAnim.ExecThread(state, Actors, AnimObj, Anim, AnimDuratio
 		AdjustCombatCamera("set", "instant")
 		LockCameraMovement("start_combat")
 	end
-	SnapCameraToObj(unit, "force", GetFloorOfPos(SnapToPassSlab(unit)), 0, "none")
+	floor = GetStepFloor(unit)
+	SnapCameraToObj(unit, "force", floor, 0, "none")
 end
 
 function SetStartCombatAnim.Skip(state, Actors, AnimObj, Anim, AnimDuration, StartCombatLogic, ...)
@@ -1334,7 +1341,8 @@ function SetStartCombatAnim.Skip(state, Actors, AnimObj, Anim, AnimDuration, Sta
 		AdjustCombatCamera("set", "instant")
 		LockCameraMovement("start_combat")
 	end
-	SnapCameraToObj(state.unit, "force", GetFloorOfPos(SnapToPassSlab(state.unit)), 0, "none")
+	local floor = GetStepFloor(state.unit)
+	SnapCameraToObj(state.unit, "force", floor, 0, "none")
 end
 
 
@@ -1517,5 +1525,16 @@ function PrgPlayEffect:GetError()
 	end
 	if results then
 		return table.concat(results, "\n")
+	end
+end
+
+function CloseLoadGameLoadingScreen()
+	-- Fix for loading a save on a sector which had a setpiece added to OnEnterMap
+	local loadingScreenDlg = GetDialog("XZuluLoadingScreen")
+	local reasonsOpen = loadingScreenDlg and loadingScreenDlg:GetOpenReasons()
+	if reasonsOpen and (reasonsOpen["load savegame"] or reasonsOpen["zulu load savegame"] or  reasonsOpen["load game data"]) then
+		SectorLoadingScreenClose("idLoadingScreen", "load savegame")
+		SectorLoadingScreenClose("idLoadingScreen", "zulu load savegame")
+		SectorLoadingScreenClose("idLoadingScreen", "load game data")
 	end
 end

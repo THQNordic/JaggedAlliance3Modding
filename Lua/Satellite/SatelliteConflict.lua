@@ -803,7 +803,7 @@ function GetArmorPowerMod(armor)
 	
 	local maxMod = const.AutoResolve.MaxArmorMod -- Maximum +% mod per Armor piece
 	local costCap = const.AutoResolve.MaxArmorModCost
-	local mod = MulDivRound(maxMod, armor.Cost, costCap)
+	local mod = Min(maxMod, MulDivRound(maxMod, armor.Cost, costCap))
 	mod = MulDivRound(mod, armor.Condition, 100)
 	
 	return mod
@@ -830,7 +830,7 @@ function GetWeaponPowerMod(unit, weapon)
 	
 	local maxMod = const.AutoResolve.MaxWeaponMod -- Maximum +% mod a Weapon can give
 	local costCap = const.AutoResolve.MaxWeaponModCost
-	local mod = MulDivRound(maxMod, weapon.Cost, costCap)
+	local mod = Min(maxMod, MulDivRound(maxMod, weapon.Cost, costCap))
 	mod = MulDivRound(mod, weapon.Condition, 100)
 	
 	return mod
@@ -1869,8 +1869,15 @@ function OpenSatelliteConflictDlg(context, openedBy)
 end
 
 function OnMsg.UnitDieStart(unit, attacker)
-	if unit:IsCivilian() and unit.Affiliation == "Civilian" and attacker and (attacker.team.player_team or attacker.team.player_enemy) then
-		CivilianDeathPenalty()
+	if unit:IsCivilian() and unit.Affiliation == "Civilian" and attacker then
+		local attackerSide = IsKindOf(attacker, "DynamicSpawnLandmine") and attacker.team_side or attacker.team.side
+		local playerSide = NetPlayerSide()
+		
+		local attackerIsPlayer = attackerSide == playerSide
+		local attackerIsPlayerEnemy = SideIsEnemy(playerSide, attackerSide)
+		if attackerIsPlayer or attackerIsPlayerEnemy then
+			CivilianDeathPenalty()
+		end
 	end
 end
 

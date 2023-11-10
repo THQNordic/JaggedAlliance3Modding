@@ -1,7 +1,6 @@
 if FirstLoad then
 	GedSatelliteSectorEditor = false
 	g_SelectedSatelliteSectors = false
-	g_SatelliteSectorSelectionWindow = false
 end
 
 function GetSatelliteSectorsGridBox(campaign)
@@ -49,7 +48,7 @@ function SelectEditorSatelliteSector(sel)
 	if g_SatelliteUI then
 		g_SatelliteUI:UpdateAllSectorVisuals()
 		SatelliteSetCameraDest(sel and sel[1].Id, 0)
-
+		
 		DbgClearSectorTexts()
 		for i, s in ipairs(sel) do
 			DbgAddSectorText(s.Id, _InternalTranslate(T{817728326241, "<SectorName()>", s}))
@@ -57,24 +56,35 @@ function SelectEditorSatelliteSector(sel)
 	end
 end
 
+function OnMsg.OnSectorClick(sector)
+	local shift = terminal.IsKeyPressed(const.vkShift)
+	if shift then
+		table.insert_unique(g_SelectedSatelliteSectors, sector)
+	end
+	SelectEditorSatelliteSector(shift and g_SelectedSatelliteSectors or {sector})
+	UpdateGedSatelliteSectorEditorSel()
+end
 
+function IsSatelliteViewEditorActive()
+	return not not GetDialog("PDADialogSatelliteEditor")
+end
 
 function OpenGedSatelliteSectorEditor(campaign)
 	CreateRealTimeThread(function()
+		EditorDeactivate()
 		OpenDialog("PDADialogSatelliteEditor", GetInGameInterface(), { satellite_editor = true })
 		if GedSatelliteSectorEditor then
 			GedSatelliteSectorEditor:Send("rfnApp", "Exit")
 			GedSatelliteSectorEditor = false
 		end
+		PopulateParentTableCache(Presets.CampaignPreset)
 		GedSatelliteSectorEditor = OpenGedApp("GedSatelliteSectorEditor", GetSatelliteSectors(true), { WarningsUpdateRoot = "root" } ) or false
-		HandleSatelliteSectorSelectionWindow(true)
 	end)
 end
 
 function GedSatelliteSectorEditorOnClose()
 	CloseDialog("PDADialogSatelliteEditor")
 	GedSatelliteSectorEditor = false
-	HandleSatelliteSectorSelectionWindow()
 	SelectEditorSatelliteSector()
 end
 
@@ -94,16 +104,6 @@ function UpdateGedSatelliteSectorEditorSel()
 			end
 			GedSatelliteSectorEditor:SetSelection("root", sel)
 		end)
-	end
-end
-
-function HandleSatelliteSectorSelectionWindow(bOpen)
-	if g_SatelliteSectorSelectionWindow and g_SatelliteSectorSelectionWindow.window_state ~= "destroying" then
-		g_SatelliteSectorSelectionWindow:delete()
-		g_SatelliteSectorSelectionWindow = false
-	end
-	if bOpen then
-		g_SatelliteSectorSelectionWindow = XTemplateSpawn("SatelliteSectorSelection")
 	end
 end
 

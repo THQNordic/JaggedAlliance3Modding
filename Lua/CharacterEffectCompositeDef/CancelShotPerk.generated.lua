@@ -7,34 +7,12 @@ DefineClass.CancelShotPerk = {
 
 
 	object_class = "Perk",
-	msg_reactions = {
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "attacker",
-			Event = "OnAttack",
-			Handler = function (self, attacker, action, target, results, attack_args)
-				
-				local function exec(self, attacker, action, target, results, attack_args)
-				if action.id == "CancelShotCone" and IsKindOf(target, "Unit") then
-					target:AddStatusEffect("CancelShot")
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "OnAttack" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, attacker, action, target, results, attack_args)
-				end
-				
-				if self:VerifyReaction("OnAttack", reaction_def, attacker, attacker, action, target, results, attack_args) then
-					exec(self, attacker, action, target, results, attack_args)
-				end
-			end,
-			HandlerCode = function (self, attacker, action, target, results, attack_args)
-				if action.id == "CancelShotCone" and IsKindOf(target, "Unit") then
-					target:AddStatusEffect("CancelShot")
+	unit_reactions = {
+		PlaceObj('UnitReaction', {
+			Event = "OnUnitAttack",
+			Handler = function (self, target, attacker, action, attack_target, results, attack_args)
+				if target == attacker and action.id == "CancelShotCone" and IsKindOf(attack_target, "Unit") then
+					attack_target:AddStatusEffect("CancelShot")
 				end
 			end,
 		}),

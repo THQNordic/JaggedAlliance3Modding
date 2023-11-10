@@ -49,10 +49,10 @@ PlaceObj('QuestsDef', {
 						PlaceObj('QuestIsVariableBool', {
 							Condition = "or",
 							QuestId = "05_TakeDownCorazon",
-							Vars = set( "CorazonLocation" ),
+							Vars = set( "Completed", "CorazonLocation" ),
 							__eval = function ()
 								local quest = gv_Quests['05_TakeDownCorazon'] or QuestGetState('05_TakeDownCorazon')
-								return quest.CorazonLocation
+								return quest.Completed or quest.CorazonLocation
 							end,
 						}),
 					},

@@ -19,6 +19,7 @@ DefineClass.Auto5_quest = {
 	LargeItem = 1,
 	Valuable = 1,
 	Cost = 1200,
+	RestockWeight = 0,
 	Caliber = "12gauge",
 	Damage = 22,
 	ObjDamageMod = 150,

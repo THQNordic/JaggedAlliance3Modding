@@ -215,7 +215,7 @@ PlaceObj('XTemplate', {
 						equip_slots = self.compare_mode_weaponslot == 1 and {"Handheld A"} or {"Handheld B"}
 					end
 					for idx, slot_name in ipairs(equip_slots) do						
-						unit:ForEachItemInSlot(slot_name, function(itm)
+						unit:ForEachItemInSlot(slot_name, function(itm, slot_name, left, top, self, item, list, other, is_weapon, is_grenade)
 							if itm and item~=itm then
 								local is_weapon_eq = itm:IsWeapon()
 								local is_grenade_eq = IsKindOf(itm, "Grenade")
@@ -231,7 +231,7 @@ PlaceObj('XTemplate', {
 									table.insert(other,1, itm)
 								end
 							end
-						end, other)	
+						end, self, item, list, other, is_weapon, is_grenade)
 					end
 					
 					local context = SubContext(item)
@@ -393,12 +393,12 @@ PlaceObj('XTemplate', {
 						local unit = GetInventoryUnit()
 						if IsKindOf(item,"Ammo") then
 							ammo = item
-							unit:ForEachItemInSlot(unit.current_weapon, function(witem, slot, l,t, weapon)
-								if witem.Caliber==ammo.Caliber then
+							unit:ForEachItemInSlot(unit.current_weapon, function(witem, slot, l,t, caliber)
+								if witem.Caliber == caliber then
 									weapon = witem
 									return "break"
 								end	
-							end, weapon)				
+							end, ammo.Caliber)				
 						elseif item:IsWeapon() then
 							weapon = item							
 							local ammos,containers, slots = owner:GetAvailableAmmos(weapon, nil, "unique")
@@ -528,16 +528,14 @@ PlaceObj('XTemplate', {
 				local free_space = false
 				for _, container in ipairs(containers) do
 					local container_slot_name = GetContainerInventorySlotName(container)
-					container:ForEachItemInSlot(container_slot_name, false, function(item, slot_name, src_left, src_top)
+					local result = container:ForEachItemInSlot(container_slot_name, false, function(item, slot_name, src_left, src_top, units)
 						if IsKindOf(item, "SquadBagItem") then
-							free_space = true
 							return "break"
 						end	
 						local is_stack = IsKindOf(item, "InventoryStack")
 						for _, unit in ipairs(units) do
 							local pos, reason = unit:CanAddItem("Inventory",item) 
 							if pos then
-								free_space = true
 								return "break"
 							elseif is_stack	then
 								local res = unit:ForEachItemInSlot("Inventory", item.class, function(itm, slot_n,l,t)
@@ -545,14 +543,16 @@ PlaceObj('XTemplate', {
 										return "break"
 									end
 								end)
-								if res=="break" then
-									free_space = true
+								if res == "break" then
 									return "break"
 								end	
 							end
 						end		
-					end)
-					if free_space then break end
+					end, units)
+					if result == "break" then
+						free_space = true
+						break
+					end
 				end
 				if not free_space then return "disabled", T(545718357333, "Inventory is full") end
 				return "enabled"

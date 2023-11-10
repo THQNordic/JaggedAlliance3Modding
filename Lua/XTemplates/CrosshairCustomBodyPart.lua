@@ -147,6 +147,7 @@ PlaceObj('XTemplate', {
 		PlaceObj('XTemplateFunc', {
 			'name', "SetRollover(self, rollover)",
 			'func', function (self, rollover)
+				if GetUIStyleGamepad() then return end
 				local nodeParent = self:ResolveId("node")
 				nodeParent:SetSelectedPart(rollover and self.context)
 			end,

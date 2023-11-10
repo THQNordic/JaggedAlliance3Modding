@@ -18,6 +18,7 @@ DefineClass.TheThing = {
 	UnitStat = "Dexterity",
 	Valuable = 1,
 	Cost = 150,
+	RestockWeight = 0,
 	BaseChanceToHit = 100,
 	CritChanceScaled = 30,
 	BaseDamage = 18,

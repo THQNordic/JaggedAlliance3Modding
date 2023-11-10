@@ -12,53 +12,18 @@ PlaceObj('CharacterEffectCompositeDef', {
 		}),
 	},
 	'object_class', "Perk",
-	'msg_reactions', {
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "unit",
-			Event = "UnitBeginTurn",
-			Handler = function (self, unit)
-				
-				local function exec(self, unit)
-				local proc = true
-				for _, other in ipairs(unit.team.units) do
-					if unit ~= other and DivRound(unit:GetDist(other), const.SlabSizeX) <= self:ResolveValue("loner_radius") then
-						proc = false
-						break
+	'unit_reactions', {
+		PlaceObj('UnitReaction', {
+			Event = "OnBeginTurn",
+			Handler = function (self, target)
+				for _, other in ipairs(target.team.units) do
+					if target ~= other and DivRound(target:GetDist(other), const.SlabSizeX) <= self:ResolveValue("loner_radius") then
+						return
 					end
 				end
 				
-				if proc then
-					unit:AddStatusEffect("Inspired")
-					PlayVoiceResponse(unit, "Loner")
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "UnitBeginTurn" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, unit)
-				end
-				
-				if self:VerifyReaction("UnitBeginTurn", reaction_def, unit, unit) then
-					exec(self, unit)
-				end
-			end,
-			HandlerCode = function (self, unit)
-				local proc = true
-				for _, other in ipairs(unit.team.units) do
-					if unit ~= other and DivRound(unit:GetDist(other), const.SlabSizeX) <= self:ResolveValue("loner_radius") then
-						proc = false
-						break
-					end
-				end
-				
-				if proc then
-					unit:AddStatusEffect("Inspired")
-					PlayVoiceResponse(unit, "Loner")
-				end
+				target:AddStatusEffect("Inspired")
+				PlayVoiceResponse(target, "Loner")
 			end,
 		}),
 	},

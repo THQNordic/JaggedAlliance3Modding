@@ -7,46 +7,23 @@ DefineClass.Caretaker = {
 
 
 	object_class = "Perk",
-	msg_reactions = {
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "healer",
-			Event = "OnBandage",
-			Handler = function (self, healer, target, healAmount)
-				
-				local function exec(self, healer, target, healAmount)
-				local tempHp = MulDivRound(healer.Medical, self:ResolveValue("medicalPercent"), 100)
-				if target.command == "DownedRally" then
-					target:AddStatusEffect("GritAfterRally", tempHp)
-				else
-					target:ApplyTempHitPoints(tempHp)
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "OnBandage" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, healer, target, healAmount)
-				end
-				
-				if self:VerifyReaction("OnBandage", reaction_def, healer, healer, target, healAmount) then
-					exec(self, healer, target, healAmount)
-				end
-			end,
-			HandlerCode = function (self, healer, target, healAmount)
-				local tempHp = MulDivRound(healer.Medical, self:ResolveValue("medicalPercent"), 100)
-				if target.command == "DownedRally" then
-					target:AddStatusEffect("GritAfterRally", tempHp)
-				else
-					target:ApplyTempHitPoints(tempHp)
+	unit_reactions = {
+		PlaceObj('UnitReaction', {
+			Event = "OnUnitBandaged",
+			Handler = function (self, target, healer, patient, hp_restored)
+				if target == healer then
+					local tempHp = MulDivRound(healer.Medical, self:ResolveValue("medicalPercent"), 100)
+					if patient.command == "DownedRally" then
+						patient:AddStatusEffect("GritAfterRally", tempHp)
+					else
+						patient:ApplyTempHitPoints(tempHp)
+					end	
 				end
 			end,
 		}),
 	},
 	DisplayName = T(416037614632, --[[CharacterEffectCompositeDef Caretaker DisplayName]] "Painkiller"),
-	Description = T(527875226325, --[[CharacterEffectCompositeDef Caretaker Description]] "Grant <em><StatPercent('Medical', medicalPercent)></em> <GameTerm('Grit')> to an ally when using <em>Bandage</em> on them (based on Medical)."),
+	Description = T(527875226325, --[[CharacterEffectCompositeDef Caretaker Description]] "When you end you turn bandaging an ally, you grant <em><StatPercent('Medical', medicalPercent)></em> <GameTerm('Grit')> to this ally (based on Medical)."),
 	Icon = "UI/Icons/Perks/Caretaker",
 	Tier = "Gold",
 	Stat = "Wisdom",

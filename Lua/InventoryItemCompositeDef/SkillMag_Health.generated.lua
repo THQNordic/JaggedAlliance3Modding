@@ -15,6 +15,10 @@ DefineClass.SkillMag_Health = {
 	AdditionalHint = T(333976389871, --[[InventoryItemCompositeDef SkillMag_Health AdditionalHint]] "<bullet_point> Used through the Item Menu\n<bullet_point> Single use\n<bullet_point> Increases Health"),
 	UnitStat = "Health",
 	Valuable = 1,
+	Cost = 1500,
+	CanAppearInShop = true,
+	MaxStock = 1,
+	RestockWeight = 10,
 	effect_moment = "on_use",
 	Effects = {
 		PlaceObj('UnitStatBoost', {

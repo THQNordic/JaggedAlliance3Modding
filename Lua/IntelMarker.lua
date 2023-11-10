@@ -270,7 +270,7 @@ end
 DefineClass.EnemyIntelMarker = {
 	__parents = { "IntelMarker" },
 	properties = {
-		{ category = "Intel Marker", id = "IntelSide",  name = "Intel Side", editor = "dropdownlist", items = function() return table.map(GetCurrentCampaignPreset().Sides, "Id") end, default = "enemy1" },
+		{ category = "Intel Marker", id = "IntelSide",  name = "Intel Side", editor = "dropdownlist", items = function() return Sides end, default = "enemy1" },
 		{ category = "Intel Marker", id = "IntelAreaText", name = "Intel Area Text", editor = "text", translate = true, default = T(815679600520, "Enemies") },
 		{ category = "Intel Marker", id = "IntelAreaRadius",  name = "Intel Area Radius", editor = "number", default = false, help = "Radius in voxels", no_edit = true },
 		{ category = "Intel Marker", id = "TextStyleForColor", name = "Text Style For Color", editor = "choice", items = GetTextStyleForColorIDs, default = "IntelEnemy", }

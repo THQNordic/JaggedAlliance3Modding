@@ -10,6 +10,13 @@ PlaceObj('InventoryItemCompositeDef', {
 	'colorStyle', "AmmoAPColor",
 	'Description', T(259826736002, --[[InventoryItemCompositeDef _556_AP Description]] "5.56 Ammo for Assault Rifles, SMGs, and Machine Guns."),
 	'AdditionalHint', T(850324784601, --[[InventoryItemCompositeDef _556_AP AdditionalHint]] "<bullet_point> Improved armor penetration"),
+	'Cost', 180,
+	'CanAppearInShop', true,
+	'Tier', 2,
+	'MaxStock', 5,
+	'RestockWeight', 25,
+	'CategoryPair', "556",
+	'ShopStackSize', 30,
 	'MaxStacks', 500,
 	'Caliber', "556",
 	'Modifications', {

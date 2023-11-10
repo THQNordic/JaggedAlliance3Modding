@@ -14,6 +14,7 @@ PlaceObj('InventoryItemCompositeDef', {
 	'UnitStat', "Explosives",
 	'Valuable', 1,
 	'Cost', 5000,
+	'CategoryPair', "HeavyWeapons",
 	'CritChanceScaled', 0,
 	'PenetrationClass', 4,
 	'WeaponRange', 45,

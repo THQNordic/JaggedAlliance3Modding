@@ -22,6 +22,9 @@ PlaceObj('UnitDataCompositeDef', {
 	'Affiliation', "Legion",
 	'StartingLevel', 3,
 	'neutral_retaliate', true,
+	'AIKeywords', {
+		"Heal",
+	},
 	'archetype', "Medic",
 	'role', "Medic",
 	'CanManEmplacements', false,

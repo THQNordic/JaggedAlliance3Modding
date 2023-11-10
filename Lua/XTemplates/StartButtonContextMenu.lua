@@ -197,6 +197,7 @@ PlaceObj('XTemplate', {
 							'run', function (self, parent, context)
 								parent.Text = gv_SatelliteView and T(119774168141, "Tactical View") or T(469353766968, "Sat View")
 								local enabledChange = SatelliteToggleActionState()
+								if gv_SatelliteView and not AnyPlayerSquads() then enabledChange =  "disabled" end
 								parent:SetEnabled(enabledChange == "enabled")
 							end,
 						}),
@@ -523,6 +524,7 @@ PlaceObj('XTemplate', {
 							'run', function (self, parent, context)
 								parent.Text = gv_SatelliteView and T(119774168141, "Tactical View") or T(469353766968, "Sat View")
 								local enabledChange = SatelliteToggleActionState()
+								if gv_SatelliteView and not AnyPlayerSquads() then enabledChange =  "disabled" end
 								parent:SetEnabled(enabledChange == "enabled")
 							end,
 						}),

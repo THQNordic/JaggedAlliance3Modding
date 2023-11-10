@@ -29,40 +29,6 @@ function ApplyGuiltyOrRighteous:GetEditorView()
 	return Untranslated("Apply " .. helperText  .. " effect on unit" )
 end
 
-DefineClass.AssociateNPCWithSector = {
-	__parents = { "Effect", },
-	__generated_by_class = "EffectDef",
-
-	properties = {
-		{ id = "Negate", name = "Remove NPC", help = "Reverse the effect, removing an NPC from the sector.", 
-			editor = "bool", default = false, },
-		{ id = "Sector", name = "Associated Sector", help = "The sector to associate with.", 
-			editor = "combo", default = false, items = function (self) return GetCampaignSectorsCombo() end, },
-		{ id = "Name", name = "NPC Name", help = "The name of the NPC to associate.", 
-			editor = "combo", default = false, items = function (self) return GetTargetUnitCombo() end, },
-	},
-	EditorView = Untranslated("Associate NPC <Name> with sector <u(Sector)>"),
-	Documentation = "Associate an NPC with a sector in the current campaign.",
-	EditorViewNeg = Untranslated("Remove NPC <Name> from sector <u(Sector)>"),
-	EditorNestedObjCategory = "Sector effects",
-}
-
-function AssociateNPCWithSector:__exec(obj, context)
-	local sector = gv_Sectors[self.Sector]
-	if not self.Negate then
-		if not sector.NPCs then
-			sector.NPCs = {}
-		end
-		sector.NPCs[#sector.NPCs + 1] = self.Name
-		return
-	elseif sector.NPCs then
-		local idx = table.find(sector.NPCs, self.Name)
-		if idx then
-			table.remove(sector.NPCs, idx)
-		end
-	end
-end
-
 DefineClass.BanterSetUnitInteraction = {
 	__parents = { "Effect", "UnitTarget", "BanterFunctionObjectBase", },
 	__generated_by_class = "EffectDef",
@@ -250,6 +216,7 @@ DefineClass.CustomCodeEffect = {
 }
 
 function CustomCodeEffect:__exec(obj, context)
+	if not self.custom_code then return end
 	local custom_code_func, err = load(self.custom_code)
 	if custom_code_func then
 		-- Procall to ensure there isnt a yield (it cant be saved)
@@ -351,16 +318,19 @@ DefineClass.ExecForEachUnitInSector = {
 
 function ExecForEachUnitInSector:__exec(obj, context)
 	local effects =  self.Effects
-	if not effects then return true end
-	context =  context or {}
+	if not effects or #effects == 0 then return true end
+	if not context then context = {} end
 	context.is_sector_unit = true
+	context.target_units = {}
 	
 	local squads = GetSquadsInSector(self.Sector)
 	for i, squad in ipairs(squads) do
-		for j, unit_id in ipairs(squad.units or empty_table) do
+		for j, unit_id in ipairs(squad.units) do
 			local unit = gv_UnitData[unit_id]
-			context.target_units={unit}
-			ExecuteEffectList(effects, unit, context)
+			context.target_units[1] = unit
+			for _, effect in ipairs(effects) do
+				effect:__exec(unit, context)
+			end
 		end
 	end
 	context.is_sector_unit = false
@@ -1192,7 +1162,7 @@ DefineClass.GroupSetSide = {
 
 	properties = {
 		{ id = "Side", help = "The new side of group.", 
-			editor = "choice", default = false, items = function (self) return table.map(GetCurrentCampaignPreset().Sides, "Id") end, },
+			editor = "choice", default = false, items = function (self) return Sides end, },
 		{ id = "CreateSquad", help = "If set to false the units will not create a new squad. Keep in mind they will be ejected from their old squad so they will despawn on the next presence check.", 
 			editor = "bool", default = true, },
 	},
@@ -2783,12 +2753,52 @@ DefineClass.RandomEffect = {
 
 function RandomEffect:__exec(obj, context)
 	local num = #self.Effects
-	local roll = InteractionRand(num, "RandomEffect") + 1
-	local effect = self.Effects[roll]
-	ExecuteEffectList({effect})
+	if num > 0 then
+		local roll = InteractionRand(num, "RandomEffect") + 1
+		self.Effects[roll]:__exec()
+	end
 end
 
 function RandomEffect:GetError()
+	if not self.Effects or #self.Effects < 1 then
+		return "Please specify some effects"
+	end
+end
+
+DefineClass.RandomEffectWithCondition = {
+	__parents = { "Effect", },
+	__generated_by_class = "EffectDef",
+
+	properties = {
+		{ id = "Effects", name = "Effects", 
+			editor = "nested_list", default = false, base_class = "ConditionalEffect", },
+	},
+	ReturnClass = "",
+	EditorView = Untranslated("Play a random effect from a list whose conditions evaluate to true."),
+	Documentation = "Play a random effect from a list whose conditions evaluate to true.",
+	EditorNestedObjCategory = "",
+}
+
+function RandomEffectWithCondition:__exec(obj, context)
+	local valid = {}
+	for i, eff in ipairs(self.Effects) do
+		if EvalConditionList(eff.Conditions, obj, context) then
+			valid[#valid + 1] = eff
+		end
+	end
+	local num = #valid
+	if num > 0 then
+		local roll = InteractionRand(num, "RandomEffect") + 1
+		
+		local effRolled = valid[roll]
+		local effects = effRolled.Effects
+		for _, effect in ipairs(effects) do
+			effect:__exec(obj, context)
+		end
+	end
+end
+
+function RandomEffectWithCondition:GetError()
 	if not self.Effects or #self.Effects < 1 then
 		return "Please specify some effects"
 	end
@@ -3125,6 +3135,7 @@ DefineClass.SectorEnterConflict = {
 
 function SectorEnterConflict:__exec(obj, context)
 	local sector = self.sector_id == "current" and gv_Sectors[gv_CurrentSectorId] or gv_Sectors[self.sector_id]
+	if not sector then return end
 	if self.conflict_mode then
 		ForceEnterConflictEffect(
 				sector,
@@ -3483,38 +3494,6 @@ function SectorSetCustomConflictDesc:GetError()
 	end
 end
 
-DefineClass.SectorSetExplorePopup = {
-	__parents = { "Effect", },
-	__generated_by_class = "EffectDef",
-
-	properties = {
-		{ id = "sector_id", name = "Sector Id", help = "Sector id.", 
-			editor = "combo", default = false, items = function (self) return GetCampaignSectorsCombo() end, },
-		{ id = "explore_popup", name = "Explore Popup", help = "Choose explore Popup.", 
-			editor = "combo", default = "", items = function (self) return PresetGroupCombo("PopupNotification", "Sectors") end, },
-	},
-	Documentation = "Change or remove (set to empty) explore pop-up for sector",
-	EditorNestedObjCategory = "Sector effects",
-}
-
-function SectorSetExplorePopup:__exec(obj, context)
-	gv_Sectors[self.sector_id].ExplorePopup = self.explore_popup
-end
-
-function SectorSetExplorePopup:GetEditorView()
-	if self.explore_popup == "" then
-		return Untranslated("Remove explore pop-up for sector <u(sector_id)>")
-	else
-		return Untranslated("Change explore pop-up for sector <u(sector_id)> to <u(explore_popup)>")
-	end
-end
-
-function SectorSetExplorePopup:GetError()
-	if not self.sector_id then
-		return "Specify sector!"
-	end
-end
-
 DefineClass.SectorSetForceConflict = {
 	__parents = { "Effect", },
 	__generated_by_class = "EffectDef",
@@ -3530,6 +3509,7 @@ DefineClass.SectorSetForceConflict = {
 }
 
 function SectorSetForceConflict:__exec(obj, context)
+	if not gv_Sectors[self.sector_id] then return end
 	gv_Sectors[self.sector_id].ForceConflict = self.force
 end
 
@@ -3777,7 +3757,7 @@ DefineClass.SectorSetSide = {
 		{ id = "sector_id", name = "Sector Id", help = "Sector id.", 
 			editor = "combo", default = false, items = function (self) return GetCampaignSectorsCombo() end, },
 		{ id = "side", name = "Side", help = "Choose side for sector.", 
-			editor = "combo", default = "player1", items = function (self) return table.map(GetCurrentCampaignPreset().Sides, "Id") end, },
+			editor = "combo", default = "player1", items = function (self) return Sides end, },
 		{ id = "enable_sticky", name = "Enable Sticky Side", help = "This will forcefully set sticky side to true.", 
 			editor = "bool", default = false, },
 		{ id = "disable_sticky", name = "Disable Sticky Side", help = "This will forcefully set sticky side to false.", 
@@ -3788,10 +3768,12 @@ DefineClass.SectorSetSide = {
 }
 
 function SectorSetSide:__exec(obj, context)
+	local sector = gv_Sectors[self.sector_id]
+	if not sector then return end
 	if self.enable_sticky then
-		gv_Sectors[self.sector_id].StickySide = true
+		sector.StickySide = true
 	elseif self.disable_sticky then
-		gv_Sectors[self.sector_id].StickySide = false
+		sector.StickySide = false
 	end
 	SatelliteSectorSetSide(self.sector_id, self.side, "force")
 end
@@ -3832,6 +3814,7 @@ DefineClass.SectorSpawnSquad = {
 }
 
 function SectorSpawnSquad:__exec(obj, context)
+	if not gv_Sectors[self.sector_id] then return end
 	GenerateEnemySquad(self.squad_def_id, self.sector_id, "Effect", nil, self.side)
 end
 

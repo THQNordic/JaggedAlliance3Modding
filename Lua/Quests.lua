@@ -172,6 +172,8 @@ QuestTCEEvalThread = false
 end
 
 function QuestTCEEvaluation(specificQuests)
+	QuestTCEEvalThread = CurrentThread() or false
+
 	TutorialHintVisibilityEvaluate()
 	
 	local quests = specificQuests or Quests or empty_table
@@ -272,6 +274,8 @@ end)
 function OnMsg.OpenSatelliteView() QuestTCEEvaluation() end
 function OnMsg.SatelliteTick()     QuestTCEEvaluation() end
 function OnMsg.QuestParamChanged(questId)
+	if CurrentThread() == QuestTCEEvalThread then return end
+
 	-- Get and Evaluate only affected quests
 	local quests = {}
 	quests[questId] = Quests[questId]
@@ -497,7 +501,6 @@ function SatelliteSectorEditorSelect(root, obj, prop_id, socket, param)
 		end
 		local sectors = GetSatelliteSectors(true)
 		GedSatelliteSectorEditor = OpenGedApp("GedSatelliteSectorEditor", sectors) or false
-		HandleSatelliteSectorSelectionWindow(true)		
 		GedSatelliteSectorEditor:SetSelection("root", table.find(sectors, "Id",param.preset_id))
 	end)
 end
@@ -791,6 +794,7 @@ function QuestGatherRefsFromPreset(preset, out, quest_id, check_var)
 end
 
 function QuestGatherRefsFromQuests(depending, quest_id, check_var)
+function QuestGatherRefsFromQuests(depending, quest_id, check_var)
 	local out = depending.quests or {}
 	local res = {val = false}
 	ForEachPreset("QuestsDef", function(preset, group, res)
@@ -801,6 +805,7 @@ function QuestGatherRefsFromQuests(depending, quest_id, check_var)
 	end, res)
 	if check_var then return res.val end
 	depending.quests = out
+end
 end
 
 function QuestGatherRefsFromBanters(depending, quest_id, check_var)
@@ -2174,6 +2179,44 @@ function SavegameSessionDataFixups.PierreHanging(session_data)
 	session_data.gvars.gv_Quests["RescueHerMan"]["HangingActive"] = false
 end
 
+function SavegameSessionDataFixups.OldDiamond(session_data)
+	if not session_data then return end
+	if not session_data.gvars then return end
+	if not session_data.gvars.gv_Quests then return end
+	if not session_data.gvars.gv_Quests["OldDiamond"] then return end
+	if not session_data.gvars.gv_Sectors["K10"].conflict then return end
+	if not session_data.gvars.gv_Quests["OldDiamond"]["TCE_ImpostorsFight"] then return end
+	
+	session_data.gvars.gv_Sectors["K10"].conflict = false
+	session_data.gvars.gv_Sectors["K10"].ForceConflict = false
+	session_data.gvars.gv_Quests["OldDiamond"]["TCE_ImpostorsFight"] = false
+end
+
+
+function SavegameSessionDataFixups.TheDump(session_data)
+	if not session_data then return end
+	if not session_data.gvars then return end
+	if not session_data.gvars.gv_Quests then return end
+	if not session_data.gvars.gv_Quests["TheTrashFief"] then return end
+	if not session_data.gvars.gv_Sectors["L9"].conflict then return end
+	if not session_data.gvars.gv_Quests["TheTrashFief"]["Completed"] then return end	
+	
+	session_data.gvars.gv_Quests["TheTrashFief"]["Completed"] = false
+	session_data.gvars.gv_Quests["TheTrashFief"]["Failed"] = true	
+	session_data.gvars.gv_Sectors["L9"].ForceConflict = false	
+	session_data.gvars.gv_Sectors["L9"].conflict.locked = false
+	
+end
+
+function SavegameSessionDataFixups.ReturnToErnie(session_data)
+	if not session_data then return end
+	if not session_data.gvars then return end
+	if not session_data.gvars.gv_Quests then return end
+	if not session_data.gvars.gv_Quests["ErnieSideQuests_WorldFlip"] then return end
+	if not session_data.gvars.gv_Quests["ErnieSideQuests_WorldFlip"]["TCE_GatherPartisans"] then return end
+	
+	session_data.gvars.gv_Quests["ErnieSideQuests_WorldFlip"]["TCE_GatherPartisans"] = false
+end
 
 function OnMsg.GatherMusic(used_music)
 	for _, group in ipairs(Presets.QuestsDef or empty_table) do

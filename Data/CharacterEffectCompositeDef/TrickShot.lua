@@ -5,45 +5,17 @@ PlaceObj('CharacterEffectCompositeDef', {
 	'Id', "TrickShot",
 	'SortKey', 9,
 	'object_class', "Perk",
-	'msg_reactions', {
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "attacker",
-			Event = "OnAttack",
-			Handler = function (self, attacker, action, target, results, attack_args)
-				
-				local function exec(self, attacker, action, target, results, attack_args)
-				if not results.miss and IsKindOf(target, "Unit") then
+	'unit_reactions', {
+		PlaceObj('UnitReaction', {
+			Event = "OnUnitAttack",
+			Handler = function (self, target, attacker, action, attack_target, results, attack_args)
+				if target == attacker and not results.miss and IsKindOf(attack_target, "Unit") then
 					if attack_args.target_spot_group == "Legs" then
-						target:AddStatusEffect("KnockDown")
+						attack_target:AddStatusEffect("KnockDown")
 					elseif attack_args.target_spot_group == "Arms" then
-						target:AddStatusEffect("Numbness")
+						attack_target:AddStatusEffect("Numbness")
 					elseif attack_args.target_spot_group == "Groin" then
-						target:AddStatusEffect("Exposed")
-					end	
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "OnAttack" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, attacker, action, target, results, attack_args)
-				end
-				
-				if self:VerifyReaction("OnAttack", reaction_def, attacker, attacker, action, target, results, attack_args) then
-					exec(self, attacker, action, target, results, attack_args)
-				end
-			end,
-			HandlerCode = function (self, attacker, action, target, results, attack_args)
-				if not results.miss and IsKindOf(target, "Unit") then
-					if attack_args.target_spot_group == "Legs" then
-						target:AddStatusEffect("KnockDown")
-					elseif attack_args.target_spot_group == "Arms" then
-						target:AddStatusEffect("Numbness")
-					elseif attack_args.target_spot_group == "Groin" then
-						target:AddStatusEffect("Exposed")
+						attack_target:AddStatusEffect("Exposed")
 					end	
 				end
 			end,

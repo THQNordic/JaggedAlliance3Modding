@@ -16,150 +16,28 @@ PlaceObj('CharacterEffectCompositeDef', {
 		}),
 	},
 	'object_class', "CharacterEffect",
-	'msg_reactions', {
-		PlaceObj('MsgActorReactionEffects', {
-			Effects = {
-				PlaceObj('ConditionalEffect', {
-					'Effects', {
-						PlaceObj('ExecuteCode', {
-							Code = function (self, obj)
-								if not IsKindOf(obj, "Unit") then return end
-								local recovery = obj:GetEffectValue("unconscious_recovery_exploration_time") 
-								if recovery and GameTime() >= recovery then
-									obj:SetTired(const.utExhausted)
-									obj:SetCommand("DownedRally")
-								end
-							end,
-							FuncCode = 'if not IsKindOf(obj, "Unit") then return end\nlocal recovery = obj:GetEffectValue("unconscious_recovery_exploration_time") \nif recovery and GameTime() >= recovery then\n	obj:SetTired(const.utExhausted)\n	obj:SetCommand("DownedRally")\nend',
-							SaveAsText = false,
-						}),
-					},
-				}),
-			},
-			Event = "ExplorationTick",
-			Handler = function (self)
-				ExecReactionEffects(self, 1, "ExplorationTick", nil, self)
-			end,
-		}),
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "obj",
-			Event = "StatusEffectAdded",
-			Handler = function (self, obj, id, stacks)
-				
-				local function exec(self, obj, id, stacks)
-				local delay = self:ResolveValue("recovery_delay_turns")
-				local recovery_turn = (g_Combat and g_Combat.current_turn or 1) + delay
-				obj:SetEffectValue("unconscious_recovery_turn", recovery_turn)
-				if not g_Combat then
-					local delay = self:ResolveValue("recovery_delay_seconds") * 1000
-					obj:SetEffectValue("unconscious_recovery_exploration_time", GameTime() + delay)
-				end
-				obj:AddStatusEffectImmunity("Surprised", id)
-				CreateGameTimeThread(obj.SetCommandIfNotDead, obj, obj.command == "GetDowned" and "Downed" or "KnockDown")
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[2]
-				if not reaction_def or reaction_def.Event ~= "StatusEffectAdded" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, obj, id, stacks)
-				end
-				
-				if self:VerifyReaction("StatusEffectAdded", reaction_def, obj, obj, id, stacks) then
-					exec(self, obj, id, stacks)
-				end
-			end,
-			HandlerCode = function (self, obj, id, stacks)
-				local delay = self:ResolveValue("recovery_delay_turns")
-				local recovery_turn = (g_Combat and g_Combat.current_turn or 1) + delay
-				obj:SetEffectValue("unconscious_recovery_turn", recovery_turn)
-				if not g_Combat then
-					local delay = self:ResolveValue("recovery_delay_seconds") * 1000
-					obj:SetEffectValue("unconscious_recovery_exploration_time", GameTime() + delay)
-				end
-				obj:AddStatusEffectImmunity("Surprised", id)
-				CreateGameTimeThread(obj.SetCommandIfNotDead, obj, obj.command == "GetDowned" and "Downed" or "KnockDown")
-			end,
-		}),
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "obj",
-			Event = "StatusEffectRemoved",
-			Handler = function (self, obj, id, stacks, reason)
-				
-				local function exec(self, obj, id, stacks, reason)
-				obj:SetEffectValue("unconscious_recovery_turn")
-				obj:SetEffectValue("unconscious_recovery_exploration_time")
-				obj:RemoveStatusEffectImmunity("Surprised", id)
-				if obj.command == "Downed" then
-					obj:SetCommand("DownedRally")
-				else
-					obj:SetTired(Min(obj.Tiredness, const.utExhausted))
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[3]
-				if not reaction_def or reaction_def.Event ~= "StatusEffectRemoved" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, obj, id, stacks, reason)
-				end
-				
-				if self:VerifyReaction("StatusEffectRemoved", reaction_def, obj, obj, id, stacks, reason) then
-					exec(self, obj, id, stacks, reason)
-				end
-			end,
-			HandlerCode = function (self, obj, id, stacks, reason)
-				obj:SetEffectValue("unconscious_recovery_turn")
-				obj:SetEffectValue("unconscious_recovery_exploration_time")
-				obj:RemoveStatusEffectImmunity("Surprised", id)
-				if obj.command == "Downed" then
-					obj:SetCommand("DownedRally")
-				else
-					obj:SetTired(Min(obj.Tiredness, const.utExhausted))
-				end
-			end,
-		}),
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "unit",
-			Event = "UnitBeginTurn",
-			Handler = function (self, unit)
-				
-				local function exec(self, unit)
-				local recovery_turn = unit:GetEffectValue("unconscious_recovery_turn") or -1
-				local rally = unit:GetEffectValue("stabilized")
+	'unit_reactions', {
+		PlaceObj('UnitReaction', {
+			Event = "OnBeginTurn",
+			Handler = function (self, target)
+				local recovery_turn = self:ResolveValue("recovery_turn")
+				local stabilized = target:GetStatusEffect("Stabilized")
+				local rally = stabilized and stabilized:ResolveValue("stabilized")
 				if not rally and g_Combat and g_Combat.current_turn >= recovery_turn then
-					rally = RollSkillCheck(unit, "Health", 50)
+					rally = RollSkillCheck(target, "Health", 50)
 				end
-				if rally and unit:IsDowned() then
-					unit:SetCommand("DownedRally")
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[4]
-				if not reaction_def or reaction_def.Event ~= "UnitBeginTurn" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, unit)
-				end
-				
-				if self:VerifyReaction("UnitBeginTurn", reaction_def, unit, unit) then
-					exec(self, unit)
+				if rally and target:IsDowned() then
+					target:SetCommand("DownedRally")
 				end
 			end,
-			HandlerCode = function (self, unit)
-				local recovery_turn = unit:GetEffectValue("unconscious_recovery_turn") or -1
-				local rally = unit:GetEffectValue("stabilized")
-				if not rally and g_Combat and g_Combat.current_turn >= recovery_turn then
-					rally = RollSkillCheck(unit, "Health", 50)
-				end
-				if rally and unit:IsDowned() then
-					unit:SetCommand("DownedRally")
+		}),
+		PlaceObj('UnitReaction', {
+			Event = "OnExplorationTick",
+			Handler = function (self, target)
+				local recovery = self:ResolveValue("recovery_time") 
+				if GameTime() >= recovery then
+					target:SetTired(const.utExhausted)
+					target:SetCommand("DownedRally")
 				end
 			end,
 		}),
@@ -168,6 +46,20 @@ PlaceObj('CharacterEffectCompositeDef', {
 	'Description', T(801008446056, --[[CharacterEffectCompositeDef Unconscious Description]] "Unconscious and unable to take any action. "),
 	'AddEffectText', T(964785237678, --[[CharacterEffectCompositeDef Unconscious AddEffectText]] "<em><DisplayName></em> is unconscious"),
 	'RemoveEffectText', T(208147554823, --[[CharacterEffectCompositeDef Unconscious RemoveEffectText]] "<em><DisplayName></em> regained consciousness"),
+	'OnAdded', function (self, obj)
+		self:SetParameter("recovery_turn", (g_Combat and g_Combat.current_turn or 1) + self:ResolveValue("recovery_delay_turns"))
+		self:SetParameter("recovery_time", GameTime() + self:ResolveValue("recovery_delay_seconds") * 1000)
+		obj:AddStatusEffectImmunity("Surprised", self.class)
+		CreateGameTimeThread(obj.SetCommandIfNotDead, obj, obj.command == "GetDowned" and "Downed" or "KnockDown")
+	end,
+	'OnRemoved', function (self, obj)
+		obj:RemoveStatusEffectImmunity("Surprised", self.class)
+		if obj.command == "Downed" then
+			obj:SetCommand("DownedRally")
+		else
+			obj:SetTired(Min(obj.Tiredness, const.utExhausted))
+		end
+	end,
 	'Icon', "UI/Hud/Status effects/unconscious",
 	'Shown', true,
 	'ShownSatelliteView', true,

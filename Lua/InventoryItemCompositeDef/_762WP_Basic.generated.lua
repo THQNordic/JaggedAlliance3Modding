@@ -11,7 +11,12 @@ DefineClass._762WP_Basic = {
 	DisplayName = T(814156249809, --[[InventoryItemCompositeDef _762WP_Basic DisplayName]] "7.62 mm WP Standard"),
 	DisplayNamePlural = T(397359282724, --[[InventoryItemCompositeDef _762WP_Basic DisplayNamePlural]] "7.62 mm WP Standard"),
 	colorStyle = "AmmoBasicColor",
-	Description = T(908352421544, --[[InventoryItemCompositeDef _762WP_Basic Description]] "7.62 Warsaw Pact ammo for Assault Rifles, SMGs, Machine Guns, and Snipers."),
+	Description = T(908352421544, --[[InventoryItemCompositeDef _762WP_Basic Description]] "7.62 Warsaw Pact ammo for Assault Rifles, SMGs, Machine Guns, and Rifles."),
+	Cost = 50,
+	CanAppearInShop = true,
+	MaxStock = 10,
+	CategoryPair = "762WP",
+	ShopStackSize = 30,
 	MaxStacks = 500,
 	Caliber = "762WP",
 }

@@ -957,6 +957,43 @@ PlaceObj('QuestsDef', {
 						"L6",
 					},
 				}),
+				PlaceObj('SectorCheckOwner', {
+					Negate = true,
+				}),
+				PlaceObj('QuestIsVariableNum', {
+					Amount = 1,
+					Prop = "PrisonersReleased",
+					QuestId = "TheGoodPlace",
+				}),
+				PlaceObj('GroupIsDead', {
+					Group = "PrisonerRioter",
+					Negate = true,
+				}),
+				PlaceObj('CombatIsActive', {
+					Negate = true,
+				}),
+			},
+			Effects = {
+				PlaceObj('GroupSetBehaviorPatrol', {
+					MarkerGroup = "Outer_Route",
+					TargetUnit = "PrisonerRioter",
+					UseWeapons = true,
+				}),
+			},
+			Once = true,
+			ParamId = "TCE_PrisonersPatrol",
+			QuestId = "Luigi",
+			requiredSectors = {
+				"L6",
+			},
+		}),
+		PlaceObj('TriggeredConditionalEvent', {
+			Conditions = {
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"L6",
+					},
+				}),
 				PlaceObj('UnitIsAware', {
 					TargetUnit = "EnemySquad",
 				}),
@@ -1315,6 +1352,11 @@ PlaceObj('QuestsDef', {
 					Prop = "Completed",
 					QuestId = "Luigi",
 				}),
+				PlaceObj('QuestSetVariableBool', {
+					Prop = "BattlePositions",
+					QuestId = "RimvilleGuardsLogic",
+					Set = false,
+				}),
 			},
 			Once = true,
 			ParamId = "TCE_Complete",
@@ -1402,6 +1444,11 @@ PlaceObj('QuestsDef', {
 				PlaceObj('QuestSetVariableBool', {
 					Prop = "Failed",
 					QuestId = "Luigi",
+				}),
+				PlaceObj('QuestSetVariableBool', {
+					Prop = "BattlePositions",
+					QuestId = "RimvilleGuardsLogic",
+					Set = false,
 				}),
 			},
 			Once = true,
@@ -1899,6 +1946,9 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('QuestVarTCEState', {
 			Name = "TCE_PrisonerLeave",
+		}),
+		PlaceObj('QuestVarTCEState', {
+			Name = "TCE_PrisonersPatrol",
 		}),
 		PlaceObj('QuestVarTCEState', {
 			Name = "TCE_PrisonersJoinCombat",

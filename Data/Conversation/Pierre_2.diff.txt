@@ -77,7 +77,7 @@
 [Keyword: We killed Graaf]
 	Pierre: Yes, I heard that and I'm glad you did. For some people, it is a real shame they can be killed only once. 
 		Meltdown: You got that right!
-		Fidel: Some people? Why only only some people?
+		Fidel: Some people? Why only some people?
 		Ivan: Да. Fascist needs to die.
 		Spike: Don't look at me! I've been killed at least three times, judging from the rumors I've heard.
 	Pierre: My only regret is I couldn't kill him myself. I tried. Yes, it's true... and I almost succeeded. That's why they moved me here.

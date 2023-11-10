@@ -91,7 +91,7 @@ function UpdateFastForwardGameSpeed()
 	else
 		time_factor = const.DefaultTimeFactor
 	end
-
+	NetUpdateHash("UpdateFastForwardGameSpeed", time_factor, g_Combat and g_Combat.is_player_control, g_FastForwardGameSpeed)
 	NetTimeFactor = time_factor
 	__SetTimeFactor(NetPause and 0 or NetTimeFactor)
 	if netInGame and NetIsHost() then
@@ -172,7 +172,11 @@ function OnMsg.TurnStart(g_CurrentTeam)
 	end
 end
 
-MapVar("gv_CombatStartFromConversation", false)
+GameVar("gv_CombatStartFromConversation", false)
+function OnMsg.NewMap()
+	gv_CombatStartFromConversation = false
+end
+
 MapVar("g_StartingCombat", false)
 DefineClass.Combat = {
 	__parents = { "InitDone" },
@@ -191,7 +195,6 @@ DefineClass.Combat = {
 	unit_reposition_shown = false,
 	start_reposition_ended = false,
 	
-	camera_use = false,
 	cinematic_kills_this_turn = false,
 
 	thread = false,
@@ -305,6 +308,7 @@ function Combat:Start(dynamic_data)
 
 	SuspendVisibiltyUpdates("EnterCombat")
 	Msg("CombatStarting", dynamic_data)
+	ListCallReactions(g_Units, "OnCombatStarting")
 	CombatLog("debug", "Combat starting")
 	if dynamic_data then -- loading a combat
 		for _, unit in ipairs(g_Units) do
@@ -342,6 +346,7 @@ function Combat:Start(dynamic_data)
 	gv_ActiveCombat = gv_CurrentSectorId
 	g_StartingCombat = false
 	Msg("CombatStart", dynamic_data, self)
+	ListCallReactions(g_Units, "OnCombatStarted")
 	PlayFX("ConflictInitiated")
 	LockCamera("CombatStarting")
 	self:UpdateVisibility()
@@ -491,7 +496,6 @@ function Combat:MainLoop(dynamic_data)
 	self.combat_started = true
 	Msg("CombatStartedForReal", dynamic_data, self)
 	local first_turn = true	
-	local outnumbered_units = {} 
 	while true do
 		if IsSetpiecePlaying() then
 			WaitMsg("SyncSetpieceDialogClosed")
@@ -717,18 +721,6 @@ function Combat:MainLoop(dynamic_data)
 			self:End()
 			break
 		end
-		
-		if g_Teams[g_CurrentTeam]:IsEnemySide(g_Teams[last_team]) then
-			if player_turn then
-				outnumbered_units = CombatCollectOutnumbered(last_team)
-			else
-				local new_outnumbered_units = CombatCollectOutnumbered(last_team, outnumbered_units)
-				local voice_unit = table.rand(new_outnumbered_units)
-				if voice_unit then
-					PlayVoiceResponse(voice_unit, "Outnumbered")
-				end
-			end
-		end
 
 		if g_CurrentTeam == eot_marker_team then
 			self.current_turn = self.current_turn + 1
@@ -882,6 +874,7 @@ function Combat:WaitEndTurn()
 		return
 	end
 	WaitMsg("EndTurnReady")
+	WaitAllOtherThreads() --EndTurnReady msg is fired async, therefore we may or may not be in the same thread order as the other player.
 end
 
 function Combat:IsLocalPlayerEndTurn()
@@ -953,6 +946,7 @@ function Combat:End()
 	AdjustCombatCamera("reset")
 	
 	Msg("CombatEnd", self, anyEnemies)
+	ListCallReactions(g_Units, "OnCombatEnd")
 	CombatLog("debug", "Combat ended")
 	NetUpdateHash("CombatEnd")
 
@@ -1143,11 +1137,11 @@ function Combat:AITurn(team)
 	end
 	local units = table.ifilter(team.units, function(idx, unit) return not unit:HasStatusEffect("Panicked") and not unit:HasStatusEffect("Berserk") end)
 	
-	for _, unit in ipairs(team.units) do
+	for _, unit in ipairs(units) do
 		unit.ai_context = nil
 	end
 	
-	g_AIExecutionController:Execute(team.units)
+	g_AIExecutionController:Execute(units)
 	
 	-- bombard
 	local bombed_units = {}
@@ -2354,11 +2348,6 @@ function GameTests.Combat()
 	
 	WaitUnitsInIdle()
 	
-	-- Units are not controllable during this time.
-	while g_Combat.camera_use or IsSetpiecePlaying() do
-		Sleep(100)
-	end
-	
 	-- mark the total hp of the units to make sure the attacks deal some damage
 	local total_hp = 0
 	for _, unit in ipairs(g_Units) do
@@ -2628,7 +2617,7 @@ function DoRandomStuffForever()
 		end
 	end)
 	
-	g_DbgAutoClickLoadingScreenStart = 1
+	g_AutoClickLoadingScreenStart = 1
 	
 	-- quick start new game
 	EditorDeactivate()

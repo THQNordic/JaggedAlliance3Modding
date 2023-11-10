@@ -9,6 +9,7 @@ PlaceObj('InventoryItemCompositeDef', {
 	'DisplayNamePlural', T(570576081589, --[[InventoryItemCompositeDef Trophy DisplayNamePlural]] "Trophies"),
 	'AdditionalHint', T(520396775412, --[[InventoryItemCompositeDef Trophy AdditionalHint]] "It's easier to keep count this way."),
 	'locked', true,
+	'RestockWeight', 0,
 	'MaxStacks', 1000,
 })
 

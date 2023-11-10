@@ -688,6 +688,97 @@ DefineConst{
 	value = 100,
 }
 DefineConst{
+	Comment = 'when performing "fake purchases", each item is independently chosen to its stock consumed with this probability (the amount of stock consume is random between )',
+	group = "BobbyRay",
+	id = "FakePurchase_PickProbability",
+	scale = "%",
+	value = 13,
+}
+DefineConst{
+	Comment = 'when performing "fake purchases", a picked item\'s stock is reduced at most by this percentage (rounded down; if item has a single piece of stock available, it is always consumed)',
+	group = "BobbyRay",
+	id = "FakePurchase_StockConsumedMax",
+	scale = "%",
+	value = 50,
+}
+DefineConst{
+	Comment = 'when performing "fake purchases", a picked item\'s stock is reduced at minimum by this percentage (rounded down; if item has a single piece of stock available, it is always consumed)',
+	group = "BobbyRay",
+	id = "FakePurchase_StockConsumedMin",
+	scale = "%",
+	value = 25,
+}
+DefineConst{
+	Comment = "for each category, out of all the available items (CanAppearInShop and CanAppearStandard) at the unlocked tiers, between (Restock_StandardPercentageMin% and Restock_StandardPercentageMax%) of the total number of items are restocked (weighted by their RestockWeight variable)",
+	group = "BobbyRay",
+	id = "Restock_StandardPercentageMax",
+	scale = "%",
+	value = 45,
+}
+DefineConst{
+	Comment = "for each category, out of all the available items (CanAppearInShop and CanAppearStandard) at the unlocked tiers, between (Restock_StandardPercentageMin% and Restock_StandardPercentageMax%) of the total number of items are restocked (weighted by their RestockWeight variable)",
+	group = "BobbyRay",
+	id = "Restock_StandardPercentageMin",
+	scale = "%",
+	value = 25,
+}
+DefineConst{
+	Comment = "when a used item is generate, its condition is between Restock_UsedConditionMin% and Restock_UsedConditionMax%",
+	group = "BobbyRay",
+	id = "Restock_UsedConditionMax",
+	scale = "%",
+	value = 80,
+}
+DefineConst{
+	Comment = "when a used item is generate, its condition is between Restock_UsedConditionMin% and Restock_UsedConditionMax%",
+	group = "BobbyRay",
+	id = "Restock_UsedConditionMin",
+	scale = "%",
+	value = 40,
+}
+DefineConst{
+	Comment = "for each category, out of all the available items (CanAppearInShop and CanAppearUsed) at the unlocked tiers, between (Restock_UsedPercentageMin% and Restock_UsedPercentageMax%) of the total number of items are restocked (weighted by their RestockWeight variable)",
+	group = "BobbyRay",
+	id = "Restock_UsedPercentageMax",
+	scale = "%",
+	value = 15,
+}
+DefineConst{
+	Comment = "for each category, out of all the available items (CanAppearInShop and CanAppearUsed) at the unlocked tiers, between (Restock_UsedPercentageMin% and Restock_UsedPercentageMax%) of the total number of items are restocked (weighted by their RestockWeight variable)",
+	group = "BobbyRay",
+	id = "Restock_UsedPercentageMin",
+	scale = "%",
+	value = 5,
+}
+DefineConst{
+	Comment = "when a used item is generated, its price is modified between Restock_UsedMinPriceModMin% and Restock_UsedPriceModMax%\nWeapons' prices are further modified by the amount of non-default components in them by Restock_UsedWeaponComponentPriceMod%",
+	group = "BobbyRay",
+	id = "Restock_UsedPriceModMax",
+	scale = "%",
+	value = 95,
+}
+DefineConst{
+	Comment = "when a used item is generated, its price is modified between Restock_UsedMinPriceModMin% and Restock_UsedPriceModMax%\nWeapons' prices are further modified by the amount of non-default components in them by Restock_UsedWeaponComponentPriceMod%",
+	group = "BobbyRay",
+	id = "Restock_UsedPriceModMin",
+	scale = "%",
+	value = 75,
+}
+DefineConst{
+	Comment = "when a used weapon is generated, every component slot is randomized by this %. Its price increases by Restock_UsedWeaponComponentPriceMod% when this happens",
+	group = "BobbyRay",
+	id = "Restock_UsedWeaponComponentPercentage",
+	scale = "%",
+	value = 25,
+}
+DefineConst{
+	Comment = "when a used item is generated, its price is modified between Restock_UsedMinPriceModMin% and Restock_UsedPriceModMax%\nWeapons' prices are further modified by the amount of non-default components in them by Restock_UsedWeaponComponentPriceMod",
+	group = "BobbyRay",
+	id = "Restock_UsedWeaponComponentPriceMod",
+	scale = "%",
+	value = 30,
+}
+DefineConst{
 	Comment = "x,y of the crosshair box that will be checked for moving the camera if it doesn't fit on screen",
 	group = "Camera",
 	id = "CrosshairPaddingX",

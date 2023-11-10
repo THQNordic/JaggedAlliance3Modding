@@ -10,6 +10,13 @@ PlaceObj('InventoryItemCompositeDef', {
 	'colorStyle', "AmmoHPColor",
 	'Description', T(839153279981, --[[InventoryItemCompositeDef _9mm_HP Description]] "9 mm ammo for Handguns and SMGs."),
 	'AdditionalHint', T(264921787121, --[[InventoryItemCompositeDef _9mm_HP AdditionalHint]] "<bullet_point> No armor penetration\n<bullet_point> High Crit chance\n<bullet_point> Inflicts <em>Bleeding</em>"),
+	'Cost', 60,
+	'CanAppearInShop', true,
+	'Tier', 2,
+	'MaxStock', 5,
+	'RestockWeight', 25,
+	'CategoryPair', "9mm",
+	'ShopStackSize', 30,
 	'MaxStacks', 500,
 	'Caliber', "9mm",
 	'Modifications', {

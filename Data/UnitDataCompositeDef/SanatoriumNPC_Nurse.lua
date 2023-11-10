@@ -18,6 +18,9 @@ PlaceObj('UnitDataCompositeDef', {
 	'Name', T(212311446348, --[[UnitDataCompositeDef SanatoriumNPC_Nurse Name]] "Nurse"),
 	'Randomization', true,
 	'Affiliation', "Civilian",
+	'AIKeywords', {
+		"Heal",
+	},
 	'archetype', "Medic",
 	'role', "Medic",
 	'MaxAttacks', 2,

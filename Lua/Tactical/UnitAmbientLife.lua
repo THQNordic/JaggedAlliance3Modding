@@ -590,22 +590,26 @@ function ItemFallDown(obj)
 	if not IsValid(obj) then
 		return
 	end
-	local fall_down_pos = FindFallDownPos(obj)
-	if not fall_down_pos then
-		local _, z = WalkableSlabByPoint(obj, "downward only")
-		if z then
-			fall_down_pos = obj:GetPos():SetZ(z)
+	local x, y, z = FindFallDownPos(obj)
+	if not x then
+		local step_obj
+		step_obj, z = WalkableSlabByPoint(obj, "downward only")
+		if not z then
+			return
 		end
+		x, y = obj:GetPosXYZ()
 	end
-	if not fall_down_pos then
-		return
-	end
+	local z3d = z or terrain.GetHeight(x, y)
+	local height = Max(0, select(3, obj:GetVisualPosXYZ()) - z3d)
 	obj:SetGravity()
-	local fall_time = obj:GetGravityFallTime(fall_down_pos)
-	obj:SetPos(fall_down_pos, fall_time)
+	local fall_time = height > 0 and obj:GetGravityFallTime(height) or 0
+	obj:SetPos(x, y, z3d, fall_time)
 	Sleep(fall_time)
 	if IsValid(obj) then
 		obj:SetGravity(0)
+		if not z then
+			obj:SetPos(x, y)
+		end
 	end
 end
 

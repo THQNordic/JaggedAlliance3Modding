@@ -7,6 +7,14 @@ DefineClass.FriendlyFire = {
 
 
 	object_class = "StatusEffect",
+	unit_reactions = {
+		PlaceObj('UnitReaction', {
+			Event = "OnCalcPersonalMorale",
+			Handler = function (self, target, value)
+				return value - 1
+			end,
+		}),
+	},
 	DisplayName = T(850035846391, --[[CharacterEffectCompositeDef FriendlyFire DisplayName]] "FriendlyFire"),
 	RemoveOnEndCombat = true,
 }

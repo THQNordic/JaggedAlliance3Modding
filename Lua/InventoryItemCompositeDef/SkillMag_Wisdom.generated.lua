@@ -15,6 +15,10 @@ DefineClass.SkillMag_Wisdom = {
 	AdditionalHint = T(680885967646, --[[InventoryItemCompositeDef SkillMag_Wisdom AdditionalHint]] "<bullet_point> Used through the Item Menu\n<bullet_point> Single use\n<bullet_point> Increases Wisdom"),
 	UnitStat = "Wisdom",
 	Valuable = 1,
+	Cost = 1500,
+	CanAppearInShop = true,
+	MaxStock = 1,
+	RestockWeight = 10,
 	effect_moment = "on_use",
 	Effects = {
 		PlaceObj('UnitStatBoost', {

@@ -72,7 +72,7 @@ function IModeCombatFreeAim:UpdateTarget(...)
 
 	IModeCombatAttackBase.UpdateTarget(self, ...)
 	
-	local tile, fx_target = self:GetFreeAttackTarget(self.potential_target, self.attacker:GetPos())
+	local tile, fx_target = self:GetFreeAttackTarget(self.potential_target, self.attacker)
 	if self.fx_free_attack ~= fx_target then
 		self.tile_free_attack = tile
 		if self.fx_free_attack then
@@ -121,7 +121,7 @@ function IModeCombatFreeAim:OnMouseButtonDown(pt, button)
 			return
 		end
 		-- special-case MG burst attack free aim to be restricted in the attack cone
-		local target, target_obj = self:GetFreeAttackTarget(self.potential_target, self.attacker:GetPos()) 		
+		local target, target_obj = self:GetFreeAttackTarget(self.potential_target, self.attacker)
 		if GetUIStyleGamepad() and self.action.AimType == "cone" and self.target_as_pos then
 			target = self.target_as_pos
 		end
@@ -174,7 +174,7 @@ end
 
 
 --target can be only unit or point
-function IModeCombatFreeAim:GetFreeAttackTarget(target, attackerPos)
+function IModeCombatFreeAim:GetFreeAttackTarget(target, attacker_or_pos)
 	local spawnFXObject
 	local objForFX
 	-- check target
@@ -211,7 +211,7 @@ function IModeCombatFreeAim:GetFreeAttackTarget(target, attackerPos)
 			objForFX = target
 			local hitSpotIdx = target:GetSpotBeginIndex("Hit")
 			if hitSpotIdx ~= -1 then
-				hitSpotIdx = target:GetNearestSpot("Hit", attackerPos)
+				hitSpotIdx = target:GetNearestSpot("Hit", attacker_or_pos)
 			end
 			
 			--if hitspot exists -> set pos to it

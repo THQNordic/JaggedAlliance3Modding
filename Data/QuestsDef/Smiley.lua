@@ -6,7 +6,7 @@ PlaceObj('QuestsDef', {
 	DevNotes = "BossCombat indicated that you started combat with the Boss while Smiley was alive (see _GroupsAttacked).\n\nRemoved in TCE_MollieDead_Reaction the Boss turning hostile when Mollie is dead (r 0221622). We shouldn't do that without a banter/conv greeting and in any case we need to fail the quest, flip the remaining guards to enemy1 and adjust the Notes.",
 	DisplayName = T(118904227644, --[[QuestsDef Smiley DisplayName]] "M.E.R.C.: Finding Smiley"),
 	NoteDefs = {
-		LastNoteIdx = 51,
+		LastNoteIdx = 52,
 		PlaceObj('QuestNote', {
 			Badges = {
 				PlaceObj('QuestBadgePlacement', {
@@ -252,7 +252,7 @@ PlaceObj('QuestsDef', {
 					end,
 				}),
 			},
-			Text = T(171307235503, --[[QuestsDef Smiley Text]] "Mollie was kidnapped from the back rooms of <em>Le Lys Rouge</em> in <em><SectorName('D7')></em> (press <em><ShortcutButton('actionCamOverview')></em> to toggle <em>Overview</em> mode)"),
+			Text = T(171307235503, --[[QuestsDef Smiley Text]] "There may be clues of Mollie's disappearing in the back rooms of <em>Le Lys Rouge</em> in <em><SectorName('D7')></em> (press <em><ShortcutButton('actionCamOverview')></em> to toggle <em>Overview</em> mode)"),
 		}),
 		PlaceObj('QuestNote', {
 			Badges = {
@@ -366,6 +366,9 @@ PlaceObj('QuestsDef', {
 							Prop = "Clues",
 							QuestId = "Smiley",
 						}),
+						PlaceObj('GroupIsDead', {
+							Group = "Broker",
+						}),
 					},
 				}),
 			},
@@ -386,6 +389,7 @@ PlaceObj('QuestsDef', {
 		PlaceObj('QuestNote', {
 			Badges = {
 				PlaceObj('QuestBadgePlacement', {
+					BadgeUnit = "Mollie",
 					Sector = "I9",
 				}),
 			},
@@ -608,6 +612,35 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			Text = T(130862710845, --[[QuestsDef Smiley Text]] "Clue: <em>Smiley</em> and <em>Mollie</em> spent some quality time in the savanna"),
+		}),
+		PlaceObj('QuestNote', {
+			CompletionConditions = {
+				PlaceObj('QuestIsVariableNum', {
+					Amount = 3,
+					Prop = "Clues",
+					QuestId = "Smiley",
+				}),
+			},
+			HideConditions = {
+				PlaceObj('QuestIsVariableBool', {
+					Condition = "or",
+					QuestId = "Smiley",
+					Vars = set( "Pastor_Key", "SmileyDead", "SmileyMet" ),
+					__eval = function ()
+						local quest = gv_Quests['Smiley'] or QuestGetState('Smiley')
+						return quest.Pastor_Key or quest.SmileyDead or quest.SmileyMet
+					end,
+				}),
+			},
+			Idx = 52,
+			ShowConditions = {
+				PlaceObj('QuestIsVariableNum', {
+					Amount = 2,
+					Prop = "Clues",
+					QuestId = "Smiley",
+				}),
+			},
+			Text = T(582801098933, --[[QuestsDef Smiley Text]] "<em>Smiley</em> is hiding somewhere close and probably needs help"),
 		}),
 		PlaceObj('QuestNote', {
 			Badges = {

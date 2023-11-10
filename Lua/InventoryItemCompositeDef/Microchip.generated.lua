@@ -12,5 +12,11 @@ DefineClass.Microchip = {
 	DisplayNamePlural = T(767899744987, --[[InventoryItemCompositeDef Microchip DisplayNamePlural]] "Chips"),
 	AdditionalHint = T(990077034297, --[[InventoryItemCompositeDef Microchip AdditionalHint]] "<bullet_point> Used for creating advanced weapon components"),
 	Valuable = 1,
+	Cost = 4900,
+	CanAppearInShop = true,
+	Tier = 3,
+	MaxStock = 1,
+	RestockWeight = 15,
+	CategoryPair = "Components",
 }
 

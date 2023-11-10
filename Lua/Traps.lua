@@ -16,7 +16,7 @@ DefineClass.TrapExplosionProperties = {
 DefineClass.TrapProperties = {
 	__parents = { "TrapExplosionProperties", "DamagePredictable" },
 	properties = {
-		{ category = "Trap", id = "visibility", name = "Visible By", editor = "set", default = set{ enemy1 = true, enemy2 = true, enemyNeutral = true, neutral = true }, items = function() return table.map(GetCurrentCampaignPreset().Sides, "Id") end,
+		{ category = "Trap", id = "visibility", name = "Visible By", editor = "set", default = set{ enemy1 = true, enemy2 = true, enemyNeutral = true, neutral = true }, items = function() return Sides end,
 			help = "Teams which can see this trap regardless of where their members are." },
 		{ category = "Trap", id = "visibilityRange", name = "Visible At (Voxels)", editor = "number", default = 3, help = "How far the trap can be seen from." },
 		{ category = "Trap", id = "revealDifficulty", name = "Reveal Skill Requirement", editor = "combo", items = const.DifficultyPresetsNew, arbitrary_value = false, default = "Easy",
@@ -394,11 +394,22 @@ function ExplosiveSubstanceCombo()
 	return arr
 end
 
+function GrenadeCombo()
+	local arr = {}
+	ForEachPreset("InventoryItemCompositeDef", function(o)
+		if o.object_class == "Grenade" then
+			arr[#arr + 1] = o.id
+		end
+	end)
+	return arr
+end
+
 DefineClass.LandmineProperties = {
 	__parents = { "PropertyObject" },
 	properties = {
 		{ category = "Trap", id = "TriggerType", editor = "choice", items = LandmineTriggerType, default = "Contact", template = true },
 		{ category = "Trap", id = "TimedExplosiveTurns", editor = "number", default = 1, template = true, help = "In exploration each turn is 5 seconds." },
+		{ category = "Trap", id = "GrenadeExplosion", editor = "combo", items = GrenadeCombo, default = false },
 	}
 }
 
@@ -717,7 +728,7 @@ function TriggerTimedExplosives()
 			AdjustCombatCamera("set")
 			local cameraClose = DoPointsFitScreen({trap:GetVisualPos()}, nil, const.Camera.BufferSizeNoCameraMov)
 			if not cameraClose then
-				SnapCameraToObj(trap:GetVisualPos(), "force",  GetFloorOfPos(SnapToPassSlab(trap:GetVisualPosXYZ())))
+				SnapCameraToObj(trap:GetVisualPos(), "force",  GetStepFloor(trap))
 				Sleep(1000)
 			end
 			trap:TriggerTrap(nil, trap.attacker)
@@ -773,8 +784,56 @@ function Landmine:TriggerTrap(victim, attacker)
 	
 	self:UpdateTriggerRadiusFx("delete")
 	self:UpdateTimedExplosionFx("delete")
-	self:Explode(victim, self.fx_actor_class, nil, attacker)
+	if #(self.GrenadeExplosion or "") > 0 then
+		self:ExplodeAsGrenade(victim, self.fx_actor_class, nil, attacker)
+	else
+		self:Explode(victim, self.fx_actor_class, nil, attacker)
+	end
 	self:SetVisible(false)
+end
+
+function Landmine:ExplodeAsGrenade(victim, fx_actor, state, attacker)
+	self.victim = victim
+	self.done = true
+	
+	-- Track who exploded the trap and handle chain explosions
+	self.attacker = IsKindOf(attacker, "Trap") and attacker.attacker or attacker
+	
+	local trapName = self:GetTrapDisplayName()
+	
+	-- Check if dud
+	local rand = InteractionRand(100)
+	if rand > DifficultyToNumber(self.triggerChance) then
+		self.discovered_trap = true
+		self.dud = true
+		CombatLog("important", T{536546697372, "<TrapName> was a dud.", TrapName = trapName})
+		CreateFloatingText(self:GetVisualPos(), T{372675206288, "<TrapName> was <em>a dud</em>", TrapName = trapName}, "BanterFloatingText")
+		PlayFX("Explosion", "failed", self)
+		return
+	end
+	
+	if IsKindOf(self, "ContainerMarker") and not self:GetItemInSlot("Inventory", "QuestItem") then
+		self.enabled = false
+		self:UpdateHighlight()
+	end
+	
+	local weapon = PlaceObject(self.GrenadeExplosion)
+	if not weapon then return end
+	
+	local target_pos = self:GetPos()
+	CreateGameTimeThread(function()
+		local attackProps = weapon:GetAreaAttackParams(nil, self, target_pos)
+		local props = GetAreaAttackResults(attackProps)
+		props.trajectory = { { pos = target_pos } }
+		props.explosion_pos = target_pos
+		weapon:OnLand(self, props, self)
+	end)
+
+	if not self.spawned_by_explosive_object then
+		-- Exploded
+		CombatLog("important", T{811751960646, "<TrapName> <em>detonated</em>!", TrapName = trapName})
+		CreateFloatingText(self:GetVisualPos(), T{463301911995, "<TrapName> <em>explodes</em>!", TrapName = trapName}, "BanterFloatingText")
+	end
 end
 
 function Landmine:AttemptDisarm(unit)
@@ -1021,9 +1080,8 @@ local function lTrapVisibilityUpdate(unit)
 			goto continue
 		end
 		
-		local distToTrap = IsValid(t) and unit:GetDist(t)
 		local range = t.discovered_trap and unit:GetSightRadius(t) or ((t.visibilityRange - 1) * const.SlabSizeX + const.SlabSizeX / 2)
-		if distToTrap and distToTrap < range then
+		if IsCloser(unit, t, range) then
 			minesAround[#minesAround + 1] = t
 		end
 		
@@ -1225,8 +1283,10 @@ function BoobyTrappable:TriggerTrap(victim)
 	if self.done or IsSetpiecePlaying() then return false end
 	local trapType = self.boobyTrapType
 	if trapType == lBoobyTrapNone then return false end
-	CreateGameTimeThread(lBoobyTrapTypes[trapType].func, self, victim)
-	self:UpdateHighlight()
+	CreateGameTimeThread(function(self, victim, trapType)
+		lBoobyTrapTypes[trapType].func(self, victim)
+		self:UpdateHighlight()
+	end, self, victim, trapType)
 	return true
 end
 
@@ -1275,6 +1335,12 @@ function DynamicSpawnLandmine:GameInit()
 end
 
 function DynamicSpawnLandmine:GetDynamicData(data)
+	data.additionalDifficulty = self.additionalDifficulty
+	data.AreaObjDamageMod = self.AreaObjDamageMod
+	data.CenterObjDamageMod = self.CenterObjDamageMod
+	data.CenterUnitDamageMod = self.CenterUnitDamageMod
+	data.DeathType = self.DeathType
+
 	data.TriggerType = self.TriggerType
 	data.timer_passed = self.timer_passed or nil
 	data.BaseDamage = self.BaseDamage
@@ -1296,6 +1362,12 @@ function DynamicSpawnLandmine:GetDynamicData(data)
 end
 
 function DynamicSpawnLandmine:SetDynamicData(data)
+	self.additionalDifficulty = data.additionalDifficulty
+	self.AreaObjDamageMod = data.AreaObjDamageMod
+	self.CenterObjDamageMod = data.CenterObjDamageMod
+	self.CenterUnitDamageMod = data.CenterUnitDamageMod
+	self.DeathType = data.DeathType
+
 	self.TriggerType = data.TriggerType
 	self.timer_passed = data.timer_passed or nil
 	self.BaseDamage = data.BaseDamage
@@ -1387,7 +1459,7 @@ function DynamicSpawnLandmine:SetCollision(value)
 end
 
 DefineClass.ExplosiveSubstance = {
-	__parents = { "InventoryStack", "TrapExplosionProperties" },
+	__parents = { "InventoryStack", "TrapExplosionProperties", "BobbyRayShopOtherProperties" },
 	properties = {
 		{ id = "dbg_explosion_buttons", no_edit = true },
 	},
@@ -1554,7 +1626,7 @@ function ThrowableTrapItem:ValidatePos(explosion_pos, attack_args)
 end
 
 DefineClass.TrapDetonator = {
-	__parents = { "InventoryItem" },
+	__parents = { "InventoryItem", "BobbyRayShopOtherProperties" },
 	properties = {
 		{ category = "Detonator", id = "AreaOfEffect", name = "Area of Effect", help = "the area within which the detonator blows up traps",
 			editor = "number", default = 3, template = true, min = 0, max = 20, },
@@ -1712,6 +1784,7 @@ function ExplosiveObject:DelayedExplosion(side)
 		ExplosiveType = ent and ent.explosive_type or "C4",
 		team_side = side -- We want the mine to run its turn in the same time as its attacker
 	})
+	self.explodePart.UpdateInteractableBadge = function() end
 	local explosiveTypePreset = g_Classes[self.explodePart.ExplosiveType]
 	self.explodePart:CopyProperties(explosiveTypePreset, TrapExplosionProperties:GetProperties())
 	PlayFX("Explosion", "burning-start", self)

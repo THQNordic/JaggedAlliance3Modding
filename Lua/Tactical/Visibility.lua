@@ -410,6 +410,7 @@ local function UpdateUnitsLOS(unitsLOS)
 	local dead_units = {}  -- enemies alarm checks
 	local enemyNeutral_Side = GameState.Conflict and "enemy1" or "neutral"
 	local script_target_groups
+	local table_iappend = table.iappend
 
 	for group, mods in pairs(gv_AITargetModifiers) do
 		for target_group, value in pairs(mods) do
@@ -418,130 +419,133 @@ local function UpdateUnitsLOS(unitsLOS)
 		end
 	end
 
-	local insert = table.insert
-	local clear = table.clear
-	local IsValidPos = Unit.IsValidPos
-	local IsDead = Unit.IsDead
-
 	for _, team in ipairs(g_Teams) do
-		local side = team.side
-		if side == "enemyNeutral" then
-			side = enemyNeutral_Side
-		end
-		if side == "neutral" then
-			for _, unit in ipairs(team.units) do
-				local has_los_tbl
-				if IsValidPos(unit) and not IsDead(unit) then
-					local is_script_target
-					if script_target_groups then
-						for _, group in ipairs(unit.Groups) do
-							if script_target_groups[group] then
-								is_script_target = true
-								break
+		if #team.units > 0 then
+			local side = team.side
+			if side == "enemyNeutral" then
+				side = enemyNeutral_Side
+			end
+			if side == "neutral" then
+				for _, unit in ipairs(team.units) do
+					local los_tbl
+					if unit.HitPoints > 0 then
+						local is_script_target
+						if script_target_groups then
+							for _, group in ipairs(unit.Groups) do
+								if script_target_groups[group] then
+									is_script_target = true
+									break
+								end
 							end
 						end
+						if is_script_target then
+							local units_list = enemy_units[side]
+							if not units_list then
+								units_list = {}
+								enemy_units[side] = units_list
+								enemy_units[#enemy_units + 1] = side
+							end
+							units_list[#units_list + 1] = unit
+							los_tbl = unitsLOS[unit]
+							if not los_tbl or #los_tbl > 1 then
+								los_tbl = {}
+							end
+							los_tbl[1] = unit
+							los_tbl[unit] = 2
+						else
+							neutral_units[#neutral_units + 1] = unit
+						end
 					end
-					if is_script_target then
-						insert(enemy_units, unit)
-						has_los_tbl = true
+					unitsLOS[unit] = los_tbl
+				end
+			elseif team.player_team then
+				for _, unit in ipairs(team.units) do
+					if unit.HitPoints <= 0 then
+						unitsLOS[unit] = nil
 					else
-						insert(neutral_units, unit)
+						player_units[#player_units + 1] = unit
+						local los_tbl = unitsLOS[unit]
+						if not los_tbl or #los_tbl > 1 then
+							los_tbl = {}
+							unitsLOS[unit] = los_tbl
+						end
+						los_tbl[1] = unit
+						los_tbl[unit] = 2
 					end
 				end
-				if has_los_tbl then
-					local los_tbl = unitsLOS[unit]
-					if los_tbl then clear(los_tbl) else los_tbl = {} unitsLOS[unit] = los_tbl end
-					los_tbl[1] = unit
-					los_tbl[unit] = 2
-				else
-					unitsLOS[unit] = nil
+			else
+				local units_list = enemy_units[side]
+				if not units_list then
+					units_list = {}
+					enemy_units[side] = units_list
+					enemy_units[#enemy_units + 1] = side
 				end
-			end
-		elseif team.player_team then
-			for _, unit in ipairs(team.units) do
-				if IsValidPos(unit) and not IsDead(unit) then
-					insert(player_units, unit)
-					local los_tbl = unitsLOS[unit]
-					if los_tbl then clear(los_tbl) else los_tbl = {} unitsLOS[unit] = los_tbl end
-					los_tbl[1] = unit
-					los_tbl[unit] = 2
-				else
-					unitsLOS[unit] = nil
+				local dead_list = dead_units[side]
+				if not dead_list then
+					dead_list = {}
+					dead_units[side] = dead_list
 				end
-			end
-		else
-			for _, unit in ipairs(team.units) do
-				local has_los_tbl
-				if IsValidPos(unit) then
-					if IsDead(unit) then
-						insert(dead_units, unit)
+				for _, unit in ipairs(team.units) do
+					if unit.HitPoints <= 0 then
+						dead_list[#dead_list + 1] = unit
+						unitsLOS[unit] = nil
 					else
-						insert(enemy_units, unit)
-						has_los_tbl = true
+						units_list[#units_list + 1] = unit
+						local los_tbl = unitsLOS[unit]
+						if not los_tbl or #los_tbl > 1 then
+							los_tbl = {}
+							unitsLOS[unit] = los_tbl
+						end
+						los_tbl[1] = unit
+						los_tbl[unit] = 2
 					end
-				end
-				if has_los_tbl then
-					local los_tbl = unitsLOS[unit]
-					if los_tbl then clear(los_tbl) else los_tbl = {} unitsLOS[unit] = los_tbl end
-					los_tbl[1] = unit
-					los_tbl[unit] = 2
-				else
-					unitsLOS[unit] = nil
 				end
 			end
 		end
 	end
 
 	local src_units, target_units = {}, {}
+	-- player targets
+	local players_count = #player_units
+	local last_player_unit = player_units[players_count]
 	for i, unit1 in ipairs(player_units) do
-		for j, unit2 in ipairs(player_units) do
-			if unit1 ~= unit2 then
-				insert(src_units, unit1)
-				insert(target_units, unit2)
-			end
+		local idx = #target_units
+		table_iappend(target_units, player_units)
+		target_units[idx + i] = last_player_unit
+		target_units[idx + players_count] = nil
+		for j, side in ipairs(enemy_units) do
+			table_iappend(target_units, enemy_units[side])
 		end
-		for j, unit2 in ipairs(enemy_units) do
-			insert(src_units, unit1)
-			insert(target_units, unit2)
-		end
-		for j, unit2 in ipairs(neutral_units) do
-			insert(src_units, unit1)
-			insert(target_units, unit2)
+		table_iappend(target_units, neutral_units)
+		for j = idx + 1, #target_units do
+			src_units[j] = unit1
 		end
 	end
-	for i, unit1 in ipairs(enemy_units) do
-		for j, unit2 in ipairs(player_units) do
-			insert(src_units, unit1)
-			insert(target_units, unit2)
-		end
-		local side1 = unit1.team.side
-		if side1 == "enemyNeutral" then side1 = enemyNeutral_Side end
-		for j, unit2 in ipairs(enemy_units) do
-			local side2 = unit2.team.side
-			if side2 == "enemyNeutral" then side2 = enemyNeutral_Side end
-			if side1 ~= side2 then
-				insert(src_units, unit1)
-				insert(target_units, unit2)
+	-- enemies targets
+	for i, side in ipairs(enemy_units) do
+		for _, unit1 in ipairs(enemy_units[side]) do
+			local idx = #target_units
+			table_iappend(target_units, player_units)
+			for k, side2 in ipairs(enemy_units) do
+				if k ~= i then
+					table_iappend(target_units, enemy_units[side2])
+				end
 			end
-		end
-		for j, unit2 in ipairs(dead_units) do
-			local side2 = unit2.team.side
-			if side2 == "enemyNeutral" then side2 = enemyNeutral_Side end
-			if side1 == side2 then
-				insert(src_units, unit1)
-				insert(target_units, unit2)
+			table_iappend(target_units, dead_units[side])
+			for j = idx + 1, #target_units do
+				src_units[j] = unit1
 			end
 		end
 	end
 	if #src_units > 0 then
 		local los_any, result = CheckLOS(target_units, src_units)
-		local uvVisible = const.uvVisible
-		for i, target in ipairs(target_units) do
-			local value = result and result[i]
-			if value then
-				local los_tbl = unitsLOS[src_units[i]]
-				insert(los_tbl, target)
-				los_tbl[target] = value
+		if los_any then
+			for i, target in ipairs(target_units) do
+				if result[i] then
+					local los_tbl = unitsLOS[src_units[i]]
+					los_tbl[#los_tbl + 1] = target
+					los_tbl[target] = result[i]
+				end
 			end
 		end
 	end
@@ -555,6 +559,7 @@ function ComputeUnitsVisibility()
 	local uvVisible = const.uvVisible
 	local uvRevealed = const.uvRevealed
 	local insert = table.insert
+	local innerInfo = gv_CurrentSectorId and g_Units.Livewire and g_Units.Livewire.team == GetPoVTeam() and gv_Sectors[gv_CurrentSectorId].intel_discovered -- Livewire's perk enabled
 
 	-- init team visibility
 	for _, team in ipairs(g_Teams) do
@@ -569,10 +574,12 @@ function ComputeUnitsVisibility()
 		else
 			local team_visibility = {}
 			visibility[team] = team_visibility
-			for i, ru in ipairs(g_RevealedUnits[team]) do
-				if not ru:IsDead() then
-					insert(team_visibility, ru)
-					team_visibility[ru] = uvRevealed
+			if g_Combat then
+				for i, ru in ipairs(g_RevealedUnits[team]) do
+					if not ru:IsDead() then
+						insert(team_visibility, ru)
+						team_visibility[ru] = uvRevealed
+					end
 				end
 			end
 			for _, unit in ipairs(team.units) do
@@ -580,8 +587,9 @@ function ComputeUnitsVisibility()
 					insert(visual_contact_change, unit)
 					visual_contact_change[unit] = 1
 				end
+
 				unit.enemy_visual_contact = false
-				if IsValid(unit) and unit:IsValidPos() and not unit:IsDead() then
+				if unit:IsValidPos() and not unit:IsDead() then
 					local unit_visibility = unit:ComputeVisibleUnits()
 					visibility[unit] = unit_visibility
 					-- build team visibility
@@ -595,6 +603,14 @@ function ComputeUnitsVisibility()
 							end
 							team_visibility[other] = tval
 						end
+					end
+				end
+			end
+			if innerInfo and team.player_team then
+				for _, unit in ipairs(g_Units) do
+					if (team_visibility[unit] or 0) < uvVisible then
+						table.insert_unique(team_visibility, unit)
+						team_visibility[unit] = bor(team_visibility[unit] or 0, uvRevealed)
 					end
 				end
 			end
@@ -829,7 +845,6 @@ function OnMsg.SetObjectDetail(action, params)
 end
 
 function ApplyUnitVisibility(active_units, pov_team, visibility, force)
-	local innerInfo = gv_CurrentSectorId and g_Units.Livewire and g_Units.Livewire.team == pov_team and gv_Sectors[gv_CurrentSectorId].intel_discovered -- Livewire's perk enabled
 	active_units = IsKindOf(active_units, "Unit") and {active_units} or active_units
 	local observers = g_Combat and {SelectedObj or nil} or (Selection or {})
 	local full_visibility = IsFullVisibility()
@@ -864,41 +879,50 @@ function ApplyUnitVisibility(active_units, pov_team, visibility, force)
 				if unit.on_die_hit_descr and unit.on_die_hit_descr.death_explosion then
 					unit:SetVisible(false)
 					unit:SetHighlightReason("visibility", nil)
-				elseif IsOnFadedSlab(unit) then
-					unit:SetVisible(not pov_team_hidden)
-					unit:SetHighlightReason("visibility", true)
 				else
-					unit:SetVisible(not pov_team_hidden)
-					table.insert(camera_visibility_check_list, unit)
+					unit:SetVisible(not pov_team_hidden) --sync state
+					if IsOnFadedSlab(unit) then --async check!
+						unit:SetHighlightReason("visibility", true)
+						unit:SetHighlightReason("faded", true)
+					else
+						table.insert(camera_visibility_check_list, unit)
+						unit:SetHighlightReason("faded", nil)
+					end
 				end
 			elseif unit:IsDead() then
 				if unit.on_die_hit_descr and unit.on_die_hit_descr.death_explosion then
 					unit:SetVisible(false, "force")
 					unit:SetHighlightReason("visibility", nil)
-				elseif IsOnFadedSlab(unit) then
-					local interaction
-					for _, au in ipairs(active_units) do
-						if unit:GetInteractionCombatAction(au) then
-							interaction = true
-							break
+				else
+					unit:SetVisible(true) --sync state
+					if IsOnFadedSlab(unit) then --async check!
+						local interaction
+						for _, au in ipairs(active_units) do
+							if unit:GetInteractionCombatAction(au) then
+								interaction = true
+								break
+							end
 						end
-					end
-					if interaction then
-						unit:SetVisible(true)
-						unit:SetHighlightReason("visibility", true)
+						if interaction then
+							unit:SetHighlightReason("visibility", true)
+						else
+							unit:SetHighlightReason("visibility", nil)
+						end
 					else
-						unit:SetVisible(false, "force")
 						unit:SetHighlightReason("visibility", nil)
 					end
-				else
-					unit:SetVisible(true)
-					unit:SetHighlightReason("visibility", nil)
 				end
 				-- weather fx
 				unit:SetHighlightReason("concealed", unit:UIConcealed("skip"))
 				unit:SetHighlightReason("obscured", unit:UIObscured())
 			else
-				local seen_by_player = innerInfo or HasVisibilityTo(pov_team, unit) and not unit:HasStatusEffect("Hidden")
+				local seen_by_player = HasVisibilityTo(pov_team, unit)
+				
+				-- Ensure that enemies the pov team has visibility to (livewire perk for instance) are
+				-- not seen if hidden.
+				if seen_by_player and unit.team and unit.team:IsEnemySide(pov_team) then
+					seen_by_player = not unit:HasStatusEffect("Hidden")
+				end
 				if not seen_by_player then
 					if deployment_markers == nil then
 						deployment_markers = (gv_DeploymentStarted or gv_Deployment) and GetAvailableDeploymentMarkers() or empty_table
@@ -974,6 +998,12 @@ function Combat:ShouldEndDueToNoVisibility()
 	if Game and Game.game_type == "PvP" then
 		return
 	end
+	
+	-- If the combat was started via script there is no guarantee that it wont
+	-- end instantly due to no visibility. (Such as H4U)
+	if gv_CombatStartFromConversation then
+		return false
+	end
 
 	self.turns_no_visibility = self.turns_no_visibility + #g_Teams
 	for _, t in ipairs(g_Teams) do
@@ -1007,7 +1037,6 @@ function InvalidateVisibility(force)
 	VisibilityUpdate(force)
 end
 
-MapVar("g_VisibilityLastUpdateTime", 0)
 MapVar("g_VisiblityUpdatesCount", 0)
 MapVar("g_VisiblityUpdatesTime", 0)
 MapVar("g_VisiblityUpdatesReportTime", GetPreciseTicks()) -- For debug
@@ -1111,7 +1140,6 @@ function VisibilityUpdate(force)
 				return 
 			end
 		end
-		g_VisibilityLastUpdateTime = GameTime()
 		g_VisibilityUpdateThread = CreateGameTimeThread(function(force)
 			local tStart = GetPreciseTicks()
 
@@ -1185,9 +1213,11 @@ function OnMsg.UnitDieStart(...)
 end
 
 function OnMsg.LoadSessionData()
-	g_VisibilityExplorationTick = true
-	InvalidateVisibility("force")
-	g_VisibilityExplorationTick = false
+	CreateGameTimeThread(function()
+		g_VisibilityExplorationTick = true
+		InvalidateVisibility("force")
+		g_VisibilityExplorationTick = false
+	end)
 end
 
 function OnMsg.OnPassabilityChanged()
@@ -1222,6 +1252,10 @@ function OnMsg.TurnStart(team)
 			unit:RevealTo(team)
 		end
 	end
+end
+
+function OnMsg.CombatEnd(combat)
+	g_RevealedUnits = {}
 end
 
 function ReapplyUnitVisibility(force)

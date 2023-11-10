@@ -23,6 +23,7 @@ const.TagLookupTable["bullet_point"]   = "<image UI/Conversation/T_Dialogue_Icon
 const.TagLookupTable["/bullet_point"]  = ""
 const.TagLookupTable["bullet_point_em"] = "<image UI/Conversation/T_Dialogue_IconBackgroundCircle.tga 400 196 175 117><style InventoryRolloverHintEm>"
 const.TagLookupTable["/bullet_point_em"]  = "</style>"
+const.TagLookupTable["space"] = "    "
 
 -- color tags
 const.TagLookupTable["red"]     = "<color 191 67 77><shadowcolor 1 60 40>"
@@ -103,9 +104,6 @@ const.PulseSize = 1180
 
 const.DefaultMouseCursor = "UI/Cursors/Cursor.tga"
 const.DefaultPdaMouseCursor = "UI/Cursors/Pda_Cursor.tga"
-
-StoryBitActivate.EditorExcludeAsNested = true
-StoryBitEnableRandom.EditorExcludeAsNested = true
 
 const.DifficultyPresets = {
 	{ text = "Easy (30)", id = 30 },

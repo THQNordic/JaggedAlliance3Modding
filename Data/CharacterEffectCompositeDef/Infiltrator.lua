@@ -12,34 +12,20 @@ PlaceObj('CharacterEffectCompositeDef', {
 		}),
 	},
 	'object_class', "Perk",
-	'msg_reactions', {
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "attacker",
-			Event = "OnAttack",
-			Handler = function (self, attacker, action, target, results, attack_args)
-				
-				local function exec(self, attacker, action, target, results, attack_args)
-				if IsValidTarget(target) and results.stealth_attack and not results.miss then
-					target:AddStatusEffect("Suppressed")
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "OnAttack" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, attacker, action, target, results, attack_args)
-				end
-				
-				if self:VerifyReaction("OnAttack", reaction_def, attacker, attacker, action, target, results, attack_args) then
-					exec(self, attacker, action, target, results, attack_args)
+	'unit_reactions', {
+		PlaceObj('UnitReaction', {
+			Event = "OnCalcStealthKillChance",
+			Handler = function (self, target, value, attacker, attack_target, weapon, target_spot_group, aim)
+				if target == attacker then
+					return value + self:ResolveValue("stealthkill_chance")
 				end
 			end,
-			HandlerCode = function (self, attacker, action, target, results, attack_args)
-				if IsValidTarget(target) and results.stealth_attack and not results.miss then
-					target:AddStatusEffect("Suppressed")
+		}),
+		PlaceObj('UnitReaction', {
+			Event = "OnUnitAttack",
+			Handler = function (self, target, attacker, action, attack_target, results, attack_args)
+				if target == attacker and IsKindOf(attack_target, "Unit") and results.stealth_attack and not results.miss and IsValidTarget(attack_target) then
+					attack_target:AddStatusEffect("Suppressed")
 				end
 			end,
 		}),

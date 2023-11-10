@@ -15,7 +15,7 @@ PlaceObj('BanterDef', {
 PlaceObj('BanterDef', {
 	Lines = {
 		PlaceObj('BanterLine', {
-			'Text', T(605395747753, --[[BanterDef GrannyShop_AK Text]] "Modified RPK-74"),
+			'Text', T(605395747753, --[[BanterDef GrannyShop_AK Text]] "Modified RPK"),
 			'Voiced', false,
 			'FloatUp', true,
 		}),

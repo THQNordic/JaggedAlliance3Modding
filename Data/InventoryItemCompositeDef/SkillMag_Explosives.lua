@@ -12,6 +12,11 @@ PlaceObj('InventoryItemCompositeDef', {
 	'AdditionalHint', T(633118403037, --[[InventoryItemCompositeDef SkillMag_Explosives AdditionalHint]] "<bullet_point> Used through the Item Menu\n<bullet_point> Single use\n<bullet_point> Increases Explosives"),
 	'UnitStat', "Explosives",
 	'Valuable', 1,
+	'Cost', 1500,
+	'CanAppearInShop', true,
+	'Tier', 2,
+	'MaxStock', 1,
+	'RestockWeight', 10,
 	'effect_moment', "on_use",
 	'Effects', {
 		PlaceObj('UnitStatBoost', {

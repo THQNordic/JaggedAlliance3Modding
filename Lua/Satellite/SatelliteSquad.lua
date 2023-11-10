@@ -2,8 +2,18 @@ local function lUpdateSquadCurrentSector(squad, old_sector, new_sector, from_map
 	if old_sector == new_sector then return end
 	local dir = gv_DeploymentDir
 	gv_DeploymentDir = false
+	
+	local comingFromUnderground = IsSectorUnderground(old_sector)
+	local goingToUnderground = IsSectorUnderground(new_sector)
+	
+	-- If coming from and moving to an underground sector, we are moving underground.
+	if comingFromUnderground and goingToUnderground then
+		comingFromUnderground = false
+		goingToUnderground = false
+	end
+	
 	if not dir and old_sector then
-		if IsSectorUnderground(old_sector) then
+		if comingFromUnderground then
 			dir = "Underground"
 		else
 			local old_y, old_x = sector_unpack(old_sector)
@@ -19,7 +29,7 @@ local function lUpdateSquadCurrentSector(squad, old_sector, new_sector, from_map
 			end
 		end
 	end
-	if not dir and new_sector and IsSectorUnderground(new_sector) then
+	if not dir and new_sector and goingToUnderground then
 		dir = "Underground"
 	end
 	for _, session_id in ipairs(squad.units) do
@@ -754,11 +764,24 @@ function SetSatelliteSquadRoute(squad, route, keepJoiningSquad, from, squadPos)
 	
 	local wasTravelling = IsSquadTravelling(squad)
 	
-	if squad.CurrentSector and gv_Sectors[squad.CurrentSector].GroundSector then
-		-- [V] Only passed when retreating from conflict, used to snap positions to the overground sector. Might not be needed anymore.
+	local squadSectorPreset = squad.CurrentSector and gv_Sectors[squad.CurrentSector]
+	local squadSectorGroundSectorId = squadSectorPreset and squadSectorPreset.GroundSector
+	if squadSectorGroundSectorId then
 		local from_map = from == "from_map" 
-		SetSatelliteSquadCurrentSector(squad, gv_Sectors[squad.CurrentSector].GroundSector, from_map)
+		SetSatelliteSquadCurrentSector(squad, squadSectorGroundSectorId, from_map)
 		SatelliteReachSectorCenter(squad.UniqueId, squad.CurrentSector, squad.PreviousSector)
+		
+		-- Manually remove the overground sector from the route.
+		-- It is possible for there to be nothing else in the route as well.
+		if route and route[1] and route[1][1] == squadSectorGroundSectorId then
+			table.remove(route[1], 1)
+			if route[1] and #route[1] == 0 then
+				table.remove(route, 1)
+			end
+			if #route == 0 then
+				route = false
+			end
+		end
 	end
 	
 	if route and route[1] then
@@ -1011,9 +1034,9 @@ function GetSectorSquadsFromSide(sector_id, side1, side2)
 end
 
 function GetSectorSquads(sector_id)
+	local squads = {}
 	local sector = gv_Sectors[sector_id]
-	local squads = {}	
-	for i, squad in ipairs(sector.all_squads) do
+	for i, squad in ipairs(sector and sector.all_squads) do
 		if not squad.arrival_squad then
 			squads[#squads + 1] = squad
 		end
@@ -1118,16 +1141,12 @@ function SectorTravelBlocked(from_sector_id, to_sector_id, _, pass_mode, __, dir
 			return false
 		elseif pass_mode == "land_water" or pass_mode == "land_water_river" then
 			if from_sector.Passability == "Land" or from_sector.Passability == "Land and Water" then
-				if from_sector.Port and not from_sector.PortLocked and from_sector.Side == "player1" and IsBoatAvailable() then
-					return false
-				else
-					return 
-						not (from_sector.BridgeCrossing and from_sector.BridgeCrossing[dir] and 
-							to_sector.BridgeCrossing and to_sector.BridgeCrossing[opposite_directions[dir]])
-				end
+				return not (from_sector.Port and not from_sector.PortLocked and from_sector.Side == "player1" and IsBoatAvailable())
 			end
 		end
 	end
+	
+	return false
 end
 
 function AreSectorsSameCity(sector_a, sector_b)
@@ -1270,7 +1289,7 @@ function GetSectorTravelTime(from_sector_id, to_sector_id, route, units, pass_mo
 		travel_time_2 = shortcut:GetTravelTime()
 		travel_time_1 = 0
 	elseif isRiverSectors then
-		travel_time_2 = const.Satellite.RiverTravelTime + 1
+		travel_time_2 = const.SatelliteShortcut.RiverTravelTime + 1
 		travel_time_1 = 0
 	end
 	
@@ -1439,6 +1458,7 @@ function LocalHireMerc(merc_id, price, days)
 	ObjModified("coop button")
 	ObjModified("MercHired")
 	Msg("MercHired", merc_id, price, days, alreadyHired)
+	gv_UnitData[merc_id]:CallReactions("OnMercHired", price, days, alreadyHired)
 end
 
 function GetMercArrivalTime()
@@ -1635,18 +1655,18 @@ function NetSyncEvents.ReleaseMerc(merc_id)
 	local sectorId = squad.CurrentSector
 
 	local items = {}
-	unit_data:ForEachItemInSlot("Inventory", function(item, _, x)
+	unit_data:ForEachItemInSlot("Inventory", function(item, _, x, y, items)
 		if not item.locked then
 			items[#items + 1] = item
 		end
-	end)
+	end, items)
 	AddToSectorInventory(sectorId,items)
-	unit_data:ForEachItemInSlot("Inventory", function(item)
+	unit_data:ForEachItemInSlot("Inventory", function(item, slot, left, top, unit_data, sectorId)
 		if not item.locked then
 			unit_data:RemoveItem("Inventory", item, "no_update")
 			NetUpdateHash("NetSyncEvents.ReleaseMerc_moving_items_params", item.class, item.id, sectorId)
 		end	
-	end)
+	end, unit_data, sectorId)
 	
 	RemoveUnitFromSquad(unit_data, "despawn")
 	unit_data.Squad = false
@@ -2170,6 +2190,22 @@ function NetSyncEvents.AssignUnitToSquad(squad_id, unit_id, position, create_new
 	end
 	Msg("UnitAssignedToSquad", squad_id, unit_id, create_new_squad)
 	ObjModified("hud_squads")
+	
+	-- If just moved to a retreating squad, this means that there might not
+	-- be a non-retreating squad left here. Retreat via squad management xd (234437)
+	local newSquad = gv_Squads[squad_id]
+	if newSquad.Retreat then
+		local sectorId = newSquad.CurrentSector
+		local allySquads, enemySquads = GetSquadsInSector(sectorId, "excludeTravel", "includeMilitia", "excludeArrive", "excludeRetreat")
+		local playerHere = #allySquads > 0
+		if not playerHere then
+			local sector = gv_Sectors[sectorId]
+			assert(sector.conflict)
+			if sector.conflict then
+				ResolveConflict(sector, "no voice", false, "retreat")
+			end
+		end
+	end
 end
 
 function ReconstructJoiningSquadNames()
@@ -2368,6 +2404,13 @@ function OnMsg.ZuluGameLoaded()
 	if gv_SatelliteView then return end
 	gameOverState = 0
 	CheckGameOver()
+end
+
+function OnMsg.SquadDespawned()
+	if gv_SatelliteView then
+		local playerSquads = GetPlayerMercSquads() or empty_table
+		if #playerSquads == 0 then PauseCampaignTime("NoMercs") end
+	end
 end
 
 function OnMsg.UnitDieStart(unit)
@@ -2795,7 +2838,7 @@ function SatelliteUnitsTick(squad)
 				DbgTravelTimerPrint(id, "rest", "travel:",(unit_data.TravelTime)/const.Scale.h, " rest ", (Game.CampaignTime - unit_data.RestTimer)/const.Scale.h)
 			end
 		end
-		NetUpdateHash("SatelliteUnitsTick", unit_data.session_id, unit_data.RestTimer, unit_data.Tiredness, unit_data.TravelTimerStart, unit_data.TravelTime)
+		--NetUpdateHash("SatelliteUnitsTick", unit_data.session_id, unit_data.RestTimer, unit_data.Tiredness, unit_data.TravelTimerStart, unit_data.TravelTime)
 		unit_data:Tick()
 	end
 
@@ -2972,16 +3015,17 @@ local function UpdateNeighborSector(sector, neigh_sector, dir, prop_id)
 	end
 end
 
-function UpdateNeighborSectorDirectionsProp(sector, dir, prop_id)
+function UpdateNeighborSectorDirectionsProp(sector, dir, prop_id, session_update_only)
 	local neigh_id = GetNeighborSector(sector.Id, dir)
-	local campaign_neigh_sector = table.find_value(CampaignPresets.HotDiamonds.Sectors, "Id", neigh_id)
-	UpdateNeighborSector(sector, campaign_neigh_sector, dir, prop_id)
+	local currentCampaign = CampaignPresets[Game and Game.Campaign or "HotDiamonds"]
+	local campaign_neigh_sector = table.find_value(currentCampaign.Sectors, "Id", neigh_id)
+	if not session_update_only then UpdateNeighborSector(sector, campaign_neigh_sector, dir, prop_id) end
 	UpdateNeighborSector(sector, gv_Sectors[neigh_id], dir, prop_id)
 end
 
-function SatelliteSectorSetDirectionsProp(sector, prop_id)
+function SatelliteSectorSetDirectionsProp(sector, prop_id, session_update_only)
 	for _, dir in ipairs(const.WorldDirections) do
-		UpdateNeighborSectorDirectionsProp(sector, dir, prop_id)
+		UpdateNeighborSectorDirectionsProp(sector, dir, prop_id, session_update_only)
 	end
 end
 

@@ -16,6 +16,7 @@ PlaceObj('XTemplate', {
 				XDialog.Open(self, ...)
 				self:SetFocus()
 				self:AnimatePhotos()
+				self:SetModal()
 			end,
 		}),
 		PlaceObj('XTemplateFunc', {

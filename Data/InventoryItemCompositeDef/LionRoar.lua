@@ -14,6 +14,7 @@ PlaceObj('InventoryItemCompositeDef', {
 	'AdditionalHint', T(251066241512, --[[InventoryItemCompositeDef LionRoar AdditionalHint]] "<bullet_point> OUR weapon\n<bullet_point> Shorter range\n<bullet_point> High Damage\n<bullet_point> Limited ammo capacity\n<bullet_point> Increased bonus from Aiming\n<bullet_point> Very noisy"),
 	'Valuable', 1,
 	'Cost', 3000,
+	'RestockWeight', 0,
 	'Caliber', "9mm",
 	'Damage', 22,
 	'AimAccuracy', 8,

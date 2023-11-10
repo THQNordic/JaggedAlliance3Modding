@@ -70,7 +70,7 @@ function DbgDrawCovers(dbg, bbox, dont_toggle, dont_rebuild)
 	for _, dbg in ipairs(old) do
 		DoneObject(dbg)
 	end
-	DbgClearVectors()
+	--DbgClearVectors()
 
 	if not dont_toggle then
 		g_dbgCoversShown = not g_dbgCoversShown
@@ -92,9 +92,8 @@ function DbgDrawCovers(dbg, bbox, dont_toggle, dont_rebuild)
 	local dbg_draw_pass_objs = DbgDrawPassSlabs("on", "terrain pass", nil, bbox)
 
 	local rebuild = GetClock()
-	if dont_rebuild then
-		bbox = GetMapBox()
-	else
+	bbox = bbox or GetMapBox()
+	if not dont_rebuild then
 		bbox = RebuildCovers(bbox)
 	end
 	rebuild = GetClock() - rebuild

@@ -11,61 +11,20 @@ PlaceObj('CharacterEffectCompositeDef', {
 	},
 	'Comment', "Grunty - free shot at battle start",
 	'object_class', "Perk",
-	'msg_reactions', {
-		PlaceObj('MsgActorReaction', {
-			Event = "CombatStarting",
-			Handler = function (self, dynamic_data)
+	'unit_reactions', {
+		PlaceObj('UnitReaction', {
+			Event = "OnCombatStarting",
+			Handler = function (self, target, load_game)
+				if load_game then return end
 				
-				local function exec(self, reaction_actor, dynamic_data)
-				if not dynamic_data then
-					local unit = g_Units.Grunty
-					if unit then
-						local enemy = unit:GetClosestEnemy()
-						if enemy then
-							local weapon = unit:GetActiveWeapons()
-							if IsKindOf(weapon, "Firearm") and not IsKindOf(weapon, "HeavyWeapon") then
-								local action = unit:GetDefaultAttackAction("ranged")
-								local args = {target = enemy, gruntyPerk = true}
-								LockCameraMovement("grunty perk")
-								StartCombatAction(action.id, unit, 0, args)
-							end
-						end
-					end
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "CombatStarting" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					local reaction_actor
-					exec(self, reaction_actor, dynamic_data)
-				end
-				
-				
-				local actors = self:GetReactionActors("CombatStarting", reaction_def, dynamic_data)
-				for _, reaction_actor in ipairs(actors) do
-					if self:VerifyReaction("CombatStarting", reaction_def, reaction_actor, dynamic_data) then
-						exec(self, reaction_actor, dynamic_data)
-					end
-				end
-			end,
-			HandlerCode = function (self, reaction_actor, dynamic_data)
-				if not dynamic_data then
-					local unit = g_Units.Grunty
-					if unit then
-						local enemy = unit:GetClosestEnemy()
-						if enemy then
-							local weapon = unit:GetActiveWeapons()
-							if IsKindOf(weapon, "Firearm") and not IsKindOf(weapon, "HeavyWeapon") then
-								local action = unit:GetDefaultAttackAction("ranged")
-								local args = {target = enemy, gruntyPerk = true}
-								LockCameraMovement("grunty perk")
-								StartCombatAction(action.id, unit, 0, args)
-							end
-						end
+				local enemy = target:GetClosestEnemy()
+				if enemy then
+					local weapon = target:GetActiveWeapons()
+					if IsKindOf(weapon, "Firearm") and not IsKindOf(weapon, "HeavyWeapon") then
+						local action = target:GetDefaultAttackAction("ranged")
+						local args = {target = enemy, gruntyPerk = true}
+						LockCameraMovement("grunty perk")
+						StartCombatAction(action.id, target, 0, args)
 					end
 				end
 			end,

@@ -7,6 +7,32 @@ DefineClass.Stealthy = {
 
 
 	object_class = "Perk",
+	unit_reactions = {
+		PlaceObj('UnitReaction', {
+			Event = "OnCalcStealthKillChance",
+			Handler = function (self, target, value, attacker, attack_target, weapon, target_spot_group, aim)
+				if target == attacker then
+					return value + self:ResolveValue("stealthkill")
+				end
+			end,
+		}),
+		PlaceObj('UnitReaction', {
+			Event = "OnCalcStealthKillMinChance",
+			Handler = function (self, target, value, attacker, attack_target, weapon, target_spot_group, aim)
+				if target == attacker then
+					return Max(value, self:ResolveValue("stealthkill_minchance"))
+				end
+			end,
+		}),
+		PlaceObj('UnitReaction', {
+			Event = "OnCalcSightModifier",
+			Handler = function (self, target, value, observer, other, step_pos, darkness)
+				if target == other and target:HasStatusEffect("Hidden") then
+					return value - self:ResolveValue("stealthy_detection")
+				end
+			end,
+		}),
+	},
 	DisplayName = T(384624400411, --[[CharacterEffectCompositeDef Stealthy DisplayName]] "Stealthy"),
 	Description = T(172679907276, --[[CharacterEffectCompositeDef Stealthy Description]] "Harder to spot by enemies while <GameTerm('Sneaking')>.\n\nSlightly increased chance for <GameTerm('StealthKills')>."),
 	Icon = "UI/Icons/Perks/Stealthy",

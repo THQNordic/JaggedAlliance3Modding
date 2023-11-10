@@ -11,6 +11,7 @@ DefineClass.Cookie = {
 	DisplayName = T(124351111212, --[[InventoryItemCompositeDef Cookie DisplayName]] "Biscuit"),
 	DisplayNamePlural = T(982005397246, --[[InventoryItemCompositeDef Cookie DisplayNamePlural]] "Biscuits"),
 	AdditionalHint = T(136230635254, --[[InventoryItemCompositeDef Cookie AdditionalHint]] "<bullet_point> Used through the Item Menu\n<bullet_point> Single use\n<bullet_point> Tasty and nutritious"),
+	CategoryPair = "Medicine",
 	MaxStacks = 20,
 	effect_moment = "on_use",
 	Effects = {

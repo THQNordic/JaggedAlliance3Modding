@@ -7,43 +7,14 @@ DefineClass.LineBreaker = {
 
 
 	object_class = "Perk",
-	msg_reactions = {
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "attacker",
-			Event = "OnKill",
-			Handler = function (self, attacker, killedUnits)
-				
-				local function exec(self, attacker, killedUnits)
-				if HasPerk(attacker, self.id) then
-					for _, unit in ipairs(killedUnits) do
-						if attacker:IsPointBlankRange(unit) then
-							attacker:AddStatusEffect("Inspired")
-							break
-						end
-					end
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "OnKill" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, attacker, killedUnits)
-				end
-				
-				if self:VerifyReaction("OnKill", reaction_def, attacker, attacker, killedUnits) then
-					exec(self, attacker, killedUnits)
-				end
-			end,
-			HandlerCode = function (self, attacker, killedUnits)
-				if HasPerk(attacker, self.id) then
-					for _, unit in ipairs(killedUnits) do
-						if attacker:IsPointBlankRange(unit) then
-							attacker:AddStatusEffect("Inspired")
-							break
-						end
+	unit_reactions = {
+		PlaceObj('UnitReaction', {
+			Event = "OnUnitKill",
+			Handler = function (self, target, killedUnits)
+				for _, unit in ipairs(killedUnits) do
+					if target:IsPointBlankRange(unit) then
+						target:AddStatusEffect("Inspired")
+						return
 					end
 				end
 			end,

@@ -15,60 +15,16 @@ PlaceObj('CharacterEffectCompositeDef', {
 		}),
 	},
 	'object_class', "CharacterEffect",
-	'msg_reactions', {
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "unit",
-			Event = "UnitEndTurn",
-			Handler = function (self, unit)
-				
-				local function exec(self, unit)
-				local grit = self:ResolveValue("gritGain")
-				unit:ApplyTempHitPoints(grit)
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "UnitEndTurn" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, unit)
-				end
-				
-				if self:VerifyReaction("UnitEndTurn", reaction_def, unit, unit) then
-					exec(self, unit)
-				end
-			end,
-			HandlerCode = function (self, unit)
-				local grit = self:ResolveValue("gritGain")
-				unit:ApplyTempHitPoints(grit)
+	'unit_reactions', {
+		PlaceObj('UnitReaction', {
+			Event = "OnEndTurn",
+			Handler = function (self, target)
+				target:ApplyTempHitPoints(self:ResolveValue("gritGain"))
 			end,
 		}),
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "attacker",
-			Event = "CalcBaseDamage",
-			Handler = function (self, attacker, weapon, target, data)
-				
-				local function exec(self, attacker, weapon, target, data)
-				local bonus = self:ResolveValue("bonus_damage")
-				data.modifier = data.modifier + bonus
-				data.breakdown[#data.breakdown + 1] = { name = self.DisplayName, value = bonus }
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[2]
-				if not reaction_def or reaction_def.Event ~= "CalcBaseDamage" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, attacker, weapon, target, data)
-				end
-				
-				if self:VerifyReaction("CalcBaseDamage", reaction_def, attacker, attacker, weapon, target, data) then
-					exec(self, attacker, weapon, target, data)
-				end
-			end,
-			HandlerCode = function (self, attacker, weapon, target, data)
+		PlaceObj('UnitReaction', {
+			Event = "OnCalcBaseDamage",
+			Handler = function (self, target, weapon, attack_target, data)
 				local bonus = self:ResolveValue("bonus_damage")
 				data.modifier = data.modifier + bonus
 				data.breakdown[#data.breakdown + 1] = { name = self.DisplayName, value = bonus }

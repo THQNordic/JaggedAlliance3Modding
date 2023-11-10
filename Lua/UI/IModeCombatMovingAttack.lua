@@ -251,8 +251,11 @@ function FindTargetFromPos(action_id, attacker, action, enemies, atk_pos, weapon
 	}
 	local default = attacker:GetDefaultAttackAction("ranged", nil, weapon)
 	local max_range = action:GetMaxAimRange(attacker, weapon)
-	if max_range then
+	if IsKindOf(weapon, "Firearm") then
+		max_range = max_range or weapon.WeaponRange
 		max_range = MulDivRound(max_range, 150 * const.SlabSizeX, 100)
+	else
+		max_range = max_range and (max_range * const.SlabSizeX)
 	end
 	-- find nearest shootable enemy from atk_pos
 	-- sort by distance, then select only non-downed units if there are any

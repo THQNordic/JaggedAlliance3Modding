@@ -40,13 +40,14 @@ PlaceObj('XTemplate', {
 				'Dock', "ignore",
 				'ContextUpdateOnOpen', true,
 				'OnContextUpdate', function (self, context, ...)
-					self.parent:SetVisible(g_RolloverShowMoreInfo)
+					self.parent:SetVisible(g_RolloverShowMoreInfo and not BobbyRayRolloverOverride())
 				end,
 			}),
 			}),
 		PlaceObj('XTemplateTemplate', {
 			'__template', "RolloverInventoryWeaponBase",
 			'Dock', "left",
+			'MaxWidth', 350,
 		}),
 		}),
 })

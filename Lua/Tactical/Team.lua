@@ -20,11 +20,39 @@ OnMsg.ChangeMap = ResetZuluStateGlobals
 OnMsg.NewGame = ResetZuluStateGlobals
 OnMsg.NewGameSessionStart = ResetZuluStateGlobals
 
+if FirstLoad then
+	SideDefs = false
+	Sides = false
+end
+
+DefineClass.CampaignSide = {
+	__parents = { "PropertyObject", },
+	properties = {
+		{ id = "Id", editor = "text", default = false, },
+		{ id = "DisplayName", name = "Display Name", editor = "text", default = false, translate = true, },
+		{ id = "Player", editor = "bool", default = false, },
+		{ id = "Enemy", editor = "bool", default = false, },
+	},
+}
+
+function OnMsg.ClassesBuilt()
+	SideDefs = {
+		CampaignSide:new{ Id = "neutral",      DisplayName = T(521973101724, "Neutral") },
+		CampaignSide:new{ Id = "player1",      DisplayName = T(222892508302, "Player 1"), Player = true },
+		CampaignSide:new{ Id = "player2",      DisplayName = T(942355779355, "Player 2"), Player = true },
+		CampaignSide:new{ Id = "enemy1",       DisplayName = T(692913892455, "Enemy 1"), Enemy = true },
+		CampaignSide:new{ Id = "enemy2",       DisplayName = T(456135028453, "Enemy 2"), Enemy = true },
+		CampaignSide:new{ Id = "enemyNeutral", DisplayName = T(607169506860, "Enemy Neutral"), },
+		CampaignSide:new{ Id = "ally",         DisplayName = T(346100175449, "Ally"), },
+	}
+	Sides = table.map(SideDefs, "Id")
+end
+
 function SetupDummyTeams()
 	if not g_Teams then g_Teams = {} end
 
 	local side_to_team = {}
-	for _, side in ipairs(GetCurrentCampaignPreset().Sides) do
+	for _, side in ipairs(SideDefs) do
 		local team = table.find_value(g_Teams, "side", side.Id)
 		if not team then
 			team = CombatTeam:new {

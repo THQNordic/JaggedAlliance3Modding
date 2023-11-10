@@ -130,15 +130,14 @@ function CombatPath:GetReachableMeleeRangePositions(target, check_occupied, min_
 	return list
 end
 
-function CombatPath:GetClosestMeleeRangePos(target, check_free, interaction)
-	local list = GetMeleeRangePositions(self.unit, target, nil, check_free)
+function CombatPath:GetClosestMeleeRangePos(target, target_pos, check_free, interaction)
+	local list = GetMeleeRangePositions(self.unit, target, target_pos, check_free)
 	local paths_ap = self.paths_ap
 	local closest, min_ap
 	for i, packed_pos in ipairs(list) do
 		local ap = paths_ap[packed_pos]
 		if ap and (not min_ap or ap < min_ap) and (not check_free or self.destinations[packed_pos]) then
-			local pos = point(point_unpack(packed_pos))
-			if interaction or IsMeleeRangeTarget(self.unit, pos, nil, target) then
+			if interaction or IsMeleeRangeTarget(self.unit, packed_pos, nil, target, target_pos) then
 				closest = packed_pos
 				min_ap = ap
 			end
@@ -153,15 +152,13 @@ function GetCombatPathLen(path, obj)
 	local len = 0
 	if #path > 0 then
 		local x1, y1, z1 = point_unpack(path[1])
-		local p1 = point(x1, y1, z1 or terrain.GetHeight(x1, y1))
 		for i = 2, #path do
 			local x2, y2, z2 = point_unpack(path[i])
-			local p2 = point(x2, y2, z2 or terrain.GetHeight(x2, y2))
-			len = len + p1:Dist(p2)
-			p1 = p2
+			len = len + GetLen(x2 - x1, y2 - y1, (z1 or z2) and (z2 or terrain.GetHeight(x2, y2)) - (z1 or terrain.GetHeight(x1, y1)) or 0)
+			x1, y1, z1 = x2, y2, z2
 		end
 		if IsValid(obj) and obj:IsValidPos() then
-			len = len + obj:GetVisualDist(p1)
+			len = len + obj:GetVisualDist(x1, y1, z1)
 		end
 	end
 	return len

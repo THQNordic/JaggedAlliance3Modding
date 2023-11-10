@@ -9,6 +9,10 @@ function IsMedicineRefill(meds, medicine)
 	return medicine and medicine.object_class == "Medicine" and medicine.Condition < medicine:GetMaxCondition() and AmountOfMedsToFill(medicine)>0 and  IsKindOf(meds, "Meds")
 end
 
+function FormatGiveActionText(action_name, dest_container)
+	return action_name
+end
+
 function GetAPCostAndUnit(item, src_container, src_container_slot_name, dest_container, dest_container_slot_name, item_at_dest, is_reload)
 	if not is_reload and not dest_container:CheckClass(item, dest_container_slot_name) then
 		return 0, GetInventoryUnit()
@@ -42,13 +46,13 @@ function GetAPCostAndUnit(item, src_container, src_container_slot_name, dest_con
 			--loot/dead unit/container => unit inv?
 			ap = costs.PickItem
 			unit = dest_container
-			action_name = T(265622314229, "Put in backpack")
+			action_name = FormatGiveActionText(T(265622314229, "Put in backpack"),dest_container)
 		elseif is_src_unit and is_dest_unit and not is_src_dead and not is_dest_dead then
 			--unit => other unit?
 			if not IsKindOf(item, "SquadBagItem") then -- squadbagitems are for free
 				ap = costs.GiveItem
 				unit = src_container
-				action_name = T{386181237071, "Give to <merc>",merc = dest_container.Nick}
+				action_name = FormatGiveActionText(T{386181237071, "Give to <merc>",merc = dest_container.Nick}, dest_container)
 			end
 		end
 	end
@@ -146,6 +150,9 @@ DefineClass.PartialContainer = {
 function PartialContainer:ForEachItemInSlot(...)
 end
 
+function PartialContainer:FindItemInSlot()
+end
+
 function PartialContainer:CanAddItem(...)
 	return packed11
 end
@@ -180,27 +187,40 @@ end
 
 function UnopennedSquadBag:ForEachItemInSlot(slot_name, base_class, fn, ...)
 	local bag = GetSquadBag(self.squad_id)
-	local arg1
-	if type(base_class) == "function" then
-		arg1 = fn
-		fn = base_class
-		base_class = false
-	end
-	for _, item in ipairs(bag) do
-		if (not base_class or IsKindOfClasses(item, base_class)) then
-			local res 
-			if arg1 ~= nil then
-				res = fn(item, slot_name, -1, -1, arg1, ...)
-			else
-				res = fn(item, slot_name, -1, -1, ...)
-			end
-			if res == "break" then
+	if not base_class then
+		for _, item in ipairs(bag) do
+			if fn(item, slot_name, -1, -1, ...) == "break" then
 				return "break"
+			end
+		end
+	elseif type(base_class) == "function" then
+		local arg1 = fn
+		fn = base_class
+		for _, item in ipairs(bag) do
+			if fn(item, slot_name, -1, -1, arg1, ...) == "break" then
+				return "break"
+			end
+		end
+	else
+		for _, item in ipairs(bag) do
+			if IsKindOfClasses(item, base_class) then
+				if fn(item, slot_name, -1, -1, ...) == "break" then
+					return "break"
+				end
 			end
 		end
 	end
 end
 
+function UnopennedSquadBag:FindItemInSlot(slot_name, func, ...)
+	local bag = GetSquadBag(self.squad_id)
+	for _, item in ipairs(bag) do
+		local value = func(item, ...)
+		if value then
+			return value
+		end
+	end
+end
 
 function GetContainerNetId(container)
 	if not container then return end
@@ -400,7 +420,7 @@ function MoveItem(args)
 	end
 	--presetup
 	assert((dest_x and dest_y) or (not dest_x and not dest_y))
-	assert(item)
+	if not item then return end 
 	
 	exec_locally = not not exec_locally
 	if dest_container == "drop" then
@@ -905,6 +925,7 @@ function DestroyItem_SendNetArgs(item, unit, src_container, src_container_slot_n
 end
 
 function DestroyItem(item, unit,src_container, src_container_slot_name, amount, sync_call)
+	if not item then return end 
 	if not sync_call then
 		local args = DestroyItem_SendNetArgs(item, unit, src_container, src_container_slot_name, amount)
 		if IsKindOf(unit, "UnitData") then

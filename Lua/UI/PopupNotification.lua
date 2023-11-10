@@ -112,7 +112,7 @@ function OpenPopupNotification(context)
 		enabled_option = GetAccountStorageOptionValue("HintsEnabled")
 	end
 	-- disable all tutorials in mp vs for now
-	if IsCompetitiveGame() or IsGameReplayRunning() or g_TestCombat then
+	if IsCompetitiveGame() or IsGameReplayRunning() or g_TestCombat or GetCurrentCampaignPreset().id ~= "HotDiamonds" then
 		enabled_option = false
 	end
 	if tutorial and not enabled_option then -- don't show pop-up, but run logic as if it was shown and closed (for quests)

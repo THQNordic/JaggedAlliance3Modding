@@ -269,13 +269,15 @@ function RangeContourMesh:SetPreset(preset)
 end
 
 function RangeContourMesh:SetVisible(value)
-	for _, mesh in ipairs(self.meshes or empty_table) do
-		mesh:SetVisible(value)
-	end
-	if self.visible ~= value then
-		self.CRMaterial.pop_in_start = RealTime() + self.CRMaterial.pop_delay
-		self.visible = value
-		self.CRMaterial.dirty = true
+	if not g_PhotoMode then
+		for _, mesh in ipairs(self.meshes or empty_table) do
+			mesh:SetVisible(value)
+		end
+		if self.visible ~= value then
+			self.CRMaterial.pop_in_start = RealTime() + self.CRMaterial.pop_delay
+			self.visible = value
+			self.CRMaterial.dirty = true
+		end
 	end
 end
 

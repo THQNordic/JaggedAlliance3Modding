@@ -174,8 +174,10 @@ function SetCombatActionState(unit, state)
 	if not state then
 		Msg("CombatPostAction", unit)
 		Msg("CombatActionEnd", unit)
+		unit:CallReactions("OnCombatActionEnd")
 	elseif state == "start" then
 		Msg("CombatActionStart", unit)
+		unit:CallReactions("OnCombatActionStart")
 	elseif state == "PostAction" then
 		Msg("CombatPostAction", unit)
 	end
@@ -686,7 +688,7 @@ function CombatActionMeleeActionCost(unit, args, target, ap)
 	if not IsValid(target) then return -1, ap end
 
 	if goto_pos == nil then
-		goto_pos = unit:GetClosestMeleeRangePos(target, stance)
+		goto_pos = unit:GetClosestMeleeRangePos(target, nil, stance)
 		if not goto_pos then
 			return -1, ap
 		end
@@ -802,9 +804,11 @@ function CombatActionGenericAttackGetUIState(self, units, args)
 		return "disabled", AttackDisableReasons.SignatureRecharge
 	end
 	
-	local cost = self:GetAPCost(unit, args)
-	if cost < 0 then return "hidden" end
-	if not unit:UIHasAP(cost) then return "disabled", GetUnitNoApReason(unit) end
+	if not (args and args.skip_ap_check) then
+		local cost = self:GetAPCost(unit, args)
+		if cost < 0 then return "hidden" end
+		if not unit:UIHasAP(cost) then return "disabled", GetUnitNoApReason(unit) end
+	end
 
 	local wep = args and args.weapon or self:GetAttackWeapons(unit)
 	if args and args.target then
@@ -822,7 +826,7 @@ function CombatActionGenericAttackGetUIState(self, units, args)
 	end
 	
 	if not self.RequireTargets then
-		local canAttack, err = unit:CanAttack(false, wep, self, args and args.aim or 0)
+		local canAttack, err = unit:CanAttack(false, wep, self, args and args.aim or 0, nil, args and args.skip_ap_check)
 		if not canAttack then return "disabled", err end
 		return "enabled"
 	end
@@ -858,14 +862,14 @@ function CombatActionsAttackGenericDamageCalculation(self, unit, args)
 		local base = unit:GetBaseDamage(weapon)
 		return base, base
 	end
-	local aim = args and args.aim
-	if not aim then
+	local args = args or {}
+	if not args.aim then
 		local dlg = GetInGameInterfaceModeDlg() 
 		if IsKindOf(dlg, "IModeCombatAttackBase") and dlg.crosshair then
-			aim = dlg.crosshair.aim
+			args.aim = dlg.crosshair.aim
 		end
 	end
-	local critChance = unit:CalcCritChance(weapon, GetCurrentUITarget(), aim, args and args.goto_pos, args and args.target_spot_group, self)
+	local critChance = unit:CalcCritChance(weapon, GetCurrentUITarget(), self, args, args.goto_pos)
 	local base = unit:GetBaseDamage(weapon)
 	local hit = {
 		weapon = weapon,
@@ -1048,18 +1052,18 @@ function GetOtherWeaponSet(currentSet)
 end
 
 function GetWeaponChangeActionDisplayName(unit)
-	local otherSet = "Handheld A"
-	if unit and unit.current_weapon == "Handheld A" then
-		otherSet = "Handheld B"
-	end
-	local weapons = unit and unit:GetEquippedWeapons(otherSet)
-	if not weapons or #weapons == 0 then
-		weapons = {unit:GetActiveWeapons("UnarmedWeapon")}
-	end
-	
 	local itemTypes = {}
-	for i, w in ipairs(weapons) do
-		itemTypes[#itemTypes + 1] = w.DisplayName
+	if unit then
+		local otherSet = unit.current_weapon == "Handheld A" and "Handheld B" or "Handheld A"
+		unit:ForEachItemInSlot(otherSet, function(item, slot_name, left, top, itemTypes)
+			if item:IsWeapon() then
+				itemTypes[#itemTypes + 1] = item.DisplayName
+			end
+		end)
+		if #itemTypess == 0 then
+			local unarmed_weapon = unit:GetActiveWeapons("UnarmedWeapon")
+			itemTypes[#itemTypes + 1] = unarmed_weapon.DisplayName
+		end
 	end
 	local weaponsTxt = table.concat(itemTypes, "/")
 	return T{887065293634, "Switch to <weaponsTxt>", weaponsTxt = weaponsTxt}
@@ -1173,9 +1177,9 @@ function GetBandageTargets(unit, mode, range_mode)
 	if unit.team and unit.team.player_team then
 		-- enable player to bandage neutral units as well
 		allies = table.icopy(allies)
-		for _, u in ipairs(g_Units) do
-			if u.team.neutral then
-				allies[#allies + 1] = u
+		for _, team in ipairs(g_Teams) do
+			if team.neutral then
+				table.iappend(allies, team.units)
 			end
 		end
 	end
@@ -1237,7 +1241,7 @@ function GetMeleeAttackAPCost(action, unit, args)
 	end
 	local goto_pos = args and args.goto_pos
 	if not goto_pos and args and args.target then
-		goto_pos = GetClosestMeleeRangePos(unit, args.target)
+		goto_pos = unit:GetClosestMeleeRangePos(args.target)
 	end
 	local attack_cost = cost
 	local move_cost = 0

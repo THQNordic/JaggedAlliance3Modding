@@ -140,14 +140,19 @@ local function lCopyTableWithoutObjects(t)
 end
 
 function EffectsWithCondition:__exec(obj, ...)
-	local paramsCaseTrue = {...}
-	local paramsCaseFalse = lCopyTableWithoutObjects(paramsCaseTrue)
-
-	if EvalConditionList(self.Conditions, obj, table.unpack(paramsCaseTrue)) then
-		ExecuteEffectList(self.Effects, obj, table.unpack(paramsCaseTrue))
+	if _EvalConditionList(self.Conditions, obj, ...) then
+		for _, effect in ipairs(self.Effects) do
+			effect:__exec(obj, ...)
+		end
 		return true
 	else
-		ExecuteEffectList(self.EffectsElse, obj, table.unpack(paramsCaseFalse))
+		if count_params(...) == 0 then
+			for _, effect in ipairs(self.EffectsElse) do
+				effect:__exec(obj)
+			end
+		else
+			_ExecuteEffectList(self.EffectsElse, obj, table.unpack(lCopyTableWithoutObjects{...}))
+		end
 	end
 end
 

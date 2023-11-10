@@ -17,6 +17,7 @@ PlaceObj('InventoryItemCompositeDef', {
 	'UnitStat', "Marksmanship",
 	'Valuable', 1,
 	'Cost', 2500,
+	'RestockWeight', 0,
 	'Caliber', "762NATO",
 	'Damage', 26,
 	'CritChanceScaled', 50,

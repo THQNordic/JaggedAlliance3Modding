@@ -1,24 +1,3 @@
--- MsgDef append
-
-AppendClass.MsgDef = { -- todo: remove it; Reaction supports choosing the actor instead
-	properties = {
-		{ id = "SingleActor", editor = "bool", default = false, help = "When the event is fired for a single object/actor" },
-		{ id = "Actor", editor = "combo", default = false, no_edit = function(self) return not self.SingleActor end,
-			items = function(self)
-				local items = { false }
-				if (self.Params or "") ~= "" then
-					local params = string.split(self.Params, ",")
-					for _, param in ipairs(params) do
-						items[#items + 1] = string.trim_spaces(param)
-					end
-				end
-				return items
-			end, 
-			help = "Specifies the object for which the Msg is fired, if any"
-		}, 
-	},
-}
-
 function MsgDef:GetError()
 	local params = string.split(self.Params, ",")
 	for _, param in ipairs(params) do
@@ -60,7 +39,6 @@ DefineClass.ActorReaction = {
 				return not msgdef
 			end,
 		},
-		{ id = "helpActor", name = "Actor Param", editor = "text", read_only = true, default = "n/a", },
 		{ id = "Handler", editor = "func", default = false, lines = 6, max_lines = 60, no_edit = true,
 			name = function(self) return self.Event end,
 			params = function (self) return self:GetParams() end, },
@@ -98,35 +76,29 @@ function ActorReaction:__generateHandler(index)
 	
 	local params = self:GetParams()
 	local exec_params = self:GetExecParams()
-	
-	local handler_code = GetFuncSourceString(self.HandlerCode, "exec", exec_params)
-	if not handler_code or handler_code == "GetMissingSourceFallback()" then 
-		handler_code = "function exec() end"
-	end
+
+	local h_name, h_params, h_body = GetFuncSource(self.HandlerCode)
+
 	local actor = self:GetActor()
-	local handler_call = string.format("exec(%s)", exec_params)
-	
-	code:appendf("\nlocal %s\n", handler_code)
-	
-	code:append("\nif not IsKindOf(self, \"MsgReactionsPreset\") then return end\n")
-	code:appendf("\nlocal reaction_def = (self.msg_reactions or empty_table)[%d]", index)
-	code:appendf("\nif not reaction_def or reaction_def.Event ~= \"%s\" then return end\n", self.Event)
-	code:append("\nif not IsKindOf(self, \"MsgActorReactionsPreset\") then")
-	if not actor then
-		code:append("\n\tlocal reaction_actor")
+	local handler_call = ""
+	if type(h_body) == "string" then
+		handler_call = h_body
+	elseif type(h_body) == "table" then
+		handler_call = table.concat(h_body, "\n")
 	end
-	code:appendf("\n\texec(%s)", exec_params)
-	code:append("\nend\n")
+	
+	
+	code:appendf("local reaction_def = (self.msg_reactions or empty_table)[%d]", index)
 	
 	if actor then
 		code:appendf("\nif self:VerifyReaction(\"%s\", reaction_def, %s, %s) then", self.Event, actor, msgparams)
 		code:appendf("\n\t%s", handler_call)
 		code:appendf("\nend")
 	else	
-		code:appendf("\n\nlocal actors = self:GetReactionActors(\"%s\", reaction_def, %s)", self.Event, msgparams)
+		code:appendf("\nlocal actors = self:GetReactionActors(\"%s\", reaction_def, %s)", self.Event, msgparams)
 		code:append("\nfor _, reaction_actor in ipairs(actors) do")
 			code:appendf("\n\tif self:VerifyReaction(\"%s\", reaction_def, reaction_actor, %s) then", self.Event, msgparams)
-			code:appendf("\n\t\texec(%s)", exec_params)
+			code:appendf("\n\t\t%s", handler_call)
 			code:appendf("\n\tend")
 		code:append("\nend")		
 	end
@@ -136,10 +108,6 @@ function ActorReaction:__generateHandler(index)
 end
 
 function ActorReaction:GetActor()
-	local msgdef = MsgDefs[self.Event]
-	if not msgdef then 
-		return false
-	end
 	return self.ActorParam
 end
 
@@ -161,7 +129,6 @@ function ActorReaction:OnEditorSetProperty(prop_id, old_value, ged)
 		-- force reevaluation of the Handler's params when the event changes
 		GedSetProperty(ged, self, "Handler", GameToGedValue(self.Handler, self:GetPropertyMetadata("Handler"), self))
 	end
-	self.helpActor = self:GetActor() or "n/a"
 	self.Flags = (#(self.FlagsDef or empty_table) > 0) and {} or nil
 	for _, flag in ipairs(self.FlagsDef) do
 		self.Flags[flag] = true
@@ -225,7 +192,7 @@ DefineClass("MsgActorReactionEffects", "MsgReaction", "ActorReactionEffects")
 
 -- MsgActorReactionsPreset
 DefineClass.MsgActorReactionsPreset = {
-	__parents = { "MsgReactionsPreset" },
+	__parents = { "UnitReactionsPreset" },
 }
 
 function MsgActorReactionsPreset:VerifyReaction(event, reaction, actor, ...)
@@ -252,7 +219,23 @@ function ZuluReactionResolveUnitActorObj(session_id, unit_data)
 	local obj
 	local mapUnit = g_Units[session_id]
 	if gv_SatelliteView or (mapUnit and (not IsValid(mapUnit) or mapUnit.is_despawned)) then
-		return unit_data
+		return unit_data or gv_UnitData[session_id]
 	end
-	return mapUnit or unit_data
+	return mapUnit or unit_data or gv_UnitData[session_id]
+end
+
+function ZuluReactionGetReactionActors_Light(event, reaction_def, ...)
+	local objs = {}
+	if reaction_def:HasFlag("SatView") then
+		for session_id, data in pairs(gv_UnitData) do
+			local obj = ZuluReactionResolveUnitActorObj(session_id, data)
+			if self:VerifyReaction(event, obj, ...) then
+				objs[#objs + 1] = obj
+			end
+		end
+	else
+		table.iappend(objs, g_Units)
+	end
+	table.sortby_field(objs, "session_id")
+	return objs
 end

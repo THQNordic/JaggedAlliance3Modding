@@ -7,34 +7,37 @@ DefineClass.OpportunisticKiller = {
 
 
 	object_class = "Perk",
-	msg_reactions = {
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "attacker",
-			Event = "OnAttack",
-			Handler = function (self, attacker, action, target, results, attack_args)
-				
-				local function exec(self, attacker, action, target, results, attack_args)
-				if attack_args and attack_args.opportunity_attack_type == "Overwatch" then
-					attacker:AddStatusEffect("OpportunisticKillerBuff")
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "OnAttack" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, attacker, action, target, results, attack_args)
-				end
-				
-				if self:VerifyReaction("OnAttack", reaction_def, attacker, attacker, action, target, results, attack_args) then
-					exec(self, attacker, action, target, results, attack_args)
+	unit_reactions = {
+		PlaceObj('UnitReaction', {
+			Event = "OnUnitAttack",
+			Handler = function (self, target, attacker, action, attack_target, results, attack_args)
+				if target == attacker and attack_args and attack_args.opportunity_attack_type == "Overwatch" then
+					self:SetParameter("charged", true)
 				end
 			end,
-			HandlerCode = function (self, attacker, action, target, results, attack_args)
-				if attack_args and attack_args.opportunity_attack_type == "Overwatch" then
-					attacker:AddStatusEffect("OpportunisticKillerBuff")
+		}),
+		PlaceObj('UnitReaction', {
+			Event = "OnBeginTurn",
+			Handler = function (self, target)
+				if not self:ResolveValue("charged") then return end
+				
+				local weapon1, weapon2 = target:GetActiveWeapons()
+				if IsKindOf(weapon1, "Firearm") then
+					target:ReloadWeapon(weapon1)
+				end
+				if IsKindOf(weapon2, "Firearm") then
+					target:ReloadWeapon(weapon2)
+				end
+				
+				self:SetParameter("charged", false)
+			end,
+		}),
+		PlaceObj('UnitReaction', {
+			Event = "OnCalcCritChance",
+			Handler = function (self, target, attacker, attack_target, action, weapon, data)
+				if target == attacker then
+					-- treat attacks equally (allow crits on opportunity attacks)
+					data.opportunity_attack = false
 				end
 			end,
 		}),

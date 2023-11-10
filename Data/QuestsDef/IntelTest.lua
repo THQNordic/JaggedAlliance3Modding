@@ -17,10 +17,6 @@ PlaceObj('QuestsDef', {
 				PlaceObj('SectorGrantIntel', {
 					sector_id = "H2",
 				}),
-				PlaceObj('AssociateNPCWithSector', {
-					Name = "CorazonSantiago",
-					Sector = "I1",
-				}),
 			},
 			Prop = "Given",
 		}),

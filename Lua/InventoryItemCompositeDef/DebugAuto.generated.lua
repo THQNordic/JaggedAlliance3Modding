@@ -15,6 +15,7 @@ DefineClass.DebugAuto = {
 	DisplayNamePlural = T(343215376565, --[[InventoryItemCompositeDef DebugAuto DisplayNamePlural]] "Debug Guns"),
 	LargeItem = 1,
 	Cost = 800,
+	RestockWeight = 0,
 	Caliber = "762WP",
 	Damage = 10,
 	MagazineSize = 30,

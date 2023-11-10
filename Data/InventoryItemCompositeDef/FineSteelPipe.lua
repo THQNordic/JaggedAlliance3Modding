@@ -9,5 +9,11 @@ PlaceObj('InventoryItemCompositeDef', {
 	'DisplayName', T(290395795637, --[[InventoryItemCompositeDef FineSteelPipe DisplayName]] "Steel Pipe"),
 	'DisplayNamePlural', T(384360336628, --[[InventoryItemCompositeDef FineSteelPipe DisplayNamePlural]] "Steel Pipes"),
 	'AdditionalHint', T(213987117364, --[[InventoryItemCompositeDef FineSteelPipe AdditionalHint]] "<bullet_point> Used for creating advanced weapon components"),
+	'Cost', 2900,
+	'CanAppearInShop', true,
+	'Tier', 2,
+	'MaxStock', 1,
+	'RestockWeight', 15,
+	'CategoryPair', "Components",
 })
 

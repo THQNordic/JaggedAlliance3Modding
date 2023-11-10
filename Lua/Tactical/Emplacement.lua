@@ -287,13 +287,22 @@ function MachineGunEmplacement:GetInteractionCombatAction(unit)
 	return Presets.CombatAction.Interactions.Interact_ManEmplacement
 end
 
+function MachineGunEmplacement:GetOperatePos()
+	local visual = self.weapon and self.weapon:GetVisualObj()
+	local spot = visual and visual:GetSpotBeginIndex("Unit")
+	local pos = visual and visual:GetSpotPos(spot)
+	return pos
+end
+
 function MachineGunEmplacement:GetInteractionPos(unit)
 	if not IsValid(self) then return false end
-	local pass_interact_pos = SnapToPassSlab(self)
-	if pass_interact_pos and unit:GetDist(pass_interact_pos) == 0 then
-		return pass_interact_pos
+	local operate_pos = self:GetOperatePos()
+	local passx, passy, passz = SnapToPassSlabXYZ(operate_pos or self)
+	if unit:IsEqualPos(passx, passy, passz) then
+		return point(passx, passy, passz)
 	end
-	return unit:GetClosestMeleeRangePos(self, nil, "interaction")
+	local pos = unit:GetClosestMeleeRangePos(self, operate_pos, nil, "interaction")
+	return pos
 end
 
 function MachineGunEmplacement:EndInteraction(unit)

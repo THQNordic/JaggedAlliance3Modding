@@ -7,47 +7,25 @@ DefineClass.MakeThemBleed = {
 
 
 	object_class = "Perk",
-	msg_reactions = {
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "attacker",
-			Event = "OnAttack",
-			Handler = function (self, attacker, action, target, results, attack_args)
-				
-				local function exec(self, attacker, action, target, results, attack_args)
-				local kills = #(results.killed_units or empty_table)
-				if kills > 0 then
-					attacker:AddToInventory("Trophy", kills)
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "OnAttack" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, attacker, action, target, results, attack_args)
-				end
-				
-				if self:VerifyReaction("OnAttack", reaction_def, attacker, attacker, action, target, results, attack_args) then
-					exec(self, attacker, action, target, results, attack_args)
-				end
-			end,
-			HandlerCode = function (self, attacker, action, target, results, attack_args)
-				local kills = #(results.killed_units or empty_table)
-				if kills > 0 then
-					attacker:AddToInventory("Trophy", kills)
+	unit_reactions = {
+		PlaceObj('UnitReaction', {
+			Event = "OnUnitAttack",
+			Handler = function (self, target, attacker, action, attack_target, results, attack_args)
+				if target == attacker then
+					local kills = #(results.killed_units or empty_table)
+					if kills > 0 then
+						attacker:AddToInventory("Trophy", kills)
+					end
 				end
 			end,
 		}),
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "attacker",
-			Event = "GatherDamageModifications",
-			Handler = function (self, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data)
+		PlaceObj('UnitReaction', {
+			Event = "OnCalcDamageAndEffects",
+			Handler = function (self, target, attacker, attack_target, action, weapon, attack_args, hit, data)
+				if target ~= attacker then return end
 				
-				local function exec(self, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data)
-				if IsKindOf(target, "Unit") and (target.species ~= "Human" or attack_args.target_spot_group == "Groin") then
-					mod_data.effects[#mod_data.effects + 1] = "Bleeding"
+				if IsKindOf(attack_target, "Unit") and (attack_target.species ~= "Human" or attack_args.target_spot_group == "Groin") then
+					data.effects[#data.effects + 1] = "Bleeding"
 				end
 				
 				local enemiesInSight = GetTargetsToShowInPartyUI(attacker)
@@ -62,42 +40,8 @@ DefineClass.MakeThemBleed = {
 				stacks = Min(stacks, maxStacks)
 								
 				local damageBonus = stacks * damagePerBleed
-				mod_data.base_damage = MulDivRound(mod_data.base_damage, 100 + damageBonus, 100)
-				mod_data.breakdown[#mod_data.breakdown + 1] = { name = self.DisplayName, value = damageBonus }
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[2]
-				if not reaction_def or reaction_def.Event ~= "GatherDamageModifications" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data)
-				end
-				
-				if self:VerifyReaction("GatherDamageModifications", reaction_def, attacker, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data) then
-					exec(self, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data)
-				end
-			end,
-			HandlerCode = function (self, attacker, target, attack_args, hit_descr, mod_data)
-				if IsKindOf(target, "Unit") and (target.species ~= "Human" or attack_args.target_spot_group == "Groin") then
-					mod_data.effects[#mod_data.effects + 1] = "Bleeding"
-				end
-				
-				local enemiesInSight = GetTargetsToShowInPartyUI(attacker)
-				local damagePerBleed = self:ResolveValue("damagePerBleed")
-				local maxStacks = self:ResolveValue("maxStacks")			
-				local stacks = 0
-				for _, unit in ipairs(enemiesInSight) do
-					if unit:HasStatusEffect("Bleeding") then
-						stacks = stacks + 1
-					end
-				end
-				stacks = Min(stacks, maxStacks)
-								
-				local damageBonus = stacks * damagePerBleed
-				mod_data.base_damage = MulDivRound(mod_data.base_damage, 100 + damageBonus, 100)
-				mod_data.breakdown[#mod_data.breakdown + 1] = { name = self.DisplayName, value = damageBonus }
+				data.base_damage = MulDivRound(data.base_damage, 100 + damageBonus, 100)
+				data.breakdown[#data.breakdown + 1] = { name = self.DisplayName, value = damageBonus }
 			end,
 		}),
 	},

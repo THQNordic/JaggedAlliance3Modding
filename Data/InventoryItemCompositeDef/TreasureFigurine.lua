@@ -12,5 +12,6 @@ PlaceObj('InventoryItemCompositeDef', {
 	'AdditionalHint', T(846725836365, --[[InventoryItemCompositeDef TreasureFigurine AdditionalHint]] "<bullet_point> A piece of Grand Chien's glorious past\n<bullet_point> <GameColorD>Can be cashed in for Money</GameColorD>"),
 	'Valuable', 1,
 	'Cost', 3000,
+	'RestockWeight', 0,
 })
 

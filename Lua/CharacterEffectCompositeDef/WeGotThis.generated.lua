@@ -7,46 +7,18 @@ DefineClass.WeGotThis = {
 
 
 	object_class = "Perk",
-	msg_reactions = {
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "attacker",
-			Event = "OnKill",
-			Handler = function (self, attacker, killedUnits)
-				
-				local function exec(self, attacker, killedUnits)
-				if HasPerk(attacker, self.id) and attacker:CanActivatePerk(self.id) then
-					local squad = gv_Squads[attacker.Squad]
+	unit_reactions = {
+		PlaceObj('UnitReaction', {
+			Event = "OnUnitKill",
+			Handler = function (self, target, killedUnits)
+				if target:CanActivatePerk(self.class) then
+					local squad = gv_Squads[target.Squad]
 					local tempHp = self:ResolveValue("tempHp")
 					for _, id in ipairs(squad.units) do
 						local unit = g_Units[id]
 						unit:ApplyTempHitPoints(tempHp)
 					end
-					attacker:ActivatePerk(self.id)
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "OnKill" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, attacker, killedUnits)
-				end
-				
-				if self:VerifyReaction("OnKill", reaction_def, attacker, attacker, killedUnits) then
-					exec(self, attacker, killedUnits)
-				end
-			end,
-			HandlerCode = function (self, attacker, killedUnits)
-				if HasPerk(attacker, self.id) and attacker:CanActivatePerk(self.id) then
-					local squad = gv_Squads[attacker.Squad]
-					local tempHp = self:ResolveValue("tempHp")
-					for _, id in ipairs(squad.units) do
-						local unit = g_Units[id]
-						unit:ApplyTempHitPoints(tempHp)
-					end
-					attacker:ActivatePerk(self.id)
+					target:ActivatePerk(self.class)
 				end
 			end,
 		}),

@@ -17,64 +17,37 @@ PlaceObj('CharacterEffectCompositeDef', {
 		}),
 	},
 	'object_class', "Perk",
-	'msg_reactions', {
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "unit",
-			Event = "UnitBeginTurn",
-			Handler = function (self, unit)
-				
-				local function exec(self, unit)
-				unit:AddStatusEffect("InstagibBuff")
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "UnitBeginTurn" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, unit)
-				end
-				
-				if self:VerifyReaction("UnitBeginTurn", reaction_def, unit, unit) then
-					exec(self, unit)
-				end
-			end,
-			HandlerCode = function (self, unit)
-				unit:AddStatusEffect("InstagibBuff")
+	'msg_reactions', {},
+	'unit_reactions', {
+		PlaceObj('UnitReaction', {
+			Event = "OnBeginTurn",
+			Handler = function (self, target)
+				self:SetParameter("available", true)
 			end,
 		}),
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "attacker",
-			Event = "GatherDamageModifications",
-			Handler = function (self, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data)
-				
-				local function exec(self, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data)
-				if attacker:HasStatusEffect("InstagibBuff") then 
-					local damageBonus = MulDivRound(attacker.Marksmanship, self:ResolveValue("marksmanshipPercent"), 100)
-					mod_data.base_damage = MulDivRound(mod_data.base_damage, 100 + damageBonus, 100)
-					mod_data.breakdown[#mod_data.breakdown + 1] = { name = self.DisplayName, value = damageBonus }
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[2]
-				if not reaction_def or reaction_def.Event ~= "GatherDamageModifications" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data)
-				end
-				
-				if self:VerifyReaction("GatherDamageModifications", reaction_def, attacker, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data) then
-					exec(self, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data)
+		PlaceObj('UnitReaction', {
+			Event = "OnUnitAttack",
+			Handler = function (self, target, attacker, action, attack_target, results, attack_args)
+				if target == attacker then
+					self:SetParameter("available", false)
 				end
 			end,
-			HandlerCode = function (self, attacker, target, attack_args, hit_descr, mod_data)
-				if attacker:HasStatusEffect("InstagibBuff") then 
+		}),
+		PlaceObj('UnitReaction', {
+			Event = "OnCalcDamageAndEffects",
+			Handler = function (self, target, attacker, attack_target, action, weapon, attack_args, hit, data)
+				if attacker == target and self:ResolveValue("available") then
 					local damageBonus = MulDivRound(attacker.Marksmanship, self:ResolveValue("marksmanshipPercent"), 100)
-					mod_data.base_damage = MulDivRound(mod_data.base_damage, 100 + damageBonus, 100)
-					mod_data.breakdown[#mod_data.breakdown + 1] = { name = self.DisplayName, value = damageBonus }
+					data.base_damage = MulDivRound(data.base_damage, 100 + damageBonus, 100)
+					data.breakdown[#data.breakdown + 1] = { name = self.DisplayName, value = damageBonus }
+				end
+			end,
+		}),
+		PlaceObj('UnitReaction', {
+			Event = "OnCalcMaxAimActions",
+			Handler = function (self, target, value, attacker, attack_target, action, weapon)
+				if target == attacker then
+					return value + self:ResolveValue("bonusAims")
 				end
 			end,
 		}),

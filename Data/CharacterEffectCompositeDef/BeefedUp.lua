@@ -12,70 +12,14 @@ PlaceObj('CharacterEffectCompositeDef', {
 		}),
 	},
 	'object_class', "Perk",
-	'msg_reactions', {
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "obj",
-			Event = "StatusEffectAdded",
-			Handler = function (self, obj, id, stacks)
-				
-				local function exec(self, obj, id, stacks)
-				if IsKindOf(obj, "UnitProperties") then
-					RecalcMaxHitPoints(obj)
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "StatusEffectAdded" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, obj, id, stacks)
-				end
-				
-				if self:VerifyReaction("StatusEffectAdded", reaction_def, obj, obj, id, stacks) then
-					exec(self, obj, id, stacks)
-				end
-			end,
-			HandlerCode = function (self, obj, id, stacks)
-				if IsKindOf(obj, "UnitProperties") then
-					RecalcMaxHitPoints(obj)
-				end
-			end,
-		}),
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "obj",
-			Event = "StatusEffectRemoved",
-			Handler = function (self, obj, id, stacks, reason)
-				
-				local function exec(self, obj, id, stacks, reason)
-				if IsKindOf(obj, "UnitProperties") then
-					RecalcMaxHitPoints(obj)
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[2]
-				if not reaction_def or reaction_def.Event ~= "StatusEffectRemoved" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, obj, id, stacks, reason)
-				end
-				
-				if self:VerifyReaction("StatusEffectRemoved", reaction_def, obj, obj, id, stacks, reason) then
-					exec(self, obj, id, stacks, reason)
-				end
-			end,
-			HandlerCode = function (self, obj, id, stacks, reason)
-				if IsKindOf(obj, "UnitProperties") then
-					RecalcMaxHitPoints(obj)
-				end
-			end,
-		}),
-	},
 	'DisplayName', T(877823816296, --[[CharacterEffectCompositeDef BeefedUp DisplayName]] "Beefed Up"),
 	'Description', T(885436226092, --[[CharacterEffectCompositeDef BeefedUp Description]] "Max <em>HP</em> increased by <em><percent(bonus_health)></em>."),
+	'OnAdded', function (self, obj)
+		RecalcMaxHitPoints(obj)
+	end,
+	'OnRemoved', function (self, obj)
+		RecalcMaxHitPoints(obj)
+	end,
 	'Icon', "UI/Icons/Perks/Fitness",
 	'Tier', "Bronze",
 	'Stat', "Health",

@@ -13,15 +13,6 @@ SpotLight.flags = SpotLight.flags or {}
 SpotLight.flags.efVsSpotLight = true
 SpotLight.flags.efVsPointLight = false
 
---[[local function UpdateUnitStealth(unit)
-	if GameState.Night or GameState.Underground then
-		local voxel_illum = GetVoxelStealthParams(unit:GetPos())
-		local voxel_lit = band(voxel_illum, const.vsFlagIlluminated) ~= 0
-	end
-end
-
-OnMsg.UnitMovementDone = UpdateUnitStealth]]
-
 function OnMsg.LightsStateUpdated()
 	ResetVoxelStealthParamsCache()
 	--[[for _, unit in ipairs(g_Units or empty_table) do
@@ -31,11 +22,10 @@ end
 
 function IsIlluminated(target, voxels, sync, step_pos)
 	--if step_pos is present, use it for all pos checks and use the target for all unit checks
-	if not IsValid(target) or IsPoint(target) or not target:IsValidPos() then return end
+	if not IsValid(target) or not target:IsValidPos() then return end
 	if not GameState.Night and not GameState.Underground then
 		return true
 	end
-	--local env_factors = GetVoxelStealthParams(target, not not sync)
 	local env_factors = GetVoxelStealthParams(step_pos or target)
 	--if sync then NetUpdateHash("IsIlluminated", target, target:GetPos(), env_factors, table.unpack(voxels)) end
 	if env_factors ~= 0 and band(env_factors, const.vsFlagIlluminated) ~= 0 then
@@ -232,14 +222,25 @@ function CreateStealthLights()
 end
 
 OnMsg.ChangeMapDone = CreateStealthLights
+
 function NetSyncEvents.OnLightModelChanged()
 	CreateStealthLights()
 end
+
 OnMsg.LightmodelChange = function()
 	if IsChangingMap() then return end --changemapdone should handle this
 	NetSyncEvent("OnLightModelChanged")
 end
 
+function OnMsg.EditorCallback(id, objects, ...)
+	if id == "EditorCallbackPlace" then
+		for _, obj in ipairs(objects) do
+			if IsKindOf(obj, "Light") and IsLightSetupToAffectStealth(obj) then
+				Stealth_HandleLight(obj)
+			end
+		end
+	end
+end
 if FirstLoad then
 	lights_on_save = false
 end

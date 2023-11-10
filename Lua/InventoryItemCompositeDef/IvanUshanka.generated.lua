@@ -13,6 +13,7 @@ DefineClass.IvanUshanka = {
 	DisplayNamePlural = T(786597442135, --[[InventoryItemCompositeDef IvanUshanka DisplayNamePlural]] "Ushanki"),
 	AdditionalHint = T(650793471533, --[[InventoryItemCompositeDef IvanUshanka AdditionalHint]] "<bullet_point> Protects against capitalism"),
 	locked = true,
+	RestockWeight = 0,
 	Slot = "Head",
 	DamageReduction = 0,
 	ProtectedBodyParts = set( "Head" ),

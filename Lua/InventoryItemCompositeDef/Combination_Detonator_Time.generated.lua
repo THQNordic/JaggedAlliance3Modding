@@ -14,5 +14,10 @@ DefineClass.Combination_Detonator_Time = {
 	DisplayNamePlural = T(118344798272, --[[InventoryItemCompositeDef Combination_Detonator_Time DisplayNamePlural]] "Time Detonators"),
 	Description = T(719759920498, --[[InventoryItemCompositeDef Combination_Detonator_Time Description]] "Allows a <em>Set Explosive</em> to detonate after a chosen amount of time has passed."),
 	AdditionalHint = T(847210825755, --[[InventoryItemCompositeDef Combination_Detonator_Time AdditionalHint]] "<bullet_point> Can be combined with TNT, C4, and PETN\n<bullet_point> Timed explosives detonate after 1 turn (or 5 seconds out of combat)"),
+	Cost = 400,
+	CanAppearInShop = true,
+	Tier = 2,
+	RestockWeight = 30,
+	CategoryPair = "Components",
 }
 

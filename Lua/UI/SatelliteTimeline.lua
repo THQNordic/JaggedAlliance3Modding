@@ -612,19 +612,14 @@ local function lOperationChangedUpdateEvent(ud, previousOperation, _,prev_prof, 
 		local sectorId = squad.CurrentSector
 		
 		-- Update event for the old operation.
-		local previousTimelineId = false
-		if previousOperationId == "Idle" then
-			previousTimelineId = "sector-activity-idle-" .. ud.session_id
-			RemoveTimelineEvent(previousTimelineId)
-		elseif previousOperationId == "RAndR" then
-			previousTimelineId = "sector-activity-randr-"..ud.session_id
+		local previousTimelineId, is_prev_personal = GetOperationEventId(ud, previousOperationId)
+		if previousOperationId == "Idle" or previousOperationId == "RAndR" then	
 			RemoveTimelineEvent(previousTimelineId)
 		elseif previousOperationId ~= "Traveling" and previousOperationId ~= "Arriving" then
-			previousTimelineId = "sector-activity-" .. sectorId .. "-" .. previousOperationId
 			local mercs = GetOperationProfessionals(sectorId, previousOperationId)
 			if next(mercs) then
 				local previousTimeLeft = GetOperationTimeLeft(mercs[1], previousOperationId, {prediction = true, all = true})
-				if previousTimeLeft <= 0 or interrupted then
+				if previousTimeLeft <= 0 or (interrupted and is_prev_personal) then
 					RemoveTimelineEvent(previousTimelineId)
 				else
 					local ctx = { operationId = previousOperationId, sectorId = sectorId }
@@ -701,7 +696,7 @@ function OnMsg.ConflictStart(sector_id)
 end
 
 function OnMsg.UnitTiredRemoved(unit)
-	if gv_SatelliteView then
+	if gv_SatelliteView and IsMerc(unit) then
 		if GetAccountStorageOptionValue("PauseActivityDone") then
 			CombatLog("important",T{869182514521, --[[CharacterEffectCompositeDef Tired RemoveEffectText]] "<em><DisplayName></em> is no longer tired",DisplayName = unit.Nick})
 			PauseCampaignTime("UI")
@@ -712,6 +707,12 @@ function OnMsg.UnitTiredRemoved(unit)
 end
 
 function OnMsg.MercContractExpired()
+	if GetAccountStorageOptionValue("PauseActivityDone") then
+		PauseCampaignTime("UI")
+	end
+end
+
+function OnMsg.BobbyRayShopShipmentArrived(shipment_details)
 	if GetAccountStorageOptionValue("PauseActivityDone") then
 		PauseCampaignTime("UI")
 	end

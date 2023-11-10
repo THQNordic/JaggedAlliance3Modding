@@ -72,13 +72,19 @@ end
 
 local function lUpdateGamepadThread()
 	local igi = GetInGameInterfaceModeDlg()
-	if not IsKindOf(igi, "GamepadUnitControl") then return end
+	if not IsKindOf(igi, "GamepadUnitControl") then 
+		if GetUIStyleGamepad() then
+			ForceHideMouseCursor("GamepadActive")
+		else
+			UnforceHideMouseCursor("GamepadActive")
+		end	
+		return 
+	end
 	if GetUIStyleGamepad() then
 		-- Remove the mouse rollover from where the mouse is.
 		if terminal.desktop then
 			terminal.desktop:MouseEvent("OnMousePos", terminal.GetMousePos())
-		end
-
+		end	
 		igi:ResumeGamepadThread()
 	else
 		igi:StopGamepadThread()
@@ -615,8 +621,8 @@ DefineConstInt("Default", "GamePadButtonHoldTime", 300)
 
 function IsXInputHeld(button, time)
 	local time = time or const.GamePadButtonHoldTime
-	local _, gamepadId = GetActiveGamepadState()
-	local pressTime = XInput.InitialButtonPressTime[gamepadId]
+	local gamepadState, gamepadId = GetActiveGamepadState()
+	local pressTime = gamepadState and XInput.InitialButtonPressTime[gamepadId]
 	pressTime = pressTime and pressTime[button]
 	local timeWasPressed = pressTime and RealTime() - pressTime
 
@@ -624,8 +630,8 @@ function IsXInputHeld(button, time)
 end
 
 function XInputSuppressButtonUpHoldCheck(button)
-	local _, gamepadId = GetActiveGamepadState()
-	local pressTime = XInput.InitialButtonPressTime[gamepadId]
+	local gamepadState, gamepadId = GetActiveGamepadState()
+	local pressTime = gamepadState and XInput.InitialButtonPressTime[gamepadId]
 	if pressTime and pressTime[button] then
 		pressTime[button] = nil
 	end

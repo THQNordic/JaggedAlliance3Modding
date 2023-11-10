@@ -12,10 +12,14 @@ DefineClass.Machete = {
 	Icon = "UI/Icons/Weapons/Machete",
 	DisplayName = T(898985781986, --[[InventoryItemCompositeDef Machete DisplayName]] "Machete"),
 	DisplayNamePlural = T(315076086987, --[[InventoryItemCompositeDef Machete DisplayNamePlural]] "Machetes"),
+	Description = T(975872566033, --[[InventoryItemCompositeDef Machete Description]] "This blade can be your best tool for navigating the jungle and handling what's in it."),
 	AdditionalHint = T(725616226891, --[[InventoryItemCompositeDef Machete AdditionalHint]] "<bullet_point> Increased damage bonus from Strength"),
 	LargeItem = 1,
 	UnitStat = "Dexterity",
-	Cost = 150,
+	Cost = 250,
+	CanAppearInShop = true,
+	Tier = 2,
+	CategoryPair = "MeleeWeapons",
 	BaseChanceToHit = 100,
 	BaseDamage = 16,
 	AimAccuracy = 15,
@@ -29,5 +33,6 @@ DefineClass.Machete = {
 	NeckAttackType = "lethal",
 	Entity = "Weapon_Machete_01",
 	HolsterSlot = "Shoulder",
+	CanAppearUsed = false,
 }
 

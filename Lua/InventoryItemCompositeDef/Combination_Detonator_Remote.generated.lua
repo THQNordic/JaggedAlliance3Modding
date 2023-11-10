@@ -12,7 +12,12 @@ DefineClass.Combination_Detonator_Remote = {
 	Icon = "UI/Icons/Items/combination_detonator_remote",
 	DisplayName = T(613057190995, --[[InventoryItemCompositeDef Combination_Detonator_Remote DisplayName]] "Remote Detonator"),
 	DisplayNamePlural = T(206415687555, --[[InventoryItemCompositeDef Combination_Detonator_Remote DisplayNamePlural]] "Remote Detonators"),
-	Description = T(292351277977, --[[InventoryItemCompositeDef Combination_Detonator_Remote Description]] "Allows a <em>Set Explosive</em> to detonate  via a radio signal."),
+	Description = T(292351277977, --[[InventoryItemCompositeDef Combination_Detonator_Remote Description]] "Allows a <em>Set Explosive</em> to detonate via a radio signal."),
 	AdditionalHint = T(539701153933, --[[InventoryItemCompositeDef Combination_Detonator_Remote AdditionalHint]] "<bullet_point> Can be combined with TNT, C4, and PETN\n<bullet_point> Remote explosives can be detonated from afar"),
+	Cost = 400,
+	CanAppearInShop = true,
+	Tier = 2,
+	RestockWeight = 30,
+	CategoryPair = "Components",
 }
 

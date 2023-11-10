@@ -703,7 +703,7 @@ PlaceObj('Conversation', {
 							Lines = {
 								PlaceObj('ConversationLine', {
 									Character = "Fidel",
-									Text = T(910072593011, --[[Conversation Flay_1 Text voice:Fidel section:Flay_1 keyword:Why not hunt the Legion instead?]] "Eh. Dunno. Fidel no hunt. Fidel just blow things up.."),
+									Text = T(910072593011, --[[Conversation Flay_1 Text voice:Fidel section:Flay_1 keyword:Why not hunt the Legion instead?]] "Eh. Dunno. Fidel no hunt. Fidel just blow things up."),
 								}),
 							},
 						}),

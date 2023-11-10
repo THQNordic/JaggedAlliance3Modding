@@ -16,6 +16,11 @@ PlaceObj('QuestsDef', {
 						return quest.WorldFlipDone
 					end,
 				}),
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"H2",
+					},
+				}),
 			},
 			Effects = {
 				PlaceObj('ConditionalEffect', {
@@ -90,6 +95,9 @@ PlaceObj('QuestsDef', {
 			Once = true,
 			ParamId = "TCE_GatherPartisans",
 			QuestId = "ErnieSideQuests_WorldFlip",
+			requiredSectors = {
+				"H2",
+			},
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {

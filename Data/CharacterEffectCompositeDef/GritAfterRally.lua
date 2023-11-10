@@ -4,42 +4,13 @@ PlaceObj('CharacterEffectCompositeDef', {
 	'Group', "System",
 	'Id', "GritAfterRally",
 	'object_class', "CharacterEffect",
-	'msg_reactions', {
-		PlaceObj('MsgActorReaction', {
-			Event = "OnDownedRally",
-			Handler = function (self, healer, target)
-				
-				local function exec(self, reaction_actor, healer, target)
-				local effect = target:GetStatusEffect(self.id)
-				if effect and effect.stacks > 0 then
-					target:ApplyTempHitPoints(effect.stacks)
-					target:RemoveStatusEffect(self.id, "all")
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "OnDownedRally" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					local reaction_actor
-					exec(self, reaction_actor, healer, target)
-				end
-				
-				
-				local actors = self:GetReactionActors("OnDownedRally", reaction_def, healer, target)
-				for _, reaction_actor in ipairs(actors) do
-					if self:VerifyReaction("OnDownedRally", reaction_def, reaction_actor, healer, target) then
-						exec(self, reaction_actor, healer, target)
-					end
-				end
-			end,
-			HandlerCode = function (self, reaction_actor, healer, target)
-				local effect = target:GetStatusEffect(self.id)
-				if effect and effect.stacks > 0 then
-					target:ApplyTempHitPoints(effect.stacks)
-					target:RemoveStatusEffect(self.id, "all")
+	'unit_reactions', {
+		PlaceObj('UnitReaction', {
+			Event = "OnUnitRallied",
+			Handler = function (self, target, healer, patient)
+				if target == patient then
+					target:ApplyTempHitPoints(self.stacks)
+					target:RemoveStatusEffect(self.class, "all")
 				end
 			end,
 		}),

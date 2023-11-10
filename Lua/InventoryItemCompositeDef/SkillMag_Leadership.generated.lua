@@ -15,6 +15,11 @@ DefineClass.SkillMag_Leadership = {
 	AdditionalHint = T(787629043274, --[[InventoryItemCompositeDef SkillMag_Leadership AdditionalHint]] "<bullet_point> Used through the Item Menu\n<bullet_point> Single use\n<bullet_point> Increases Leadership"),
 	UnitStat = "Leadership",
 	Valuable = 1,
+	Cost = 1500,
+	CanAppearInShop = true,
+	Tier = 2,
+	MaxStock = 1,
+	RestockWeight = 10,
 	effect_moment = "on_use",
 	Effects = {
 		PlaceObj('UnitStatBoost', {

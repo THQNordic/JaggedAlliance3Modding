@@ -9,6 +9,12 @@ PlaceObj('InventoryItemCompositeDef', {
 	'DisplayNamePlural', T(922038247898, --[[InventoryItemCompositeDef _40mmFragGrenade DisplayNamePlural]] "40 mm HE"),
 	'Description', T(997055293212, --[[InventoryItemCompositeDef _40mmFragGrenade Description]] "40 mm ordnance ammo for Grenade Launchers."),
 	'AdditionalHint', T(838736661240, --[[InventoryItemCompositeDef _40mmFragGrenade AdditionalHint]] "<bullet_point> Inflicts <em>Bleeding</em> in the epicenter"),
+	'Cost', 300,
+	'CanAppearInShop', true,
+	'Tier', 2,
+	'MaxStock', 5,
+	'RestockWeight', 50,
+	'CategoryPair', "Ordnance",
 	'CenterUnitDamageMod', 130,
 	'CenterObjDamageMod', 500,
 	'CenterAppliedEffects', {

@@ -16,6 +16,7 @@ PlaceObj('InventoryItemCompositeDef', {
 	'Cumbersome', 1,
 	'Valuable', 1,
 	'Cost', 3000,
+	'RestockWeight', 0,
 	'Caliber', "762NATO",
 	'Damage', 50,
 	'AimAccuracy', 10,

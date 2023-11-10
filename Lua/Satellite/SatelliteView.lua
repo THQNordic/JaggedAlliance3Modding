@@ -132,7 +132,10 @@ function NetSyncEvents.OpenPDASatellite(context)
 	end)
 end
 
-local thread
+if FirstLoad then
+	g_OpenSatelliteViewThread = false
+end
+
 function _OpenSatelliteView(campaign, context, loading_screen)
 	--this part is sync cuz coming from sync ev
 	if g_Combat then
@@ -149,8 +152,8 @@ function _OpenSatelliteView(campaign, context, loading_screen)
 	else
 		SkipNonBlockingSetpieces() --waking up setpieces' threads from rtt is async;
 	end
-	assert(not IsValidThread(thread))
-	thread = CreateRealTimeThread(function()
+	assert(not IsValidThread(g_OpenSatelliteViewThread))
+	g_OpenSatelliteViewThread = CreateRealTimeThread(function()
 		--still probably sync
 		sprocall(function()
 			if not HasGameSession() then
@@ -176,21 +179,21 @@ function _OpenSatelliteView(campaign, context, loading_screen)
 			
 			FireNetSyncEventOnHost("OpenPDASatellite", context) --since there is non sync code up to here, only way to guarantee this is through ev
 			
-			if not gv_SatelliteView or not GetDialog("PDADialogSatellite") then --sometimes, when game loads super slowly, this is already true
+			while HasGameSession() and (not gv_SatelliteView or not GetDialog("PDADialogSatellite")) do --sometimes, when game loads super slowly, this is already true
 				--gv_SatelliteView is sometimes bogus because it is a game var and it could be persisted true without the ui being up
-				WaitMsg("InitSatelliteView")
+				WaitMsg("InitSatelliteView", 2000)
 			end
 			
 			local dlg = GetDialog("PDADialog")
 			if dlg then
 				dlg:SetVisible(true)
 			end
-			
-			if loading_screen then
-				LoadingScreenClose("idSatelliteView", "satellite")
-			end
 		end)
+		if loading_screen then
+			LoadingScreenClose("idSatelliteView", "satellite")
+		end
 		openiningSatView = nil
+		g_OpenSatelliteViewThread = false
 	end)
 end
 
@@ -336,10 +339,18 @@ end
 local ticks_in_day = 24 * 60 * const.Scale.min / const.Satellite.SectorsTick
 local function lFireCampaignTimeSyncMessages(time, old_time)
 	local tick = time / const.Satellite.Tick
+	local sectors_tick = time / const.Satellite.SectorsTick
 	if tick ~= old_time / const.Satellite.Tick then
 		Msg("SatelliteTick", tick)
+		local list = GetUnitDataList()
+		ListCallReactions(list, "OnSatelliteTick")
+		if time % const.Scale.h <= 0 then
+			ListCallReactions(list, "OnNewHour")
+		end
+		if time % const.Scale.day < const.Scale.min then
+			ListCallReactions(list, "OnNewDay")
+		end		
 	end
-	local sectors_tick = time / const.Satellite.SectorsTick
 	if sectors_tick ~= old_time / const.Satellite.SectorsTick then
 		Msg("SectorsTick", sectors_tick % ticks_in_day, ticks_in_day)
 	end
@@ -362,13 +373,16 @@ function GetCampHumanTime()
 		(Game.CampaignTime % const.Scale.day) % const.Scale.h / const.Scale.min
 end
 
-local thread = false
+if FirstLoad then
+	g_TimeAdvanceThread = false
+end
+
 function NetSyncEvents.SatelliteCampaignTimeAdvance(time, old_time, step)
 	if IsCampaignPaused() then
 		return
 	end
-	DeleteThread(thread)
-	thread = CreateMapRealTimeThread(function()
+	DeleteThread(g_TimeAdvanceThread)
+	g_TimeAdvanceThread = CreateMapRealTimeThread(function()
 		local lastGameTime = GameTime()
 	
 		WaitAllOtherThreads()
@@ -393,6 +407,7 @@ function NetSyncEvents.SatelliteCampaignTimeAdvance(time, old_time, step)
 			end
 			lastGameTime = gameTimeNow
 		end
+		g_TimeAdvanceThread = false
 	end)
 end
 
@@ -705,8 +720,6 @@ function CompleteCurrentMilitiaTraining(sector, mercs)
 			militia_types[unit.class] = militia_types[unit.class] + 1
 		end
 		
-		---local params = { sector_ID = Untranslated(sector.name), sector_name = sector.display_name, mercs = merc_list_text }
-		
 		local popupHost = GetDialog("PDADialogSatellite")
 		popupHost = popupHost and popupHost:ResolveId("idDisplayPopupHost")
 		
@@ -920,17 +933,6 @@ function OnMsg.EnterSector()
 end
 
 -- sides
-function SetSideStanding(side_id, add_standing)
-	local side = gv_Sides[side_id]
-	if side.StickyStanding then return end
-	
-	side.Standing = side.Standing + add_standing
-end
-
-function SetSideStickyStanding(side_id, sticky)
-	gv_Sides[side_id].StickyStanding = sticky
-end
-
 function GetSectorPOITypes()
 	return { "all", "Mine", "Guardpost", "Port" }
 end
@@ -1297,7 +1299,7 @@ function SpawnOnDefenderPriorityMarkerPositions(session_ids)
 			
 			-- Dont spawn beasts on high up markers unless they are specifically set.
 			if role == "Beast" and not overwriteBeastOnMarker then
-				local floor = GetFloorOfPos(def_marker:GetPos())
+				local floor = GetFloorOfPos(def_marker:GetPosXYZ())
 				if floor >= 1 then -- zero indexed
 					shouldSpawn = false
 				end
@@ -1797,7 +1799,7 @@ function EnterSector(sector_id, spawn_mode, spawn_markers, save_sector, force_te
 	
 	g_GoingAboveground = false
 	for _, squad in ipairs(g_SquadsArray) do
-		if shouldSpawnSquad(squad, sector) and IsSectorUnderground(squad.PreviousSector) then
+		if shouldSpawnSquad(squad, sector) and IsSectorUnderground(squad.PreviousSector) and not IsSectorUnderground(sector.Id) then
 			g_GoingAboveground = true
 			break
 		end
@@ -1826,6 +1828,11 @@ function EnterSector(sector_id, spawn_mode, spawn_markers, save_sector, force_te
 	
 	spawn_mode = force_test_map and "attack" or spawn_mode
 	local load_game = not spawn_mode and not spawn_markers
+	
+	if not load_game and not force_test_map and gv_Sectors[gv_CurrentSectorId] then
+		ExecuteSectorEvents("SE_PreChangeMap", gv_CurrentSectorId, "wait")
+	end
+	
 	ChangeGameState{loading_savegame = true}
 	ChangeMap(force_test_map or sector.Map or "__CombatTest")
 	ChangeGameState{loading_savegame = false, entered_sector = true}
@@ -1895,6 +1902,7 @@ function EnterSector(sector_id, spawn_mode, spawn_markers, save_sector, force_te
 	SetupTeamsFromMap()
 	UpdateSpawnersLocal()
 	Msg("EnterSector", game_start, load_game)
+	ListCallReactions(g_Units, "OnEnterSector", game_start, load_game)
 	
 	if not load_game or ambient_timeouted then
 		Msg("AmbientLifeSpawn")
@@ -2036,7 +2044,7 @@ function EnterFirstSector(sector_id, force)
 				spawn_markers[s.UniqueId] = markers
 			end
 		end
-		EnterSector(init_sector, nil, spawn_markers, true, nil, "game_start")
+		EnterSector(sector_id, nil, spawn_markers, true, nil, "game_start")
 		return true
 	end
 end
@@ -2259,4 +2267,8 @@ function SavegameSessionDataFixups.FixMinesTaggedAsDepleted(sector_data, lua_rev
 			end
 		end
 	end
+end
+
+function OnMsg.BobbyRayShopShipmentArrived(shipment)
+	CombatLog("important", T{389474969879, "<em>Bobby Ray's</em> shipment arrived in <em><SectorName(sector_id)></em>.", order_id = Untranslated(shipment.order_id), sector_id = shipment.sector_id})
 end

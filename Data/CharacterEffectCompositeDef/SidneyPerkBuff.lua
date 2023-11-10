@@ -4,85 +4,25 @@ PlaceObj('CharacterEffectCompositeDef', {
 	'Group', "System",
 	'Id', "SidneyPerkBuff",
 	'object_class', "CharacterEffect",
-	'msg_reactions', {
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "attacker",
-			Event = "AttackMiss",
-			Handler = function (self, attacker, target)
-				
-				local function exec(self, attacker, target)
-				attacker:RemoveStatusEffect(self.id)
+	'unit_reactions', {
+		PlaceObj('UnitReaction', {
+			Event = "OnUnitAttack",
+			Handler = function (self, target, attacker, action, attack_target, results, attack_args)
+				if attacker == target and results.miss then
+					target:RemoveStatusEffect(self.class)
 				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "AttackMiss" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, attacker, target)
-				end
-				
-				if self:VerifyReaction("AttackMiss", reaction_def, attacker, attacker, target) then
-					exec(self, attacker, target)
-				end
-			end,
-			HandlerCode = function (self, attacker, target)
-				attacker:RemoveStatusEffect(self.id)
 			end,
 		}),
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "target",
-			Event = "DamageTaken",
-			Handler = function (self, attacker, target, dmg, hit_descr)
-				
-				local function exec(self, attacker, target, dmg, hit_descr)
-				target:RemoveStatusEffect(self.id)
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[2]
-				if not reaction_def or reaction_def.Event ~= "DamageTaken" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, attacker, target, dmg, hit_descr)
-				end
-				
-				if self:VerifyReaction("DamageTaken", reaction_def, target, attacker, target, dmg, hit_descr) then
-					exec(self, attacker, target, dmg, hit_descr)
-				end
-			end,
-			HandlerCode = function (self, attacker, target, dmg, hit_descr)
-				target:RemoveStatusEffect(self.id)
+		PlaceObj('UnitReaction', {
+			Event = "OnDamageTaken",
+			Handler = function (self, target, attacker, dmg, hit_descr)
+				target:RemoveStatusEffect(self.class)
 			end,
 		}),
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "unit",
-			Event = "UnitBeginTurn",
-			Handler = function (self, unit)
-				
-				local function exec(self, unit)
-				local ap = CharacterEffectDefs.SidneyPerk:ResolveValue("APBuff") * const.Scale.AP
-				unit:GainAP(ap)
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[3]
-				if not reaction_def or reaction_def.Event ~= "UnitBeginTurn" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, unit)
-				end
-				
-				if self:VerifyReaction("UnitBeginTurn", reaction_def, unit, unit) then
-					exec(self, unit)
-				end
-			end,
-			HandlerCode = function (self, unit)
-				local ap = CharacterEffectDefs.SidneyPerk:ResolveValue("APBuff") * const.Scale.AP
-				unit:GainAP(ap)
+		PlaceObj('UnitReaction', {
+			Event = "OnCalcStartTurnAP",
+			Handler = function (self, target, value)
+				return value + SidneyPerk:ResolveValue("APBuff") * const.Scale.AP
 			end,
 		}),
 	},

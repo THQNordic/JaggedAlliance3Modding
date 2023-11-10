@@ -380,12 +380,10 @@ end
 
 -- Defender Markers, Defender Priority Markers and Villain Defender Priority markers  - conditions that enable or disable them
 function GridMarker:IsMarkerEnabled(context)
-	for i,condition in ipairs(self.EnabledConditions) do
-		if not condition:Evaluate(self, context) then
-			return false
-		end
+	if EvalConditionList(self.EnabledConditions, self, context) then
+		return true
 	end
-	return true
+	return false
 end
 
 function GridMarker:SetDynamicData(data)
@@ -442,6 +440,9 @@ end
 
 function GridMarker:GetMarkerCornerPositions()
 	local positions = self:GetAreaPositions()
+	if not positions or #positions == 0 then
+		return {}
+	end
 	local pos_voxel_x, pos_voxel_y = self:GetPosXYZ()
 	local area_width = self.AreaWidth * slab_x
 	local area_height = self.AreaHeight * slab_y
@@ -449,35 +450,43 @@ function GridMarker:GetMarkerCornerPositions()
 	local area_right = area_left + area_width
 	local area_top = pos_voxel_y - area_height / 2
 	local area_bottom = area_top + area_height
-	local left_top_min_dist = max_int
-	local right_top_min_dist = max_int
-	local left_bottom_min_dist = max_int
-	local right_bottom_min_dist = max_int
-	local result = {}
-	for _, pos_packed in ipairs(positions) do
-		local x, y = point_unpack(pos_packed)
-		if IsCloser2D(x, y, area_left, area_top, left_top_min_dist) then
-			left_top_min_dist = dist
-			result[1] = pos_packed
+
+	local p1 = positions[1]
+	local x, y = point_unpack(p1)
+	local left_top_min, left_top_min_x, left_top_min_y = p1, x, y
+	local right_top_min, right_top_min_x, right_top_min_y = p1, x, y
+	local left_bottom_min, left_bottom_min_x, left_bottom_min_y = p1, x, y
+	local right_bottom_min, right_bottom_min_x, right_bottom_min_y = p1, x, y
+	for i = 2, #positions do
+		local p = positions[i]
+		local x, y = point_unpack(p)
+		if IsCloser2D(area_left, area_top, x, y, left_top_min_x, left_top_min_y) then
+			left_top_min = p
+			left_top_min_x = x
+			left_top_min_y = y
 		end
-		if IsCloser2D(x, y, area_right, area_top, right_top_min_dist) then
-			right_top_min_dist = dist
-			result[2] = pos_packed
+		if IsCloser2D(area_right, area_top, x, y, right_top_min_x, right_top_min_y) then
+			right_top_min = p
+			right_top_min_x = x
+			right_top_min_y = y
 		end
-		if IsCloser2D(x, y, area_left, area_bottom, left_bottom_min_dist) then
-			left_bottom_min_dist = dist
-			result[4] = pos_packed
+		if IsCloser2D(area_left, area_bottom, x, y, left_bottom_min_x, left_bottom_min_y) then
+			left_bottom_min = p
+			left_bottom_min_x = x
+			left_bottom_min_y = y
 		end
-		if IsCloser2D(x, y, area_right, area_bottom, right_bottom_min_dist) then
-			right_bottom_min_dist = dist
-			result[3] = pos_packed
+		if IsCloser2D(area_right, area_bottom, x, y, right_bottom_min_x, right_bottom_min_y) then
+			right_bottom_min = p
+			right_bottom_min_x = x
+			right_bottom_min_y = y
 		end
 	end
-	for i = 1, 4 do
-		if result[i] then
-			result[i] = { point(point_unpack(result[i])) }
-		end
-	end
+	local result = {
+		{ point(point_unpack(left_top_min)) },
+		{ point(point_unpack(right_top_min)) },
+		{ point(point_unpack(right_bottom_min)) },
+		{ point(point_unpack(left_bottom_min)) },
+	}
 	return result
 end
 

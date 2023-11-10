@@ -7,196 +7,39 @@ DefineClass.BandageInCombat = {
 
 
 	object_class = "StatusEffect",
-	msg_reactions = {
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "obj",
-			Event = "StatusEffectAdded",
-			Handler = function (self, obj, id, stacks)
-				
-				local function exec(self, obj, id, stacks)
-				local target = IsKindOf(obj, "Unit") and obj:GetBandageTarget()
-				if target then
-					target:RemoveStatusEffect("Downed")
-					target:RemoveStatusEffect("BleedingOut")
-				end
-				obj:RemoveStatusEffect("FreeMove")
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "StatusEffectAdded" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, obj, id, stacks)
-				end
-				
-				if self:VerifyReaction("StatusEffectAdded", reaction_def, obj, obj, id, stacks) then
-					exec(self, obj, id, stacks)
-				end
-			end,
-			HandlerCode = function (self, obj, id, stacks)
-				local target = IsKindOf(obj, "Unit") and obj:GetBandageTarget()
-				if target then
-					target:RemoveStatusEffect("Downed")
-					target:RemoveStatusEffect("BleedingOut")
-				end
-				obj:RemoveStatusEffect("FreeMove")
-			end,
-		}),
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "obj",
-			Event = "StatusEffectRemoved",
-			Handler = function (self, obj, id, stacks, reason)
-				
-				local function exec(self, obj, id, stacks, reason)
-				local target =  IsKindOf(obj, "Unit") and obj:GetBandageTarget()
-				if not g_Combat then return end
-				if target and not target:IsDead() and target:IsDowned() and not target:HasStatusEffect("Unconscious") then
-					target:RemoveStatusEffect("Stabilized")
-					target:AddStatusEffect("BleedingOut")
-					target:RemoveStatusEffect("BeingBandaged")
-				elseif target == obj then
-					target:RemoveStatusEffect("BeingBandaged")
-				end
-				
-				if IsKindOf(obj, "Unit") and not obj:IsDead() then
-					if CurrentThread() == obj.command_thread then
-						obj:QueueCommand("EndCombatBandage") -- make sure it does not break the RemoveStatusEffect call
-					else
-						obj:SetCommand("EndCombatBandage")
-					end
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[2]
-				if not reaction_def or reaction_def.Event ~= "StatusEffectRemoved" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, obj, id, stacks, reason)
-				end
-				
-				if self:VerifyReaction("StatusEffectRemoved", reaction_def, obj, obj, id, stacks, reason) then
-					exec(self, obj, id, stacks, reason)
-				end
-			end,
-			HandlerCode = function (self, obj, id, stacks, reason)
-				local target =  IsKindOf(obj, "Unit") and obj:GetBandageTarget()
-				if not g_Combat then return end
-				if target and not target:IsDead() and target:IsDowned() and not target:HasStatusEffect("Unconscious") then
-					target:RemoveStatusEffect("Stabilized")
-					target:AddStatusEffect("BleedingOut")
-					target:RemoveStatusEffect("BeingBandaged")
-				elseif target == obj then
-					target:RemoveStatusEffect("BeingBandaged")
-				end
-				
-				if IsKindOf(obj, "Unit") and not obj:IsDead() then
-					if CurrentThread() == obj.command_thread then
-						obj:QueueCommand("EndCombatBandage") -- make sure it does not break the RemoveStatusEffect call
-					else
-						obj:SetCommand("EndCombatBandage")
-					end
-				end
-			end,
-			helpActor = "obj",
-		}),
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "unit",
-			Event = "UnitBeginTurn",
-			Handler = function (self, unit)
-				
-				local function exec(self, unit)
-				local target = unit:GetBandageTarget()
-				local medicine = unit:GetBandageMedicine()
-				if not target or not medicine or target.command == "Die" or target:IsDead() or target.HitPoints >= target.MaxHitPoints then
-					unit:RemoveStatusEffect("BandageInCombat")
-					return 
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[3]
-				if not reaction_def or reaction_def.Event ~= "UnitBeginTurn" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, unit)
-				end
-				
-				if self:VerifyReaction("UnitBeginTurn", reaction_def, unit, unit) then
-					exec(self, unit)
-				end
-			end,
-			HandlerCode = function (self, unit)
-				local target = unit:GetBandageTarget()
-				local medicine = unit:GetBandageMedicine()
-				if not target or not medicine or target.command == "Die" or target:IsDead() or target.HitPoints >= target.MaxHitPoints then
-					unit:RemoveStatusEffect("BandageInCombat")
-					return 
+	unit_reactions = {
+		PlaceObj('UnitReaction', {
+			Event = "OnBeginTurn",
+			Handler = function (self, target)
+				local patient = target:GetBandageTarget()
+				local medicine = target:GetBandageMedicine()
+				if not patient or not medicine or patient.command == "Die" or patient:IsDead() or patient.HitPoints >= patient.MaxHitPoints then
+					target:RemoveStatusEffect("BandageInCombat")
 				end
 			end,
 		}),
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "unit",
-			Event = "UnitEndTurn",
-			Handler = function (self, unit)
-				
-				local function exec(self, unit)
-				local target = unit:GetBandageTarget()
-				local medicine = unit:GetBandageMedicine()
-				if not IsValid(target) or target.command == "Die" or target:IsDead() or target.HitPoints >= target.MaxHitPoints then
-					unit:RemoveStatusEffect(self.id)
+		PlaceObj('UnitReaction', {
+			Event = "OnEndTurn",
+			Handler = function (self, target)
+				local patient = target:GetBandageTarget()
+				local medicine = target:GetBandageMedicine()
+				if not IsValid(patient) or patient.command == "Die" or patient:IsDead() or patient.HitPoints >= patient.MaxHitPoints then
+					target:RemoveStatusEffect(self.class)
 					return
 				end
-				if target:IsDowned() then
-					if target:GetEffectValue("stabilized") or RollSkillCheck(unit, "Medical") then
-						target:SetCommand("DownedRally", unit, medicine)
+				if patient:IsDowned() then
+					local stabilized = patient:GetStatusEffect("Stabilized")
+					stabilized = stabilized and stabilized:ResolveValue("stabilized")
+					if stabilized or RollSkillCheck(target, "Medical") then
+						patient:SetCommand("DownedRally", target, medicine)
 					else
-						target:AddStatusEffect("Stabilized")
+						patient:AddStatusEffect("Stabilized")
 					end
 				else
-					target:GetBandaged(medicine, unit)
-					if target.HitPoints >= target.MaxHitPoints then
-						target:RemoveStatusEffect("BeingBandaged")
-						unit:RemoveStatusEffect(self.id)
-					end
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[4]
-				if not reaction_def or reaction_def.Event ~= "UnitEndTurn" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, unit)
-				end
-				
-				if self:VerifyReaction("UnitEndTurn", reaction_def, unit, unit) then
-					exec(self, unit)
-				end
-			end,
-			HandlerCode = function (self, unit)
-				local target = unit:GetBandageTarget()
-				local medicine = unit:GetBandageMedicine()
-				if not IsValid(target) or target.command == "Die" or target:IsDead() or target.HitPoints >= target.MaxHitPoints then
-					unit:RemoveStatusEffect(self.id)
-					return
-				end
-				if target:IsDowned() then
-					if target:GetEffectValue("stabilized") or RollSkillCheck(unit, "Medical") then
-						target:SetCommand("DownedRally", unit, medicine)
-					else
-						target:AddStatusEffect("Stabilized")
-					end
-				else
-					target:GetBandaged(medicine, unit)
-					if target.HitPoints >= target.MaxHitPoints then
-						target:RemoveStatusEffect("BeingBandaged")
-						unit:RemoveStatusEffect(self.id)
+					patient:GetBandaged(medicine, target)
+					if patient.HitPoints >= patient.MaxHitPoints then
+						patient:RemoveStatusEffect("BeingBandaged")
+						target:RemoveStatusEffect(self.class)
 					end
 				end
 			end,
@@ -204,6 +47,34 @@ DefineClass.BandageInCombat = {
 	},
 	DisplayName = T(725524260335, --[[CharacterEffectCompositeDef BandageInCombat DisplayName]] "Treating"),
 	Description = T(829769124050, --[[CharacterEffectCompositeDef BandageInCombat Description]] "Bandaging an ally. No more actions available this turn. Effectiveness of the action depends on Medical skill."),
+	OnAdded = function (self, obj)
+		local target = obj:GetBandageTarget()
+		if target then
+			target:RemoveStatusEffect("Downed")
+			target:RemoveStatusEffect("BleedingOut")
+		end
+		obj:RemoveStatusEffect("FreeMove")
+	end,
+	OnRemoved = function (self, obj)
+		local target = obj:GetBandageTarget()
+		if not g_Combat then return end
+		if target and not target:IsDead() and target:IsDowned() and not target:HasStatusEffect("Unconscious") then
+			target:RemoveStatusEffect("Stabilized")
+			target:AddStatusEffect("BleedingOut")
+			target:RemoveStatusEffect("BeingBandaged")
+		elseif target == obj then
+			target:RemoveStatusEffect("BeingBandaged")
+		end
+		
+		if not obj:IsDead() then
+			obj:ClearBehaviors("Bandage")
+			if CurrentThread() == obj.command_thread then
+				obj:QueueCommand("EndCombatBandage") -- make sure it does not break the RemoveStatusEffect call
+			else
+				obj:SetCommand("EndCombatBandage")
+			end
+		end
+	end,
 	Icon = "UI/Hud/Status effects/treating",
 	RemoveOnSatViewTravel = true,
 	Shown = true,

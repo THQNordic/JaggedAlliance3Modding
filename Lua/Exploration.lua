@@ -87,6 +87,7 @@ function Exploration:VisibilityInvalidateThread()
 		local timeBetweenTicks = 500
 		Sleep(timeBetweenTicks)
 		Msg("ExplorationTick", timeBetweenTicks)
+		ListCallReactions(g_Units, "OnExplorationTick")
 	end
 end
 
@@ -189,9 +190,7 @@ function Exploration:UpdateSusVisualization(data)
 		mesh:SetProgress(MulDivRound(ally.suspicion or 0, 1000, SuspicionThreshold))
 		
 		if dataForAlly then
-			if mesh:GetGameFlags(const.gofLockedOrientation) == 0 then
-				mesh:SetGameFlags(const.gofLockedOrientation)
-			end
+			mesh:SetGameFlags(const.gofLockedOrientation)
 		
 			local unit = dataForAlly.unit
 			mesh:Face(unit:GetPos())

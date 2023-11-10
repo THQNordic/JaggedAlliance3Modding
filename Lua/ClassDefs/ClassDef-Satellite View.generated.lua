@@ -32,32 +32,6 @@ function CampaignCity:GetEditorView()
 	return self.DisplayName or Untranslated(self.Id or "(unnamed city)")
 end
 
-DefineClass.CampaignSide = {
-	__parents = { "CampaignObject", },
-	__generated_by_class = "ClassDef",
-
-	properties = {
-		{ id = "Id", 
-			editor = "text", default = false, },
-		{ id = "DisplayName", name = "Display Name", 
-			editor = "text", default = false, translate = true, },
-		{ id = "Standing", 
-			editor = "number", default = 0, min = -100, max = 100, },
-		{ id = "StickyStanding", name = "Sticky Standing", 
-			editor = "bool", default = false, },
-		{ id = "template_key", 
-			editor = "text", default = false, no_edit = true, },
-		{ id = "Player", 
-			editor = "bool", default = false, },
-		{ id = "Enemy", 
-			editor = "bool", default = false, },
-	},
-}
-
-function CampaignSide:GetEditorView()
-	return self.DisplayName or Untranslated(self.Id or "(unnamed side)")
-end
-
 DefineClass.EnemySquadUnit = {
 	__parents = { "PropertyObject", },
 	__generated_by_class = "ClassDef",
@@ -173,7 +147,6 @@ DefineClass.SatelliteSector = {
 		{ id = "SetId", 
 			editor = "func", default = function (self, id)
 self.name = id
-self.NPCs = table.copy(self.NPCs)
 CampaignObject.SetId(self, id)
 end, no_edit = true, params = "self, id", },
 		{ id = "Setdisplay_name", 
@@ -187,15 +160,41 @@ end
 end, no_edit = true, params = "self, display_name", },
 		{ id = "OnEditorSetProperty", 
 			editor = "func", default = function (self, prop_id)
-if prop_id == "Roads" or prop_id == "BlockTravel"then
+if prop_id == "Roads" or prop_id == "BlockTravel" then
 	SatelliteSectorSetDirectionsProp(self, prop_id)
 end
--- allow the sector to be saved in the campaign
--- (it strips generated sectors before saving)
-self.generated = nil
+if g_SatelliteUI then
+	g_SatelliteUI:UpdateSectorVisuals(self.Id)
+end
 end, no_edit = true, params = "self, prop_id", },
+		{ category = "Data", id = "generated_hint", help = "<center>This is an automatically-generated empty sector.", 
+			editor = "help", default = false, no_edit = function(self) return not self.generated end, },
+		{ category = "Data", id = "inherited_hint", help = "<center>This is an inherited sector - use the button below to override it in this DLC.", 
+			editor = "help", default = false, no_edit = function(self) return not self.inherited end, },
+		{ category = "Data", id = "edit_sector_button", 
+			editor = "buttons", default = false, buttons = { {name = "Edit sector", func = "EditGeneratedSector", is_hidden = function(self) if IsKindOf(self, "ModItem") then return true end
+
+return IsKindOf(self, "GedMultiSelectAdapter") or not self.inherited and not self.generated end }, }, },
 		{ id = "Id", 
 			editor = "text", default = false, read_only = true, },
+		{ id = "underground_sector_buttons", 
+			editor = "buttons", default = false, buttons = { {name = "Add underground sector", func = "AddUndergroundSector", is_hidden = function(self) if IsKindOf(self, "GedMultiSelectAdapter") then return true end
+
+if IsKindOf(self, "ModItem") then return true end
+
+local campaign = GetParentTableOfKind(self, "CampaignPreset")
+return not self.Id or
+			self.Id:ends_with("_Underground") or
+		(campaign and table.find(campaign.Sectors, "Id", self.Id .. "_Underground")) end },  {name = "Select underground sector", func = "SelectUndergroundSector", is_hidden = function(self) if IsKindOf(self, "GedMultiSelectAdapter") then return true end
+
+if IsKindOf(self, "ModItem") then return true end
+
+local campaign = GetParentTableOfKind(self, "CampaignPreset")
+return not self.Id or
+			self.Id:ends_with("_Underground") or
+		not (campaign and table.find(campaign.Sectors, "Id", self.Id .. "_Underground")) end },  {name = "Remove sector", func = "RemoveSector", is_hidden = function(self) if IsKindOf(self, "ModItem") then return true end
+
+return IsKindOf(self, "GedMultiSelectAdapter") or not self.Id or self.inherited or not self.Id:ends_with("_Underground") end }, }, },
 		{ id = "MapPosition", help = "delete me", 
 			editor = "point", default = false, dont_save = true, no_edit = true, },
 		{ id = "XMapPosition", 
@@ -210,35 +209,29 @@ end, no_edit = true, params = "self, prop_id", },
 			editor = "text", default = false, },
 		{ id = "Label2", name = "Label 2", 
 			editor = "text", default = false, },
-		{ id = "ExplorePopup", 
-			editor = "combo", default = "", items = function (self) return PresetGroupCombo("PopupNotification", "Sectors") end, },
-		{ id = "HasUnderground", 
-			editor = "bool", default = false, 
-			no_edit = function(self) return self.GroundSector end, },
 		{ id = "HideUnderground", 
-			editor = "bool", default = false, no_edit = function(self) return not self.HasUnderground end, 
-			no_edit = function(self) return self.GroundSector end, },
+			editor = "bool", default = false, no_edit = function(self) return self.GroundSector end, },
 		{ id = "GroundSector", 
-			editor = "text", default = false, read_only = true, no_edit = true, },
+			editor = "text", default = false, no_edit = true, },
 		{ id = "template_key", 
 			editor = "text", default = false, read_only = true, no_edit = true, },
-		{ id = "display_name", name = "DisplayName", 
+		{ id = "display_name", name = "Display name", 
 			editor = "text", default = false, translate = true, context = SatelliteSectorLocContext(), },
 		{ id = "Side", 
-			editor = "combo", default = "enemy1", items = function (self) return table.map(GetCurrentCampaignPreset().Sides, "Id") end, },
-		{ id = "StickySide", name = "Sticky Side", 
+			editor = "combo", default = "enemy1", items = function (self) return Sides end, },
+		{ id = "StickySide", name = "Sticky side", 
 			editor = "bool", default = false, },
-		{ category = "Travel", id = "TerrainType", name = "Terrain Type", 
+		{ category = "Travel", id = "TerrainType", name = "Terrain type", help = "Terrain type modifies the travel time", 
 			editor = "preset_id", default = "Savanna", 
 			no_edit = function(self) return self.GroundSector end, preset_class = "SectorTerrain", },
-		{ id = "WeatherZone", name = "Weather Zone", help = "Weather Zone the sector belongs to. Sectors within the same Weather Zone have the same weather conditions.", 
+		{ id = "WeatherZone", name = "Weather zone", help = "Weather Zone the sector belongs to. Sectors within the same Weather Zone have the same weather conditions.", 
 			editor = "text", default = false, },
 		{ category = "Travel", id = "Passability", 
 			editor = "combo", default = "Land", 
 			no_edit = function(self) return self.GroundSector end, items = function (self) return {"Land", "Water", "Land and Water", "Blocked"} end, },
-		{ category = "City", id = "City", name = "Associated City", 
+		{ category = "City", id = "City", name = "Associated city", 
 			editor = "combo", default = "none", items = function (self) return table.iappend({"none"}, table.map(GetCurrentCampaignPreset().Cities, "Id")) end, },
-		{ category = "City", id = "ShowCity", name = "Show City Name", help = "Whether to show the city name on the sector", 
+		{ category = "City", id = "ShowCity", name = "Show city name", help = "Whether to show the city name on the sector", 
 			editor = "bool", default = false, },
 		{ id = "reveal_allowed", help = "Treat sector as revealed even if there are no player squads nearby", 
 			editor = "bool", default = false, no_edit = true, },
@@ -276,7 +269,7 @@ end, no_edit = true, params = "self, prop_id", },
 		{ category = "Guardpost", id = "Guardpost", 
 			editor = "bool", default = false, 
 			no_edit = function(self) return self.GroundSector end, },
-		{ category = "Guardpost", id = "PatrolRespawnTime", name = "Attack Spawn (+ 24h Preparation)", 
+		{ category = "Guardpost", id = "PatrolRespawnTime", name = "Attack spawn (+24h preparation)", 
 			editor = "number", default = 172800, 
 			no_edit = function(self) return not self.Guardpost end, scale = "h", min = 0, },
 		{ category = "Guardpost", id = "InitialSpawn", name = "Initial squad spawn", 
@@ -285,13 +278,13 @@ end, no_edit = true, params = "self, prop_id", },
 		{ category = "Guardpost", id = "TargetSectors", name = "Target sectors", help = "Target sectors for spawned enemy squads.", 
 			editor = "string_list", default = {}, 
 			no_edit = function(self) return not self.Guardpost end, item_default = "", items = function (self) return GetCampaignSectorsCombo("") end, },
-		{ category = "Guardpost", id = "ExtraDefenderSquads", name = "Extra Defender Squads", help = "Squads that will be spawned as extra defenders (4th shield)", 
+		{ category = "Guardpost", id = "ExtraDefenderSquads", name = "Extra defender squads", help = "Squads that will be spawned as extra defenders (4th shield)", 
 			editor = "preset_id_list", default = {}, 
 			no_edit = function(self) return not self.Guardpost end, preset_class = "EnemySquads", item_default = "", },
-		{ category = "Guardpost", id = "EnemySquadsList", name = "Enemy Squads List", help = "A random squad from the list will be chosen on guardpost spawn time", 
+		{ category = "Guardpost", id = "EnemySquadsList", name = "Enemy squads list", help = "A random squad from the list will be chosen on guardpost spawn time", 
 			editor = "preset_id_list", default = {}, 
 			no_edit = function(self) return not self.Guardpost end, preset_class = "EnemySquads", item_default = "", },
-		{ category = "Guardpost", id = "StrongEnemySquadsList", name = "Strong Enemy Squads List", help = 'When the guardpost performs a "strong attack" it will swap the currently primed squad with one from this array.', 
+		{ category = "Guardpost", id = "StrongEnemySquadsList", name = "Strong enemy squads list", help = 'When the guardpost performs a "strong attack" it will swap the currently primed squad with one from this array.', 
 			editor = "preset_id_list", default = {}, 
 			no_edit = function(self) return not self.Guardpost end, preset_class = "EnemySquads", item_default = "", },
 		{ category = "Militia", id = "Militia", 
@@ -300,14 +293,14 @@ end, no_edit = true, params = "self, prop_id", },
 		{ category = "Militia", id = "MaxMilitia", 
 			editor = "number", default = 8, 
 			no_edit = function(self) return not self.Militia end, min = 1, max = 50, },
-		{ category = "Militia", id = "MilitiaTrainingCost", name = "Training Cost", 
+		{ category = "Militia", id = "MilitiaTrainingCost", name = "Training cost", 
 			editor = "number", default = 750, 
 			no_edit = function(self) return not self.Militia end, min = 1, max = 10000, },
 		{ category = "Conflict", id = "ForceConflict", 
 			editor = "bool", default = false, },
-		{ category = "Conflict", id = "InitialSquads", name = "InitialSquads", 
+		{ category = "Conflict", id = "InitialSquads", name = "Initial squads", 
 			editor = "string_list", default = {}, item_default = "", items = function (self) return table.keys(EnemySquadDefs, true) end, },
-		{ category = "Conflict", id = "CustomConflictDescr", name = "Custom Conflict Description", help = "The first time a conflict is initiated in this sector, this description preset will be shown.", 
+		{ category = "Conflict", id = "CustomConflictDescr", name = "Custom conflict description", help = "The first time a conflict is initiated in this sector, this description preset will be shown.", 
 			editor = "combo", default = false, items = function (self) return PresetGroupCombo("ConflictDescription", "Default") end, },
 		{ category = "Militia", id = "militia_training", 
 			editor = "bool", default = false, no_edit = true, },
@@ -323,38 +316,35 @@ end, no_edit = true, params = "self, prop_id", },
 			editor = "prop_table", default = false, dont_save = true, no_edit = true, },
 		{ category = "Operation", id = "started_operations", help = "Started operations for the sector", 
 			editor = "prop_table", default = false, no_edit = true, },
-		{ id = "Intel", name = "Intel", 
+		{ id = "Intel", 
 			editor = "bool", default = true, },
-		{ id = "intel_discovered", name = "Intel", 
+		{ id = "intel_discovered", 
 			editor = "bool", default = false, no_edit = true, },
 		{ id = "player_visited", help = "Marked as visited when a player squad reaches the sector's center on the satellite.", 
 			editor = "bool", default = false, no_edit = true, },
-		{ id = "autoresolve_disabled", name = "Intel", 
+		{ id = "autoresolve_disabled", 
 			editor = "bool", default = false, no_edit = true, },
-		{ id = "InterestingSector", name = "Interesting Sector", help = "Marks whether a sector has something interesting in it", 
+		{ id = "InterestingSector", name = "Interesting sector", help = "Marks whether a sector has something interesting in it", 
 			editor = "bool", default = false, },
 		{ id = "MinFlareCarriers", help = "Minimum number of Roaming NPCs to carry a light during Night or Underground", 
 			editor = "number", default = 1, slider = true, min = 0, max = 20, },
 		{ id = "MaxFlareCarriers", help = "Minimum number of Roaming NPCs to carry a light during Night or Underground", 
 			editor = "number", default = 3, slider = true, min = function(self) return self.MinFlareCarriers end, max = function(self) return 20 end, },
-		{ id = "RAndRAllowed", name = "R&R Allowed", help = "R&R operation is available in this sector", 
+		{ id = "RAndRAllowed", name = "R&R allowed", help = "R&R operation is available in this sector", 
 			editor = "bool", default = false, },
-		{ id = "RepairShop", name = "Repair Shop", help = "Allows Craft Ammo, Craft Explosives operations in this sector", 
+		{ id = "RepairShop", name = "Repair shop", help = "Allows Craft Ammo, Craft Explosives operations in this sector", 
 			editor = "bool", default = false, },
-		{ category = "Travel", id = "Roads", name = "Roads", 
+		{ category = "Travel", id = "Roads", name = "Roads", help = "Roads only improve the quality of travel and lack of a road doesn't prevent travel between sectors", 
 			editor = "directions_set", default = false, 
 			no_edit = function(self) return self.GroundSector end, },
-		{ category = "Travel", id = "ImpassableForEnemies", name = "Impassable for Enemies", help = "Enemy squads can't pass through this sector", 
+		{ category = "Travel", id = "ImpassableForEnemies", name = "Impassable for enemies", help = "Enemy squads can't pass through this sector", 
 			editor = "bool", default = false, },
-		{ category = "Diamond Briefcase", id = "ImpassableForDiamonds", name = "Impassable for Diamonds", help = "Diamond shipments can't pass through this sector", 
+		{ category = "Diamond Briefcase", id = "ImpassableForDiamonds", name = "Impassable for diamonds", help = "Diamond shipments can't pass through this sector", 
 			editor = "bool", default = false, },
-		{ category = "Travel", id = "BlockTravel", name = "Block Travel", 
+		{ category = "Travel", id = "BlockTravel", name = "Block travel", help = "Blocks travel and adds ui indication for that in the satellite view (red/white line)", 
 			editor = "directions_set", default = false, 
 			no_edit = function(self) return self.GroundSector end, },
-		{ category = "Travel", id = "BlockTravelRiver", name = "Block Travel River", help = "Blocks travel without displaying it on the sat view", 
-			editor = "directions_set", default = false, 
-			no_edit = function(self) return self.GroundSector end, },
-		{ category = "Travel", id = "BridgeCrossing", name = "Bridge Crossing", 
+		{ category = "Travel", id = "BlockTravelRiver", name = "Block travel - invisible", help = "Blocks travel without displaying it on the sat view", 
 			editor = "directions_set", default = false, 
 			no_edit = function(self) return self.GroundSector end, },
 		{ id = "sector_data", 
@@ -371,8 +361,6 @@ end, no_edit = true, params = "self, prop_id", },
 			editor = "nested_list", default = false, no_edit = true, base_class = "InventoryItem", },
 		{ id = "sector_craft_explosive_items_queued", 
 			editor = "nested_list", default = false, no_edit = true, base_class = "InventoryItem", },
-		{ id = "NPCs", name = "NPCs", help = "List of NPCs placed here using the AssociateNPCWithSector effect.", 
-			editor = "preset_id_list", default = {}, preset_class = "UnitDataCompositeDef", item_default = "", },
 		{ id = "conflict", 
 			editor = "prop_table", default = false, no_edit = true, },
 		{ id = "conflict_backup", 
@@ -385,17 +373,19 @@ end, no_edit = true, params = "self, prop_id", },
 			editor = "nested_list", default = false, base_class = "SectorEvent", },
 		{ id = "ExecutedEvents", 
 			editor = "prop_table", default = false, no_edit = true, },
-		{ id = "CustomIcon", name = "Custom Building Icon", help = "A custom icon to show in the rollover along with other buildings.", 
-			editor = "ui_image", default = false, },
 		{ category = "Port", id = "Port", name = "Port", 
 			editor = "bool", default = false, },
-		{ category = "Port", id = "PortLocked", name = "PortLocked", 
+		{ category = "Port", id = "PortLocked", name = "Port locked", 
 			editor = "bool", default = false, },
-		{ category = "Port", id = "CanBeUsedForArrival", name = "CanBeUsedForArrival", 
+		{ category = "Port", id = "CanBeUsedForArrival", 
 			editor = "bool", default = false, },
-		{ category = "Diamond Briefcase", id = "DBSourceSector", name = "Source Sector", help = "Travelling squads carrying diamond shipments will spawn on this sector.", 
+		{ category = "Port", id = "BobbyRayDeliveryCostMultiplier", 
+			editor = "number", default = 100, no_edit = function(self) return not self.CanBeUsedForArrival end, scale = "%", },
+		{ category = "Port", id = "SectorImagePreview", 
+			editor = "ui_image", default = "UI/PDA/ss_i1.png", no_edit = function(self) return not self.CanBeUsedForArrival end, },
+		{ category = "Diamond Briefcase", id = "DBSourceSector", name = "Source sector", help = "Travelling squads carrying diamond shipments will spawn on this sector.", 
 			editor = "bool", default = false, },
-		{ category = "Diamond Briefcase", id = "DBDestinationSector", name = "Destination Sector", help = "Travelling squads carrying diamond shipments will path to this sector.", 
+		{ category = "Diamond Briefcase", id = "DBDestinationSector", name = "Destination sector", help = "Travelling squads carrying diamond shipments will path to this sector.", 
 			editor = "bool", default = false, },
 		{ category = "Diamond Briefcase", id = "DBRecalc", help = "You only need to run this once when applying multiple changes. It will take a while!", 
 			editor = "buttons", default = false, buttons = { {name = "Recalculate Diamond Routes", func = "GenerateDynamicDBPathCache"}, }, },
@@ -403,18 +393,18 @@ end, no_edit = true, params = "self, prop_id", },
 			editor = "number", default = false, },
 		{ id = "enabled_auto_deploy", 
 			editor = "bool", default = true, no_edit = true, },
-		{ id = "awareness_sequence", name = "Awareness Sequence", 
+		{ id = "awareness_sequence", name = "Awareness sequence", 
 			editor = "choice", default = "Standard", items = function (self) return { "Standard", "Skip Setpiece", "Skip All" } end, },
 		{ id = "last_enter_campaign_time", 
 			editor = "number", default = 0, no_edit = true, },
 		{ id = "last_own_campaign_time", 
 			editor = "number", default = 0, no_edit = true, },
 		{ category = "Music", id = "MusicCombat", name = "Music Combat", help = "Music in turn based mode", 
-			editor = "combo", default = "Combat_Dramatic", items = function (self) return PresetsCombo("RadioStationPreset") end, },
-		{ category = "Music", id = "MusicConflict", name = "Music Conflict", help = "In real time exploration but the sector is still in conflict", 
-			editor = "combo", default = "Enemy_Territory", items = function (self) return PresetsCombo("RadioStationPreset") end, },
-		{ category = "Music", id = "MusicExploration", name = "Music Exploration", help = "Real time exploration and there is no conflict in the sector", 
-			editor = "combo", default = "Exploration_Jungle", items = function (self) return PresetsCombo("RadioStationPreset") end, },
+			editor = "combo", default = "Battle_Easy", items = function (self) return PresetsCombo("RadioStationPreset") end, },
+		{ category = "Music", id = "MusicConflict", name = "Music conflict", help = "In real time exploration but the sector is still in conflict", 
+			editor = "combo", default = "Village_Conflict", items = function (self) return PresetsCombo("RadioStationPreset") end, },
+		{ category = "Music", id = "MusicExploration", name = "Music exploration", help = "Real time exploration and there is no conflict in the sector", 
+			editor = "combo", default = "Jungle_Exploration", items = function (self) return PresetsCombo("RadioStationPreset") end, },
 		{ category = "Squads", id = "enemy_squads", 
 			editor = "nested_list", default = false, dont_save = true, no_edit = true, base_class = "SatelliteSquad", },
 		{ category = "Squads", id = "ally_squads", 
@@ -425,29 +415,31 @@ end, no_edit = true, params = "self, prop_id", },
 			editor = "nested_list", default = false, dont_save = true, no_edit = true, base_class = "SatelliteSquad", },
 		{ category = "Squads", id = "all_squads", 
 			editor = "nested_list", default = false, dont_save = true, no_edit = true, base_class = "SatelliteSquad", },
-		{ category = "Warning State", id = "warningStateEnabled", name = "Enable Warning State", help = "If enabled the first time you are discovered by enemies you will enter a Warning State.\nA timer is set. Enemies become neutral until the timer expires. And effects can be executed.", 
+		{ category = "Warning State", id = "warningStateEnabled", name = "Enable warning state", help = "If enabled the first time you are discovered by enemies you will enter a Warning State.\nA timer is set. Enemies become neutral until the timer expires. And effects can be executed.", 
 			editor = "bool", default = false, },
-		{ category = "Warning State", id = "warningReceived", name = "Warning Received", 
+		{ category = "Warning State", id = "warningReceived", name = "Warning received", 
 			editor = "bool", default = false, no_edit = true, },
-		{ category = "Warning State", id = "inWarningState", name = "In Warning State", 
+		{ category = "Warning State", id = "inWarningState", 
 			editor = "bool", default = false, no_edit = true, },
-		{ category = "Warning State", id = "warningTimerText", name = "Warning Timer Text", help = "Text to display when the Warning State is active.", 
+		{ category = "Warning State", id = "warningTimerText", name = "Warning timer text", help = "Text to display when the Warning State is active.", 
 			editor = "text", default = T(888882045986, --[[ClassDef Satellite View SatelliteSector default]] "Exit the Area"), no_edit = function(self) return not self.warningStateEnabled end, translate = true, },
-		{ category = "Warning State", id = "warningStateTimer", name = "Warning State Timer", help = "How long (sec) will the Warning State hold.", 
+		{ category = "Warning State", id = "warningStateTimer", name = "Warning state timer", help = "How long (sec) will the Warning State hold.", 
 			editor = "number", default = 30000, no_edit = function(self) return not self.warningStateEnabled end, scale = "sec", min = 0, },
-		{ category = "Warning State", id = "warningBanters", name = "Warning Banters", help = "List of banters from which to choose one to play when spotted by the nearest enemy.", 
+		{ category = "Warning State", id = "warningBanters", name = "Warning banters", help = "List of banters from which to choose one to play when spotted by the nearest enemy.", 
 			editor = "preset_id_list", default = {}, no_edit = function(self) return not self.warningStateEnabled end, preset_class = "BanterDef", item_default = "", },
-		{ category = "Combat Tasks", id = "combatTaskGenerate", name = "When to Generate", help = "When to generate Combat Tasks. Chances and cooldowns are independant and are always taken into account.", 
+		{ category = "Combat Tasks", id = "combatTaskGenerate", name = "When to generate", help = "When to generate Combat Tasks. Chances and cooldowns are independant and are always taken into account.", 
 			editor = "choice", default = "always", items = function (self) return {"always", "afterFirstConflict", "never"} end, },
-		{ category = "Combat Tasks", id = "combatTaskAmount", name = "Maximum Amount", help = "Maximum Combat Tasks that can be given.", 
+		{ category = "Combat Tasks", id = "combatTaskAmount", name = "Maximum amount", help = "Maximum Combat Tasks that can be given.", 
 			editor = "number", default = 1, min = 0, },
 		{ category = "Combat Tasks", id = "firstConflictWon", 
 			editor = "bool", default = false, no_edit = true, },
 		{ id = "conflictLoyaltyGained", help = "Checks whether to give loyalty on Conflict Win. Resets on sector lost and sector defended.", 
 			editor = "bool", default = false, no_edit = true, },
 	},
+	EditorView = Untranslated("<if_any(inherited,generated)><color 128 128 128></if><Id><opt(u(display_name),' ','')><if(inherited)> [inherited]</if><if(generated)> [generated - empty]</if>"),
 	FilterClass = "SatelliteSectorGedFilter",
 	generated = false,
+	inherited = false,
 }
 
 function SatelliteSector:GetError()
@@ -484,27 +476,67 @@ function SatelliteSector:GetError()
 	return next(errors) and table.concat(errors, "\n") or nil
 end
 
-function SatelliteSector:SetHasUnderground(value)
-	self.HasUnderground = value
-	if not GetCurrentCampaignPreset() then return end
-	local sectors = GetSatelliteSectors()
-	local id = self.Id .. "_Underground"
-	local u_sector = table.find_value(sectors, "Id", id)
-	if value then
-		if not u_sector then
-			local sector = PlaceObject("SatelliteSector")
-			sector.GroundSector = self.Id
-			sector:SetId(id)
-			table.insert(sectors, table.find(sectors, "Id", self.Id) + 1, sector)
-			ObjModified(GetSatelliteSectors())
-		end
-	else
-		if u_sector then
-			table.remove_value(sectors, u_sector)
-			DoneObject(u_sector)
-			ObjModified(GetSatelliteSectors())
-		end
+function SatelliteSector:EditGeneratedSector(root, prop_id, ged)
+	self.inherited = nil
+	self.generated = nil
+	ObjModified(self)
+	ged:SetUiStatus("editing_sector", "Editing sector...")
+	if g_SatelliteUI then
+		g_SatelliteUI:RebuildSectorGrid()
 	end
+	ged:SetUiStatus("editing_sector")
+end
+
+function SatelliteSector:AddUndergroundSector(root, prop_id, ged)
+	CreateRealTimeThread(function()
+		local id = self.Id .. "_Underground"
+		local sector = PlaceObject("SatelliteSector")
+		sector.GroundSector = self.Id
+		sector:SetId(id)
+		
+		local sectors = GetParentTable(self)
+		local idx = table.find(sectors, "Id", self.Id) + 1
+		table.insert(sectors, idx, sector)
+		UpdateParentTable(sector, sectors)
+		
+		ged:SetUiStatus("add_sector", "Adding sector...")
+		CreateSessionCampaignObject(sector, SatelliteSector, gv_Sectors, "Sectors")
+		if g_SatelliteUI then
+			g_SatelliteUI:RebuildSectorGrid()
+		end
+		ObjModified(sectors)
+		Sleep(100)
+		ged:SetSelection("root", { idx }, nil, "notify")
+		ged:SetUiStatus("add_sector")
+	end)
+end
+
+function SatelliteSector:SelectUndergroundSector(root, prop_id, ged)
+	CreateRealTimeThread(function()
+		ged:ResetFilter("root")
+		Sleep(100)
+		ged:SetSelection("root", { table.find(GetParentTable(self), "Id", self.Id .. "_Underground") }, nil, "notify")
+	end)
+end
+
+function SatelliteSector:RemoveSector(root, prop_id, ged)
+	CreateRealTimeThread(function()
+		local sectors = GetParentTable(self)
+		table.remove_value(sectors, self)
+		GetParentTableOfKind(self, "CampaignPreset"):PostLoad() -- rerun sector inheritance
+		if not table.find(sectors, "Id", self.Id) then
+			DeleteSessionCampaignObject(self, SatelliteSector, gv_Sectors)
+		end
+		
+		ged:SetUiStatus("remove_sector", "Removing sector...")
+		if g_SatelliteUI then
+			g_SatelliteUI:RebuildSectorGrid()
+		end
+		ObjModified(sectors)
+		Sleep(100)
+		ged:SetSelection("root", { table.find(GetParentTable(self), "Id", self.Id:gsub("_Underground", "")) }, nil, "notify")
+		ged:SetUiStatus("remove_sector")
+	end)
 end
 
 function SatelliteSector:GetTravelPrice(squad)
@@ -542,11 +574,17 @@ function SatelliteSector:GetTravelPrice(squad)
 	return cost, discounts
 end
 
+function SatelliteSector:IsReadOnly()
+	return self.generated or self.inherited
+end
+
 DefineClass.SatelliteSectorGedFilter = {
 	__parents = { "GedFilter", },
 	__generated_by_class = "ClassDef",
 
 	properties = {
+		{ id = "HideGenerated", name = "Hide inherited/empty", 
+			editor = "bool", default = false, },
 		{ id = "City", 
 			editor = "choice", default = "don't care", items = function (self) return table.iappend({"don't care", "any", "none"}, table.map(GetCurrentCampaignPreset().Cities, "Id")) end, },
 		{ id = "Mine", 
@@ -569,6 +607,7 @@ DefineClass.SatelliteSectorGedFilter = {
 }
 
 function SatelliteSectorGedFilter:FilterObject(sector)
+	if self.HideGenerated and (sector.inherited or sector.generated) then return false end
 	if self.Mine ~= "don't care" and self.Mine ~= sector.Mine then return false end
 	if self.Guardpost ~= "don't care" and self.Guardpost ~= sector.Guardpost then return false end
 	if self.City == "any" then
@@ -617,7 +656,7 @@ DefineClass.SatelliteSquad = {
 
 	properties = {
 		{ id = "Side", 
-			editor = "combo", default = "enemy1", items = function (self) return table.map(GetCurrentCampaignPreset().Sides, "Id") end, },
+			editor = "combo", default = "enemy1", items = function (self) return Sides end, },
 		{ id = "Name", 
 			editor = "text", default = false, },
 		{ id = "image", 

@@ -17,58 +17,24 @@ PlaceObj('CharacterEffectCompositeDef', {
 		}),
 	},
 	'object_class', "Perk",
-	'msg_reactions', {
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "attacker",
-			Event = "CalcBaseDamage",
-			Handler = function (self, attacker, weapon, target, data)
-				
-				local function exec(self, attacker, weapon, target, data)
-				local wounded = attacker:GetStatusEffect("Wounded")
+	'unit_reactions', {
+		PlaceObj('UnitReaction', {
+			Event = "OnCalcBaseDamage",
+			Handler = function (self, target, weapon, attack_target, data)
+				local wounded = target:GetStatusEffect("Wounded")
 				if wounded and wounded.stacks > 0 then
-						local stackCap = self:ResolveValue("stackCap")
-						local damagePerStack = self:ResolveValue("damageBonus")
-						local stacks = Min(wounded.stacks, stackCap)
-						local berserkerMod = damagePerStack*stacks
-							
-						data.modifier = data.modifier + berserkerMod
-						data.breakdown[#data.breakdown + 1] = { name = self.DisplayName, value = berserkerMod }
-							
-						if attacker.team.player_enemy and g_Combat and not table.find(g_Combat.berserkVRsPerRole, attacker.role) then
-							PlayVoiceResponse(attacker, "AIBerserkerPerk")
-							table.insert(g_Combat.berserkVRsPerRole, attacker.role)
-						end
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "CalcBaseDamage" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, attacker, weapon, target, data)
-				end
-				
-				if self:VerifyReaction("CalcBaseDamage", reaction_def, attacker, attacker, weapon, target, data) then
-					exec(self, attacker, weapon, target, data)
-				end
-			end,
-			HandlerCode = function (self, attacker, weapon, target, data)
-				local wounded = attacker:GetStatusEffect("Wounded")
-				if wounded and wounded.stacks > 0 then
-						local stackCap = self:ResolveValue("stackCap")
-						local damagePerStack = self:ResolveValue("damageBonus")
-						local stacks = Min(wounded.stacks, stackCap)
-						local berserkerMod = damagePerStack*stacks
-							
-						data.modifier = data.modifier + berserkerMod
-						data.breakdown[#data.breakdown + 1] = { name = self.DisplayName, value = berserkerMod }
-							
-						if attacker.team.player_enemy and g_Combat and not table.find(g_Combat.berserkVRsPerRole, attacker.role) then
-							PlayVoiceResponse(attacker, "AIBerserkerPerk")
-							table.insert(g_Combat.berserkVRsPerRole, attacker.role)
-						end
+					local stackCap = self:ResolveValue("stackCap")
+					local damagePerStack = self:ResolveValue("damageBonus")
+					local stacks = Min(wounded.stacks, stackCap)
+					local berserkerMod = damagePerStack*stacks
+						
+					data.modifier = data.modifier + berserkerMod
+					data.breakdown[#data.breakdown + 1] = { name = self.DisplayName, value = berserkerMod }
+						
+					if target.team.player_enemy and g_Combat and not table.find(g_Combat.berserkVRsPerRole, target.role) then
+						PlayVoiceResponse(target, "AIBerserkerPerk")
+						table.insert(g_Combat.berserkVRsPerRole, target.role)
+					end
 				end
 			end,
 		}),

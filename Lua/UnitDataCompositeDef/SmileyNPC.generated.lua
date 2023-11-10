@@ -47,6 +47,7 @@ DefineClass.SmileyNPC = {
 	Specialization = "Doctor",
 	gender = "Male",
 	PersistentSessionId = "NPC_Smiley",
+	HealPersistentOnSpawn = true,
 	VoiceResponseId = "Smiley",
 }
 

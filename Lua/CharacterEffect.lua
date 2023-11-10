@@ -247,6 +247,8 @@ function StatusEffectObject:AddStatusEffect(id, stacks)
 			self:AddModifier("StatusEffect:"..id, mod.target_prop, mod.mod_mul*10, mod.mod_add)
 		end
 		self.StatusEffectReceivedTime[id] = GameTime()
+		self:AddReactions(effect, effect.unit_reactions)
+		effect:OnAdded(self)
 	else
 		newStack = effect.stacks
 		effect.stacks = Min(effect.stacks + stacks, effect.max_stacks)
@@ -281,6 +283,7 @@ function StatusEffectObject:AddStatusEffect(id, stacks)
 
 	ObjModified(self.StatusEffects)
 	Msg("StatusEffectAdded", self, id, stacks)
+	self:CallReactions("OnStatusEffectAdded", id, stacks)
 	return effect
 end
 
@@ -299,6 +302,8 @@ function StatusEffectObject:RemoveStatusEffect(id, stacks, reason)
 		for _, mod in ipairs(preset:GetProperty("Modifiers")) do
 			self:RemoveModifier("StatusEffect:"..id, mod.target_prop)
 		end
+		self:RemoveReactions(effect)
+		effect:OnRemoved(self)
 		return
 	end
 	
@@ -318,6 +323,8 @@ function StatusEffectObject:RemoveStatusEffect(id, stacks, reason)
 		for _, mod in ipairs(preset:GetProperty("Modifiers")) do
 			self:RemoveModifier("StatusEffect:"..id, mod.target_prop)
 		end
+		self:RemoveReactions(effect)
+		effect:OnRemoved(self)
 		lost = true
 		if Platform.developer and self:ReportStatusEffectsInLog() then
 			if not self:IsDead() then
@@ -333,6 +340,7 @@ function StatusEffectObject:RemoveStatusEffect(id, stacks, reason)
 
 	ObjModified(self.StatusEffects)
 	Msg("StatusEffectRemoved", self, id, removedStacks, reason)
+	self:CallReactions("OnStatusEffectRemoved", id, effect.stacks)
 end
 
 function StatusEffectObject:HasVisibleEffects()

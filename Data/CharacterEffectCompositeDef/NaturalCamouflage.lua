@@ -11,6 +11,16 @@ PlaceObj('CharacterEffectCompositeDef', {
 		}),
 	},
 	'object_class', "Perk",
+	'unit_reactions', {
+		PlaceObj('UnitReaction', {
+			Event = "OnCalcSightModifier",
+			Handler = function (self, target, value, observer, other, step_pos, darkness)
+				if target == other then
+					return value + self:ResolveValue("sight_mod")
+				end
+			end,
+		}),
+	},
 	'DisplayName', T(253789261079, --[[CharacterEffectCompositeDef NaturalCamouflage DisplayName]] "Natural Camouflage"),
 	'Description', T(164831707721, --[[CharacterEffectCompositeDef NaturalCamouflage Description]] "This character is <percent(sight_mod)> harder to see."),
 	'Icon', "UI/Icons/Perks/Inescapable",

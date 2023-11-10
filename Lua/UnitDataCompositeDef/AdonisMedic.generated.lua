@@ -23,6 +23,9 @@ DefineClass.AdonisMedic = {
 	Affiliation = "Adonis",
 	StartingLevel = 7,
 	neutral_retaliate = true,
+	AIKeywords = {
+		"Heal",
+	},
 	archetype = "Medic",
 	role = "Medic",
 	MaxAttacks = 1,

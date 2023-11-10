@@ -113,7 +113,7 @@ function FallbackMarkerPositions(markers, spawn_count)
 	-- Markers not found (or no markers passed) try to invent positions
 	local positions, taken, radius = {}, {}, 5*guim
 	local center, angle, marker
-	if #markers > 0 then
+	if markers and #markers > 0 then
 		marker = table.interaction_rand(markers, "SpawnMarker")
 		StoreErrorSource(marker, "Could not find a marker with enough free spawn positions.")
 		center, angle = marker:GetPos(), marker:GetAngle()

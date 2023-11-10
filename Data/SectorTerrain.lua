@@ -25,8 +25,15 @@ PlaceObj('SectorTerrain', {
 
 PlaceObj('SectorTerrain', {
 	Comment = "Display name used only",
-	DisplayName = T(151762328917, --[[SectorTerrain Shortcut DisplayName]] "River <em>(Shortcut)</em>"),
+	DisplayName = T(151762328917, --[[SectorTerrain Shortcut DisplayName]] "<em>(Shortcut)</em>"),
 	id = "Shortcut",
+})
+
+PlaceObj('SectorTerrain', {
+	Comment = "Display name used only",
+	DisplayName = T(370199120657, --[[SectorTerrain Shortcut_River DisplayName]] "River <em>(Shortcut)</em>"),
+	group = "Default",
+	id = "Shortcut_River",
 })
 
 PlaceObj('SectorTerrain', {

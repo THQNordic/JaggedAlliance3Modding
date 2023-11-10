@@ -172,7 +172,9 @@ Loot Definition
 
 ## Mod Options
 
-Allows adding easily modifiable options to your mod. The options of the mod could be found in the *CurrentModOptions* or in the *AccountStorage.ModOptions.[mod_id]*. Also, the Message *ApplyModOptions* could be used to apply changes in the mod behavior instantly. When an option is added to a mod, the user will be able to change it from the Main Menu -> Options -> Mod Options.
+Allows adding easily modifiable options to your mod. The options of the mod could be found in the *CurrentModOptions* table. The best practice to access *CurrentModOptions* is to hook on the *ApplyModOptions* message which is called when the mod options are loaded and when the user changes them. Then check if the message was sent for *CurrentModId* and proceed with executing the desired code. 
+
+When an option is added to a mod, the user will be able to change it from the Main Menu -> Options -> Mod Options.
 
 Choice
 : Creates a ui entry with a dropdown that contains all listed options.
@@ -210,7 +212,7 @@ Sector Operation
 
 ## Unit
 
-Appearance Preset
+[Appearance Preset](ModItemAppearancePreset.md.html)
 : Creates an appearance preset that is used by a unit preset.
 
 Banter

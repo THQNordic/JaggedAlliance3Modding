@@ -188,18 +188,12 @@ PlaceObj('XTemplate', {
 									Sleep(5)
 								GetDialog(self).parent:SetHandleMouse(true)
 								end)
-								g_CurrentlyEditingName = true
-							else
-								g_CurrentlyEditingName = false
 							end
-							ObjModified("NewSelectedSave")
 							ObjModified("action-button-mm")
 							GetDialog(self):ResolveId("idSubSubContent"):SetMode("save", editField.context)
 							ShowSavegameDescription(editField.context, GetDialog(self):ResolveId("idSubSubContent"))
 						else
 							GetDialog(self):ResolveId("idSubSubContent"):SetVisible(false)
-							g_CurrentlyEditingName = false
-							ObjModified("NewSelectedSave")
 							ObjModified("action-button-mm")
 							self:SetSelected(true)
 						end
@@ -275,11 +269,6 @@ PlaceObj('XTemplate', {
 					self:SetFocus(selected or g_SelectedSave == self.context)
 					self.idImgBcgrSelected:SetVisible(selected or g_SelectedSave == self.context)
 					self.idImg:SetVisible(not (selected or g_SelectedSave == self.context))
-				end
-				
-				if 	selected and g_CurrentlyEditingName then
-					g_CurrentlyEditingName = false
-					ObjModified("NewSelectedSave")
 				end
 				
 				--revert the prev selected save entry name

@@ -16,6 +16,7 @@ PlaceObj('InventoryItemCompositeDef', {
 	'UnitStat', "Marksmanship",
 	'Cost', 2000,
 	'locked', true,
+	'CategoryPair', "Handguns",
 	'Caliber', "44CAL",
 	'Damage', 17,
 	'AimAccuracy', 5,

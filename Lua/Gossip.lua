@@ -328,7 +328,7 @@ end
 function OnMsg.OperationChanged(merc, prev_operation, operation, interrupted)
 	local squad = merc.Squad and gv_Squads[merc.Squad]
 	local loc = squad and squad.CurrentSector
-	NetGossip("SatViewActivity", merc.session_id, prev_operation and prev_operation.id, operation and operation.id, loc, GetCurrentPlaytime(), Game and Game.CampaignTime)
+	NetGossip("SatViewActivity", merc.session_id, prev_operation and prev_operation.id, operation and operation.id, loc, interrupted, GetCurrentPlaytime(), Game and Game.CampaignTime)
 end
 
 function OnMsg.UnitLeveledUp(unit)
@@ -376,4 +376,16 @@ end
 
 function OnMsg.GenerateLoot(loot_def, items, result)
 	NetGossip("GenerateLoot", GameTime(), loot_def.id, table.imap(items, "class"), GetCurrentPlaytime(), Game and Game.CampaignTime)
+end
+
+function OnMsg.CashInItem(item, amount, total_money)
+	NetGossip("CashInItem", item.class, total_money, GetCurrentPlaytime(), Game and Game.CampaignTime)
+end
+
+function OnMsg.UnitDied(unit, attacker, results)
+	NetGossip("UnitDied", unit.session_id, attacker and attacker.session_id, results, gv_CurrentSectorId, GetCurrentPlaytime(), Game and Game.CampaignTime)
+end
+
+function OnMsg.ThrowGrenade(unit, grenade, attacks)
+	NetGossip("ThrowGrenade", unit.session_id, grenade and grenade.class, attacks, gv_CurrentSectorId, GetCurrentPlaytime(), Game and Game.CampaignTime)
 end

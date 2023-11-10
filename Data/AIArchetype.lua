@@ -891,6 +891,23 @@ PlaceObj('AIArchetype', {
 			'min_score', 100,
 			'MinDist', 3000,
 		}),
+		PlaceObj('AIActionThrowGrenade', {
+			'BiasId', "Nova",
+			'Weight', 300,
+			'OnActivationBiases', {
+				PlaceObj('AIBiasModification', {
+					'BiasId', "Nova",
+					'Effect', "disable",
+				}),
+			},
+			'RequiredKeywords', {
+				"Nova",
+			},
+			'team_score', 0,
+			'self_score_mod', 100,
+			'MinDist', 0,
+			'MaxDist', 3000,
+		}),
 	},
 	TargetChangePolicy = "restart",
 	TargetScoreRandomization = 10,
@@ -988,7 +1005,7 @@ PlaceObj('AIArchetype', {
 			'BiasId', "Healer",
 			'Priority', true,
 			'Fallback', false,
-			'Score', function (self, unit)
+			'Score', function (self, unit, proto_context, debug_data)
 				for _, ally in ipairs(unit.team.units) do
 					if not ally:IsDead() and ally.HitPoints < MulDivRound(ally.MaxHitPoints, 70, 100) then
 						return self.Weight
@@ -1007,7 +1024,38 @@ PlaceObj('AIArchetype', {
 			'SignatureActions', {
 				PlaceObj('AIActionBandage', {
 					'Priority', true,
+					'RequiredKeywords', {
+						"Heal",
+					},
 					'CanUseMod', 1000,
+				}),
+				PlaceObj('AIActionStim', {
+					'Priority', true,
+					'RequiredKeywords', {
+						"Stim",
+					},
+					'TargetRules', {
+						PlaceObj('AIStimRule', {
+							'Keyword', "Flank",
+							'Weight', 100,
+						}),
+						PlaceObj('AIStimRule', {
+							'Keyword', "Control",
+							'Weight', 50,
+						}),
+						PlaceObj('AIStimRule', {
+							'Keyword', "Explosives",
+							'Weight', 50,
+						}),
+						PlaceObj('AIStimRule', {
+							'Keyword', "Ordnance",
+							'Weight', 50,
+						}),
+						PlaceObj('AIStimRule', {
+							'Keyword', "RunAndGun",
+							'Weight', 100,
+						}),
+					},
 				}),
 			},
 			'TakeCoverChance', 0,
@@ -1568,7 +1616,7 @@ PlaceObj('AIArchetype', {
 	Behaviors = {
 		PlaceObj('ApproachInteractableAI', {
 			'Comment', "approach/man the selected emplacement",
-			'Score', function (self, unit)
+			'Score', function (self, unit, proto_context, debug_data)
 				local emplacement = g_Combat and g_Combat:GetEmplacementAssignment(unit)
 				if not emplacement or emplacement.manned_by then
 					return 0
@@ -1580,7 +1628,7 @@ PlaceObj('AIArchetype', {
 		}),
 		PlaceObj('HoldPositionAI', {
 			'Comment', "when manning emplacement",
-			'Score', function (self, unit)
+			'Score', function (self, unit, proto_context, debug_data)
 				local emplacement = g_Combat and g_Combat:GetEmplacementAssignment(unit)
 				if not emplacement or emplacement.manned_by ~= unit then
 					return 0
@@ -1672,7 +1720,7 @@ PlaceObj('AIArchetype', {
 		PlaceObj('StandardAI', {
 			'Priority', true,
 			'Comment', "breaking pindown",
-			'Score', function (self, unit)
+			'Score', function (self, unit, proto_context, debug_data)
 				local enemies = {}
 				for _, descr in pairs(g_Pindown) do
 					if descr.target == self then

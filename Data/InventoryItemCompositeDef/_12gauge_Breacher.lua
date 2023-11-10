@@ -10,6 +10,12 @@ PlaceObj('InventoryItemCompositeDef', {
 	'colorStyle', "AmmoAPColor",
 	'Description', T(641022773748, --[[InventoryItemCompositeDef _12gauge_Breacher Description]] "12-gauge ammo for Shotguns."),
 	'AdditionalHint', T(109230359975, --[[InventoryItemCompositeDef _12gauge_Breacher AdditionalHint]] "<bullet_point> Very short range\n<bullet_point> Wide attack cone\n<bullet_point> Improved armor penetration\n<bullet_point> Prevents Grazing hits due to opponents Taking Cover\n<bullet_point> Inflicts <em>Suppressed</em>"),
+	'Cost', 100,
+	'CanAppearInShop', true,
+	'Tier', 2,
+	'MaxStock', 5,
+	'RestockWeight', 25,
+	'ShopStackSize', 12,
 	'MaxStacks', 500,
 	'Caliber', "12gauge",
 	'Modifications', {

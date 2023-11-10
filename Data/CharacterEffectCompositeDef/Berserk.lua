@@ -6,46 +6,6 @@ PlaceObj('CharacterEffectCompositeDef', {
 	'SortKey', 100,
 	'Comment', "morale effect",
 	'object_class', "CharacterEffect",
-	'msg_reactions', {
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "obj",
-			Event = "StatusEffectAdded",
-			Handler = function (self, obj, id, stacks)
-				
-				local function exec(self, obj, id, stacks)
-				obj:RemoveStatusEffect("Panicked")
-				if IsKindOf(obj, "Unit") then
-					obj:InterruptPreparedAttack()
-					if g_Teams[g_CurrentTeam] == obj.team then
-						ScheduleMoraleActions()
-					end
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "StatusEffectAdded" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, obj, id, stacks)
-				end
-				
-				if self:VerifyReaction("StatusEffectAdded", reaction_def, obj, obj, id, stacks) then
-					exec(self, obj, id, stacks)
-				end
-			end,
-			HandlerCode = function (self, obj, id, stacks)
-				obj:RemoveStatusEffect("Panicked")
-				if IsKindOf(obj, "Unit") then
-					obj:InterruptPreparedAttack()
-					if g_Teams[g_CurrentTeam] == obj.team then
-						ScheduleMoraleActions()
-					end
-				end
-			end,
-		}),
-	},
 	'Conditions', {
 		PlaceObj('CombatIsActive', {}),
 	},
@@ -53,6 +13,13 @@ PlaceObj('CharacterEffectCompositeDef', {
 	'Description', T(392582028996, --[[CharacterEffectCompositeDef Berserk Description]] "Uncontrollable. Recklessly attacks nearby enemies."),
 	'AddEffectText', T(473269787540, --[[CharacterEffectCompositeDef Berserk AddEffectText]] "<em><DisplayName></em> went Berserk"),
 	'RemoveEffectText', T(463610360293, --[[CharacterEffectCompositeDef Berserk RemoveEffectText]] "<em><DisplayName></em> is no longer Berserk"),
+	'OnAdded', function (self, obj)
+		obj:RemoveStatusEffect("Panicked")
+		obj:InterruptPreparedAttack()
+		if g_Teams[g_CurrentTeam] == obj.team then
+			ScheduleMoraleActions()
+		end
+	end,
 	'lifetime', "Until End of Next Turn",
 	'Icon', "UI/Hud/Status effects/rage",
 	'RemoveOnEndCombat', true,

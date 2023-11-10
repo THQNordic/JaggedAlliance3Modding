@@ -7,63 +7,23 @@ DefineClass.Slowed = {
 
 
 	object_class = "StatusEffect",
-	msg_reactions = {
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "obj",
-			Event = "StatusEffectAdded",
-			Handler = function (self, obj, id, stacks)
-				
-				local function exec(self, obj, id, stacks)
-				Msg("UnitAPChanged", obj)
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "StatusEffectAdded" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, obj, id, stacks)
-				end
-				
-				if self:VerifyReaction("StatusEffectAdded", reaction_def, obj, obj, id, stacks) then
-					exec(self, obj, id, stacks)
-				end
-			end,
-			HandlerCode = function (self, obj, id, stacks)
-				Msg("UnitAPChanged", obj)
-			end,
-		}),
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "obj",
-			Event = "StatusEffectRemoved",
-			Handler = function (self, obj, id, stacks, reason)
-				
-				local function exec(self, obj, id, stacks, reason)
-				Msg("UnitAPChanged", obj)
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[2]
-				if not reaction_def or reaction_def.Event ~= "StatusEffectRemoved" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, obj, id, stacks, reason)
-				end
-				
-				if self:VerifyReaction("StatusEffectRemoved", reaction_def, obj, obj, id, stacks, reason) then
-					exec(self, obj, id, stacks, reason)
-				end
-			end,
-			HandlerCode = function (self, obj, id, stacks, reason)
-				Msg("UnitAPChanged", obj)
+	unit_reactions = {
+		PlaceObj('UnitReaction', {
+			Event = "OnCalcMoveModifier",
+			Handler = function (self, target, value, action)
+				return value + self:ResolveValue("move_ap_modifier")
 			end,
 		}),
 	},
 	DisplayName = T(801987474984, --[[CharacterEffectCompositeDef Slowed DisplayName]] "Slowed"),
 	Description = T(726867626791, --[[CharacterEffectCompositeDef Slowed Description]] "<em><percent(move_ap_modifier)></em> higher <em>Movement cost</em>."),
 	AddEffectText = T(689905178968, --[[CharacterEffectCompositeDef Slowed AddEffectText]] "<em><DisplayName></em> is slowed"),
+	OnAdded = function (self, obj)
+		Msg("UnitAPChanged", obj)
+	end,
+	OnRemoved = function (self, obj)
+		Msg("UnitAPChanged", obj)
+	end,
 	type = "Debuff",
 	lifetime = "Until End of Turn",
 	Icon = "UI/Hud/Status effects/legs_pain",

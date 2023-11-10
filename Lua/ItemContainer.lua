@@ -316,13 +316,13 @@ function OnMsg.DamageDone(attacker, target, damage, hit_descr)
 	-- Drop guaranteed drop item, dump everything else.
 	if allDead then
 		local items = {}
-		spawner:ForEachItemInSlot("Inventory", function(item, slot)
+		spawner:ForEachItemInSlot("Inventory", function(item, slot, left, top, items)
 			if item.guaranteed_drop or IsKindOf(item, "QuestItem") then
 				items[#items + 1] = item
 			else
 				CombatLog("debug", "Item " .. item.class .. " was destroyed when destroying box")
 			end
-		end)
+		end, items)
 		spawner:ClearSlot("Inventory")
 		
 		if #items > 0 then
@@ -330,9 +330,9 @@ function OnMsg.DamageDone(attacker, target, damage, hit_descr)
 			for i, item in ipairs(items) do
 				container:AddItem("Inventory", item)
 			end
-			local fall_pos = FindFallDownPos(container)
-			if not fall_pos then return end
-			CreateGameTimeThread(GravityFall, container, fall_pos)
+			local x, y, z = FindFallDownPos(container)
+			if not x then return end
+			CreateGameTimeThread(GravityFall, container, point(x, y, z))
 		end
 	end
 end
@@ -473,15 +473,13 @@ function SectorStash:AddDeadUnitsItems()
 	if not gv_Sectors or not self.sector_id then
 		return
 	end
-	
 	local units_list = gv_Sectors[self.sector_id].dead_units
 	for _, session_id in ipairs(units_list) do
 		local ud = gv_UnitData[session_id]
 		if ud and ud:IsDead() then
-			ud:ForEachItemInSlot("InventoryDead",function(item) 
+			ud:ForEachItemInSlot("InventoryDead", function(item, slot, left, top, self)
 				Inventory.AddItem(self, "Inventory", item)
-			end)
-				
+			end, self)
 		end
 	end
 end

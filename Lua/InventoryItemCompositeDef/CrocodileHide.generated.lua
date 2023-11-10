@@ -17,6 +17,7 @@ DefineClass.CrocodileHide = {
 	Description = "",
 	AdditionalHint = "",
 	Cost = 700,
+	CategoryPair = "Medium",
 	PenetrationClass = 3,
 	DamageReduction = 20,
 	AdditionalReduction = 30,

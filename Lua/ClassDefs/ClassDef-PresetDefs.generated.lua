@@ -351,6 +351,62 @@ function BanterDef:OnPreSave()
 	end
 end
 
+DefineClass.BobbyRayShopCategory = {
+	__parents = { "Preset", },
+	__generated_by_class = "PresetDef",
+
+	properties = {
+		{ id = "DisplayName", 
+			editor = "text", default = false, translate = true, },
+		{ id = "UrlSuffix", 
+			editor = "text", default = false, },
+		{ id = "GetSubCategories", 
+			editor = "func", default = function (self)  end, },
+		{ id = "BelongsInCategory", 
+			editor = "func", default = function (self, item)
+return item:GetCategory() == self
+end, params = "self, item", },
+	},
+	HasSortKey = true,
+}
+
+DefineClass.BobbyRayShopDeliveryDef = {
+	__parents = { "Preset", },
+	__generated_by_class = "PresetDef",
+
+	properties = {
+		{ id = "MinTime", help = "in days", 
+			editor = "number", default = false, },
+		{ id = "MaxTime", help = "in days", 
+			editor = "number", default = false, },
+		{ id = "Name", 
+			editor = "text", default = false, translate = true, },
+		{ id = "TimeDescription", 
+			editor = "text", default = false, translate = true, },
+		{ id = "Price", 
+			editor = "number", default = false, },
+	},
+	HasGroups = false,
+	HasSortKey = true,
+}
+
+DefineClass.BobbyRayShopSubCategory = {
+	__parents = { "Preset", },
+	__generated_by_class = "PresetDef",
+
+	properties = {
+		{ id = "DisplayName", 
+			editor = "text", default = false, translate = true, },
+		{ id = "Category", 
+			editor = "combo", default = "Other", template = true, items = function (self) return PresetArray("BobbyRayShopCategory") end, },
+		{ id = "BelongsInSubCategory", 
+			editor = "func", default = function (self, item)
+return item:GetSubCategory() == self
+end, params = "self, item", },
+	},
+	HasSortKey = true,
+}
+
 DefineClass.Caliber = {
 	__parents = { "ListPreset", },
 	__generated_by_class = "PresetDef",
@@ -370,41 +426,58 @@ DefineClass.CampaignPreset = {
 	__generated_by_class = "PresetDef",
 
 	properties = {
-		{ category = "Satellite Settings", id = "sectors_offset", name = "Sectors Offset", 
+		{ category = "Satellite Settings", id = "sectors_offset", name = "Sectors offset", 
 			editor = "point", default = point(0, 0, 0), },
-		{ category = "Satellite Settings", id = "sector_size", name = "Sector Size", 
+		{ category = "Satellite Settings", id = "sector_size", name = "Sector size", 
 			editor = "point", default = point(0, 0), },
-		{ category = "Satellite Settings", id = "map_size", name = "Map Size", 
+		{ category = "Satellite Settings", id = "map_size", name = "Map size", 
 			editor = "point", default = point(0, 0), },
-		{ category = "Satellite Settings", id = "map_file", name = "Map File", 
-			editor = "text", default = false, },
-		{ category = "Preset", id = "DisplayName", name = "Display Name", 
+		{ category = "Preset", id = "DisplayName", name = "Display name", 
 			editor = "text", default = false, translate = true, },
+		{ category = "Satellite Settings", id = "map_file", name = "Map image", 
+			editor = "ui_image", default = false, },
 		{ category = "Preset", id = "Description", name = "Description", 
 			editor = "text", default = "", translate = true, },
+		{ category = "Map Size & Sectors", id = "InheritSectorsFrom", name = "Inherit sectors from", 
+			editor = "choice", default = false, no_edit = function(self) return self.save_in == "" or IsKindOf(self, "ModItem") end, no_validate = true, items = function (self)
+-- can inherit the sectors from any CampaignPreset with the save id in the base game, or another DLC
+local ret = { { text = "", value = false } }
+ForEachPresetExtended("CampaignPreset", function(preset)
+	if preset.id == self.id and preset.save_in ~= self.save_in then
+		table.insert(ret, { text = preset.save_in ~= "" and preset.save_in or "<base game>", value = preset.save_in })
+	end
+end)
+return ret
+end, },
 		{ category = "Map Size & Sectors", id = "sector_topleft", name = "Top-left sector", 
-			editor = "text", default = false, read_only = function(self) return next(self.Sectors or empty_table) and not self.editing_size end, },
+			editor = "text", default = "A1", read_only = function(self) return next(self.Sectors or empty_table) and not self.editing_size end, validate = function(self, value) return ValidateSectorId(value) end, },
 		{ category = "Map Size & Sectors", id = "sector_bottomright", name = "Bottom-right sector", 
-			editor = "text", default = false, read_only = function(self) return next(self.Sectors or empty_table) and not self.editing_size end, },
+			editor = "text", default = "A1", read_only = function(self) return next(self.Sectors or empty_table) and not self.editing_size end, validate = function(self, value) return ValidateSectorId(value) end, },
 		{ category = "Map Size & Sectors", id = "size_btns", 
-			editor = "buttons", default = false, buttons = { {name = "Edit size", func = "EditSize", is_hidden = function(self) return self.editing_size end },  {name = "Confirm new size", func = "UpdateSize", is_hidden = function(self) return not self.editing_size end }, }, },
+			editor = "buttons", default = false, buttons = { {name = "Edit range of defined sectors", func = "EditSize", is_hidden = function(self) return self.editing_size end },  {name = "Confirm new size", func = "UpdateSize", is_hidden = function(self) return not self.editing_size end }, }, },
+		{ category = "Map Size & Sectors", id = "SectorRange", name = "Sector range", help = "Total range of sectors", 
+			editor = "text", default = false, dont_save = true, read_only = true, },
 		{ category = "Map Size & Sectors", id = "sector_columns", name = "Sector columns", 
-			editor = "number", default = false, read_only = true, min = 1, max = 99, },
+			editor = "number", default = 1, dont_save = true, read_only = true, },
 		{ category = "Map Size & Sectors", id = "sector_rowsstart", name = "Sector rows start", 
-			editor = "number", default = false, read_only = true, min = -25, max = 1, },
+			editor = "number", default = 1, dont_save = true, read_only = true, },
 		{ category = "Map Size & Sectors", id = "sector_rows", name = "Sector rows end", 
-			editor = "number", default = false, read_only = true, min = 1, max = 26, },
+			editor = "number", default = 1, dont_save = true, read_only = true, },
 		{ category = "Map Size & Sectors", id = "InitialSector", name = "Initial sector", help = "The sector in which the campaign starts", 
-			editor = "text", default = false, },
+			editor = "text", default = "A1", validate = function(self, value) local err = ValidateSectorId(value)
+if err then return err end
+
+local x, y = sector_unpack(value)
+if x < self.sector_rowsstart or x > self.sector_rows or y < 1 or y > self.sector_columns then
+	return "The starting sector is not withing the map boundaries."
+end end, },
 		{ category = "Map Size & Sectors", id = "map_editor_btn", 
 			editor = "buttons", default = false, buttons = { {name = "Edit sectors for current Game's campaign", func = "OpenGedSatelliteSectorEditor", is_hidden = function(self) return not Game or not next(gv_Sectors) end }, }, },
 		{ id = "Cities", 
 			editor = "nested_list", default = false, base_class = "CampaignCity", inclusive = true, },
-		{ id = "Sides", 
-			editor = "nested_list", default = false, base_class = "CampaignSide", inclusive = true, },
 		{ id = "Sectors", 
 			editor = "nested_list", default = false, no_edit = true, base_class = "SatelliteSector", inclusive = true, },
-		{ id = "EffectsOnStart", name = "Effects On Start Campaign", help = "Effects that are executed when the campaign is started.", 
+		{ id = "EffectsOnStart", name = "Effects on campaign start", help = "Effects that are executed when the campaign is started.", 
 			editor = "nested_list", default = false, base_class = "Effect", inclusive = true, },
 		{ id = "Initialize", help = "Called once when the campaign starts for the first time.", 
 			editor = "func", default = function (self)  end, },
@@ -418,9 +491,9 @@ DefineClass.CampaignPreset = {
 			editor = "number", default = 1, },
 		{ id = "starting_hour", name = "Starting date, hour, 0-23", help = "Enter local time and it will be converted to GMT; if you want the campaign to start at 06:00 and you're in GMT+02 (Sofia winter), enter 8", 
 			editor = "number", default = 8, },
-		{ id = "starting_timestamp", name = "Starting Time", 
+		{ id = "starting_timestamp", name = "Starting time", 
 			editor = "number", default = 0, read_only = true, },
-		{ id = "DisclaimerOnStart", 
+		{ id = "DisclaimerOnStart", name = "Disclaimer on start", 
 			editor = "text", default = false, translate = true, lines = 2, },
 	},
 	GlobalMap = "CampaignPresets",
@@ -440,16 +513,25 @@ function CampaignPreset:EditSize(root, prop_id, ged)
 	ObjModified(self)
 end
 
-function CampaignPreset:UpdateSize()
+function CampaignPreset:ValidateSize()
 	local x1, y1 = sector_unpack(self.sector_topleft)
 	local x2, y2 = sector_unpack(self.sector_bottomright)
-	self.sector_columns = y2 - y1 + 1
-	self.sector_rowsstart = x1
-	self.sector_rows = x2
-	self.editing_size = nil
+	if x2 < x1 or y2 < y1 then
+		self.sector_bottomright = self.sector_topleft
+	end
+end
+
+function CampaignPreset:UpdateSize()
+	self:ValidateSize()
+	self:PostLoad()
+	ObjModified(self.Sectors)
 	ObjModified(self)
-	
-	self:GenerateEmptySectors()
+end
+
+function CampaignPreset:GetSectorRange()
+	local x1, y1 = self.sector_rowsstart, 1
+	local x2, y2 = self.sector_rows, self.sector_columns
+	return string.format("%s-%s", sector_pack(x1, y1), sector_pack(x2, y2))
 end
 
 function CampaignPreset:OnEditorSetProperty(prop_id, old_value, ged)
@@ -461,6 +543,10 @@ function CampaignPreset:OnEditorSetProperty(prop_id, old_value, ged)
 			hour = self.starting_hour 
 		}
 	end
+	if prop_id == "InheritSectorsFrom" then
+		self:PostLoad()
+		ObjModified(self.Sectors)
+	end
 end
 
 function CampaignPreset:OnStartCampaign(...)
@@ -471,41 +557,84 @@ function CampaignPreset:OnStartCampaign(...)
 	Msg("CampaignStarted", self.id)
 end
 
-function CampaignPreset:GenerateEmptySectors()
+function CampaignPreset:FindInheritSectorsPreset(current)
+	local parent
+	ForEachPresetExtended("CampaignPreset", function(preset)
+		if preset.id == self.id and preset.save_in == current.InheritSectorsFrom then
+			parent = preset
+		end
+	end)
+	return parent
+end
+
+function CampaignPreset:RoundOutSectors()
 	self.Sectors = self.Sectors or {}
 	
-	local existing = {}
-	for _, sector in ipairs(self.Sectors) do
-		existing[sector.Id] = true
-	end
-	for y = 1, self.sector_columns do
-		for x = self.sector_rowsstart, self.sector_rows do
-			local sector_id = sector_pack(x, y)
-			if not existing[sector_id] then
-				table.insert(self.Sectors, GenerateEmptySector(sector_id))
+	-- calculate bounding box of all sectors into 'bbox'
+	local bbox = box(
+		point(sector_unpack(self.sector_topleft)),
+		point(sector_unpack(self.sector_bottomright)) + point(1, 1)
+	)
+	
+	-- build inheritance list (of campaign presets, by order of inheritance)
+	local parents, current = { self }, self
+	local sector_by_id = {}
+	repeat
+		-- create id to sector map for each campaign preset
+		local sectors = {}
+		for _, sector in ipairs(current.Sectors) do
+			local x, y = sector_unpack(sector.Id)
+			bbox = Extend(bbox, point(x, y))
+			sectors[sector.Id] = sector
+		end
+		sector_by_id[current] = sectors
+		
+		current = self:FindInheritSectorsPreset(current)
+		if current then
+			if table.find(parents, current) then break end -- prevent infinite loop in case of a cycle
+			table.insert(parents, current)
+		end
+	until not current
+	
+	-- update size properties, according to the total bounding box
+	self.sector_rowsstart = bbox:minx()
+	self.sector_rows = bbox:maxx() - 1
+	self.sector_columns = bbox:maxy() - 1
+	
+	-- perform sector inheritance
+	local function inherit_sector(sector_id)
+		for _, campaign_preset in ipairs(parents) do
+			local sector = sector_by_id[campaign_preset][sector_id]
+			if sector then
+				if campaign_preset ~= self then
+					sector = sector:Clone()
+					sector.inherited = true
+					table.insert(self.Sectors, sector)
+					UpdateParentTable(sector, self.Sectors)
+				end
+				return true
 			end
 		end
 	end
-	table.sortby_field(self.Sectors, "Id")
-	ObjModified(self.Sectors)
-end
-
-function CampaignPreset:PostLoad()
-	local bbox = box()
-	for _, sector in ipairs(self.Sectors) do
-		local x, y = sector_unpack(sector.Id)
-		bbox = Extend(bbox, point(x, y))
-	end
 	
-	self.sector_topleft = sector_pack(bbox:minx(), 1)
-	self.sector_bottomright = sector_pack(bbox:maxx() - 1, bbox:maxy() - 1)
-	self:UpdateSize()
+	for y = 1, self.sector_columns do
+		for x = self.sector_rowsstart, self.sector_rows do
+			local sector_id = sector_pack(x, y)
+			if not inherit_sector(sector_id) then -- no sector at that point
+				local sector = GenerateEmptySector(sector_id)
+				table.insert(self.Sectors, sector)
+				UpdateParentTable(sector, self.Sectors)
+			end
+			inherit_sector(sector_id .. "_Underground")
+		end
+	end
+	table.sortby_field(self.Sectors, "Id")
 end
 
-function CampaignPreset:OnPreSave()
+function CampaignPreset:RemoveGeneratedSectors()
 	local sectors = self.Sectors or {}
 	for idx = #sectors, 1, -1 do
-		if sectors[idx].generated then
+		if sectors[idx].generated or sectors[idx].inherited then
 			table.remove(sectors, idx)
 		end
 	end
@@ -513,8 +642,24 @@ function CampaignPreset:OnPreSave()
 	self.editing_size = nil
 end
 
+function CampaignPreset:PostLoad()
+	self:RemoveGeneratedSectors()
+	self:RoundOutSectors()
+end
+
+function CampaignPreset:OnPreSave()
+	self:ValidateSize()
+	self:RemoveGeneratedSectors()
+end
+
 function CampaignPreset:OnPostSave()
-	self:GenerateEmptySectors()
+	self:RoundOutSectors()
+end
+
+function CampaignPreset:GetWarning()
+	if self.InheritSectorsFrom and not self:FindInheritSectorsPreset(self) then
+		return "Unable to find DLC to inherit sectors from."
+	end
 end
 
 DefineClass.ChanceToHitModifier = {
@@ -765,6 +910,8 @@ end, params = "self, units", },
 			editor = "func", default = function (self, units)
 return self.Icon
 end, params = "self, units", },
+		{ id = "IdDefault", 
+			editor = "text", default = false, },
 		{ id = "ResolveAction", 
 			editor = "func", default = function (self, context)
 return self
@@ -797,6 +944,11 @@ end, no_edit = function(self) return self.ActionType ~= "Toggle" end, params = "
 	EditorMenubar = "Combat",
 	EditorMenubarSortKey = "-9",
 }
+
+function CombatAction:OnPreSave(by_user_request, ged)
+	self.IdDefault = self.id .. "default"
+	Preset.OnPreSave(self, by_user_request, ged)
+end
 
 function CombatAction:GetError()
 	if not self.DisplayName then return "CombatActions must have a DisplayName" end
@@ -3289,7 +3441,13 @@ DefineClass.SatelliteShortcutPreset = {
 			editor = "combo", default = false, items = function (self) return GetCampaignSectorsCombo() end, },
 		{ id = "shortcut_direction_exit_sector", help = "The sector which denotes the direction in which the exit sector is being entered from", 
 			editor = "combo", default = false, items = function (self) return GetCampaignSectorsCombo() end, },
+		{ id = "speed_const", help = "The constant denoting the shortcut's speed", 
+			editor = "combo", default = "RiverTravelTime", items = function (self) return ConstCategoryToCombo(const.SatelliteShortcut) end, },
+		{ id = "terrain", name = "Travel Breakdown Terrain Description", 
+			editor = "combo", default = "Shortcut_River", items = function (self) return PresetsCombo("SectorTerrain") end, },
 		{ id = "one_way", name = "One way", 
+			editor = "bool", default = false, },
+		{ id = "disabled", name = "Disabled By Default", 
 			editor = "bool", default = false, },
 		{ id = "GetEditorView", 
 			editor = "func", default = function (self)
@@ -3303,10 +3461,6 @@ end, },
 			editor = "func", default = function (self)
 return self.VisibilitySectors
 end, no_edit = true, },
-		{ id = "GetTravelTime", 
-			editor = "func", default = function (self)
-return self.TravelTimeInSectors * const.Satellite.RiverTravelTime
-end, no_edit = true, },
 		{ id = "VisibilitySectors", help = "Sectors which are visible while travelling on the shortcut", 
 			editor = "string_list", default = {}, item_default = "", items = function (self) return GetCampaignSectorsCombo() end, },
 		{ id = "TravelTimeInSectors", help = "How many sectors this shortcut is long. This is multiplied by const.Satellite.RiverTravelTime", 
@@ -3314,7 +3468,17 @@ end, no_edit = true, },
 		{ id = "water_shortcut", 
 			editor = "bool", default = false, },
 	},
+	GlobalMap = "SatelliteShortcuts",
 }
+
+function SatelliteShortcutPreset:GetShortcutEnabled()
+	return not self.disabled
+end
+
+function SatelliteShortcutPreset:GetTravelTime()
+	local timeConst = const.SatelliteShortcut[self.speed_const or "RiverTravelTime"]
+	return self.TravelTimeInSectors * timeConst
+end
 
 DefineClass.SatelliteTimelineEventDef = {
 	__parents = { "ListPreset", },
@@ -3673,7 +3837,7 @@ end,
 },
 		{ id = "side", 
 			editor = "choice", default = "player1", 
-			read_only = function(self) return self.squad_type ~= "NPC" end, items = function (self) return table.map(GetCurrentCampaignPreset().Sides, "Id") end, },
+			read_only = function(self) return self.squad_type ~= "NPC" end, items = function (self) return Sides end, },
 		{ id = "spawn_location", 
 			editor = "choice", default = "Standard", items = function (self) return {"Standard", "On Marker"} end, },
 		{ id = "tier", name = "Tier", help = "Level up, give more perks and more expensive weapons for higher tiers.", 
@@ -4067,31 +4231,15 @@ function WeaponComponentEffect:VerifyReaction(event, reaction_def, reaction_acto
 	if IsKindOf(reaction_actor, "BaseWeapon") then
 		return reaction_actor:HasComponent(self.id)
 	end
-	
-	if not IsKindOf(reaction_actor, "UnitInventory") then return end
-	
-	local weapons = reaction_actor:GetEquippedWeapons(reaction_actor.current_weapon, "FirearmBase")
-	for _, weapon in ipairs(weapons) do
-		if weapon:HasComponent(self.id) then
+	if IsKindOf(reaction_actor, "UnitInventory") then
+		if reaction_actor:FindItemInSlot(reaction_actor.current_weapon, function(weapon, id) return IsKindOf(weapon, "FirearmBase") and weapon:HasComponent(id) end, self.id) then
 			return true
 		end
 	end
 end
 
 function WeaponComponentEffect:GetReactionActors(event, reaction_def, ...)
-	local objs = {}
-	if reaction_def:HasFlag("SatView") then
-		for session_id, data in pairs(gv_UnitData) do
-			local obj = ZuluReactionResolveUnitActorObj(session_id, data)
-			if self:VerifyReaction(event, obj, ...) then
-				objs[#objs + 1] = obj
-			end
-		end
-	else
-		table.iappend(objs, g_Units)
-	end
-	table.sortby_field(objs, "session_id")
-	return objs
+	return ZuluReactionGetReactionActors_Light(event, reaction, ...)
 end
 
 DefineClass.WeaponComponentSharedClass = {

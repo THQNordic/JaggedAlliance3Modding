@@ -8,5 +8,6 @@ PlaceObj('InventoryItemCompositeDef', {
 	'DisplayName', T(424339741886, --[[InventoryItemCompositeDef GoldenWatch DisplayName]] "Golden Watch"),
 	'Description', T(815681556557, --[[InventoryItemCompositeDef GoldenWatch Description]] "Heinrich's golden watch."),
 	'Valuable', 1,
+	'RestockWeight', 0,
 })
 

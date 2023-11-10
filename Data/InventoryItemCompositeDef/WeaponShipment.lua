@@ -12,5 +12,6 @@ PlaceObj('InventoryItemCompositeDef', {
 	'AdditionalHint', T(561475317234, --[[InventoryItemCompositeDef WeaponShipment AdditionalHint]] "<bullet_point> <GameColorD>Can be opened to receive the items</GameColorD>"),
 	'Valuable', 1,
 	'loot_def', "WeaponShipment",
+	'RestockWeight', 0,
 })
 

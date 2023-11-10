@@ -14,5 +14,6 @@ DefineClass.Pamphlets_LysRouge = {
 	Description = T(494386205466, --[[InventoryItemCompositeDef Pamphlets_LysRouge Description]] "Collection of slogans and speeches of Comrade Chimurenga, the Savanna Lion, leader of the People's Provisional Revolutionary Government. Illustrated with pictures of barely dressed female members of the working class."),
 	AdditionalHint = T(747141972385, --[[InventoryItemCompositeDef Pamphlets_LysRouge AdditionalHint]] "<bullet_point> Unites the workers of the world\n<bullet_point> Contains inspiring images of Le Lys Rouge girls who will raise your gun for the Revolution!"),
 	Cost = 100,
+	RestockWeight = 0,
 }
 

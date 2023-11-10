@@ -14,5 +14,6 @@ DefineClass.Pamphlets = {
 	Description = T(845151278385, --[[InventoryItemCompositeDef Pamphlets Description]] "Collection of slogans and speeches of Comrade Chimurenga, the Savanna Lion, leader of the People's Provisional Revolutionary Government."),
 	AdditionalHint = T(568192581302, --[[InventoryItemCompositeDef Pamphlets AdditionalHint]] "<bullet_point> Unites the workers of the world\n<bullet_point> Poorly illustrated"),
 	Cost = 100,
+	RestockWeight = 0,
 }
 

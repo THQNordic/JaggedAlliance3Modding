@@ -1084,7 +1084,7 @@ PlaceObj('XTemplate', {
 							'HandleMouse', false,
 						}),
 						PlaceObj('XTemplateWindow', {
-							'Margins', box(0, 0, 0, 50),
+							'Margins', box(0, 0, 0, 44),
 							'Dock', "box",
 							'HAlign', "left",
 							'VAlign', "bottom",
@@ -1250,9 +1250,9 @@ PlaceObj('XTemplate', {
 															local overrideLock = false
 															if GetUIStyleGamepad() then
 																local state = GetActiveGamepadState()
-																local leftThumbPos = state.LeftThumb
+																local leftThumbPos = state and state.LeftThumb or point20
 																-- modified from XInput.PointToDirection(pt)
-																angle = AngleNormalize(90*60 - CalcOrientation(leftThumbPos))
+																angle = state and AngleNormalize(90*60 - CalcOrientation(leftThumbPos)) or 0
 																
 																local setSelectionTo = false
 																local indexReplacements, first_idx, last_idx, boxes = dlg:GetChoiceData()
@@ -1261,9 +1261,8 @@ PlaceObj('XTemplate', {
 																	local center = dlg:ResolveId("idRhombus")
 																	local rhombusSel = dlg:ResolveId("idRhombusSel")
 																	
-																	local gamepadState = GetActiveGamepadState()
 																	local centerOnBox = center.box:Center()
-																	local gamePadStick = gamepadState.LeftThumb
+																	local gamePadStick = state.LeftThumb
 																	gamePadStick = gamePadStick:SetY(-gamePadStick:y())
 																	gamePadStick = Normalize(gamePadStick)
 																	local gamepadPointingTowards = gamePadStick
@@ -1346,6 +1345,9 @@ PlaceObj('XTemplate', {
 														return false
 													end
 													local state = GetActiveGamepadState()
+													if not state then
+														return 0
+													end
 													local dpad_left  = state.DPadLeft 
 													local dpad_right = state.DPadRight
 													local dpad_up    = state.DPadUp

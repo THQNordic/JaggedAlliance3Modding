@@ -16,6 +16,7 @@ DefineClass.ShapedCharge = {
 	AdditionalHint = T(429964637592, --[[InventoryItemCompositeDef ShapedCharge AdditionalHint]] "<bullet_point> Cone-shaped explosion\n<bullet_point> High mishap risk when used by anyone except Barry"),
 	UnitStat = "Explosives",
 	Cost = 1500,
+	RestockWeight = 0,
 	MinMishapChance = 2,
 	MaxMishapChance = 30,
 	MaxMishapRange = 6,

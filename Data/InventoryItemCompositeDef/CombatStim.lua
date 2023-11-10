@@ -9,6 +9,12 @@ PlaceObj('InventoryItemCompositeDef', {
 	'DisplayName', T(634691805568, --[[InventoryItemCompositeDef CombatStim DisplayName]] "Combat Stim"),
 	'DisplayNamePlural', T(713501369682, --[[InventoryItemCompositeDef CombatStim DisplayNamePlural]] "Combat Stims"),
 	'AdditionalHint', T(717527540232, --[[InventoryItemCompositeDef CombatStim AdditionalHint]] "<bullet_point> Used through the Item Menu\n<bullet_point> Single use\n<bullet_point> Gain extra AP until the end of next turn\n<bullet_point> Lose Energy after the effect wears off"),
+	'Cost', 400,
+	'CanAppearInShop', true,
+	'Tier', 2,
+	'MaxStock', 6,
+	'RestockWeight', 25,
+	'CategoryPair', "Medicine",
 	'effect_moment', "on_use",
 	'Effects', {
 		PlaceObj('UnitAddStatusEffect', {

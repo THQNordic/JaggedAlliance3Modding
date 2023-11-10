@@ -18,50 +18,20 @@ PlaceObj('CharacterEffectCompositeDef', {
 	},
 	'Comment', "lose 1/10 of the bonus for each tile between you and the target (if the target is adjacent I count it as range 0)",
 	'object_class', "Perk",
-	'msg_reactions', {
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "attacker",
-			Event = "GatherCTHModifications",
-			Handler = function (self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
-				
-				local function exec(self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
-				if cth_id == self.id then
-					local attacker, target = data.attacker, data.target
-					
+	'unit_reactions', {
+		PlaceObj('UnitReaction', {
+			Event = "OnCalcChanceToHit",
+			Handler = function (self, target, attacker, action, attack_target, weapon1, weapon2, data)
+				if target == attacker then
 					local value = self:ResolveValue("cqc_bonus_max")
-					local tileSpace = DivRound(attacker:GetDist2D(target), const.SlabSizeX) - 1
+					local tileSpace = DivRound(attacker:GetDist2D(attack_target), const.SlabSizeX) - 1
 					if tileSpace > 0 then
 						local lossPerTile = self:ResolveValue("cqc_bonus_loss_per_tile")
 						value = value - lossPerTile * tileSpace
 					end
-					data.mod_add = Max(0, value)
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "GatherCTHModifications" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
-				end
-				
-				if self:VerifyReaction("GatherCTHModifications", reaction_def, attacker, attacker, cth_id, action_id, target, weapon1, weapon2, data) then
-					exec(self, attacker, cth_id, action_id, target, weapon1, weapon2, data)
-				end
-			end,
-			HandlerCode = function (self, attacker, cth_id, data)
-				if cth_id == self.id then
-					local attacker, target = data.attacker, data.target
-					
-					local value = self:ResolveValue("cqc_bonus_max")
-					local tileSpace = DivRound(attacker:GetDist2D(target), const.SlabSizeX) - 1
-					if tileSpace > 0 then
-						local lossPerTile = self:ResolveValue("cqc_bonus_loss_per_tile")
-						value = value - lossPerTile * tileSpace
+					if value > 0 then
+						ApplyCthModifier_Add(self, data, value)
 					end
-					data.mod_add = Max(0, value)
 				end
 			end,
 		}),

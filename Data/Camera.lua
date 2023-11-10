@@ -2631,6 +2631,18 @@ PlaceObj('Camera', {
 })
 
 PlaceObj('Camera', {
+	cam_dest_lookat = point(129971, 105716, 11790),
+	cam_dest_pos = point(130042, 109627, 14905),
+	cam_lookat = point(129971, 105716, 11790),
+	cam_pos = point(130042, 109627, 14905),
+	fovx = 4384,
+	group = "Mercs_Life",
+	id = "Technical_Difficulties",
+	map = "_UI_Outro_03",
+	order = 20,
+})
+
+PlaceObj('Camera', {
 	cam_dest_lookat = point(156709, 186296, 3671),
 	cam_dest_pos = point(158038, 185970, 8481),
 	cam_lookat = point(156709, 186296, 3671),

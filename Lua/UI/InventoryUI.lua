@@ -578,11 +578,9 @@ function XInventorySlot:InitialSpawnItems()
 	if not IsKindOf(context, "Inventory") then 
 		return 
 	end 
-	local slot_name = self.slot_name
-	context:ForEachItemInSlot(slot_name,
-		function(item, slotname, left, top) 
-			self:SpawnItemUI(item,left, top)
-		end)
+	context:ForEachItemInSlot(self.slot_name, function(item, slotname, left, top, self)
+		self:SpawnItemUI(item, left, top)
+	end, self)
 end
 
 function XInventorySlot:OnContextUpdate(context)
@@ -936,6 +934,7 @@ end
 
 function NetSyncEvents.DropToAnotherSectorStash(unit_id,sector_id,src_slot, item_id)
 	local item = g_ItemIdToItem[item_id]
+	if not item then return end 
 	local unit = gv_UnitData[unit_id]
 	unit:RemoveItem(src_slot, item)
 	AddToSectorInventory(sector_id,{item})
@@ -1973,16 +1972,17 @@ function HighlightWeaponsForAmmo(ammo, bShow)
 			for _, slot_data in ipairs(member.inventory_slots) do
 				local slot_name = slot_data.slot_name
 				if IsEquipSlot(slot_name) then
-					
-					member:ForEachItemInSlot(slot_name, weapon_class, function(witem, slot, l,t)
-						if witem.Caliber == ammo.Caliber then
-							-- head
-							button:SetHighlightedStatOrIcon(bShow and "UI/Icons/Rollover/ammo")			
-							-- backpack
-							h_members[member] = true
+					local result = member:ForEachItemInSlot(slot_name, weapon_class, function(witem, slot, left, top, caliber)
+						if witem.Caliber == caliber then
 							return "break"
-						end	
-					end)
+						end
+					end, ammo.Caliber)
+					if result == "break" then
+						-- head
+						button:SetHighlightedStatOrIcon(bShow and "UI/Icons/Rollover/ammo")
+						-- backpack
+						h_members[member] = true
+					end
 				end
 			end
 		end
@@ -2030,15 +2030,17 @@ function HighlightMedicinesForMeds(meds, bShow)
 	for _, button in ipairs(squad_list) do	
 		local member = button:GetContext()
 		if member then
-			member:ForEachItemInSlot(GetContainerInventorySlotName(member), "Medicine", function(witem, slot, l,t)
-				if witem.Condition<witem:GetMaxCondition() then
-					-- head
-					button:SetHighlighted(bShow)
-					-- backpack
-					h_members[member] = true
+			local result = member:ForEachItemInSlot(GetContainerInventorySlotName(member), "Medicine", function(witem)
+				if witem.Condition < witem:GetMaxCondition() then
 					return "break"
 				end	
 			end)
+			if result == "break" then
+				-- head
+				button:SetHighlighted(bShow)
+				-- backpack
+				h_members[member] = true
+			end
 		end
 
 		--Highlight medicines
@@ -2092,9 +2094,14 @@ function HighlightWoundedCharacterPortraits(item, show)
 	end
 end
 
-function HighlightDropSlot(wnd, bShow, pt, drag_win)
+function InventoryGetDragWidthHeight()
 	local width = InventoryDragItem and InventoryDragItem:GetUIWidth()
 	local height = InventoryDragItem and InventoryDragItem:GetUIHeight()
+	return width, height
+end
+
+function HighlightDropSlot(wnd, bShow, pt, drag_win)
+	local width,height = InventoryGetDragWidthHeight()
 	
 	local dlg = GetMercInventoryDlg()
 	local slot_ctrl = ((InventoryStartDragSlotName == "Inventory") or (InventoryStartDragSlotName == "InventoryDead")) and dlg:GetSlotByName(InventoryStartDragSlotName, InventoryStartDragContext) or dlg:GetSlotByName(InventoryStartDragSlotName)
@@ -3146,7 +3153,7 @@ function InventoryGetTargetsRecipe(item, unit, item2, container2)
 	local container2_id = container2 and container2.session_id	
 	local squad = gv_UnitData[unit_id] and gv_UnitData[unit_id].Squad
 	if not squad then return end 
-	local all_mercs = container2 and {container2_id} or table.copy(gv_Squads[squad].units)
+	local all_mercs = container2 and container2_id and {container2_id} or table.copy(gv_Squads[squad].units)
 	-- check distance restrictions
 	if (not gv_SatelliteView or InventoryIsCombatMode(unit)) then
 		for i = #all_mercs, 1, -1 do
@@ -3693,11 +3700,6 @@ if Platform.developer then
 		
 		wait_units_idle()
 		
-		-- Units are not controllable during this time.
-		while g_Combat.camera_use do
-			Sleep(100)
-		end
-					
 		if true then -- player turn code block
 		-- test inventory inside the combat
 			GameTestInventory()
@@ -3733,45 +3735,31 @@ end
 
 function PopupMenuGiveItemToSquad(node)
 	local context = node and node.context
-	if context then
-		local ui_slot = context.slot_wnd
-		local dest_squad = node.squad
-		local src_container = context.context
-		local item = context.item
-		local squadBag = dest_squad.UniqueId
-		
-		local args = {item = item, src_container = src_container, src_slot = ui_slot.slot_name,
-						dest_container = squadBag, dest_slot = "Inventory"}
-		local rez = MoveItem(args)
-		if rez then
-			local su = dest_squad.units
-			for _, unitName in ipairs(su) do
-				local dest_container = gv_SatelliteView and gv_UnitData[unitName] or g_Units[unitName]
-				args.dest_container = dest_container
-				args.dest_slot = GetContainerInventorySlotName(dest_container)
-				rez = MoveItem(args)
-				if not rez then
-					break
-				end
+	if not context then return end
+	local ui_slot = context.slot_wnd
+	local dest_squad = node.squad
+	local src_container = context.context
+	local item = context.item
+	local squadBag = dest_squad.UniqueId
+	
+	local args = {item = item, src_container = src_container, src_slot = ui_slot.slot_name,
+					dest_container = squadBag, dest_slot = "Inventory"}
+	local rez = MoveItem(args)
+	if rez then
+		local su = dest_squad.units
+		for _, unitName in ipairs(su) do
+			local dest_container = gv_SatelliteView and gv_UnitData[unitName] or g_Units[unitName]
+			args.dest_container = dest_container
+			args.dest_slot = GetContainerInventorySlotName(dest_container)
+			rez = MoveItem(args)
+			if not rez then
+				break
 			end
 		end
-
-		if rez then
-			print("failed to transfer to squad", rez)
-		end
 	end
-end
 
-function PopupMenuGiveItem(node)
-	local context = node and node.context
-	if context then
-		local ui_slot = context.slot_wnd
-		local dest_container = node.unit
-		local args = {item = context.item, src_container = context.context, src_slot = ui_slot.slot_name, dest_container = dest_container,
-							dest_slot = GetContainerInventorySlotName(dest_container), }
-		MoveItem(args) --this will merge stacks and move, if you want only move use amount = item.Amount
-		ui_slot:ClosePopup()
-		PlayFX("GiveItem", "start")
+	if rez then
+		print("failed to transfer to squad", rez)
 	end
 end
 

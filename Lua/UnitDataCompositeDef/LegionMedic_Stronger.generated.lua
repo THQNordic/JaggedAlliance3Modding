@@ -24,6 +24,9 @@ DefineClass.LegionMedic_Stronger = {
 	Affiliation = "Legion",
 	StartingLevel = 5,
 	neutral_retaliate = true,
+	AIKeywords = {
+		"Heal",
+	},
 	archetype = "Medic",
 	role = "Medic",
 	CanManEmplacements = false,

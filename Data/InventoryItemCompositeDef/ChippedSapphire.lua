@@ -11,5 +11,6 @@ PlaceObj('InventoryItemCompositeDef', {
 	'Description', T(293363329165, --[[InventoryItemCompositeDef ChippedSapphire Description]] "It's a speckle of some value, cold to the touch and inviting."),
 	'AdditionalHint', T(946629763742, --[[InventoryItemCompositeDef ChippedSapphire AdditionalHint]] "<bullet_point> <GameColorD>Can be cashed in for Money</GameColorD>"),
 	'Cost', 350,
+	'RestockWeight', 0,
 })
 

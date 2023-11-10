@@ -63,6 +63,7 @@ DefineClass.SE_OnSideChange = { __parents = { "SectorEvent", } }
 DefineClass.SE_PlayerControl = { __parents = { "SectorEvent", } }
 DefineClass.SE_OnConflictStarted = { __parents = { "SectorEvent", } }
 DefineClass.SE_OnEnterWarningState = { __parents = { "SectorEvent", } }
+DefineClass.SE_PreChangeMap = { __parents = { "SectorEvent", } }
 
 function OnMsg.LoyaltyChanged(city_id, loyalty, change)
 	for id, sector in sorted_pairs(gv_Sectors) do

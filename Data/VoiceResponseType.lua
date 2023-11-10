@@ -2,10 +2,9 @@
 
 PlaceObj('VoiceResponseType', {
 	Comment = "when selected or autoselected",
-	Cooldown = 200,
 	Mandatory = true,
 	MinLines = 3,
-	PerLineCooldown = 10000,
+	PerLineCooldown = 30000,
 	SortKey = -10,
 	SynchGroup = true,
 	group = "Selection",

@@ -17,6 +17,7 @@ DefineClass.Machete_Crafted = {
 	LargeItem = 1,
 	UnitStat = "Dexterity",
 	Cost = 150,
+	RestockWeight = 0,
 	BaseChanceToHit = 100,
 	CritChanceScaled = 30,
 	BaseDamage = 16,

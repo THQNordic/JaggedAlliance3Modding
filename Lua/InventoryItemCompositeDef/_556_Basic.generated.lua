@@ -12,6 +12,11 @@ DefineClass._556_Basic = {
 	DisplayNamePlural = T(124208305458, --[[InventoryItemCompositeDef _556_Basic DisplayNamePlural]] "5.56 mm Standard"),
 	colorStyle = "AmmoBasicColor",
 	Description = T(114938435533, --[[InventoryItemCompositeDef _556_Basic Description]] "5.56 Ammo for Assault Rifles, SMGs, and Machine Guns."),
+	Cost = 90,
+	CanAppearInShop = true,
+	MaxStock = 10,
+	CategoryPair = "556",
+	ShopStackSize = 30,
 	MaxStacks = 500,
 	Caliber = "556",
 }

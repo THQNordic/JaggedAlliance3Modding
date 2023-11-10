@@ -192,10 +192,6 @@ PlaceObj('XTemplate', {
 						return "break"
 					end
 				end
-				if shortcut=="ButtonY" then
-					self:SetMode("login")
-					return "break"
-				end
 			end,
 		}),
 		PlaceObj('XTemplateFunc', {

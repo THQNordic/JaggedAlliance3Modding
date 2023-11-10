@@ -7,6 +7,7 @@ PlaceObj('InventoryItemCompositeDef', {
 	'object_class', "HyenaWeapon",
 	'DisplayName', T(144930352145, --[[InventoryItemCompositeDef HyenaJaws DisplayName]] "Jaws"),
 	'DisplayNamePlural', T(922267352647, --[[InventoryItemCompositeDef HyenaJaws DisplayNamePlural]] "Jaws"),
+	'CategoryPair', "MeleeWeapons",
 	'BaseChanceToHit', 100,
 	'CritChance', 2,
 	'BaseDamage', 15,

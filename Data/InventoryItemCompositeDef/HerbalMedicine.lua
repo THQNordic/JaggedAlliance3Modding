@@ -8,6 +8,7 @@ PlaceObj('InventoryItemCompositeDef', {
 	'DisplayName', T(603680939283, --[[InventoryItemCompositeDef HerbalMedicine DisplayName]] "Herbal Medicine"),
 	'DisplayNamePlural', T(722930256983, --[[InventoryItemCompositeDef HerbalMedicine DisplayNamePlural]] "Herbal Medicine"),
 	'AdditionalHint', T(976799203017, --[[InventoryItemCompositeDef HerbalMedicine AdditionalHint]] "<bullet_point> Used through the Item Menu\n<bullet_point> Single use\n<bullet_point> Grants high Grit\n<bullet_point> Unpredictable side effects\n<bullet_point> All natural"),
+	'CategoryPair', "Medicine",
 	'MaxStacks', 20,
 	'effect_moment', "on_use",
 	'Effects', {

@@ -55,79 +55,6 @@ PlaceObj('EffectDef', {
 })
 
 PlaceObj('EffectDef', {
-	id = "AssociateNPCWithSector",
-	PlaceObj('ClassConstDef', {
-		'name', "EditorView",
-		'type', "text",
-		'value', "Associate NPC <Name> with sector <u(Sector)>",
-		'untranslated', true,
-	}),
-	PlaceObj('ClassConstDef', {
-		'name', "Documentation",
-		'type', "text",
-		'value', "Associate an NPC with a sector in the current campaign.",
-	}),
-	PlaceObj('ClassMethodDef', {
-		'name', "__exec",
-		'params', "obj, context",
-		'code', function (self, obj, context)
-			local sector = gv_Sectors[self.Sector]
-			if not self.Negate then
-				if not sector.NPCs then
-					sector.NPCs = {}
-				end
-				sector.NPCs[#sector.NPCs + 1] = self.Name
-				return
-			elseif sector.NPCs then
-				local idx = table.find(sector.NPCs, self.Name)
-				if idx then
-					table.remove(sector.NPCs, idx)
-				end
-			end
-		end,
-	}),
-	PlaceObj('PropertyDefBool', {
-		'id', "Negate",
-		'name', "Remove NPC",
-		'help', "Reverse the effect, removing an NPC from the sector.",
-	}),
-	PlaceObj('PropertyDefCombo', {
-		'id', "Sector",
-		'name', "Associated Sector",
-		'help', "The sector to associate with.",
-		'items', function (self) return GetCampaignSectorsCombo() end,
-	}),
-	PlaceObj('ClassConstDef', {
-		'name', "EditorViewNeg",
-		'type', "text",
-		'value', "Remove NPC <Name> from sector <u(Sector)>",
-		'untranslated', true,
-	}),
-	PlaceObj('TestHarness', {
-		'name', "TestHarness",
-		'TestedOnce', true,
-		'Tested', true,
-		'GetTestSubject', function (self) return SelectedObj end,
-		'TestObject', PlaceObj('AssociateNPCWithSector', {
-			Name = T(942131685021, --[[EffectDef Effects AssociateNPCWithSector Name]] "Test"),
-			Negate = true,
-			Sector = "I2",
-		}),
-	}),
-	PlaceObj('ClassConstDef', {
-		'name', "EditorNestedObjCategory",
-		'type', "text",
-		'value', "Sector effects",
-	}),
-	PlaceObj('PropertyDefCombo', {
-		'id', "Name",
-		'name', "NPC Name",
-		'help', "The name of the NPC to associate.",
-		'items', function (self) return GetTargetUnitCombo() end,
-	}),
-})
-
-PlaceObj('EffectDef', {
 	DefParentClassList = {
 		"Effect",
 		"UnitTarget",
@@ -465,6 +392,7 @@ PlaceObj('EffectDef', {
 		'name', "__exec",
 		'params', "obj, context",
 		'code', function (self, obj, context)
+			if not self.custom_code then return end
 			local custom_code_func, err = load(self.custom_code)
 			if custom_code_func then
 				-- Procall to ensure there isnt a yield (it cant be saved)
@@ -635,16 +563,19 @@ PlaceObj('EffectDef', {
 		'params', "obj, context",
 		'code', function (self, obj, context)
 			local effects =  self.Effects
-			if not effects then return true end
-			context =  context or {}
+			if not effects or #effects == 0 then return true end
+			if not context then context = {} end
 			context.is_sector_unit = true
+			context.target_units = {}
 			
 			local squads = GetSquadsInSector(self.Sector)
 			for i, squad in ipairs(squads) do
-				for j, unit_id in ipairs(squad.units or empty_table) do
+				for j, unit_id in ipairs(squad.units) do
 					local unit = gv_UnitData[unit_id]
-					context.target_units={unit}
-					ExecuteEffectList(effects, unit, context)
+					context.target_units[1] = unit
+					for _, effect in ipairs(effects) do
+						effect:__exec(unit, context)
+					end
 				end
 			end
 			context.is_sector_unit = false
@@ -2269,7 +2200,7 @@ PlaceObj('EffectDef', {
 	PlaceObj('PropertyDefChoice', {
 		'id', "Side",
 		'help', "The new side of group.",
-		'items', function (self) return table.map(GetCurrentCampaignPreset().Sides, "Id") end,
+		'items', function (self) return Sides end,
 	}),
 	PlaceObj('PropertyDefBool', {
 		'id', "CreateSquad",
@@ -5029,9 +4960,10 @@ PlaceObj('EffectDef', {
 		'params', "obj, context",
 		'code', function (self, obj, context)
 			local num = #self.Effects
-			local roll = InteractionRand(num, "RandomEffect") + 1
-			local effect = self.Effects[roll]
-			ExecuteEffectList({effect})
+			if num > 0 then
+				local roll = InteractionRand(num, "RandomEffect") + 1
+				self.Effects[roll]:__exec()
+			end
 		end,
 	}),
 	PlaceObj('PropertyDefNestedList', {
@@ -5063,6 +4995,107 @@ PlaceObj('EffectDef', {
 				}),
 				PlaceObj('PlayerGrantMoney', {
 					Amount = 20,
+				}),
+			},
+		}),
+	}),
+})
+
+PlaceObj('EffectDef', {
+	group = "Effects",
+	id = "RandomEffectWithCondition",
+	PlaceObj('ClassConstDef', {
+		'name', "ReturnClass",
+		'type', "text",
+	}),
+	PlaceObj('ClassConstDef', {
+		'name', "EditorView",
+		'type', "text",
+		'value', "Play a random effect from a list whose conditions evaluate to true.",
+		'untranslated', true,
+	}),
+	PlaceObj('ClassConstDef', {
+		'name', "Documentation",
+		'type', "text",
+		'value', "Play a random effect from a list whose conditions evaluate to true.",
+	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "__exec",
+		'params', "obj, context",
+		'code', function (self, obj, context)
+			local valid = {}
+			for i, eff in ipairs(self.Effects) do
+				if EvalConditionList(eff.Conditions, obj, context) then
+					valid[#valid + 1] = eff
+				end
+			end
+			local num = #valid
+			if num > 0 then
+				local roll = InteractionRand(num, "RandomEffect") + 1
+				
+				local effRolled = valid[roll]
+				local effects = effRolled.Effects
+				for _, effect in ipairs(effects) do
+					effect:__exec(obj, context)
+				end
+			end
+		end,
+	}),
+	PlaceObj('PropertyDefNestedList', {
+		'id', "Effects",
+		'name', "Effects",
+		'base_class', "ConditionalEffect",
+	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "GetError",
+		'code', function (self)
+			if not self.Effects or #self.Effects < 1 then
+				return "Please specify some effects"
+			end
+		end,
+	}),
+	PlaceObj('ClassConstDef', {
+		'name', "EditorNestedObjCategory",
+		'type', "text",
+	}),
+	PlaceObj('TestHarness', {
+		'name', "TestHarness",
+		'TestedOnce', true,
+		'Tested', true,
+		'GetTestSubject', function (self) return SelectedObj end,
+		'TestObject', PlaceObj('RandomEffectWithCondition', {
+			Effects = {
+				PlaceObj('ConditionalEffect', {
+					'Conditions', {
+						PlaceObj('CheckExpression', {}),
+					},
+					'Effects', {
+						PlaceObj('PlayerGrantMoney', {
+							Amount = 10,
+						}),
+					},
+				}),
+				PlaceObj('ConditionalEffect', {
+					'Conditions', {
+						PlaceObj('CheckExpression', {
+							Expression = function (self, obj) return false end,
+						}),
+					},
+					'Effects', {
+						PlaceObj('PlayerGrantMoney', {
+							Amount = 10000,
+						}),
+					},
+				}),
+				PlaceObj('ConditionalEffect', {
+					'Conditions', {
+						PlaceObj('CheckExpression', {}),
+					},
+					'Effects', {
+						PlaceObj('PlayerPayMoney', {
+							Amount = 10,
+						}),
+					},
 				}),
 			},
 		}),
@@ -5752,6 +5785,7 @@ PlaceObj('EffectDef', {
 		'params', "obj, context",
 		'code', function (self, obj, context)
 			local sector = self.sector_id == "current" and gv_Sectors[gv_CurrentSectorId] or gv_Sectors[self.sector_id]
+			if not sector then return end
 			if self.conflict_mode then
 				ForceEnterConflictEffect(
 						sector,
@@ -6409,68 +6443,6 @@ PlaceObj('EffectDef', {
 
 PlaceObj('EffectDef', {
 	group = "Effects",
-	id = "SectorSetExplorePopup",
-	PlaceObj('PropertyDefCombo', {
-		'id', "sector_id",
-		'name', "Sector Id",
-		'help', "Sector id.",
-		'items', function (self) return GetCampaignSectorsCombo() end,
-	}),
-	PlaceObj('PropertyDefCombo', {
-		'id', "explore_popup",
-		'name', "Explore Popup",
-		'help', "Choose explore Popup.",
-		'default', "",
-		'items', function (self) return PresetGroupCombo("PopupNotification", "Sectors") end,
-	}),
-	PlaceObj('ClassConstDef', {
-		'name', "Documentation",
-		'type', "text",
-		'value', "Change or remove (set to empty) explore pop-up for sector",
-	}),
-	PlaceObj('ClassMethodDef', {
-		'name', "__exec",
-		'params', "obj, context",
-		'code', function (self, obj, context)
-			gv_Sectors[self.sector_id].ExplorePopup = self.explore_popup
-		end,
-	}),
-	PlaceObj('ClassMethodDef', {
-		'name', "GetEditorView",
-		'code', function (self)
-			if self.explore_popup == "" then
-				return Untranslated("Remove explore pop-up for sector <u(sector_id)>")
-			else
-				return Untranslated("Change explore pop-up for sector <u(sector_id)> to <u(explore_popup)>")
-			end
-		end,
-	}),
-	PlaceObj('ClassMethodDef', {
-		'name', "GetError",
-		'code', function (self)
-			if not self.sector_id then
-				return "Specify sector!"
-			end
-		end,
-	}),
-	PlaceObj('TestHarness', {
-		'name', "TestHarness",
-		'TestedOnce', true,
-		'Tested', true,
-		'GetTestSubject', function (self)  end,
-		'TestObject', PlaceObj('SectorSetExplorePopup', {
-			sector_id = "F5",
-		}),
-	}),
-	PlaceObj('ClassConstDef', {
-		'name', "EditorNestedObjCategory",
-		'type', "text",
-		'value', "Sector effects",
-	}),
-})
-
-PlaceObj('EffectDef', {
-	group = "Effects",
 	id = "SectorSetForceConflict",
 	PlaceObj('PropertyDefCombo', {
 		'id', "sector_id",
@@ -6492,6 +6464,7 @@ PlaceObj('EffectDef', {
 		'name', "__exec",
 		'params', "obj, context",
 		'code', function (self, obj, context)
+			if not gv_Sectors[self.sector_id] then return end
 			gv_Sectors[self.sector_id].ForceConflict = self.force
 		end,
 	}),
@@ -6943,7 +6916,7 @@ PlaceObj('EffectDef', {
 		'name', "Side",
 		'help', "Choose side for sector.",
 		'default', "player1",
-		'items', function (self) return table.map(GetCurrentCampaignPreset().Sides, "Id") end,
+		'items', function (self) return Sides end,
 	}),
 	PlaceObj('PropertyDefBool', {
 		'id', "enable_sticky",
@@ -6964,10 +6937,12 @@ PlaceObj('EffectDef', {
 		'name', "__exec",
 		'params', "obj, context",
 		'code', function (self, obj, context)
+			local sector = gv_Sectors[self.sector_id]
+			if not sector then return end
 			if self.enable_sticky then
-				gv_Sectors[self.sector_id].StickySide = true
+				sector.StickySide = true
 			elseif self.disable_sticky then
-				gv_Sectors[self.sector_id].StickySide = false
+				sector.StickySide = false
 			end
 			SatelliteSectorSetSide(self.sector_id, self.side, "force")
 		end,
@@ -7052,6 +7027,7 @@ PlaceObj('EffectDef', {
 		'name', "__exec",
 		'params', "obj, context",
 		'code', function (self, obj, context)
+			if not gv_Sectors[self.sector_id] then return end
 			GenerateEnemySquad(self.squad_def_id, self.sector_id, "Effect", nil, self.side)
 		end,
 	}),

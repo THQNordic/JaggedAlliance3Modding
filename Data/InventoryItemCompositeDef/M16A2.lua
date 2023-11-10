@@ -14,7 +14,10 @@ PlaceObj('InventoryItemCompositeDef', {
 	'AdditionalHint', T(622886074467, --[[InventoryItemCompositeDef M16A2 AdditionalHint]] "<bullet_point> Increased bonus from Aiming\n<bullet_point> Low attack costs\n<bullet_point> No Auto firing mode with standard Stock"),
 	'LargeItem', 1,
 	'UnitStat', "Marksmanship",
-	'Cost', 1200,
+	'Cost', 3000,
+	'CanAppearInShop', true,
+	'Tier', 2,
+	'CategoryPair', "AssaultRifles",
 	'Caliber', "556",
 	'Damage', 17,
 	'AimAccuracy', 6,
@@ -25,14 +28,6 @@ PlaceObj('InventoryItemCompositeDef', {
 	'HandSlot', "TwoHanded",
 	'Entity', "Weapon_M16A2",
 	'ComponentSlots', {
-		PlaceObj('WeaponComponentSlot', {
-			'SlotType', "Handguard",
-			'Modifiable', false,
-			'AvailableComponents', {
-				"M16_Handguard",
-			},
-			'DefaultComponent', "M16_Handguard",
-		}),
 		PlaceObj('WeaponComponentSlot', {
 			'SlotType', "Scope",
 			'CanBeEmpty', true,
@@ -81,11 +76,12 @@ PlaceObj('InventoryItemCompositeDef', {
 		}),
 		PlaceObj('WeaponComponentSlot', {
 			'SlotType', "Under",
-			'CanBeEmpty', true,
 			'AvailableComponents', {
 				"GrenadeLauncher_M16A1",
 				"VerticalGrip_M16",
+				"M16_Handguard",
 			},
+			'DefaultComponent', "M16_Handguard",
 		}),
 		PlaceObj('WeaponComponentSlot', {
 			'SlotType', "Side",

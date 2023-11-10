@@ -35,8 +35,8 @@ PlaceObj('CombatTask', {
 	id = "KillCompetition",
 	msg_reactions = {
 		PlaceObj('MsgReaction', {
-			Event = "OnAttack",
-			Handler = function (self, attacker, action, target, results, attack_args)
+			Event = "Attack",
+			Handler = function (self, action, results, attack_args, combat_starting, attacker, target)
 				if IsMerc(attacker) then
 					local kills = EnemiesKilled(attacker, results)
 					local task = FindActiveCombatTask(self.id)
@@ -132,8 +132,8 @@ PlaceObj('CombatTask', {
 	id = "ElusiveKiller",
 	msg_reactions = {
 		PlaceObj('MsgReaction', {
-			Event = "OnAttack",
-			Handler = function (self, attacker, action, target, results, attack_args)
+			Event = "Attack",
+			Handler = function (self, action, results, attack_args, combat_starting, attacker, target)
 				if IsMerc(attacker) and IsEnemyKill(attacker, results) then
 					local task = attacker:FirstCombatTaskById(self.id)
 					if task then task:Update(1) end
@@ -203,20 +203,18 @@ PlaceObj('CombatTask', {
 })
 
 PlaceObj('CombatTask', {
-	description = T(927408184696, --[[CombatTask GroinKiller description]] "The team must kill all enemies with attacks in the groin."),
+	description = T(927408184696, --[[CombatTask GroinKiller description]] "The team must kill <requiredProgress> enemies with attacks in the groin."),
 	group = "Default",
-	hideProgress = true,
 	holdUntilEnd = true,
 	id = "GroinKiller",
 	msg_reactions = {
 		PlaceObj('MsgReaction', {
 			Event = "OnAttack",
 			Handler = function (self, attacker, action, target, results, attack_args)
-				if IsMerc(attacker) and IsEnemyKill(attacker, results) then
-					local task = FindActiveCombatTask(self.id)
-					if not target or (target.species == "Human" and attack_args.target_spot_group ~= "Groin") then
-						if task then task:Fail() end
-					elseif target and target.species == "Human" then
+				if IsMerc(attacker) and target and target.species == "Human" and attack_args.target_spot_group == "Groin" then
+					local kills = EnemiesKilled(attacker, results)
+					if kills > 0 then
+						local task = FindActiveCombatTask(self.id)
 						if task then task:Update(1) end
 					end
 				end
@@ -224,6 +222,7 @@ PlaceObj('CombatTask', {
 		}),
 	},
 	name = T(639828499284, --[[CombatTask GroinKiller name]] "Make them Suffer"),
+	requiredProgress = 3,
 	statGainRolls = {
 		"Dexterity",
 		"Marksmanship",
@@ -467,21 +466,18 @@ PlaceObj('CombatTask', {
 		PlaceObj('MsgReaction', {
 			Event = "Attack",
 			Handler = function (self, action, results, attack_args, combat_starting, attacker, target)
-				-- Clear the progress in case the combat doesn't start
-				if IsMerc(attacker) and not g_Combat and not combat_starting then
-					local task = attacker:FirstCombatTaskById(self.id)
-					if task then task:Update(-task.currentProgress) end
-				end
-			end,
-		}),
-		PlaceObj('MsgReaction', {
-			Event = "OnAttack",
-			Handler = function (self, attacker, action, target, results, attack_args)
 				if IsMerc(attacker) then
-					local kills = EnemiesKilled(attacker, results)
-					if kills > 0 then
-						local task = attacker:FirstCombatTaskById(self.id)
-						if task then task:Update(kills) end
+					local task = attacker:FirstCombatTaskById(self.id)
+					if not task then return end
+					
+					if not g_Combat and not combat_starting then
+						-- reset progress if combat doesn't start
+						task:Update(-task.currentProgress)
+					else
+						local kills = EnemiesKilled(attacker, results)
+						if kills > 0 then
+							task:Update(kills)
+						end
 					end
 				end
 			end,
@@ -608,8 +604,8 @@ PlaceObj('CombatTask', {
 	id = "StealthyApproach",
 	msg_reactions = {
 		PlaceObj('MsgReaction', {
-			Event = "OnAttack",
-			Handler = function (self, attacker, action, target, results, attack_args)
+			Event = "Attack",
+			Handler = function (self, action, results, attack_args, combat_starting, attacker, target)
 				if IsMerc(attacker) then
 					local kills = EnemiesKilled(attacker, results)
 					if kills > 0 then

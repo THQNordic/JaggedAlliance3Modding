@@ -15,6 +15,11 @@ DefineClass.SkillMag_Mechanical = {
 	AdditionalHint = T(594623778604, --[[InventoryItemCompositeDef SkillMag_Mechanical AdditionalHint]] "<bullet_point> Used through the Item Menu\n<bullet_point> Single use\n<bullet_point> Increases Mechanical"),
 	UnitStat = "Mechanical",
 	Valuable = 1,
+	Cost = 1500,
+	CanAppearInShop = true,
+	Tier = 2,
+	MaxStock = 1,
+	RestockWeight = 10,
 	effect_moment = "on_use",
 	Effects = {
 		PlaceObj('UnitStatBoost', {

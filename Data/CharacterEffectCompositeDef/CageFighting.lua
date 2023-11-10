@@ -5,52 +5,18 @@ PlaceObj('CharacterEffectCompositeDef', {
 	'Id', "CageFighting",
 	'Comment', "Used in Landsbach",
 	'object_class', "CharacterEffect",
-	'msg_reactions', {
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "target",
-			Event = "PreUnitDamaged",
-			Handler = function (self, attacker, target, data)
-				
-				local function exec(self, attacker, target, data)
-				if target:HasStatusEffect("CageFightingToTheDeath") then return end
-				
-				-- Prevent death in cage fighting, and track loss
-				local dmg = data.dmg
-				local hpTotal = Max(0, target.HitPoints - dmg)
-				local maxHp = target:GetInitialMaxHitPoints()  -- without wounds
-				local hpLoseAt = MulDivRound(maxHp, CageFightingLostAtPercent, 100)
-				if hpTotal < hpLoseAt then
-					dmg = target.HitPoints - hpLoseAt
-					Msg("CageFightingLose", target)
-					data.dmg = dmg
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "PreUnitDamaged" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, attacker, target, data)
-				end
-				
-				if self:VerifyReaction("PreUnitDamaged", reaction_def, target, attacker, target, data) then
-					exec(self, attacker, target, data)
-				end
-			end,
-			HandlerCode = function (self, attacker, target, data)
-				if target:HasStatusEffect("CageFightingToTheDeath") then return end
-				
-				-- Prevent death in cage fighting, and track loss
-				local dmg = data.dmg
-				local hpTotal = Max(0, target.HitPoints - dmg)
-				local maxHp = target:GetInitialMaxHitPoints()  -- without wounds
-				local hpLoseAt = MulDivRound(maxHp, CageFightingLostAtPercent, 100)
-				if hpTotal < hpLoseAt then
-					dmg = target.HitPoints - hpLoseAt
-					Msg("CageFightingLose", target)
-					data.dmg = dmg
+	'unit_reactions', {
+		PlaceObj('UnitReaction', {
+			Event = "PreUnitTakeDamage",
+			Handler = function (self, target, damage, attacker, attack_target, hit)
+				if target == attack_target then
+					local hpTotal = Max(0, target.HitPoints - damage)
+					local maxHp = target:GetInitialMaxHitPoints()  -- without wounds
+					local hpLoseAt = MulDivRound(maxHp, CageFightingLostAtPercent, 100)
+					if hpTotal < hpLoseAt then
+						Msg("CageFightingLose", target)
+						return target.HitPoints - hpLoseAt
+					end
 				end
 			end,
 		}),

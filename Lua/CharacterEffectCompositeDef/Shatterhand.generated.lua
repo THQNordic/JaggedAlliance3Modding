@@ -8,7 +8,7 @@ DefineClass.Shatterhand = {
 
 	object_class = "Perk",
 	DisplayName = T(180355493830, --[[CharacterEffectCompositeDef Shatterhand DisplayName]] "Revenge"),
-	Description = T(210753897016, --[[CharacterEffectCompositeDef Shatterhand Description]] "Make an <GameTerm('Interrupt')> attack with firearms when taking significant damage during the enemy turn (chance is based on Health).\n\nWill not trigger while <em>Taking Cover</em>."),
+	Description = T(210753897016, --[[CharacterEffectCompositeDef Shatterhand Description]] "Make an <GameTerm('Interrupt')> attack with firearms when taking significant damage during the enemy turn (chance is based on Health).\n\nWill not trigger while <em>Taking Cover</em> or being in <em>Overwatch</em>."),
 	Icon = "UI/Icons/Perks/Shatterhand",
 	Tier = "Silver",
 	Stat = "Health",

@@ -22,15 +22,14 @@ function OnMsg.InitSessionCampaignObjects()
 	gv_Cheats.BigGuns = false
 	gv_Cheats.AlwaysHit = false
 	gv_Cheats.AlwaysMiss = false
-	gv_Cheats.ShowCth = false
 	gv_Cheats.SignatureNoCD = false
 	gv_Cheats.oneHpEnemies = false
 	gv_Cheats.ShowSquadsPower = false
 	
-	for id, def in pairs(gv_Sides) do
-		gv_Cheats.GodMode[id] = false
-		gv_Cheats.InfiniteAP[id] = false
-		gv_Cheats.Invulnerability[id] = false
+	for _, side in ipairs(SideDefs) do
+		gv_Cheats.GodMode[side.Id] = false
+		gv_Cheats.InfiniteAP[side.Id] = false
+		gv_Cheats.Invulnerability[side.Id] = false
 	end
 end
 
@@ -106,8 +105,6 @@ function NetSyncEvents.CheatEnable(id, state, side, args)
 		gv_Cheats.AlwaysMiss = false
 	elseif id == "AlwaysMiss" and state then
 		gv_Cheats.AlwaysHit = false
-	elseif id == "ShowCth" then
-		UpdateAllBadgesAndModes()
 	elseif id == "Teleport" then
 		RevealAllSectors()
 	elseif id == "OneHpEnemies" then

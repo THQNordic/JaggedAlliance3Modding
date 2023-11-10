@@ -36,7 +36,8 @@ PlaceObj('XTemplate', {
 			end
 			self.idItemHint:SetText(hint or "")
 			self.idHint:SetText(ctrl_hint or "")
-			self.idHint.parent:SetVisible(ctrl_hint  and ctrl_hint ~="")
+			local hide = BobbyRayRolloverOverride()
+			self.idHint.parent:SetVisible(ctrl_hint  and ctrl_hint ~="" and not hide)
 			
 			local embed = GetParentOfKind(context.control, "XInventoryItemEmbed")
 			if embed then

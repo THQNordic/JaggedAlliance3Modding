@@ -13,6 +13,7 @@ PlaceObj('InventoryItemCompositeDef', {
 	'UnitStat', "Dexterity",
 	'Cost', 150,
 	'locked', true,
+	'RestockWeight', 0,
 	'BaseChanceToHit', 100,
 	'BaseDamage', 12,
 	'AimAccuracy', 20,

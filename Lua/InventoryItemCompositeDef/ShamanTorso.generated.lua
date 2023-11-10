@@ -14,6 +14,7 @@ DefineClass.ShamanTorso = {
 	DisplayNamePlural = T(345511615742, --[[InventoryItemCompositeDef ShamanTorso DisplayNamePlural]] "Deathsquad Armors"),
 	AdditionalHint = T(960658212530, --[[InventoryItemCompositeDef ShamanTorso AdditionalHint]] "<bullet_point> Can't be combined with weave or ceramics"),
 	Valuable = 1,
+	RestockWeight = 0,
 	PenetrationClass = 4,
 	AdditionalReduction = 40,
 	ProtectedBodyParts = set( "Arms", "Torso" ),

@@ -290,60 +290,51 @@ function UnitInventory:GetAvailableAmmos(weapon, ammo_type, unique)
 	local types = {}
 	local containers = {}
 	local slots = {}
-	local function add(ammo, container, slot)
-		table.insert(types, ammo)
-		table.insert(containers, container)
-		table.insert(slots, slot)
-	end
+
 	local slot_name = GetContainerInventorySlotName(self)
-	self:ForEachItemInSlot(slot_name, ammo_class, function(ammo, slot, left, top, weapon, types)
-		if (not ammo_type or ammo.class == ammo_type) and ammo.Caliber == weapon.Caliber then
-			if unique then
-				local found = table.find(types, "class", ammo.class)
-				if not found then
-					add(ammo, self, slot_name)
-				end
-			else
-				add(ammo, self, slot_name)
-			end		
+	local caliber = weapon.Caliber
+	self:ForEachItemInSlot(slot_name, ammo_class, function(ammo, slot_name, left, top, types, ammo_type, caliber, unique)
+		if (not ammo_type or ammo.class == ammo_type) and ammo.Caliber == caliber then
+			if not unique or not table.find(types, "class", ammo.class) then
+				table.insert(types, ammo)
+			end
 		end
-	end, weapon, types)
-	
-	local squad_id = self.Squad
-	local bag = GetSquadBag(squad_id)	
-	for _, ammo in ipairs(bag or empty_table) do
-		if IsKindOf(ammo, ammo_class)and (not ammo_type or ammo.class == ammo_type) and ammo.Caliber == weapon.Caliber then
-			if unique then
-				local found = table.find(types, "class", ammo.class)
-				if not found then
-					add(ammo, bag)
-				end
-			else
-				add(ammo, bag)
-			end		
+	end, types, ammo_type, caliber, unique)
+	for i = 1, #types do
+		containers[i] = self
+		slots[i] = slot_name
+	end
+
+	local bag = GetSquadBag(self.Squad)	
+	for _, ammo in ipairs(bag) do
+		if IsKindOf(ammo, ammo_class)and (not ammo_type or ammo.class == ammo_type) and ammo.Caliber == caliber then
+			if not unique or not table.find(types, "class", ammo.class) then
+				table.insert(types, ammo)
+				table.insert(containers, bag)
+			end
 		end
 	end
 	return types, containers, slots
 end
 
+local l_count_available_ammo
+
 -- count available ammo im mercs backpack and squads backpack
 function UnitInventory:CountAvailableAmmo(ammo_type)
-	local count = {count = 0}
+	l_count_available_ammo = 0
 	local slot_name = GetContainerInventorySlotName(self)
-	self:ForEachItemInSlot(slot_name, ammo_type, function(ammo, slot, left, top, count)
+	self:ForEachItemInSlot(slot_name, ammo_type, function(ammo, slot, left, top, ammo_type)
 		if (not ammo_type or ammo.class == ammo_type) then
-			count.count = count.count + ammo.Amount
+			l_count_available_ammo = l_count_available_ammo + ammo.Amount
 		end
-	end, count)
-	
-	local squad_id = self.Squad
-	local bag = GetSquadBag(squad_id)	
-	for _, ammo in ipairs(bag or empty_table) do
+	end, ammo_type)
+	local bag = GetSquadBag(self.Squad)
+	for _, ammo in ipairs(bag) do
 		if (not ammo_type or ammo.class == ammo_type) then
-			count.count = count.count + ammo.Amount
+			l_count_available_ammo = l_count_available_ammo + ammo.Amount
 		end
 	end
-	return count.count
+	return l_count_available_ammo
 end
 
 function UnitInventory:ReloadWeapon(gun, ammo_type, delayed_fx, ai)
@@ -423,26 +414,52 @@ function UnitInventory:ReloadWeapon(gun, ammo_type, delayed_fx, ai)
 	return reloaded
 end
 
+function UnitInventory:GetEquippedWeaponSlot(weapon)
+	if self:FindItemInSlot("Handheld A", function(item, weapon) return item == weapon end, weapon) then
+		return "Handheld A"
+	elseif self:FindItemInSlot("Handheld B", function(item, weapon) return item == weapon end, weapon) then
+		return "Handheld B"
+	end
+end
+
 -- check for equipped weapons in specified Handheld slot
 function UnitInventory:GetEquippedWeapons(slot_name, class)
 	local weapons = {}
-	self:ForEachItemInSlot(slot_name,function(item, s, l,t, weapons)
+	self:ForEachItemInSlot(slot_name,function(item, s, l,t, weapons, class)
 		if item:IsWeapon() and (not class or IsKindOf(item, class)) then
-			weapons[#weapons +1] = item
+			weapons[#weapons + 1] = item
 		end	
-	end, weapons)
+	end, weapons, class)
 	return weapons
 end
 
 function UnitInventory:GetItemsInWeaponSlot(slot_name) 
 	local items = {}
-	self:ForEachItemInSlot(slot_name, function(item, _, x)
+	self:ForEachItemInSlot(slot_name, function(item, slot, x, y, items)
 		items[x] = item
-	end)
+	end, items)
 	table.compact(items) -- Items will be sorted by x
 	return items
 end
 
+function UnitInventory:FindWeaponInSlotById(slot, id)
+	return self:FindItemInSlot(slot, function(item, id)
+		if item.id == id then
+			return item
+		end
+		if IsKindOf(item, "Firearm") then
+			local min
+			for slot, sub in pairs(item.subweapons) do
+				if sub.id == id and (not min or lessthan(sub, min)) then
+					min = sub
+				end
+			end
+			if min then
+				return min
+			end
+		end
+	end, id)
+end
 
 function UnitInventory:InventoryBandage()
 	local target = self
@@ -476,14 +493,7 @@ function UnitInventory:GetBandaged(medkit, healer)
 	if (heal_amount or 0) <= 0 then
 		return
 	end
-	self:RemoveStatusEffect("Bleeding")
-	
-	local voxels = self:GetVisualVoxels()
-	local fire, dist = AreVoxelsInFireRange(voxels)
-	if not fire or dist >= const.SlabSizeX then
-		self:RemoveStatusEffect("Burning")
-	end
-	
+		
 	-- restore hp up to (current) max hp
 	local old_hp = self.HitPoints
 	self.HitPoints = Min(self.MaxHitPoints, self.HitPoints + heal_amount)
@@ -517,6 +527,10 @@ function UnitInventory:GetBandaged(medkit, healer)
 	ObjModified(self)
 	Msg("OnBandage", healer, self, restored)
 	Msg("OnBandaged", healer, self, restored)
+	healer:CallReactions("OnUnitBandaged", healer, self, restored)
+	if healer ~= self then
+		self:CallReactions("OnUnitBandaged", healer, self, restored)
+	end
 	if IsValid(healer) then
 		Msg("InventoryChange", healer)
 	end
@@ -561,7 +575,7 @@ function UnitInventory:GetEquipedArmour()
 end
 
 DefineClass.UnitData = {
-	__parents = { "UnitProperties", "UnitInventory", "StatusEffectObject" },
+	__parents = { "UnitBase" },
 	properties = {
 		{ category = "", id = "MessengerOnline", editor = "bool", default = true },
 		{ id = "status_effect_exp", editor = "nested_list", default = false, no_edit = true },
@@ -1110,6 +1124,15 @@ function CreateUnitData(unitdata_id, id, seed)
 		Msg("UnitDataCreated", man)
 		return man
 	end
+end
+
+function GetUnitDataList()
+	local list = {}
+	for _, ud in pairs(gv_UnitData) do
+		list[#list + 1] = ud
+	end
+	table.sortby_field(list, "session_id")
+	return list
 end
 
 function AddScaledProgress(obj, progress_id, prop_id, add, max, scale)
@@ -2365,14 +2388,4 @@ function ReplaceMerc(from, to, keepInventory)
 	ObjModified(squad)
 	ObjModified(fromUnitData)
 	ObjModified(toUnitData)
-end
-
-function OnMsg.EnterSector(game_start, load_game)
-	for session_id, unit_data in sorted_pairs(gv_UnitData) do
-		if IsMerc(unit_data) and not g_Units[session_id] then
-			unit_data:ForEachItem(false, function(item, slot)
-				item:ApplyModifiersList(item.applied_modifiers)
-			end)
-		end
-	end
 end

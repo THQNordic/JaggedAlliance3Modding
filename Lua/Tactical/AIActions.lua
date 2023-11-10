@@ -9,6 +9,9 @@ function AIKeywordsCombo()
 		"Flank",
 		"MobileShot",
 		"RunAndGun",
+		"Stim",
+		"Nova",
+		"Heal",
 
 	}
 end
@@ -218,6 +221,7 @@ DefineClass.AIActionThrowGrenade = {
 	__parents = { "AIActionBaseZoneAttack", },
 	properties = {
 		{ id = "MinDist", editor = "number", scale = "m", default = 2*guim, min = 0 },
+		{ id = "MaxDist", editor = "number", scale = "m", default = 100*guim, min = 0 },
 		{ id = "SmokeGrenade", editor = "bool", default = false, },
  	},
 	hidden = false,
@@ -245,7 +249,7 @@ function AIActionThrowGrenade:PrecalcAction(context, action_state)
 		return
 	end
 	
-	local max_range = grenade:GetMaxAimRange(context.unit) * const.SlabSizeX
+	local max_range = Min(self.MaxDist, grenade:GetMaxAimRange(context.unit) * const.SlabSizeX)
 	local blast_radius = grenade.AreaOfEffect * const.SlabSizeX
 	local zones = AIPrecalcGrenadeZones(context, action_id, self.MinDist, max_range, blast_radius, grenade.aoeType)
 	local zone, score = self:EvalZones(context, zones)
@@ -309,6 +313,7 @@ function AIActionBandage:Execute(context, action_state)
 		context.unit:Face(action_state.args.target)
 	end
 	AIPlayCombatAction("Bandage", context.unit, nil, action_state.args)
+	return "stop"
 end
 
 function AIActionBandage:PrecalcAction(context, action_state)
@@ -858,6 +863,7 @@ DefineClass.AIActionHeavyWeaponAttack = {
 	__parents = { "AIActionBaseZoneAttack", },
 	properties = { 
 		{ id = "MinDist", editor = "number", scale = "m", default = 2*guim, min = 0 },
+		{ id = "MaxDist", editor = "number", scale = "m", default = 100*guim, min = 0 },
 		{ id = "SmokeGrenade", editor = "bool", default = false, },
 		{ id = "action_id", editor = "dropdownlist", items = { "GrenadeLauncherFire", "RocketLauncherFire", "Bombard" }, default = "GrenadeLauncherFire" },
 		{ id = "LimitRange", editor = "bool", default = false },
@@ -886,7 +892,7 @@ function AIActionHeavyWeaponAttack:PrecalcAction(context, action_state)
 		return
 	end
 	
-	local max_range = caction:GetMaxAimRange(context.unit, weapon)	* const.SlabSizeX
+	local max_range = Min(self.MaxDist, caction:GetMaxAimRange(context.unit, weapon) * const.SlabSizeX)
 	local blast_radius = weapon.ammo.AreaOfEffect * const.SlabSizeX
 	local zones = AIPrecalcGrenadeZones(context, self.action_id, self.MinDist, max_range, blast_radius, weapon.ammo.aoeType)
 	

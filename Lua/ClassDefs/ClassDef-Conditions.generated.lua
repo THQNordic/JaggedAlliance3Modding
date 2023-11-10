@@ -337,35 +337,34 @@ DefineClass.EvalForEachUnitInSector = {
 
 function EvalForEachUnitInSector:__eval(obj, context)
 	local conditions =  self.Conditions
-	if not conditions then return true end
-	
-	context =  context or {}
+	if not conditions or #conditions == 0 then
+		return true
+	end
+	if not context then context = {} end
 	context.is_sector_unit = true
+	context.target_units = {}
+	local check_for = self.CheckFor
 	
 	local squads = GetSquadsInSector(self.Sector)
 	for i, squad in ipairs(squads) do
-		for j, unit_id in ipairs(squad.units or empty_table) do
-			local res = true		
+		for j, unit_id in ipairs(squad.units) do
 			local unit = gv_UnitData[unit_id]
-			context.target_units={unit}
-			for _, cond in ipairs(conditions) do
-			   res = res and cond:Evaluate(unit, context)			
-				if not res then 
-					break
-				end		
+			context.target_units[1] = unit
+			if _EvalConditionList(conditions, unit, context) then
+				if check_for == "any" then
+					context.is_sector_unit = false
+					return true
+				end
+			else
+				if check_for == "all" then
+					context.is_sector_unit = false
+					return false
+				end
 			end
-			if not res  and  self.CheckFor == "all" then
-				context.is_sector_unit = false
-				return false
-			end	
-			if res  and   self.CheckFor == "any" then
-				context.is_sector_unit = false
-				return true
-			end	
 		end
 	end
 	context.is_sector_unit = false
-	return self.CheckFor=="all"
+	return check_for == "all"
 end
 
 DefineClass.GroupIsDead = {
@@ -1580,7 +1579,7 @@ DefineClass.SectorCheckOwner = {
 		{ id = "sector_id", name = "Sector Id", help = "Sector id.", 
 			editor = "combo", default = "current", items = function (self) return table.iappend({{text="current",value="current"}}, GetCampaignSectorsCombo()) end, },
 		{ id = "owner", name = "Owner", help = "Specify owner.", 
-			editor = "combo", default = "any player", items = function (self) return table.iappend( {"any player", "any enemy", }, table.map(GetCurrentCampaignPreset().Sides, "Id")) end, },
+			editor = "combo", default = "any player", items = function (self) return table.iappend( {"any player", "any enemy", }, Sides) end, },
 	},
 	EditorView = Untranslated("if <u(sector_id)> sector is controlled by <u(owner)>"),
 	EditorViewNeg = Untranslated("if <u(sector_id)> sector is not controlled by <u(owner)>"),
@@ -1593,13 +1592,13 @@ function SectorCheckOwner:__eval(obj, context)
 	if not gv_Sectors[sector_id] or not GetCurrentCampaignPreset() then return end
 	local sector_side = gv_Sectors[sector_id].Side
 	if self.owner == "any player" then
-		for _, side in ipairs(GetCurrentCampaignPreset().Sides) do
+		for _, side in ipairs(SideDefs) do
 			if side.Player and side.Id == sector_side then
 				return true
 			end
 		end
 	elseif self.owner == "any enemy" then
-		for _, side in ipairs(GetCurrentCampaignPreset().Sides) do
+		for _, side in ipairs(SideDefs) do
 			if side.Enemy and side.Id == sector_side then
 				return true
 			end

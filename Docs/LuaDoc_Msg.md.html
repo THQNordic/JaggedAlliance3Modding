@@ -2,14 +2,7 @@
 
 
 function OnMsg.**ApplyModOptions**(mod_id)
-: fired when the user applies changes to their mod options.
-
-
-# ApplyModOptions
-
-
-function OnMsg.**ApplyModOptions**(mod_id)
-: fired when the user applies changes to their mod options.
+: fired when loading the mod options and when the user applies changes to their mod options.
 
 
 # ChangeMap
@@ -31,6 +24,13 @@ function OnMsg.**ClassesBuilt**()
 
 function OnMsg.**ClassesGenerate**()
 : use this message to mess with the classdefs (before classes are built)
+
+
+# ClassesPostBuilt
+
+
+function OnMsg.**ClassesPostBuilt**()
+: use this message to perform actions after MapObject classes' info has been added to the C++ engine
 
 
 # ClassesPostprocess

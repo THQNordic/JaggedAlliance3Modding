@@ -17,58 +17,26 @@ PlaceObj('CharacterEffectCompositeDef', {
 		}),
 	},
 	'object_class', "Perk",
-	'msg_reactions', {
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "attacker",
-			Event = "GatherDamageModifications",
-			Handler = function (self, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data)
+	'unit_reactions', {
+		PlaceObj('UnitReaction', {
+			Event = "OnCalcDamageAndEffects",
+			Handler = function (self, target, attacker, attack_target, action, weapon, attack_args, hit, data)
+				if attacker ~= target then return end
 				
-				local function exec(self, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data)
-				if not IsKindOf(target, "CombatObject") or not IsKindOfClasses(mod_data.weapon, "HeavyWeapon", "MachineGun") then
+				if not IsKindOf(attack_target, "CombatObject") or not IsKindOfClasses(weapon, "HeavyWeapon", "MachineGun") then
 					return
 				end
 					
-				if IsKindOf(target,"Unit") then
-					if GetCoversAt(target:GetPos()) then
+				if IsKindOf(attack_target,"Unit") then
+					if GetCoversAt(attack_target:GetPos()) then
 						local damageBonus = self:ResolveValue("enemyDamageMod") 
-						mod_data.base_damage = MulDivRound(mod_data.base_damage, 100 + damageBonus, 100)
-						mod_data.breakdown[#mod_data.breakdown + 1] = { name = self.DisplayName, value = damageBonus }
+						data.base_damage = MulDivRound(data.base_damage, 100 + damageBonus, 100)
+						data.breakdown[#data.breakdown + 1] = { name = self.DisplayName, value = damageBonus }
 					end
 				else
 					local damageBonus = self:ResolveValue("objectDamageMod") 
-					mod_data.base_damage = MulDivRound(mod_data.base_damage, 100 + damageBonus, 100)
-					mod_data.breakdown[#mod_data.breakdown + 1] = { name = self.DisplayName, value = damageBonus }
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "GatherDamageModifications" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data)
-				end
-				
-				if self:VerifyReaction("GatherDamageModifications", reaction_def, attacker, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data) then
-					exec(self, attacker, target, action_id, weapon, attack_args, hit_descr, mod_data)
-				end
-			end,
-			HandlerCode = function (self, attacker, target, attack_args, hit_descr, mod_data)
-				if not IsKindOf(target, "CombatObject") or not IsKindOfClasses(mod_data.weapon, "HeavyWeapon", "MachineGun") then
-					return
-				end
-					
-				if IsKindOf(target,"Unit") then
-					if GetCoversAt(target:GetPos()) then
-						local damageBonus = self:ResolveValue("enemyDamageMod") 
-						mod_data.base_damage = MulDivRound(mod_data.base_damage, 100 + damageBonus, 100)
-						mod_data.breakdown[#mod_data.breakdown + 1] = { name = self.DisplayName, value = damageBonus }
-					end
-				else
-					local damageBonus = self:ResolveValue("objectDamageMod") 
-					mod_data.base_damage = MulDivRound(mod_data.base_damage, 100 + damageBonus, 100)
-					mod_data.breakdown[#mod_data.breakdown + 1] = { name = self.DisplayName, value = damageBonus }
+					data.base_damage = MulDivRound(data.base_damage, 100 + damageBonus, 100)
+					data.breakdown[#data.breakdown + 1] = { name = self.DisplayName, value = damageBonus }
 				end
 			end,
 		}),

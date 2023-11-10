@@ -3,7 +3,7 @@
 PlaceObj('InventoryItemCompositeDef', {
 	'Group', "Grenade - Throwable",
 	'Id', "ToxicGasGrenade",
-	'Comment', "high mishap",
+	'Comment', "high mishap, illegal",
 	'object_class', "Grenade",
 	'Repairable', false,
 	'Reliability', 100,
@@ -13,7 +13,8 @@ PlaceObj('InventoryItemCompositeDef', {
 	'DisplayNamePlural', T(321416953052, --[[InventoryItemCompositeDef ToxicGasGrenade DisplayNamePlural]] "Mustard Gas Grenades"),
 	'AdditionalHint', T(277464468866, --[[InventoryItemCompositeDef ToxicGasGrenade AdditionalHint]] "<bullet_point> Inflicts <em>Choking</em>\n<bullet_point> Ranged attacks passing through gas become grazing hits\n<bullet_point> High mishap chance\n<bullet_point> Almost silent"),
 	'UnitStat', "Explosives",
-	'Cost', 1500,
+	'Tier', 3,
+	'CategoryPair', "Grenade",
 	'MinMishapChance', 2,
 	'MaxMishapChance', 30,
 	'MaxMishapRange', 6,

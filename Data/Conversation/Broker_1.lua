@@ -1051,18 +1051,6 @@ PlaceObj('Conversation', {
 		PlaceObj('ConversationPhrase', {
 			AutoRemove = true,
 			Conditions = {
-				PlaceObj('CheckOR', {
-					Conditions = {
-						PlaceObj('SectorHasIntel', {
-							Negate = true,
-							sector_id = "H9",
-						}),
-						PlaceObj('SectorHasIntel', {
-							Negate = true,
-							sector_id = "H8",
-						}),
-					},
-				}),
 				PlaceObj('UnitSquadHasItem', {
 					ItemId = "TinyDiamonds",
 				}),
@@ -1073,6 +1061,10 @@ PlaceObj('Conversation', {
 				}),
 				PlaceObj('SectorGrantIntel', {
 					sector_id = "H8",
+				}),
+				PlaceObj('CityGrantLoyalty', {
+					Amount = 5,
+					City = "Fleatown",
 				}),
 				PlaceObj('UnitTakeItem', {
 					AnySquad = true,
@@ -1396,7 +1388,6 @@ PlaceObj('Conversation', {
 				}),
 			},
 			PhraseConditionRolloverText = T(871001974207, --[[Conversation Broker_1 PhraseConditionRolloverText]] "Delivered 1 x <color EmStyle>Tiny diamond</color>\nGained a forged passport for <em>Karen</em>"),
-			ShowDisabled = true,
 			StoryBranchIcon = "conversation_trade",
 			id = "ForgeapassportforKarenGosling",
 		}),

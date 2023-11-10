@@ -633,7 +633,7 @@ function Targeting_UnitInMelee(dialog, blackboard, command, pt)
 	local canAttack, attackError
 	
 	if free_aim and not potential_target then
-		local _, target_obj = dialog:GetFreeAttackTarget(dialog.potential_target, attacker:GetPos()) 
+		local _, target_obj = dialog:GetFreeAttackTarget(dialog.potential_target, attacker)
 		if IsValid(target_obj) then
 			potential_target = target_obj
 		end			

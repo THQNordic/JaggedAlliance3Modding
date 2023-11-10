@@ -24,9 +24,6 @@ PlaceObj('XTemplate', {
 		PlaceObj('XTemplateLayer', {
 			'layer', "XCameraLockLayer",
 		}),
-		PlaceObj('XTemplateLayer', {
-			'layer', "XPauseLayer",
-		}),
 		PlaceObj('XTemplateWindow', {
 			'__condition', function (parent, context) return not gv_SatelliteView end,
 			'__class', "XBlurRect",
@@ -37,7 +34,12 @@ PlaceObj('XTemplate', {
 		PlaceObj('XTemplateFunc', {
 			'name', "Open",
 			'func', function (self, ...)
-				SetCampaignSpeed(0, GetUICampaignPauseReason("CoopUI"))
+				-- Opening and closing of this UI should be sync
+				CreateGameTimeThread(function()
+					NetUpdateHash("OpenCoOpUI")
+					_SetCampaignSpeed(0, "CoopUI")
+					Pause("CoOpUI")
+				end)
 				if g_SatelliteUI then
 					g_SatelliteUI:SetSuppressSectorVisualUpdates(true)
 				end	
@@ -57,10 +59,17 @@ PlaceObj('XTemplate', {
 		PlaceObj('XTemplateFunc', {
 			'name', "Close",
 			'func', function (self, ...)
+				CreateGameTimeThread(function()
+					NetUpdateHash("CloseCoOpUI")
+					_SetCampaignSpeed(nil, "CoopUI")
+					Resume("CoOpUI")
+				end)
+				
 				XDialog.Close(self, ...)
 				ObjModified("coop button")
 				ObjModified("co-op-ui")
-				SetCampaignSpeed(nil, GetUICampaignPauseReason("CoopUI"))
+				
+				-- Opening and closing of this UI should be sync
 				if g_SatelliteUI then
 					g_SatelliteUI:SetSuppressSectorVisualUpdates(false)
 				end
@@ -141,6 +150,15 @@ PlaceObj('XTemplate', {
 				RefreshMercSelection()
 			end,
 			'__condition', function (parent, context) return NetIsHost() end,
+		}),
+		PlaceObj('XTemplateAction', {
+			'comment', "open ingame main menu",
+			'ActionId', "IGMainMenu",
+			'ActionGamepad', "Start",
+			'ActionMouseBindable', false,
+			'OnAction', function (self, host, source, ...)
+				OpenIngameMainMenu()
+			end,
 		}),
 		PlaceObj('XTemplateWindow', {
 			'__class', "XContextWindow",

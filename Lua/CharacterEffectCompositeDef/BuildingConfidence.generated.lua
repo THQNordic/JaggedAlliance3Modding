@@ -7,111 +7,33 @@ DefineClass.BuildingConfidence = {
 
 
 	object_class = "Perk",
-	msg_reactions = {
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "attacker",
-			Event = "OnAttack",
-			Handler = function (self, attacker, action, target, results, attack_args)
-				
-				local function exec(self, attacker, action, target, results, attack_args)
-				attacker:SetEffectValue("attackedThisCombat", true)
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "OnAttack" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, attacker, action, target, results, attack_args)
-				end
-				
-				if self:VerifyReaction("OnAttack", reaction_def, attacker, attacker, action, target, results, attack_args) then
-					exec(self, attacker, action, target, results, attack_args)
-				end
-			end,
-			HandlerCode = function (self, attacker, action, target, results, attack_args)
-				attacker:SetEffectValue("attackedThisCombat", true)
-			end,
-		}),
-		PlaceObj('MsgActorReaction', {
-			Event = "CombatEnd",
-			Handler = function (self, test_combat, combat, anyEnemies)
-				
-				local function exec(self, reaction_actor, test_combat, combat, anyEnemies)
-				local unit = g_Units.MD
-				if unit then
-					unit:SetEffectValue("attackedThisCombat", false)
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[2]
-				if not reaction_def or reaction_def.Event ~= "CombatEnd" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					local reaction_actor
-					exec(self, reaction_actor, test_combat, combat, anyEnemies)
-				end
-				
-				
-				local actors = self:GetReactionActors("CombatEnd", reaction_def, test_combat, combat, anyEnemies)
-				for _, reaction_actor in ipairs(actors) do
-					if self:VerifyReaction("CombatEnd", reaction_def, reaction_actor, test_combat, combat, anyEnemies) then
-						exec(self, reaction_actor, test_combat, combat, anyEnemies)
-					end
-				end
-			end,
-			HandlerCode = function (self, reaction_actor, test_combat, combat, anyEnemies)
-				local unit = g_Units.MD
-				if unit then
-					unit:SetEffectValue("attackedThisCombat", false)
+	unit_reactions = {
+		PlaceObj('UnitReaction', {
+			Event = "OnUnitAttack",
+			Handler = function (self, target, attacker, action, attack_target, results, attack_args)
+				if target == attacker then
+					self:SetParameter("attacked", true)
 				end
 			end,
 		}),
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "unit",
-			Event = "UnitBeginTurn",
-			Handler = function (self, unit)
-				
-				local function exec(self, unit)
-				if g_Combat then
-					if g_Combat.current_turn >= self:ResolveValue("turnToProc") and unit:GetEffectValue("attackedThisCombat") and not unit:HasStatusEffect("ConfidenceBuilt") then
-						local chance = self:ResolveValue("chanceToProc")
-						local roll = InteractionRand(100, "BuildingConfidence")
-						if roll < chance then
-							unit:AddStatusEffect("Inspired")
-							unit.team:ChangeMorale(1, self.DisplayName)
-							unit:AddStatusEffect("ConfidenceBuilt") 
-						end
-					end
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[3]
-				if not reaction_def or reaction_def.Event ~= "UnitBeginTurn" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, unit)
-				end
-				
-				if self:VerifyReaction("UnitBeginTurn", reaction_def, unit, unit) then
-					exec(self, unit)
-				end
+		PlaceObj('UnitReaction', {
+			Event = "OnCombatEnd",
+			Handler = function (self, target)
+				self:SetParameter("attacked", false)
+				self:SetParameter("applied", false)
 			end,
-			HandlerCode = function (self, unit)
-				if g_Combat then
-					if g_Combat.current_turn >= self:ResolveValue("turnToProc") and unit:GetEffectValue("attackedThisCombat") and not unit:HasStatusEffect("ConfidenceBuilt") then
-						local chance = self:ResolveValue("chanceToProc")
-						local roll = InteractionRand(100, "BuildingConfidence")
-						if roll < chance then
-							unit:AddStatusEffect("Inspired")
-							unit.team:ChangeMorale(1, self.DisplayName)
-							unit:AddStatusEffect("ConfidenceBuilt") 
-						end
+		}),
+		PlaceObj('UnitReaction', {
+			Event = "OnBeginTurn",
+			Handler = function (self, target)
+				if g_Combat.current_turn < self:ResolveValue("turnToProc") then return end
+				if self:ResolveValue("attacked") and not self:ResolveValue("applied") then
+					local chance = self:ResolveValue("chanceToProc")
+					local roll = InteractionRand(100, "BuildingConfidence")
+					if roll < chance then
+						target:AddStatusEffect("Inspired")
+						target.team:ChangeMorale(1, self.DisplayName)
+						self:SetParameter("applied", true)
 					end
 				end
 			end,

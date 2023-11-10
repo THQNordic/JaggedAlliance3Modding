@@ -12,6 +12,10 @@ PlaceObj('InventoryItemCompositeDef', {
 	'Description', "",
 	'AdditionalHint', T(861733747986, --[[InventoryItemCompositeDef Detonator AdditionalHint]] "<bullet_point> Used to trigger Remote-detonated explosives in an area"),
 	'UnitStat', "Explosives",
+	'Cost', 400,
+	'CanAppearInShop', true,
+	'MaxStock', 1,
+	'CategoryPair', "Components",
 	'AreaOfEffect', 5,
 	'ThrowRange', 20,
 })

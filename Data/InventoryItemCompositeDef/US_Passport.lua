@@ -11,5 +11,6 @@ PlaceObj('InventoryItemCompositeDef', {
 	'Description', T(877878006530, --[[InventoryItemCompositeDef US_Passport Description]] "Passport and visa of one Karen Gosling."),
 	'AdditionalHint', T(804477503504, --[[InventoryItemCompositeDef US_Passport AdditionalHint]] "<bullet_point> May get you back to the place where demanding to speak to the manager can actually solve anything"),
 	'Cost', 200,
+	'RestockWeight', 0,
 })
 

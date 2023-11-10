@@ -1,7 +1,7 @@
 local lDefaultState = "closed"
 
 DefineClass.ToolItem = {
-	__parents = { "InventoryItem" },
+	__parents = { "InventoryItem", "BobbyRayShopOtherProperties" },
 	properties = {
 		{ category = "Misc", id = "skillCheckPenalty", name = "Skill Check Penalty", editor = "number", default = 0, template = true,
 			help = "A penalty to the skill checks of actions this tool is used in. Negative numbers will boost skill checks." },
@@ -221,12 +221,14 @@ LockpickableActionIds = {
 }
 
 -- Get the tool with the lowest condition
+local l_get_unit_quick_slot_item
+
 local function lGetUnitQuickSlotItem(unit, item_id)
-	local item = false
+	l_get_unit_quick_slot_item = nil
 	
 	local filter = function(o)
-		if o.Condition > 0 and (not item or o.Condition < item.Condition) then
-			item = o
+		if o.Condition > 0 and (not l_get_unit_quick_slot_item or o.Condition < l_get_unit_quick_slot_item.Condition) then
+			l_get_unit_quick_slot_item = o
 		end
 	end
 	
@@ -234,7 +236,7 @@ local function lGetUnitQuickSlotItem(unit, item_id)
 	unit:ForEachItemInSlot("Handheld B", item_id, filter)
 	unit:ForEachItemInSlot("Inventory", item_id, filter)
 	
-	return item
+	return l_get_unit_quick_slot_item
 end
 
 function GetUnitLockpick(unit)
@@ -447,27 +449,27 @@ end
 local function lEvaluateCuttablePath(from, to)
 --[[	DebugDrawVoxelBBox(from)
 	DebugDrawVoxelBBox(to)]]
-	
+
 	-- Check if passable
-	local slabFrom = GetPassSlab(from)
-	local slabTo = GetPassSlab(to)
-	if not slabFrom or not slabTo then
-		return false
+	local slabFromX, slabFromY, slabFromZ = GetPassSlabXYZ(from)
+	local slabToX, slabToY, slabToZ = GetPassSlabXYZ(to)
+	if not slabFromX or not slabToX then
+		return
 	end
-	
+
 	-- Check if a drop/climb
-	local fromFallDown = FindFallDownPos(from)
-	local toFallDown = FindFallDownPos(to)
-	local fromZ = fromFallDown and (fromFallDown:z() or terrain.GetHeight(fromFallDown)) or terrain.GetHeight(from)
-	local toZ = toFallDown and (toFallDown:z() or terrain.GetHeight(toFallDown)) or terrain.GetHeight(to)
+	local x1, y1, z1 = FindFallDownPos(from)
+	local x2, y2, z2 = FindFallDownPos(to)
+	local fromZ = x1 and (z1 or terrain.GetHeight(x1, y1)) or terrain.GetHeight(from)
+	local toZ = x2 and (z2 or terrain.GetHeight(x2, y2)) or terrain.GetHeight(to)
 	local zDiff = abs(fromZ - toZ)
 	if zDiff > const.SlabSizeZ / 2 then
 --[[		DbgAddVector(slabFrom, zDiff, const.clrGreen)
 		DbgAddVector(slabTo, zDiff, const.clrGreen)]]
-		return false
+		return
 	end
-	
-	return { slabFrom, slabTo }
+
+	return { point(slabFromX, slabFromY, slabFromZ), point(slabToX, slabToY, slabToZ) }
 end
 
 function CuttableFence:GetInteractionPos()
@@ -510,7 +512,7 @@ function CuttableFence:GetInteractionPos()
 			local from = center:SetY(center:y() + offsetAmount)
 			local to = center:SetY(center:y() - offsetAmount)
 			local t = lEvaluateCuttablePath(from, to)
-			if t and #t > 0 then
+			if t then
 				self.interact_positions = t
 			end
 		elseif side == "W" or side == "E" then
@@ -526,7 +528,7 @@ function CuttableFence:GetInteractionPos()
 			local from = center:SetX(center:x() + offsetAmount)
 			local to = center:SetX(center:x() - offsetAmount)
 			local t = lEvaluateCuttablePath(from, to)
-			if t and #t > 0 then
+			if t then
 				self.interact_positions = t
 			end
 		end

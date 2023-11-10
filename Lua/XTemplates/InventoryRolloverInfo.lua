@@ -15,6 +15,7 @@ PlaceObj('XTemplate', {
 		'MaxWidth', 356,
 		'LayoutMethod', "VList",
 		'LayoutVSpacing', 5,
+		'FoldWhenHidden', true,
 		'Background', RGBA(52, 55, 61, 255),
 		'BackgroundRectGlowSize', 2,
 		'BackgroundRectGlowColor', RGBA(32, 35, 47, 255),
@@ -119,16 +120,11 @@ PlaceObj('XTemplate', {
 						local weapon = ResolvePropObj(context)
 						local owner_id = child.parent:GetContext().owner
 						local unit = owner_id and g_Units[owner_id]
-						local args = {weapon = weapon}
-						if unit then
-							if table.find(unit:GetEquippedWeapons("Handheld A", "BaseWeapon"), weapon) or
-								table.find(unit:GetEquippedWeapons("Handheld B", "BaseWeapon"), weapon) 
-							then
-								local ap = CombatActions[item]:GetAPCost(unit, args)
-								if ap ~= -1 then
-									child.idPropVal:SetValueText(T{499138807753, "<val><style PDABrowserTitleSmall> AP</style>",val = ap/const.Scale.AP})
-									return
-								end
+						if unit and unit:GetEquippedWeaponSlot(weapon) then
+							local ap = CombatActions[item]:GetAPCost(unit, {weapon = weapon})
+							if ap ~= -1 then
+								child.idPropVal:SetValueText(T{499138807753, "<val><style PDABrowserTitleSmall> AP</style>",val = ap/const.Scale.AP})
+								return
 							end
 						end
 						child.idPropVal:SetValueText(T{499138807753, "<val><style PDABrowserTitleSmall> AP</style>",val = (CombatActions[item].ActionPointDelta + (weapon.AttackAP or weapon.ShootAP))/const.Scale.AP})						

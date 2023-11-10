@@ -9,6 +9,8 @@ PlaceObj('InventoryItemCompositeDef', {
 	'Icon', "UI/Icons/Items/flak_vest",
 	'DisplayName', T(374509228449, --[[InventoryItemCompositeDef FlakVest_Test DisplayName]] "Flak Vest"),
 	'DisplayNamePlural', T(696476836520, --[[InventoryItemCompositeDef FlakVest_Test DisplayNamePlural]] "Flak Vests"),
+	'RestockWeight', 0,
+	'CategoryPair', "Light",
 	'PenetrationClass', 2,
 	'DamageReduction', 100,
 	'AdditionalReduction', 20,

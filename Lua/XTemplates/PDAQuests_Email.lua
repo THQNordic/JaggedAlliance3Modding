@@ -198,6 +198,8 @@ PlaceObj('XTemplate', {
 							'func', function (self, hyperlink, argument, hyperlink_box, pos, button)
 								if hyperlink == "OpenIMPPage" then
 									OpenIMPPage()
+								elseif hyperlink == "OpenBobbyRayPage" then
+									OpenBobbyRayPage()
 								end
 							end,
 						}),

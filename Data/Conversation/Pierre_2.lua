@@ -857,7 +857,7 @@ PlaceObj('Conversation', {
 						Lines = {
 							PlaceObj('ConversationLine', {
 								Character = "Fidel",
-								Text = T(857561951511, --[[Conversation Pierre_2 Text voice:Fidel section:Pierre_2 keyword:We killed Graaf]] "Some people? Why only only some people?"),
+								Text = T(857561951511, --[[Conversation Pierre_2 Text voice:Fidel section:Pierre_2 keyword:We killed Graaf]] "Some people? Why only some people?"),
 							}),
 						},
 					}),

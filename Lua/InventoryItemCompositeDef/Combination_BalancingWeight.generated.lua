@@ -12,5 +12,11 @@ DefineClass.Combination_BalancingWeight = {
 	DisplayName = T(123433109021, --[[InventoryItemCompositeDef Combination_BalancingWeight DisplayName]] "Balancing Weight"),
 	DisplayNamePlural = T(137826660046, --[[InventoryItemCompositeDef Combination_BalancingWeight DisplayNamePlural]] "Balancing Weights"),
 	AdditionalHint = T(234109065893, --[[InventoryItemCompositeDef Combination_BalancingWeight AdditionalHint]] "<bullet_point> Can be combined with Melee Weapons\n<bullet_point> Balanced weapons have increased bonus from Aiming\n<bullet_point> Balanced Knives can be thrown further"),
+	Cost = 900,
+	CanAppearInShop = true,
+	Tier = 2,
+	MaxStock = 1,
+	RestockWeight = 15,
+	CategoryPair = "Components",
 }
 

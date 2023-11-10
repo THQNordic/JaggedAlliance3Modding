@@ -100,10 +100,20 @@ function Canvas:ShouldSway()
 	return should_sway and self:GetWindStrength() > 0
 end
 
-function Canvas:UpdateWind()
+function Canvas:UpdateWind(sync)
 	local base_state = self:GetBaseWindState()
-	if not self:ShouldSway() then
-		self:SetState(base_state)
+	if not self:ShouldSway(sync) then
+		if base_state == "idle" then
+			if self:HasState("idle_Static") then
+				self:ClearAnim(2)
+				self:SetState("idle_Static")
+			else
+				--StoreWarningSource(self, string.format("Canvas window does not have idle_Static animation, falling back to 'idle'"))
+				self:SetState(base_state)
+			end
+		else
+			self:SetState(base_state)
+		end
 		return
 	end
 	
@@ -151,8 +161,10 @@ function Canvas:UpdateWind()
 		end
 		-- change the weighting
 		if wind_blending_disabled then
-			self:SetAnimWeight(1, 100)
-			self:SetAnimWeight(2, 0)
+			if not self:IsStaticAnim(self:GetState()) then
+				self:SetAnimWeight(1, 100)
+				self:SetAnimWeight(2, 0)
+			end
 		else
 			local strong_wind_threshold = GetStrongWindThreshold()
 			local wind_strength = self:GetWindStrength()
@@ -193,12 +205,12 @@ function CanvasWindow:PostLoad()
 	self:SetProperState()
 end
 
-function CanvasWindow:ShouldSway()
-	if not Canvas.ShouldSway(self) then
+function CanvasWindow:ShouldSway(sync)
+	if not Canvas.ShouldSway(self, sync) then
 		return false
 	end
-	
-	return self:Random(100) < (self:IsStrongWind() and strong_chance or weak_chance)
+	local rand = sync and InteractionRand(100) or AsyncRand(100)
+	return rand < (self:IsStrongWind() and strong_chance or weak_chance)
 end
 
 function CanvasWindow:OnAttachToParent(parent, spot)

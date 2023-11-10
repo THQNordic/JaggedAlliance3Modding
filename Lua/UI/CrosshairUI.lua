@@ -108,6 +108,67 @@ function CrosshairUI:Open(...)
 			end
 		end
 	end)
+	
+	self:CreateThread("gamepad-control", function()
+		local boxes = false
+		local upDownAxis = point(0, 4096)
+		local bodyPartBoxes = {}
+		while true do
+			WaitFramesOrSleepAtLeast(1, 33)
+			if not GetUIStyleGamepad() then goto continue end
+			
+			local state = GetActiveGamepadState()
+			if not state then goto continue end
+			local gamePadStick = state.LeftThumb
+			if gamePadStick == point20 then goto continue end
+			gamePadStick = gamePadStick:SetY(-gamePadStick:y())
+			gamePadStick = Normalize(gamePadStick)
+
+			local centerOnBox = self.idTarget and self.idTarget.box
+			centerOnBox = centerOnBox and centerOnBox:Center()
+			
+			table.clear(bodyPartBoxes)
+			local bodyPartButtons = self.idButtonsContainer
+			for i, bodyPartButt in ipairs(bodyPartButtons) do
+				if bodyPartButt.visible then
+					bodyPartBoxes[#bodyPartBoxes + 1] = bodyPartButt.box
+					bodyPartBoxes["id" .. #bodyPartBoxes] = bodyPartButt.context 
+				end
+			end
+			
+			local highestDot, highestDotSel = false, false
+			for choiceIdx, box in ipairs(bodyPartBoxes) do
+				local vecTowardsBox = box:Center() - centerOnBox
+				vecTowardsBox = Normalize(vecTowardsBox)
+				local dot = Dot(gamePadStick, vecTowardsBox) / 4096
+				if (not highestDot or dot > highestDot) and dot > 0 then
+					highestDot = dot
+					highestDotSel = bodyPartBoxes["id" .. choiceIdx]
+				end
+			end
+			
+			-- Check if closer to up/down
+			if highestDot then
+				local dotUp = Dot(gamePadStick, upDownAxis) / 4096
+				if dotUp > highestDot and dotUp > 0 then
+					highestDot = dotUp
+					highestDotSel = false
+				end
+				
+				local dotDown = Dot(gamePadStick, -upDownAxis) / 4096
+				if dotDown > highestDot and dotDown > 0 then
+					highestDot = dotDown
+					highestDotSel = false
+				end
+			end
+			
+			if highestDotSel then
+				self:SetSelectedPart(highestDotSel)
+			end
+			
+			::continue::
+		end
+	end)
 end
 
 function CrosshairUI:OnLayoutComplete()
@@ -571,8 +632,11 @@ function CrosshairUI:UpdateAim()
 			attackResultCopy.bodyPartDisplayName = Presets.TargetBodyPart.Default[highestCthId].display_name
 			cthCalc["InCover"] = cthCalc[highestCthId]
 			attackResultCalc["InCover"] = attackResultCopy
-		elseif self.targetPart == "BlindFire" or self.targetPart == "InCover" then -- No longer valid fake bodypart
-			self.targetPart = defaultBodyPart
+			
+			self.targetPart = Presets.TargetBodyPart.Default.InCover
+		elseif self.targetPart == Presets.TargetBodyPart.Default.BlindFire or
+				 self.targetPart == Presets.TargetBodyPart.Default.InCover then -- No longer valid fake bodypart
+			self.targetPart = g_DefaultShotBodyPart
 		end
 		
 		self.cached_results[action.id] = {
@@ -612,6 +676,13 @@ function CrosshairUI:UpdateAim()
 			}
 		end
 		self.context.danger = AnyAttackInterrupt(attacker, target, action, target_dummy)
+		if not self.context.danger and args.goto_pos then
+			local combatPath = GetMeleeAttackCombatPath(action, attacker)
+			local targetPath = combatPath and combatPath:GetCombatPathFromPos(args.goto_pos)
+			if targetPath then
+				self.context.danger = AnyInterruptsAlongPath(attacker, targetPath, "all")
+			end
+		end
 	end
 
 	assert(self.cached_results[action.id])
@@ -714,7 +785,7 @@ function CrosshairUI:GetNextAimLevel()
 end
 
 function CrosshairUI:ToggleAim(previous)
-	if self.context.noAim then return end
+	if not self.visible or self.context.noAim then return end
 	self.aim = previous and self:GetPrevAimLevel() or self:GetNextAimLevel()
 	self:UpdateAim()
 	PlayFX("SightAim")
@@ -889,6 +960,7 @@ function SpawnCrosshair(self, action, closeOnAttack, meleeTargetPos, target, don
 			WaitMsg("OnRender")
 			crosshair:SetVisible(true)
 			crosshair:InvalidateLayout()
+			Sleep(500)
 		end)
 	else
 		if not g_Combat and not IsCoOpGame() then
@@ -1067,7 +1139,14 @@ end
 function CrosshairUI:SetVisible(visible, ...)
 	XContextWindow.SetVisible(self, visible, ...)
 	if visible then
-		self:MoveInCurrentGamepadList(0)
+		-- Delay auto-select to after camera has finished moving.
+		self:DeleteThread("when-ready")
+		self:CreateThread("when-ready", function()
+			while self:GetThread("actionCameraWait") do
+				Sleep(1)
+			end
+			self:MoveInCurrentGamepadList(0)
+		end)
 	end
 end
 
@@ -1172,14 +1251,6 @@ function CalculateCrosshairFireModeButtonOffset(num, totalParts)
 	
 	return x + 1, y
 end
-
-CrosshairBodyPartDirections = {
-	"LeftThumbUp",
-	"LeftThumbUpRight",
-	"LeftThumbRight",
-	"LeftThumbDownRight",
-	"LeftThumbDown"
-}
 
 CrosshairFiringModeDirection = {
 	"LeftThumbUpLeft",

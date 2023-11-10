@@ -7,75 +7,31 @@ DefineClass.InnerInfo = {
 
 
 	object_class = "Perk",
-	msg_reactions = {
-		PlaceObj('MsgActorReaction', {
-			Event = "OnEnterMapVisual",
-			Handler = function (self)
+	unit_reactions = {
+		PlaceObj('UnitReaction', {
+			Event = "OnUnitEnterMapVisual",
+			Handler = function (self, target)
+				local sector = gv_Sectors[gv_CurrentSectorId]
+				if target.HireStatus ~= "Hired" or not sector.intel_discovered then
+					 return 
+				end
 				
-				local function exec(self, reaction_actor)
 				CreateGameTimeThread(function()
-					local livewire = g_Units.Livewire
-					local sector = gv_Sectors[gv_CurrentSectorId]
 					local playVr
-					if livewire and livewire.HireStatus == "Hired" and sector.intel_discovered then
-						while GetInGameInterfaceMode() == "IModeDeployment" do
-							Sleep(20)
-						end
-						for _, unit in ipairs(g_Units) do
-							if unit:IsOnEnemySide(livewire) then
-								unit:RevealTo(livewire.team)
-								unit.innerInfoRevealed = true
-								playVr = true
-								break
-							end
-						end
-						if playVr then
-							Sleep(2000)
-							PlayVoiceResponse(livewire,"PersonalPerkSubtitled")
+					while GetInGameInterfaceMode() == "IModeDeployment" do
+						Sleep(20)
+					end
+					for _, unit in ipairs(g_Units) do
+						if unit:IsOnEnemySide(target) then
+							unit:RevealTo(target.team)
+							unit.innerInfoRevealed = true
+							playVr = true
+							break
 						end
 					end
-				end)
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "OnEnterMapVisual" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					local reaction_actor
-					exec(self, reaction_actor)
-				end
-				
-				
-				local actors = self:GetReactionActors("OnEnterMapVisual", reaction_def, nil)
-				for _, reaction_actor in ipairs(actors) do
-					if self:VerifyReaction("OnEnterMapVisual", reaction_def, reaction_actor, nil) then
-						exec(self, reaction_actor)
-					end
-				end
-			end,
-			HandlerCode = function (self, reaction_actor)
-				CreateGameTimeThread(function()
-					local livewire = g_Units.Livewire
-					local sector = gv_Sectors[gv_CurrentSectorId]
-					local playVr
-					if livewire and livewire.HireStatus == "Hired" and sector.intel_discovered then
-						while GetInGameInterfaceMode() == "IModeDeployment" do
-							Sleep(20)
-						end
-						for _, unit in ipairs(g_Units) do
-							if unit:IsOnEnemySide(livewire) then
-								unit:RevealTo(livewire.team)
-								unit.innerInfoRevealed = true
-								playVr = true
-								break
-							end
-						end
-						if playVr then
-							Sleep(2000)
-							PlayVoiceResponse(livewire,"PersonalPerkSubtitled")
-						end
+					if playVr then
+						Sleep(2000)
+						PlayVoiceResponse(target,"PersonalPerkSubtitled")
 					end
 				end)
 			end,

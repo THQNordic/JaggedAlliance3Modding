@@ -209,13 +209,12 @@ PlaceObj('ChanceToHitModifier', {
 
 PlaceObj('ChanceToHitModifier', {
 	CalcValue = function (self, attacker, target, body_part_def, action, weapon1, weapon2, lof, aim, opportunity_attack, attacker_pos, target_pos)
+		if attacker ~= target and attacker:IsPointBlankRange(target) then
+			return false, 0
+		end
 		if IsIlluminated(target) then
 			return false, 0
 		end
-		
-		local atPointBlank =  attacker ~= target and attacker:IsPointBlankRange(target)
-		if atPointBlank then return false, 0 end
-		
 		local penalty = const.EnvEffects.DarknessCTHPenalty
 		if IsKindOf(attacker, "Unit") and attacker:HasNightVision() then
 			local reductionPercent = CharacterEffectDefs.NightOps:ResolveValue("night_acc_penalty_reduction")

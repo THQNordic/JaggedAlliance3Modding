@@ -12,21 +12,11 @@ PlaceObj('CharacterEffectCompositeDef', {
 	},
 	'Comment', "Sidney - bonus AP until damage taken or miss",
 	'object_class', "Perk",
-	'msg_reactions', {
-		PlaceObj('MsgActorReactionEffects', {
-			Effects = {
-				PlaceObj('ConditionalEffect', {
-					'Effects', {
-						PlaceObj('UnitAddStatusEffect', {
-							Status = "SidneyPerkBuff",
-							TargetUnit = "current unit",
-						}),
-					},
-				}),
-			},
-			Event = "CombatStart",
-			Handler = function (self, dynamic_data)
-				ExecReactionEffects(self, 1, "CombatStart", nil, self, dynamic_data)
+	'unit_reactions', {
+		PlaceObj('UnitReaction', {
+			Event = "OnCombatStarted",
+			Handler = function (self, target, load_game)
+				target:AddStatusEffect("SidneyPerkBuff")
 			end,
 		}),
 	},

@@ -194,14 +194,17 @@ function GetAllShipmentItems()
 	return items
 end
 
-local lShipmentItemsCache
+if FirstLoad then
+	ShipmentItemsCache = false
+end
+
 function OnMsg.DataLoaded()
-	lShipmentItemsCache = GetAllShipmentItems()
+	ShipmentItemsCache = GetAllShipmentItems()
 end
 
 function HasAnyShipmentItem(unit)
 	local hasBriefcase, shipmentPresetId = false, false
-	for i, itemPair in ipairs(lShipmentItemsCache) do
+	for i, itemPair in ipairs(ShipmentItemsCache) do
 		hasBriefcase = not not unit:HasItem(itemPair[1])
 		if hasBriefcase then
 			shipmentPresetId = itemPair[2]
@@ -485,6 +488,7 @@ local function lCheckDiamondBadge()
 	end
 end
 
+OnMsg.CloseSatelliteView = lCheckDiamondBadge
 OnMsg.EnterSector = lCheckDiamondBadge
 OnMsg.CombatEnd = lCheckDiamondBadge
 function OnMsg.InventoryChange(u)

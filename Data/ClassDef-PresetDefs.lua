@@ -588,6 +588,86 @@ PlaceObj('PresetDef', {
 })
 
 PlaceObj('PresetDef', {
+	DefHasSortKey = true,
+	DefModItemName = "BobbyRayShopCategory mod",
+	DefModItemSubmenu = "Item",
+	DefStoreAsTable = "inherit",
+	group = "PresetDefs",
+	id = "BobbyRayShopCategory",
+	PlaceObj('PropertyDefText', {
+		'id', "DisplayName",
+	}),
+	PlaceObj('PropertyDefText', {
+		'id', "UrlSuffix",
+		'translate', false,
+	}),
+	PlaceObj('PropertyDefFunc', {
+		'id', "GetSubCategories",
+		'name', "",
+	}),
+	PlaceObj('PropertyDefFunc', {
+		'id', "BelongsInCategory",
+		'params', "self, item",
+		'default', function (self, item)
+			return item:GetCategory() == self
+		end,
+	}),
+})
+
+PlaceObj('PresetDef', {
+	DefHasGroups = false,
+	DefHasSortKey = true,
+	DefModItemName = "BobbyRayShopCategory mod",
+	DefModItemSubmenu = "Item",
+	DefStoreAsTable = "inherit",
+	group = "PresetDefs",
+	id = "BobbyRayShopDeliveryDef",
+	PlaceObj('PropertyDefNumber', {
+		'id', "MinTime",
+		'help', "in days",
+	}),
+	PlaceObj('PropertyDefNumber', {
+		'id', "MaxTime",
+		'help', "in days",
+	}),
+	PlaceObj('PropertyDefText', {
+		'id', "Name",
+	}),
+	PlaceObj('PropertyDefText', {
+		'id', "TimeDescription",
+		'name', "",
+	}),
+	PlaceObj('PropertyDefNumber', {
+		'id', "Price",
+	}),
+})
+
+PlaceObj('PresetDef', {
+	DefHasSortKey = true,
+	DefModItemName = "BobbyRayShopSubCategory mod",
+	DefModItemSubmenu = "Item",
+	DefStoreAsTable = "inherit",
+	group = "PresetDefs",
+	id = "BobbyRayShopSubCategory",
+	PlaceObj('PropertyDefText', {
+		'id', "DisplayName",
+	}),
+	PlaceObj('PropertyDefCombo', {
+		'id', "Category",
+		'template', true,
+		'default', "Other",
+		'items', function (self) return PresetArray("BobbyRayShopCategory") end,
+	}),
+	PlaceObj('PropertyDefFunc', {
+		'id', "BelongsInSubCategory",
+		'params', "self, item",
+		'default', function (self, item)
+			return item:GetSubCategory() == self
+		end,
+	}),
+})
+
+PlaceObj('PresetDef', {
 	DefModItem = true,
 	DefModItemName = "Caliber mod",
 	DefModItemSubmenu = "Item",
@@ -614,31 +694,30 @@ PlaceObj('PresetDef', {
 	PlaceObj('PropertyDefPoint', {
 		'category', "Satellite Settings",
 		'id', "sectors_offset",
-		'name', "Sectors Offset",
+		'name', "Sectors offset",
 		'default', point(0, 0, 0),
 	}),
 	PlaceObj('PropertyDefPoint', {
 		'category', "Satellite Settings",
 		'id', "sector_size",
-		'name', "Sector Size",
+		'name', "Sector size",
 		'default', point(0, 0),
 	}),
 	PlaceObj('PropertyDefPoint', {
 		'category', "Satellite Settings",
 		'id', "map_size",
-		'name', "Map Size",
+		'name', "Map size",
 		'default', point(0, 0),
-	}),
-	PlaceObj('PropertyDefText', {
-		'category', "Satellite Settings",
-		'id', "map_file",
-		'name', "Map File",
-		'translate', false,
 	}),
 	PlaceObj('PropertyDefText', {
 		'category', "Preset",
 		'id', "DisplayName",
-		'name', "Display Name",
+		'name', "Display name",
+	}),
+	PlaceObj('PropertyDefUIImage', {
+		'category', "Satellite Settings",
+		'id', "map_file",
+		'name', "Map image",
 	}),
 	PlaceObj('PropertyDefText', {
 		'category', "Preset",
@@ -649,12 +728,32 @@ PlaceObj('PresetDef', {
 	PlaceObj('ClassConstDef', {
 		'name', "editing_size",
 	}),
+	PlaceObj('PropertyDefChoice', {
+		'category', "Map Size & Sectors",
+		'id', "InheritSectorsFrom",
+		'name', "Inherit sectors from",
+		'no_edit', "expression",
+		'no_edit_expression', function (self) return self.save_in == "" or IsKindOf(self, "ModItem") end,
+		'no_validate', true,
+		'items', function (self)
+			-- can inherit the sectors from any CampaignPreset with the save id in the base game, or another DLC
+			local ret = { { text = "", value = false } }
+			ForEachPresetExtended("CampaignPreset", function(preset)
+				if preset.id == self.id and preset.save_in ~= self.save_in then
+					table.insert(ret, { text = preset.save_in ~= "" and preset.save_in or "<base game>", value = preset.save_in })
+				end
+			end)
+			return ret
+		end,
+	}),
 	PlaceObj('PropertyDefText', {
 		'category', "Map Size & Sectors",
 		'id', "sector_topleft",
 		'name', "Top-left sector",
 		'read_only', "expression",
 		'read_only_expression', function (self) return next(self.Sectors or empty_table) and not self.editing_size end,
+		'validate', function (self, value) return ValidateSectorId(value) end,
+		'default', "A1",
 		'translate', false,
 	}),
 	PlaceObj('PropertyDefText', {
@@ -662,6 +761,8 @@ PlaceObj('PresetDef', {
 		'id', "sector_bottomright",
 		'name', "Bottom-right sector",
 		'read_only', "sector_topleft.read_only",
+		'validate', function (self, value) return ValidateSectorId(value) end,
+		'default', "A1",
 		'translate', false,
 	}),
 	PlaceObj('PropertyDefButtons', {
@@ -669,7 +770,7 @@ PlaceObj('PresetDef', {
 		'id', "size_btns",
 		'buttons', {
 			PlaceObj('PropertyDefPropButton', {
-				'Name', "Edit size",
+				'Name', "Edit range of defined sectors",
 				'FuncName', "EditSize",
 				'IsHidden', function (self) return self.editing_size end,
 			}),
@@ -693,49 +794,80 @@ PlaceObj('PresetDef', {
 		end,
 	}),
 	PlaceObj('ClassMethodDef', {
-		'name', "UpdateSize",
-		'comment', "Sets map size from sector_topleft and sector_bottomright",
+		'name', "ValidateSize",
 		'code', function (self)
 			local x1, y1 = sector_unpack(self.sector_topleft)
 			local x2, y2 = sector_unpack(self.sector_bottomright)
-			self.sector_columns = y2 - y1 + 1
-			self.sector_rowsstart = x1
-			self.sector_rows = x2
-			self.editing_size = nil
+			if x2 < x1 or y2 < y1 then
+				self.sector_bottomright = self.sector_topleft
+			end
+		end,
+	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "UpdateSize",
+		'code', function (self)
+			self:ValidateSize()
+			self:PostLoad()
+			ObjModified(self.Sectors)
 			ObjModified(self)
-			
-			self:GenerateEmptySectors()
+		end,
+	}),
+	PlaceObj('PropertyDefText', {
+		'category', "Map Size & Sectors",
+		'id', "SectorRange",
+		'name', "Sector range",
+		'help', "Total range of sectors",
+		'dont_save', true,
+		'read_only', true,
+		'translate', false,
+	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "GetSectorRange",
+		'code', function (self)
+			local x1, y1 = self.sector_rowsstart, 1
+			local x2, y2 = self.sector_rows, self.sector_columns
+			return string.format("%s-%s", sector_pack(x1, y1), sector_pack(x2, y2))
 		end,
 	}),
 	PlaceObj('PropertyDefNumber', {
 		'category', "Map Size & Sectors",
 		'id', "sector_columns",
 		'name', "Sector columns",
+		'dont_save', true,
 		'read_only', true,
-		'min', 1,
-		'max', 99,
+		'default', 1,
 	}),
 	PlaceObj('PropertyDefNumber', {
 		'category', "Map Size & Sectors",
 		'id', "sector_rowsstart",
 		'name', "Sector rows start",
+		'dont_save', true,
 		'read_only', true,
-		'min', -25,
-		'max', 1,
+		'default', 1,
 	}),
 	PlaceObj('PropertyDefNumber', {
 		'category', "Map Size & Sectors",
 		'id', "sector_rows",
 		'name', "Sector rows end",
+		'dont_save', true,
 		'read_only', true,
-		'min', 1,
-		'max', 26,
+		'default', 1,
 	}),
 	PlaceObj('PropertyDefText', {
 		'category', "Map Size & Sectors",
 		'id', "InitialSector",
 		'name', "Initial sector",
 		'help', "The sector in which the campaign starts",
+		'validate', function (self, value)
+			local err = ValidateSectorId(value)
+			if err then return err end
+			
+			local x, y = sector_unpack(value)
+			if x < self.sector_rowsstart or x > self.sector_rows or y < 1 or y > self.sector_columns then
+				return "The starting sector is not withing the map boundaries."
+			end
+		end,
+		'default', "A1",
 		'translate', false,
 	}),
 	PlaceObj('PropertyDefButtons', {
@@ -755,11 +887,6 @@ PlaceObj('PresetDef', {
 		'inclusive', true,
 	}),
 	PlaceObj('PropertyDefNestedList', {
-		'id', "Sides",
-		'base_class', "CampaignSide",
-		'inclusive', true,
-	}),
-	PlaceObj('PropertyDefNestedList', {
 		'id', "Sectors",
 		'no_edit', true,
 		'base_class', "SatelliteSector",
@@ -767,7 +894,7 @@ PlaceObj('PresetDef', {
 	}),
 	PlaceObj('PropertyDefNestedList', {
 		'id', "EffectsOnStart",
-		'name', "Effects On Start Campaign",
+		'name', "Effects on campaign start",
 		'help', "Effects that are executed when the campaign is started.",
 		'base_class', "Effect",
 		'inclusive', true,
@@ -786,6 +913,10 @@ PlaceObj('PresetDef', {
 					day = self.starting_day, 
 					hour = self.starting_hour 
 				}
+			end
+			if prop_id == "InheritSectorsFrom" then
+				self:PostLoad()
+				ObjModified(self.Sectors)
 			end
 		end,
 	}),
@@ -810,49 +941,92 @@ PlaceObj('PresetDef', {
 		end,
 	}),
 	PlaceObj('ClassMethodDef', {
-		'name', "GenerateEmptySectors",
-		'comment', "Places empty sectors at each point within the map where a sector doesn't exist",
+		'name', "FindInheritSectorsPreset",
+		'params', "current",
+		'code', function (self, current)
+			local parent
+			ForEachPresetExtended("CampaignPreset", function(preset)
+				if preset.id == self.id and preset.save_in == current.InheritSectorsFrom then
+					parent = preset
+				end
+			end)
+			return parent
+		end,
+	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "RoundOutSectors",
+		'comment', "Inherited sectors for DLC campaign extension, add empty sectors at each point within the map where a sector doesn't exist",
 		'code', function (self)
 			self.Sectors = self.Sectors or {}
 			
-			local existing = {}
-			for _, sector in ipairs(self.Sectors) do
-				existing[sector.Id] = true
-			end
-			for y = 1, self.sector_columns do
-				for x = self.sector_rowsstart, self.sector_rows do
-					local sector_id = sector_pack(x, y)
-					if not existing[sector_id] then
-						table.insert(self.Sectors, GenerateEmptySector(sector_id))
+			-- calculate bounding box of all sectors into 'bbox'
+			local bbox = box(
+				point(sector_unpack(self.sector_topleft)),
+				point(sector_unpack(self.sector_bottomright)) + point(1, 1)
+			)
+			
+			-- build inheritance list (of campaign presets, by order of inheritance)
+			local parents, current = { self }, self
+			local sector_by_id = {}
+			repeat
+				-- create id to sector map for each campaign preset
+				local sectors = {}
+				for _, sector in ipairs(current.Sectors) do
+					local x, y = sector_unpack(sector.Id)
+					bbox = Extend(bbox, point(x, y))
+					sectors[sector.Id] = sector
+				end
+				sector_by_id[current] = sectors
+				
+				current = self:FindInheritSectorsPreset(current)
+				if current then
+					if table.find(parents, current) then break end -- prevent infinite loop in case of a cycle
+					table.insert(parents, current)
+				end
+			until not current
+			
+			-- update size properties, according to the total bounding box
+			self.sector_rowsstart = bbox:minx()
+			self.sector_rows = bbox:maxx() - 1
+			self.sector_columns = bbox:maxy() - 1
+			
+			-- perform sector inheritance
+			local function inherit_sector(sector_id)
+				for _, campaign_preset in ipairs(parents) do
+					local sector = sector_by_id[campaign_preset][sector_id]
+					if sector then
+						if campaign_preset ~= self then
+							sector = sector:Clone()
+							sector.inherited = true
+							table.insert(self.Sectors, sector)
+							UpdateParentTable(sector, self.Sectors)
+						end
+						return true
 					end
 				end
 			end
-			table.sortby_field(self.Sectors, "Id")
-			ObjModified(self.Sectors)
-		end,
-	}),
-	PlaceObj('ClassMethodDef', {
-		'name', "PostLoad",
-		'comment', "Updates map bounds from the existing sectors",
-		'code', function (self)
-			local bbox = box()
-			for _, sector in ipairs(self.Sectors) do
-				local x, y = sector_unpack(sector.Id)
-				bbox = Extend(bbox, point(x, y))
-			end
 			
-			self.sector_topleft = sector_pack(bbox:minx(), 1)
-			self.sector_bottomright = sector_pack(bbox:maxx() - 1, bbox:maxy() - 1)
-			self:UpdateSize()
+			for y = 1, self.sector_columns do
+				for x = self.sector_rowsstart, self.sector_rows do
+					local sector_id = sector_pack(x, y)
+					if not inherit_sector(sector_id) then -- no sector at that point
+						local sector = GenerateEmptySector(sector_id)
+						table.insert(self.Sectors, sector)
+						UpdateParentTable(sector, self.Sectors)
+					end
+					inherit_sector(sector_id .. "_Underground")
+				end
+			end
+			table.sortby_field(self.Sectors, "Id")
 		end,
 	}),
 	PlaceObj('ClassMethodDef', {
-		'name', "OnPreSave",
-		'comment', "Remove generated sectors",
+		'name', "RemoveGeneratedSectors",
+		'comment', "Remove generated & inherited sectors added by RoundOutSectors",
 		'code', function (self)
 			local sectors = self.Sectors or {}
 			for idx = #sectors, 1, -1 do
-				if sectors[idx].generated then
+				if sectors[idx].generated or sectors[idx].inherited then
 					table.remove(sectors, idx)
 				end
 			end
@@ -861,10 +1035,34 @@ PlaceObj('PresetDef', {
 		end,
 	}),
 	PlaceObj('ClassMethodDef', {
+		'name', "PostLoad",
+		'comment', "Add generated sectors",
+		'code', function (self)
+			self:RemoveGeneratedSectors()
+			self:RoundOutSectors()
+		end,
+	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "OnPreSave",
+		'comment', "Remove generated sectors",
+		'code', function (self)
+			self:ValidateSize()
+			self:RemoveGeneratedSectors()
+		end,
+	}),
+	PlaceObj('ClassMethodDef', {
 		'name', "OnPostSave",
 		'comment', "Add back generated sectors",
 		'code', function (self)
-			self:GenerateEmptySectors()
+			self:RoundOutSectors()
+		end,
+	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "GetWarning",
+		'code', function (self)
+			if self.InheritSectorsFrom and not self:FindInheritSectorsPreset(self) then
+				return "Unable to find DLC to inherit sectors from."
+			end
 		end,
 	}),
 	PlaceObj('PropertyDefNumber', {
@@ -890,12 +1088,13 @@ PlaceObj('PresetDef', {
 	}),
 	PlaceObj('PropertyDefNumber', {
 		'id', "starting_timestamp",
-		'name', "Starting Time",
+		'name', "Starting time",
 		'read_only', true,
 		'default', 0,
 	}),
 	PlaceObj('PropertyDefText', {
 		'id', "DisclaimerOnStart",
+		'name', "Disclaimer on start",
 		'lines', 2,
 	}),
 })
@@ -1029,6 +1228,14 @@ PlaceObj('PresetDef', {
 		'help', "What gamestate this action requires to be displayed to the player.",
 		'default', "combat",
 		'items', function (self) return { "any", "combat", "exploration" } end,
+	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "OnPreSave",
+		'params', "by_user_request, ged",
+		'code', function (self, by_user_request, ged)
+			self.IdDefault = self.id .. "default"
+			Preset.OnPreSave(self, by_user_request, ged)
+		end,
 	}),
 	PlaceObj('PropertyDefChoice', {
 		'id', "MultiSelectBehavior",
@@ -1346,6 +1553,10 @@ PlaceObj('PresetDef', {
 		'default', function (self, units)
 			return self.Icon
 		end,
+	}),
+	PlaceObj('PropertyDefText', {
+		'id', "IdDefault",
+		'translate', false,
 	}),
 	PlaceObj('PropertyDefFunc', {
 		'id', "ResolveAction",
@@ -5056,6 +5267,7 @@ PlaceObj('PresetDef', {
 })
 
 PlaceObj('PresetDef', {
+	DefGlobalMap = "SatelliteShortcuts",
 	id = "SatelliteShortcutPreset",
 	PlaceObj('PropertyDefCombo', {
 		'id', "start_sector",
@@ -5075,9 +5287,25 @@ PlaceObj('PresetDef', {
 		'help', "The sector which denotes the direction in which the exit sector is being entered from",
 		'items', function (self) return GetCampaignSectorsCombo() end,
 	}),
+	PlaceObj('PropertyDefCombo', {
+		'id', "speed_const",
+		'help', "The constant denoting the shortcut's speed",
+		'default', "RiverTravelTime",
+		'items', function (self) return ConstCategoryToCombo(const.SatelliteShortcut) end,
+	}),
+	PlaceObj('PropertyDefCombo', {
+		'id', "terrain",
+		'name', "Travel Breakdown Terrain Description",
+		'default', "Shortcut_River",
+		'items', function (self) return PresetsCombo("SectorTerrain") end,
+	}),
 	PlaceObj('PropertyDefBool', {
 		'id', "one_way",
 		'name', "One way",
+	}),
+	PlaceObj('PropertyDefBool', {
+		'id', "disabled",
+		'name', "Disabled By Default",
 	}),
 	PlaceObj('PropertyDefFunc', {
 		'id', "GetEditorView",
@@ -5100,14 +5328,6 @@ PlaceObj('PresetDef', {
 			return self.VisibilitySectors
 		end,
 	}),
-	PlaceObj('PropertyDefFunc', {
-		'id', "GetTravelTime",
-		'help', "",
-		'no_edit', true,
-		'default', function (self)
-			return self.TravelTimeInSectors * const.Satellite.RiverTravelTime
-		end,
-	}),
 	PlaceObj('PropertyDefStringList', {
 		'id', "VisibilitySectors",
 		'help', "Sectors which are visible while travelling on the shortcut",
@@ -5119,6 +5339,19 @@ PlaceObj('PresetDef', {
 	}),
 	PlaceObj('PropertyDefBool', {
 		'id', "water_shortcut",
+	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "GetShortcutEnabled",
+		'code', function (self)
+			return not self.disabled
+		end,
+	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "GetTravelTime",
+		'code', function (self)
+			local timeConst = const.SatelliteShortcut[self.speed_const or "RiverTravelTime"]
+			return self.TravelTimeInSectors * timeConst
+		end,
 	}),
 })
 
@@ -5758,7 +5991,7 @@ PlaceObj('ClassDef', {
 		'id', "side",
 		'extra_code', 'read_only = function(self) return self.squad_type ~= "NPC" end',
 		'default', "player1",
-		'items', function (self) return table.map(GetCurrentCampaignPreset().Sides, "Id") end,
+		'items', function (self) return Sides end,
 	}),
 	PlaceObj('PropertyDefChoice', {
 		'id', "spawn_location",
@@ -6393,12 +6626,8 @@ PlaceObj('PresetDef', {
 			if IsKindOf(reaction_actor, "BaseWeapon") then
 				return reaction_actor:HasComponent(self.id)
 			end
-			
-			if not IsKindOf(reaction_actor, "UnitInventory") then return end
-			
-			local weapons = reaction_actor:GetEquippedWeapons(reaction_actor.current_weapon, "FirearmBase")
-			for _, weapon in ipairs(weapons) do
-				if weapon:HasComponent(self.id) then
+			if IsKindOf(reaction_actor, "UnitInventory") then
+				if reaction_actor:FindItemInSlot(reaction_actor.current_weapon, function(weapon, id) return IsKindOf(weapon, "FirearmBase") and weapon:HasComponent(id) end, self.id) then
 					return true
 				end
 			end
@@ -6408,19 +6637,7 @@ PlaceObj('PresetDef', {
 		'name', "GetReactionActors",
 		'params', "event, reaction_def, ...",
 		'code', function (self, event, reaction_def, ...)
-			local objs = {}
-			if reaction_def:HasFlag("SatView") then
-				for session_id, data in pairs(gv_UnitData) do
-					local obj = ZuluReactionResolveUnitActorObj(session_id, data)
-					if self:VerifyReaction(event, obj, ...) then
-						objs[#objs + 1] = obj
-					end
-				end
-			else
-				table.iappend(objs, g_Units)
-			end
-			table.sortby_field(objs, "session_id")
-			return objs
+			return ZuluReactionGetReactionActors_Light(event, reaction, ...)
 		end,
 	}),
 	PlaceObj('ClassConstDef', {

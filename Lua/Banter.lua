@@ -1672,6 +1672,19 @@ function PlayVoiceResponseTacticalSituation(currTeam, event)
 			currTeam.tactical_situations_vr["missedShots"] = 0
 		end
 	elseif event == "turnEnd" and not currTeam:IsPlayerControlled() then
+		local playerTeams = {}
+		for i, team in ipairs(g_Teams) do
+			if team.side == "player1" or team.side == "player2" then
+				if team:IsEnemySide(currTeam) then
+					local outnumbered_units = CombatCollectOutnumbered(i)
+					local voice_unit = table.rand(outnumbered_units)
+					if voice_unit then
+						PlayVoiceResponse(voice_unit, "Outnumbered")
+					end
+				end
+			end
+		end
+	
 		if table.find(vrEvents, "TacticalReposition") and next(vrEvents["TacticalReposition"]) then
 			unitForVR = table.rand(vrEvents["TacticalReposition"], InteractionRand(1000000, "TacticalSituation"))
 			PlayVoiceResponse(unitForVR, "TacticalReposition")

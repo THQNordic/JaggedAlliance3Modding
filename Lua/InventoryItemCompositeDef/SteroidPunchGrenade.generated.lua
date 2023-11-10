@@ -14,6 +14,7 @@ DefineClass.SteroidPunchGrenade = {
 	DisplayNamePlural = T(421052735666, --[[InventoryItemCompositeDef SteroidPunchGrenade DisplayNamePlural]] "Steroid Punches"),
 	UnitStat = "Explosives",
 	Cost = 1500,
+	CategoryPair = "Grenade",
 	MinMishapChance = 0,
 	MaxMishapChance = 0,
 	MinMishapRange = 1,

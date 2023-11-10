@@ -169,20 +169,26 @@ function PDAScreen:DrawChildren(clip_box)
 	if drawWindows then
 		topMod = UIL.ModifiersGetTop()
 		UIL.PushModifier(self.screen_on_interp)
+
 		for _, win in ipairs(self) do
-			if win.visible and not win.outside_parent and (not UseClipBox or win.box:Intersect2D(clip_box) ~= irOutside) then
+			if win.visible and not win.outside_parent and
+				(not UseClipBox or win.box:Intersect2D(clip_box) ~= irOutside) then
 				if not win.DrawOnTop then
+				
+					if win == node.idRolloverArea then
+						-- Punchtrough sector operations dim
+						if g_SatTimelineUI and GetDialog("SectorOperationsUI") then
+							g_SatTimelineUI:DrawWindow()
+						end
+					end
+				
 					win:DrawWindow(clip_box)
 				end
 			end
 		end
+		
 		UIL.ModifiersSetTop(topMod)
 
-		-- Punchtrough dim
-		if g_SatTimelineUI and GetDialog("SectorOperationsUI") then
-			g_SatTimelineUI:DrawWindow()
-		end
-		
 		UIL.DrawFrame(self.vignette_image_id, node.idDisplay.box, self.Rows, self.Columns, self:GetRow(), self:GetColumn(),
 			self.FrameBox, not self.TileFrame, self.TransparentCenter, scaleX, scaleY, self.FlipX, self.FlipY)
 	end
@@ -328,6 +334,24 @@ DefineClass.PDACommonButtonClass = {
 	MinWidth = 124,
 	SqueezeX = true,
 	MouseCursor = "UI/Cursors/Pda_Hand.tga",
+}
+
+DefineClass.PDACommonCheckButtonClass = {
+	__parents = { "XCheckButton" },
+	shortcut = false,
+	shortcut_gamepad = false,
+	applied_gamepad_margin = false,
+	
+	FXMouseIn = "buttonRollover",
+	FXPress = "buttonPress",
+	FXPressDisabled = "IactDisabled",
+	Padding = box(8, 0, 8, 0),
+	MinHeight = 26,
+	MaxHeight = 26,
+	MinWidth = 124,
+	SqueezeX = true,
+	MouseCursor = "UI/Cursors/Pda_Hand.tga",
+	Icon = "UI/PDA/WEBSites/Bobby Rays/delivery_checkbox.png",
 }
 
 function PDACommonButtonClass:Open()
@@ -614,6 +638,7 @@ function NetEvents.AnyPlayerClosedFirstMercSelection()
 	if pda and pda.window_state ~= "destroying" and pda.window_state ~= "closing" then
 		pda:Close()
 	end
+	gv_AIMBrowserEverClosed = true
 end
 
 function PDAClass:CloseAction(host)
@@ -670,7 +695,6 @@ function PDAClass:CloseAction(host)
 				if true then
 					self:Close()
 					NetEvent("AnyPlayerClosedFirstMercSelection")
-					gv_AIMBrowserEverClosed = true
 					return
 				end
 			
@@ -894,6 +918,52 @@ function MessengerScrollbar:DrawWindow(clip_box)
 	-- Prevent the children from being drawn with the tint modifier, and then draw them separately
 	XWindow.DrawWindow(self, clip_box)
 	XWindow.DrawChildren(self, clip_box)
+end
+
+DefineClass.MessengerScrollbar_Gold = {
+	__parents = { "MessengerScrollbar" },
+	Background = RGB(255,255,255),
+}
+
+function MessengerScrollbar_Gold:Open()
+	self.MinWidth = self.UnscaledWidth
+	self.MaxWidth = self.UnscaledWidth
+	XScrollThumb.Open(self)
+	
+	local thumb = self.idThumb
+	thumb:SetImage("UI/PDA/WEBSites/Bobby Rays/scrollbar")
+	thumb:SetFrameBox(box(3,3,3,3))
+	thumb:SetMargins(box(2,0,2,0))
+
+	local topArr = XTemplateSpawn("PDASmallButton", self)
+	topArr:SetCenterImage("UI/PDA/WEBSites/Bobby Rays/scrollbar_up")
+	topArr.idCenterImg:SetHAlign("stretch")
+	topArr.idCenterImg:SetVAlign("stretch")
+	topArr.idCenterImg:SetImageColor(RGB(255,255,255))
+	topArr.idCenterImg:SetImageFit("stretch")
+	topArr:SetDock("ignore")
+	topArr:SetId("idTopArrow")
+	topArr.OnPress = function(o)
+		local target = self:ResolveId(self.Target)
+		if not target then return end
+		target:ScrollUp()
+	end
+	topArr:Open()
+
+	local bottomArr = XTemplateSpawn("PDASmallButton", self)
+	bottomArr:SetCenterImage("UI/PDA/WEBSites/Bobby Rays/scrollbar_down")
+	bottomArr.idCenterImg:SetHAlign("stretch")
+	bottomArr.idCenterImg:SetVAlign("stretch")
+	bottomArr.idCenterImg:SetImageColor(RGB(255,255,255))
+	bottomArr.idCenterImg:SetImageFit("stretch")
+	bottomArr:SetDock("ignore")
+	bottomArr:SetId("idBottomArrow")
+	bottomArr.OnPress = function(o)
+		local target = self:ResolveId(self.Target)
+		if not target then return end
+		target:ScrollDown()
+	end
+	bottomArr:Open()
 end
 
 DefineClass.MessengerScrollbarHorizontal = {
@@ -2400,9 +2470,9 @@ function XInventoryItemEmbed:Open()
 	elseif IsKindOf(inventory, "InventoryItem") then
 		items = { inventory }
 	elseif #(self.slot or "") > 0 then 
-		inventory:ForEachItemInSlot(self.slot, function(slot_item, slot_name, item_left, item_top, ibox, item)
+		inventory:ForEachItemInSlot(self.slot, function(slot_item, slot_name, item_left, item_top, items)
 			items[#items + 1] = slot_item
-		end)
+		end, items)
 	elseif next(inventory) then
 		items = inventory
 	end
@@ -2672,6 +2742,7 @@ end
 function ClearVolatileBrowserTabs()
 	UndockBrowserTab("banner_page")
 	UndockBrowserTab("page_error")
+	if not BobbyRayShopIsUnlocked() then UndockBrowserTab("bobby_ray_shop") end
 end
 
 function PDAImpHeaderEnable(self)

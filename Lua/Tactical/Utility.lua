@@ -1550,14 +1550,23 @@ function AnyInterruptsAlongPath(unit, path, allInterrupts)
 	local gotoDummies = unit:GenerateTargetDummiesFromPath(path)
 	
 	local mask = unit:GetItemInSlot("Head", "GasMask")
-	if not mask or mask.Condition <= 0 then
-		local smokeObjs = g_SmokeObjs
+	local check_gas = (not mask or mask.Condition <= 0) and (next(g_SmokeObjs) ~= nil)
+	local check_fire = next(g_Fire) ~= nil
+	
+	if check_gas or check_fire then
 		local voxels = {}
 
 		for i, dummy in ipairs(gotoDummies) do
 			local _, headVoxel = unit:GetVisualVoxels(dummy.pos, dummy.stance, voxels)
 			local smoke = g_SmokeObjs[headVoxel]
 			if smoke and smoke:GetGasType() ~= "smoke" then
+				if unit:GetDist(dummy.pos) < const.SlabSizeX / 2 then
+					-- target dummies come in order of distance from the start, if we're already inside the gas there's no need to give off warnings
+					break
+				end
+				return true
+			end
+			if 	AreVoxelsInFireRange(voxels) then
 				if unit:GetDist(dummy.pos) < const.SlabSizeX / 2 then
 					-- target dummies come in order of distance from the start, if we're already inside the gas there's no need to give off warnings
 					break
@@ -1998,16 +2007,16 @@ function ZuluModalDialog:OnShortcut(shortcut, ...)
 end
 
 function ZuluModalDialog:OnSetFocus()
-	RefreshPopupFocus()
+	DelayedCall(0, RefreshPopupFocus)
 end
 
 function ZuluModalDialog:OnKillFocus()
-	RefreshPopupFocus()
+	DelayedCall(0, RefreshPopupFocus)
 end
 
 function ZuluModalDialog:SetVisibleInstant(...)
 	XDialog.SetVisibleInstant(self, ...)
-	RefreshPopupFocus()
+	DelayedCall(0, RefreshPopupFocus)
 end
 
 function RefreshPopupFocus()
@@ -2275,12 +2284,15 @@ function IsPausedByGameLogic()
 end
 
 -- Used by UI to delay certain animations and actions until after various gameplay interruptions.
-function AnyPlayerControlStoppers()
+function AnyPlayerControlStoppers(params)
 	if GetDialog("ConversationDialog") then return true end
 	if IsSetpiecePlaying() then return true end
 	if IsRepositionPhase() then return true end
 	if GetDialog("PopupNotification") then return true end
-	if IsPausedByGameLogic() then return true end
+	
+	if not params or not params.skip_pause then
+		if IsPausedByGameLogic() then return true end
+	end
 end
 
 function WaitPlayerControl(params)
@@ -3238,6 +3250,7 @@ function DbgFindFreePassPositions(pos, count, max_radius, seed)
 	end
 end
 
+local dbgStartExplorationSpamGuard = false
 function DbgStartExploration(map, units)
 	DbgStopCombat()
 	if map and map ~= GetMapName() then
@@ -3252,6 +3265,12 @@ function DbgStartExploration(map, units)
 		print("This map doesn't have game logic enabled, therefore you cannot test on it.")
 		return
 	end
+	
+	if dbgStartExplorationSpamGuard and RealTime() - dbgStartExplorationSpamGuard < 50 then
+		return
+	end
+	
+	dbgStartExplorationSpamGuard = RealTime()
 
 	-- link debug exploration to satellite sector
 	if not HasGameSession() then
@@ -3729,4 +3748,41 @@ function EndTurnAnimationOnLayoutComplete(interp, window)
 	local distanceToBottomFromMe = bottom - window.box:miny()
 	
 	interp.targetRect = sizebox(0, distanceToBottomFromMe, 1000, 1000)
+end
+
+function Conscience_CheckExpiration(effect, target, timer)
+	local duration = effect:ResolveValue("days")
+	local startTime = effect:ResolveValue(timer) or 0
+
+	local dayStarted = GetTimeAsTable(startTime)
+	dayStarted = dayStarted and dayStarted.day
+
+	local dayNow = GetTimeAsTable(Game.CampaignTime)
+	dayNow = dayNow and dayNow.day
+
+	-- Intentionally check if days have passed calendar, and not time wise.
+	if dayNow - dayStarted >= duration then
+		target:RemoveStatusEffect(effect.class)
+	end
+end
+
+function ApplyCthModifier_Add(effect, data, value, text, meta_text)
+	data.mod_add = data.mod_add + value
+	if data.modifiers then
+		data.modifiers[#data.modifiers + 1] = {
+			id = effect.class, 
+			value = value,
+			name = text or effect.DisplayName, 
+			metaText = meta_text,
+		}
+	end
+end
+
+function ConstCategoryToCombo(constList)
+	local res = {}
+	for k,v in pairs(constList) do
+		res[#res+1] = { k, v }
+	end
+	table.sortby_field(res, 2)
+	return table.map(res, 1)
 end

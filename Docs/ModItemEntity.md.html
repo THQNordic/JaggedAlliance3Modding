@@ -115,6 +115,15 @@ To add an animation:
 Multiple animations can be created in one Blender scene by occupying different ranges on the timeline (thus the frame start/end fields).
 Animations can have compensation for moving objects - use CME for linear motion, and VDA for nonlinear motion.
 
+Armature Weight Transfers
+-------------------
+When you are setting up the new mesh for export, you need to make sure it is linked to the same armature and uses the same vertex group as the body. Follow these steps:
+1. Make sure both meshes's Scale is applied to its data. (Scale X Y Z = 1). 
+    - In [Object Mode] Select meshes and go to: Object/Apply/Scale. Or Object/Apply/All Transforms from the menu.
+2. Select the mesh with the Armature modifier (Source Object), and with Shift Key select second mesh to transfer the Weight data (Target Object). The mesh which will inherit data should be selected last (Target Object).
+3. Go to [Weight Paint] mode. If the Selection order is correct. The (Target Object) is colored Blue (no weight data color, all vertices have 0 weight) 
+4. Go to Weights/Transfer Weights. Bottom Left appears the parameters of the operation "Transfer Mesh Data", there in the "Source Layer Selection" menu chose "By Name" (be sure that the "Transfer Mesh Data/Vertex Mapping = Nearest Vertex"). The (Target Object) has inherited the data from (Source Object) - The Armature modifier and the Weight Groups. Based on Approximation in position space (see "Transfer Mesh Data/Vertex Mapping/Nearest Vertex").
+
 A Note on Materials
 -------------------
 
@@ -180,7 +189,7 @@ Inherit entity (`self.inherit_entity`)
 : Allowed values are: AnimatedTextureObject, AutoAttachObject, Deposition, Decal, FloorAlignedObj, Mirrorable, Animal, ForestDebris, HumanHead, ResourceEntityClass, ResourcePileEntityClass, Bush, Plant, Tree
 
 Class (`self.class_parent`)
-: Classes which this entity class should inherit (comma separated).
+: Classes which this entity class should inherit (comma separated). Check [Appearance Preset](ModItemAppearancePreset.md.html) for more information on the required class for appearance entities. 
 
 Material type (`self.material_type`)
 : Physical material of this entity.

@@ -7,39 +7,35 @@ DefineClass.Zoophobic = {
 
 
 	object_class = "Perk",
-	msg_reactions = {
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "target",
-			Event = "OnAttack",
-			Handler = function (self, attacker, action, target, results, attack_args)
-				
-				local function exec(self, attacker, action, target, results, attack_args)
-				if attacker.species ~= "Human" and not results.miss and not target:HasStatusEffect("ZoophobiaChecked") then
+	unit_reactions = {
+		PlaceObj('UnitReaction', {
+			Event = "OnUnitAttack",
+			Handler = function (self, target, attacker, action, attack_target, results, attack_args)
+				if target == attack_target and attacker.species ~= "Human" and not results.miss and not target:HasStatusEffect("ZoophobiaChecked") then
 					CombatLog("debug", T{Untranslated("<em>Zoophobic</em> proc on <unit>"), unit = target.Name})
-					target:AddStatusEffect("ZoophobiaChecked")
-				end
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "OnAttack" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, attacker, action, target, results, attack_args)
-				end
-				
-				if self:VerifyReaction("OnAttack", reaction_def, target, attacker, action, target, results, attack_args) then
-					exec(self, attacker, action, target, results, attack_args)
+					self:SetParameter("active", true)
 				end
 			end,
-			HandlerCode = function (self, attacker, action, target, results, attack_args)
-				if attacker.species ~= "Human" and not results.miss and not target:HasStatusEffect("ZoophobiaChecked") then
-					CombatLog("debug", T{Untranslated("<em>Zoophobic</em> proc on <unit>"), unit = target.Name})
-					target:AddStatusEffect("ZoophobiaChecked")
+		}),
+		PlaceObj('UnitReaction', {
+			Event = "OnCalcPersonalMorale",
+			Handler = function (self, target, value)
+				if self:ResolveValue("active") then
+					return value - 1
 				end
 			end,
-			helpActor = "target",
+		}),
+		PlaceObj('UnitReaction', {
+			Event = "OnCombatEnd",
+			Handler = function (self, target)
+				self:SetParameter("active", false)
+			end,
+		}),
+		PlaceObj('UnitReaction', {
+			Event = "OnSatelliteTick",
+			Handler = function (self, target)
+				self:SetParameter("active", false)
+			end,
 		}),
 	},
 	DisplayName = T(619689762390, --[[CharacterEffectCompositeDef Zoophobic DisplayName]] "Zoophobic"),

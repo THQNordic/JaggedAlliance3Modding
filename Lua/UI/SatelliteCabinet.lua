@@ -1,21 +1,7 @@
 function NetEvents.ExploreSectorInSatellite(sector_id)
 	local sector = gv_Sectors[sector_id]
 	if not sector.conflict then
-		if sector.ExplorePopup ~= "" then
-			if not ShowPopupNotification(sector.ExplorePopup, sector) then
-				ExecuteSectorEvents("SE_OnSatelliteExplore", sector_id)
-			else
-				local handle_event = not netInGame or NetIsHost()
-				if handle_event then
-					CreateRealTimeThread(function()
-						WaitMsg("ClosePopup" .. sector.ExplorePopup)
-						NetEchoEvent("ExecuteSectorEvents", "SE_OnSatelliteExplore", sector_id) -- this will be called when both players close their explore notifications
-					end)
-				end
-			end
-		else
-			ExecuteSectorEvents("SE_OnSatelliteExplore", sector_id)
-		end
+		ExecuteSectorEvents("SE_OnSatelliteExplore", sector_id)
 	end
 end
 
@@ -177,7 +163,7 @@ function GetSquadEnterSectorState(squadId, sectorId)
 	local enabled = not squad_travelling or IsConflictMode(squad.CurrentSector)
 	if not enabled then return false, T(635144125310, "Can't go to Tactical View because the squad is traveling. Wait until it arrives at the destination.") end
 	
-	local canEnterMapWise = sector and (sector.Map or (sector.ExplorePopup and sector.ExplorePopup ~= "") or sector.conflict)
+	local canEnterMapWise = sector and (sector.Map or sector.conflict)
 	enabled = enabled and canEnterMapWise
 
 	return enabled, T(910553896811, "Cannot enter the sector")

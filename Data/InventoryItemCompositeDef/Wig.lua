@@ -10,5 +10,6 @@ PlaceObj('InventoryItemCompositeDef', {
 	'DisplayNamePlural', T(699472559460, --[[InventoryItemCompositeDef Wig DisplayNamePlural]] "Red curly wig"),
 	'Description', T(196951336122, --[[InventoryItemCompositeDef Wig Description]] "The haircut of a lady that certainly doesn't look a day over 40."),
 	'Cost', 100,
+	'RestockWeight', 0,
 })
 

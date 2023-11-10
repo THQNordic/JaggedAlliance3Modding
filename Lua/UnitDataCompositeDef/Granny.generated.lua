@@ -45,5 +45,6 @@ DefineClass.Granny = {
 	pollyvoice = "Aditi",
 	gender = "Female",
 	PersistentSessionId = "NPC_Granny",
+	HealPersistentOnSpawn = true,
 }
 

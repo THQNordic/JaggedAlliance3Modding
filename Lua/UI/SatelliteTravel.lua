@@ -238,9 +238,8 @@ function SquadRouteDecoration:EnsureSquadIcon(squadMode)
 			squadIcon:SetZOrder(-1)
 			squadIcon:SetHAlign("center")
 			squadIcon:SetVAlign("center")
-			--squadIcon:SetScaleModifier(point(700, 700))
 			self.ScaleWithMap = false
-			self.UpdateZoom = SquadWindow.UpdateZoom
+			self.UpdateZoom = XMapWindow.UpdateZoom
 
 			squadIcon.idBase:SetImageColor(RGBA(255, 255, 255, 190))
 			squadIcon.idUpperIcon:SetImageColor(RGBA(255, 255, 255, 190))
@@ -577,9 +576,14 @@ function SquadRouteSegment:ResumeReduction(squadPos, time, dont_move)
 end
 
 function SquadRouteSegment:DrawBackground()
-	if not self.pointOne then return end 
-	UIL.DrawLineAntialised(12, self.pointOne, self.pointTwo, GameColors.D)
-	UIL.DrawLineAntialised(10, self.pointOne, self.pointTwo, self.Background)
+	if not self.pointOne then return end
+	if self.direction == "none" then return end
+	
+	local scaledWidth = ScaleXY(self.scale, 12)
+	local scaledWidthSmaller = ScaleXY(self.scale, 10)
+	
+	UIL.DrawLineAntialised(scaledWidth, self.pointOne, self.pointTwo, GameColors.D)
+	UIL.DrawLineAntialised(scaledWidthSmaller, self.pointOne, self.pointTwo, self.Background)
 end
 
 DefineClass.SquadRouteShortcutSegment = {
@@ -1053,11 +1057,15 @@ function SquadUIMovementThread(squadWnd)
 				local shortcutSegment = routeDisplay.shortcuts[1]
 				
 				local travelTime = shortcut:GetTravelTime()
-				local timeResolution = const.Satellite.RiverTravelTime / 4
+				local timeResolution = const.Satellite.Tick
 				
 				local waterPrevSector = reversedShortcut and shortcut.shortcut_direction_entrance_sector or shortcut.shortcut_direction_exit_sector
 				
-				assert(travelTime % timeResolution == 0)
+				-- We can only interpolate in increments of satellite tick, but we
+				-- actually dont need to check if the travel time can be divided by it
+				-- since the only difference would be a very small jump towards the end,
+				-- which is not noticable.
+				--assert(travelTime % timeResolution == 0)
 				assert(travelTime % const.Scale.min == 0)
 				
 				if not squad.traversing_shortcut_start then
@@ -1252,7 +1260,11 @@ local function lGetSectorTerrainTypeUI(sector, waypoint, routeIdx, prevSector)
 
 	local isShortcut = false
 	if waypoint and waypoint.shortcuts and waypoint.shortcuts[routeIdx] then
-		terrainType = "Shortcut"
+		local toSector = waypoint[routeIdx]
+		local fromSector = prevSector and prevSector.Id or sector and sector.Id
+		local shortcutPreset = toSector and fromSector and GetShortcutByStartEnd(toSector, fromSector)
+
+		terrainType = shortcutPreset and shortcutPreset.terrain or "Shortcut"
 		isShortcut = true
 	end
 	return terrainType, isShortcut
@@ -1458,28 +1470,34 @@ function GetShortcutCurvePointAt(path, percentOfPath)
 end
 
 function GetShortcutByStartEnd(startSectorId, endSectorId)
-	for i, shortcut in ipairs(Presets.SatelliteShortcutPreset.Default) do
+	local foundShorcut, foundIsReverse = false, false
+	ForEachPreset("SatelliteShortcutPreset", function(shortcut)
+		if not shortcut:GetShortcutEnabled() then return end
+	
 		local rightWay = shortcut.start_sector == startSectorId and shortcut.end_sector == endSectorId
 		local reverseWay = shortcut.start_sector == endSectorId and shortcut.end_sector == startSectorId
 	
 		if rightWay or reverseWay then
-			return shortcut, reverseWay
+			foundShorcut, foundIsReverse = shortcut, reverseWay
+			return "break"
 		end
-	end
-
-	return false
+	end)
+	
+	return foundShorcut, foundIsReverse
 end
 
 function GetShortcutsAtSector(sectorId, force_twoway)
 	local shortcuts = false
 
-	for i, shortcut in ipairs(Presets.SatelliteShortcutPreset.Default) do
+	ForEachPreset("SatelliteShortcutPreset", function(shortcut)
+		if not shortcut:GetShortcutEnabled() then return end
+	
 		local here = shortcut.start_sector == sectorId or (shortcut.end_sector == sectorId and (not shortcut.one_way or force_twoway))
 		if here then
 			if not shortcuts then shortcuts = {} end
 			shortcuts[#shortcuts + 1] = shortcut
 		end
-	end
+	end)
 
 	return shortcuts
 end
@@ -1497,4 +1515,4 @@ function IsRiverSector(sectorId, force_two_way)
 	return not not GetShortcutsAtSector(sectorId, force_two_way)
 end
 
-DefineConstInt("Satellite", "RiverTravelTime", 56, "min", "How many minutes it takes to travel one sector of river")
+DefineConstInt("SatelliteShortcut", "RiverTravelTime", 56, "min", "How many minutes it takes to travel one sector of river")

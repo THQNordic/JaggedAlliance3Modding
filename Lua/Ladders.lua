@@ -160,22 +160,19 @@ function Ladder:UpdateTunnels()
 				DoneObject(tunnel)
 			end
 		end
-		self.tunnels = false
+		table.iclear(self.tunnels)
 	end
 	local x1, y1, z1, x2, y2, z2 = self:GetTunnelPositions()
 	if not x1 then return end
 	local costAP = self:GetCost()
-	local tunnel = PlaceSlabTunnel("SlabTunnelLadder", costAP, x1, y1, z1, x2, y2, z2)
-	if tunnel then
-		tunnel.ladder = self
-		self.tunnels = self.tunnels or {}
-		table.insert(self.tunnels, tunnel)
-	end
-	tunnel = PlaceSlabTunnel("SlabTunnelLadder", costAP, x2, y2, z2, x1, y1, z1)
-	if tunnel then
-		tunnel.ladder = self
-		self.tunnels = self.tunnels or {}
-		table.insert(self.tunnels, tunnel)
+	local luaobj1 = { ladder = self }
+	local luaobj2 = { ladder = self }
+	local tunnel1 = PlaceSlabTunnel("SlabTunnelLadder", costAP, luaobj1, x1, y1, z1, x2, y2, z2)
+	local tunnel2 = PlaceSlabTunnel("SlabTunnelLadder", costAP, luaobj2, x2, y2, z2, x1, y1, z1)
+	if tunnel1 or tunnel2 then
+		if not self.tunnels then self.tunnels = {} end
+		table.insert(self.tunnels, tunnel1)
+		table.insert(self.tunnels, tunnel2)
 	end
 end
 
@@ -208,7 +205,7 @@ function Ladder:OnEditorSetProperty(prop_id, old_value)
 	if prop_id == "LadderParts" then
 		local ladder_parts = {}
 		for i = 1, old_value do
-			table.insert(ladder_parts, self:GetAttach(i))
+			ladder_parts[i] = self:GetAttach(i)
 		end
 		table.sort(ladder_parts, function(part1, part2)
 			return part1:GetAttachOffset() > part2:GetAttachOffset()
@@ -309,23 +306,43 @@ function SlabTunnelLadder:TraverseTunnel(unit, pos1, pos2, quick_play)
 	if z1 < z2 then
 		-- up
 		unit:MovePlayAnimSpeedUpdate("nw_LadderClimbOn_Start")
-		for i = 2, ladder_parts - 2 do
-			unit:MovePlayAnimSpeedUpdate("nw_LadderClimbOn_Idle", nil, 0, pos1:SetZ(z2 - (ladder_parts - i) * voxel_z))
-			if i == 2 then
-				unit:TunnelUnblock(entrance_pos, exit_pos)
+		local t = 0
+		if ladder_parts >= 4 then
+			for i = 2, ladder_parts - 2 do
+				unit:MovePlayAnimSpeedUpdate("nw_LadderClimbOn_Idle", nil, 0, pos1:SetZ(z2 - (ladder_parts - i) * voxel_z))
+				if i == 2 then
+					unit:TunnelUnblock(entrance_pos, exit_pos)
+				end
 			end
+		else
+			local modifier = unit:CalcMoveSpeedModifier()
+			if modifier > 0 then
+				local hit_phase = Max(200, GetAnimDuration(unit:GetEntity(), "nw_LadderClimbOn_End") / 3)
+				t = MulDivRound(hit_phase, 1000, modifier)
+			end
+			unit:SetPos(pos2:SetZ(z1 + 2 * voxel_z))
 		end
-		unit:SetPos(pos2)
+		unit:SetPos(pos2, t)
 		unit:MovePlayAnimSpeedUpdate("nw_LadderClimbOn_End", nil, 0)
 	else
-		-- down
 		unit:MovePlayAnimSpeedUpdate("nw_LadderClimbOff_Start")
 		unit:TunnelUnblock(entrance_pos, exit_pos)
 		unit:SetPos(pos2:SetZ(z1 - 2*voxel_z))
-		for i = 2, ladder_parts - 2 do
-			unit:MovePlayAnimSpeedUpdate("nw_LadderClimbOff_Idle", nil, 0, pos2:SetZ(z2 + (ladder_parts - 2 - i) * voxel_z))
+		local t = 0
+		if ladder_parts >= 4 then
+			for i = 2, ladder_parts - 2 do
+				unit:MovePlayAnimSpeedUpdate("nw_LadderClimbOff_Idle", nil, 0, pos2:SetZ(z2 + (ladder_parts - 2 - i) * voxel_z))
+			end
+		else
+			local modifier = unit:CalcMoveSpeedModifier()
+			if modifier > 0 then
+				local t1 = unit:GetAnimMoment("nw_LadderClimbOff_End", "FootLeft")
+				local t2 = unit:GetAnimMoment("nw_LadderClimbOff_End", "FootRight")
+				local hit_phase = t1 and t2 and Min(t1, t2) or t1 or t2 or GetAnimDuration(unit:GetEntity(), "nw_LadderClimbOff_End") / 2
+				t = MulDivRound(hit_phase, 1000, modifier)
+			end
 		end
-		unit:SetPos(pos2)
+		unit:SetPos(pos2, t)
 		unit:MovePlayAnimSpeedUpdate("nw_LadderClimbOff_End", nil, 0)
 	end
 	unit:SetState("nw_Standing_Idle")

@@ -7,39 +7,15 @@ DefineClass.ReservedAP = {
 
 
 	object_class = "CharacterEffect",
-	msg_reactions = {
-		PlaceObj('MsgActorReaction', {
-			ActorParam = "unit",
-			Event = "UnitBeginTurn",
-			Handler = function (self, unit)
-				
-				local function exec(self, unit)
-				local ap = unit:GetEffectValue("reserved_ap") or 0
+	unit_reactions = {
+		PlaceObj('UnitReaction', {
+			Event = "OnBeginTurn",
+			Handler = function (self, target)
+				local ap = target:GetEffectValue("reserved_ap") or 0
 				if ap > 0 then
-					unit:GainAP(ap)
+					target:GainAP(ap)
 				end
-				unit:RemoveStatusEffect("ReservedAP")
-				end
-				
-				if not IsKindOf(self, "MsgReactionsPreset") then return end
-				
-				local reaction_def = (self.msg_reactions or empty_table)[1]
-				if not reaction_def or reaction_def.Event ~= "UnitBeginTurn" then return end
-				
-				if not IsKindOf(self, "MsgActorReactionsPreset") then
-					exec(self, unit)
-				end
-				
-				if self:VerifyReaction("UnitBeginTurn", reaction_def, unit, unit) then
-					exec(self, unit)
-				end
-			end,
-			HandlerCode = function (self, unit)
-				local ap = unit:GetEffectValue("reserved_ap") or 0
-				if ap > 0 then
-					unit:GainAP(ap)
-				end
-				unit:RemoveStatusEffect("ReservedAP")
+				target:RemoveStatusEffect(self.class)
 			end,
 		}),
 	},

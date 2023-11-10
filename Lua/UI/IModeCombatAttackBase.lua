@@ -307,6 +307,21 @@ function IModeCombatBase:StartMoveAndAttack(attacker, action, target, step_pos, 
 		while not attacker:IsIdleCommand() do
 			WaitMsg("Idle", 20)
 		end
+		
+		-- Wait for other units to finish (like co-op for instance)
+		local team = attacker.team
+		while team do
+			local anyNonIdle = false
+			for i, u in ipairs(team.units) do
+				if not u:IsIdleCommand() then
+					WaitMsg("Idle", 20)
+					anyNonIdle = true
+				end
+			end
+			if not anyNonIdle then
+				break
+			end
+		end
 
 		self.move_step_position = false
 					
@@ -663,9 +678,6 @@ function OnMsg.CombatActionEnd(unit)
 		while not unit:IsIdleCommand() and g_Combat do
 			WaitMsg("Idle")
 		end
-		while g_Combat and g_Combat.camera_use do
-			Sleep(100)
-		end
 		if unit ~= SelectedObj or IsSetpiecePlaying() then return end
 		
 		local mode_dlg = GetInGameInterfaceModeDlg()
@@ -693,7 +705,16 @@ function OnMsg.CombatActionEnd(unit)
 		
 		Sleep(500)
 		if currentIgi ~= mode_dlg.class or IsSetpiecePlaying() then return end -- If the dialog mode changed in the delay, then user input overrode us.
-
+		
+		-- Retreated
+		if not IsValid(unit) then
+			local ud = gv_UnitData[unit.session_id]
+			local retreat = ud and ud.retreat_to_sector
+			if retreat then
+				return
+			end
+		end
+		
 		-- The attacker died (pindown/overwatch)
 		if not unit:CanBeControlled() or unit:IsIncapacitated() then			
 			return RestoreDefaultMode(unit, "next")

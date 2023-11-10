@@ -16,8 +16,9 @@ PlaceObj('XTemplate', {
 		PlaceObj('XTemplateTemplate', {
 			'__condition', function (parent, context) local cnt = ResolvePropObj(context) return cnt and not cnt:IsWeapon() end,
 			'__template', "RolloverInventoryBase",
-			'MinWidth', 400,
-			'MaxWidth', 450,
+			'Margins', box(10, 10, 10, 10),
+			'MinWidth', 350,
+			'MaxWidth', 350,
 		}),
 		}),
 	PlaceObj('XTemplateTemplate', {

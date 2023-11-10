@@ -11,5 +11,6 @@ DefineClass.MissingItem = {
 	Icon = "UI/Icons/Items/microchip",
 	DisplayName = T(233231085938, --[[InventoryItemCompositeDef MissingItem DisplayName]] "Code Error"),
 	DisplayNamePlural = T(955032740853, --[[InventoryItemCompositeDef MissingItem DisplayNamePlural]] "Code Errors"),
+	RestockWeight = 0,
 }
 

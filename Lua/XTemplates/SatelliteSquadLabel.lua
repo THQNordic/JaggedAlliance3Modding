@@ -86,7 +86,7 @@ PlaceObj('XTemplate', {
 			}, {
 				PlaceObj('XTemplateWindow', {
 					'comment', "update observer",
-					'__context', function (parent, context) return "SquadLabel" .. context.UniqueId end,
+					'__context', function (parent, context) return context.UniqueId and "SquadLabel" .. context.UniqueId or "ShipmentLabel" .. context.shipment.order_id end,
 					'__class', "XContextWindow",
 					'OnContextUpdate', function (self, context, ...)
 						self.parent:OnContextUpdate(self.parent.context)

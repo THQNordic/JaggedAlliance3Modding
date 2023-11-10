@@ -14,6 +14,7 @@ DefineClass.PlasmaGun_Crowbar = {
 	DisplayNamePlural = T(593438446878, --[[InventoryItemCompositeDef PlasmaGun_Crowbar DisplayNamePlural]] "Plasma Gun Crowbars"),
 	AdditionalHint = T(209695381987, --[[InventoryItemCompositeDef PlasmaGun_Crowbar AdditionalHint]] "<bullet_point> Shoots deadly plasma bolts while in perfect vacuum. Otherwise works as a crowbar\n<bullet_point> Breaks locks of doors and containers (based on Strength)\n<bullet_point> Bonus to skill checks for breaking locks\n<bullet_point> May damage the contents of containers\n<bullet_point> Loses Condition after each use\n<bullet_point> Can be repaired\n<bullet_point> Used automatically from the Inventory"),
 	Valuable = 1,
+	RestockWeight = 0,
 	skillCheckPenalty = -15,
 }
 

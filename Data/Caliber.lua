@@ -7,7 +7,7 @@ PlaceObj('Caliber', {
 })
 
 PlaceObj('Caliber', {
-	Name = T(478204811355, --[[Caliber Default 40mmGrenade Name]] "40mm Grenade"),
+	Name = T(478204811355, --[[Caliber Default 40mmGrenade Name]] "40mm"),
 	id = "40mmGrenade",
 })
 
@@ -24,7 +24,7 @@ PlaceObj('Caliber', {
 })
 
 PlaceObj('Caliber', {
-	Name = T(165805422275, --[[Caliber Default MortarShell Name]] "Mortar Shell"),
+	Name = T(165805422275, --[[Caliber Default MortarShell Name]] "Shell"),
 	id = "MortarShell",
 })
 
@@ -35,26 +35,26 @@ PlaceObj('Caliber', {
 
 PlaceObj('Caliber', {
 	ImpactForce = -1,
-	Name = T(612634424902, --[[Caliber Default 9mm Name]] "9 x 19"),
+	Name = T(612634424902, --[[Caliber Default 9mm Name]] "9mm"),
 	SortKey = 1,
 	id = "9mm",
 })
 
 PlaceObj('Caliber', {
 	ImpactForce = -1,
-	Name = T(765237503756, --[[Caliber Default 556 Name]] "5.56 x 45"),
+	Name = T(765237503756, --[[Caliber Default 556 Name]] "5.56"),
 	SortKey = 4,
 	id = "556",
 })
 
 PlaceObj('Caliber', {
-	Name = T(858798485217, --[[Caliber Default 762WP Name]] "7.62 x 39"),
+	Name = T(858798485217, --[[Caliber Default 762WP Name]] "7.62 WP"),
 	SortKey = 5,
 	id = "762WP",
 })
 
 PlaceObj('Caliber', {
-	Name = T(166875825975, --[[Caliber Default 762NATO Name]] "7.62 x 51"),
+	Name = T(166875825975, --[[Caliber Default 762NATO Name]] "7.62 NATO"),
 	SortKey = 6,
 	id = "762NATO",
 })

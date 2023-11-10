@@ -6,7 +6,7 @@ DefineClass.AIBehavior = {
 		{ id = "Comment", editor = "text", default = "" },
 		{ id = "Fallback", editor = "bool", default = true, help = "When enabled, this behavior will be considered the go-to fallback behavior for specific uses, like GuardArea archetype. If multiple behaviors are marked as Fallback, only the first one will be used." },
 		{ id = "RequiredKeywords", editor = "string_list", default = {}, item_default = "", items = AIKeywordsCombo, arbitrary_value = true, },
-		{ id = "Score", editor = "func", params = "self, unit", default = function(self, unit) return self.Weight end, },
+		{ id = "Score", editor = "func", params = "self, unit, proto_context, debug_data", default = function(self, unit, proto_context, debug_data) return self.Weight end, },
 		{ id = "turn_phase", name = "Turn Phase", editor = "choice", default = "Normal", items = function (self) return { "Early", "Normal", "Late" } end, },
 		{ id = "OptLocWeight", name = "Optimal Location Weight", editor = "number", default = 100, help = "How important is moving toward optimal location", },
 		{ id = "EndTurnPolicies", name = "End-of-Turn Location Policies", editor = "nested_list", default = false, base_class = "AIPositioningPolicy", class_filter = function (name, class, obj) return class.end_of_turn end, },
@@ -341,11 +341,8 @@ end
 -- Positioning AI behavior
 ----------------------------------------
 
-function PositioningAIScore(self, unit)
-	local context = unit and unit.ai_context
-	if not context then
-		return 0
-	end
+function PositioningAIScore(self, unit, proto_context, debug_data)
+	unit.ai_context = unit.ai_context or AICreateContext(unit, proto_context)
 	local dest, score = AIScoreReachableVoxels(unit.ai_context, self.EndTurnPolicies, 0)
 	return MulDivRound(score, self.Weight, 100)
 end
@@ -354,7 +351,7 @@ DefineClass.PositioningAI = {
 	__parents = { "AIBehavior" },
 	properties = {
 		{ id = "VoiceResponse", name = "Voice Response", editor = "text", default = "", help = "voice response to play on activation of this behavior", },
-		{ id = "Score", editor = "func", params = "self, unit", default = PositioningAIScore, },
+		{ id = "Score", editor = "func", params = "self, unit, proto_context, debug_data", default = PositioningAIScore, },
 	},
 }
 
@@ -393,7 +390,7 @@ DefineClass.HoldPositionAI = {
 	__parents = { "AIBehavior" },
 	properties = {
 		{ id = "VoiceResponse", name = "Voice Response", editor = "text", default = "", help = "voice response to play on activation of this behavior", },
-		{ id = "Score", editor = "func", params = "self, unit", default = function(self, unit) return self.Weight end, },
+		{ id = "Score", editor = "func", params = "self, unit, proto_context, debug_data", default = function(self, unit) return self.Weight end, },
 	},
 }
 

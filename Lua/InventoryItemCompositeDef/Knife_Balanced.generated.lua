@@ -13,9 +13,14 @@ DefineClass.Knife_Balanced = {
 	SubIcon = "UI/Icons/Weapons/balanced",
 	DisplayName = T(443240153343, --[[InventoryItemCompositeDef Knife_Balanced DisplayName]] "Balanced Knife"),
 	DisplayNamePlural = T(645556627800, --[[InventoryItemCompositeDef Knife_Balanced DisplayNamePlural]] "Balanced Knives"),
+	Description = T(710450771830, --[[InventoryItemCompositeDef Knife_Balanced Description]] "Nothing like being up close and personal."),
 	AdditionalHint = T(307902922198, --[[InventoryItemCompositeDef Knife_Balanced AdditionalHint]] "<bullet_point> Balanced - longer throwing range\n<bullet_point> Balanced - increased bonus from Aiming\n<bullet_point> Low attack costs"),
 	UnitStat = "Dexterity",
-	Cost = 200,
+	Cost = 1200,
+	CanAppearInShop = true,
+	Tier = 2,
+	MaxStock = 1,
+	RestockWeight = 15,
 	BaseChanceToHit = 100,
 	BaseDamage = 12,
 	AimAccuracy = 20,
@@ -28,5 +33,6 @@ DefineClass.Knife_Balanced = {
 	Noise = 1,
 	Entity = "Weapon_FC_AMZ_Knife_01",
 	HolsterSlot = "Leg",
+	CanAppearUsed = false,
 }
 

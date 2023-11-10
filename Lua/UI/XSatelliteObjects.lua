@@ -18,6 +18,8 @@ DefineClass.SectorWindow = {
 	VAlign = "top",
 	
 	SectorVisible = true,
+	layer = "satellite",
+	click_time = false,
 	
 	--RolloverTemplate = "ZuluContextMenu",
 	RolloverAnchor = "right",
@@ -52,7 +54,7 @@ function SectorWindow:Open()
 	local city = self.context.City
 	if city ~= "none" and self.context.ShowCity then
 		local cityPreset = gv_Cities[city]
-		text = cityPreset.DisplayName
+		text = cityPreset and cityPreset.DisplayName
 	end
 	
 	if text then
@@ -70,6 +72,22 @@ function SectorWindow:Open()
 		txt:SetZOrder(2)
 	end
 	
+	if IsSatelliteViewEditorActive() then
+		local status = XText:new({
+			Id = "idDbgStatus",
+			TextStyle = "DbgSectorStatus",
+			TextColor = RGB(128, 128, 128),
+			HAlign = "center",
+			VAlign = "bottom",
+			Margins = box(0, 0, 0, 5),
+			Clip = false,
+			UseClipBox = false,
+			HandleMouse = false,
+			ZOrder = 2,
+		}, self)
+		status:SetText(self.context.inherited and "Inherited" or self.context.generated and "Empty" or "")
+	end
+	
 	if self.context.Passability == "Blocked" then
 		local img = XTemplateSpawn("XImage", self)
 		img:SetImage("UI/SatelliteView/sector_empty")
@@ -79,31 +97,29 @@ function SectorWindow:Open()
 		img:SetZOrder(-1)
 	end
 	
-	if true then
-		local icon = XTemplateSpawn("XMapRollerableContextImage", self)
-		icon.Clip = false
-		icon.UseClipBox = false
-		icon:SetId("idIntelMarker")
-		icon:SetImage("UI/Icons/SateliteView/icon_neutral")
-		icon:SetHAlign("left")
-		icon:SetVAlign("bottom")
-		icon:SetVisible(false)
-		icon:SetMargins(box(10, 10, 10, 10))
-		icon:SetRolloverTemplate("RolloverGeneric")
-		icon:SetRolloverText(T(230411316470, "Intel acquired."))
-		icon:SetRolloverOffset(box(20, 0, 0, 0))
-		icon.HandleMouse = true
-		
-		local iicon = XTemplateSpawn("XImage", icon)
-		iicon.Clip = false
-		iicon.UseClipBox = false
-		iicon.Margins = box(0, 0, 0, 0)
-		iicon.VAlign = "center"
-		iicon.HAlign = "center"
-		iicon.MinHeight = 25
-		iicon.MaxHeight = 25
-		iicon:SetImage("UI/Icons/SateliteView/intel_missing")
-	end
+	local icon = XTemplateSpawn("XMapRollerableContextImage", self)
+	icon.Clip = false
+	icon.UseClipBox = false
+	icon:SetId("idIntelMarker")
+	icon:SetImage("UI/Icons/SateliteView/icon_neutral")
+	icon:SetHAlign("left")
+	icon:SetVAlign("bottom")
+	icon:SetVisible(false)
+	icon:SetMargins(box(10, 10, 10, 10))
+	icon:SetRolloverTemplate("RolloverGeneric")
+	icon:SetRolloverText(T(230411316470, "Intel acquired."))
+	icon:SetRolloverOffset(box(20, 0, 0, 0))
+	icon.HandleMouse = true
+	
+	local iicon = XTemplateSpawn("XImage", icon)
+	iicon.Clip = false
+	iicon.UseClipBox = false
+	iicon.Margins = box(0, 0, 0, 0)
+	iicon.VAlign = "center"
+	iicon.HAlign = "center"
+	iicon.MinHeight = 25
+	iicon.MaxHeight = 25
+	iicon:SetImage("UI/Icons/SateliteView/intel_missing")
 	
 	-- Is an underground sector
 	if self.context.GroundSector then
@@ -209,6 +225,10 @@ function SectorWindow:Open()
 	end
 
 	XContextWindow.Open(self)
+	
+	local sector = self.context
+	local isUnderground = sector.GroundSector
+	self.layer = isUnderground and "underground" or "satellite"
 end
 
 BlockTravelMasks = {
@@ -248,11 +268,25 @@ function SectorWindow:OnMouseButtonDown(pt, button)
 	-- but we have a shortcut bound to LeftTrigger+X :(
 	if GetUIStyleGamepad() then
 		local activeGamepad, gamepadId = GetActiveGamepadState()
-		local ltHeld = XInput.IsCtrlButtonPressed(gamepadId, "LeftTrigger")
+		local ltHeld = activeGamepad and XInput.IsCtrlButtonPressed(gamepadId, "LeftTrigger")
 		if ltHeld then return end
 	end
-
+	
+	if button == "L" and IsSatelliteViewEditorActive() then
+		self.click_time = GetPreciseTicks()
+		if terminal.IsKeyPressed(const.vkShift) then
+			return "break"
+		end
+	end
+	
 	return self.map:OnSectorClick(self, self.context, button)
+end
+
+function SectorWindow:OnMouseButtonUp(pt, button)
+	if self.click_time and button == "L" and IsSatelliteViewEditorActive() and GetPreciseTicks() - self.click_time < 150 then
+		Msg("OnSectorClick", self.context)
+	end
+	XMapWindow.OnMouseButtonUp(self, pt, button)
 end
 
 function SectorWindow:ShowTravelBlockLines(travelMode)
@@ -285,6 +319,13 @@ function SectorWindow:UpdateZoom(prevZoom, newZoom, time)
 end
 
 function SectorWindow:SetVisible(visible, ...)
+	if self.layer == "underground" then
+		local groundSector = gv_Sectors[self.context.GroundSector]
+		if groundSector and groundSector.HideUnderground then
+			visible = false
+		end
+	end
+
 	XMapWindow.SetVisible(self, visible, ...)
 	if self.idUndergroundImage then self.idUndergroundImage:SetVisible(visible) end
 end
@@ -1300,7 +1341,6 @@ function SatelliteQuestIcon:OnPress()
 		quest = quest and quest.preset
 		if not quest then return end
 		questUI:SetSelectedQuest(quest.id)
-		local a = true
 	end)
 end
 

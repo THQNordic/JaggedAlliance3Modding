@@ -285,7 +285,7 @@ function Targeting_AOE_Cone(dialog, blackboard, command, pt)
 		
 		local gamepadState = GetActiveGamepadState()
 		
-		local ptRight = gamepadState.RightThumb
+		local ptRight = gamepadState and gamepadState.RightThumb or point20
 		if ptRight ~= point20 then
 			local up = ptRight:y() < -1
 			currentLength = currentLength + 500 * (up and -1 or 1)
@@ -293,9 +293,18 @@ function Targeting_AOE_Cone(dialog, blackboard, command, pt)
 			blackboard.gamepad_aim_length = currentLength
 		end
 		
-		local ptLeft = gamepadState.LeftThumb
+		local ptLeft = gamepadState and gamepadState.LeftThumb or point20
 		if ptLeft == point20 then
-			ptLeft = blackboard.gamepad_aim_last_pos or point20
+			if blackboard.gamepad_aim_last_pos then
+				ptLeft = blackboard.gamepad_aim_last_pos 
+			else
+				local p1 = attacker:GetPos()
+				local p2 = p1 + Rotate(point(5*guim, 0), attacker:GetAngle())
+				local s1 = select(2, GameToScreen(p1))
+				local s2 = select(2, GameToScreen(p2))
+				local angle = CalcOrientation(s1, s2)
+				ptLeft = Rotate(point(guim, 0), -angle) -- screen Y is reversed
+			end
 		end
 		blackboard.gamepad_aim_last_pos = ptLeft
 		

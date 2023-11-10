@@ -65,7 +65,7 @@ PlaceObj('XTemplate', {
 					'OnContextUpdate', function (self, context, ...)
 						local unreadEmail = GetUnreadEmails()
 						if #unreadEmail == 0 then return end
-						local lastMail = unreadEmail[#unreadEmail]
+						local lastMail = unreadEmail[1]
 						local emailPreset = Emails[lastMail.id]
 						if emailPreset then
 							self:SetText(T{833470911974, "From:<newline><sender>", sender = emailPreset.sender})

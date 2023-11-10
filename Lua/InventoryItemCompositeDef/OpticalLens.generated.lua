@@ -11,5 +11,11 @@ DefineClass.OpticalLens = {
 	DisplayName = T(894385255221, --[[InventoryItemCompositeDef OpticalLens DisplayName]] "Lens"),
 	DisplayNamePlural = T(339259119696, --[[InventoryItemCompositeDef OpticalLens DisplayNamePlural]] "Lenses"),
 	AdditionalHint = T(242265758689, --[[InventoryItemCompositeDef OpticalLens AdditionalHint]] "<bullet_point> Used for creating advanced weapon components"),
+	Cost = 3400,
+	CanAppearInShop = true,
+	Tier = 2,
+	MaxStock = 1,
+	RestockWeight = 15,
+	CategoryPair = "Components",
 }
 

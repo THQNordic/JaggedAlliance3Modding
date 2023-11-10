@@ -114,6 +114,9 @@ PlaceObj('XTemplate', {
 						local itm = g_Classes[item.item]
 						child.idIcon:SetImage(itm.Icon)
 						 local dlg = GetDialog(context.control)
+						if not dlg then 
+							return 
+						end	
 						local sector_id = dlg.context.Id
 						local operation_id = dlg[1].context[1].operation
 						local res_items = SectorOperation_CalcCraftResources(sector_id, operation_id)

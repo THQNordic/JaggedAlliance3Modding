@@ -202,6 +202,10 @@ end, template = true, },
 			editor = "text", default = false, template = true, translate = true, },
 		{ id = "RemoveEffectText", help = "The merc object will be passed as context, use proper tags", 
 			editor = "text", default = false, template = true, translate = true, },
+		{ category = "Reactions", id = "OnAdded", 
+			editor = "func", default = function (self, obj)  end, template = true, params = "self, obj", },
+		{ category = "Reactions", id = "OnRemoved", 
+			editor = "func", default = function (self, obj)  end, template = true, params = "self, obj", },
 		{ category = "Effect", id = "type", name = "Type", help = '"System" effects are not either Positive or Negative for the sake of other features interacting with only Positive or Negative effects.\n"Buff" - something Positive\n"Debuff" - something Negative', 
 			editor = "combo", default = "System", template = true, items = function (self) return {"System", "Buff", "Debuff", "AttackBased"} end, },
 		{ category = "Effect", id = "lifetime", name = "Lifetime", 
@@ -338,17 +342,8 @@ DefineClass.ConditionalSpawn = {
 }
 
 function ConditionalSpawn:GetSpawnDespawnConditions(marker,spawn_once)
-	local bSpawnCond = true
-	local bDespawnCond = self.Despawn_Conditions and next(self.Despawn_Conditions)
-	for _, cond in ipairs(self.Spawn_Conditions or empty_table) do
-		bSpawnCond = cond:Evaluate(self) and bSpawnCond
-		if not bSpawnCond then break end
-	end
-	for _, cond in ipairs(self.Despawn_Conditions or empty_table) do
-		bDespawnCond = cond:Evaluate(self)  and bDespawnCond
-		if not bDespawnCond then break end
-	end
-	
+	local bSpawnCond = EvalConditionList(self.Spawn_Conditions, self)
+	local bDespawnCond = next(self.Despawn_Conditions) and EvalConditionList(self.Despawn_Conditions, self)
 	return bSpawnCond, bDespawnCond
 end
 
@@ -1303,7 +1298,7 @@ DefineClass.UnitMarker = {
 		{ category = "Interaction", id = "InteractionVisuals", name = "InteractionVisuals", 
 			editor = "choice", default = false, items = function (self) return AllInteractableIcons() end, },
 		{ category = "Spawn Object", id = "Side", 
-			editor = "choice", default = "neutral", items = function (self) return table.map(GetCurrentCampaignPreset().Sides, "Id") end, },
+			editor = "choice", default = "neutral", items = function (self) return Sides end, },
 		{ id = "kill_on_spawn", 
 			editor = "bool", default = false, dont_save = true, no_edit = true, },
 		{ category = "Spawn Object", id = "Persistent", help = 'triggering the spawn multiple times will result in the same units, preserving any changes in their data; this is ignored if the template to be spawned has a non-empty "Persistent Session Id" (works as if it is enabled)', 
@@ -1360,12 +1355,19 @@ function UnitMarker:SpawnObjects()
 	
 	if pts and #pts > 0 then
 		local idx = template_idx
-		local unit_template_id = self.UnitDataSpawnDefs[idx].UnitDataDefId
-		local name = self.UnitDataSpawnDefs[idx].Name
+		local spawnEntry = self.UnitDataSpawnDefs[idx]
+		local unit_template_id = spawnEntry.UnitDataDefId
+		local name = spawnEntry.Name
 		local pos = pts[1]
 		
 		-- check for existing UnitData for this session_id, if the unit has died skip the spawn
 		local unit_data = gv_UnitData and gv_UnitData[session_id]
+		
+		if unit_data and unit_data.HealPersistentOnSpawn and not unit_data:IsDead() then
+			unit_data:RemoveAllStatusEffects()
+			unit_data.HitPoints = unit_data.MaxHitPoints
+		end
+	
 		if not (unit_data and unit_data:IsDead()) then
 			-- If changing the template id of a unit we need to recreate the unit data.
 			if unit_data and unit_data.class ~= unit_template_id then
@@ -1954,6 +1956,8 @@ end, read_only = true, no_edit = true, params = "self, baseLevel", },
 			editor = "set", default = false, template = true, items = function (self) return { "Weaponrs", "Weaponls" } end, },
 		{ category = "General", id = "PersistentSessionId", name = "Persistent Session Id", help = "optional, all units spawned from this template will use the specified session id", 
 			editor = "text", default = false, template = true, },
+		{ category = "General", id = "HealPersistentOnSpawn", name = "Heal Persistent Unit On Spawn", help = "if this unit is a persistent unit, it will be healed once spawned from a unit marker", 
+			editor = "bool", default = false, template = true, },
 		{ category = "Voice", id = "VoiceResponseId", name = "Voice Response Id", help = "The VoiceResponse preset used be this unit; same as the unit Id by default", 
 			editor = "preset_id", default = false, template = true, preset_class = "VoiceResponse", },
 		{ category = "Voice", id = "FallbackMissingVR", name = "FallbackMissingVR", help = "If no vr is found for this unit. Use this fallback unit for the vr. Applies only for Humans.", 
@@ -2092,19 +2096,19 @@ function UnitProperties:EquipStartingGear(items)
 	end
 	
 	-- make sure all equipped firearms have ammo
-	for _, slot in ipairs({"Handheld A", "Handheld B"}) do
-		self:ForEachItemInSlot(slot, "Firearm", function(weapon)
-			if not weapon.ammo or weapon.ammo.Amount <= 0 then
-				local ammo = GetAmmosWithCaliber(weapon.Caliber, "sort")[1]
-				if ammo then
-					local tempAmmo = PlaceInventoryItem(ammo.id)
-					tempAmmo.Amount = tempAmmo.MaxStacks
-					weapon:Reload(tempAmmo, "suspend_fx")
-					DoneObject(tempAmmo)
-				end
+	local function reload_weapon(weapon)
+		if not weapon.ammo or weapon.ammo.Amount <= 0 then
+			local ammo = GetAmmosWithCaliber(weapon.Caliber, "sort")[1]
+			if ammo then
+				local tempAmmo = PlaceInventoryItem(ammo.id)
+				tempAmmo.Amount = tempAmmo.MaxStacks
+				weapon:Reload(tempAmmo, "suspend_fx")
+				DoneObject(tempAmmo)
 			end
-		end)
+		end
 	end
+	self:ForEachItemInSlot("Handheld A", "Firearm", reload_weapon)
+	self:ForEachItemInSlot("Handheld B", "Firearm", reload_weapon)
 	
 	-- place the rest in Inventory slot
 	for i, item in ipairs(items) do
@@ -2142,16 +2146,16 @@ function UnitProperties:TryLoadAmmo(slot, weapon_class, ammo_id)
 		StoreErrorSource(self, string.format("Unit %s trying to load invalid ammo type '%s'", self.unitdatadef_id or self.class, ammo_id))
 		return
 	end
-	self:ForEachItemInSlot(slot, weapon_class, function(weapon)
-		if weapon.Caliber ~= ammo.Caliber then
+	self:ForEachItemInSlot(slot, weapon_class, function(weapon, slot_name, left, top, self, ammo_id, caliber)
+		if weapon.Caliber ~= caliber then
 			StoreErrorSource(self, string.format("Unit %s trying to load incompatible ammo type '%s' in their '%s'", self.unitdatadef_id or self.class, ammo_id, weapon.class))
 			return
 		end
 		local tempAmmo = PlaceInventoryItem(ammo_id)
 		tempAmmo.Amount = tempAmmo.MaxStacks
 		weapon:Reload(tempAmmo, "suspend_fx")
-		DoneObject(tempAmmo)	
-	end)
+		DoneObject(tempAmmo)
+	end, self, ammo_id, ammo.Caliber)
 end
 
 function UnitProperties:GetMaxActionPoints()
@@ -2301,82 +2305,6 @@ function UnitProperties:Getbase_BaseCrit(weapon)
 	end
 	
 	return weapon.base_CritChance + MulDivRound(weapon.base_CritChanceScaled, self:GetLevel(), 10)
-end
-
-function UnitProperties:GetPersonalMorale()
-	local teamMorale = self.team and self.team.morale or 0
-	--modifiers to personal morale for each merc
-	local personalMorale = 0
-	--reduce morale for at least one disliked merc in team
-	local isDisliking = false
-	for _, dislikedMerc in ipairs(self.Dislikes) do
-		local dislikedIndex = table.find(self.team.units, "session_id", dislikedMerc)
-		if dislikedIndex and not self.team.units[dislikedIndex]:IsDead() then
-			personalMorale = personalMorale - 1
-			isDisliking = true
-			break
-		end
-	end
-	--increase morale for no disliked and at least one liked merc
-	if not isDisliking then
-		for _, likedMerc in ipairs(self.Likes) do
-			local likedIndex = table.find(self.team.units, "session_id", likedMerc)
-			if likedIndex and not self.team.units[likedIndex]:IsDead()  then
-				personalMorale = personalMorale + 1
-				break
-			end
-		end
-	end
-	--lower morale if below 50% or 3+ wounds (REVERT for psycho perk)
-	local isWounded = false
-	local idx = self:HasStatusEffect("Wounded")
-	if idx and self.StatusEffects[idx].stacks >= 3 then
-		isWounded = true
-	end
-	if self.HitPoints < MulDivRound(self.MaxHitPoints, 50, 100) or isWounded then
-		if HasPerk(self, "Psycho") then
-			personalMorale = personalMorale + 1
-		else
-			personalMorale = personalMorale - 1
-		end
-	end
-	--lower morale if liked merc has died recently
-	for _, likedMerc in ipairs(self.Likes) do
-		local ud = gv_UnitData[likedMerc]
-		if ud and ud.HireStatus == "Dead" then
-			local deathDay = ud.HiredUntil
-			if deathDay + 7 * const.Scale.day > Game.CampaignTime then
-				personalMorale = personalMorale - 1
-				break
-			end
-		end
-	end
-	--lower morale if claustrophobic or zoophobic perk is active
-	if self:HasStatusEffect("ZoophobiaChecked") then
-		personalMorale = personalMorale - 1
-	end
-	if self:HasStatusEffect("ClaustrophobiaChecked") then
-		personalMorale = personalMorale - 1
-	end
-	--lower morale if friendly fire
-	if self:HasStatusEffect("FriendlyFire") then
-		personalMorale = personalMorale - 1
-	end
-	--lower/increase if proud/guilty effect is on
-	if self:HasStatusEffect("Conscience_Guilty") then
-		personalMorale = personalMorale - 1
-	end
-	if self:HasStatusEffect("Conscience_Sinful") then
-		personalMorale = personalMorale - 2
-	end
-	if self:HasStatusEffect("Conscience_Proud") then
-		personalMorale = personalMorale + 1
-	end
-	if self:HasStatusEffect("Conscience_Righteous") then
-		personalMorale = personalMorale + 2
-	end
-	
-	return Clamp(personalMorale + teamMorale, -3, 3)
 end
 
 function UnitProperties:HasPassedTimeAfterDeath(givenTime)

@@ -3220,11 +3220,6 @@ PlaceObj('WeaponComponent', {
 			Entity = "WeaponAttA_LauncherM203",
 			Slot = "Under",
 		}),
-		PlaceObj('WeaponComponentVisual', {
-			ApplyTo = "M16A2",
-			Entity = "",
-			Slot = "Handguard",
-		}),
 	},
 	group = "M16A2 Specific",
 	id = "GrenadeLauncher_M16A1",
@@ -3233,7 +3228,7 @@ PlaceObj('WeaponComponent', {
 PlaceObj('WeaponComponent', {
 	DisplayName = T(746456549455, --[[WeaponComponent M16_Handguard DisplayName]] "Default Handguard"),
 	ModificationDifficulty = -25,
-	Slot = "Handguard",
+	Slot = "Under",
 	Visuals = {
 		PlaceObj('WeaponComponentVisual', {
 			ApplyTo = "M16A2",
@@ -3260,6 +3255,11 @@ PlaceObj('WeaponComponent', {
 			ApplyTo = "M16A2",
 			Entity = "WeaponAttA_VerticalGripM16",
 			Slot = "Grip",
+		}),
+		PlaceObj('WeaponComponentVisual', {
+			ApplyTo = "M16A2",
+			Entity = "WeaponAttA_HanguardM16A1",
+			Slot = "Handguard",
 		}),
 		PlaceObj('WeaponComponentVisual', {
 			ApplyTo = "M16A2",
@@ -6756,11 +6756,6 @@ PlaceObj('WeaponComponent', {
 			ApplyTo = "HK21",
 			Entity = "WeaponAttA_GripHK21",
 			Slot = "Under",
-		}),
-		PlaceObj('WeaponComponentVisual', {
-			ApplyTo = "M16A2",
-			Entity = "WeaponAttA_VerticalGripM16",
-			Slot = "Grip",
 		}),
 		PlaceObj('WeaponComponentVisual', {
 			ApplyTo = "G36",

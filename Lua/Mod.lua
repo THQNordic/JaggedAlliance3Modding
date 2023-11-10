@@ -65,21 +65,25 @@ end
 
 function CheatNewModGame(start_type)
 	CreateRealTimeThread(function()
-		local pickedCampaign = WaitListChoice(nil, GetCampaignPresets(), "Select campaign", 1)
+		local campaignPresets = {}
+		for _, preset in pairs(CampaignPresets) do
+			table.insert(campaignPresets, preset.id)
+		end
+		local pickedCampaign = WaitListChoice(nil, campaignPresets, "Select campaign", 1)
 		if not pickedCampaign then return end
 	
 		if start_type == "quickstart" then
 			if WaitQuestion(terminal.desktop, Untranslated("Quick Start"), Untranslated("A new quick test mod game will be started. It will skip the merc hire & arrival phase.\n\nUnsaved mod changes will not be applied. Continue?"), Untranslated("Yes"), Untranslated("No")) ~= "ok" then
 				return
 			end
-			ModsReloadItems(nil, "force_reload")
-			QuickStartCampaign("HotDiamonds", {difficulty = "Normal", testModGame = true})
+			ProtectedModsReloadItems(nil, "force_reload")
+			QuickStartCampaign(pickedCampaign, {difficulty = "Normal", testModGame = true})
 		elseif start_type == "normal" then
 			if WaitQuestion(terminal.desktop, Untranslated("New Game"), Untranslated("A new test mod game will be started.\n\nUnsaved mod changes will not be applied. Continue?"), Untranslated("Yes"), Untranslated("No")) ~= "ok" then
 				return
 			end
-			ModsReloadItems(nil, "force_reload")
-			StartCampaign("HotDiamonds", {difficulty = "Normal", testModGame = true})
+			ProtectedModsReloadItems(nil, "force_reload")
+			StartCampaign(pickedCampaign, {difficulty = "Normal", testModGame = true})
 		end
 	end)
 end
@@ -109,9 +113,7 @@ function ModEditorOpen(mod)
 			}
 			local ged = OpenGedApp("ModManager", ModsList, context)
 			if ged then ged:BindObj("log", ModMessageLog) end
-			if not ModdingHelpShownOnEditorOpen 
-				and (AccountStorage.OpenModdingDocs == nil or AccountStorage.OpenModdingDocs) then
-				ModdingHelpShownOnEditorOpen = true
+			if LocalStorage.OpenModdingDocs == nil or LocalStorage.OpenModdingDocs then
 				if not Platform.developer then
 					GedOpHelpMod()
 				end
@@ -187,6 +189,24 @@ end
 
 DefineModItemPreset("AppearancePreset", { EditorName = "Appearance preset", EditorSubmenu = "Unit" })
 
+AppendClass.ModItemAppearancePreset = {
+	properties = {
+				{ id = "helpInfo", editor = "help", category = "Mod",
+					help = Untranslated([[ <em>To see the different newly exported entities in the dropdowns below you need to add their appropriate class in the entity mod item.</em>
+					
+					<em>Part  -   Class</em>
+					Body  -   CharacterBodyMale/Female
+					Head  -   CharacterHeadMale/Female
+					Pants -   CharacterPantsMale/Female
+					Armor -   CharacterArmorMale/Female
+					Chest -   CharacterChestMale/Female
+					Hip   -   CharacterHipMale/Female
+					Hat   -   CharacterHat/Female
+					Hair  -   CharacterHairMale/Female
+					]]), },
+					},
+}
+
 local function UpdateAppearanceOnSpawnedObj(id)
 	for _, unit in ipairs(g_Units) do
 		if unit.Appearance and unit.Appearance == id then
@@ -218,7 +238,6 @@ function ApplyModOptions(modsOptions)
 			end
 			AccountStorage.ModOptions[mod.id] = storage_table
 			rawset(mod.env, "CurrentModOptions", modOptions)
-				--@@@msg ApplyModOptions,mod_id- fired when the user applies changes to their mod options.
 			Msg("ApplyModOptions", mod.id)
 		end
 		SaveAccountStorage(1000)

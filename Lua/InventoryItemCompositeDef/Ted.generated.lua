@@ -12,5 +12,6 @@ DefineClass.Ted = {
 	DisplayNamePlural = T(153775721377, --[[InventoryItemCompositeDef Ted DisplayNamePlural]] "Teds"),
 	AdditionalHint = T(317995733561, --[[InventoryItemCompositeDef Ted AdditionalHint]] "Ted is dead"),
 	locked = true,
+	RestockWeight = 0,
 }
 

@@ -14,5 +14,8 @@ DefineClass.Lockpick = {
 	DisplayNamePlural = T(983215060783, --[[InventoryItemCompositeDef Lockpick DisplayNamePlural]] "Locksmith's Kits"),
 	AdditionalHint = T(336083124700, --[[InventoryItemCompositeDef Lockpick AdditionalHint]] "<bullet_point> Unlocks doors and containers (based on Mechanical)\n<bullet_point> Unskilled use may permanently damage the lock\n<bullet_point> Loses Condition after each use\n<bullet_point> Cannot be repaired\n<bullet_point> Used automatically from the Inventory"),
 	UnitStat = "Mechanical",
+	Cost = 200,
+	CanAppearInShop = true,
+	CategoryPair = "Tool",
 }
 

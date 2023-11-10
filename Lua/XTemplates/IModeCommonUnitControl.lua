@@ -563,6 +563,10 @@ PlaceObj('XTemplate', {
 								'UseClipBox', false,
 								'FoldWhenHidden', true,
 								'TextStyle', "GamepadHint",
+								'OnContextUpdate', function (self, context, ...)
+									XText.OnContextUpdate(self, context,...)
+									self:SetVisible(not g_Combat and not cameraTac.GetIsInOverview())
+								end,
 								'Translate', true,
 								'Text', T(574974041680, --[[XTemplate IModeCommonUnitControl Text]] "<ShortcutName('ExplorationSelectionToggle')> <GamepadSelectToggleDynamicText()>"),
 								'WordWrap', false,
@@ -572,6 +576,15 @@ PlaceObj('XTemplate', {
 									'__context', function (parent, context) return Selection end,
 									'__class', "XContextWindow",
 									'FoldWhenHidden', true,
+									'OnContextUpdate', function (self, context, ...)
+										self.parent:OnContextUpdate()
+									end,
+								}),
+								PlaceObj('XTemplateWindow', {
+									'__context', function (parent, context) return "cameraTac.SetOverview" end,
+									'__class', "XContextWindow",
+									'FoldWhenHidden', true,
+									'ContextUpdateOnOpen', true,
 									'OnContextUpdate', function (self, context, ...)
 										self.parent:OnContextUpdate()
 									end,
@@ -612,10 +625,26 @@ PlaceObj('XTemplate', {
 								'UseClipBox', false,
 								'FoldWhenHidden', true,
 								'TextStyle', "GamepadHint",
+								'ContextUpdateOnOpen', true,
+								'OnContextUpdate', function (self, context, ...)
+									XText.OnContextUpdate(self, context,...)
+									self:SetVisible(not cameraTac.GetIsInOverview())
+								end,
 								'Translate', true,
 								'Text', T(967392707679, --[[XTemplate IModeCommonUnitControl Text]] "<ShortcutName('toggleActivePause')> Active pause"),
 								'WordWrap', false,
-							}),
+								'HideOnEmpty', true,
+							}, {
+								PlaceObj('XTemplateWindow', {
+									'__context', function (parent, context) return "cameraTac.SetOverview" end,
+									'__class', "XContextWindow",
+									'FoldWhenHidden', true,
+									'ContextUpdateOnOpen', true,
+									'OnContextUpdate', function (self, context, ...)
+										self.parent:OnContextUpdate()
+									end,
+								}),
+								}),
 							}),
 						}),
 					PlaceObj('XTemplateTemplate', {

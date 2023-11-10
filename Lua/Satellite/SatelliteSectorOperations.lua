@@ -1065,16 +1065,18 @@ function GetOperationsInSector(sector_id)
 	return sector_operations
 end
 
+local l_get_sector_operation_resource_amount
+
 function GetSectorOperationResource(sector, item_id)
-	local amount = {count = 0}
+	l_get_sector_operation_resource_amount = 0
 --[[	-- sector inventory
 	local containers = sector.sector_inventory or empty_table
 	for cidx, container in ipairs(containers) do
 		if container[2] then -- is opened
 			local items = container[3] or empty_table
 			for idx, item in ipairs(items) do
-				if item.class == item_id then 			
-					amount.count = amount.count + (IsKindOf(item, "InventoryStack") and item.Amount or 1)
+				if item.class == item_id then
+					l_get_sector_operation_resource_amount = l_get_sector_operation_resource_amount + (IsKindOf(item, "InventoryStack") and item.Amount or 1)
 				end	
 			end
 		end
@@ -1082,11 +1084,11 @@ function GetSectorOperationResource(sector, item_id)
 --]]
 	-- bags
 	local squads = GetSquadsInSector(sector.Id)
-	for _, s in ipairs(squads or empty_table) do
+	for _, s in ipairs(squads) do
 		local bag = GetSquadBag(s.UniqueId) 
-		for i, item in ipairs(bag or empty_table) do
+		for i, item in ipairs(bag) do
 			if item.class == item_id then
-				amount.count = amount.count + (IsKindOf(item, "InventoryStack") and item.Amount or 1)
+				l_get_sector_operation_resource_amount = l_get_sector_operation_resource_amount + (IsKindOf(item, "InventoryStack") and item.Amount or 1)
 			end
 		end
 	end
@@ -1094,12 +1096,12 @@ function GetSectorOperationResource(sector, item_id)
 	local mercs = GetPlayerMercsInSector(sector.Id)
 	for _, id in ipairs(mercs) do
 		local unit = gv_UnitData[id]
-		unit:ForEachItemDef(item_id, function(item, slot, amount)
-			amount.count = amount.count + (IsKindOf(item, "InventoryStack") and item.Amount or 1)
-		end, amount)
+		unit:ForEachItemDef(item_id, function(item)
+			l_get_sector_operation_resource_amount = l_get_sector_operation_resource_amount + (IsKindOf(item, "InventoryStack") and item.Amount or 1)
+		end)
 	end
 	
-	return amount.count
+	return l_get_sector_operation_resource_amount
 end
 
 function NetSyncEvents.PaySectorOperationResource(sector_id, item_id, count)
@@ -1595,8 +1597,8 @@ end
 function XActivityItem:OnContextUpdate(item,...)
 	XInventoryItem.OnContextUpdate(self, item,...)
 	local w, h = item:GetUIWidth(), item:GetUIHeight()
-	self:SetMinWidth(tile_size*w)
-	self:SetMaxWidth(tile_size*w)
+	self:SetMinWidth(tile_size*w +( w>1 and 7 or 0))
+	self:SetMaxWidth(tile_size*w +( w>1 and 7 or 0))
 	self:SetMinHeight(tile_size*h)
 	self:SetMaxHeight(tile_size*h)
 	self:SetGridWidth(w)
@@ -1647,7 +1649,9 @@ end
 function TableWithItemsFromNet(t)
 	for i, inv_slot in ipairs(t) do
 		for ii, item_id in ipairs(inv_slot) do
-			inv_slot[ii] = g_ItemIdToItem[item_id]
+			if g_ItemIdToItem[item_id] then
+				inv_slot[ii] = g_ItemIdToItem[item_id]
+			end
 		end
 	end
 	return t
