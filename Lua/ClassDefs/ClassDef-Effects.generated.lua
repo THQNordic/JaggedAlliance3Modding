@@ -3147,7 +3147,14 @@ function SectorEnterConflict:__exec(obj, context)
 			)
 	else
 		sector.ForceConflict = false
-		ResolveConflict(sector, "no voice")
+		if gv_Sectors[gv_CurrentSectorId] == sector then
+			if sector.conflict then
+				sector.conflict.locked = false
+			end
+			CheckMapConflictResolved("no voice")
+		else
+			ResolveConflict(sector, "no voice")
+		end
 	end
 end
 

@@ -767,9 +767,11 @@ function OnMsg.UnitAnyMovementStart(unit)
 	unit:UpdateMeleeTrainingVisual()
 end
 
-function OnMsg.Idle(unit)
+function OnMsg.Idle(unit)	
 	unit:UpdateMeleeTrainingVisual()
-	UpdatePindowns()
+	if not HasAnyCombatActionInProgress("check all") then -- can be true if move_and_attack is in progress
+		UpdatePindowns()
+	end
 end
 
 OnMsg.UnitDieStart = UpdatePindowns

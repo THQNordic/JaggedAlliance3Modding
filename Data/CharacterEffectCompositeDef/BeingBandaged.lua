@@ -5,6 +5,12 @@ PlaceObj('CharacterEffectCompositeDef', {
 	'Id', "BeingBandaged",
 	'Comment', "marker effect for when being bandaged",
 	'object_class', "StatusEffect",
+	'OnAdded', function (self, obj)
+		ObjModified(obj)
+	end,
+	'OnRemoved', function (self, obj)
+		ObjModified(obj)
+	end,
 	'RemoveOnSatViewTravel', true,
 })
 

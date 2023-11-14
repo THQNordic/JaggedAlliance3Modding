@@ -472,9 +472,9 @@ PlaceObj('TextStyle', {
 })
 
 PlaceObj('TextStyle', {
-	DisabledRolloverTextColor = 4281612093,
+	DisabledRolloverTextColor = 3358865213,
 	DisabledShadowColor = 4294967295,
-	DisabledTextColor = 4281612093,
+	DisabledTextColor = 3358865213,
 	RolloverTextColor = 4280296239,
 	ShadowColor = 2701131775,
 	ShadowSize = 1,
@@ -3551,6 +3551,16 @@ PlaceObj('TextStyle', {
 	TextFont = T(477200618617, --[[TextStyle AimCopyrightTextC TextFont]] "Source Code Pro, 24"),
 	group = "Zulu PDA",
 	id = "AimCopyrightTextC",
+})
+
+PlaceObj('TextStyle', {
+	DisabledRolloverTextColor = 4280296239,
+	DisabledTextColor = 4280296239,
+	RolloverTextColor = 4280296239,
+	TextColor = 4280296239,
+	TextFont = T(459072349598, --[[TextStyle BobbyRaySectorPickButton TextFont]] "Source Code Pro Medium, 16"),
+	group = "Zulu PDA",
+	id = "BobbyRaySectorPickButton",
 })
 
 PlaceObj('TextStyle', {

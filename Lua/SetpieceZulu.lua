@@ -943,10 +943,10 @@ function SetpieceShoot.ExecThread(state, Actors, TargetType, TargetUnits, Target
 		if all_done then break end
 		WaitMsg("SetpieceShootDone", 100)
 	end
-	threads[actor] = nil
 	
 	-- go back to aiming anims
 	for _, actor in ipairs(Actors) do
+		threads[actor] = nil
 		if IsValid(actor) then
 			actor:RestoreAiming(target_pt)
 		end

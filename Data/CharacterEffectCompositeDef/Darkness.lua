@@ -15,10 +15,14 @@ PlaceObj('CharacterEffectCompositeDef', {
 	'DisplayName', T(770333565093, --[[CharacterEffectCompositeDef Darkness DisplayName]] "In Darkness"),
 	'Description', "",
 	'OnAdded', function (self, obj)
-		obj:SetHighlightReason("darkness", true)
+		if IsKindOf(obj, "Unit") then
+			obj:SetHighlightReason("darkness", true)
+		end
 	end,
 	'OnRemoved', function (self, obj)
-		obj:SetHighlightReason("darkness", nil)
+		if IsKindOf(obj, "Unit") then
+			obj:SetHighlightReason("darkness", nil)
+		end
 	end,
 	'Icon', "UI/Hud/Status effects/darkness",
 })

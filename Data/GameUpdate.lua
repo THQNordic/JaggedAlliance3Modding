@@ -2,7 +2,7 @@
 
 PlaceObj('GameUpdate', {
 	SortKey = 98,
-	Text = T(207005912397, --[[GameUpdate Update1_3 Text]] "Bobby Ray's Gun's and Things is finally open for business in Grand Chien! Head to their website and stock up on new tools of destruction and warfare at any time after liberating Ernie Village. More advanced weapons and armors will appear as you progress through the campaign."),
+	Text = T(207005912397, --[[GameUpdate Update1_3 Text]] "Bobby Ray's Guns and Things is finally open for business in Grand Chien! Head to their website and stock up on new tools of destruction and warfare at any time after liberating Ernie Village. More advanced weapons and armors will appear as you progress through the campaign."),
 	Title = T(959353497015, --[[GameUpdate Update1_3 Title]] "Update 1.3 - Codename: Vicky"),
 	group = "Default",
 	id = "Update1_3",

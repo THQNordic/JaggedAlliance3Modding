@@ -2046,35 +2046,30 @@ function AIPrecalcConeTargetZones(context, action_id, additional_target_pt, stan
 
 	-- calc cone areas for each remaining target point
 	local zones = {}
-	local angle = params.cone_angle
+	local cone_angle = params.cone_angle
 	local targets = {}
-	local attack_pos = context.unit_pos
+	local attack_pos = unit:GetPos() -- make sure we're using the current position in case the unit has moved
 	local units = table.copy(context.enemies)
 	table.iappend(units, GetAllAlliedUnits(unit))
 	local unit_sight = unit:GetSightRadius()
-	local los_any, los_targets = CheckLOS(units, unit, unit_sight, stance)
 	
-	for zi, pt in ipairs(target_pts) do		
+	for zi, pt in ipairs(target_pts) do
 		local dir = pt - attack_pos
 		if dir:Len() > 0 then
 			local target_pos = (attack_pos + SetLen(dir, max_range)):SetTerrainZ()
-			local base_shape, ms_shape = ConstructConeAreaShapes(attack_pos, target_pos, params.cone_angle)
-			
 			local zone = {
 				target_pos = target_pos,
-				poly = ms_shape,
 				units = {},
 			}
 			zones[#zones + 1] = zone
-			
+		
+			local angle = CalcOrientation(attack_pos, pt)
+			local los_any, los_targets = CheckLOS(units, unit, unit:GetDist(target_pos), nil, cone_angle, angle)
 			if los_any then
-				for i, los in ipairs(los_targets) do
-					if los then
-						local target_unit = units[i]
-						if target_unit ~= unit and IsValidTarget(target_unit) and IsPointInsidePoly2D(target_unit:GetPos(), zone.poly) then
-							zone.units[#zone.units + 1] = target_unit
-							table.insert_unique(targets, target_unit)
-						end
+				for i, target_unit in ipairs(units) do
+					if los_targets[i] and IsValidTarget(target_unit) then
+						zone.units[#zone.units + 1] = target_unit
+						table.insert_unique(targets, target_unit)
 					end
 				end
 			end

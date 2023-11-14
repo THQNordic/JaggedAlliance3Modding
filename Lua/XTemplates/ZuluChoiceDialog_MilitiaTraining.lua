@@ -168,7 +168,7 @@ PlaceObj('XTemplate', {
 							'VAlign', "center",
 							'TextStyle', "MercStatName_Bigger",
 							'Translate', true,
-							'Text', T(879462448033, --[[XTemplate ZuluChoiceDialog_MilitiaTraining Text]] "Cost"),
+							'Text', T(363242598420, --[[XTemplate ZuluChoiceDialog_MilitiaTraining Text]] "Cost"),
 						}),
 						PlaceObj('XTemplateWindow', {
 							'__class', "XText",

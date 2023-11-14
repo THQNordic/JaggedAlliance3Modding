@@ -1374,7 +1374,8 @@ PlaceObj('CombatAction', {
 	end,
 	GetAttackWeapons = function (self, unit, args)
 		if args and args.weapon then return args.weapon end
-		return unit:GetActiveWeapons("Firearm")
+		local weapon = unit:GetActiveWeapons("Firearm")
+		return weapon -- make sure to return only 1 weapon, the attack doesn't use 2
 	end,
 	GetTargets = function (self, units)
 		local unit = units[1]
@@ -1464,7 +1465,8 @@ PlaceObj('CombatAction', {
 	end,
 	GetAttackWeapons = function (self, unit, args)
 		if args and args.weapon then return args.weapon end
-		return unit:GetActiveWeapons("Firearm")
+		local weapon = unit:GetActiveWeapons("Firearm")
+		return weapon -- make sure to return only 1 weapon, the attack doesn't use 2
 	end,
 	GetTargets = function (self, units)
 		local unit = units[1]

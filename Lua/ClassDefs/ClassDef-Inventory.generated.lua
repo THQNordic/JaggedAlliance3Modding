@@ -57,7 +57,7 @@ DefineClass.BobbyRayShopArmorProperties = {
 
 	properties = {
 		{ category = "BobbyRayShop", id = "CategoryPair", 
-			editor = "preset_id", default = "UtilityArmor", no_edit = function(self) return self.CanAppearInShop end, template = true, preset_class = "BobbyRayShopSubCategory", preset_group = "Armor", },
+			editor = "preset_id", default = "UtilityArmor", no_edit = function(self) return not self.CanAppearInShop end, template = true, preset_class = "BobbyRayShopSubCategory", preset_group = "Armor", },
 		{ category = "BobbyRayShop", id = "GetShopStats", help = "returns an array of { statName, statValue }", 
 			editor = "func", default = function (self, stacks)
 return BobbyRayStoreGetStats_Armor(self)

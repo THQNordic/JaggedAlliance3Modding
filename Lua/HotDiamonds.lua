@@ -1400,3 +1400,136 @@ function TwelveChairsChair:OnDie(...)
 	SetQuestVar(quest, "NumberChairsFound", currentCount + 1)
 	CombatObject.OnDie(self, ...)
 end
+
+
+function SavegameSessionDataFixups.PantagruelTCE(session_data)
+	if not session_data then return end
+	if not session_data.gvars then return end
+	if not session_data.gvars.gv_Quests then return end
+	if not session_data.gvars.gv_Quests["RescueBiff"] then return end
+	if not session_data.gvars.gv_Quests["RescueBiff"]["TCE_SecondPantagruelChimurenga"] then return end
+	session_data.gvars.gv_Quests["RescueBiff"]["TCE_SecondPantagruelChimurenga"] = false
+end
+
+function SavegameSessionDataFixups.G6ForcedConflict(session_data)
+	if not session_data then return end
+	if not session_data.gvars then return end
+	if not session_data.gvars.gv_Sectors then return end
+	if not session_data.gvars.gv_Sectors.G6 then return end
+	session_data.gvars.gv_Sectors.G6.ForcedConflict = false
+end
+
+function OnMsg.EnterSector() 
+	if gv_CurrentSectorId == "G6" then
+		if not gv_Sectors.G6 then return end
+		if not gv_Sectors.G6.conflict or gv_Sectors.G6.conflict["no_exploration_resolve"] then return end
+		CheckMapConflictResolved()
+	end
+	if gv_CurrentSectorId == "K16" then
+		CheckMapConflictResolved()
+	end
+end
+
+function SavegameSessionDataFixups.Sanatorium(session_data)
+	if not session_data then return end
+	if not session_data.gvars then return end
+	if not session_data.gvars.gv_Quests then return end
+	if not session_data.gvars.gv_Quests["Sanatorium"] then return end
+	if not session_data.gvars.gv_Quests["Sanatorium"]["Completed"] then return end
+	session_data.gvars.gv_Quests["Sanatorium"]["Failed"] = false
+end
+
+function SavegameSessionDataFixups.BiffDeadOnArrivalConflict(session_data)
+	if not session_data then return end
+	if not session_data.gvars then return end
+	if not session_data.gvars.gv_Quests then return end
+	if not session_data.gvars.gv_Quests["RescueBiff"] then return end
+	if not session_data.gvars.gv_Quests["RescueBiff"]["TCE_BiffDeadOnArrival"] then return end
+	if not session_data.gvars.gv_Sectors then return end
+	if not session_data.gvars.gv_Sectors["A8"].conflict then return end
+	if not session_data.gvars.gv_Sectors["A8"].conflict.locked then return end
+	session_data.gvars.gv_Sectors["A8"].conflict.locked = false
+end
+
+
+function SavegameSessionDataFixups.IlleMoratFirstEnter(session_data)
+	if not session_data then return end
+	if not session_data.gvars then return end
+	if not session_data.gvars.gv_Sectors then return end
+	if not session_data.gvars.gv_Sectors.D17 then return end
+	if not session_data.gvars.gv_Quests["Beast"] then return end	
+	if session_data.gvars.gv_Sectors.D17.last_enter_campaign_time ~= 0 then
+		session_data.gvars.gv_Quests["Beast"]["IlleMorat_FirstEnter"] = true
+	end
+end
+
+function SavegameSessionDataFixups.BeastKillTCE(session_data)
+	if not session_data then return end
+	if not session_data.gvars then return end
+	if not session_data.gvars.gv_Quests then return end
+	if not session_data.gvars.gv_Quests["Beast"] then return end
+	if session_data.gvars.gv_Quests["Beast"]["TCE_RemoveConflict"] then return end
+	session_data.gvars.gv_Quests["Beast"]["completed_tce"] = false	
+end
+
+function SavegameSessionDataFixups.FaucheuxEndgame(session_data)
+	if not session_data then return end
+	if not session_data.gvars then return end
+	if not session_data.gvars.gv_Quests then return end
+	if not session_data.gvars.gv_Quests["05_TakeDownFaucheux"] then return end
+	if not session_data.gvars.gv_Quests["05_TakeDownFaucheux"]["FaucheuxEscaped"] then return end
+	session_data.gvars.gv_Quests["05_TakeDownFaucheux"]["FaucheuxDead"] = false
+	
+	if not session_data.gvars.gv_Quests["06_Endgame"] then return end
+	session_data.gvars.gv_Quests["06_Endgame"]["Outro_PeaceRestored"] = false
+end
+
+function SavegameSessionDataFixups.PierreHanging(session_data)
+	if not session_data then return end
+	if not session_data.gvars then return end
+	if not session_data.gvars.gv_Quests then return end
+	if not session_data.gvars.gv_Quests["RescueHerMan"] then return end	
+	if not session_data.gvars.gv_Quests["RescueHerMan"]["HangingActive"] then return end
+	if not session_data.gvars.gv_Quests["PierreDefeated"] then return end
+	if not session_data.gvars.gv_Quests["PierreDefeated"]["PierreJoined"] then return end
+	session_data.gvars.gv_Quests["RescueHerMan"]["HangingActive"] = false
+end
+
+function SavegameSessionDataFixups.OldDiamond(session_data)
+	if not session_data then return end
+	if not session_data.gvars then return end
+	if not session_data.gvars.gv_Quests then return end
+	if not session_data.gvars.gv_Quests["OldDiamond"] then return end
+	if not session_data.gvars.gv_Sectors["K10"].conflict then return end
+	if not session_data.gvars.gv_Quests["OldDiamond"]["TCE_ImpostorsFight"] then return end
+	
+	session_data.gvars.gv_Sectors["K10"].conflict = false
+	session_data.gvars.gv_Sectors["K10"].ForceConflict = false
+	session_data.gvars.gv_Quests["OldDiamond"]["TCE_ImpostorsFight"] = false
+end
+
+
+function SavegameSessionDataFixups.TheDump(session_data)
+	if not session_data then return end
+	if not session_data.gvars then return end
+	if not session_data.gvars.gv_Quests then return end
+	if not session_data.gvars.gv_Quests["TheTrashFief"] then return end
+	if not session_data.gvars.gv_Sectors["L9"].conflict then return end
+	if not session_data.gvars.gv_Quests["TheTrashFief"]["Completed"] then return end	
+	
+	session_data.gvars.gv_Quests["TheTrashFief"]["Completed"] = false
+	session_data.gvars.gv_Quests["TheTrashFief"]["Failed"] = true	
+	session_data.gvars.gv_Sectors["L9"].ForceConflict = false	
+	session_data.gvars.gv_Sectors["L9"].conflict.locked = false
+	
+end
+
+function SavegameSessionDataFixups.ReturnToErnie(session_data)
+	if not session_data then return end
+	if not session_data.gvars then return end
+	if not session_data.gvars.gv_Quests then return end
+	if not session_data.gvars.gv_Quests["ErnieSideQuests_WorldFlip"] then return end
+	if not session_data.gvars.gv_Quests["ErnieSideQuests_WorldFlip"]["TCE_GatherPartisans"] then return end
+	
+	session_data.gvars.gv_Quests["ErnieSideQuests_WorldFlip"]["TCE_GatherPartisans"] = false
+end

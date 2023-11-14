@@ -2402,8 +2402,8 @@ DefineClass.UnitTarget = {
 
 function UnitTarget:Match(target, unit, context)
 	if Groups[target] then
-		if IsKindOfClasses(unit, "Unit", "CheeringDummy") then
-			return unit:IsInGroup(target)
+		if IsKindOfClasses(unit, "Unit", "CheeringDummy") and unit:IsInGroup(target) then
+			return true
 		end
 	end
 	
@@ -2471,7 +2471,12 @@ function UnitTarget:GetMatchedMapUnits(target, context)
 			end
 		end
 	elseif Groups[target] then
-		units = Groups[target]
+		for _, u in ipairs(Groups[target]) do
+			if IsKindOf(u, "Unit") then
+				units = units or {}
+				units[#units+1] = u
+			end
+		end
 	end
 	return units
 end

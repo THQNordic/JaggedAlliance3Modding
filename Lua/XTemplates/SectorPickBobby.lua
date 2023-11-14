@@ -13,6 +13,10 @@ PlaceObj('XTemplate', {
 		'Id', "idTestTest",
 		'IdNode', true,
 		'Dock', "box",
+		'OnLayoutComplete', function (self)
+			-- !TODO: for some reason, the sector button's text doesn't update the transparency properly on open
+			self:UpdateButtons()
+		end,
 	}, {
 		PlaceObj('XTemplateFunc', {
 			'name', "SetSectorImage(self, dest, ...)",
@@ -42,15 +46,19 @@ PlaceObj('XTemplate', {
 		PlaceObj('XTemplateFunc', {
 			'name', "UpdateSector(self)",
 			'func', function (self)
-				-- !TODO: this is being called twice due to being called on LayoutComplete
 				local txt = self:ResolveId("idSectorName")
 				local dest = BobbyRayCartGetDeliverySector()
 				assert(dest)
 				txt:SetText(gv_Sectors[dest].display_name)
 				txt:SetTextStyle("PDABobbyStore_HG20C")
 				self:SetSectorImage(dest)
-				
-				-- !TODO: use a different visual cue for selected vs hovered?
+				-- self:UpdateButtons() -- called in LayoutComplete, because Open wasn't updating the text's transparency correctly
+			end,
+		}),
+		PlaceObj('XTemplateFunc', {
+			'name', "UpdateButtons(self)",
+			'func', function (self)
+				local dest = BobbyRayCartGetDeliverySector()
 				local sectorBtns = self:ResolveId("idSectorList")
 				for i, btn in ipairs(sectorBtns) do
 					if btn.context.Id then
@@ -189,7 +197,6 @@ PlaceObj('XTemplate', {
 							'LayoutMethod', "VList",
 							'FillOverlappingSpace', true,
 							'LayoutVSpacing', 5,
-							'Background', RGBA(0, 72, 130, 135),
 							'VScroll', "idSectorScroll",
 							'OnContextUpdate', function (self, context, ...)
 								if self.RespawnOnContext then
@@ -226,10 +233,14 @@ PlaceObj('XTemplate', {
 									'Padding', box(0, 0, 8, 0),
 									'LayoutMethod', "HList",
 									'LayoutHSpacing', 5,
+									'DisabledBackground', RGBA(255, 255, 255, 128),
 									'OnPress', function (self, gamepad)
 										self:ResolveId("node"):ChooseSector(self.context.Id)
 									end,
-									'Image', "UI/PDA/os_system_buttons.png",
+									'Image', "UI/PDA/WEBSites/Bobby Rays/shop_button.png",
+									'Columns', 4,
+									'TextStyle', "BobbyRaySectorPickButton",
+									'ColumnsUse', "abccd",
 								}, {
 									PlaceObj('XTemplateWindow', {
 										'Id', "idSectorSquare",
@@ -259,7 +270,7 @@ PlaceObj('XTemplate', {
 									PlaceObj('XTemplateFunc', {
 										'name', "SetSelected(self, selected)",
 										'func', function (self, selected)
-											self:SetImage(selected and "UI/PDA/os_system_buttons_yellow" or "UI/PDA/os_system_buttons")
+											self:SetEnabled(not selected)
 										end,
 									}),
 									}),

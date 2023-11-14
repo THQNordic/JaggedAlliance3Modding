@@ -11,6 +11,8 @@ DefineClass.CageFighting = {
 		PlaceObj('UnitReaction', {
 			Event = "PreUnitTakeDamage",
 			Handler = function (self, target, damage, attacker, attack_target, hit)
+				if target:HasStatusEffect("CageFightingToTheDeath") then return end
+				
 				if target == attack_target then
 					local hpTotal = Max(0, target.HitPoints - damage)
 					local maxHp = target:GetInitialMaxHitPoints()  -- without wounds

@@ -79,9 +79,6 @@ PlaceObj('XTemplate', {
 			'func', function (self, ...)
 				local value = not self.idSubMenu:GetVisible()
 				self.idSubMenu:SetVisible(value)
-				self.context:DeactivateFreeCamera()
-				self.idScrollArea:RespawnContent()
-				self.idActionBar:RespawnContent()
 				if Platform.console then
 					self.idActionBar:SetVisible(value)
 					self.idFreeCameraWarning:SetVisible(value and cameraFly.IsActive())

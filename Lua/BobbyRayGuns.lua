@@ -85,6 +85,63 @@ GameVar("g_BobbyRayCart", {
 	units = {}
 })
 
+-- whenever items are added to the cart, they get assigned an ordinal, such that g_BobbyRayCartOrdinalUnits[item.id] = ordinal
+-- the ordinal resets to 0 whenever the units are cleared
+-- order form's item list is sorted by ordinal
+if FirstLoad then
+	lBobbyRayCartNextOrdinal = 1
+	lBobbyRayCartOrdinalUnits = {}
+end
+local function lClearOrdinals()
+	lBobbyRayCartNextOrdinal = 1
+	lBobbyRayCartOrdinalUnits = lBobbyRayCartOrdinalUnits or {}
+	table.clear(lBobbyRayCartOrdinalUnits)
+end
+
+local function lGetNextOrdinal()
+	lBobbyRayCartNextOrdinal = lBobbyRayCartNextOrdinal + 1
+	return lBobbyRayCartNextOrdinal - 1
+end
+
+local function lRebuildOrdinals(units)
+	lClearOrdinals()
+	for item_id, item in sorted_pairs(units) do
+		lBobbyRayCartOrdinalUnits[item_id] = lGetNextOrdinal()
+	end
+end
+
+local function lHasItemOrdinal(item_id)
+	return lBobbyRayCartOrdinalUnits[item_id] and true or false
+end
+local function lGetItemOrdinal(item_id)
+	assert(lBobbyRayCartOrdinalUnits[item_id])
+	return lBobbyRayCartOrdinalUnits[item_id]
+end
+
+local function lCheckShopIdInconsistency()
+	for class, item in pairs(g_BobbyRayStore.standard) do
+		if g_BobbyRayStore.standard_ids[item.id] ~= item.class then
+			return true
+		end
+	end
+	return false
+end
+
+local function lFixShopIds()
+	table.clear(g_BobbyRayStore.standard_ids)
+	for class, item in pairs(g_BobbyRayStore.standard) do
+		g_BobbyRayStore.standard_ids[item.id] = item.class
+	end
+end
+
+function OnMsg.LoadSessionData()
+	if lCheckShopIdInconsistency() then
+		BobbyRayCartClearEverything()
+		lFixShopIds() 
+	end
+	lRebuildOrdinals(BobbyRayCartGetUnits())
+end
+
 ---------------------------------------------------------- New logic
 
 GameVar("g_BobbyRayItemsDirty", false) -- so that we don't need to update an item's "New" status on every satellite tick; GameVar to sync in multiplayer
@@ -120,7 +177,7 @@ end
 
 ---------------------------------------------------------- Shop Contents
 
-local function lGetShopItemFromId(id)
+function lGetShopItemFromId(id)
 	if g_BobbyRayStore.used[id] then return g_BobbyRayStore.used[id] end
 	return g_BobbyRayStore.standard[g_BobbyRayStore.standard_ids[id]]
 end
@@ -199,7 +256,7 @@ function BobbyRayCartUnitsToOrders()
 		local entry = lGetShopItemFromId(item_id)
 		table.insert(orders, entry)
 	end
-	table.sort(orders, function(a,b) return a.id > b.id end)
+	table.sort(orders, function(a,b) return lGetItemOrdinal(a.id) < lGetItemOrdinal(b.id) end)
 	for i=table.count(orders), min_entries - 1 do
 		table.insert(orders, empty_table)
 	end
@@ -254,6 +311,7 @@ end
 
 local function lBobbyRayCartAdd(item_id)
 	g_BobbyRayCart.units[item_id] = g_BobbyRayCart.units[item_id] and g_BobbyRayCart.units[item_id] + 1 or 1
+	if not lHasItemOrdinal(item_id) then lBobbyRayCartOrdinalUnits[item_id] = lGetNextOrdinal() end
 end
 
 local function lBobbyRayCartRemove(item_id)
@@ -267,6 +325,7 @@ end
 
 function BobbyRayCartClearUnits()
 	table.clear(g_BobbyRayCart.units)
+	lClearOrdinals()
 end
 
 function NetSyncEvents.BobbyRayCartAdd(item_id)
@@ -295,6 +354,7 @@ function BobbyRayCheckClearEmptyCartEntries()
 		for item, amount in pairs(g_BobbyRayCart.units) do
 			if amount == 0 then
 				g_BobbyRayCart.units[item] = nil
+				lBobbyRayCartOrdinalUnits[item] = nil
 			end
 		end
 		lForgetBobbyRayOrderTabState()
@@ -411,7 +471,7 @@ end
 function BobbyRayStoreGetStats_Armor(item)
 	return {
 		{ T(113963825061, "DR"), T{580888120593, "<percent(number)>", number = item.DamageReduction + item.AdditionalReduction } },
-		{ T(260685017729, "SLOT"), Untranslated(item.Slot) },
+		{ T(260685017729, "SLOT"), Presets.TargetBodyPart.Default[item.Slot].display_name },
 		{ T(842354777573, "PEN"), GetPenetrationClassUIText(item.PenetrationClass) },
 	}
 end
@@ -462,31 +522,29 @@ function PrepareShopItemsForRestock(unlocked_tier, used)
 	NetUpdateHash("PrepareShopItemsForRestock1", unlocked_tier, used)
 	-- aggregate category weights and count
 	-- !TODO: do we want to skip items that are already at max stock?
-	for _, group in ipairs(Presets.InventoryItemCompositeDef) do
-		for _, preset in ipairs(group) do
-			local item = g_Classes[preset.id]
-			local usedOrStandard = false
-			if used then 
-				usedOrStandard = item.CanAppearUsed
-			else 
-				usedOrStandard = item.CanAppearStandard
-			end
-			if item.CanAppearInShop and usedOrStandard and item.Tier <= unlocked_tier and item.RestockWeight > 0 then
-				local cat = item:GetCategory().id
-				if not category_weights[cat] then
-					category_weights[cat] = 0
-					category_count[cat] = 0
-					category_items[cat] = {}
-					category_items_set[cat] = {}
-				end
-				table.insert(category_items[cat], item)
-				category_items_set[cat][item] = true
-				category_weights[cat] = category_weights[cat] + item.RestockWeight
-				category_count[cat] = category_count[cat] + 1
-				NetUpdateHash("PrepareShopItemsForRestock2", cat, item.class, item.RestockWeight, category_count[cat], category_weights[cat])
-			end
+	ForEachPreset("InventoryItemCompositeDef", function(preset)
+		local item = g_Classes[preset.id]
+		local usedOrStandard = false
+		if used then 
+			usedOrStandard = item.CanAppearUsed
+		else 
+			usedOrStandard = item.CanAppearStandard
 		end
-	end
+		if item.CanAppearInShop and usedOrStandard and item.Tier <= unlocked_tier and item.RestockWeight > 0 then
+			local cat = item:GetCategory().id
+			if not category_weights[cat] then
+				category_weights[cat] = 0
+				category_count[cat] = 0
+				category_items[cat] = {}
+				category_items_set[cat] = {}
+			end
+			table.insert(category_items[cat], item)
+			category_items_set[cat][item] = true
+			category_weights[cat] = category_weights[cat] + item.RestockWeight
+			category_count[cat] = category_count[cat] + 1
+			NetUpdateHash("PrepareShopItemsForRestock2", cat, item.class, item.RestockWeight, category_count[cat], category_weights[cat])
+		end
+	end)
 	return category_items, category_count, category_weights, category_items_set
 end
 
@@ -620,7 +678,7 @@ end
 function BobbyRayStoreConsumeRandomStock()
 	-- standard items
 	for _, item in sorted_pairs(g_BobbyRayStore.standard) do
-		if InteractionRand(100, "BobbyRayShop") < const.BobbyRay.FakePurchase_PickProbability then
+		if item.CanBeConsumed and InteractionRand(100, "BobbyRayShop") < const.BobbyRay.FakePurchase_PickProbability then
 			local current_stock = item.Stock
 			local stock_purchased = Max(1, MulDivRound(current_stock, const.BobbyRay.FakePurchase_StockConsumedMin, 100) + MulDivRound(current_stock, InteractionRand(const.BobbyRay.FakePurchase_StockConsumedMax - const.BobbyRay.FakePurchase_StockConsumedMin + 1, "BobbyRayShop"), 100))
 			assert(current_stock >= stock_purchased)
@@ -637,7 +695,7 @@ function BobbyRayStoreConsumeRandomStock()
 	
 	-- used items
 	for item_id, item in sorted_pairs(g_BobbyRayStore.used) do
-		if InteractionRand(100, "BobbyRayShop") < const.BobbyRay.FakePurchase_PickProbability then
+		if item.CanBeConsumed and InteractionRand(100, "BobbyRayShop") < const.BobbyRay.FakePurchase_PickProbability then
 			bobby_restock_print("Consumed", item.class, "(Used)")
 			g_BobbyRayStore.used[item.id] = nil
 		end
@@ -822,16 +880,18 @@ function BobbyRayShopFinishPurchase()
 	
 	-- update store
 	for item_id, amount in pairs(units) do
-		local item = lGetShopItemFromId(item_id)
-		if item.Used then
-			assert(g_BobbyRayStore.used[item.id])
-			g_BobbyRayStore.used[item.id] = nil
-		else
-			assert(g_BobbyRayStore.standard[item.class] and g_BobbyRayStore.standard[item.class].Stock >= amount)
-			g_BobbyRayStore.standard[item.class].Stock = g_BobbyRayStore.standard[item.class].Stock - amount
-			if g_BobbyRayStore.standard[item.class].Stock == 0 then
-				g_BobbyRayStore.standard[item.class] = nil
-				g_BobbyRayStore.standard_ids[item.id] = nil
+		if amount > 0 then
+			local item = lGetShopItemFromId(item_id)
+			if item.Used then
+				assert(g_BobbyRayStore.used[item.id])
+				g_BobbyRayStore.used[item.id] = nil
+			else
+				assert(g_BobbyRayStore.standard[item.class] and g_BobbyRayStore.standard[item.class].Stock >= amount)
+				g_BobbyRayStore.standard[item.class].Stock = g_BobbyRayStore.standard[item.class].Stock - amount
+				if g_BobbyRayStore.standard[item.class].Stock == 0 then
+					g_BobbyRayStore.standard[item.class] = nil
+					g_BobbyRayStore.standard_ids[item.id] = nil
+				end
 			end
 		end
 	end
@@ -937,9 +997,11 @@ function NetSyncEvents.CreateTimerBeforeAction(mode)
 		dialog:Close()
 
 		if mode == "clear-store" then
+			if IsBobbyRayOpen("cart") then OpenBobbyRayPage() end
 			BobbyRayStoreClear()
 			ObjModified(g_BobbyRayStore)
 		elseif mode == "clear-order" then
+			if IsBobbyRayOpen("cart") then OpenBobbyRayPage() end
 			BobbyRayCartClearEverything()
 			ObjModified(g_BobbyRayCart)
 		elseif mode == "finish-order" then
@@ -1053,7 +1115,6 @@ function ShipmentUIUpdateMovement(shipment_window)
 end
 
 function ArrivingShipmentTravelThread(shipment_window)
-	print("Processing shipment travel thread...")
 	local shipment = shipment_window.context.shipment
 	local sectorId = shipment.sector_id
 	local sY, sX = sector_unpack(sectorId)

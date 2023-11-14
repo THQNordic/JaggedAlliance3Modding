@@ -372,11 +372,12 @@ config.DebugReplayDesync = true
 
 config.PhotoMode_DisablePhotoFilter = true
 config.PhotoMode_DisableBloomStrength = true
+config.PhotoMode_SlidersDpadOnly = false
+config.PhotoMode_FreeCameraPositionChange = false
+
 hr.EnablePreciseSelection = 1
---config.PhotoMode_DisableDOF = true
 
 if Platform.ps4 then
 	config.AutorunLoadingScreenProgressDuration = 70 * 1000
 end
 
-config.PhotoMode_SlidersDpadOnly = false

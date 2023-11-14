@@ -7,6 +7,12 @@ DefineClass.BeingBandaged = {
 
 
 	object_class = "StatusEffect",
+	OnAdded = function (self, obj)
+		ObjModified(obj)
+	end,
+	OnRemoved = function (self, obj)
+		ObjModified(obj)
+	end,
 	RemoveOnSatViewTravel = true,
 }
 

@@ -1230,7 +1230,18 @@ function IModeCommonUnitControl:UpdateTarget(pos)
 			elseif action.id == "MarkTarget" then
 				SetAPIndicator(1, "attack", T(163504056969, "Prepare Takedown"), "appending")
 			elseif not action or action.AimType ~= "melee-charge" then
-				local apCost = action:GetAPCost(SelectedObj, { target = mouse_obj })
+				local breakdown = {}
+				local apCost = action:GetAPCost(SelectedObj, { target = mouse_obj, ap_cost_breakdown = breakdown })
+				if breakdown.move_cost and breakdown.attack_cost then
+					local free_move_ap_used = Min(breakdown.move_cost or 0, SelectedObj.free_move_ap)
+					apCost = apCost - Max(0, free_move_ap_used)
+					-- round the cost to match before/after AP readings
+					local unitAp = SelectedObj:GetUIActionPoints()
+					local before = unitAp / const.Scale.AP
+					local after = (unitAp - apCost) / const.Scale.AP -- free move is already accounted for in apCost
+					apCost = (before - after) * const.Scale.AP
+
+				end
 				SetAPIndicator(apCost > 0 and apCost or false, "attack")
 			end
 			self.penalty = self.penalty or 0

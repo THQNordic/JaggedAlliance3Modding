@@ -137,7 +137,7 @@ PlaceObj('ClassDef', {
 		'category', "BobbyRayShop",
 		'id', "CategoryPair",
 		'no_edit', "expression",
-		'no_edit_expression', function (self) return self.CanAppearInShop end,
+		'no_edit_expression', function (self) return not self.CanAppearInShop end,
 		'template', true,
 		'preset_class', "BobbyRayShopSubCategory",
 		'preset_group', "Armor",

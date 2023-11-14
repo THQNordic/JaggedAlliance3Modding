@@ -4539,8 +4539,8 @@ PlaceObj('ClassDef', {
 		'params', "target, unit, context",
 		'code', function (self, target, unit, context)
 			if Groups[target] then
-				if IsKindOfClasses(unit, "Unit", "CheeringDummy") then
-					return unit:IsInGroup(target)
+				if IsKindOfClasses(unit, "Unit", "CheeringDummy") and unit:IsInGroup(target) then
+					return true
 				end
 			end
 			
@@ -4614,7 +4614,12 @@ PlaceObj('ClassDef', {
 					end
 				end
 			elseif Groups[target] then
-				units = Groups[target]
+				for _, u in ipairs(Groups[target]) do
+					if IsKindOf(u, "Unit") then
+						units = units or {}
+						units[#units+1] = u
+					end
+				end
 			end
 			return units
 		end,

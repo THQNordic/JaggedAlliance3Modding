@@ -459,7 +459,7 @@ function UltraPresetWarning(new_obj, original_obj, category)
 		local ok = WaitQuestion(
 			terminal.desktop, 
 			T(145768933497, "Video mode change"), 
-			T{"<ultraPresetWaringT>\n\n<ultraPresetConfirmationT>", ultraPresetWaringT = ultraPresetWaringT, ultraPresetConfirmationT = ultraPresetConfirmationT},
+			T{776508122432, "<ultraPresetWaringT>\n\n<ultraPresetConfirmationT>", ultraPresetWaringT = ultraPresetWaringT, ultraPresetConfirmationT = ultraPresetConfirmationT},
 			T(689884995409, "Yes"), 
 			T(782927325160, "No")) == "ok"
 		if not LocalStorage.ShowedUltraWarning then

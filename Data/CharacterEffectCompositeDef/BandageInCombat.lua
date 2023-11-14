@@ -56,12 +56,10 @@ PlaceObj('CharacterEffectCompositeDef', {
 	'OnRemoved', function (self, obj)
 		local target = obj:GetBandageTarget()
 		if not g_Combat then return end
+		target:RemoveStatusEffect("BeingBandaged")
 		if target and not target:IsDead() and target:IsDowned() and not target:HasStatusEffect("Unconscious") then
 			target:RemoveStatusEffect("Stabilized")
 			target:AddStatusEffect("BleedingOut")
-			target:RemoveStatusEffect("BeingBandaged")
-		elseif target == obj then
-			target:RemoveStatusEffect("BeingBandaged")
 		end
 		
 		if not obj:IsDead() then

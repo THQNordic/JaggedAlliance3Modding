@@ -137,7 +137,7 @@ PlaceObj('XTemplate', {
 			'ImageScale', point(1015, 1015),
 		}, {
 			PlaceObj('XTemplateWindow', {
-				'Padding', box(46, 25, 46, 31),
+				'Padding', box(46, 25, 46, 22),
 				'Background', RGBA(187, 0, 255, 0),
 			}, {
 				PlaceObj('XTemplateWindow', {
@@ -285,6 +285,7 @@ PlaceObj('XTemplate', {
 										'Clip', false,
 										'VScroll', "idSectorScroll",
 										'MouseWheelStep', 33,
+										'WorkUnfocused', true,
 									}, {
 										PlaceObj('XTemplateForEach', {
 											'array', function (parent, context) return BobbyRayCartUnitsToOrders() end,
@@ -319,8 +320,10 @@ PlaceObj('XTemplate', {
 							}),
 						PlaceObj('XTemplateWindow', {
 							'Id', "idDelivery",
-							'Margins', box(0, 0, 14, 0),
 							'Dock', "bottom",
+							'HAlign', "left",
+							'MinWidth', 664,
+							'MaxWidth', 664,
 							'OnLayoutComplete', function (self)
 								local b = self.box
 								self:ResolveId("idDeliveryFrameFixTop"):SetBox(b:minx(), b:miny(), b:sizex(), b:sizey())
@@ -416,7 +419,6 @@ PlaceObj('XTemplate', {
 									}),
 								PlaceObj('XTemplateWindow', {
 									'Id', "idDeliveryTotal",
-									'HAlign', "center",
 									'VAlign', "center",
 									'MinWidth', 664,
 									'MinHeight', 60,
@@ -546,7 +548,6 @@ PlaceObj('XTemplate', {
 					}),
 				PlaceObj('XTemplateWindow', {
 					'comment', "Bottom",
-					'Margins', box(0, 0, 0, -5),
 					'Dock', "bottom",
 					'VAlign', "center",
 					'Background', RGBA(255, 107, 0, 0),
@@ -560,6 +561,7 @@ PlaceObj('XTemplate', {
 							'__class', "PDACommonButtonClass",
 							'Id', "idButtonShop",
 							'Dock', "left",
+							'VAlign', "center",
 							'MinWidth', 144,
 							'LayoutMethod', "Box",
 							'DisabledBackground', RGBA(255, 255, 255, 223),
@@ -592,6 +594,7 @@ PlaceObj('XTemplate', {
 							'__class', "PDACommonButtonClass",
 							'Id', "idButtonClear",
 							'Dock', "right",
+							'VAlign', "center",
 							'MinWidth', 144,
 							'LayoutMethod', "Box",
 							'OnContextUpdate', function (self, context, ...)
@@ -627,7 +630,10 @@ PlaceObj('XTemplate', {
 						'__class', "PDACommonButtonClass",
 						'Id', "idButtonAccept",
 						'Dock', "right",
+						'VAlign', "bottom",
 						'MinWidth', 144,
+						'MinHeight', 32,
+						'MaxHeight', 32,
 						'LayoutMethod', "Box",
 						'OnContextUpdate', function (self, context, ...)
 							self:SetEnabled(self.action.ActionState() == "enabled")

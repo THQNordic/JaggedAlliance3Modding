@@ -621,7 +621,7 @@ function GetSectorConflict(sector_id)
 	return sector and sector.conflict
 end
 
-local function lCheckMapConflictResolved()
+function CheckMapConflictResolved(no_voice)
 	local sector = gv_Sectors[gv_CurrentSectorId]
 	local playerUnits = GetCurrentMapUnits("player")
 	local enemy_win = #playerUnits == 0
@@ -643,30 +643,25 @@ local function lCheckMapConflictResolved()
 			end
 		end
 		
-		ResolveConflict(sector, false, false, isRetreat)
+		ResolveConflict(sector, no_voice, false, isRetreat)
 	end
 end
 
-function CheckMapConflictResolvedForFixup()
-	lCheckMapConflictResolved()
-end
-
-
 function OnMsg.CombatEnd(combat)
 	if not combat.test_combat then
-		lCheckMapConflictResolved()
+		CheckMapConflictResolved()
 	end
 end
 
 function OnMsg.UnitDied()
 	if not g_Combat then
-		lCheckMapConflictResolved()
+		CheckMapConflictResolved()
 	end
 end
 
 function OnMsg.VillainDefeated(unit)
 	if not g_Combat then
-		lCheckMapConflictResolved()
+		CheckMapConflictResolved()
 	end
 end
 

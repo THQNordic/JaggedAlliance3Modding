@@ -261,6 +261,25 @@ PlaceObj('XTemplate', {
 					'__template', "PDAAIMBrowser",
 					'Id', "idBrowserContent",
 				}),
+				PlaceObj('XTemplateWindow', {
+					'__class', "VirtualCursorManager",
+					'Reason', "Browser",
+				}, {
+					PlaceObj('XTemplateFunc', {
+						'name', "Open(self, ...)",
+						'func', function (self, ...)
+							VirtualCursorManager.Open(self,...)
+							SetDisableMouseRightClickReason(true, "PDAAIMBrowser")
+						end,
+					}),
+					PlaceObj('XTemplateFunc', {
+						'name', "Done(self, ...)",
+						'func', function (self, ...)
+							VirtualCursorManager.Done(self,...)
+							SetDisableMouseRightClickReason(false, "PDAAIMBrowser")
+						end,
+					}),
+					}),
 				}),
 			PlaceObj('XTemplateMode', {
 				'mode', "evaluation",
@@ -269,6 +288,25 @@ PlaceObj('XTemplate', {
 					'__template', "PDAAimEvaluation",
 					'Id', "idBrowserContent",
 				}),
+				PlaceObj('XTemplateWindow', {
+					'__class', "VirtualCursorManager",
+					'Reason', "Browser",
+				}, {
+					PlaceObj('XTemplateFunc', {
+						'name', "Open(self, ...)",
+						'func', function (self, ...)
+							VirtualCursorManager.Open(self,...)
+							SetDisableMouseRightClickReason(true, "PDAAimEvaluation")
+						end,
+					}),
+					PlaceObj('XTemplateFunc', {
+						'name', "Done(self, ...)",
+						'func', function (self, ...)
+							VirtualCursorManager.Done(self,...)
+							SetDisableMouseRightClickReason(false, "PDAAimEvaluation")
+						end,
+					}),
+					}),
 				}),
 			PlaceObj('XTemplateMode', {
 				'mode', "imp",
@@ -277,6 +315,25 @@ PlaceObj('XTemplate', {
 					'__template', "PDAImpDialog",
 					'Id', "idBrowserContent",
 				}),
+				PlaceObj('XTemplateWindow', {
+					'__class', "VirtualCursorManager",
+					'Reason', "Browser",
+				}, {
+					PlaceObj('XTemplateFunc', {
+						'name', "Open(self, ...)",
+						'func', function (self, ...)
+							VirtualCursorManager.Open(self,...)
+							SetDisableMouseRightClickReason(true, "PDAImpDialog")
+						end,
+					}),
+					PlaceObj('XTemplateFunc', {
+						'name', "Done(self, ...)",
+						'func', function (self, ...)
+							VirtualCursorManager.Done(self,...)
+							SetDisableMouseRightClickReason(false, "PDAImpDialog")
+						end,
+					}),
+					}),
 				}),
 			PlaceObj('XTemplateMode', {
 				'mode', "landing",
@@ -284,6 +341,25 @@ PlaceObj('XTemplate', {
 				PlaceObj('XTemplateTemplate', {
 					'__template', "PDABrowserLanding",
 				}),
+				PlaceObj('XTemplateWindow', {
+					'__class', "VirtualCursorManager",
+					'Reason', "Browser",
+				}, {
+					PlaceObj('XTemplateFunc', {
+						'name', "Open(self, ...)",
+						'func', function (self, ...)
+							VirtualCursorManager.Open(self,...)
+							SetDisableMouseRightClickReason(true, "PDABrowserLanding")
+						end,
+					}),
+					PlaceObj('XTemplateFunc', {
+						'name', "Done(self, ...)",
+						'func', function (self, ...)
+							VirtualCursorManager.Done(self,...)
+							SetDisableMouseRightClickReason(false, "PDABrowserLanding")
+						end,
+					}),
+					}),
 				}),
 			PlaceObj('XTemplateMode', {
 				'mode', "banner_page",
@@ -319,6 +395,25 @@ PlaceObj('XTemplate', {
 					'__template', "PDABrowserMortuary",
 					'Id', "PDABrowserMortuary",
 				}),
+				PlaceObj('XTemplateWindow', {
+					'__class', "VirtualCursorManager",
+					'Reason', "Browser",
+				}, {
+					PlaceObj('XTemplateFunc', {
+						'name', "Open(self, ...)",
+						'func', function (self, ...)
+							VirtualCursorManager.Open(self,...)
+							SetDisableMouseRightClickReason(true, "PDABrowserMortuary")
+						end,
+					}),
+					PlaceObj('XTemplateFunc', {
+						'name', "Done(self, ...)",
+						'func', function (self, ...)
+							VirtualCursorManager.Done(self,...)
+							SetDisableMouseRightClickReason(false, "PDABrowserMortuary")
+						end,
+					}),
+					}),
 				}),
 			PlaceObj('XTemplateMode', {
 				'mode', "page_error",
@@ -339,6 +434,25 @@ PlaceObj('XTemplate', {
 				PlaceObj('XTemplateTemplate', {
 					'__template', "PDABrowserError",
 				}),
+				PlaceObj('XTemplateWindow', {
+					'__class', "VirtualCursorManager",
+					'Reason', "Browser",
+				}, {
+					PlaceObj('XTemplateFunc', {
+						'name', "Open(self, ...)",
+						'func', function (self, ...)
+							VirtualCursorManager.Open(self,...)
+							SetDisableMouseRightClickReason(true, "PDABrowserError")
+						end,
+					}),
+					PlaceObj('XTemplateFunc', {
+						'name', "Done(self, ...)",
+						'func', function (self, ...)
+							VirtualCursorManager.Done(self,...)
+							SetDisableMouseRightClickReason(false, "PDABrowserError")
+						end,
+					}),
+					}),
 				}),
 			PlaceObj('XTemplateMode', {
 				'mode', "bobby_ray_shop",
@@ -374,26 +488,11 @@ PlaceObj('XTemplate', {
 					'IgnoreMissing', true,
 					'Id', "idBrowserContent",
 				}),
+				PlaceObj('XTemplateWindow', {
+					'__class', "VirtualCursorManager",
+					'Reason', "Browser",
 				}),
-			}),
-		PlaceObj('XTemplateWindow', {
-			'__class', "VirtualCursorManager",
-			'Reason', "Browser",
-		}, {
-			PlaceObj('XTemplateFunc', {
-				'name', "Open(self, ...)",
-				'func', function (self, ...)
-					VirtualCursorManager.Open(self,...)
-					SetDisableMouseRightClickReason(true, "Browser")
-				end,
-			}),
-			PlaceObj('XTemplateFunc', {
-				'name', "Done(self, ...)",
-				'func', function (self, ...)
-					VirtualCursorManager.Done(self,...)
-					SetDisableMouseRightClickReason(false, "Browser")
-				end,
-			}),
+				}),
 			}),
 		}),
 })

@@ -738,6 +738,38 @@ function Interactable:GetDynamicData(data)
 	end
 end
 
+function SavegameSectorDataFixups.FixupInteractableEnable(metadata, lua_ver, data)
+	-- up to 339675 only false was saved
+	-- between 339676 and 344684 both false and true were saved
+	-- after 344685 only true is saved
+	
+	if lua_ver < 339676 then
+		local a = true
+		for i, m in ipairs(metadata.dynamic_data) do
+			local objHandle = m.handle
+			local object = HandleToObject[objHandle]
+			local isInteractable = false
+			if object and IsKindOf(object, "Interactable") then
+				isInteractable = true
+			else
+				local toSpawn = metadata.spawn or empty_table
+				local objectToSpawnIdx = table.find(toSpawn, objHandle)
+				if objectToSpawnIdx then
+					local class = toSpawn[objectToSpawnIdx - 1]
+					class = class and g_Classes[class]
+					if class and IsKindOf(class, "Interactable") then
+						isInteractable = true
+					end
+				end
+			end
+			
+			if isInteractable and m.enabled == nil then
+				m.enabled = true
+			end
+		end
+	end
+end
+
 function Interactable:GetInteractableBadgeSpot()
 	if self.BadgePosition ~= "average" then return "Origin" end
 	local sumX = 0

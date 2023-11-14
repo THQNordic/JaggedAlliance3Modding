@@ -143,14 +143,14 @@ local function lEmailNotificationPopup(emailNotification)
 end
 
 function EmailNotficationPopup()
-	CreateGameTimeThread(function()
+	CreateMapRealTimeThread(function()
 		while IsSetpiecePlaying() do
 			WaitMsg("SetpieceEnded", 100)
 		end
 		Sleep(1000)
-		local igi = GetInGameInterfaceModeDlg()
 		local emailNotificationSat = g_SatelliteUI and g_SatelliteUI:ResolveId("idEmailNotification")
 		if emailNotificationSat then lEmailNotificationPopup(emailNotificationSat) end
+		local igi = GetInGameInterfaceModeDlg()
 		local emailNotificationTac = igi and igi:ResolveId("idEmailNotification")
 		if emailNotificationTac then lEmailNotificationPopup(emailNotificationTac) end
 	end)

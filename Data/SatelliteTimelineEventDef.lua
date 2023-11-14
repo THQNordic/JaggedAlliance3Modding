@@ -82,7 +82,7 @@ PlaceObj('SatelliteTimelineEventDef', {
 			end
 		end)
 	end,
-	Text = T(941028342521, --[[SatelliteTimelineEventDef store_shipment Text]] "The shipment from Bobby Ray Guns and Things arrives."),
+	Text = T(941028342521, --[[SatelliteTimelineEventDef store_shipment Text]] "The shipment from Bobby Ray's Guns and Things arrives."),
 	Title = T(770176635424, --[[SatelliteTimelineEventDef store_shipment Title]] "Shipment arrives"),
 	group = "Default",
 	id = "store_shipment",

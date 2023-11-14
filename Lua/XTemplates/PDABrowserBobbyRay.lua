@@ -388,7 +388,8 @@ PlaceObj('XTemplate', {
 		PlaceObj('XTemplateWindow', {
 			'__class', "XText",
 			'TextStyle', "PDABobbyHighlight",
-			'Text', "Dev Actions",
+			'Translate', true,
+			'Text', T(501723542931, --[[XTemplate PDABrowserBobbyRay Text]] "Cheats"),
 			'TextHAlign', "center",
 			'TextVAlign', "center",
 		}),

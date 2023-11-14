@@ -1080,7 +1080,7 @@ end
 function SnappingScrollBar:GetThumbRange()
 	local thumb_size = self:GetThumbSize()
 	local area = (self.Horizontal and self.content_box:sizex() or self.content_box:sizey()) - thumb_size
-	local pos = self.Scroll > 0 and lMapToRange(self.Scroll, self.Min, self.Max - self.PageSize, 0, area) or 0
+	local pos = lMapToRange(self.Scroll, self.Min, self.Max - self.PageSize, 0, area)
 	return pos, pos + thumb_size
 end
 

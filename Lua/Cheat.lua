@@ -1,3 +1,8 @@
+if FirstLoad then
+	g_CheatsEnabledInC = Platform.cheats
+end
+Platform.cheats = rawget(_G, "g_CheatsEnabledInC")
+
 function AreCheatsEnabled()
 	return Platform.cheats or Platform.trailer or IsInModTestingMode()
 end

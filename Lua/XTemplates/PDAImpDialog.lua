@@ -309,25 +309,6 @@ PlaceObj('XTemplate', {
 			'ActionGamepad', "DPadUp",
 		}),
 		PlaceObj('XTemplateWindow', {
-			'__class', "VirtualCursorManager",
-			'Reason', "Imp",
-		}, {
-			PlaceObj('XTemplateFunc', {
-				'name', "Open(self, ...)",
-				'func', function (self, ...)
-					VirtualCursorManager.Open(self,...)
-					SetDisableMouseRightClickReason(true, "Browser")
-				end,
-			}),
-			PlaceObj('XTemplateFunc', {
-				'name', "Done(self, ...)",
-				'func', function (self, ...)
-					VirtualCursorManager.Done(self,...)
-					SetDisableMouseRightClickReason(false, "Browser")
-				end,
-			}),
-			}),
-		PlaceObj('XTemplateWindow', {
 			'HAlign', "center",
 			'MinWidth', 1076,
 			'MaxWidth', 1076,

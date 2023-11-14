@@ -36,6 +36,7 @@ PlaceObj('XTemplate', {
 		PlaceObj('XTemplateFunc', {
 			'name', "SetCategory(self, category, subcategory)",
 			'func', function (self, category, subcategory)
+				self:ResolveId("idSectorList"):ScrollTo(0,0)
 				BobbyRayShopSetCategory(category and category.id or nil, subcategory and subcategory.id or nil)
 				self:ResolveId("idCategory"):OnContextUpdate({category = category, subcategory = subcategory})
 				ObjModified(g_BobbyRayStore)
@@ -238,6 +239,7 @@ PlaceObj('XTemplate', {
 							'LayoutVSpacing', -7,
 							'Clip', false,
 							'VScroll', "idSectorScroll",
+							'WorkUnfocused', true,
 							'OnContextUpdate', function (self, context, ...)
 								if self.RespawnOnContext then
 									if self.window_state == "open" then
@@ -434,6 +436,7 @@ PlaceObj('XTemplate', {
 						'Clip', false,
 						'FoldWhenHidden', true,
 						'TextStyle', "PDABobbyStore_HG18E",
+						'ContextUpdateOnOpen', true,
 						'OnContextUpdate', function (self, context, ...)
 							local cart_count, cart_cost = BobbyRayCartGetAggregate()
 							local delivery_cost = BobbyRayCartGetDeliveryOption().Price
@@ -461,7 +464,8 @@ PlaceObj('XTemplate', {
 			PlaceObj('XTemplateWindow', {
 				'__class', "XText",
 				'TextStyle', "PDABobbyHighlight",
-				'Text', "Dev Actions",
+				'Translate', true,
+				'Text', T(501723542931, --[[XTemplate PDABrowserBobbyRay_Store Text]] "Cheats"),
 				'TextHAlign', "center",
 				'TextVAlign', "center",
 			}),
