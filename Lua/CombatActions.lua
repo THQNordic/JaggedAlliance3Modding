@@ -790,6 +790,21 @@ function CombatActionGetOneAttackableEnemy(action, attacker, weapon, filter, ...
 	end
 end
 
+function CombatActionFiringMetaGetUIState(self, units, args)
+	local actionState, err = CombatActionGenericAttackGetUIState(self, units, args)
+	if actionState ~= "enabled" then return actionState, err end
+	
+	-- Any firing mode should be enabled
+	local unit = units[1]
+	local _, firingModes = unit:ResolveDefaultFiringModeAction(self)
+	for i, fmAction in ipairs(firingModes) do
+		local actionEnabled = fmAction:GetUIState(units, args)
+		if actionEnabled == "enabled" then return "enabled" end
+	end
+	
+	return "disabled"
+end
+
 function CombatActionGenericAttackGetUIState(self, units, args)
 	if netInGame and (IsPaused() and not IsActivePaused()) then
 		return "disabled", AttackDisableReasons.InvalidTarget

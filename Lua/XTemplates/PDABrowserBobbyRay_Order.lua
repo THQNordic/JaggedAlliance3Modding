@@ -169,7 +169,7 @@ PlaceObj('XTemplate', {
 						'Dock', "left",
 						'TextStyle', "PDABobbyStore_HG24E_Glow",
 						'Translate', true,
-						'Text', T(959495600025, --[[XTemplate PDABrowserBobbyRay_Order Text]] "ORDER FORM"),
+						'Text', T(959495600025, --[[XTemplate PDABrowserBobbyRay_Order Text]] "CART"),
 						'TextVAlign', "bottom",
 					}),
 					PlaceObj('XTemplateWindow', {

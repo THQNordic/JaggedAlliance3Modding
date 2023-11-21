@@ -22,8 +22,8 @@ function SaveLoadObject:DoSavegame(name, lastSave, overwrite)
 	return NetSaveGameRequest(name, lastSave, overwrite)
 end
 
-function NetSyncEvents.ZuluGameLoaded(file_name)
-	Msg("ZuluGameLoaded", file_name)
+function NetSyncEvents.ZuluGameLoaded(file_name, lua_revision)
+	Msg("ZuluGameLoaded", file_name, lua_revision)
 end
 
 function SaveLoadObject:DoLoadgame(name, metadata) -- In Zulu metadata is passed as well
@@ -42,7 +42,7 @@ function LoadGame(name, params, metadata)
 	local err = oldLoadGame(name, params)
 	if not err and Game then
 		Game.isDev = metadata.isDev
-		NetSyncEvent("ZuluGameLoaded", name)
+		NetSyncEvent("ZuluGameLoaded", name, metadata and metadata.lua_revision)
 		SectorLoadingScreenClose(id, reason, tip, metadata)
 	else
 		LoadingScreenClose(id, reason)

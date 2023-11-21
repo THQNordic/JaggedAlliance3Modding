@@ -19,7 +19,7 @@ DefineClass.ShoulderToShoulder = {
 					end
 				end
 				if proc then
-					targetj:ApplyTempHitPoints(self:ResolveValue("tempHp"))
+					target:ApplyTempHitPoints(self:ResolveValue("tempHp"))
 				end
 			end,
 		}),

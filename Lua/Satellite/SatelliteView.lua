@@ -829,6 +829,18 @@ function SavegameSectorDataFixups.MilitiaChangeData(sector_data, lua_revision)
 	end
 end
 
+-- fixup of savegames with conflict with no mercs due to changes to mercs squads available for conflict (traveling squads are filtered from UI) 
+function OnMsg.ZuluGameLoaded(filename, lua_revision)
+	if lua_revision and lua_revision>346296 then return end
+	for id, sector_id in pairs(g_ConflictSectors) do
+		local playersqs = GetSquadsInSector(sector_id, "excludeTravelling", "includeMilitia", "excludeArriving", "excludeRetreating")
+		if not next(playersqs) then
+			ResolveConflict(gv_Sectors[sector_id], "no voice")			
+		end
+	end
+end
+
+
 -- Prior to this version arrival squads weren't saved as such.
 -- Try to guess based on their name.
 function SavegameSessionDataFixups.ArrivalSquads(data, meta)
@@ -1838,7 +1850,7 @@ function EnterSector(sector_id, spawn_mode, spawn_markers, save_sector, force_te
 	ChangeGameState{loading_savegame = false, entered_sector = true}
 
 	-- Load saved data
-	ApplyDynamicData()
+	local luaRevisionLoaded = ApplyDynamicData()
 
 	-- Auto create entrance markers for directions in which entrances are not placed.
 	for _, direction in sorted_pairs(const.WorldDirections) do
@@ -1901,7 +1913,7 @@ function EnterSector(sector_id, spawn_mode, spawn_markers, save_sector, force_te
 	
 	SetupTeamsFromMap()
 	UpdateSpawnersLocal()
-	Msg("EnterSector", game_start, load_game)
+	Msg("EnterSector", game_start, load_game, luaRevisionLoaded)
 	ListCallReactions(g_Units, "OnEnterSector", game_start, load_game)
 	
 	if not load_game or ambient_timeouted then

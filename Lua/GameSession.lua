@@ -1048,6 +1048,8 @@ function ApplyDynamicData()
 	-- load other 'handles' like 'combat'
 	Msg("LoadDynamicData", sector_data)
 	ResumePassEdits("ApplyDynamicData")
+	
+	return sector_data.lua_revision_on_save
 end
 
 -- Some dynamic data like object's vangle, vpos and such depend on visual properties which

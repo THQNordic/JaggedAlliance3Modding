@@ -4969,7 +4969,7 @@ PlaceObj('CombatAction', {
 		return weapon
 	end,
 	GetUIState = function (self, units, args)
-		return CombatActionGenericAttackGetUIState(self, units, args)
+		return CombatActionFiringMetaGetUIState(self, units, args)
 	end,
 	Icon = "UI/Icons/Hud/attack",
 	IdDefault = "Attackdefault",
@@ -5037,7 +5037,7 @@ PlaceObj('CombatAction', {
 		return unit:GetActiveWeapons("Firearm")
 	end,
 	GetUIState = function (self, units, args)
-		return CombatActionGenericAttackGetUIState(self, units, args)
+		return CombatActionFiringMetaGetUIState(self, units, args)
 	end,
 	Icon = "UI/Icons/Hud/attack",
 	IdDefault = "AttackDualdefault",
@@ -5111,7 +5111,7 @@ PlaceObj('CombatAction', {
 		return CombatActions[defAction]:GetMinAimRange(unit, weapon)
 	end,
 	GetUIState = function (self, units, args)
-		return CombatActionGenericAttackGetUIState(self, units, args)
+		return CombatActionFiringMetaGetUIState(self, units, args)
 	end,
 	Icon = "UI/Icons/Hud/attack",
 	IdDefault = "AttackShotgundefault",

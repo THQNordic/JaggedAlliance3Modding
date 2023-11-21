@@ -626,6 +626,7 @@ function OnMsg.ChangeMap()
 end
 
 function OnMsg.NetDisconnect(reason)
+	assert(not g_ForceLeaveGameDialog, "g_ForceLeaveGameDialog safe to ignore")
 	CreateRealTimeThread(function()
 		if GameState.loading_savegame then
 			WaitGameState({loading_savegame = false})
@@ -634,11 +635,13 @@ function OnMsg.NetDisconnect(reason)
 			WaitGameState({loading = false})
 		end
 		if reason == "ui_closed" or reason == "analytics" then return end
-		local msg = ShowMPLobbyError("disconnect-after-leave-game", reason)
+		if g_ForceLeaveGameDialog then return end
+		g_ForceLeaveGameDialog = ShowMPLobbyError("disconnect-after-leave-game", reason)
 		MultiplayerLobbySetUI("empty")
 		if was_client then
-			if msg then
-				WaitMsg(msg)
+			if g_ForceLeaveGameDialog then
+				WaitMsg(g_ForceLeaveGameDialog)
+				g_ForceLeaveGameDialog = false
 			end
 			
 			if not GetDialog("PreGameMenu") then
@@ -653,7 +656,7 @@ if FirstLoad then
 end
 
 function OnGuestForceLeaveGame(reason)
-	assert(not g_ForceLeaveGameDialog)
+	assert(not g_ForceLeaveGameDialog, "g_ForceLeaveGameDialog safe to ignore")
 	if not CanYield() then
 		CreateRealTimeThread(OnGuestForceLeaveGame, reason)
 		return
@@ -666,6 +669,7 @@ function OnGuestForceLeaveGame(reason)
 	WaitLoadingScreenClose()
 	
 	if reason then
+		if g_ForceLeaveGameDialog then return end
 		g_ForceLeaveGameDialog = ShowMPLobbyError("disconnect-after-leave-game", reason)
 		g_ForceLeaveGameDialog:Wait()
 		g_ForceLeaveGameDialog = false
@@ -678,7 +682,7 @@ function OnGuestForceLeaveGame(reason)
 end
 
 function NotifyPlayerLeft(player, reason)
-	assert(not g_ForceLeaveGameDialog)
+	assert(not g_ForceLeaveGameDialog, "g_ForceLeaveGameDialog safe to ignore")
 	if not CanYield() then
 		CreateRealTimeThread(NotifyPlayerLeft, player, reason)
 		return
@@ -698,10 +702,11 @@ function NotifyPlayerLeft(player, reason)
 		NetLeaveGame("host left")
 		
 		if not GetDialog("PreGameMenu") then
+			if g_ForceLeaveGameDialog then return end
 			g_ForceLeaveGameDialog = CreateMessageBox(nil, T(687826475879, "Co-Op Lobby"), T{707106868307, "Game host - <u(name)> left the game. Returning to main menu.", name = player.name}, T(325411474155, "OK"), leave_notify_obj)
 			g_ForceLeaveGameDialog:Wait()
 			g_ForceLeaveGameDialog = false
-		
+			
 			OpenPreGameMainMenu()
 			Msg("ForceLeaveGameEnd")
 			return
@@ -978,6 +983,8 @@ function UIReceiveInvite(name, host_id, game_id, gameType, gameName)
 			return
 		end
 	end
+	
+	CloseDialog("Credits")
 
 	if Game or g_DisclaimerSplashScreen then
 		if g_DisclaimerSplashScreen then

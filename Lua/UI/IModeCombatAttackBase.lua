@@ -782,7 +782,7 @@ function OnMsg.CombatActionEnd(unit)
 			crosshair:UpdateAim()
 			ApplyDamagePrediction(attacker, chAction, {target = target})
 			crosshair:SetVisible(true)
-		elseif IsValid(target) and action then
+		elseif action then
 			-- Check if another attack can be afforded
 			local cost_ap = action:GetAPCost(unit) or -1
 			local cantShootAgain = cost_ap < 0 or not unit:UIHasAP(cost_ap)

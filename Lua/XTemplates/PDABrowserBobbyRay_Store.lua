@@ -408,7 +408,7 @@ PlaceObj('XTemplate', {
 						'SqueezeY', true,
 						'TextStyle', "PDABobbyStore_SCP_18MB",
 						'Translate', true,
-						'Text', T(959495600025, --[[XTemplate PDABrowserBobbyRay_Store Text]] "ORDER FORM"),
+						'Text', T(959495600025, --[[XTemplate PDABrowserBobbyRay_Store Text]] "CART"),
 						'ColumnsUse', "abccd",
 					}, {
 						PlaceObj('XTemplateCode', {
@@ -441,7 +441,7 @@ PlaceObj('XTemplate', {
 							local cart_count, cart_cost = BobbyRayCartGetAggregate()
 							local delivery_cost = BobbyRayCartGetDeliveryOption().Price
 							local units_cost = cart_cost - delivery_cost
-							self:SetText(T{506356054484, "CART: <Amount> / <money(Cost)>", Amount = cart_count, Cost = cart_cost})
+							self:SetText(T{506356054484, "<Amount> / <money(Cost)>", Amount = cart_count, Cost = cart_cost})
 							XText.OnContextUpdate(self, context, ...)
 						end,
 						'Translate', true,

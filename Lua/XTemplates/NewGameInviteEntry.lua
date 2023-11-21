@@ -39,7 +39,7 @@ PlaceObj('XTemplate', {
 					self:SetRolloverText(nil)
 				else
 					self:SetRolloverTitle(T(333935821245, "Open Gamer Card"))
-					self:SetRolloverText(T{622712774708, "Press <GamepadShortcutName('ButtonA')> to open <gamertag>'s GamerCard.", gamertag = Untranslated(self:GetName()[1])})
+					self:SetRolloverText(T{622712774708, "Press <GamepadShortcutName('ButtonA')> to open <gamertag>'s GamerCard.", gamertag = self:GetName()})
 				end
 			end,
 		}),

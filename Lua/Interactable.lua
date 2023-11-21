@@ -738,13 +738,17 @@ function Interactable:GetDynamicData(data)
 	end
 end
 
+---
+-- ============================================================
+-- SAVE GAME ISSUE FIXUP
+-- ============================================================
+---
 function SavegameSectorDataFixups.FixupInteractableEnable(metadata, lua_ver, data)
 	-- up to 339675 only false was saved
 	-- between 339676 and 344684 both false and true were saved
 	-- after 344685 only true is saved
 	
 	if lua_ver < 339676 then
-		local a = true
 		for i, m in ipairs(metadata.dynamic_data) do
 			local objHandle = m.handle
 			local object = HandleToObject[objHandle]
@@ -769,6 +773,42 @@ function SavegameSectorDataFixups.FixupInteractableEnable(metadata, lua_ver, dat
 		end
 	end
 end
+
+function Interactable:HasDisableEffect()
+	if not IsKindOf(self, "CustomInteractable") then return false end
+
+	local condEffects = self.ConditionalEffects
+	for i, condEff in ipairs(condEffects) do
+		local effects = condEff.Effects
+		for _, eff in ipairs(condEff.Effects) do
+			if IsKindOf(eff, "DisableInteractionMarkerEffect") then
+				return true
+			end
+		end
+	end
+	
+	return false
+end
+
+function OnMsg.EnterSector(_, __, lua_revision_loaded)
+	if not lua_revision_loaded then return end -- First time enter sector, no need to fixup
+	if lua_revision_loaded > 346035 then return end -- Old save, check for problems
+	
+	-- If any interactable without a disable effect is disabled
+	-- this means the save is broken by the 344685 change.
+	local count = 0
+	local interactables = MapGet("map", "Interactable")
+	for i, int in ipairs(interactables) do
+		if not int.enabled and not int:HasDisableEffect() then
+			int.enabled = true
+			count = count + 1
+		end
+	end
+	--print("~=~ applied interactable fixup, fixed", count, "interactables ~=~")
+end
+---
+-- ============================================================
+---
 
 function Interactable:GetInteractableBadgeSpot()
 	if self.BadgePosition ~= "average" then return "Origin" end
