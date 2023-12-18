@@ -290,7 +290,7 @@ function UpdatePathFX(mover_start, path, steps_obj, inside_attack_area, dialog)
 	
 	local path_radius = fx_path_width / 2
 	local goto_pos = point(point_unpack(path[1]))
-	if dialog.attacker:GetProvokePos(path, true) then
+	if dialog.attacker and dialog.attacker:GetProvokePos(path, true) then
 		steps_obj.steps_color = const.Combat.FootstepsOverwatchColor
 	else
 		steps_obj.steps_color = steps_obj:IsAttackPos(goto_pos) and const.Combat.FootstepsAttackColor or const.Combat.FootstepsColor

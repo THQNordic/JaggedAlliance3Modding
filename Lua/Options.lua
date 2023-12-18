@@ -93,6 +93,14 @@ function OnMsg.ApplyAccountOptions()
 		hr.GamepadMouseUseRightStick = GetAccountStorageOptionValue("InvertPDAThumbs")
 		hr.GamepadMouseSensitivity = GetAccountStorageOptionValue("GamepadCursorMoveSpeed")
 		
+		-- Editor mode
+		local igi = GetInGameInterfaceModeDlg()
+		if not igi then
+			hr.CameraTacMoveSpeed = GetAccountStorageOptionValue("GamepadCameraMoveSpeed")
+		end
+		hr.CameraTacZoomStepGamepad = GetAccountStorageOptionValue("GamepadCameraMoveSpeed") / 10
+		hr.CameraTacRotationSpeed = (GetAccountStorageOptionValue("GamepadCameraMoveSpeed") / 10) * 2
+
 		UpdateAllBadgesAndModes()
 		if GetUIStyleGamepad() then
 			RecreateButtonsTagLookupTable()

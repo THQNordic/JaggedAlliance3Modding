@@ -29,7 +29,7 @@ PlaceObj('XTemplate', {
 		}, {
 			PlaceObj('XTemplateTemplate', {
 				'comment', "use",
-				'__condition', function (parent, context) return context and context.item.effect_moment == "on_use" and ((gv_SatelliteView and not InventoryIsCombatMode())  or InventoryIsValidGiveDistance(context.unit,  context.slot_wnd:GetContext())) end,
+				'__condition', function (parent, context) return context and context.item.effect_moment == "on_use" and ((gv_SatelliteView and not InventoryIsCombatMode())  or InventoryIsValidGiveDistance(context.unit,  context.slot_wnd:GetContext())) and InventoryIsContainerOnSameSector(context) end,
 				'__template', "ContextMenuButton",
 				'Id', "use",
 				'FocusOrder', point(1, 1),
@@ -310,18 +310,32 @@ PlaceObj('XTemplate', {
 								if IsKindOf(context.unit, "UnitData") then
 									unit = g_Units[context.unit.session_id]
 								end
-								local args = { weapon = context.item.class, pos = context.unit:GetItemPackedPos(context.item)}
+								local weapon = context.item
+								--local args = { weapon = context.item.class, pos = context.unit:GetItemPackedPos(context.item)}
+								local args = { item_id = weapon.id, pos = context.unit:GetItemPackedPos(context.item)}
 								
 								local action = CombatActions["Reload"]										
 								local cost_ap = action:GetAPCost(unit, args)
+								local min_ap, max_ap = cost_ap, cost_ap
+								if IsKindOf(weapon, "FirearmBase") then
+									for slot, sub in pairs(weapon.subweapons) do
+										args.item_id = sub.id
+										local ap = action:GetAPCost(unit, args)
+										min_ap = Min(min_ap, ap)
+										max_ap = Max(max_ap, ap)
+									end
+								end
 								
-								self:SetTextStyle((rollover and self.enabled) and "SatelliteContextMenuTextRollover" or "SatelliteContextMenuText")
+								self:SetTextStyle((rollover and self.enabled) and "SatelliteContextMenuTextRollover" or "SatelliteContextMenuText")						
 								if cost_ap > 0 then
-									local text = "<ap(cost_ap)>"
+									local text = T{463371975920, "<ap(cost_ap)>", cost_ap = cost_ap}
+									if min_ap > 0 and max_ap > 0 and min_ap < max_ap then
+										text = T{715701596831, "<ap(min)>-<ap(max)>", min = min_ap, max = max_ap }
+									end
 									if not context.unit:UIHasAP(cost_ap) then
 										text = "<color InventoryActionsTextRed>" .. text .. "</color>"
 									end
-									self:SetText(T{text, cost_ap = cost_ap})
+									self:SetText(text)
 								end
 							end,
 						}),
@@ -586,7 +600,7 @@ PlaceObj('XTemplate', {
 			}, {
 				PlaceObj('XTemplateTemplate', {
 					'comment', "split",
-					'__condition', function (parent, context) return context.item.Amount>1 and not IsKindOfClasses(context.context, "SquadBag", "SectorStash", "ItemDropContainer") end,
+					'__condition', function (parent, context) return context.item.Amount>1 and not IsKindOfClasses(context.context, "SquadBag", "ItemDropContainer") end,
 					'__template', "ContextMenuButton",
 					'Id', "split",
 					'FocusOrder', point(1, 7),
@@ -615,13 +629,13 @@ PlaceObj('XTemplate', {
 				'__condition', function (parent, context) return context and context.item:IsKindOf("Medicine") end,
 			}, {
 				PlaceObj('XTemplateGroup', {
-					'__condition', function (parent, context) return context and InventoryIsContainerOnSameSector(context) and context.item and context and context.item:IsKindOfClasses("Medkit", "FirstAidKit") end,
+					'__condition', function (parent, context) return context and InventoryIsContainerOnSameSector(context) and  context.item  and context.item:IsKindOfClasses("Medkit", "FirstAidKit", "Reanimationsset") end,
 				}, {
 					PlaceObj('XTemplateTemplate', {
 						'comment', "salvage",
 						'__condition', function (parent, context)
-							local item = context.item
-							return context and context.item and  context.item.Condition>=1 and AmountOfSalvagedMeds(item)>0
+							local item = context and context.item
+							return item and  item.Condition>=1 and AmountOfSalvagedMeds(item)>0
 						end,
 						'__template', "ContextMenuButton",
 						'Id', "salvage",
@@ -693,8 +707,8 @@ PlaceObj('XTemplate', {
 					PlaceObj('XTemplateTemplate', {
 						'comment', "refill",
 						'__condition', function (parent, context)
-							local item = context.item
-							return context and context.item and  context.item.Condition<context.item:GetMaxCondition() and  AmountOfMedsToFill(item)>0
+							local item = context and context.item
+							return item and item.Condition<item:GetMaxCondition() and  AmountOfMedsToFill(item)>0
 						end,
 						'__template', "ContextMenuButton",
 						'Id', "refill",
@@ -1108,7 +1122,7 @@ PlaceObj('XTemplate', {
 				}),
 			PlaceObj('XTemplateTemplate', {
 				'comment', "cashin",
-				'__condition', function (parent, context) return InvContextMenuFilter(context, "Valuables") end,
+				'__condition', function (parent, context) return InvContextMenuFilter(context, "Valuables") and InventoryIsContainerOnSameSector(context) end,
 				'__template', "ContextMenuButton",
 				'Id', "cashin",
 				'FocusOrder', point(1, 11),
@@ -1173,7 +1187,7 @@ PlaceObj('XTemplate', {
 				}),
 			PlaceObj('XTemplateTemplate', {
 				'comment', "cashstack",
-				'__condition', function (parent, context) return InvContextMenuFilter(context, "ValuablesStack")  and context.item and context.item.Amount>1 end,
+				'__condition', function (parent, context) return InvContextMenuFilter(context, "ValuablesStack")  and context.item and context.item.Amount>1 and InventoryIsContainerOnSameSector(context) end,
 				'__template', "ContextMenuButton",
 				'Id', "cashstack",
 				'FocusOrder', point(1, 12),

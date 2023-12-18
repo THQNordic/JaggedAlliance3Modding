@@ -8,7 +8,7 @@ PlaceObj('QuestsDef', {
 		PlaceObj('QuestKillTCEsOnCompleted', {}),
 	},
 	NoteDefs = {
-		LastNoteIdx = 7,
+		LastNoteIdx = 8,
 		PlaceObj('QuestNote', {
 			AddInHistory = true,
 			Badges = {
@@ -27,8 +27,14 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('GroupIsDead', {
-					Group = "EscapedPatients",
+				PlaceObj('QuestIsVariableBool', {
+					Condition = "or",
+					QuestId = "Sanatorium",
+					Vars = set( "CampHope_PatientsKilled" ),
+					__eval = function ()
+						local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
+						return quest.CampHope_PatientsKilled
+					end,
 				}),
 			},
 			Idx = 2,
@@ -61,17 +67,23 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('CheckOR', {
+				PlaceObj('OR', {
 					Conditions = {
-						PlaceObj('GroupIsDead', {
-							Group = "EscapedPatients",
-						}),
 						PlaceObj('QuestIsVariableBool', {
+							Condition = "or",
 							QuestId = "Sanatorium",
-							Vars = set( "CampHopeVisit_Phase2" ),
+							Vars = set( "CampHopeVisit_Phase2", "CampHope_PatientsKilled" ),
 							__eval = function ()
 								local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
-								return quest.CampHopeVisit_Phase2
+								return quest.CampHopeVisit_Phase2 or quest.CampHope_PatientsKilled
+							end,
+						}),
+						PlaceObj('QuestIsVariableBool', {
+							QuestId = "CampHope",
+							Vars = set( "Completed" ),
+							__eval = function ()
+								local quest = gv_Quests['CampHope'] or QuestGetState('CampHope')
+								return quest.Completed
 							end,
 						}),
 					},
@@ -113,8 +125,26 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('GroupIsDead', {
-					Group = "EscapedPatients",
+				PlaceObj('OR', {
+					Conditions = {
+						PlaceObj('QuestIsVariableBool', {
+							Condition = "or",
+							QuestId = "Sanatorium",
+							Vars = set( "CampHope_PatientsKilled" ),
+							__eval = function ()
+								local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
+								return quest.CampHope_PatientsKilled
+							end,
+						}),
+						PlaceObj('QuestIsVariableBool', {
+							QuestId = "CampHope",
+							Vars = set( "Completed" ),
+							__eval = function ()
+								local quest = gv_Quests['CampHope'] or QuestGetState('CampHope')
+								return quest.Completed
+							end,
+						}),
+					},
 				}),
 			},
 			Idx = 4,
@@ -142,17 +172,23 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('CheckOR', {
+				PlaceObj('OR', {
 					Conditions = {
-						PlaceObj('GroupIsDead', {
-							Group = "EscapedPatients",
-						}),
 						PlaceObj('QuestIsVariableBool', {
+							Condition = "or",
 							QuestId = "Sanatorium",
-							Vars = set( "CampHopeVisit_Phase3" ),
+							Vars = set( "CampHopeVisit_Phase3", "CampHope_PatientsKilled" ),
 							__eval = function ()
 								local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
-								return quest.CampHopeVisit_Phase3
+								return quest.CampHopeVisit_Phase3 or quest.CampHope_PatientsKilled
+							end,
+						}),
+						PlaceObj('QuestIsVariableBool', {
+							QuestId = "CampHope",
+							Vars = set( "Completed" ),
+							__eval = function ()
+								local quest = gv_Quests['CampHope'] or QuestGetState('CampHope')
+								return quest.Completed
 							end,
 						}),
 					},
@@ -183,13 +219,26 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('QuestIsVariableBool', {
-					QuestId = "Sanatorium",
-					Vars = set( "CampHope_GameOver" ),
-					__eval = function ()
-						local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
-						return quest.CampHope_GameOver
-					end,
+				PlaceObj('OR', {
+					Conditions = {
+						PlaceObj('QuestIsVariableBool', {
+							QuestId = "CampHope",
+							Vars = set( "Completed" ),
+							__eval = function ()
+								local quest = gv_Quests['CampHope'] or QuestGetState('CampHope')
+								return quest.Completed
+							end,
+						}),
+						PlaceObj('QuestIsVariableBool', {
+							Condition = "or",
+							QuestId = "Sanatorium",
+							Vars = set( "CampHope_GameOver" ),
+							__eval = function ()
+								local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
+								return quest.CampHope_GameOver
+							end,
+						}),
+					},
 				}),
 			},
 			Idx = 6,
@@ -227,8 +276,71 @@ PlaceObj('QuestsDef', {
 						return quest.CampHope_GameOver
 					end,
 				}),
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "Sanatorium",
+					Vars = set( "CampHopeVisit_Phase1" ),
+					__eval = function ()
+						local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
+						return quest.CampHopeVisit_Phase1
+					end,
+				}),
 			},
 			Text = T(311111834399, --[[QuestsDef CampHope Text]] "<em>Outcome:</em> The Game is over in <em><SectorName('I12')></em>"),
+		}),
+		PlaceObj('QuestNote', {
+			Badges = {
+				PlaceObj('QuestBadgePlacement', {
+					Sector = "I12",
+				}),
+			},
+			CompletionConditions = {
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "U-Bahn",
+					Vars = set( "OutcomeSanatorium" ),
+					__eval = function ()
+						local quest = gv_Quests['U-Bahn'] or QuestGetState('U-Bahn')
+						return quest.OutcomeSanatorium
+					end,
+				}),
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "Sanatorium",
+					Vars = set( "CampHopeVisit_Phase1" ),
+					__eval = function ()
+						local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
+						return quest.CampHopeVisit_Phase1
+					end,
+				}),
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"I12",
+					},
+				}),
+			},
+			Idx = 8,
+			ShowConditions = {
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "U-Bahn",
+					Vars = set( "OutcomeSanatorium" ),
+					__eval = function ()
+						local quest = gv_Quests['U-Bahn'] or QuestGetState('U-Bahn')
+						return quest.OutcomeSanatorium
+					end,
+				}),
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "Sanatorium",
+					Vars = set( "CampHopeVisit_Phase1" ),
+					__eval = function ()
+						local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
+						return quest.CampHopeVisit_Phase1
+					end,
+				}),
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"I12",
+					},
+				}),
+			},
+			Text = T(609595177119, --[[QuestsDef CampHope Text]] "<em>Outcome:</em> Everyone is healed in <em><SectorName('I12')></em> and the Game is played just for fun"),
 		}),
 	},
 	QuestGroup = "Jungle",

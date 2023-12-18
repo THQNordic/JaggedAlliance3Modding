@@ -17,8 +17,8 @@ PlaceObj('VoiceResponse', {
 		T(475501435947, --[[VoiceResponse Bounce Pain VoiceResponse Pain - Hit by an attack (if surrounded SurroundedPain is played instead). Short. These are emotes - disregard the written text. voice:Bounce]] "Oof.")
 	}),
 	Wounded = TConcat({
-		T(945720117473, --[[VoiceResponse Bounce Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Bounce]] "That ain't nothing to me!"),
-		T(366819491085, --[[VoiceResponse Bounce Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Bounce]] "Bounce always bounces back, baby!")
+		T(945720117473, --[[VoiceResponse Bounce Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Bounce]] "That ain't nothing to me!"),
+		T(366819491085, --[[VoiceResponse Bounce Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Bounce]] "Bounce always bounces back, baby!")
 	}),
 	group = "Other",
 	id = "Bounce",

@@ -331,6 +331,8 @@ function UpdateMovementAvatar(dialog, target_pos, stanceChange, command, special
 		mov_avatar:SetObjectMarking(5)
 		mov_avatar:SetHierarchyGameFlags(const.gofObjectMarking)
 		mov_avatar:ClearHierarchyEnumFlags(const.efShadow)
+		
+		NetSyncEvent("MovementAvatarCoOp", "setup", netUniqueId, attacker.session_id, target_pos, mov_avatar:GetStateText(), { bandage = bandage })
 	elseif command == "delete" then
 		if mov_avatar then
 			if mov_avatar.rollover and mov_avatar.rollover.window_state ~= "destroying" then
@@ -353,6 +355,8 @@ function UpdateMovementAvatar(dialog, target_pos, stanceChange, command, special
 		end
 		blackboard.melee_threats = nil
 		g_RolloverShowMoreInfoFakeRollover = false
+		
+		NetSyncEvent("MovementAvatarCoOp", "delete", netUniqueId, attacker.session_id)
 		return
 	elseif command == "update_pos" then
 		--orientation, pos and stance
@@ -365,15 +369,20 @@ function UpdateMovementAvatar(dialog, target_pos, stanceChange, command, special
 			mov_avatar:SetState(attacker:GetIdleBaseAnim(stanceChange))
 			mov_avatar:SetOrientation(axis_z, orientation_angle, blackboard.movement_avatar:GetVisible() and 150 or 0)
 			if mov_avatar.rollover then mov_avatar.rollover:SetVisible(true) end
+			
+			NetSyncEvent("MovementAvatarCoOp", "update", netUniqueId, attacker.session_id, target_pos, mov_avatar:GetStateText(), { orient = orientation_angle })
 		elseif dialog.action and dialog.action.AimType == "melee-charge" then
 			MovementAvatar_PlayAnim(dialog, attacker, blackboard)
 		else
-			if mov_avatar.rollover then mov_avatar.rollover:SetVisible(false) end
+			if mov_avatar.rollover then
+				mov_avatar.rollover:SetVisible(false)
+				NetSyncEvent("MovementAvatarCoOp", "update", netUniqueId, attacker.session_id, false)
+			end
 		end
 	end
 
 	if target_pos then
-		if target_pos and target_pos ~= point20 then
+		if target_pos ~= point20 then
 			blackboard.movement_avatar:SetPos(target_pos, blackboard.movement_avatar:GetVisible() and 50 or 0)
 			blackboard.movement_avatar:SetVisible(true)
 		else
@@ -448,6 +457,7 @@ function CreateBlackboardFXPath(blackboard, mover_pos, target_path, inside_attac
 		end
 	end
 	blackboard.fx_path = fx
+	NetSyncEvent("MovementAvatarCoOpPath", netUniqueId, mover_pos, target_path)
 end
 
 function DestroyBlackboardFXPath(blackboard)
@@ -455,6 +465,7 @@ function DestroyBlackboardFXPath(blackboard)
 		DoneObject(blackboard.fx_path)
 	end
 	blackboard.fx_path = false
+	NetSyncEvent("MovementAvatarCoOpPath", netUniqueId)
 end
 
 DefineClass.IModeCombatMovement = {
@@ -1189,4 +1200,99 @@ function MovementAvatar_PlayAnim(dialog, attacker, blackboard)
 		Sleep(1500)
 	 end
 	end, blackboard.movement_avatar, anim)
+end
+
+-------------------------------------
+
+if FirstLoad then
+OtherPlayerMovementAvatar = false
+OtherPlayerPathFX = false
+end
+
+function OnMsg.NetPlayerLeft(player_id)
+	if IsValid(OtherPlayerMovementAvatar) then
+		DoneObject(OtherPlayerMovementAvatar)
+	end
+	
+	if IsValid(OtherPlayerPathFX) then
+		DoneObject(OtherPlayerPathFX)
+	end
+	
+	OtherPlayerMovementAvatar = false
+	OtherPlayerPathFX = false
+end
+
+function NetSyncEvents.MovementAvatarCoOpPath(playerId, from, path)
+	if playerId == netUniqueId then return end
+
+	OtherPlayerPathFX = UpdatePathFX(from, path, OtherPlayerPathFX, false, empty_table)
+end
+
+function NetSyncEvents.MovementAvatarCoOp(command, playerId, basedOnUnitId, pos, state, special_args)
+	if playerId == netUniqueId then return end
+
+	local unit = g_Units[basedOnUnitId]
+	if command == "delete" or not netInGame or not unit then
+		if OtherPlayerMovementAvatar then
+			DoneObject(OtherPlayerMovementAvatar)
+			OtherPlayerMovementAvatar = false
+		end
+		return
+	end
+	
+	local mov_avatar = OtherPlayerMovementAvatar
+	if not mov_avatar or not IsValid(mov_avatar) then
+		mov_avatar = PlaceObject("AppearanceObject")
+		mov_avatar:ClearEnumFlags(const.efSelectable)
+		mov_avatar:SetGameFlags(const.gofDontHideWithRoom)
+		mov_avatar.Appearance = ""
+		mov_avatar:SetPos(pos)
+		OtherPlayerMovementAvatar = mov_avatar
+	end
+	
+	if unit.Appearance ~= mov_avatar.Appearance then 
+		mov_avatar:ApplyAppearance(unit.Appearance)
+		mov_avatar.gender = unit.gender
+		mov_avatar:ClearEnumFlags(const.efSelectable)
+	end
+	
+	if state then
+		mov_avatar:SetState(state)
+	end
+	
+	if command == "setup" then
+		mov_avatar:DestroyAttaches("WeaponVisual")
+		local bandage = special_args and special_args.bandage
+		local attaches = not bandage and unit:GetAttaches("WeaponVisual")
+		if attaches then
+			for i = #attaches, 1, -1 do
+				local attach = attaches[i]
+				local item = attach.weapon
+				local o = item and item:CreateVisualObj(mov_avatar)
+				if o then
+					item:UpdateVisualObj(o)
+					o.equip_index = attach.equip_index
+					attaches[i] = o
+				else
+					table.remove(attaches, i)
+				end
+			end
+			AttachVisualItems(mov_avatar, attaches, nil, nil, unit)
+		end
+		mov_avatar:SetObjectMarking(12)
+		mov_avatar:SetHierarchyGameFlags(const.gofObjectMarking)
+		mov_avatar:ClearHierarchyEnumFlags(const.efShadow)
+	end
+	
+	local orient = special_args and special_args.orient
+	if orient then
+		mov_avatar:SetOrientation(axis_z, orient, mov_avatar:GetVisible() and 150 or 0)
+	end
+	
+	if pos and pos ~= point20 then
+		mov_avatar:SetPos(pos, mov_avatar:GetVisible() and 50 or 0)
+		mov_avatar:SetVisible(true)
+	else
+		mov_avatar:SetVisible(false)
+	end
 end

@@ -289,9 +289,3 @@ function RocketLauncher:UpdateVisualObj(...)
 	Firearm.UpdateVisualObj(self, ...)
 	self:UpdateRocket()
 end
-
-function HeavyWeaponsTrainingCostMod(currentAPCost)
-	local reduction = CharacterEffectDefs.HeavyWeaponsTraining:ResolveValue("ap_cost_reduction") * const.Scale.AP
-	local minCost = CharacterEffectDefs.HeavyWeaponsTraining:ResolveValue("min_ap_cost") * const.Scale.AP
-	return Max(minCost, currentAPCost - reduction)
-end

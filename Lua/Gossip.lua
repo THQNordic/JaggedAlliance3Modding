@@ -347,8 +347,11 @@ function OnMsg.Attack(action, results, attack_args)
 	local attacker = attack_args.obj
 	local target = attack_args.target
 	if not IsValid(target) then return end
-	local attack_pos = IsKindOf(attacker, "CObject") and attacker:GetPos() or (IsPoint(attacker) and attacker)
-	local target_pos = IsKindOf(target, "CObject") and target:GetPos() or (IsPoint(target) and target)
+	local attack_pos = IsValid(attacker) and attacker:GetPos() or (IsPoint(attacker) and attacker)
+	local target_pos = IsValid(target) and target:GetPos() or (IsPoint(target) and target)
+	if not attack_pos and results.explosion then
+		attack_pos = results.start_pos
+	end
 	local attacker_is_unit = IsKindOf(attacker, "Unit")
 	local target_is_unit = IsKindOf(target, "Unit")
 	local attack_descr = {

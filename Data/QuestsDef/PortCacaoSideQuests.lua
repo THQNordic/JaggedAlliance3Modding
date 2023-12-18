@@ -1217,19 +1217,15 @@ PlaceObj('QuestsDef', {
 				}),
 				PlaceObj('ConditionalEffect', {
 					'Conditions', {
-						PlaceObj('QuestIsVariableBool', {
-							QuestId = "Docks",
-							Vars = set({
-	CacaoGangDead = false,
-}),
-							__eval = function ()
-								local quest = gv_Quests['Docks'] or QuestGetState('Docks')
-								return not quest.CacaoGangDead
-							end,
-						}),
 						PlaceObj('QuestIsVariableNum', {
 							Amount = 4,
 							Prop = "CacaoGang",
+							QuestId = "Docks",
+						}),
+						PlaceObj('QuestIsVariableNum', {
+							Amount = 2,
+							Condition = "<",
+							Prop = "CacaoGangDead",
 							QuestId = "Docks",
 						}),
 					},

@@ -120,6 +120,46 @@ PlaceObj('TextStyle', {
 })
 
 PlaceObj('TextStyle', {
+	RolloverTextColor = 4291018156,
+	TextColor = 4291018156,
+	TextFont = T(464288185379, --[[TextStyle ModDescription_Bold TextFont]] "Source Sans Pro, 16, bold"),
+	group = "PDA Browser",
+	id = "ModDescription_Bold",
+})
+
+PlaceObj('TextStyle', {
+	RolloverTextColor = 4291080053,
+	TextColor = 4291080053,
+	TextFont = T(798401326987, --[[TextStyle ModDescription_Heading1 TextFont]] "Source Sans Pro, 22"),
+	group = "PDA Browser",
+	id = "ModDescription_Heading1",
+})
+
+PlaceObj('TextStyle', {
+	RolloverTextColor = 4291080053,
+	TextColor = 4291080053,
+	TextFont = T(685151013190, --[[TextStyle ModDescription_Heading2 TextFont]] "Source Sans Pro, 18"),
+	group = "PDA Browser",
+	id = "ModDescription_Heading2",
+})
+
+PlaceObj('TextStyle', {
+	RolloverTextColor = 4291080053,
+	TextColor = 4291080053,
+	TextFont = T(777102739972, --[[TextStyle ModDescription_Heading3 TextFont]] "Source Sans Pro, 16"),
+	group = "PDA Browser",
+	id = "ModDescription_Heading3",
+})
+
+PlaceObj('TextStyle', {
+	RolloverTextColor = 4292321104,
+	TextColor = 4292321104,
+	TextFont = T(433447538576, --[[TextStyle ModDescription_Hyperlink TextFont]] "Source Sans Pro, 16"),
+	group = "PDA Browser",
+	id = "ModDescription_Hyperlink",
+})
+
+PlaceObj('TextStyle', {
 	RolloverTextColor = 4280296239,
 	TextColor = 4280296239,
 	TextFont = T(145587506668, --[[TextStyle PDAAskThievesCaption TextFont]] "Source Code Pro, 16"),
@@ -1208,7 +1248,23 @@ PlaceObj('TextStyle', {
 PlaceObj('TextStyle', {
 	RolloverTextColor = 4290724685,
 	TextColor = 4290724685,
-	TextFont = T(138804107489, --[[TextStyle ConflictDefeat TextFont]] "Source Code Pro Bold, 30"),
+	TextFont = T(563626225375, --[[TextStyle ConflictArrivingSquadWarning TextFont]] "HMGothic Regular, 16"),
+	group = "Zulu",
+	id = "ConflictArrivingSquadWarning",
+})
+
+PlaceObj('TextStyle', {
+	RolloverTextColor = 4293320394,
+	TextColor = 4293320394,
+	TextFont = T(507475870517, --[[TextStyle ConflictCount TextFont]] "Source Code Pro Medium, 12"),
+	group = "Zulu",
+	id = "ConflictCount",
+})
+
+PlaceObj('TextStyle', {
+	RolloverTextColor = 4286349920,
+	TextColor = 4286349920,
+	TextFont = T(774561753484, --[[TextStyle ConflictDefeat TextFont]] "HMGothic Rough A, 42"),
 	group = "Zulu",
 	id = "ConflictDefeat",
 })
@@ -1234,7 +1290,7 @@ PlaceObj('TextStyle', {
 PlaceObj('TextStyle', {
 	RolloverTextColor = 4290724685,
 	TextColor = 4290724685,
-	TextFont = T(785304448732, --[[TextStyle ConflictEnemyCount TextFont]] "Source Code Pro Bold, 48"),
+	TextFont = T(785304448732, --[[TextStyle ConflictEnemyCount TextFont]] "HMGothic Rough A, 48"),
 	group = "Zulu",
 	id = "ConflictEnemyCount",
 })
@@ -1242,7 +1298,7 @@ PlaceObj('TextStyle', {
 PlaceObj('TextStyle', {
 	RolloverTextColor = 4290724685,
 	TextColor = 4290724685,
-	TextFont = T(738344732939, --[[TextStyle ConflictEnemyHeader TextFont]] "Source Code Pro Bold, 30"),
+	TextFont = T(738344732939, --[[TextStyle ConflictEnemyHeader TextFont]] "HMGothic Rough A, 30"),
 	group = "Zulu",
 	id = "ConflictEnemyHeader",
 })
@@ -1250,7 +1306,7 @@ PlaceObj('TextStyle', {
 PlaceObj('TextStyle', {
 	RolloverTextColor = 4284060330,
 	TextColor = 4284060330,
-	TextFont = T(450550394202, --[[TextStyle ConflictMercsCount TextFont]] "Source Code Pro Bold, 48"),
+	TextFont = T(450550394202, --[[TextStyle ConflictMercsCount TextFont]] "HMGothic Rough A, 48"),
 	group = "Zulu",
 	id = "ConflictMercsCount",
 })
@@ -1258,7 +1314,7 @@ PlaceObj('TextStyle', {
 PlaceObj('TextStyle', {
 	RolloverTextColor = 4284060330,
 	TextColor = 4284060330,
-	TextFont = T(463215266810, --[[TextStyle ConflictMercsHeader TextFont]] "Source Code Pro Bold, 30"),
+	TextFont = T(463215266810, --[[TextStyle ConflictMercsHeader TextFont]] "HMGothic Rough A, 30"),
 	group = "Zulu",
 	id = "ConflictMercsHeader",
 })
@@ -1266,15 +1322,15 @@ PlaceObj('TextStyle', {
 PlaceObj('TextStyle', {
 	RolloverTextColor = 4286349920,
 	TextColor = 4286349920,
-	TextFont = T(774561753484, --[[TextStyle ConflictName TextFont]] "HMGothic Rough A, 30"),
+	TextFont = T(892512140929, --[[TextStyle ConflictName TextFont]] "HMGothic Rough A, 30"),
 	group = "Zulu",
 	id = "ConflictName",
 })
 
 PlaceObj('TextStyle', {
-	RolloverTextColor = 4293320394,
-	TextColor = 4293320394,
-	TextFont = T(488665555178, --[[TextStyle ConflictPower TextFont]] "Source Code Pro Medium, 16"),
+	RolloverTextColor = 4286742648,
+	TextColor = 4286742648,
+	TextFont = T(488665555178, --[[TextStyle ConflictPower TextFont]] "HMGothic Rough A, 16"),
 	group = "Zulu",
 	id = "ConflictPower",
 })
@@ -1290,9 +1346,25 @@ PlaceObj('TextStyle', {
 PlaceObj('TextStyle', {
 	RolloverTextColor = 4293320394,
 	TextColor = 4293320394,
-	TextFont = T(721237735812, --[[TextStyle ConflictSquadName TextFont]] "Source Code Pro Bold, 20"),
+	TextFont = T(721237735812, --[[TextStyle ConflictSquadName TextFont]] "HMGothic Regular, 20"),
 	group = "Zulu",
 	id = "ConflictSquadName",
+})
+
+PlaceObj('TextStyle', {
+	RolloverTextColor = 4286742648,
+	TextColor = 4286742648,
+	TextFont = T(716429437060, --[[TextStyle ConflictSquadNamePosition TextFont]] "HMGothic Regular, 16"),
+	group = "Zulu",
+	id = "ConflictSquadNamePosition",
+})
+
+PlaceObj('TextStyle', {
+	RolloverTextColor = 4291018156,
+	TextColor = 4291018156,
+	TextFont = T(504294473717, --[[TextStyle ConflictTime TextFont]] "HMGothic Rough A,18"),
+	group = "Zulu",
+	id = "ConflictTime",
 })
 
 PlaceObj('TextStyle', {
@@ -1304,9 +1376,9 @@ PlaceObj('TextStyle', {
 })
 
 PlaceObj('TextStyle', {
-	RolloverTextColor = 4284060330,
-	TextColor = 4284060330,
-	TextFont = T(182285645928, --[[TextStyle ConflictVictory TextFont]] "Source Code Pro Bold, 30"),
+	RolloverTextColor = 4286349920,
+	TextColor = 4286349920,
+	TextFont = T(774561753484, --[[TextStyle ConflictVictory TextFont]] "HMGothic Rough A, 42"),
 	group = "Zulu",
 	id = "ConflictVictory",
 })
@@ -1317,6 +1389,14 @@ PlaceObj('TextStyle', {
 	TextFont = T(444808523848, --[[TextStyle ConflictWarning TextFont]] "Source Code Pro Medium, 16"),
 	group = "Zulu",
 	id = "ConflictWarning",
+})
+
+PlaceObj('TextStyle', {
+	RolloverTextColor = 4286742648,
+	TextColor = 4286742648,
+	TextFont = T(174174183532, --[[TextStyle ConflictWeather TextFont]] "HMGothic Rough A,18"),
+	group = "Zulu",
+	id = "ConflictWeather",
 })
 
 PlaceObj('TextStyle', {
@@ -4528,6 +4608,14 @@ PlaceObj('TextStyle', {
 	TextFont = T(523927017172, --[[TextStyle PDAMercNameCard_DamageTaken TextFont]] "Source Code Pro Bold, 18"),
 	group = "Zulu PDA",
 	id = "PDAMercNameCard_DamageTaken",
+})
+
+PlaceObj('TextStyle', {
+	RolloverTextColor = 4291018156,
+	TextColor = 4291018156,
+	TextFont = T(154546403651, --[[TextStyle PDAMercNameCard_Large TextFont]] "Source Code Pro Bold, 30"),
+	group = "Zulu PDA",
+	id = "PDAMercNameCard_Large",
 })
 
 PlaceObj('TextStyle', {

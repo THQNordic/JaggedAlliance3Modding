@@ -193,7 +193,9 @@ function SquadBag:RemoveItem(slot_name, item, no_update)
 	table.remove_entry(cdata, item)
 	gv_Squads[self.squad_id].squad_bag = cdata
 	
-	SortItemsInBag(self.squad_id)
+	if not no_update then
+		SortItemsInBag(self.squad_id)
+	end
 	return item, pos
 end
 

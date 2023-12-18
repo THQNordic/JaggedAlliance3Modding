@@ -228,7 +228,7 @@ function IModeExploration:OnMouseButtonUp(pt, button, time)
 		if (gamepadClick or left) and target_unit and #Selection > 0 then
 			local team = g_CurrentTeam and g_Teams[g_CurrentTeam]
 			if team and target_unit.team:IsEnemySide(team) and not target_unit:IsDead() then
-				local action = Selection[1]:GetDefaultAttackAction()
+				local action = Selection[1]:GetDefaultAttackAction(nil, nil, nil, nil, nil, nil, "ui")
 				-- special case
 				if ShouldUseMarkTarget(Selection[1], target_unit) then
 					action = CombatActions.MarkTarget

@@ -10,20 +10,35 @@ PlaceObj('XTemplate', {
 		'HandleMouse', true,
 	}, {
 		PlaceObj('XTemplateFunc', {
-			'name', "OnSetRollover(self, rollover)",
+			'name', "OnSetRollover_Override(self, rollover)",
 			'func', function (self, rollover)
-				if not rollover or self:GetContext() == empty_table then 
+				if not rollover or self:GetContext().item == empty_table then 
 					self:SetBackground(RGBA(22,20,19,230))
 					PlayFX("buttonRollover", "start")
 				else
+					local parent = self:ResolveId("node"):ResolveId("node")
+					local entry = self:GetContext().index
+					if parent:GetSelectedEntry() ~= entry then parent:SelectEntry(entry) end
 					self:SetBackground(RGBA(53,46,39,230))
+				end
+				XContentTemplate.OnSetRollover(self,rollover)
+			end,
+		}),
+		PlaceObj('XTemplateFunc', {
+			'name', "OnSetRollover(self, rollover)",
+			'func', function (self, rollover)
+				local parent = self:ResolveId("node"):ResolveId("node")
+				if not parent:IsUsingNativeGamepad() then
+					self:OnSetRollover_Override(rollover)
+				else
+					XContentTemplate.OnSetRollover(self,rollover)
 				end
 			end,
 		}),
 		PlaceObj('XTemplateFunc', {
 			'name', "OnMouseButtonDown(self, pos, button)",
 			'func', function (self, pos, button)
-				local ctx = self:GetContext()
+				local ctx = self:GetContext().item
 				if ctx == empty_table then return end
 				local cur_stock = BobbyRayStoreGetEntry(ctx).Stock
 				if button == "L" and CanAddToCart(ctx.id) then
@@ -39,7 +54,8 @@ PlaceObj('XTemplate', {
 			end,
 		}),
 		PlaceObj('XTemplateWindow', {
-			'__class', "XImage",
+			'__context', function (parent, context) return context.item end,
+			'__class', "XContextImage",
 			'IdNode', false,
 			'HAlign', "center",
 			'MinHeight', 110,
@@ -66,7 +82,7 @@ PlaceObj('XTemplate', {
 					'FrameBox', box(7, 7, 7, 7),
 				}, {
 					PlaceObj('XTemplateTemplate', {
-						'__condition', function (parent, context) return context ~= empty_table end,
+						'__condition', function (parent, context) return context and context ~= empty_table end,
 						'__template', "PDABrowserBobbyRay_StoreEntry_Image",
 						'Margins', box(7, 7, 7, 7),
 					}),
@@ -90,7 +106,7 @@ PlaceObj('XTemplate', {
 					'FrameBox', box(7, 7, 7, 7),
 				}, {
 					PlaceObj('XTemplateTemplate', {
-						'__condition', function (parent, context) return context ~= empty_table end,
+						'__condition', function (parent, context) return context and context ~= empty_table end,
 						'__template', "PDABrowserBobbyRay_StoreEntry_Cart",
 						'Margins', box(7, 7, 7, 7),
 					}),
@@ -114,7 +130,7 @@ PlaceObj('XTemplate', {
 					'FrameBox', box(7, 7, 7, 7),
 				}, {
 					PlaceObj('XTemplateTemplate', {
-						'__condition', function (parent, context) return context ~= empty_table end,
+						'__condition', function (parent, context) return context and context ~= empty_table end,
 						'__template', "PDABrowserBobbyRay_StoreEntry_Stats",
 						'Margins', box(7, 7, 7, 7),
 					}),
@@ -138,7 +154,7 @@ PlaceObj('XTemplate', {
 					'FrameBox', box(7, 7, 7, 7),
 				}, {
 					PlaceObj('XTemplateTemplate', {
-						'__condition', function (parent, context) return context ~= empty_table end,
+						'__condition', function (parent, context) return context and context ~= empty_table end,
 						'__template', "PDABrowserBobbyRay_StoreEntry_Description",
 						'Margins', box(7, 7, 7, 7),
 					}),

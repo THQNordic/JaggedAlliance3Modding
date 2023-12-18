@@ -15,7 +15,7 @@ PlaceObj('XTemplate', {
 		end,
 		'LayoutMethod', "HList",
 		'RolloverOnFocus', true,
-		'MouseCursor', "CommonAssets/UI/HandCursor.tga",
+		'MouseCursor', "UI/Cursors/Hand.tga",
 	}, {
 		PlaceObj('XTemplateWindow', {
 			'__condition', function (parent, context) return not GetDialog("PDADialog") and not g_SatelliteUI end,

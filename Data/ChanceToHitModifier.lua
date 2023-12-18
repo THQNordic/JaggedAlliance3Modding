@@ -825,32 +825,6 @@ PlaceObj('ChanceToHitModifier', {
 
 PlaceObj('ChanceToHitModifier', {
 	CalcValue = function (self, attacker, target, body_part_def, action, weapon1, weapon2, lof, aim, opportunity_attack, attacker_pos, target_pos)
-		local template = CharacterEffectDefs.MartialArts
-		
-		local effect = 0
-		if HasPerk(attacker, "MartialArts") then
-			effect = effect + template:ResolveValue("hit")
-		end
-		if HasPerk(target, "MartialArts") then
-			effect = effect - template:ResolveValue("defense")
-		end
-		
-		local text
-		if IsKindOf(target, "Unit") and target.species ~= "Human" then
-			text = T(767817302327, "Perk: Animal Reflexes")
-		end
-		
-		return effect ~= 0, effect, text
-	end,
-	RequireActionType = "Any Melee Attack",
-	RequireTarget = true,
-	display_name = T(392457957758, --[[ChanceToHitModifier Perks MartialArts display_name]] "Perk: Martial Arts"),
-	group = "Perks",
-	id = "MartialArts",
-})
-
-PlaceObj('ChanceToHitModifier', {
-	CalcValue = function (self, attacker, target, body_part_def, action, weapon1, weapon2, lof, aim, opportunity_attack, attacker_pos, target_pos)
 		if action and action.id ~= "SingleShot" then
 			return false
 		end

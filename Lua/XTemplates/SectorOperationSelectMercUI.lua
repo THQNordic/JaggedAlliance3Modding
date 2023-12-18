@@ -180,12 +180,15 @@ PlaceObj('XTemplate', {
 										
 										
 										if empty and context then 
+											--[[
 											local teachers = GetOperationProfessionals(sector_id, operation, "Teacher")
 											if idx and context.mercs[idx].OperationProfession == "Student" or context.list_as_prof == "Student"then
 												if #teachers <= 0 then
 													empty = false
 												end
+												
 											end
+											--]]
 											local assigned = GetOperationProfessionals(sector_id, "TreatWounds",  context.list_as_prof)
 											if operation=="TreatWounds" and (assigned or #available>0) then
 												empty = false

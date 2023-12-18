@@ -51,6 +51,8 @@ PlaceObj('XTemplate', {
 				
 				local context = self:GetContext()
 				self.selected_unit = context.unit
+				self.selected_items = {}
+				self.selected_tab = "all"
 				
 				self.slots = {}
 				self.compare_wnd = {}
@@ -306,19 +308,22 @@ PlaceObj('XTemplate', {
 					return "break"
 				end
 				local dlg = GetDialog("FullscreenGameDialogs")
+				local pt =  GamepadMouseGetPos()
 				-- compare mode
-				if button=="ButtonY" and  XInput.IsCtrlButtonPressed(controller_id, "RightTrigger") then
-					if self.compare_mode then
-						self:CloseCompare()
-						XInventoryItem.RolloverTemplate = "RolloverInventory"
-						self.compare_mode  = not self.compare_mode
-					else					
-						self.compare_mode  = not self.compare_mode
-						self:OpenCompare()
+				if XInput.IsCtrlButtonPressed(controller_id, "RightTrigger") then
+					if button=="ButtonY" then
+						if self.compare_mode then
+							self:CloseCompare()
+							XInventoryItem.RolloverTemplate = "RolloverInventory"
+							self.compare_mode  = not self.compare_mode
+						else					
+							self.compare_mode  = not self.compare_mode
+							self:OpenCompare()
+						end
+						
+						self:ActionsUpdated()
+						return "break"
 					end
-					
-					self:ActionsUpdated()
-					return "break"
 				end
 				
 				-- also close compare mode with B
@@ -360,6 +365,22 @@ PlaceObj('XTemplate', {
 						owner = win.context
 						item = owner:GetItemInSlot(win.slot_name, false, left, top)
 					end					
+					if button=="ButtonA"  then						
+						local win = terminal.desktop:GetMouseTarget(pt)
+						while win and not IsKindOf(win, "XInventorySlot") do
+							win = win:GetParent()
+						end
+						if not win then return "break" end
+						local wnd_found, item = win:FindItemWnd(pt)			
+						if InventoryToggleItemMultiselect(self, wnd_found, item) then
+							return "break"
+						end
+						if self and (not item or not self.selected_items[item]) then
+							self:DeselectMultiItems()		
+						end
+				
+						return "break"
+					end
 					if button == "DPadRight" or button == "Right" then
 						-- modify weapon
 						if item and item:IsWeapon() and IsKindOf(item, "Firearm") then
@@ -398,7 +419,7 @@ PlaceObj('XTemplate', {
 									weapon = witem
 									return "break"
 								end	
-							end, ammo.Caliber)				
+							end, ammo.Caliber)
 						elseif item:IsWeapon() then
 							weapon = item							
 							local ammos,containers, slots = owner:GetAvailableAmmos(weapon, nil, "unique")
@@ -487,12 +508,24 @@ PlaceObj('XTemplate', {
 					InventoryUIResetSquadBag()
 				--					InventoryUIResetSectorStash(sector_id)
 					InventoryUIRespawn()
+					
+					if IsKindOf(ctx_unit, "Unit") then
+						if ctx_unit:CanBeControlled() then
+							SelectObj(ctx_unit)
+						end
+						ObjModified("hud_squads")
+					elseif g_SatelliteUI then
+						g_SatelliteUI:SelectSquad(selected_squad)
+					end
 				end
 			end,
 		}),
 		PlaceObj('XTemplateFunc', {
 			'name', "TakeAllState(self)",
 			'func', function (self)
+				if self.selected_tab ~= "all" then
+					return "hidden"
+				end	
 				local context = self:GetContext()
 				local container = context and context.container
 				if not container or InventoryIsCombatMode() then return "hidden" end
@@ -580,6 +613,8 @@ PlaceObj('XTemplate', {
 			'name', "TakeAllAction(self)",
 			'func', function (self)
 				local dlg = self
+				local tab_filter = self.Mode=="loot" and self.selected_tab
+				
 				local context = dlg:GetContext()
 				local unit = context.unit
 				if not unit then return end
@@ -731,16 +766,31 @@ PlaceObj('XTemplate', {
 					slot_ctrl.drag_win = win
 					slot_ctrl.drag_button = button
 					DragSource = slot_ctrl												
-					slot_ctrl.desktop:SetMouseCapture(slot_ctrl)			
-					HighlightEquipSlots(InventoryDragItem, true)
-					HighlightWeaponsForAmmo(InventoryDragItem, true)
-					--HighlightAPCost(InventoryDragItem, true, StartDragSource)
+					slot_ctrl.desktop:SetMouseCapture(slot_ctrl)		
+					if InventoryDragItem and not InventoryDragItems then
+						HighlightEquipSlots(InventoryDragItem, true)
+						HighlightWeaponsForAmmo(InventoryDragItem, true)
+						--HighlightAPCost(InventoryDragItem, true, StartDragSource)
+					end
 				end	
+			end,
+		}),
+		PlaceObj('XTemplateFunc', {
+			'name', "DeselectMultiItems(self)",
+			'func', function (self)
+				local selected_items = self.selected_items
+				self.selected_items = {}
+				for im, wnd_found in pairs(selected_items) do
+					if wnd_found.window_state~="destroying" then
+						wnd_found:OnSetSelected(false)		
+						wnd_found.idRollover:SetVisible(false)
+					end
+				end
 			end,
 		}),
 		PlaceObj('XTemplateAction', {
 			'ActionId', "NextUnit",
-			'ActionName', T(488448512300, --[[XTemplate Inventory ActionName]] "Next Unit"),
+			'ActionName', T(196270563950, --[[XTemplate Inventory ActionName]] "Next Unit"),
 			'ActionShortcut', "Tab",
 			'ActionGamepad', "RightShoulder",
 			'ActionBindable', true,
@@ -774,7 +824,7 @@ PlaceObj('XTemplate', {
 		}),
 		PlaceObj('XTemplateAction', {
 			'ActionId', "PrevUnit",
-			'ActionName', T(123120196907, --[[XTemplate Inventory ActionName]] "Prev Unit"),
+			'ActionName', T(884862371491, --[[XTemplate Inventory ActionName]] "Prev Unit"),
 			'ActionGamepad', "LeftShoulder",
 			'ActionBindable', true,
 			'OnAction', function (self, host, source, ...)
@@ -804,7 +854,7 @@ PlaceObj('XTemplate', {
 		}),
 		PlaceObj('XTemplateAction', {
 			'ActionId', "NextSquad",
-			'ActionName', T(225808868216, --[[XTemplate Inventory ActionName]] "Next Squad"),
+			'ActionName', T(673071428097, --[[XTemplate Inventory ActionName]] "Next Squad"),
 			'ActionGamepad', "LeftTrigger-RightShoulder",
 			'ActionBindable', true,
 			'OnAction', function (self, host, source, ...)
@@ -826,7 +876,7 @@ PlaceObj('XTemplate', {
 		}),
 		PlaceObj('XTemplateAction', {
 			'ActionId', "PrevSquad",
-			'ActionName', T(924232255805, --[[XTemplate Inventory ActionName]] "Prev Squad"),
+			'ActionName', T(752681569250, --[[XTemplate Inventory ActionName]] "Prev Squad"),
 			'ActionGamepad', "LeftTrigger-LeftShoulder",
 			'ActionBindable', true,
 			'OnAction', function (self, host, source, ...)
@@ -848,7 +898,7 @@ PlaceObj('XTemplate', {
 		}),
 		PlaceObj('XTemplateAction', {
 			'ActionId', "CurrentWeapon1",
-			'ActionName', T(625383249041, --[[XTemplate Inventory ActionName]] "Active Weapon I"),
+			'ActionName', T(222512614441, --[[XTemplate Inventory ActionName]] "Active Weapon I"),
 			'ActionShortcut', "Z",
 			'ActionButtonTemplate', "InventoryActionBarButton",
 			'ActionState', function (self, host)
@@ -869,7 +919,7 @@ PlaceObj('XTemplate', {
 		}),
 		PlaceObj('XTemplateAction', {
 			'ActionId', "CurrentWeapon2",
-			'ActionName', T(270530821357, --[[XTemplate Inventory ActionName]] "Active Weapon II"),
+			'ActionName', T(708528887842, --[[XTemplate Inventory ActionName]] "Active Weapon II"),
 			'ActionShortcut', "X",
 			'ActionButtonTemplate', "InventoryActionBarButton",
 			'ActionState', function (self, host)
@@ -890,7 +940,7 @@ PlaceObj('XTemplate', {
 		}),
 		PlaceObj('XTemplateAction', {
 			'ActionId', "Primary",
-			'ActionName', T(751371171497, --[[XTemplate Inventory ActionName]] "Loadout I"),
+			'ActionName', T(369940981994, --[[XTemplate Inventory ActionName]] "Loadout I"),
 			'ActionToolbar', "InventoryActionBar",
 			'ActionShortcut', "Z",
 			'ActionShortcut2', "Shift-Z",
@@ -914,7 +964,7 @@ PlaceObj('XTemplate', {
 		}),
 		PlaceObj('XTemplateAction', {
 			'ActionId', "Secondary",
-			'ActionName', T(327566264426, --[[XTemplate Inventory ActionName]] "Loadout II"),
+			'ActionName', T(961191695579, --[[XTemplate Inventory ActionName]] "Loadout II"),
 			'ActionToolbar', "InventoryActionBar",
 			'ActionShortcut', "X",
 			'ActionShortcut2', "Shift-X",
@@ -938,7 +988,7 @@ PlaceObj('XTemplate', {
 		}),
 		PlaceObj('XTemplateAction', {
 			'ActionId', "Actions",
-			'ActionName', T(822111640935, --[[XTemplate Inventory ActionName]] "Item Menu"),
+			'ActionName', T(330169171314, --[[XTemplate Inventory ActionName]] "Item Menu"),
 			'ActionToolbar', "InventoryActionBar",
 			'ActionShortcut', "right_click",
 			'ActionGamepad', "ButtonX",
@@ -952,8 +1002,23 @@ PlaceObj('XTemplate', {
 			'FXPressDisabled', "IactDisabled",
 		}),
 		PlaceObj('XTemplateAction', {
+			'ActionId', "Multiselect",
+			'ActionName', T(706402605218, --[[XTemplate Inventory ActionName]] "Multiselect"),
+			'ActionToolbar', "InventoryActionBar",
+			'ActionShortcut', "Ctrl",
+			'ActionGamepad', "LeftTrigger-ButtonA",
+			'ActionButtonTemplate', "InventoryActionBarButton",
+			'OnShortcutUp', function (self, host, source, ...)
+				return
+			end,
+			'IgnoreRepeated', true,
+			'FXMouseIn', "buttonRollover",
+			'FXPress', "buttonPress",
+			'FXPressDisabled', "IactDisabled",
+		}),
+		PlaceObj('XTemplateAction', {
 			'ActionId', "CompareItems",
-			'ActionName', T(959647610798, --[[XTemplate Inventory ActionName]] "Compare"),
+			'ActionName', T(977052176447, --[[XTemplate Inventory ActionName]] "Compare"),
 			'ActionToolbar', "InventoryActionBar",
 			'ActionShortcut', "Shift",
 			'ActionGamepad', "RightTrigger-ButtonY",
@@ -996,7 +1061,7 @@ PlaceObj('XTemplate', {
 		}),
 		PlaceObj('XTemplateAction', {
 			'ActionId', "CloseInventory",
-			'ActionName', T(179983927560, --[[XTemplate Inventory ActionName]] "Close"),
+			'ActionName', T(370922956055, --[[XTemplate Inventory ActionName]] "Close"),
 			'ActionToolbar', "InventoryActionBar",
 			'ActionGamepad', "ButtonB",
 			'ActionButtonTemplate', "InventoryActionBarButton",
@@ -1119,6 +1184,7 @@ PlaceObj('XTemplate', {
 							'func', function (self, draw_win, pt)
 								return 	IsKindOf(InventoryDragItem,"MiscItem")
 										 	and InventoryDragItem.effect_moment=="on_use" 
+											and not next(InventoryDragItems)
 											--and (gv_SatelliteView or InventoryIsValidGiveDistance(InventoryStartDragContext, self:GetContext()))
 							end,
 						}),
@@ -1303,7 +1369,7 @@ PlaceObj('XTemplate', {
 								PlaceObj('XTemplateWindow', {
 									'__class', "XToggleButton",
 									'RolloverTemplate', "ChangeActiveWeaponAPRollover",
-									'RolloverTitle', T(372870127725, --[[XTemplate Inventory RolloverTitle]] "AP"),
+									'RolloverTitle', T(480351423675, --[[XTemplate Inventory RolloverTitle]] "AP"),
 									'Id', "idWeapons1",
 									'Margins', box(0, 5, 39, 0),
 									'HAlign', "right",
@@ -1369,7 +1435,7 @@ PlaceObj('XTemplate', {
 								PlaceObj('XTemplateWindow', {
 									'__class', "XToggleButton",
 									'RolloverTemplate', "ChangeActiveWeaponAPRollover",
-									'RolloverTitle', T(498938149015, --[[XTemplate Inventory RolloverTitle]] "AP"),
+									'RolloverTitle', T(362170312988, --[[XTemplate Inventory RolloverTitle]] "AP"),
 									'Id', "idWeapons2",
 									'Margins', box(0, 5, 39, 0),
 									'HAlign', "right",
@@ -1414,7 +1480,7 @@ PlaceObj('XTemplate', {
 						'Visible', false,
 						'TextStyle', "PDABrowserTextLight",
 						'Translate', true,
-						'Text', T(331801298547, --[[XTemplate Inventory Text]] "Not Enough AP "),
+						'Text', T(673883947178, --[[XTemplate Inventory Text]] "Not Enough AP "),
 						'TextHAlign', "center",
 					}),
 					}),
@@ -1432,7 +1498,7 @@ PlaceObj('XTemplate', {
 					'Padding', box(0, 0, 0, 0),
 					'TextStyle', "InventoryContainerTitle",
 					'Translate', true,
-					'Text', T(455809205633, --[[XTemplate Inventory Text]] "Loot"),
+					'Text', T(236302281025, --[[XTemplate Inventory Text]] "Loot"),
 					'TextHAlign', "center",
 					'TextVAlign', "center",
 				}),
@@ -1476,8 +1542,27 @@ PlaceObj('XTemplate', {
 					}, {
 						PlaceObj('XTemplateWindow', {
 							'comment', "loot",
-							'__context', function (parent, context) return context.container end,
+							'__context', function (parent, context)
+								if not gv_SatelliteView then
+									return context.container
+								end
+								
+								local dlg = GetDialog(parent)
+								local tab = dlg.selected_tab
+								if not tab or tab=="all" then
+									return context.container
+								end	
+								local sector_id = gv_SectorInventory.sector_id
+								gv_SectorInventory:Clear()
+								local preset = InventoryTabs[tab]
+								local context = GetSectorInventory(sector_id, 
+									function(item)return preset:FilterItem(item) end)
+								dlg.context.container = context
+								return context
+							end,
 							'__class', "XContextWindow",
+							'Id', "idLootContainer",
+							'ContextUpdateOnOpen', true,
 						}, {
 							PlaceObj('XTemplateWindow', {
 								'__class', "XFrame",
@@ -1505,7 +1590,7 @@ PlaceObj('XTemplate', {
 									'MaxHeight', 60,
 									'TextStyle', "InventoryWarning",
 									'Translate', true,
-									'Text', T(553785802738, --[[XTemplate Inventory Text]] "The selected squad is not in the sector"),
+									'Text', T(613199745056, --[[XTemplate Inventory Text]] "The selected squad is not in the sector"),
 									'TextHAlign', "center",
 									'TextVAlign', "center",
 								}),
@@ -1539,7 +1624,8 @@ PlaceObj('XTemplate', {
 											local name = T(495002164195, "BAG")
 											local is_sector_stash = IsKindOf(context, "SectorStash")
 											if is_sector_stash then
-												name = Untranslated("   ")-- T{288565331426, "SECTOR <sector> STASH", sector = Untranslated(context.sector_id or gv_CurrentSectorId or "")}
+												name = Untranslated("")-- T{288565331426, "SECTOR <sector> STASH", sector = Untranslated(context.sector_id or gv_CurrentSectorId or "")}
+												child.parent:SetMargins(box(0, 60, 0, 65))
 											elseif IsKindOf(context,"Unit") then
 												name = context:IsMerc() and T(185167895211, "<Nick> BODY") or T(698760915819, "DEAD BODY")
 											elseif context:HasMember("spawner") and IsKindOf(context.spawner, "ContainerMarker")	then
@@ -1571,9 +1657,11 @@ PlaceObj('XTemplate', {
 													'__class', "XText",
 													'Id', "idName",
 													'Padding', box(6, 2, 2, 2),
+													'FoldWhenHidden', true,
 													'TextStyle', "InventoryBackpackTitle",
 													'Translate', true,
-													'Text', T(575554482996, --[[XTemplate Inventory Text]] "BAG"),
+													'Text', T(227485168633, --[[XTemplate Inventory Text]] "BAG"),
+													'HideOnEmpty', true,
 													'TextVAlign', "center",
 												}),
 												}),
@@ -1633,7 +1721,7 @@ PlaceObj('XTemplate', {
 								PlaceObj('XTemplateWindow', {
 									'__class', "XZuluScroll",
 									'Id', "idScrollbarCenter",
-									'Margins', box(0, 30, 10, 65),
+									'Margins', box(0, 50, 10, 65),
 									'HAlign', "right",
 									'MouseCursor', "UI/Cursors/Hand.tga",
 									'Target', "idScrollAreaCenter",
@@ -1641,16 +1729,125 @@ PlaceObj('XTemplate', {
 									'AutoHide', true,
 								}),
 								PlaceObj('XTemplateWindow', {
+									'comment', "tabs",
+									'__condition', function (parent, context)
+										local unit = GetInventoryUnit()
+											if gv_SatelliteView then	
+												if unit.Squad and gv_Squads[unit.Squad] and context.sector_id == gv_Squads[unit.Squad].CurrentSector then
+													return true
+												end	
+											end
+											return false
+									end,
+									'Margins', box(24, 20, 0, 0),
+								}, {
+									PlaceObj('XTemplateWindow', {
+										'__context', function (parent, context) return "inventory tabs" end,
+										'__class', "XContentTemplate",
+										'Id', "idTabs",
+										'Dock', "top",
+										'LayoutMethod', "HList",
+										'LayoutHSpacing', 12,
+									}, {
+										PlaceObj('XTemplateForEach', {
+											'array', function (parent, context) return Presets.InventoryTab.Default end,
+											'__context', function (parent, context, item, i, n) return item end,
+											'run_after', function (child, context, item, i, n, last)
+												local tab = item--InventoryTabs[item]
+												child.idTabIcon:SetImage(tab.icon)
+												local dlg = GetDialog(child)
+												child:SetToggled(dlg.selected_tab==item.id)
+												child:SetId(item.id)
+											end,
+										}, {
+											PlaceObj('XTemplateWindow', {
+												'__class', "XToggleButton",
+												'MinWidth', 62,
+												'MinHeight', 32,
+												'MaxWidth', 62,
+												'MaxHeight', 32,
+												'LayoutMethod', "Box",
+												'BorderColor', RGBA(0, 0, 0, 0),
+												'Background', RGBA(255, 255, 255, 0),
+												'FocusedBorderColor', RGBA(0, 0, 0, 0),
+												'FocusedBackground', RGBA(255, 255, 255, 0),
+												'DisabledBorderColor', RGBA(0, 0, 0, 0),
+												'OnPress', function (self, gamepad)
+													if self.Toggled then return end
+													self:SetToggled(not self.Toggled)
+													XTextButton.OnPress(self)
+													local dlg = GetDialog(self)
+													dlg.selected_tab = self.context.id
+													local sector_id = gv_SectorInventory.sector_id
+													gv_SectorInventory:Clear()
+													dlg.context.container = GetSectorInventory(sector_id, 
+														function(item)return self.context:FilterItem(item) end)
+													dlg.idCenter:RespawnContent()
+													local selected = dlg.selected_items
+													dlg:DeselectMultiItems()
+													
+													ObjModified("inventory tabs")
+												end,
+												'RolloverBackground', RGBA(0, 0, 0, 0),
+												'PressedBackground', RGBA(0, 0, 0, 0),
+												'Icon', "UI/Inventory/tabs_button",
+												'IconColumns', 2,
+												'DisabledIconColor', RGBA(255, 255, 255, 0),
+												'ToggledBackground', RGBA(215, 159, 80, 255),
+											}, {
+												PlaceObj('XTemplateFunc', {
+													'name', "OnChange(self, toggled)",
+													'func', function (self, toggled)
+														self:SetIconColumn(toggled and 2 or 1)
+														self.idTabIcon:SetColumn(toggled and 2 or 1)
+													end,
+												}),
+												PlaceObj('XTemplateWindow', {
+													'__class', "XImage",
+													'Id', "idTabIcon",
+													'HAlign', "center",
+													'VAlign', "center",
+													'HandleMouse', true,
+													'Image', "UI/Inventory/tabs_all.png",
+													'Columns', 2,
+												}),
+												}),
+											}),
+										}),
+									}),
+								PlaceObj('XTemplateWindow', {
 									'ZOrder', 2,
 									'Margins', box(0, 0, 0, 20),
 									'VAlign', "bottom",
 									'DrawOnTop', true,
 								}, {
+									PlaceObj('XTemplateFunc', {
+										'name', "Open",
+										'func', function (self, ...)
+											XWindow.Open(self)
+											local take =  self:ResolveId("idTakeAll")
+											local vtake = take and take:GetVisible()											
+											local select =  self:ResolveId("idSelectAll")
+											local vselect = select and select:GetVisible()
+											
+											if vtake and not vselect then
+												take:SetHAlign("center")
+											end
+											if vtake and vselect then
+												take:SetHAlign("right")
+												select:SetHAlign("left")
+											end
+											if not vtake and vselect then
+												select:SetHAlign("center")
+											end
+										end,
+									}),
 									PlaceObj('XTemplateTemplate', {
 										'comment', "ammo pack -  set invisble",
 										'__context', function (parent, context) return "GamepadUIStyleChanged" end,
 										'__condition', function (parent, context) local host = GetActionsHost(parent, true) local context = host:GetContext() return context.container end,
 										'__template', "InventoryActionBarButtonCenter",
+										'Id', "idAmmo",
 										'HAlign', "left",
 										'VAlign', "bottom",
 										'MinWidth', 240,
@@ -1697,7 +1894,7 @@ PlaceObj('XTemplate', {
 										'FoldWhenHidden', true,
 										'TextStyle', "InventoryActionsTextRedBig",
 										'Translate', true,
-										'Text', T(657578945215, --[[XTemplate Inventory Text]] "Inventory is full"),
+										'Text', T(295657023753, --[[XTemplate Inventory Text]] "Inventory is full"),
 										'HideOnEmpty', true,
 									}),
 									PlaceObj('XTemplateTemplate', {
@@ -1705,6 +1902,7 @@ PlaceObj('XTemplate', {
 										'__context', function (parent, context) return "GamepadUIStyleChanged" end,
 										'__condition', function (parent, context) local host = GetActionsHost(parent, true) local context = host:GetContext() return context.container end,
 										'__template', "InventoryActionBarButtonCenter",
+										'Id', "idTakeAll",
 										'HAlign', "center",
 										'VAlign', "bottom",
 										'MinWidth', 240,
@@ -1741,11 +1939,42 @@ PlaceObj('XTemplate', {
 											end,
 										}),
 										}),
+									PlaceObj('XTemplateTemplate', {
+										'comment', "select all",
+										'__context', function (parent, context) return "GamepadUIStyleChanged" end,
+										'__condition', function (parent, context) local host = GetActionsHost(parent, true) local context = host:GetContext() return context.container and gv_SatelliteView end,
+										'__template', "InventoryActionBarButtonCenter",
+										'Id', "idSelectAll",
+										'HAlign', "left",
+										'VAlign', "bottom",
+										'MinWidth', 240,
+										'MaxHeight', 240,
+										'OnContextUpdate', function (self, context, ...)
+											if self.action then
+												self:SetText(self.action.ActionName)
+											end
+										end,
+										'OnPressEffect', "action",
+										'OnPressParam', "SelectAll",
+									}, {
+										PlaceObj('XTemplateFunc', {
+											'name', "Open",
+											'func', function (self, ...)
+												XTextButton.Open(self)
+												if self.action then
+													self:SetText(self.action.ActionName)
+												end
+												local host = GetActionsHost(self.parent, true) 
+												local hidden = self.action:ActionState(host)=="hidden"
+												self:SetVisible(not hidden)
+											end,
+										}),
+										}),
 									}),
 								}),
 							PlaceObj('XTemplateAction', {
 								'ActionId', "AmmoPack",
-								'ActionName', T(599664273908, --[[XTemplate Inventory ActionName]] "SQUAD SUPPLIES"),
+								'ActionName', T(217119703945, --[[XTemplate Inventory ActionName]] "SQUAD SUPPLIES"),
 								'ActionShortcut', "A",
 								'ActionState', function (self, host)
 									local context = host:GetContext()
@@ -1763,7 +1992,7 @@ PlaceObj('XTemplate', {
 							}),
 							PlaceObj('XTemplateAction', {
 								'ActionId', "TakeAll",
-								'ActionName', T(867497972621, --[[XTemplate Inventory ActionName]] "TAKE ALL"),
+								'ActionName', T(756073794149, --[[XTemplate Inventory ActionName]] "TAKE ALL"),
 								'ActionShortcut', "T",
 								'ActionGamepad', "LeftTrigger-ButtonY",
 								'ActionState', function (self, host)
@@ -1771,6 +2000,43 @@ PlaceObj('XTemplate', {
 								end,
 								'OnAction', function (self, host, source, ...)
 									return host:TakeAllAction()
+								end,
+							}),
+							PlaceObj('XTemplateAction', {
+								'ActionId', "SelectAll",
+								'ActionName', T(502338221981, --[[XTemplate Inventory ActionName]] "SELECT ALL"),
+								'ActionShortcut', "S",
+								'ActionGamepad', "LeftTrigger-ButtonX",
+								'ActionState', function (self, host)
+									return gv_SatelliteView and host.context.container and host.context.container:GetItem() and "enabled" or "hidden"
+								end,
+								'OnAction', function (self, host, source, ...)
+									local ctn = host.context.container
+									InventoryClosePopup()
+									local itm, iwnd = next(host.selected_items)
+									host:DeselectMultiItems()
+									local cont_slot = false
+									ctn:ForEachItem(function(item,sn, l,t, cont_slot)
+										if not cont_slot then
+											for slot, val in pairs(host.slots) do
+												local wnd, itm  = slot:FindItemWnd(item) 			
+												if wnd then
+													host.selected_items[item] = wnd														
+													wnd:SetRollover(true)
+													wnd:OnSetSelected(true)			
+													wnd:OnSetRollover(true)
+													cont_slot = slot
+												end	
+											end		
+										else		
+											local wnd, itm  = cont_slot:FindItemWnd(item) 
+											host.selected_items[item] = wnd			
+											wnd:SetRollover(true)
+											wnd:OnSetSelected(true)
+											wnd:OnSetRollover(true)
+										end
+										
+									end, cont_slot)
 								end,
 							}),
 							}),
@@ -1812,7 +2078,7 @@ PlaceObj('XTemplate', {
 												'Padding', box(6, 2, 2, 2),
 												'TextStyle', "InventoryBackpackTitle",
 												'Translate', true,
-												'Text', T(723855553115, --[[XTemplate Inventory Text]] "BAG"),
+												'Text', T(884569480073, --[[XTemplate Inventory Text]] "BAG"),
 												'TextVAlign', "center",
 											}),
 											}),
@@ -1907,7 +2173,7 @@ PlaceObj('XTemplate', {
 										'FoldWhenHidden', true,
 										'TextStyle', "InventoryActionsTextRedBig",
 										'Translate', true,
-										'Text', T(657578945215, --[[XTemplate Inventory Text]] "Inventory is full"),
+										'Text', T(535760316543, --[[XTemplate Inventory Text]] "Inventory is full"),
 										'HideOnEmpty', true,
 									}),
 									PlaceObj('XTemplateTemplate', {
@@ -1934,7 +2200,7 @@ PlaceObj('XTemplate', {
 								}),
 							PlaceObj('XTemplateAction', {
 								'ActionId', "Loot",
-								'ActionName', T(130903108184, --[[XTemplate Inventory ActionName]] "Show Loot"),
+								'ActionName', T(672375550834, --[[XTemplate Inventory ActionName]] "Show Loot"),
 								'ActionToolbar', "ActionBarCenter",
 								'ActionShortcut', "L",
 								'ActionState', function (self, host)
@@ -1955,7 +2221,7 @@ PlaceObj('XTemplate', {
 							}),
 							PlaceObj('XTemplateAction', {
 								'ActionId', "TakeLoot",
-								'ActionName', T(435910084510, --[[XTemplate Inventory ActionName]] "Take Loot"),
+								'ActionName', T(166438187352, --[[XTemplate Inventory ActionName]] "Take Loot"),
 								'ActionToolbar', "ActionBarCenter",
 								'ActionShortcut', "T",
 								'ActionGamepad', "LeftTrigger-ButtonY",
@@ -1983,7 +2249,7 @@ PlaceObj('XTemplate', {
 					'HAlign', "center",
 					'TextStyle', "InventoryContainerTitle",
 					'Translate', true,
-					'Text', T(995023004139, --[[XTemplate Inventory Text]] "Squad Backpacks"),
+					'Text', T(481179361219, --[[XTemplate Inventory Text]] "Squad Backpacks"),
 				}),
 				PlaceObj('XTemplateWindow', {
 					'comment', "right",
@@ -2047,7 +2313,7 @@ PlaceObj('XTemplate', {
 										'HandleMouse', false,
 										'TextStyle', "InventoryBackpackTitle",
 										'Translate', true,
-										'Text', T(396385158705, --[[XTemplate Inventory Text]] "<Nick> BACKPACK"),
+										'Text', T(971957775453, --[[XTemplate Inventory Text]] "<Nick> BACKPACK"),
 										'TextVAlign', "center",
 									}, {
 										PlaceObj('XTemplateFunc', {
@@ -2111,7 +2377,7 @@ PlaceObj('XTemplate', {
 										'HandleMouse', false,
 										'TextStyle', "InventoryBackpackTitle",
 										'Translate', true,
-										'Text', T(141372786399, --[[XTemplate Inventory Text]] "Squad Supplies"),
+										'Text', T(447637689417, --[[XTemplate Inventory Text]] "Squad Supplies"),
 										'TextVAlign', "center",
 									}, {
 										PlaceObj('XTemplateFunc', {
@@ -2176,11 +2442,36 @@ PlaceObj('XTemplate', {
 				}),
 			PlaceObj('XTemplateWindow', {
 				'Id', "idCompare",
-				'Margins', box(100, 110, 0, 0),
 				'Dock', "box",
 				'HAlign', "left",
 				'MinWidth', 855,
-			}),
+			}, {
+				PlaceObj('XTemplateFunc', {
+					'name', "SetOutsideScale(self, scale)",
+					'func', function (self, scale)
+						-- The inventory has some custom scale active. In order to have the fake
+						-- comparison rollovers which are spawned inside this window scale like
+						-- the normal rollovers, we need to override the scale here.
+						
+						XWindow.SetOutsideScale(self, terminal.desktop.scale)
+					end,
+				}),
+				PlaceObj('XTemplateFunc', {
+					'name', "SetLayoutSpace(self, x, y, width, height)",
+					'func', function (self, x, y, width, height)
+						-- We want the margins to scale in "inventory scale"
+						
+						local dlg = self:ResolveId("node")
+						local dlgScale = dlg.scale
+						
+						local xMarg, yMarg = ScaleXY(dlgScale, 100, 110)
+						x = x + xMarg
+						y = y + yMarg
+						
+						XWindow.SetLayoutSpace(self, x, y, width, height)
+					end,
+				}),
+				}),
 			}),
 		PlaceObj('XTemplateTemplate', {
 			'__template', "InventoryActionBar",

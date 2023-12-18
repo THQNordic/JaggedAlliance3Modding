@@ -292,7 +292,7 @@ PlaceObj('VoiceResponse', {
 		T(355094374279, --[[VoiceResponse Thor SelectionStealth VoiceResponse SelectionStealth - when selected or autoselected voice:Thor]] "They will hear nothing but the wind.")
 	}),
 	SeriouslyWounded = TConcat({
-		T(759466379237, --[[VoiceResponse Thor SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds) voice:Thor]] "Looks like I'm about to hit the karmic wheel head on.")
+		T(759466379237, --[[VoiceResponse Thor SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining. voice:Thor]] "Looks like I'm about to hit the karmic wheel head on.")
 	}),
 	Startled = TConcat({
 		T(288998446867, --[[VoiceResponse Thor Startled VoiceResponse Startled - Startled by hearing a sudden noise voice:Thor]] "Huh?"),
@@ -354,9 +354,9 @@ PlaceObj('VoiceResponse', {
 		T(800918238698, --[[VoiceResponse Thor WeaponJammed VoiceResponse WeaponJammed - When weapon has jammed voice:Thor]] "Gott im Himmel, my gun's not firing.")
 	}),
 	Wounded = TConcat({
-		T(567595014117, --[[VoiceResponse Thor Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Thor]] "This pain is temporary."),
-		T(573203964233, --[[VoiceResponse Thor Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Thor]] "The enemy's negative energy sure stings a bit!"),
-		T(275477790408, --[[VoiceResponse Thor Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Thor]] "Ooooo... right in the chakra!")
+		T(567595014117, --[[VoiceResponse Thor Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Thor]] "This pain is temporary."),
+		T(573203964233, --[[VoiceResponse Thor Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Thor]] "The enemy's negative energy sure stings a bit!"),
+		T(275477790408, --[[VoiceResponse Thor Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Thor]] "Ooooo... right in the chakra!")
 	}),
 	group = "MercenariesOld",
 	id = "Thor",

@@ -20,7 +20,6 @@ DefineClass.ArmyDemo_Elite = {
 	Portrait = "UI/EnemiesPortraits/ArmyDemo",
 	Name = T(266253718474, --[[UnitDataCompositeDef ArmyDemo_Elite Name]] "Elite Siege Engineer"),
 	Randomization = true,
-	elite = true,
 	Affiliation = "Army",
 	StartingLevel = 6,
 	neutral_retaliate = true,

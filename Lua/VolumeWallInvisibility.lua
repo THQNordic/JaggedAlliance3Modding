@@ -161,9 +161,9 @@ function StartWallInvisibilityThread(reason)
 end
 
 function StopAllHiding(reason, delay, time)
-	StopWallInvisibilityThread(reason)
 	CMT_SetPause(true, reason)
 	C_CCMT_ShowAllAndReset(delay, time)
+	StopWallInvisibilityThread(reason) --calls ResetBlackPlaneVisibility which will try to hide stuff, so after C_CCMT_ShowAllAndReset which will show everything
 	blackPlanesLastVisibleFloor = false
 end
 

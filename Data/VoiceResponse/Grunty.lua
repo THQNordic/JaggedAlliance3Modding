@@ -298,7 +298,7 @@ PlaceObj('VoiceResponse', {
 		T(211594707476, --[[VoiceResponse Grunty SelectionStealth VoiceResponse SelectionStealth - when selected or autoselected voice:Grunty]] "Ja, I will hide and they will seek.")
 	}),
 	SeriouslyWounded = TConcat({
-		T(380349345912, --[[VoiceResponse Grunty SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds) voice:Grunty]] "I am very badly wounded.")
+		T(380349345912, --[[VoiceResponse Grunty SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining. voice:Grunty]] "I am very badly wounded.")
 	}),
 	Startled = TConcat({
 		T(505541684551, --[[VoiceResponse Grunty Startled VoiceResponse Startled - Startled by hearing a sudden noise voice:Grunty]] "Huh?"),
@@ -341,9 +341,9 @@ PlaceObj('VoiceResponse', {
 		T(423204063729, --[[VoiceResponse Grunty WeaponJammed VoiceResponse WeaponJammed - When weapon has jammed voice:Grunty]] "My gun is being insolent and refuses to fire.")
 	}),
 	Wounded = TConcat({
-		T(343572825284, --[[VoiceResponse Grunty Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Grunty]] "Scheisse! I am hit."),
-		T(742061375589, --[[VoiceResponse Grunty Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Grunty]] "The enemy has given me an adorable little scratch."),
-		T(878097638142, --[[VoiceResponse Grunty Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Grunty]] 'Like Mother always says, "It isn\'t fun unless it hurts."')
+		T(343572825284, --[[VoiceResponse Grunty Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Grunty]] "Scheisse! I am hit."),
+		T(742061375589, --[[VoiceResponse Grunty Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Grunty]] "The enemy has given me an adorable little scratch."),
+		T(878097638142, --[[VoiceResponse Grunty Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Grunty]] 'Like Mother always says, "It isn\'t fun unless it hurts."')
 	}),
 	group = "MercenariesOld",
 	id = "Grunty",

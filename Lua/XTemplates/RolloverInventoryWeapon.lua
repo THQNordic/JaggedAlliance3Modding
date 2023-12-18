@@ -47,7 +47,6 @@ PlaceObj('XTemplate', {
 		PlaceObj('XTemplateTemplate', {
 			'__template', "RolloverInventoryWeaponBase",
 			'Dock', "left",
-			'MaxWidth', 350,
 		}),
 		}),
 })

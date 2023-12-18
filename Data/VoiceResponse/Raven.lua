@@ -275,9 +275,9 @@ PlaceObj('VoiceResponse', {
 		T(529681881007, --[[VoiceResponse Raven SelectionStealth VoiceResponse SelectionStealth - when selected or autoselected voice:Raven]] "Advancing undetected.")
 	}),
 	SeriouslyWounded = TConcat({
-		T(261686321931, --[[VoiceResponse Raven SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds) voice:Raven]] "I need meds... painkillers... something!"),
-		T(251725839007, --[[VoiceResponse Raven SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds) voice:Raven]] "I can't fight like this. I gotta get patched up."),
-		T(871882550505, --[[VoiceResponse Raven SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds) voice:Raven]] "Fucking... OW! I'm in real bad shape here.")
+		T(261686321931, --[[VoiceResponse Raven SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining. voice:Raven]] "I need meds... painkillers... something!"),
+		T(251725839007, --[[VoiceResponse Raven SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining. voice:Raven]] "I can't fight like this. I gotta get patched up."),
+		T(871882550505, --[[VoiceResponse Raven SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining. voice:Raven]] "Fucking... OW! I'm in real bad shape here.")
 	}),
 	Startled = TConcat({
 		T(271008889738, --[[VoiceResponse Raven Startled VoiceResponse Startled - Startled by hearing a sudden noise voice:Raven]] "Huh?"),
@@ -323,9 +323,9 @@ PlaceObj('VoiceResponse', {
 		T(757236108684, --[[VoiceResponse Raven WeaponJammed VoiceResponse WeaponJammed - When weapon has jammed voice:Raven]] "Weapon malfunction!")
 	}),
 	Wounded = TConcat({
-		T(379310931668, --[[VoiceResponse Raven Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Raven]] "Not good."),
-		T(216298207128, --[[VoiceResponse Raven Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Raven]] "Ow!"),
-		T(740660092221, --[[VoiceResponse Raven Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Raven]] "I'll get you for that!")
+		T(379310931668, --[[VoiceResponse Raven Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Raven]] "Not good."),
+		T(216298207128, --[[VoiceResponse Raven Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Raven]] "Ow!"),
+		T(740660092221, --[[VoiceResponse Raven Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Raven]] "I'll get you for that!")
 	}),
 	group = "MercenariesOld",
 	id = "Raven",

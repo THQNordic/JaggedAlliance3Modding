@@ -293,7 +293,7 @@ function SyncStartExploration()
 	
 	if GetUIStyleGamepad() then
 		local unitsInMap = GetAllPlayerUnitsOnMap()
-		unitsInMap = table.ifilter(unitsInMap, function(_, o) return o:IsLocalPlayerControlled() end)
+		unitsInMap = table.ifilter(unitsInMap, function(_, o) return o:IsLocalPlayerControlled() and not o:IsDead() end)
 		SelectionSet(unitsInMap)
 	end
 end
@@ -342,6 +342,13 @@ function NetSyncEvents.ExplorationStartCombat(team_idx, unit_id)
 		end
 			
 		CloseWeaponModificationCoOpAware()
+		
+		-- Evaluate TCEs for any "starting combat" tces, and wait for any
+		-- setpieces that might be triggered (FaucheuxLeave)
+		QuestTCEEvaluation()
+		while IsSetpiecePlaying() do
+			WaitMsg("SetpieceEnded", 100)
+		end
 		
 		-- setup combat
 		local combat = Combat:new{

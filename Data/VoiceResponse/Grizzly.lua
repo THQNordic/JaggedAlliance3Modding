@@ -304,7 +304,7 @@ PlaceObj('VoiceResponse', {
 		T(815161702025, --[[VoiceResponse Grizzly SelectionStealth VoiceResponse SelectionStealth - when selected or autoselected voice:Grizzly]] "Keepin' it quiet.")
 	}),
 	SeriouslyWounded = TConcat({
-		T(494613781965, --[[VoiceResponse Grizzly SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds) voice:Grizzly]] "Even a Grizzly has his limits! I need a medic!")
+		T(494613781965, --[[VoiceResponse Grizzly SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining. voice:Grizzly]] "Even a Grizzly has his limits! I need a medic!")
 	}),
 	Startled = TConcat({
 		T(169380186735, --[[VoiceResponse Grizzly Startled VoiceResponse Startled - Startled by hearing a sudden noise voice:Grizzly]] "Huh?"),
@@ -357,9 +357,9 @@ PlaceObj('VoiceResponse', {
 		T(350893017390, --[[VoiceResponse Grizzly WeaponJammed VoiceResponse WeaponJammed - When weapon has jammed voice:Grizzly]] "Damn! Got a jam here. Gotta clear it.")
 	}),
 	Wounded = TConcat({
-		T(898828077506, --[[VoiceResponse Grizzly Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Grizzly]] "Got stung, but it's not bad."),
-		T(878767708771, --[[VoiceResponse Grizzly Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Grizzly]] "Looks worse than it feels."),
-		T(582844608885, --[[VoiceResponse Grizzly Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Grizzly]] "Took a hit, but I should be able to walk it off.")
+		T(898828077506, --[[VoiceResponse Grizzly Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Grizzly]] "Got stung, but it's not bad."),
+		T(878767708771, --[[VoiceResponse Grizzly Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Grizzly]] "Looks worse than it feels."),
+		T(582844608885, --[[VoiceResponse Grizzly Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Grizzly]] "Took a hit, but I should be able to walk it off.")
 	}),
 	group = "MercenariesOld",
 	id = "Grizzly",

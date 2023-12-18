@@ -168,6 +168,7 @@ PlaceObj('BanterDef', {
 		PlaceObj('BanterLine', {
 			'Character', "Meltdown",
 			'Text', T(266406307834, --[[BanterDef Grimer_VillagerFemale_07_Loyalty Text section:Banters_Local_GrimerHamlet/Grimer_VillagerFemale_07_Loyalty >> Magazines voice:Meltdown]] "Using magazines to brew moonshine!? ...I guess I can see it."),
+			'Optional', true,
 		}),
 	},
 	Once = true,

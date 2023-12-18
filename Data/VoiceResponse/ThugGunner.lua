@@ -202,14 +202,14 @@ PlaceObj('VoiceResponse', {
 		T(466408539963, --[[VoiceResponse ThugGunner TakeCover VoiceResponse TakeCover - Played when the Take Cover action is used voice:ThugGunner]] "Tucking in!")
 	}),
 	Wounded = TConcat({
-		T(519471425626, --[[VoiceResponse ThugGunner Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:ThugGunner]] "Je suis blessé!"),
-		T(854677147561, --[[VoiceResponse ThugGunner Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:ThugGunner]] "Uff, that hurt!"),
-		T(804990347005, --[[VoiceResponse ThugGunner Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:ThugGunner]] "Fuck!"),
-		T(664112701908, --[[VoiceResponse ThugGunner Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:ThugGunner]] "Gonna need a bandage."),
-		T(249946498790, --[[VoiceResponse ThugGunner Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:ThugGunner]] "Je suis grièvement blessé!"),
-		T(272064397771, --[[VoiceResponse ThugGunner Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:ThugGunner]] "Damn, that hurts!"),
-		T(653492018618, --[[VoiceResponse ThugGunner Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:ThugGunner]] "Uff, Ça fait mal!"),
-		T(290694676633, --[[VoiceResponse ThugGunner Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:ThugGunner]] "Putain!")
+		T(519471425626, --[[VoiceResponse ThugGunner Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:ThugGunner]] "Je suis blessé!"),
+		T(854677147561, --[[VoiceResponse ThugGunner Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:ThugGunner]] "Uff, that hurt!"),
+		T(804990347005, --[[VoiceResponse ThugGunner Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:ThugGunner]] "Fuck!"),
+		T(664112701908, --[[VoiceResponse ThugGunner Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:ThugGunner]] "Gonna need a bandage."),
+		T(249946498790, --[[VoiceResponse ThugGunner Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:ThugGunner]] "Je suis grièvement blessé!"),
+		T(272064397771, --[[VoiceResponse ThugGunner Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:ThugGunner]] "Damn, that hurts!"),
+		T(653492018618, --[[VoiceResponse ThugGunner Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:ThugGunner]] "Uff, Ça fait mal!"),
+		T(290694676633, --[[VoiceResponse ThugGunner Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:ThugGunner]] "Putain!")
 	}),
 	group = "Enemies",
 	id = "ThugGunner",

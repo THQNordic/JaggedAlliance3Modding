@@ -49,29 +49,6 @@
 		Ice: How the poor stay poor and the rich stay rich, Exhibit motherfuckin' A.
 		Tex: Sound to me like good deal for everyone, partner!
 		Blood: I'm getting a bad taste in my mouth just listening to you... and I hate when things taste bad.
-[Keyword: What was stolen from you?]
-	Gunther: <em>Diesel</em>. I don't know why, but several gallons of it were stolen from me. It may seem trivial to you, but I am not talking about the normal kind of diesel. It is... sehr special to me.
-		Barry: Could be dangerous. Diesel is not most ideal of explosive fuels, but it can still create destruction of noteworthy magnitudes.
-		Gus: People go crazy over fuel, Woodman. I saw an old lady shoot a biker who cut in front of her at the gas station during the shortage a while back.
-		DrQ: I am always astonished, and distressed by the amount of emotional attachment people form to material items.
-		Hitman: Everybody thinks their own gas is special and that everyone else's stinks.
-	Gunther: I need it back. Unfortunately, investigation is not something my men excel at, but I suspect you do. Help me retrieve what was stolen and <em>Landsbach Diamond Mine</em> will be yours. I am done with this place and I've no wish to fight you for it.
-		Scope: Not to be rude, but they also don't seem to excel at guarding your Diesel, either.
-		Gunther: And yet you managed to be rude, regardless. I do so enjoy the British and their ability to be childishly clever. For your information, the theft happened off the premises.
-		Nails: Scooter, you got yourself a deal. Any man who takes his fuel that seriously is a man I can respect.
-		Grunty: That is a most generous offer. I look forward to toasting our success with brandy... and perhaps some schnitzel?
-		Shadow: I don't get it. A whole mine full of diamonds for a few gallons of gas? Something doesn't add up.
-		Gunther: Math is hard. Don't strain yourself.
-[Keyword: Who might have stolen the Diesel?]
-		Raider: Have you seen anyone suspicious sniffing around your special gas, sir?
-		Raven: Do you have any enemies? Jilted partners, disgruntled employees, angry neighbors who don't like your dogs on their lawn... y'know, stuff like that.
-		Sidney: Let us begin by eliminating the suspects... Pardon me, I meant to say "narrowing."
-	Gunther: I don't know who might have stolen it, but I do know it was not stolen from here. A van was transporting my <em>Diesel</em> to a... location I do not wish to disclose. The van left here on schedule but never arrived. I suspect it was ambushed en route.
-	Gunther: As you can see, I don't get out much. I have few personal contacts. You should probably ask around in town and see if someone might know more. A good place to start is <em>Night Club</em>. I imagine many of the patrons know a good deal about local criminal activity.
-		Larry: Heey, now we're talking. I'll ask everyone in the <em>Night Club</em> about drugs... No, wait - it's gas, right? I'll ask them about that, too.
-		Vicki: If we gonna be jammin' in a club, that place better be dropping some serious Reggae beats, mon.
-		Scully: Careful there, Siegfried. Your class bias is showing.
-		Ice: Hell, yeah. We gonna walk into the club all like, "What's up? We lookin' for a weasel wants to talk about Diesel."
 [Keyword: What is this Night Club?]
 	Gunther: Do not be fooled. Das ist not a techno club. It is an arena. The diggers like to go there to satisfy their base desires. They drink, they gamble, they fool around with girls... and they fight - sometimes, to the death.
 		Tex: Mortal Kombaaat! Great game. Terrible movie.
@@ -98,6 +75,29 @@
 			Len: You're talking about mass murder, not war.
 	[Keyword: We're not afraid]
 		Gunther: Oh. But you should be. I dare you to attack one of my soldiers. I promise you a quick and painful result.
+[Keyword: What was stolen from you?]
+	Gunther: <em>Diesel</em>. I don't know why, but several gallons of it were stolen from me. It may seem trivial to you, but I am not talking about the normal kind of diesel. It is... sehr special to me.
+		Barry: Could be dangerous. Diesel is not most ideal of explosive fuels, but it can still create destruction of noteworthy magnitudes.
+		Gus: People go crazy over fuel, Woodman. I saw an old lady shoot a biker who cut in front of her at the gas station during the shortage a while back.
+		DrQ: I am always astonished, and distressed by the amount of emotional attachment people form to material items.
+		Hitman: Everybody thinks their own gas is special and that everyone else's stinks.
+	Gunther: I need it back. Unfortunately, investigation is not something my men excel at, but I suspect you do. Help me retrieve what was stolen and <em>Landsbach Diamond Mine</em> will be yours. I am done with this place and I've no wish to fight you for it.
+		Scope: Not to be rude, but they also don't seem to excel at guarding your Diesel, either.
+		Gunther: And yet you managed to be rude, regardless. I do so enjoy the British and their ability to be childishly clever. For your information, the theft happened off the premises.
+		Nails: Scooter, you got yourself a deal. Any man who takes his fuel that seriously is a man I can respect.
+		Grunty: That is a most generous offer. I look forward to toasting our success with brandy... and perhaps some schnitzel?
+		Shadow: I don't get it. A whole mine full of diamonds for a few gallons of gas? Something doesn't add up.
+		Gunther: Math is hard. Don't strain yourself.
+[Keyword: Who might have stolen the Diesel?]
+		Raider: Have you seen anyone suspicious sniffing around your special gas, sir?
+		Raven: Do you have any enemies? Jilted partners, disgruntled employees, angry neighbors who don't like your dogs on their lawn... y'know, stuff like that.
+		Sidney: Let us begin by eliminating the suspects... Pardon me, I meant to say "narrowing."
+	Gunther: I don't know who might have stolen it, but I do know it was not stolen from here. A van was transporting my <em>Diesel</em> to a... location I do not wish to disclose. The van left here on schedule but never arrived. I suspect it was ambushed en route.
+	Gunther: As you can see, I don't get out much. I have few personal contacts. You should probably ask around in town and see if someone might know more. A good place to start is <em>Night Club</em>. I imagine many of the patrons know a good deal about local criminal activity.
+		Larry: Heey, now we're talking. I'll ask everyone in the <em>Night Club</em> about drugs... No, wait - it's gas, right? I'll ask them about that, too.
+		Vicki: If we gonna be jammin' in a club, that place better be dropping some serious Reggae beats, mon.
+		Scully: Careful there, Siegfried. Your class bias is showing.
+		Ice: Hell, yeah. We gonna walk into the club all like, "What's up? We lookin' for a weasel wants to talk about Diesel."
 [Keyword: We found your Diesel]
 	Gunther: Ah, so you have. I suspected you would be suitable to the task. You have my sincere gratitude, mercenaries.
 		Fauda: When I have a task before me, I let no one stand in my way... although I do allow some to sit or lay down.
@@ -115,7 +115,7 @@
 		Gunther: I see you are skeptical. That is understandable. I do not require you to believe me. I do, however, require your cooperation. Therefore, in addition to giving you the <em>diamond mine</em>, I shall also leave you some <em>militia</em>, drawn from the local populace, to help defend it. What do you say?
 		[Keyword: That seems like a good deal]
 			Gunther: I am very happy to hear that, mein freund. Come, let us toast to our mutual success. Prost!
-		[Keyword: We are putting and end to this]
+		[Keyword: We are putting an end to this]
 			Gunther: And who is paying you to do that? No one. I am giving you the diamond mine - the very thing you are contracted to take - yet you wish to interfere in my business instead. Why?
 				Meltdown: Because you talk too much and I'm damn tired of it!
 				Steroid: Because I hate Nazis!

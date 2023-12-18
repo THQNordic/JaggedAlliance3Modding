@@ -274,7 +274,7 @@ PlaceObj('VoiceResponse', {
 		T(975220689745, --[[VoiceResponse Sidney SelectionStealth VoiceResponse SelectionStealth - when selected or autoselected voice:Sidney]] "Understood. Mum's the word.")
 	}),
 	SeriouslyWounded = TConcat({
-		T(998266875213, --[[VoiceResponse Sidney SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds) voice:Sidney]] "Keep calm and try not to die.")
+		T(998266875213, --[[VoiceResponse Sidney SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining. voice:Sidney]] "Keep calm and try not to die.")
 	}),
 	Startled = TConcat({
 		T(363973731072, --[[VoiceResponse Sidney Startled VoiceResponse Startled - Startled by hearing a sudden noise voice:Sidney]] "Huh?"),
@@ -312,9 +312,9 @@ PlaceObj('VoiceResponse', {
 		T(152721710472, --[[VoiceResponse Sidney WeaponJammed VoiceResponse WeaponJammed - When weapon has jammed voice:Sidney]] "Ah. Misfire. Not to worry. Have it cleared in a jiff.")
 	}),
 	Wounded = TConcat({
-		T(487168287461, --[[VoiceResponse Sidney Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Sidney]] "Just a scratch."),
-		T(971919185769, --[[VoiceResponse Sidney Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Sidney]] "Bloody rotter got a lucky hit."),
-		T(599762584940, --[[VoiceResponse Sidney Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Sidney]] "It's fine. Perfect, even.")
+		T(487168287461, --[[VoiceResponse Sidney Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Sidney]] "Just a scratch."),
+		T(971919185769, --[[VoiceResponse Sidney Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Sidney]] "Bloody rotter got a lucky hit."),
+		T(599762584940, --[[VoiceResponse Sidney Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Sidney]] "It's fine. Perfect, even.")
 	}),
 	group = "MercenariesOld",
 	id = "Sidney",

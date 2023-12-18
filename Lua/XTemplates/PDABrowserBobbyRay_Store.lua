@@ -11,6 +11,12 @@ PlaceObj('XTemplate', {
 		end,
 		'__class', "XDialog",
 		'Id', "PDABrowserBobbyRay_Store",
+		'OnLayoutComplete', function (self)
+			if self.pending_scroll_reset then 
+				self:ResolveId("idSectorList"):ScrollTo(0,0)
+				self.pending_scroll_reset = false
+			end
+		end,
 		'LayoutMethod', "VList",
 		'HandleMouse', true,
 		'MouseCursor', "UI/Cursors/Pda_Cursor.tga",
@@ -18,6 +24,9 @@ PlaceObj('XTemplate', {
 		PlaceObj('XTemplateFunc', {
 			'name', "Open(self,...)",
 			'func', function (self,...)
+				self.is_using_native_gamepad = false
+				self.selected_entry = 1
+				
 				PDABrowserTabState["bobby_ray_shop"].mode_param = "store"
 				PauseCampaignTime(GetUICampaignPauseReason("PDABrowserBobbyRay_Store"))
 				g_BobbyRayShopOpen = true
@@ -31,16 +40,171 @@ PlaceObj('XTemplate', {
 				BobbyRayCheckClearEmptyCartEntries()
 				ResumeCampaignTime(GetUICampaignPauseReason("PDABrowserBobbyRay_Store"))
 				g_BobbyRayShopOpen = false
+				SetDisableMouseViaGamepad(false, "BobbyRayStoreSelectionDPad")
+			end,
+		}),
+		PlaceObj('XTemplateFunc', {
+			'name', "IsUsingNativeGamepad(self)",
+			'func', function (self)
+				return GetUIStyleGamepad() and self.is_using_native_gamepad
+			end,
+		}),
+		PlaceObj('XTemplateFunc', {
+			'name', "RecheckSelectedEntry(self)",
+			'func', function (self)
+				local itemList = self:ResolveId("idSectorList")
+				if not self.selected_entry then return end
+				
+				if self:IsUsingNativeGamepad() then
+					itemList[self.selected_entry]:OnSetRollover_Override(true)
+					return
+				end
+				
+				if not itemList:MouseInWindow(terminal.GetMousePos()) then
+					itemList[self.selected_entry]:OnSetRollover_Override(false)
+					return
+				end
+				
+				if itemList[self.selected_entry]:MouseInWindow(terminal.GetMousePos()) then
+					itemList[self.selected_entry]:OnSetRollover_Override(true)
+					return
+				end
+			end,
+		}),
+		PlaceObj('XTemplateFunc', {
+			'name', "SetEnableNativeGamepad(self, enable)",
+			'func', function (self, enable)
+				if enable ~= IsZuluMouseViaGamepadEnabled() and self.is_using_native_gamepad == enable then return false end
+				self.is_using_native_gamepad = enable
+				if enable and GetUIStyleGamepad() then
+					SetDisableMouseViaGamepad(true, "BobbyRayStoreSelectionDPad")
+					self:RevealSelectedEntry()
+				else
+					SetDisableMouseViaGamepad(false, "BobbyRayStoreSelectionDPad")
+					self:HideSelectedEntry()
+					self:RecheckSelectedEntry()
+				end
+				return true
+			end,
+		}),
+		PlaceObj('XTemplateFunc', {
+			'name', "SelectEntry(self, index)",
+			'func', function (self, index)
+				if self.selected_entry == index then return end
+				local itemList = self:ResolveId("idSectorList")
+				if self.selected_entry then
+					itemList[self.selected_entry]:OnSetRollover_Override(false)
+				end
+				if not (itemList[index]:GetContext().item and itemList[index]:GetContext().item ~= empty_table) then
+					return
+				end
+				self.selected_entry = index
+				if self.selected_entry then
+					itemList[index]:OnSetRollover_Override(true)
+					RunWhenXWindowIsReady(itemList, function()
+						if self.pending_scroll_reset then return end
+						itemList:SetSelection(self.selected_entry)
+					end)
+				end
+			end,
+		}),
+		PlaceObj('XTemplateFunc', {
+			'name', "SelectPreviousEntry(self)",
+			'func', function (self)
+				local entry = self.selected_entry
+				if not entry  then 
+					entry = 1
+				else
+					entry = Max(1, entry-1)
+				end
+				self:SelectEntry(entry)
+			end,
+		}),
+		PlaceObj('XTemplateFunc', {
+			'name', "SelectNextEntry(self)",
+			'func', function (self)
+				local entry = self.selected_entry
+				if not entry  then 
+					entry = 1
+				else
+					local list = self:ResolveId("idSectorList")
+					if entry + 1 <= #list and list[entry + 1]:GetContext().item ~= empty_table then
+						entry = entry + 1
+					end
+				end
+				self:SelectEntry(entry)
+			end,
+		}),
+		PlaceObj('XTemplateFunc', {
+			'name', "GetSelectedEntry(self)",
+			'func', function (self)
+				return self.selected_entry
+			end,
+		}),
+		PlaceObj('XTemplateFunc', {
+			'name', "RevealSelectedEntry(self)",
+			'func', function (self)
+				local itemList = self:ResolveId("idSectorList")
+				if self.selected_entry then
+					itemList[self.selected_entry]:OnSetRollover_Override(true)
+				end
+			end,
+		}),
+		PlaceObj('XTemplateFunc', {
+			'name', "HideSelectedEntry(self)",
+			'func', function (self)
+				local itemList = self:ResolveId("idSectorList")
+				if self.selected_entry then
+					itemList[self.selected_entry]:OnSetRollover_Override(false)
+				end
+			end,
+		}),
+		PlaceObj('XTemplateFunc', {
+			'name', "AddEntryToCart(self)",
+			'func', function (self)
+				if not self.selected_entry then return end
+				local item = self:ResolveId("idSectorList")[self.selected_entry]:GetContext().item
+				if not item or item == empty_table then return end
+				if CanAddToCart(item.id) then
+					NetSyncEvent("BobbyRayCartAdd", item.id)
+					PlayFX("buttonPress", "start")
+				else
+					PlayFX("IactDisabled", "start")
+				end
+				ObjModified(g_BobbyRayCart)
+			end,
+		}),
+		PlaceObj('XTemplateFunc', {
+			'name', "RemoveEntryFromCart(self)",
+			'func', function (self)
+				if not self.selected_entry then return end
+				local item = self:ResolveId("idSectorList")[self.selected_entry]:GetContext().item
+				if not item or item == empty_table then return end
+				if CanRemoveFromCart(item.id) then
+					NetSyncEvent("BobbyRayCartRemove", item.id)
+					PlayFX("buttonPress", "start")
+				else
+					PlayFX("IactDisabled", "start")
+				end
+				ObjModified(g_BobbyRayCart)
 			end,
 		}),
 		PlaceObj('XTemplateFunc', {
 			'name', "SetCategory(self, category, subcategory)",
 			'func', function (self, category, subcategory)
 				self:ResolveId("idSectorList"):ScrollTo(0,0)
+				self.selected_entry = false
 				BobbyRayShopSetCategory(category and category.id or nil, subcategory and subcategory.id or nil)
 				self:ResolveId("idCategory"):OnContextUpdate({category = category, subcategory = subcategory})
 				ObjModified(g_BobbyRayStore)
 				ObjModified("pda_url")
+				self:SelectEntry(1)
+				if self:IsUsingNativeGamepad() then
+					self:RevealSelectedEntry()
+				else
+					self:HideSelectedEntry()
+				end
+				self.pending_scroll_reset = true
 			end,
 		}),
 		PlaceObj('XTemplateFunc', {
@@ -84,12 +248,112 @@ PlaceObj('XTemplate', {
 				host.CycleCategory(host, "prev")
 			end,
 		}),
+		PlaceObj('XTemplateAction', {
+			'ActionId', "idPrevItem",
+			'ActionGamepad', "DPadUp",
+			'OnAction', function (self, host, source, ...)
+				if not host.selected_entry then return end
+				local itemList = host:ResolveId("idSectorList")
+				local mouseInArea = itemList:MouseInWindow(terminal.GetMousePos()) 
+				local mouseInEntry = itemList[host.selected_entry]:MouseInWindow(terminal.GetMousePos())
+				if host:SetEnableNativeGamepad(true) then
+					if mouseInArea and mouseInEntry then
+						host:SelectPreviousEntry()
+					else
+						host:RevealSelectedEntry()
+					end
+				else
+					host:SelectPreviousEntry()
+				end
+			end,
+		}),
+		PlaceObj('XTemplateAction', {
+			'ActionId', "idNextItem",
+			'ActionGamepad', "DPadDown",
+			'OnAction', function (self, host, source, ...)
+				if not host.selected_entry then return end
+				local itemList = host:ResolveId("idSectorList")
+				local mouseInArea = itemList:MouseInWindow(terminal.GetMousePos()) 
+				local mouseInEntry = itemList[host.selected_entry]:MouseInWindow(terminal.GetMousePos())
+				if host:SetEnableNativeGamepad(true) then
+					if mouseInArea and mouseInEntry then
+						host:SelectNextEntry()
+					else
+						host:RevealSelectedEntry()
+					end
+				else
+					host:SelectNextEntry()
+				end
+			end,
+		}),
+		PlaceObj('XTemplateAction', {
+			'ActionId', "idReactivateVirtualMouse",
+			'ActionGamepad', "LeftThumbDown",
+			'OnAction', function (self, host, source, ...)
+				host:SetEnableNativeGamepad(false)
+			end,
+		}),
+		PlaceObj('XTemplateAction', {
+			'ActionId', "idReactivateVirtualMouse",
+			'ActionGamepad', "LeftThumbUp",
+			'OnAction', function (self, host, source, ...)
+				host:SetEnableNativeGamepad(false)
+			end,
+		}),
+		PlaceObj('XTemplateAction', {
+			'ActionId', "idReactivateVirtualMouse",
+			'ActionGamepad', "LeftThumbLeft",
+			'OnAction', function (self, host, source, ...)
+				host:SetEnableNativeGamepad(false)
+			end,
+		}),
+		PlaceObj('XTemplateAction', {
+			'ActionId', "idReactivateVirtualMouse",
+			'ActionGamepad', "LeftThumbRight",
+			'OnAction', function (self, host, source, ...)
+				host:SetEnableNativeGamepad(false)
+			end,
+		}),
+		PlaceObj('XTemplateAction', {
+			'ActionId', "idAddToCart",
+			'ActionGamepad', "ButtonA",
+			'ActionState', function (self, host)
+				return not host:IsUsingNativeGamepad() and "disabled" or "enabled"
+			end,
+			'OnAction', function (self, host, source, ...)
+				host:AddEntryToCart()
+			end,
+		}),
+		PlaceObj('XTemplateAction', {
+			'ActionId', "idRemoveFromCart",
+			'ActionGamepad', "ButtonX",
+			'ActionState', function (self, host)
+				return not host:IsUsingNativeGamepad() and "disabled" or "enabled"
+			end,
+			'OnAction', function (self, host, source, ...)
+				host:RemoveEntryFromCart()
+			end,
+		}),
 		PlaceObj('XTemplateWindow', {
 			'comment', "Background",
 			'__class', "XImage",
 			'Dock', "box",
 			'Image', "UI/PDA/WEBSites/bobby_rays_background",
 			'ImageFit', "stretch",
+		}),
+		PlaceObj('XTemplateWindow', {
+			'comment', "gamepad observer",
+			'__context', function (parent, context) return "GamepadUIStyleChanged" end,
+			'__class', "XContextWindow",
+			'Visible', false,
+			'FoldWhenHidden', true,
+			'OnContextUpdate', function (self, context, ...)
+				if GetUIStyleGamepad() then
+					self.parent:SetEnableNativeGamepad(false)
+				else
+					self.parent:SetEnableNativeGamepad(false)
+				end
+			end,
 		}),
 		PlaceObj('XTemplateWindow', {
 			'comment', "PageSpecific",
@@ -228,12 +492,6 @@ PlaceObj('XTemplate', {
 								self:ResolveId("idFixupFrameRight"):SetBox(x,y,w,h)
 								self:ResolveId("idFixupFrameTop"):SetBox(x,y,w,h)
 								
-								local cur_w, cur_h = GetResolution()
-								if self.prev_w ~= cur_w or self.prev_h ~= cur_h then
-									scroll:ScrollTo(0)
-								end
-								self.prev_w, self.prev_h = GetResolution()
-								
 								SnappingScrollArea.OnLayoutComplete(self)
 							end,
 							'LayoutVSpacing', -7,
@@ -259,15 +517,17 @@ PlaceObj('XTemplate', {
 							PlaceObj('XTemplateForEach', {
 								'array', function (parent, context) return BobbyRayStoreToArray(BobbyRayShopGetActiveCategoryPair()) end,
 								'item_in_context', "store_entry",
-								'__context', function (parent, context, item, i, n) return item end,
-								'run_after', function (child, context, item, i, n, last)
-									
-								end,
+								'__context', function (parent, context, item, i, n) return {item = item, index = i} end,
 							}, {
 								PlaceObj('XTemplateTemplate', {
 									'__template', "PDABrowserBobbyRay_StoreEntry",
 									'MinHeight', 110,
 									'MaxHeight', 110,
+									'OnLayoutComplete', function (self)
+										if self:MouseInWindow(terminal.GetMousePos()) then
+											self:ResolveId("node"):ResolveId("node"):SelectEntry(self:GetContext().index)
+										end
+									end,
 								}),
 								}),
 							}),
@@ -662,6 +922,7 @@ PlaceObj('XTemplate', {
 			'ActionId', "idScrollUp",
 			'ActionGamepad', "RightThumbUp",
 			'OnAction', function (self, host, source, ...)
+				host:SetEnableNativeGamepad(false)
 				local scrollbar = host:ResolveId("idSectorList")
 				if not scrollbar then return end
 				scrollbar:ScrollUp()
@@ -671,6 +932,7 @@ PlaceObj('XTemplate', {
 			'ActionId', "idScrollDown",
 			'ActionGamepad', "RightThumbDown",
 			'OnAction', function (self, host, source, ...)
+				host:SetEnableNativeGamepad(false)
 				local scrollbar = host:ResolveId("idSectorList")
 				if not scrollbar then return end
 				scrollbar:ScrollDown()

@@ -17,8 +17,6 @@ PlaceObj('UnitDataCompositeDef', {
 	'Portrait', "UI/EnemiesPortraits/RebelRecon",
 	'Name', T(631807055173, --[[UnitDataCompositeDef Landsbach_Thug Name]] "Night Club Guard"),
 	'Randomization', true,
-	'elite', true,
-	'eliteCategory', "Foreigners",
 	'Affiliation', "Other",
 	'StartingLevel', 4,
 	'neutral_retaliate', true,
@@ -51,6 +49,6 @@ PlaceObj('UnitDataCompositeDef', {
 	'Tier', "Elite",
 	'pollyvoice', "Joey",
 	'gender', "Male",
-	'VoiceResponseId', "AdonisAssault",
+	'VoiceResponseId', "ThugGunner",
 })
 

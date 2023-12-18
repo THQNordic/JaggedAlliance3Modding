@@ -196,8 +196,16 @@ PlaceObj('BanterDef', {
 		}),
 	},
 	conditions = {
-		PlaceObj('CheckIsPersistentUnitDead', {
-			per_ses_id = "NPC_Lurch",
+		PlaceObj('QuestIsVariableBool', {
+			QuestId = "_GroupsAttacked",
+			Vars = set( "Lurch_Killed" ),
+			__eval = function ()
+				local quest = gv_Quests['_GroupsAttacked'] or QuestGetState('_GroupsAttacked')
+				return quest.Lurch_Killed
+			end,
+		}),
+		PlaceObj('SectorCheckCity', {
+			city = "PortDiancie",
 		}),
 	},
 	disabledInConflict = true,
@@ -213,8 +221,16 @@ PlaceObj('BanterDef', {
 		}),
 	},
 	conditions = {
-		PlaceObj('CheckIsPersistentUnitDead', {
-			per_ses_id = "NPC_Lurch",
+		PlaceObj('QuestIsVariableBool', {
+			QuestId = "_GroupsAttacked",
+			Vars = set( "Lurch_Killed" ),
+			__eval = function ()
+				local quest = gv_Quests['_GroupsAttacked'] or QuestGetState('_GroupsAttacked')
+				return quest.Lurch_Killed
+			end,
+		}),
+		PlaceObj('SectorCheckCity', {
+			city = "PortDiancie",
 		}),
 	},
 	disabledInConflict = true,

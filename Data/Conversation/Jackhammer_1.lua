@@ -372,6 +372,9 @@ PlaceObj('Conversation', {
 					Prop = "JackhammerExecution",
 					QuestId = "Luigi",
 				}),
+				PlaceObj('PlaySetpiece', {
+					setpiece = "JackhammerDies",
+				}),
 			},
 			GoTo = "<end conversation>",
 			Keyword = "I say that",

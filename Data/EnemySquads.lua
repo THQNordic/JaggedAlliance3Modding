@@ -437,6 +437,67 @@ PlaceObj('EnemySquads', {
 })
 
 PlaceObj('EnemySquads', {
+	Units = {
+		PlaceObj('EnemySquadUnit', {
+			'weightedList', {
+				PlaceObj('UnitTypeListWithWeights', {
+					'unitType', "SuperSoldier_Assault",
+				}),
+			},
+			'UnitCountMin', 1,
+			'UnitCountMax', 1,
+		}),
+		PlaceObj('EnemySquadUnit', {
+			'weightedList', {
+				PlaceObj('UnitTypeListWithWeights', {
+					'unitType', "SuperSoldier_Linebreaker",
+				}),
+			},
+			'UnitCountMin', 1,
+			'UnitCountMax', 1,
+		}),
+		PlaceObj('EnemySquadUnit', {
+			'weightedList', {
+				PlaceObj('UnitTypeListWithWeights', {
+					'unitType', "SuperSoldier_Medic",
+				}),
+			},
+			'UnitCountMin', 1,
+			'UnitCountMax', 1,
+		}),
+		PlaceObj('EnemySquadUnit', {
+			'weightedList', {
+				PlaceObj('UnitTypeListWithWeights', {
+					'unitType', "SuperSoldier_Ordnance",
+				}),
+			},
+			'UnitCountMin', 1,
+			'UnitCountMax', 1,
+		}),
+		PlaceObj('EnemySquadUnit', {
+			'weightedList', {
+				PlaceObj('UnitTypeListWithWeights', {
+					'unitType', "SuperSoldier_Skirmisher",
+				}),
+			},
+			'UnitCountMin', 1,
+			'UnitCountMax', 1,
+		}),
+		PlaceObj('EnemySquadUnit', {
+			'weightedList', {
+				PlaceObj('UnitTypeListWithWeights', {
+					'unitType', "SuperSoldier_Stormer",
+				}),
+			},
+			'UnitCountMin', 1,
+			'UnitCountMax', 1,
+		}),
+	},
+	group = "DLC1",
+	id = "TestSuperSoldiers",
+})
+
+PlaceObj('EnemySquads', {
 	DiamondBriefcase = true,
 	DiamondBriefcaseCarrier = 1,
 	Units = {
@@ -1968,6 +2029,323 @@ PlaceObj('EnemySquads', {
 	displayName = T(773069763606, --[[EnemySquads TheMajors_Retinue displayName]] "The Retinue"),
 	group = "Guardpost",
 	id = "TheMajors_Retinue",
+})
+
+PlaceObj('EnemySquads', {
+	Comment = "mid tier",
+	Units = {
+		PlaceObj('EnemySquadUnit', {
+			'weightedList', {
+				PlaceObj('UnitTypeListWithWeights', {
+					'unitType', "SuperSoldier_Skirmisher",
+				}),
+			},
+			'UnitCountMin', 2,
+			'UnitCountMax', 2,
+		}),
+		PlaceObj('EnemySquadUnit', {
+			'weightedList', {
+				PlaceObj('UnitTypeListWithWeights', {
+					'unitType', "SuperSoldier_Assault",
+				}),
+			},
+			'UnitCountMin', 2,
+			'UnitCountMax', 2,
+		}),
+		PlaceObj('EnemySquadUnit', {
+			'weightedList', {
+				PlaceObj('UnitTypeListWithWeights', {
+					'unitType', "SuperSoldier_Ordnance",
+				}),
+			},
+			'UnitCountMin', 1,
+			'UnitCountMax', 1,
+		}),
+		PlaceObj('EnemySquadUnit', {
+			'weightedList', {
+				PlaceObj('UnitTypeListWithWeights', {
+					'unitType', "SuperSoldier_Linebreaker",
+				}),
+			},
+			'UnitCountMin', 2,
+			'UnitCountMax', 2,
+		}),
+	},
+	group = "Hans",
+	id = "BigStation",
+})
+
+PlaceObj('EnemySquads', {
+	Comment = "mid tier",
+	Units = {
+		PlaceObj('EnemySquadUnit', {
+			'weightedList', {
+				PlaceObj('UnitTypeListWithWeights', {
+					'unitType', "SuperSoldier_Assault",
+				}),
+			},
+			'UnitCountMin', 3,
+			'UnitCountMax', 3,
+		}),
+		PlaceObj('EnemySquadUnit', {
+			'weightedList', {
+				PlaceObj('UnitTypeListWithWeights', {
+					'unitType', "SuperSoldier_Linebreaker",
+				}),
+			},
+			'UnitCountMin', 5,
+			'UnitCountMax', 5,
+		}),
+		PlaceObj('EnemySquadUnit', {
+			'weightedList', {
+				PlaceObj('UnitTypeListWithWeights', {
+					'unitType', "SuperSoldier_Skirmisher",
+				}),
+			},
+			'UnitCountMin', 4,
+			'UnitCountMax', 4,
+		}),
+		PlaceObj('EnemySquadUnit', {
+			'weightedList', {
+				PlaceObj('UnitTypeListWithWeights', {
+					'unitType', "SuperSoldier_Stormer",
+				}),
+			},
+			'UnitCountMin', 2,
+			'UnitCountMax', 2,
+		}),
+	},
+	group = "Hans",
+	id = "BioLabor",
+})
+
+PlaceObj('EnemySquads', {
+	Comment = "high tier",
+	Units = {
+		PlaceObj('EnemySquadUnit', {
+			'weightedList', {
+				PlaceObj('UnitTypeListWithWeights', {
+					'unitType', "SuperSoldier_Assault_Stronger",
+				}),
+			},
+			'UnitCountMin', 2,
+			'UnitCountMax', 2,
+		}),
+		PlaceObj('EnemySquadUnit', {
+			'weightedList', {
+				PlaceObj('UnitTypeListWithWeights', {
+					'unitType', "SuperSoldier_Linebreaker_Stronger",
+				}),
+			},
+			'UnitCountMin', 2,
+			'UnitCountMax', 2,
+		}),
+		PlaceObj('EnemySquadUnit', {
+			'weightedList', {
+				PlaceObj('UnitTypeListWithWeights', {
+					'unitType', "SuperSoldier_Medic",
+				}),
+			},
+			'UnitCountMin', 1,
+			'UnitCountMax', 1,
+		}),
+		PlaceObj('EnemySquadUnit', {
+			'weightedList', {
+				PlaceObj('UnitTypeListWithWeights', {
+					'unitType', "SuperSoldier_Ordnance",
+				}),
+			},
+			'UnitCountMin', 2,
+			'UnitCountMax', 2,
+		}),
+		PlaceObj('EnemySquadUnit', {
+			'weightedList', {
+				PlaceObj('UnitTypeListWithWeights', {
+					'unitType', "SuperSoldier_Skirmisher_Stronger",
+				}),
+			},
+			'UnitCountMin', 2,
+			'UnitCountMax', 2,
+		}),
+		PlaceObj('EnemySquadUnit', {
+			'weightedList', {
+				PlaceObj('UnitTypeListWithWeights', {
+					'unitType', "SuperSoldier_Stormer_Stronger",
+				}),
+			},
+			'UnitCountMin', 2,
+			'UnitCountMax', 2,
+		}),
+	},
+	group = "Hans",
+	id = "Cryolabor",
+})
+
+PlaceObj('EnemySquads', {
+	Comment = "mid tier",
+	Units = {
+		PlaceObj('EnemySquadUnit', {
+			'weightedList', {
+				PlaceObj('UnitTypeListWithWeights', {
+					'unitType', "SuperSoldier_EmplacementGunner",
+				}),
+			},
+			'UnitCountMin', 2,
+			'UnitCountMax', 2,
+		}),
+		PlaceObj('EnemySquadUnit', {
+			'weightedList', {
+				PlaceObj('UnitTypeListWithWeights', {
+					'unitType', "SuperSoldier_Assault",
+				}),
+			},
+			'UnitCountMin', 5,
+			'UnitCountMax', 5,
+		}),
+		PlaceObj('EnemySquadUnit', {
+			'weightedList', {
+				PlaceObj('UnitTypeListWithWeights', {
+					'unitType', "SuperSoldier_Skirmisher",
+				}),
+			},
+			'UnitCountMin', 3,
+			'UnitCountMax', 3,
+		}),
+		PlaceObj('EnemySquadUnit', {
+			'weightedList', {
+				PlaceObj('UnitTypeListWithWeights', {
+					'unitType', "SuperSoldier_Ordnance",
+				}),
+			},
+			'UnitCountMin', 2,
+			'UnitCountMax', 2,
+		}),
+		PlaceObj('EnemySquadUnit', {
+			'weightedList', {
+				PlaceObj('UnitTypeListWithWeights', {
+					'unitType', "SuperSoldier_Medic",
+				}),
+			},
+			'UnitCountMin', 2,
+			'UnitCountMax', 2,
+		}),
+	},
+	group = "Hans",
+	id = "Klinik",
+})
+
+PlaceObj('EnemySquads', {
+	Comment = "low tier",
+	Units = {
+		PlaceObj('EnemySquadUnit', {
+			'weightedList', {
+				PlaceObj('UnitTypeListWithWeights', {
+					'unitType', "SuperSoldier_Skirmisher",
+				}),
+			},
+			'UnitCountMin', 2,
+			'UnitCountMax', 2,
+		}),
+		PlaceObj('EnemySquadUnit', {
+			'weightedList', {
+				PlaceObj('UnitTypeListWithWeights', {
+					'unitType', "SuperSoldier_Assault",
+				}),
+			},
+			'UnitCountMin', 1,
+			'UnitCountMax', 2,
+		}),
+		PlaceObj('EnemySquadUnit', {
+			'weightedList', {
+				PlaceObj('UnitTypeListWithWeights', {
+					'unitType', "SuperSoldier_Linebreaker",
+				}),
+			},
+			'UnitCountMin', 1,
+			'UnitCountMax', 2,
+		}),
+	},
+	group = "Hans",
+	id = "SmallStations",
+})
+
+PlaceObj('EnemySquads', {
+	Comment = "low tier",
+	Units = {
+		PlaceObj('EnemySquadUnit', {
+			'weightedList', {
+				PlaceObj('UnitTypeListWithWeights', {
+					'unitType', "SuperSoldier_Assault",
+				}),
+			},
+			'UnitCountMin', 1,
+			'UnitCountMax', 1,
+		}),
+		PlaceObj('EnemySquadUnit', {
+			'weightedList', {
+				PlaceObj('UnitTypeListWithWeights', {
+					'unitType', "SuperSoldier_Stormer",
+				}),
+			},
+			'UnitCountMin', 1,
+			'UnitCountMax', 1,
+		}),
+	},
+	group = "Hans",
+	id = "TunnelSentry",
+})
+
+PlaceObj('EnemySquads', {
+	Comment = "mid tier",
+	Units = {
+		PlaceObj('EnemySquadUnit', {
+			'weightedList', {
+				PlaceObj('UnitTypeListWithWeights', {
+					'unitType', "SuperSoldier_EmplacementGunner",
+				}),
+			},
+			'UnitCountMin', 2,
+			'UnitCountMax', 2,
+		}),
+		PlaceObj('EnemySquadUnit', {
+			'weightedList', {
+				PlaceObj('UnitTypeListWithWeights', {
+					'unitType', "SuperSoldier_Assault",
+				}),
+			},
+			'UnitCountMin', 4,
+			'UnitCountMax', 4,
+		}),
+		PlaceObj('EnemySquadUnit', {
+			'weightedList', {
+				PlaceObj('UnitTypeListWithWeights', {
+					'unitType', "SuperSoldier_Stormer",
+				}),
+			},
+			'UnitCountMin', 4,
+			'UnitCountMax', 4,
+		}),
+		PlaceObj('EnemySquadUnit', {
+			'weightedList', {
+				PlaceObj('UnitTypeListWithWeights', {
+					'unitType', "SuperSoldier_Linebreaker",
+				}),
+			},
+			'UnitCountMin', 3,
+			'UnitCountMax', 3,
+		}),
+		PlaceObj('EnemySquadUnit', {
+			'weightedList', {
+				PlaceObj('UnitTypeListWithWeights', {
+					'unitType', "SuperSoldier_Medic",
+				}),
+			},
+			'UnitCountMin', 2,
+			'UnitCountMax', 2,
+		}),
+	},
+	group = "Hans",
+	id = "Waffenlabor",
 })
 
 PlaceObj('EnemySquads', {

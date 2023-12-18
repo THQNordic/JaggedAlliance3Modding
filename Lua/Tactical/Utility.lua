@@ -25,7 +25,7 @@ end
 function OnMsg.ConflictEnd(sector)
 	local campaignPreset = GetCurrentCampaignPreset()
 	if not sector or not campaignPreset then return end
-	local questVarState = GetQuestVar("01_Landing", "TCE_InitialConflictLock")
+	local questVarState = gv_Quests["01_Landing"] and GetQuestVar("01_Landing", "TCE_InitialConflictLock")
 	if sector.Id == campaignPreset.InitialSector and not TutorialHintsState.TravelPlaced and questVarState == "done" then
 		BlinkStartButtonAndSatellite(true)
 	end
@@ -441,8 +441,8 @@ function GetOperationTimeLeftAssign(merc, operation, context)
 		local teacher = context.list_as_prof=="Teacher" and merc
 		if not teacher then
 			local mercs = GetOperationProfessionalsGroupedByProfession(sector_id, "TrainMercs")
-			local 	teachers = mercs["Teacher"]
-			teacher = teachers[1]
+			local 	teachers = mercs["Teacher"] or mercs["Student"]
+			teacher = teachers and teachers[1] or merc
 		end	
 		return GetActorOperationTimeLeft(teacher, "TrainMercs")
 	end
@@ -548,10 +548,10 @@ function GetOperationTimeLeft(merc, operation, context)
 		local mercs = GetOperationProfessionalsGroupedByProfession(sector_id, "TrainMercs")
 		local 	students = mercs["Student"]
 		local 	teachers = mercs["Teacher"]
-		if not context.prediction and (not next(students) or not next(teachers)) then
+		if not context.prediction and not next(students) then
 			return 0
 		end
-		return GetActorOperationTimeLeft(teachers[1] or context.merc, "TrainMercs")
+		return GetActorOperationTimeLeft(teachers[1] or context.merc or students[1], "TrainMercs")
 	end
 	
 	if operation == "RepairItems" then	
@@ -1043,6 +1043,16 @@ function AddSquadToSectorList(squad, sector_id)
 	end
 end
 
+function SquadsReindexArray(array, first)
+	local idx = table.find(array, first)
+	if not idx or idx == 1 then return end
+	for i=1, idx-1 do
+		table.remove(array, 1)
+		table.insert(array)
+	end
+	return array
+end
+
 function GetSquadsInSector(sector_id, excludeTravelling, includeMilitia, excludeArriving, excludeRetreating)
 	local sectorData = gv_Sectors[sector_id]
 	-- in allmost all of calls only sector_id is passed, so precalc that result
@@ -1113,11 +1123,11 @@ end
 function GetEnemiesInSector(sector, ...)
 	local _, squads = GetSquadsInSector(sector, ...)
 	if #squads == 0 and gv_Sectors[sector].conflict then
-		return {
+		return {{
 			DisplayName = T(496804530535, "UNKNOWN ENEMIES"),
 			units = false,
 			Count = T(548893794472, "UNKNOWN STRENGTH")
-		}
+		}}
 	end
 	return squads
 end
@@ -1235,9 +1245,11 @@ function GroupEnemyMercs(squads, separateDead)
 			local data = gv_UnitData[u]
 			if data then
 				totalCount = totalCount + 1
+				local is_dead = false
 				local name = _InternalTranslate(data.Name)
 				if separateDead and data.HitPoints == 0 then
 					name = name .. "_dead"
+					is_dead = true
 				end
 				
 				local hasShipment = false
@@ -1260,7 +1272,8 @@ function GroupEnemyMercs(squads, separateDead)
 						DisplayName = data.Name,
 						templates = { data },
 						Side = s.Side,
-						hasShipment = hasShipment
+						hasShipment = hasShipment,
+						is_dead = separateDead and is_dead or false,
 					}
 				end
 			end
@@ -1528,28 +1541,28 @@ end
 function AnyAttackInterrupt(unit, target, action, target_dummy)
 	if action and (action.id == "CancelShot" or action.id == "CancelShotCone") or not target then return false end
 	
-	if action and action.ActionType == "Melee Attack" and action.AimType == "melee" and HasPerk(unit, "HardBlow") then
+	if not unit:CallReactions_And("OnCheckInterruptAttackAvailable", target, action) then
 		return false
 	end
 	
 	-- Pindown type interrupt
 	local target_dummies = { target_dummy or unit.target_dummy or unit }
-	local any = unit:CheckProvokeOpportunityAttacks("attack interrupt", target_dummies, true, "any")
+	local any = unit:CheckProvokeOpportunityAttacks(action, "attack interrupt", target_dummies, true, "any")
 	if any then
 		return true
 	end
 	-- Overwatch type interrupt
-	any = unit:CheckProvokeOpportunityAttacks("attack reaction", target_dummies, true, "any")
+	any = unit:CheckProvokeOpportunityAttacks(action, "attack reaction", target_dummies, true, "any")
 	if any then
 		return true
 	end
 	return false
 end
 
-function AnyInterruptsAlongPath(unit, path, allInterrupts)
+function AnyInterruptsAlongPath(unit, path, allInterrupts, action)
 	local gotoDummies = unit:GenerateTargetDummiesFromPath(path)
 	
-	local mask = unit:GetItemInSlot("Head", "GasMask")
+	local mask = unit:GetItemInSlot("Head", "GasMaskBase")
 	local check_gas = (not mask or mask.Condition <= 0) and (next(g_SmokeObjs) ~= nil)
 	local check_fire = next(g_Fire) ~= nil
 	
@@ -1576,7 +1589,7 @@ function AnyInterruptsAlongPath(unit, path, allInterrupts)
 		end
 	end
 	
-	local interrupts = unit:CheckProvokeOpportunityAttacks("move", gotoDummies, true, allInterrupts and "all" or "any")
+	local interrupts = unit:CheckProvokeOpportunityAttacks(action or CombatActions.Move, "move", gotoDummies, true, allInterrupts and "all" or "any")
 	if interrupts then
 		return interrupts
 	end
@@ -2314,7 +2327,7 @@ function WaitPlayerControl(params)
 				WaitMsg("SetpieceDialogClosed", 100)
 			end
 		end
-		while IsRepositionPhase() do
+		while IsRepositionPhase() and not IsSetpiecePlaying() do
 			anyStoppers = true
 			WaitMsg("RepositionEnd", 100)
 		end
@@ -3064,6 +3077,10 @@ function OpenStartButton()
 		startBut = inventoryUI.idStartButton
 		startBut = startBut and startBut:ResolveId("idStartButtonInner")
 	elseif satDiag then
+		-- Don't allow opening of the command menu while selecting a travel destination.
+		-- This is doable via gamepad and steals the focus away.
+		if g_SatelliteUI and g_SatelliteUI.travel_mode then return end
+	
 		startBut = satDiag:ResolveId("idStartButton")
 		startBut = startBut and startBut:ResolveId("idStartButtonInner")
 	else
@@ -3785,4 +3802,58 @@ function ConstCategoryToCombo(constList)
 	end
 	table.sortby_field(res, 2)
 	return table.map(res, 1)
+end
+
+function ForEachPresetInCampaign(class, func, ...)
+	class = g_Classes[class] or class
+	class = class.PresetClass or class.class
+	for group_index, group in ipairs(Presets[class]) do
+		for preset_index, preset in ipairs(group) do
+			local id = preset.id
+			local presetCampaign = preset.campaign
+			if not presetCampaign then
+				assert(presetCampaign, "TODO: (maybe no assert just treat them as true)Do not use this function for non-campaign related presets.")
+				return ...
+			end
+			local campaignRelated = preset.campaign == "<all>" or GetCurrentCampaignPreset().id == preset.campaign
+			if (id == "" or group[id] == preset) and not preset.Obsolete and campaignRelated then
+				if func(preset, group, ...) == "break" then
+					return ...
+				end
+			end
+		end
+	end
+	return ...
+end
+
+function ForEachPresetInCampaignAndGroup(class, group, func, ...)
+	if type(class) == "table" then
+		class = class.PresetClass or class.class
+	end
+	group = (Presets[class] or empty_table)[group]
+	for preset_index, preset in ipairs(group) do
+		local campaignRelated = preset.campaign == "<all>" or GetCurrentCampaignPreset().id == preset.campaign
+		if group[preset.id] == preset and not preset.Obsolete and campaignRelated then
+			if func(preset, group, ...) == "break" then
+				return ...
+			end
+		end
+	end
+	return ...
+end
+
+function PresetsInCampaignArray(class, func, ...)
+	return ForEachPresetInCampaign(class, function(preset, group, presets, func, ...)
+		if not func or func(preset, group, ...) then
+			presets[#presets + 1] = preset
+		end
+	end, {}, func, ...)
+end
+
+function PresetsGroupInCampaignArray(class, input_group, func, ...)
+	return ForEachPresetInCampaignAndGroup(class, input_group, function(preset, group, presets, func, ...)
+		if not func or func(preset, group, ...) then
+			presets[#presets + 1] = preset
+		end
+	end, {}, func, ...)
 end

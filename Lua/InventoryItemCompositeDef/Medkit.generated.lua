@@ -7,6 +7,16 @@ DefineClass.Medkit = {
 
 
 	object_class = "Medicine",
+	unit_reactions = {
+		PlaceObj('UnitReaction', {
+			Event = "OnCalcHealAmount",
+			Handler = function (self, target, patient, medic, medkit, data)
+				if self == medkit then
+					data.heal_modifier = data.heal_modifier + 25
+				end
+			end,
+		}),
+	},
 	ScrapParts = 1,
 	Repairable = false,
 	Icon = "UI/Icons/Items/medkit",
@@ -19,5 +29,6 @@ DefineClass.Medkit = {
 	Tier = 2,
 	CategoryPair = "Medicine",
 	max_meds_parts = 12,
+	UsePriority = 1,
 }
 

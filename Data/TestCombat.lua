@@ -818,6 +818,50 @@ PlaceObj('TestCombat', {
 })
 
 PlaceObj('TestCombat', {
+	attacker_dir = "Underground",
+	group = "dlc1",
+	id = "b12u",
+	map = "B-12U - Diesel Klinik",
+	sector_id = "B12_Underground",
+	squads = {
+		PlaceObj('TestCombatSquad', nil),
+		PlaceObj('TestCombatSquad', {
+			'squad_type', "NPC",
+			'npc_squad_id', "Klinik",
+			'side', "enemy1",
+		}),
+	},
+})
+
+PlaceObj('TestCombat', {
+	group = "dlc1",
+	id = "dlc1test",
+	sector_id = "B17",
+	squads = {
+		PlaceObj('TestCombatSquad', nil),
+		PlaceObj('TestCombatSquad', {
+			'squad_type', "NPC",
+			'npc_squad_id', "TestSuperSoldiers",
+			'side', "enemy1",
+		}),
+	},
+})
+
+PlaceObj('TestCombat', {
+	group = "dlc1",
+	id = "g12u",
+	map = "G-12U - Waffenlabor",
+	squads = {
+		PlaceObj('TestCombatSquad', nil),
+		PlaceObj('TestCombatSquad', {
+			'squad_type', "NPC",
+			'npc_squad_id', "Waffenlabor",
+			'side', "enemy1",
+		}),
+	},
+})
+
+PlaceObj('TestCombat', {
 	DisplayText = T(235797842568, --[[TestCombat Trailer TheRust_Trailer DisplayText]] "The Rust"),
 	SortKey = 1,
 	TimeOfDay = "Sunset",

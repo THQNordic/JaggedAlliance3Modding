@@ -2,11 +2,11 @@
 
 UndefineClass('BlackPowder')
 DefineClass.BlackPowder = {
-	__parents = { "ExplosiveSubstance" },
+	__parents = { "ExplosiveSubstanceSquadBagItem" },
 	__generated_by_class = "InventoryItemCompositeDef",
 
 
-	object_class = "ExplosiveSubstance",
+	object_class = "ExplosiveSubstanceSquadBagItem",
 	Repairable = false,
 	Icon = "UI/Icons/Items/black_powder",
 	DisplayName = T(435852653453, --[[InventoryItemCompositeDef BlackPowder DisplayName]] "Gunpowder"),

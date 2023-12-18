@@ -3,7 +3,7 @@ DefineClass.ExitZoneInteractable = {
 	properties = {
 		{ category = "Enabled Logic", editor = "bool", id = "HideVisualWhenDisabled", default = false },
 		{ category = "Travel", editor = "combo", id = "SectorOverride", items = function() return GetCampaignSectorsCombo() end, default = false },
-		{ category = "Travel", editor = "bool", id = "IsUnderground", default = false },
+		{ category = "Travel", editor = "bool", id = "IsUnderground", name = "IsUndergroundExit", default = false },
 		{ category = "Travel", editor = "bool", id = "RetreatInConflictOnlyIfCameFromHere", default = false },
 		{ category = "Travel", editor = "choice", name = "Entity", id = "entity", items = function() return table.get(Presets, "EntityVariation", "Default", "TravelObject", "Entities") or { "UITravelObject_01" } end, default = "UITravelObject_01" },
 	},
@@ -77,11 +77,27 @@ local function lUpdateVisualsOfExitZoneInteractables()
 end
 
 function NetSyncEvents.UpdateVisualsOfExitZoneInteractables()
-	MapForEach("map", "ExitZoneInteractable", ExitZoneInteractable.EvaluateNeedForFakeVisual)
+	local sector = gv_Sectors[gv_CurrentSectorId]
+	local inConflict = sector and sector.conflict
+	
+	MapForEach("map", "ExitZoneInteractable", function(o)
+		 o:EvaluateNeedForFakeVisual()
+		 
+		 if o.RetreatInConflictOnlyIfCameFromHere and inConflict then return end
+		 
+		 if o:IsMarkerEnabled() then
+			 -- Mark all sectors that can be accessed from this sector as discovered
+			 local nextSector = o:GetNextSector()
+			 if nextSector then
+				nextSector.discovered = true
+			 end
+		 end
+	end)
 end
 
 OnMsg.ExplorationStart = lUpdateVisualsOfExitZoneInteractables
 OnMsg.DeploymentStarted = lUpdateVisualsOfExitZoneInteractables
+OnMsg.CombatEnd = lUpdateVisualsOfExitZoneInteractables
 
 function ExitZoneInteractable:EvaluateNeedForFakeVisual()
 	self:InitFakeVO()
@@ -132,8 +148,16 @@ function ExitZoneInteractable:EvaluateNeedForFakeVisual()
 	local spotForFakeInteractable = false
 	for i, d in ipairs(dirs) do
 		local voxel = self:GetPos() + d
-		local bbox = GetVoxelBBox(voxel)
-		local any = MapGetFirst(bbox, "GridMarker")	-- NOTE: enumerating in the voxel may be faster than all GridMarkers
+		local bbox = GetVoxelBBox(voxel, false, true)
+		local boxHasZ = bbox:minz()
+		local any = MapGetFirst(bbox, "GridMarker", function(obj) -- NOTE: enumerating in the voxel may be faster than all GridMarkers
+			if not boxHasZ then return true end
+			
+			local x, y, z = obj:GetPosXYZ()
+			if not z then z = terrain.GetHeight(x, y) end
+
+			return bbox:PointInside(x, y, z)
+		end)
 		if not any then
 			spotForFakeInteractable = voxel
 			break
@@ -175,9 +199,18 @@ function ExitZoneInteractable:GetNextSector()
 		sectorId = gv_Sectors[gv_CurrentSectorId].GroundSector or (gv_CurrentSectorId .. "_Underground")
 		underground = self.Groups[1]
 	else
+		local selfIsUnderground = not not gv_Sectors[gv_CurrentSectorId].GroundSector
+		
 		for _, dir in ipairs(const.WorldDirections) do
 			if self:IsInGroup(dir) then
 				local neighSectorId = GetNeighborSector(gv_CurrentSectorId, dir)
+				
+				-- Underground sectors exits in world directions can only lead to
+				-- other underground sectors
+				if selfIsUnderground and not IsSectorUnderground(neighSectorId) then
+					neighSectorId = false
+				end
+				
 				if neighSectorId and
 					not IsTravelBlocked(gv_CurrentSectorId, neighSectorId) and
 					not GetDirectionProperty(neighSectorId, gv_CurrentSectorId, "BlockTravelRiver") and
@@ -520,15 +553,19 @@ end
 
 function RetreatMoveWholeSquad(squad_id, to_sector_id, from_sector_id)
 	local squad = gv_Squads[squad_id]
-	local route = {{to_sector_id}}
-	local time = AreAdjacentSectors(from_sector_id, to_sector_id) and GetSectorTravelTime(from_sector_id, to_sector_id, route, squad.units) or 0
+
+	local route = GenerateRouteDijkstra(from_sector_id, to_sector_id)
+	if not route then route = {to_sector_id} end
+	route = {route} -- waypointify
+	
+	local time = GetSectorTravelTime(from_sector_id, to_sector_id, route, squad.units)
 	local instant = not time or time <= 0
+	
+	-- When the link is multiple sectors teleport between them (186068)
+	if route and route[1] and #route[1] > 1 then instant = true end
 	
 	local from_sector = gv_Sectors[from_sector_id]
 	local to_sector = gv_Sectors[to_sector_id]
-	if to_sector.GroundSector or from_sector.GroundSector then
-		instant = true
-	end
 	
 	if not instant then
 		-- Tick needs to be considered passed in order for the squad to be considered travelling.

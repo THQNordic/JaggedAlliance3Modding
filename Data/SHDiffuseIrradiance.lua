@@ -452,12 +452,12 @@ PlaceObj('SHDiffuseIrradiance', {
 PlaceObj('SHDiffuseIrradiance', {
 	id = "Wet_Underground_Lab_NeutralExterior",
 	save_in = "",
-	sh9_coefficients = "AAD+fwAA/n8AAPx/AAD+fwAA/n8AAPx/AAD+fwAA/n8AAPx/AAD+fwAA/n8AAPx/AAD+fwAA/n8A\nAPx/AAD+fwAA/n8AAPx/AAD+fwAA/n8AAPx/AAD+fwAA/n8AAPx/AAD+fwAA/n8AAPx/",
+	sh9_coefficients = "q32jPj8Gmj7QDVU+XyF9PC6ZaDzyDU083IKfvYvcjL0BSCW9yjUzOhbxIzvipM+51otMu40WdLts\nJj+7jyzAOxL7wzuP0pY7rT+mO+avjzsn4t867L5duzVNeLuSryK7UtGwu2E2VrtnvvS6",
 })
 
 PlaceObj('SHDiffuseIrradiance', {
 	id = "Wet_Underground_Lab_NeutralInterior",
 	save_in = "",
-	sh9_coefficients = "AAD+fwAA/n8AAPx/AAD+fwAA/n8AAPx/AAD+fwAA/n8AAPx/AAD+fwAA/n8AAPx/AAD+fwAA/n8A\nAPx/AAD+fwAA/n8AAPx/AAD+fwAA/n8AAPx/AAD+fwAA/n8AAPx/AAD+fwAA/n8AAPx/",
+	sh9_coefficients = "+aijPh8Umj5kYVU+k9CAPELAajzJ3048ypOfvRckjb2jOiW9FcQjOiMMHzt3HhO67RhLu+tucrsv\npT27r/nAO53PwzthWZc7pK+lO0AujjvHh9g6xMxeu8V2ertQxyO7Unevu2e+U7vgmPe6",
 })
 

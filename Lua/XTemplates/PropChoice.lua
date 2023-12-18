@@ -11,6 +11,7 @@ PlaceObj('XTemplate', {
 		'RolloverOffset', box(20, -5, 0, 0),
 		'LayoutMethod', "HList",
 		'RolloverOnFocus', true,
+		'MouseCursor', "UI/Cursors/Hand.tga",
 	}, {
 		PlaceObj('XTemplateProperty', {
 			'id', "isExpanded",

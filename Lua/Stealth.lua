@@ -280,6 +280,15 @@ function Light:MakeNotSync()
 	self:SetHandle(oh or self:GenerateHandle())
 end
 
+function Light:OnEditorSetProperty(prop_id)
+	if prop_id == "DetailClass" then
+		self:DestroyRenderObj()
+		if IsLightSetupToAffectStealth(self) then
+			Stealth_HandleLight(self)
+		end
+	end
+end
+
 AppendClass.Light = {
 	stealth_light = false,
 	old_handle = false,

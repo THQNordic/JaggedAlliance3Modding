@@ -401,8 +401,7 @@ function Unit:AmbientRoutine()
 				end
 			end
 		else
-			StoreErrorSource(self, "Unit can't find markers or visitables for ambient routine. Unit will switch to StandStill routine!")
-			self.routine = "StandStill"
+			self.routine = "StandStill"	-- silently switch to StandStill because of map patching(was a VME)
 		end
 	end
 	self:IdleRoutine_StandStill()
@@ -423,7 +422,7 @@ function Unit:IdleRoutine_StandStill(timeout, dont_halt)
 		local anim = self:GetStateText()
 		if anim_style:HasAnimation(anim) or anim == anim_style.Start then
 			Sleep(self:TimeToAnimEnd())
-		elseif not GameState.loading then
+		elseif GameTimeAdvanced then
 			if (anim_style.Start or "") ~= "" and IsValidAnim(self, anim_style.Start) then
 				self:PlayTransitionAnims(anim_style.Start) -- play possible another style End animation
 				self:SetState(anim_style.Start, const.eKeepComponentTargets)
@@ -435,7 +434,7 @@ function Unit:IdleRoutine_StandStill(timeout, dont_halt)
 		local start_time = GameTime()
 		while not timeout or GameTime() - start_time < timeout do
 			self:SetState(anim_style:GetRandomAnim(self), const.eKeepComponentTargets)
-			if GameState.loading then
+			if not GameTimeAdvanced then
 				self:RandomizeAnimPhase()
 			end
 			Sleep(self:TimeToAnimEnd())
@@ -447,7 +446,7 @@ function Unit:IdleRoutine_StandStill(timeout, dont_halt)
 			Sleep(self:TimeToAnimEnd())
 		end
 		self:SetState(base_idle, const.eKeepComponentTargets)
-		if GameState.loading then
+		if not GameTimeAdvanced then
 			self:RandomizeAnimPhase()
 		end
 	end
@@ -495,7 +494,7 @@ function Unit:IdleRoutine()
 						closest_pos = p
 					end
 				end
-				if not GameState.loading then
+				if not GameState.sync_loading then
 					Sleep(self:TimeToAngleInterpolationEnd())
 					self:TakeSlabExploration()
 				end
@@ -705,12 +704,12 @@ end
 
 function Unit:RoamSingle(marker)
 	if g_Combat or not marker then
-		self:SetBehavior()
+		self:ClearBehaviors("RoamSingle")
 		self:SetCommand("Idle")
 		return
 	end
 	if self.species == "Hyena" then
-		self:SetBehavior()
+		self:ClearBehaviors("RoamSingle")
 		self:SetCommand("RoamHyenaLead")
 		return
 	end
@@ -1105,7 +1104,7 @@ function Unit:Patrol(marker_group, next_id, loop, end_orient)
 		if not loop or next_id == 1 then
 			-- get the previous (last existing) marker to make the unit face in the way it points
 			if route[next_id - 1] and end_orient then
-				self:SetOrientationAngle(angle, GameState.loading and 0 or 200)
+				self:SetOrientationAngle(angle, not GameTimeAdvanced and 0 or 200)
 			end
 			self:SetBehavior()
 			self:SetCommand("Idle")

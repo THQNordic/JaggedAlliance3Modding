@@ -6,7 +6,6 @@ local voxelSizeZ = const.SlabSizeZ or 0
 --assign to wall/roof tool
 --------------------------------------------------------------------------------------------------------------------------------------------
 if FirstLoad then
-	CollectionsToHideVisuals = true
 	CollectionsToHideVisualMeshes = false
 end
 
@@ -42,6 +41,7 @@ function GetCollectionsToHideDataForRoom(r, create)
 	if idx then
 		return c[idx], c
 	elseif create then
+		assert(XEditorUndo:AssertOpCapture())
 		local data = PlaceObject("CollectionsToHidePersistableData", {room = r}) -- will add itself to the list
 		return data, c
 	else
@@ -62,12 +62,14 @@ function GetCollectionsToHideAssociatedRooms(col)
 	local c = GetCollectionsToHide()
 	for i = 1, #c do
 		local d = c[i]
-		for j = 1, #tMembers do
-			local idx = table.find(d[tMembers[j]] or empty_table, col)
-			if idx then
-				ret = ret or {}
-				ret[d.room] = ret[d.room] or {}
-				table.insert(ret[d.room], tMembers[j])
+		if d then
+			for j = 1, #tMembers do
+				local idx = table.find(d[tMembers[j]] or empty_table, col)
+				if idx then
+					ret = ret or {}
+					ret[d.room] = ret[d.room] or {}
+					table.insert(ret[d.room], tMembers[j])
+				end
 			end
 		end
 	end
@@ -185,51 +187,52 @@ end
 
 DefineClass.CollectionsToHideContainer = {
 	__parents = { "Object" },
-	flags = { gofPermanent = true, efWalkable = false, efCollision = false, efApplyToGrids = false },
+	flags = { gofPermanent = false, efWalkable = false, efCollision = false, efApplyToGrids = false },
 	properties = {
 		{ id = "contents", editor = "objects", default = false },
 	},
 }
 
 function CollectionsToHideContainer:GetEditorRelatedObjects()
-	return self.contents
+	assert(false) -- the container's contents should not be saved in undo information; its children will auto add/remove themselves from the parent
 end
 
 function CollectionsToHideContainer:CleanBadEntries()
+	assert(XEditorUndo:AssertOpCapture())
 	colToRoomCache = false
 	roomToColCache = false
 	
+	local to_delete = {}
 	local t = self.contents
 	for i = #t, 1, -1 do
 		local o = t[i]
 		o:CleanBadEntries()
 		if not IsValid(o.room) or o:IsEmpty() then
-			DoneObject(o)
-			table.remove(t, i)
+			table.insert(to_delete, o)
 		end
 	end
-end
-
-function CollectionsToHideContainer:CleanUp()
-	colToRoomCache = false
-	roomToColCache = false
 	
-	local t = self.contents
-	for i = #t, 1, -1 do
-		local o = t[i]
-		if o:IsEmpty() then
-			DoneObject(o)
-			table.remove(t, i)
-		end
-	end
+	XEditorUndo:BeginOp{ objects = to_delete, name = "Linked collection deletion" }
+	DoneObjects(to_delete)
+	XEditorUndo:EndOp()
 end
 
 function CollectionsToHideContainer:PostLoad(reason)
 	if reason == "undo" then
 		colToRoomCache = false
 		roomToColCache = false
-		Msg("EditorSelectionChanged", editor.GetSel()) -- to update red visualization box
 	end
+end
+
+function OnMsg.EditorObjectOperationEnding()
+	if g_CollectionsToHideContainer then
+		g_CollectionsToHideContainer:CleanBadEntries()
+	end
+	
+	local selection = editor.GetSel()
+	if HasAlignedObjs(selection) then -- proxy for having rooms
+		CreateRealTimeThread(RefreshCollectionHidingVisuals, selection)
+	end	
 end
 
 DefineClass.CollectionsToHidePersistableData = {
@@ -245,8 +248,12 @@ DefineClass.CollectionsToHidePersistableData = {
 	},
 }
 
+function CollectionsToHidePersistableData:GetObjIdentifier()
+	return xxhash(42357, self.room:GetObjIdentifier())
+end
+
 function CollectionsToHidePersistableData:Init()
-	if not IsChangingMap() then
+	if not IsChangingMap() or XEditorUndo.undoredo_in_progress then
 		table.insert(GetCollectionsToHide(), self)
 	end
 end
@@ -271,33 +278,12 @@ function CollectionsToHidePersistableData:IsEmpty()
 			return false
 		end
 	end
-	
 	return true
 end
 
-local function printRedLine(count)
-	for i = 1, (count or 1) do
-		print("<color 255 0 0>-----------------------------------------------------------------------------------------</color>")
-	end
-end
-
-local function printError(str)
-	printRedLine(2)
-	print(str)
-	printRedLine(2)
-end
-
-local function printMsg(str)
-	printRedLine()
-	print(str)
-	printRedLine()
-end
-
 function CollectionsToHidePersistableData:CleanBadEntries()
-	local all_cleared = true
-	if not IsKindOf(self.room, "Room") then
-		printError("<color 255 0 0>Found non room room in CollectionsToHidePersistableData and removed it[" .. (self.room and rawget(self.room, "name") or "") .. ", " .. (self.room and self.room.class or tostring(self.room) or "") .. "]!</color>")
-		self:delete()
+	if not IsKindOf(self.room, "Room") or not IsValid(self.room) then
+		print("<color 255 0 0>Found non room room in CollectionsToHidePersistableData and removed it[" .. (self.room and rawget(self.room, "name") or "") .. ", " .. (self.room and self.room.class or tostring(self.room) or "") .. "]!</color>")
 		return
 	end
 	for i = 1, #tMembers do
@@ -307,37 +293,18 @@ function CollectionsToHidePersistableData:CleanBadEntries()
 			local e = t[j]
 			if not IsValid(e) then
 				table.remove(t, j)
-				printError("<color 255 0 0>Found invalid collection in CollectionsToHidePersistableData[".. m .. ", " .. self.room.name .."]!</color>")
+				print("<color 255 0 0>Found invalid collection in CollectionsToHidePersistableData[".. m .. ", " .. self.room.name .."]!</color>")
 			end
 		end
 		if t and #t <= 0 then
-			self[m] = false
+			self[m] = nil
 		end
 		if self[m] then
 			local room = self.room
 			if m == "Roof" and not room:HasRoof() then
-				printError(string.format("<color 255 0 0>Removed hook to %s's roof because the roof does not exist.</color>", room.name))
-				self[m] = false
+				print(string.format("<color 255 0 0>Removed hook to %s's roof because the roof does not exist.</color>", room.name))
+				self[m] = nil
 			end
-			all_cleared = false
-		end
-	end
-	if all_cleared then
-		self:delete()
-	end
-end
-
--- handle pasting a room without (all) the linked collections
-CollectionsToHidePersistableData.PostLoad = CollectionsToHidePersistableData.CleanBadEntries
-
-function OnMsg.SaveMap()
-	if g_CollectionsToHideContainer then
-		g_CollectionsToHideContainer:CleanBadEntries() -- more aggressive cleanup
-		
-		if #g_CollectionsToHideContainer.contents <= 0 and
-			not next(g_CollectionsToHideContainer.contents) then
-			DoneObject(g_CollectionsToHideContainer)
-			g_CollectionsToHideContainer = false
 		end
 	end
 end
@@ -365,7 +332,6 @@ local function _ReadInputHelper(obj)
 	else
 		side = obj.side
 	end
-	
 	return r, side
 end
 
@@ -373,7 +339,7 @@ function LinkUnlinkCollectionToElement(collection, r, side, op)
 	ClearCollectionsToHideCache(collection, r)
 	rawset(collection, "hidden", nil)
 	
-	XEditorUndo:BeginOp{ objects = {GetCollectionsToHideContainer()}, name = string.format("Unlink collection from room %s side %s", r.name, side) }
+	XEditorUndo:BeginOp{ objects = GetCollectionsToHide(), name = op == "link" and "Link collection to room" or "Unlink collection from room" }
 	
 	local d, c = GetCollectionsToHideDataForRoom(r)
 	if (not op or op == "unlink") and d and table.remove_entry(d[side] or empty_table, collection) then
@@ -388,9 +354,9 @@ function LinkUnlinkCollectionToElement(collection, r, side, op)
 		table.insert_unique(d[side], collection)
 		op = "link"
 	end
-	printMsg(string.format("%s %s %s", op == "link" and "Linking" or "Unlinking", r.name, side))
+	print(string.format("%s %s %s", op == "link" and "Linking" or "Unlinking", r.name, side))
 	
-	XEditorUndo:EndOp({GetCollectionsToHideContainer()})
+	XEditorUndo:EndOp(GetCollectionsToHide())
 	return op
 end
 
@@ -610,12 +576,8 @@ function ExtractCollectionsFromObjs(objs)
 	return cols
 end
 
-function OnMsg.CollectionDeleted(col)
-	CollectionsToHideDeletionHandlerHelper({[col] = true})
-end
-
-function OnMsg.EditorCallback(id, objs, replace)
-	if id == "EditorCallbackDelete" and not replace then
+function OnMsg.EditorCallback(id, objs, reason)
+	if id == "EditorCallbackDelete" and reason ~= "undo" then
 		--handle deletion
 		--gather agents
 		local cols
@@ -626,8 +588,9 @@ function OnMsg.EditorCallback(id, objs, replace)
 			if IsValid(obj) then
 				cols = PutInTHelper(cols, obj:GetRootCollection())
 				cols = PutInTHelper(cols, obj:GetCollection())
-				
-				if IsKindOf(obj, "Room") then
+				if IsKindOf(obj, "Collection") then
+					cols = PutInTHelper(cols, obj)
+				elseif IsKindOf(obj, "Room") then
 					rooms = rooms or {}
 					rooms[obj] = true
 				end
@@ -662,50 +625,49 @@ function CollectionsToHideDeletionHandlerHelper(cols, rooms)
 		return
 	end
 	
-	--clear cache
+	assert(XEditorUndo:AssertOpCapture())
+	XEditorUndo:StartTracking(GetCollectionsToHide(), not "created", "omit_children")
+	
+	-- clear cache
+	local allData = GetCollectionsToHide()
 	roomToColCache = false
 	colToRoomCache = false
-	XEditorUndo:BeginOp{ objects = {GetCollectionsToHideContainer()}, name = "Linked objects' deletion" }
-	local allData = GetCollectionsToHide()
-	--cleanup cols
+	
+	-- cleanup rooms
+	for room, _ in pairs(rooms or empty_table) do
+		local idx = table.find(allData or empty_table, "room", room)
+		if idx then
+			local d = allData[idx]
+			DoneObject(d) -- d also used in message below
+			print(string.format("<color 255 144 0>Clearing CollectionsToHidePersistableData hook - room deleted[%s]!</color>", d.room and d.room.name or tostring(d.room)))
+		end
+	end
+	
+	-- cleanup cols
 	for col, _ in pairs(cols or empty_table) do
 		for i = (#allData or ""), 1, -1 do
 			local d = allData[i]
 			for j = 1, #tMembers do
 				local idx = table.find(d[tMembers[j]] or empty_table, col)
 				if idx then
-					printError(string.format("<color 255 144 0>Removing CollectionsToHidePersistableData hook to collection from delete handler (collection deleted)[%s, %s]!</color>", d.room and d.room.name or tostring(d.room), tMembers[j]))
+					print(string.format("<color 255 144 0>Removing CollectionsToHidePersistableData hook to collection from delete handler (collection deleted)[%s, %s]!</color>", d.room and d.room.name or tostring(d.room), tMembers[j]))
 					table.remove(d[tMembers[j]], idx)
 					if #d[tMembers[j]] <= 0 then
 						d[tMembers[j]] = false
-						printError(string.format("<color 255 144 0>CollectionsToHidePersistableData hook empty on side, removing[%s]!</color>", tMembers[j]))
+						print(string.format("<color 255 144 0>CollectionsToHidePersistableData hook empty on side, removing[%s]!</color>", tMembers[j]))
 					end
 				end
 			end
 			
 			if d:IsEmpty() then
 				DoneObject(d)
-				table.remove(allData, i)
-				printError(string.format("<color 255 144 0>CollectionsToHidePersistableData hook empty, removing[%s]!</color>", d.room and d.room.name or tostring(d.room)))
+				print(string.format("<color 255 144 0>CollectionsToHidePersistableData hook empty, removing[%s]!</color>", d.room and d.room.name or tostring(d.room)))
 			end
 		end
 	end
-	--cleanup rooms
-	for room, _ in pairs(rooms or empty_table) do
-		local idx = table.find(allData or empty_table, "room", room)
-		if idx then
-			local d = allData[idx]
-			DoneObject(d)
-			table.remove(allData, idx)
-			printError(string.format("<color 255 144 0>Clearing CollectionsToHidePersistableData hook - room deleted[%s]!</color>", d.room and d.room.name or tostring(d.room)))
-		end
-	end
-	XEditorUndo:EndOp({GetCollectionsToHideContainer()})
 end
 
-local function RefreshCollectionHidingVisuals(selection)
-	selection = selection or editor.GetSel()
-	
+function RefreshCollectionHidingVisuals(selection)
 	for i = #(CollectionsToHideVisualMeshes or ""), 1, -1 do
 		DoneObject(CollectionsToHideVisualMeshes[i])
 		CollectionsToHideVisualMeshes[i] = nil
@@ -713,43 +675,36 @@ local function RefreshCollectionHidingVisuals(selection)
 	
 	CollectionsToHideVisualMeshes = false
 	
-	if CollectionsToHideVisuals then
-		local cleanup = false
-		local cols = ExtractCollectionsFromObjs(selection)
-		
-		for col, _ in pairs(cols or empty_table) do
-			local d = GetRoomDataForCollection(col)
-			for room, sides in pairs(d or empty_table) do
-				CollectionsToHideVisualMeshes = CollectionsToHideVisualMeshes or {}
-				for j = 1, #sides do
-					local s = sides[j]
-					if s == "Roof" then
-						if room:HasRoof() and room.roof_box then
-							table.insert(CollectionsToHideVisualMeshes, PlaceBox(room.roof_box:grow(voxelSizeX, voxelSizeY, voxelSizeZ), RGB(255, 0, 0)))
-						else
-							cleanup = true
-						end
+	local cleanup = false
+	local cols = ExtractCollectionsFromObjs(selection or empty_table)
+	for col, _ in pairs(cols or empty_table) do
+		local d = GetRoomDataForCollection(col)
+		for room, sides in pairs(d or empty_table) do
+			CollectionsToHideVisualMeshes = CollectionsToHideVisualMeshes or {}
+			for j = 1, #sides do
+				local s = sides[j]
+				if s == "Roof" then
+					if room:HasRoof() and room.roof_box then
+						table.insert(CollectionsToHideVisualMeshes, PlaceBox(room.roof_box:grow(voxelSizeX, voxelSizeY, voxelSizeZ), RGB(255, 0, 0)))
 					else
-						local b = room:GetWallBox(s):grow(voxelSizeX, voxelSizeY, voxelSizeZ)
-						table.insert(CollectionsToHideVisualMeshes, PlaceBox(b, RGB(255, 0, 0)))
+						cleanup = true
 					end
+				else
+					local b = room:GetWallBox(s):grow(voxelSizeX, voxelSizeY, voxelSizeZ)
+					table.insert(CollectionsToHideVisualMeshes, PlaceBox(b, RGB(255, 0, 0)))
 				end
 			end
 		end
-		
-		if cleanup then
-			print("Found bad entries in data, running cleanup!")
-			g_CollectionsToHideContainer:CleanBadEntries()
-		end
+	end
+	
+	if cleanup then
+		print("Found bad entries in data, running cleanup!")
+		g_CollectionsToHideContainer:CleanBadEntries()
 	end
 end
 
 function OnMsg.EditorSelectionChanged(selection)
 	RefreshCollectionHidingVisuals(selection)
-end
-
-function StartAssignElementToCollection()
-	print("deprecated")
 end
 
 DefineClass.XCollectionHidingTool = {

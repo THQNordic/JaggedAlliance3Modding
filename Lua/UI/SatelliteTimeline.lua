@@ -695,13 +695,40 @@ function OnMsg.ConflictStart(sector_id)
 	end
 end
 
-function OnMsg.UnitTiredRemoved(unit)
-	if gv_SatelliteView and IsMerc(unit) then
+function OnMsg.UnitTiredLevelAdded(unit, value)
+	if gv_SatelliteView and IsMerc(unit) and value > 0 then
+		local actor = "short"
 		if GetAccountStorageOptionValue("PauseActivityDone") then
-			CombatLog("important",T{869182514521, --[[CharacterEffectCompositeDef Tired RemoveEffectText]] "<em><DisplayName></em> is no longer tired",DisplayName = unit.Nick})
-			PauseCampaignTime("UI")
-		else
-			CombatLog("short",T{869182514521, --[[CharacterEffectCompositeDef Tired RemoveEffectText]] "<em><DisplayName></em> is no longer tired",DisplayName = unit.Nick})
+			actor = "important"
+			if value < 2 then
+				PauseCampaignTime("UI")	
+			end
+		end
+		
+		if value == 1 then 			
+			CombatLog(actor, T{488444599414, --[[CharacterEffectCompositeDef Tired AddEffectText]] "<em><DisplayName></em> is tired", DisplayName = unit.Nick})
+		elseif value  == 2 then
+			CombatLog(actor, T{264384902433, --[[CharacterEffectCompositeDef Exhausted AddEffectText]] "<em><DisplayName></em> is exhausted", DisplayName = unit.Nick})
+		end
+
+	end
+end
+
+
+function OnMsg.UnitTiredLevelRemoved(unit, value)
+	if gv_SatelliteView and IsMerc(unit) and value >= 0 then
+		local actor = "short"
+		if GetAccountStorageOptionValue("PauseActivityDone") then			
+			actor = "important"
+			if value == 0 then 
+				PauseCampaignTime("UI")
+			end
+		end
+		
+		if value == 0 then
+			CombatLog(actor, T{869182514521, --[[CharacterEffectCompositeDef Tired RemoveEffectText]] "<em><DisplayName></em> is no longer tired", DisplayName = unit.Nick})
+		elseif value == 1 then
+			CombatLog(actor, T{377164938786, --[[CharacterEffectCompositeDef Exhausted RemoveEffectText]] "<em><DisplayName></em> is no longer exhausted", DisplayName = unit.Nick})
 		end
 	end
 end

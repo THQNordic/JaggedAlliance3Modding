@@ -17,8 +17,8 @@ function CanBeSetpieceActor(idx, obj)
 	return IsKindOf(obj, "Unit") or not IsKindOf(obj, "EditorObject")
 end
 
-local function SetpieceUpdateVisibility(setpiece)
-	g_SetpieceFullVisibility = setpiece and (setpiece.Visibility == "Full") or false
+local function SetpieceUpdateVisibility(setpiece, start)
+	g_SetpieceFullVisibility = start and setpiece and (setpiece.Visibility == "Full") or false
 	local pov_team = GetPoVTeam()
 	local active_units = Selection
 	if not active_units or (#active_units == 0) then
@@ -83,7 +83,7 @@ function OnSetpieceStarted(setpiece)
 	Msg("WillStartSetpiece")
 	
 	-- recalc visibility to apply setpiece.Visibility
-	SetpieceUpdateVisibility(setpiece)
+	SetpieceUpdateVisibility(setpiece, true)
 	
 	-- update unit highlights to disable in scene
 	for _, u in ipairs(g_Units) do
@@ -494,6 +494,8 @@ function SetpieceSetStance.ExecThread(state, Actors, stance, weapon, transition)
 	local duration = 0
 	for i, actor in ipairs(Actors) do
 		if actor.species ~= "Human" then goto continue end
+		if actor:HasStatusEffect("ManningEmplacement") then goto continue end
+		if actor:GetBandageTarget() then goto continue end
 		-- setup weapons, start transition anims
 		actor:SetCommand("SetpieceIdle")
 		
@@ -1201,7 +1203,7 @@ function SetpieceCamera.ExecThread(state, CamType, Easing, Movement, Interpolati
 	CameraMode = CameraMode == "Default" and state.setpiece.CameraMode or CameraMode
 	apply_camera_mode(CameraMode, HidesFloorsAbove)
 	old_SetpieceCamera_ExecThread(state, CamType, Easing, Movement, Interpolation, Duration, PanOnly, Lightmodel, LookAt1, Pos1, LookAt2, Pos2, FovX, Zoom, CamProps, DOFStrengthNear, DOFStrengthFar, DOFNear, DOFFar, DOFNearSpread, DOFFarSpread, CameraMode, HidesFloorsAbove)
-	apply_camera_mode(state.setpiece.CameraMode) -- no need to do this in .Skip, the setpiece always restores the Default behavior in OnSetpieceEnded
+	apply_camera_mode(state.setpiece and state.setpiece.CameraMode) -- no need to do this in .Skip, the setpiece always restores the Default behavior in OnSetpieceEnded
 end
 
 
@@ -1218,7 +1220,8 @@ DefineClass.SetpieceTODWeather = {
 		},
 	},
 	StatementTag = "Setpiece",
-	EditorName = "TOD Weather",
+	EditorName = "Time-of-day weather",
+	EditorSubmenu = "Commands",
 	EditorView = Untranslated("Sets <u(TimeOfDay)> <u(Weather)>"),
 }
 

@@ -270,27 +270,24 @@ end
 
 MapGameTimeRepeat("CombatCam_FailSafe", 100, CombatCam_FailSafeUpdate)]]
 
-local function CombatCam_CalcAttackCamPos(attacker, target)
+local function CombatCam_CalcAttackCamPos(zone, attacker, target)
+	if not (IsValid(attacker) and attacker:IsValidPos() or IsPoint(attacker)) then
+		return
+	end
 	local lookat = attacker
-	local zone = CombatCam_CalcZone()
-	if target and zone then
-		local attack_pos = IsValid(attacker) and attacker:GetVisualPos()
-		if not attack_pos then
-			return
-		end
-		local target_pos = IsValid(target) and target:GetVisualPos() or target
+	local target_pos = IsValid(target) and target:IsValidPos() and target:GetVisualPos() or IsPoint(target) and target
+	if target_pos and target_pos:IsValid() then
+		local attack_pos = IsValid(attacker) and attacker:GetVisualPos() or attacker
 		if not target_pos:IsValidZ() then
 			target_pos = target_pos:SetTerrainZ()
 		end
-		
 		local x, y = zone.center:xy()
 		lookat = (attack_pos + target_pos) / 2
 		if CountUnitsInZone(x, y, {attack_pos, target_pos}, zone) == 2 then
 			return
 		end
 	end
-	local lookat_pos = IsValid(lookat) and lookat:GetVisualPos() or lookat
-	if zone and IsCloser(zone.center, lookat_pos, 5*guim) then
+	if IsCloser(zone.center, lookat, 5*guim) then
 		return
 	end
 	return lookat, zone
@@ -339,8 +336,12 @@ function CombatCam_ShowAttack(attacker, target)
 	
 	if not HasCombatActionInProgress(attacker) then
 		return CombatCam_RemoveAttacker(attacker)
-	end	
-	local lookat, zone = CombatCam_CalcAttackCamPos(attacker, target)
+	end
+	local zone = CombatCam_CalcZone()
+	if not zone then
+		return
+	end
+	local lookat = CombatCam_CalcAttackCamPos(zone, attacker, target)
 
 	--[[g_CombatCamShowAttackLog = g_CombatCamShowAttackLog or {}
 	table.insert(g_CombatCamShowAttackLog, {
@@ -351,11 +352,15 @@ function CombatCam_ShowAttack(attacker, target)
 		target_pos = IsValid(target) and target:GetVisualPos() or target,
 	})--]]
 
-	if not lookat or not zone then -- already in camera
+	if not lookat then -- already in camera
 		return
 	end
-	
-	local x, y = lookat:xy()
+	local x, y
+	if IsValid(lookat) then
+		x, y = lookat:GetVisualPosXYZ()
+	else
+		x, y = lookat:xy()
+	end
 	if CountUnitsInZone(x, y, {attacker, target}, zone) < 2 then
 		cameraTac.SetForceMaxZoom(true)
 		-- todo: maybe try to fit target in the zone instead
@@ -371,7 +376,7 @@ end
 MapVar("showAttack", false)
 
 function CombatCam_ShowAttackNew(attacker, target, willBeinterrupted, results, freezeCamPos, changeFloorOnly)
-	if CurrentActionCamera then
+	if ActionCameraPlaying then
 		return
 	end
 	
@@ -970,7 +975,7 @@ local function __AIExecutionControllerExecute(self, units, reposition, played_un
 			local dest
 			if not g_Combat then break end
 			if units_repositioning then
-				if g_Combat and ((self.label == "AlwaysReady" and unit == self.activator) or not g_Combat:IsRepositioned(self)) then
+				if g_Combat and ((self.label == "AlwaysReady" and unit == self.activator) or not g_Combat:IsRepositioned(unit)) then
 					unit.ActionPoints = MulDivRound(unit:GetMaxActionPoints(), const.Combat.RepositionAPPercent, 100)
 
 					if unit:HasStatusEffect("FreeReposition") then
@@ -1037,7 +1042,8 @@ local function __AIExecutionControllerExecute(self, units, reposition, played_un
 																					middlePoint,
 																					10)
 				
-				local interrupts = unit:CheckProvokeOpportunityAttacks("attack interrupt", {unit.target_dummy or unit})
+				local attack_action = unit:GetDefaultAttackAction(false, true)
+				local interrupts = unit:CheckProvokeOpportunityAttacks(attack_action, "attack interrupt", {unit.target_dummy or unit})
 			
 				moveAttackException = moveAttackException or unit.ai_context and unit.ai_context.movement_action and MoveAndAttack[unit.ai_context.movement_action.action_id] or MoveAndAttack[unit.action_command]
 				if not self.testAllAttacks and isTargetUnit and hasAp and willMove and willFit and not interrupts and not g_Combat:GetEmplacementAssignment(unit) and target.visible then
@@ -1057,6 +1063,7 @@ local function __AIExecutionControllerExecute(self, units, reposition, played_un
 			if dest then
 				local rx, ry, rz, rs = stance_pos_unpack(dest)
 				unit:ClearEnumFlags(const.efResting)
+				assert(CanDestlock(unit, rx, ry, rz or const.InvalidZ, nil, false))
 				PlaceDestlock(unit, rx, ry, rz)
 				local step_pos = point(rx, ry, rz)
 				local willReveal = RevealUnitBeforeMove(unit, {goto_pos = step_pos, goto_stance = rs})
@@ -1204,7 +1211,7 @@ local function __AIExecutionControllerExecute(self, units, reposition, played_un
 		end	
 			
 		if attacker then
-			PlayVoiceResponse(attacker, "AIStartingTurnAttack")
+			PlayVoiceResponseGroup(attacker, "AIStartingTurnAttack")
 		elseif mover then
 			PlayVoiceResponse(mover, "AIStartingTurnMoving")
 		end
@@ -1227,20 +1234,22 @@ local function __AIExecutionControllerExecute(self, units, reposition, played_un
 		-- post-movement update before starting over
 		for _, unit in ipairs(playing) do
 			-- remove all scouted locations first in case any of the behaviors/actions causes a restart
-			unit.ai_context.behavior:EndMovement(unit)
-			AIUpdateScoutLocation(unit)
+			if unit.ai_context then -- might be dead
+				unit.ai_context.behavior:EndMovement(unit)
+				AIUpdateScoutLocation(unit)
+			end
 		end
 				
 		local end_combat
 		--for i, unit in ipairs(playing) do
 		while #(playing or empty_table) > 0 and g_Combat do
 			-- select unit that would cause minimal camera movement (pos + target)
-			local unit, min_dist
+			local unit
 			if cinematicUnit then
 				unit = cinematicUnit
 				cinematicUnit = false
 			else
-				unit, min_dist = PickClosestUnit(playing)
+				unit = PickClosestUnit(playing)
 			end
 			table.remove_value(playing, unit)
 			
@@ -1395,7 +1404,7 @@ function AIExecutionController:SelectPlayingUnits(units, zone)
 		local interruptedGroup = false
 		for idx, unit in ipairs(selected) do
 			local pathDummies = unit:GenerateTargetDummiesFromPath(unit.ai_context.dest_combat_path)
-			local interrupted = unit:CheckProvokeOpportunityAttacks("move", pathDummies)
+			local interrupted = unit:CheckProvokeOpportunityAttacks(CombatActions.Move, "move", pathDummies)
 			if interrupted and idx == 1 then 
 				interruptedGroup = true
 			end
@@ -1634,7 +1643,7 @@ local function AIExecutionTrackUnits()
 		end
 	end
 	
-	if not g_AIExecutionController.group_to_follow or not next(g_AIExecutionController.group_to_follow) then
+	if not g_AIExecutionController or not next(g_AIExecutionController.group_to_follow) then
 		--for some reason there is no group to follow
 		return
 	end
@@ -1757,20 +1766,23 @@ OnMsg.ExecutionControllerDeactivate = CheckEnemySightedQueue
 
 function PickClosestUnit(group)
 	-- select unit that would cause minimal camera movement (pos + target)
-	local unit, min_dist
+	local zone = CombatCam_CalcZone()
+	local unit, best_lookat
 	for _, u in ipairs(group) do
-		local target = AIGetIntendedTarget(u)
-		local lookat, zone = CombatCam_CalcAttackCamPos(u, target)
-		if not lookat or not zone then
-			unit = u
-			break
-		end
-		local dist = zone.center:Dist(IsValid(lookat) and lookat:GetVisualPos() or lookat)
-		if not min_dist or dist < min_dist then
-			unit, min_dist = u, dist
+		if IsValid(u) and u:IsValidPos() then
+			local target = AIGetIntendedTarget(u)
+			local lookat = zone and CombatCam_CalcAttackCamPos(zone, u, target)
+			if not lookat then
+				unit = u
+				break
+			end
+			if not best_lookat or IsCloser(zone.center, lookat, best_lookat) then
+				unit = u
+				best_lookat = lookat
+			end
 		end
 	end
-	return unit, min_dist
+	return unit
 end
 
 function ShowBadgeOfAttacker(attacker, show)

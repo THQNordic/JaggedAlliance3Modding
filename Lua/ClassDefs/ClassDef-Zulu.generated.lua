@@ -181,6 +181,27 @@ DefineClass.Butterflies = {
 	place_name = "DecorFX_Butterflies",
 }
 
+DefineClass.CampaignSpecific = {
+	__parents = { "PropertyObject", },
+	__generated_by_class = "ClassDef",
+
+	properties = {
+		{ id = "campaign", name = "Campaign", help = "The relevant campaign for this preset.", 
+			editor = "combo", default = "HotDiamonds", items = function (self)
+local items = {}
+if not IsKindOf(self, "ModItem") then
+	table.insert(items, "<all>")
+end
+table.iappend(items, PresetsCombo("CampaignPreset")())
+return items
+end, },
+		{ id = "IsRelatedToCurrentCampaign", name = "IsRelatedToCurrentCampaign", 
+			editor = "func", default = function (self)
+return self.campaign == GetCurrentCampaignPreset().id or self.campaign == "<all>"
+end, no_edit = true, },
+	},
+}
+
 DefineClass.CharacterEffectProperties = {
 	__parents = { "PropertyObject", },
 	__generated_by_class = "ClassDef",
@@ -2187,6 +2208,13 @@ function UnitProperties:SetTired(value)
 	elseif oldValue > 0 and value <= 0 then
 		Msg("UnitTiredRemoved", self)
 	end
+	if value - oldValue > 0 then
+		Msg("UnitTiredLevelAdded", self, value)	
+	end
+	
+	if value - oldValue < 0 then
+		Msg("UnitTiredLevelRemoved", self, value)	
+	end
 end
 
 function UnitProperties:ChangeTired(delta)
@@ -2222,6 +2250,7 @@ function UnitProperties:GetInventoryMaxSlots()
 end
 
 function UnitProperties:IsDead()
+	if self.immortal then return false end
 	return self.HitPoints <= 0
 end
 

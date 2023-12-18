@@ -265,7 +265,7 @@ PlaceObj('VoiceResponse', {
 		T(956983486323, --[[VoiceResponse Spike SelectionStealth VoiceResponse SelectionStealth - when selected or autoselected voice:Spike]] "Time to do a little skulking.")
 	}),
 	SeriouslyWounded = TConcat({
-		T(928672269810, --[[VoiceResponse Spike SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds) voice:Spike]] "I don't think I'll make it unless I get these wounds looked at.")
+		T(928672269810, --[[VoiceResponse Spike SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining. voice:Spike]] "I don't think I'll make it unless I get these wounds looked at.")
 	}),
 	Startled = TConcat({
 		T(494680540940, --[[VoiceResponse Spike Startled VoiceResponse Startled - Startled by hearing a sudden noise voice:Spike]] "Huh?"),
@@ -328,9 +328,9 @@ PlaceObj('VoiceResponse', {
 		T(423158196689, --[[VoiceResponse Spike WeaponJammed VoiceResponse WeaponJammed - When weapon has jammed voice:Spike]] "Misfire! Damn! Had a beauty of a shot lined up, too.")
 	}),
 	Wounded = TConcat({
-		T(114974739956, --[[VoiceResponse Spike Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Spike]] "Damn, that stings!"),
-		T(997035476630, --[[VoiceResponse Spike Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Spike]] "I'm wounded!"),
-		T(908202021220, --[[VoiceResponse Spike Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Spike]] "Another scar for the Major.")
+		T(114974739956, --[[VoiceResponse Spike Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Spike]] "Damn, that stings!"),
+		T(997035476630, --[[VoiceResponse Spike Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Spike]] "I'm wounded!"),
+		T(908202021220, --[[VoiceResponse Spike Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Spike]] "Another scar for the Major.")
 	}),
 	group = "MercenariesOld",
 	id = "Spike",

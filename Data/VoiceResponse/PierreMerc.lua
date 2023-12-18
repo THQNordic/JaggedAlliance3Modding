@@ -290,7 +290,7 @@ PlaceObj('VoiceResponse', {
 		T(549674123500, --[[VoiceResponse PierreMerc SelectionStealth VoiceResponse SelectionStealth - when selected or autoselected voice:PierreMerc]] "I will go quietly... if I must.")
 	}),
 	SeriouslyWounded = TConcat({
-		T(970453307996, --[[VoiceResponse PierreMerc SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds) voice:PierreMerc]] "I cannot continue with this many injuries!")
+		T(970453307996, --[[VoiceResponse PierreMerc SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining. voice:PierreMerc]] "I cannot continue with this many injuries!")
 	}),
 	Startled = TConcat({
 		T(476841906075, --[[VoiceResponse PierreMerc Startled VoiceResponse Startled - Startled by hearing a sudden noise voice:PierreMerc]] "Huh?"),
@@ -336,9 +336,9 @@ PlaceObj('VoiceResponse', {
 		T(813403377750, --[[VoiceResponse PierreMerc WeaponJammed VoiceResponse WeaponJammed - When weapon has jammed voice:PierreMerc]] "Damn you, you stupid gun! Shoot, goddammit!")
 	}),
 	Wounded = TConcat({
-		T(839542094561, --[[VoiceResponse PierreMerc Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:PierreMerc]] "Damn it!"),
-		T(577278524485, --[[VoiceResponse PierreMerc Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:PierreMerc]] "Won't die yet!"),
-		T(293157313622, --[[VoiceResponse PierreMerc Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:PierreMerc]] "Lucky fool hit me!")
+		T(839542094561, --[[VoiceResponse PierreMerc Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:PierreMerc]] "Damn it!"),
+		T(577278524485, --[[VoiceResponse PierreMerc Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:PierreMerc]] "Won't die yet!"),
+		T(293157313622, --[[VoiceResponse PierreMerc Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:PierreMerc]] "Lucky fool hit me!")
 	}),
 	group = "MercenariesNew",
 	id = "PierreMerc",

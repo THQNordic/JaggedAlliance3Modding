@@ -55,7 +55,7 @@ PlaceObj('GameTerm', {
 })
 
 PlaceObj('GameTerm', {
-	Description = T(980486586386, --[[GameTerm Default Energy Description]] "Characters are initially <em>Well-rested</em> but will lose Energy as they participate in combat, take damage, and travel. At some point they will become <em>Tired</em>, <em>Exhausted</em> and may even fall <em>Unconscious</em>"),
+	Description = T(980486586386, --[[GameTerm Default Energy Description]] "Characters will lose Energy as they suffer negative effects or travel over land. At some point they will become <em>Tired</em>, <em>Exhausted</em> and may even fall <em>Unconscious</em>. Energy is recovered when resting and characters may even become <em>Well-rested</em> with the R&R operation."),
 	Name = T(660409506008, --[[GameTerm Default Energy Name]] "Energy"),
 	id = "Energy",
 })

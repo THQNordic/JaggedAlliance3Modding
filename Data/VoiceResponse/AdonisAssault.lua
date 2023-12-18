@@ -202,14 +202,14 @@ PlaceObj('VoiceResponse', {
 		T(702436128719, --[[VoiceResponse AdonisAssault TakeCover VoiceResponse TakeCover - Played when the Take Cover action is used voice:AdonisAssault]] "Taking cover!")
 	}),
 	Wounded = TConcat({
-		T(385844688429, --[[VoiceResponse AdonisAssault Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:AdonisAssault]] "I'm wounded!"),
-		T(644290641400, --[[VoiceResponse AdonisAssault Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:AdonisAssault]] "Uff, that hurt!"),
-		T(121420748628, --[[VoiceResponse AdonisAssault Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:AdonisAssault]] "Fuck!"),
-		T(318047846947, --[[VoiceResponse AdonisAssault Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:AdonisAssault]] "I'm hurt bad!"),
-		T(560650302863, --[[VoiceResponse AdonisAssault Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:AdonisAssault]] "Hurts like a motherf-"),
-		T(798025554081, --[[VoiceResponse AdonisAssault Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:AdonisAssault]] "Need a medic!"),
-		T(401741680443, --[[VoiceResponse AdonisAssault Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:AdonisAssault]] "They got me!"),
-		T(746929784578, --[[VoiceResponse AdonisAssault Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:AdonisAssault]] "Bastards!")
+		T(385844688429, --[[VoiceResponse AdonisAssault Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:AdonisAssault]] "I'm wounded!"),
+		T(644290641400, --[[VoiceResponse AdonisAssault Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:AdonisAssault]] "Uff, that hurt!"),
+		T(121420748628, --[[VoiceResponse AdonisAssault Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:AdonisAssault]] "Fuck!"),
+		T(318047846947, --[[VoiceResponse AdonisAssault Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:AdonisAssault]] "I'm hurt bad!"),
+		T(560650302863, --[[VoiceResponse AdonisAssault Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:AdonisAssault]] "Hurts like a motherf-"),
+		T(798025554081, --[[VoiceResponse AdonisAssault Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:AdonisAssault]] "Need a medic!"),
+		T(401741680443, --[[VoiceResponse AdonisAssault Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:AdonisAssault]] "They got me!"),
+		T(746929784578, --[[VoiceResponse AdonisAssault Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:AdonisAssault]] "Bastards!")
 	}),
 	group = "Enemies",
 	id = "AdonisAssault",

@@ -661,7 +661,7 @@ function AIFindDestinations(unit, context)
 				printf("Other target dummy pos %s", o.target_dummy and tostring(o.target_dummy:GetPos()) or "")
 				printf("Other efResting=%d", o:GetEnumFlags(const.efResting))
 				if o.reposition_dest then
-					printf("Other reposition dest=%d,%d", stance_pos_unpack(o.reposition_dest))
+					printf("Other reposition dest=%s", tostring(point(stance_pos_unpack(o.reposition_dest))))
 				end
 			end
 			assert(not "AI can't find unit free destination")
@@ -1980,6 +1980,17 @@ function AIGetAttackArgs(context, action, target_spot_group, aim_type, override_
 	return args, has_ap, target
 end
 
+function AIFilterTargetPoints(unit, target_pts, min_range, max_range)
+	for i = #target_pts, 1, -1 do
+		local dist = unit:GetDist(target_pts[i])
+		if dist == 0 or (max_range and dist > max_range) then
+			table.remove(target_pts, i)
+		elseif min_range and min_range < max_range and dist < min_range then
+			table.remove(target_pts, i)
+		end
+	end
+end
+
 function AICalcAOETargetPoints(context, min_range, max_range, max_radius)
 	local target_pts = {}
 	local unit = context.unit
@@ -2016,15 +2027,7 @@ function AICalcAOETargetPoints(context, min_range, max_range, max_radius)
 	end
 	
 	-- filter out target points not in range
-	local attack_pos = context.unit_pos
-	for i = #target_pts, 1, -1 do
-		local dist = unit:GetDist(target_pts[i])
-		if dist == 0 or (max_range and dist > max_range) then
-			table.remove(target_pts, i)
-		elseif min_range and min_range < max_range and dist < min_range then
-			table.remove(target_pts, i)
-		end
-	end
+	AIFilterTargetPoints(unit, target_pts, min_range, max_range)
 	
 	return target_pts
 end
@@ -2146,10 +2149,15 @@ local function IsUnitHit(hit)
 	end
 end
 
-function AIPrecalcGrenadeZones(context, action_id, min_range, max_range, blast_radius, aoeType)
+function AIPrecalcGrenadeZones(context, action_id, min_range, max_range, blast_radius, aoeType, target_pts)
 	if context.target_locked then return {} end
 	
-	local target_pts = AICalcAOETargetPoints(context, min_range, max_range, blast_radius)
+	if not target_pts then
+		target_pts = AICalcAOETargetPoints(context, min_range, max_range, blast_radius)
+	else
+		-- make sure the target points are within the allowed range
+		AIFilterTargetPoints(context.unit, target_pts, min_range, max_range)
+	end
 
 	-- calculate parabolas and affected units to each target point
 	local zones = {}
@@ -2301,7 +2309,7 @@ function AIEvalStimTarget(unit, target, rules)
 	
 	local score = 0
 	for _, rule in ipairs(rules) do
-		if table.find(ally.AIKeywords or empty_table, rule.Keyword) then
+		if table.find(target.AIKeywords or empty_table, rule.Keyword) then
 			score = score + rule.Weight
 		end
 	end
@@ -2384,6 +2392,7 @@ function AIRangeCheck(context, ppt1, target, ppt2, range_type, range_min, range_
 end
 
 function AIReloadWeapons(unit)
+	if IsMerc(unit) then return end
 	local firearms = select(3, unit:GetActiveWeapons("Firearm"))
 	table.iappend(firearms, select(3, unit:GetActiveWeapons("HeavyWeapon")))
 	for _, firearm in ipairs(firearms) do
@@ -2519,7 +2528,7 @@ function AIAssignToEmplacements(team)
 				-- check priority assignment first
 				local gunner
 				for _, unit in ipairs(g_MGPriorityAssignment) do
-					if IsValidTarget(unit) and unit.team == team and not unit:IsIncapacitated() then
+					if IsValidTarget(unit) and unit.team == team and unit.CanManEmplacements and not unit:IsIncapacitated() then
 						gunner = unit
 						break
 					end

@@ -21,7 +21,6 @@ DefineClass.ArmySniper_Elite = {
 	BigPortrait = "UI/Enemies/LegionRaider",
 	Name = T(408763831400, --[[UnitDataCompositeDef ArmySniper_Elite Name]] "Elite Sniper"),
 	Randomization = true,
-	elite = true,
 	Affiliation = "Army",
 	StartingLevel = 7,
 	neutral_retaliate = true,

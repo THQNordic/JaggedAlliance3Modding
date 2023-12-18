@@ -1002,6 +1002,17 @@ int time
 : the time (ms) to change the axis (optional).
 
 
+## CObject:SetAxisAngle
+
+Smoothly turns the object to the given axis and angle for the specified time. This method ensures proper interpolation avoiding discontinuities.
+
+
+void **CObject:SetAxisAngle**(point axis, int angle, [int time = 0])
+
+void **CObject:SetAxisAngle**(int axis_x, int axis_y, int axis_z, int angle, [int time = 0])
+
+void **CObject:SetAxisAngle**(object other, [int time = 0])
+
 ## CObject:SetColorModifier
 
 Modifies the colorization of the entire object.
@@ -1032,6 +1043,8 @@ Specifies object's material properties.
 
 
 void **CObject:SetColorizationMaterial**(int idx, int color, int roughness, int metallic)
+
+void **CObject:SetColorizationMaterial**(object other)
 int idx
 : colorization index, depends on the number of colorization masks available in the object's entity
 
@@ -1043,6 +1056,9 @@ int roughness
 
 int metallic
 : the metallic degree, represented as an integer between -128 and 127
+
+object other
+: copy the colorization from another object
 
 
 ## CObject:SetDust
@@ -1148,6 +1164,17 @@ int time
 : the time (ms) to change the position (optional).
 
 
+## CObject:SetPosAxisAngle
+
+Smoothly moves and turns the object to the given pos, axis and angle for the specified time. It is better to use this method instead of invoking the interpolations separately.
+
+
+void **CObject:SetPosAxisAngle**(point pos, point axis, int angle, [int time = 0])
+
+void **CObject:SetPosAxisAngle**(int pos_x, int pos_y, int pos_z, int axis_x, int axis_y, int axis_z, int angle, [int time = 0])
+
+void **CObject:SetPosAxisAngle**(object other, [int time = 0])
+
 ## CObject:SetRollPitchYaw
 
 Sets the object's orientation via roll, pitch and yaw angles.
@@ -1197,10 +1224,10 @@ Associates a sound to be played from this object.
 
 void **CObject:SetSound**(string sound, [string type, int volume, int crossfade, bool looping])
 string sound
-: a sound name (sound bank) or a sound filename
+: a sound name (sound bank) or a sound filename.
 
 string type
-: a sound type name, indicating that a sound file is provided, instead of a sound name
+: a sound type name, indicating that a sound file is provided, instead of a sound name.
 
 int volume
 : forces the volume of the sound between 0 and 1000 (the sound bank volume is used by default).
@@ -1476,6 +1503,19 @@ int index
 
 _returns_ bool
 : Returns true if the state is present
+
+
+## IsBeingDestructed
+
+Returns if the given param is an object in the process of being destroyed.
+
+
+bool **IsBeingDestructed**(object obj)
+object obj
+: the object to be tested
+
+_returns_ bool
+: true if the object is being destroyed
 
 
 ## IsValid

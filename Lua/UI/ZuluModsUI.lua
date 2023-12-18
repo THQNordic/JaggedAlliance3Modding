@@ -44,8 +44,23 @@ function ShowModInfo(dlg)
 		dlg.idAuthorName:SetText(modContext.Author)
 		dlg.idVersion:SetText(modContext.ModVersion or _InternalTranslate(T(77, "Unknown")))
 		local rawDescr = g_ModsUIContextObj.mod_defs[modContext.ModID].description
+		rawDescr = ParseSteam(rawDescr or "", {
+			Heading1TextStyle = "ModDescription_Heading1",
+			Heading2TextStyle = "ModDescription_Heading2",
+			Heading3TextStyle = "ModsDescription_Heading3",
+			NormalTextStyle = "ModDescription",
+			ItalicTextStyle = "ModDescription", -- TODO: missing?
+			BoldTextStyle = "ModDescription_Bold",
+			HyperlinkTextStyle = "ModDescription_Hyperlink",
+			CodeTextStyle = "ModDescription", -- TODO: missing?
+			AllowUrl = false,
+		})
 		dlg.idDescrText:SetText(rawDescr and rawDescr ~= "" and rawDescr or _InternalTranslate(T(492159285354, "No description")))
-		dlg.idListMods:SetText(GetModDependencies(modContext))
+		local requiredMods = GetModDependencies(modContext)
+		if requiredMods then
+			dlg.idRequiredMods:SetVisible(true)
+			dlg.idListMods:SetText(requiredMods)
+		end
 		if dlg.idExternalLinks then
 			local links = table.copy(modContext.ExternalLinks)
 			for idx, link in ipairs(links) do
@@ -53,6 +68,7 @@ function ShowModInfo(dlg)
 				links[idx] = string.format("<h %s %s %s %s underline>%s</h>", link, r, g, b, link)
 			end
 			if next(links) then
+				dlg.idExternalLinks:SetVisible(true)
 				dlg.idListLinks:SetText(table.concat(links, "\n"))
 			else
 				dlg.idListLinks:SetHandleMouse(false)
@@ -129,12 +145,11 @@ end
 
 function GetModDependencies(modContext)
 	local label = _InternalTranslate(T(781481359653, "<style SaveMapEntryTitle>Required mods: </style>"))
-	local emptyText = _InternalTranslate(T(77, "Unknown"))
 	local modDependencies = ModDependencyGraph[modContext.ModID]
 	local requiredMods = table.copy(modDependencies.outgoing)
 	table.iappend(requiredMods, modDependencies.outgoing_failed)
 	local titles = {}
-	if not next(requiredMods) then return label .. emptyText end
+	if not next(requiredMods) then return false end
 	local notIns
 	for _, mod in ipairs(requiredMods) do
 		if mod.required then

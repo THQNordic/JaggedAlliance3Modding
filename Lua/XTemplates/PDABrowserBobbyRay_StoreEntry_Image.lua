@@ -6,7 +6,7 @@ PlaceObj('XTemplate', {
 	id = "PDABrowserBobbyRay_StoreEntry_Image",
 	PlaceObj('XTemplateWindow', {
 		'RolloverTranslate', false,
-		'RolloverTemplate', "RolloverInventory",
+		'RolloverTemplate', "RolloverInventoryBobbyRay",
 		'RolloverAnchor', "left",
 		'RolloverText', "placeholder",
 		'HandleMouse', true,
@@ -16,10 +16,11 @@ PlaceObj('XTemplate', {
 			'name', "Open(self,...)",
 			'func', function (self,...)
 				XWindow.Open(self,...)
-				self:SetRolloverTitle(self:GetContext().DisplayName)
-				self:ResolveId("idWeaponImage"):SetImage(self:GetContext().Icon)
-				self:ResolveId("idLabelNew"):SetVisible(self:GetContext().New)
-				self:ResolveId("idLabelUsed"):SetImage(self:GetContext():GetShopSubIcon())
+				local item = self:GetContext()
+				self:SetRolloverTitle(item.DisplayName)
+				self:ResolveId("idWeaponImage"):SetImage(item.Icon)
+				self:ResolveId("idLabelNew"):SetVisible(item.New)
+				self:ResolveId("idLabelUsed"):SetImage(item:GetShopSubIcon())
 			end,
 		}),
 		PlaceObj('XTemplateWindow', {
@@ -54,8 +55,8 @@ PlaceObj('XTemplate', {
 			'TextStyle', "PDABobbyStore_HG18G_Shadow",
 			'ContextUpdateOnOpen', true,
 			'OnContextUpdate', function (self, context, ...)
-				self:SetText(self.parent:GetContext().DisplayName)
 				local item = self.parent:GetContext()
+				self:SetText(item.DisplayName)
 				-- local stock = item.Stock - BobbyRayCartGetUnits()[item.id] or 0
 				local hasStock = BobbyRayCartHasEnoughStock(item)
 				local hasMoney = BobbyRayCartHasEnoughMoney(item)
@@ -98,7 +99,7 @@ PlaceObj('XTemplate', {
 			}),
 			}),
 		PlaceObj('XTemplateWindow', {
-			'__condition', function (parent, context) return parent:GetContext().GetShopConditionPercent end,
+			'__condition', function (parent, context) return context.GetShopConditionPercent end,
 			'__class', "XText",
 			'Id', "idLabelCondition",
 			'Margins', box(7, 5, 7, 7),
@@ -130,7 +131,7 @@ PlaceObj('XTemplate', {
 			}),
 			}),
 		PlaceObj('XTemplateWindow', {
-			'__condition', function (parent, context) return parent:GetContext().ShopStackSize and parent:GetContext().ShopStackSize ~= 1 end,
+			'__condition', function (parent, context) return context.ShopStackSize and parent:GetContext().ShopStackSize ~= 1 end,
 			'__class', "XText",
 			'Id', "idLabelShopStack",
 			'Margins', box(7, 5, 7, 7),
@@ -145,13 +146,13 @@ PlaceObj('XTemplate', {
 				local hasStock = BobbyRayCartHasEnoughStock(item)
 				
 				local normalStyle = T{532958001928, "<style PDABobbyStore_HG18C_Shadow><cur><valign top 0><style PDABobbyStore_HG16D_Shadow>/<max></style>",
-					cur = self:GetContext().ShopStackSize,
-					max = self:GetContext().MaxStacks
+					cur = item.ShopStackSize,
+					max = item.MaxStacks
 				}
 				
 				local outOfStockStyle = T{716983962033, "<style PDABobbyStore_HG18D_Shadow><cur><valign top 0><style PDABobbyStore_HG16D_Shadow_Transparent>/<max></style>",
-					cur = self:GetContext().ShopStackSize,
-					max = self:GetContext().MaxStacks
+					cur = item.ShopStackSize,
+					max = item.MaxStacks
 				}
 				self:SetText(hasStock and normalStyle or outOfStockStyle)
 				

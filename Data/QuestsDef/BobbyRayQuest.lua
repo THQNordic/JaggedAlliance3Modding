@@ -94,11 +94,8 @@ PlaceObj('QuestsDef', {
 					end,
 					FuncCode = 'bobby_tier_print("---------------------------- unlocking tier 1 shop with quest")',
 				}),
-				PlaceObj('QuestSetVariableNum', {
-					Amount = 1,
-					Operation = "set",
-					Prop = "UnlockedTier",
-					QuestId = "BobbyRayQuest",
+				PlaceObj('BobbyRaySetState', {
+					State = 1,
 				}),
 			},
 			Once = true,
@@ -131,11 +128,8 @@ PlaceObj('QuestsDef', {
 				PlaceObj('ExecuteCode', {
 					FuncCode = 'bobby_tier_print("--------------------------- unlocking tier 2 shops with quest")\nif obj.BlockingEmails then\n	bobby_tier_print("\\t\\tEmail timer not yet passed, will not send e-mail...")\nelse\n	bobby_tier_print("\\t\\tSending e-mail!")\n	ReceiveEmail("BobbyRayShopTier2Unlocked")\nend',
 				}),
-				PlaceObj('QuestSetVariableNum', {
-					Amount = 2,
-					Operation = "set",
-					Prop = "UnlockedTier",
-					QuestId = "BobbyRayQuest",
+				PlaceObj('BobbyRaySetState', {
+					State = 2,
 				}),
 			},
 			Once = true,
@@ -172,11 +166,8 @@ PlaceObj('QuestsDef', {
 				PlaceObj('ExecuteCode', {
 					FuncCode = 'bobby_tier_print("--------------------- unlocking tier 3 with quest")\nif obj.BlockingEmails then\n	bobby_tier_print("\\t\\tEmail timer not yet passed, will not send e-mail...")\nelse\n	bobby_tier_print("\\t\\tSending e-mail!")\n	ReceiveEmail("BobbyRayShopTier3Unlocked")\nend',
 				}),
-				PlaceObj('QuestSetVariableNum', {
-					Amount = 3,
-					Operation = "set",
-					Prop = "UnlockedTier",
-					QuestId = "BobbyRayQuest",
+				PlaceObj('BobbyRaySetState', {
+					State = 3,
 				}),
 			},
 			Once = true,
@@ -214,8 +205,9 @@ PlaceObj('QuestsDef', {
 					TimeAmount = 120,
 				}),
 				PlaceObj('ExecuteCode', {
-					FuncCode = 'bobby_tier_print("---------------------------- Restocking shop with Quest")\nBobbyRayStoreRestock()',
+					FuncCode = 'bobby_tier_print("---------------------------- Restocking shop with Quest")',
 				}),
+				PlaceObj('BobbyRayRestockShop', {}),
 			},
 			ParamId = "TCE_ShopRestock",
 			QuestId = "BobbyRayQuest",
@@ -235,8 +227,9 @@ PlaceObj('QuestsDef', {
 					TimeAmountRangeMax = 14,
 				}),
 				PlaceObj('ExecuteCode', {
-					FuncCode = 'bobby_tier_print("---------------------------- Consuming random shop stock with Quest")\nBobbyRayStoreConsumeRandomStock()',
+					FuncCode = 'bobby_tier_print("---------------------------- Consuming random shop stock with Quest")',
 				}),
+				PlaceObj('BobbyRayConsumeStock', {}),
 			},
 			ParamId = "TCE_ShopFakePurchase",
 			QuestId = "BobbyRayQuest",

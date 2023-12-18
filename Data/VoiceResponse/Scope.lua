@@ -270,7 +270,7 @@ PlaceObj('VoiceResponse', {
 		T(245051133420, --[[VoiceResponse Scope SelectionStealth VoiceResponse SelectionStealth - when selected or autoselected voice:Scope]] "Going dark.")
 	}),
 	SeriouslyWounded = TConcat({
-		T(784907215429, --[[VoiceResponse Scope SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds) voice:Scope]] "Sorry, but I think I am about to die.")
+		T(784907215429, --[[VoiceResponse Scope SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining. voice:Scope]] "Sorry, but I think I am about to die.")
 	}),
 	Startled = TConcat({
 		T(598160212365, --[[VoiceResponse Scope Startled VoiceResponse Startled - Startled by hearing a sudden noise voice:Scope]] "Huh?"),
@@ -323,9 +323,9 @@ PlaceObj('VoiceResponse', {
 		T(535191602896, --[[VoiceResponse Scope WeaponJammed VoiceResponse WeaponJammed - When weapon has jammed voice:Scope]] "Firearms malfunction!")
 	}),
 	Wounded = TConcat({
-		T(483544724456, --[[VoiceResponse Scope Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Scope]] "Biscuits!"),
-		T(506909338512, --[[VoiceResponse Scope Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Scope]] "Bloody ow!"),
-		T(959485594924, --[[VoiceResponse Scope Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Scope]] "Ow! Burnt biscuits.")
+		T(483544724456, --[[VoiceResponse Scope Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Scope]] "Biscuits!"),
+		T(506909338512, --[[VoiceResponse Scope Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Scope]] "Bloody ow!"),
+		T(959485594924, --[[VoiceResponse Scope Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Scope]] "Ow! Burnt biscuits.")
 	}),
 	group = "MercenariesOld",
 	id = "Scope",

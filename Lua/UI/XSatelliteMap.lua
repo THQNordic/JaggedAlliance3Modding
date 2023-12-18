@@ -86,13 +86,29 @@ DefineClass.XSatelliteViewMap = {
 	blinking_sector_fx = false,
 	
 	-- Caches
-	squads_in_shorcuts = false
+	squads_in_shorcuts = false,
+	
+	-- Layers
+	satellite_layer_image = "",
+	underground_layer_image = "",
+	satellite_image_cached = false,
+	underground_image_cached = false,
+	
+	decorations = false
 }
 
 function XSatelliteViewMap:Init()
 	local campaign = GetCurrentCampaignPreset()
 	self:ValidateAndInitSizes(campaign)
-	self:SetImage(campaign.map_file)
+	
+	self.satellite_layer_image = campaign.map_file
+	self.underground_layer_image = campaign.underground_file
+	self.satellite_image_cached = self.satellite_layer_image and { ResourceManager.GetResourceID(self.satellite_layer_image) } or empty_table
+	self.underground_image_cached = self.underground_layer_image and { ResourceManager.GetResourceID(self.underground_layer_image) } or empty_table
+	
+	-- Cause caching
+	self:SetImage(self.underground_layer_image)
+	self:SetImage(self.satellite_layer_image)
 	
 	self.playable_area = point(campaign.sector_columns * self.sector_size:x(), (campaign.sector_rows - campaign.sector_rowsstart + 1) * self.sector_size:y())
 	self.clamp_box = sizebox(self.grid_start, self.playable_area)
@@ -218,6 +234,20 @@ function XSatelliteViewMap:Open()
 	end)
 end
 
+function XSatelliteViewMap:Done()
+	local satImageObj = self.satellite_image_cached[2]
+	if satImageObj then
+		satImageObj:ReleaseRef()
+		satImageObj = false
+	end
+	
+	local undergroundImageObj = self.underground_image_cached[2]
+	if undergroundImageObj then
+		undergroundImageObj:ReleaseRef()
+		undergroundImageObj = false
+	end
+end
+
 function XSatelliteViewMap:OnDelete()
 	self:RemoveContextMenu()
 	if self.travel_mode then self:ExitTravelMode() end
@@ -280,10 +310,6 @@ end
 
 SatelliteLayers = { "satellite", "underground" }
 
-function IsSectorLayerDefaultVisible(layerName)
-	return false
-end
-
 function XSatelliteViewMap:GenerateSectorGrid()
 	local size_x, size_y = 0, 0
 	for id, s in pairs(gv_Sectors) do
@@ -300,7 +326,6 @@ function XSatelliteViewMap:GenerateSectorGrid()
 	self.sector_enemy = {}
 	self.sector_neutral = {}
 	for i, layerName in ipairs(SatelliteLayers) do
-		local defaultVisible = IsSectorLayerDefaultVisible(layerName)
 		local visibleMap = {}
 		local player = {}
 		local enemy = {}
@@ -308,7 +333,7 @@ function XSatelliteViewMap:GenerateSectorGrid()
 	
 		for i = 1, size_x * size_y do
 			assert(type(self.sector_visible_map[i]) == "nil")
-			visibleMap[i] = defaultVisible
+			visibleMap[i] = false
 			player[i] = false
 			enemy[i] = false
 			neutral[i] = false
@@ -370,6 +395,26 @@ function XSatelliteViewMap:GenerateSectorGrid()
 		
 		::continue::
 	end
+	
+	local decorations = {}
+	local campaignDecorations = GetCurrentCampaignPreset()
+	campaignDecorations = campaignDecorations and campaignDecorations.decorations
+	
+	for i, dec in ipairs(campaignDecorations) do
+		local sector = gv_Sectors[dec.relativeSector]
+		local sectorPos = sector and sector.XMapPosition or point20
+		
+		local decoPos = sectorPos + dec.offset
+		local decoUI = XTemplateSpawn("SatelliteViewDecoration", self)
+		decoUI:SetImage(dec.image)
+		decoUI.PosX = decoPos:x()
+		decoUI.PosY = decoPos:y()
+		decoUI.layer = dec.sat_layer
+		decoUI:SetVisible(decoUI.layer == self.layer_mode)
+		decorations[#decorations + 1] = decoUI
+	end
+	
+	self.decorations = decorations
 end
 
 -- slow, to be used from Satellite Sector editor onlyfunction XSatelliteViewMap:RebuildSectorGrid()
@@ -383,8 +428,61 @@ end
 	end	
 end
 
+function XSatelliteViewMap:SetLayerMode(layerMode)
+	self.layer_mode = layerMode
+	if layerMode == "underground" then
+		self:SetImage(self.underground_layer_image)
+	elseif layerMode == "satellite" then
+		self:SetImage(self.satellite_layer_image)
+	end
+	
+	for sectorId, sectorWin in pairs(self.sector_to_wnd) do
+		sectorWin:SetVisible(sectorWin.layer == layerMode)
+	end
+	self:UpdateAllSectorVisuals()
+	
+	for i, deco in ipairs(self.decorations) do
+		deco:SetVisible(deco.layer == layerMode)
+	end
+
+	ObjModified("satellite_layer")
+end
+
 -- Visualizations
 ------
+
+function XSatelliteViewMap:SetImage(imagePath)
+	if not imagePath then return end
+	
+	if imagePath ~= self.satellite_layer_image and imagePath ~= self.underground_layer_image then
+		return XImage.SetImage(self, imagePath)
+	end
+	
+	local cacheTable = imagePath == self.satellite_layer_image and
+								self.satellite_image_cached or 
+								self.underground_image_cached
+
+	self.image_id = cacheTable[1]
+	self.image_obj = cacheTable[2]
+	
+	if self.image_id and not self.image_obj then
+		self:DeleteThread(imagePath)
+		self:CreateThread(imagePath, function(imageIdToLoad)
+			local obj = AsyncGetResource(imageIdToLoad)
+			cacheTable[2] = obj
+			
+			if self.image_id == imageIdToLoad then
+				self.image_obj = obj
+				self.src_rect = false
+				self:CalcSrcRect()
+			end
+		end, self.image_id)
+	else
+		self.src_rect = false
+		self:CalcSrcRect()
+	end
+	self.Image = imagePath
+end
 
 function XSatelliteViewMap:GenerateSquadWindows()
 	local squad_to_wnd = {}
@@ -578,7 +676,15 @@ function XSatelliteViewMap:ShowSectorIdUI(sector, show)
 	window.idSectorIcon:SetVisible(show)
 end
 
+function OnMsg.GamepadUIStyleChanged()
+	if g_SatelliteUI then
+		g_SatelliteUI:ShowCursorHint(g_SatelliteUI.showCursorHint_CachedShow, g_SatelliteUI.showCursorHint_CachedReason)
+	end
+end
+
 function XSatelliteViewMap:ShowCursorHint(show, reason)
+	self.showCursorHint_CachedShow = show
+	self.showCursorHint_CachedReason = reason
 	if show and not g_ZuluMessagePopup and not RolloverWin then
 		local text = false
 		local style = false
@@ -648,7 +754,7 @@ end
 
 function OnMsg.DestroyRolloverWindow()
 	if not g_SatelliteUI then return end
-	g_SatelliteUI:ShowCursorHint(true)
+	g_SatelliteUI:ShowCursorHint(true, g_SatelliteUI.showCursorHint_CachedReason)
 end
 
 function XSatelliteViewMap:UpdateSectorVisuals(sector_id)
@@ -671,15 +777,14 @@ function XSatelliteViewMap:UpdateSectorVisuals(sector_id)
 	
 	local pos_y, pos_x = sector_unpack(sector_id)
 	local mapIdx = 1 + pos_x - 1 + (pos_y - 1) * self.sector_max_x
-	local visibleFx = sectorVisible or IsSectorLayerDefaultVisible(windowLayer)
-	visibleMap[mapIdx] = not not visibleFx -- the C++ side needs strictly true/false here
+	visibleMap[mapIdx] = not not sectorVisible -- the C++ side needs strictly true/false here
 	
 	local side = sector.Side
 	if (side == "player1" or side == "player2") and not sector.ForceConflict and sector.Passability ~= "Water" then
 		playerMask[mapIdx] = true
 		enemyMask[mapIdx] = false
 		neutralMask[mapIdx] = false
-	elseif side == "enemy1" and sector.Passability ~= "Water" then
+	elseif (side == "enemy1" or side == "enemy2") and sector.Passability ~= "Water" then
 		enemyMask[mapIdx] = true
 		playerMask[mapIdx] = false
 		neutralMask[mapIdx] = false
@@ -701,6 +806,12 @@ function XSatelliteViewMap:UpdateSectorVisuals(sector_id)
 			enemyMask[mapIdx] = false
 			playerMask[mapIdx] = false
 		end
+	end
+	
+	if not sector.discovered then
+		neutralMask[mapIdx] = false
+		enemyMask[mapIdx] = false
+		playerMask[mapIdx] = false
 	end
 
 	local questMode = self.filter_info_mode == "quests"
@@ -738,7 +849,12 @@ function XSatelliteViewMap:UpdateSectorVisuals(sector_id)
 	end
 	
 	if window.idUndergroundImage then
-		window.idUndergroundImage:SetImage(inConflict and "UI/SatelliteView/sector_underground_conflict" or "UI/SatelliteView/sector_underground")
+		local undergroundImage = sector.UndergroundImage or "UI/SatelliteView/sector_underground"
+		if inConflict then
+			undergroundImage = undergroundImage .. "_conflict"
+		end
+		window.idUndergroundImage:SetImage(undergroundImage)
+		window.idUndergroundImage:SetImageColor(sectorVisible and white or RGB(150, 150, 150))
 	end
 
 	-- 1. selected_squad
@@ -1189,9 +1305,15 @@ function XSatelliteViewMap:DrawContent()
 
 	local white = RGB(255,255,255)
 	
-	local shader_params = XSatelliteViewParams:GetActiveInstance() or XSatelliteViewParams
-	local shader_buf = pstr()
+	local shader_params
+	if self.layer_mode == "underground" then
+		shader_params = XSatelliteViewParams:GetById("NewXSatelliteViewParamsUnderground")
+	else
+		shader_params = XSatelliteViewParams:GetActiveInstance()
+	end
+	shader_params = shader_params or XSatelliteViewParams
 
+	local shader_buf = pstr()
 	local currentLayer = self.layer_mode
 	local visible_sectors = table.copy(self.sector_visible_map[currentLayer])
 	local player_sectors = table.copy(self.sector_player[currentLayer])
@@ -1225,33 +1347,33 @@ function XSatelliteViewMap:DrawContent()
 		local idx = 1 + (x - 1) + (y - 1) * self.sector_max_x
 		rollover_sectors[idx] = true
 	end
-
+	
+	local sectorMax = point(self.sector_max_x, self.sector_max_y)
 	local vision_mask_id = draw_as_paused and shader_params.vision_blur_id or shader_params.vision_id
 	shader_buf = (UIFxModifierPresets[vision_mask_id] or XSatelliteViewMapBaseParams):ComposeBuffer(shader_buf)
-	UILDrawSatelliteViewMap(self.Image, white, dst_rect, src_rect, point(self.sector_max_x, self.sector_max_y), visible_sectors, shader_buf)
-	UILDrawSatelliteViewMap(self.Image, white, dst_rect, src_rect, point(self.sector_max_x, self.sector_max_y), selected_sectors, shader_buf)
-	UILDrawSatelliteViewMap(self.Image, white, dst_rect, src_rect, point(self.sector_max_x, self.sector_max_y), rollover_sectors, shader_buf)
+	UILDrawSatelliteViewMap(self.Image, white, dst_rect, src_rect, sectorMax, visible_sectors, shader_buf)
+	UILDrawSatelliteViewMap(self.Image, white, dst_rect, src_rect, sectorMax, selected_sectors, shader_buf)
+	UILDrawSatelliteViewMap(self.Image, white, dst_rect, src_rect, sectorMax, rollover_sectors, shader_buf)
 
-	UILDrawSatelliteViewLines( dst_rect, point(self.sector_max_x, self.sector_max_y), self.sector_visible_map[currentLayer],
-		shader_params.visible_grid_color, shader_params.invisible_grid_color, shader_params.grid_width)
+	UILDrawSatelliteViewLines(dst_rect, sectorMax, visible_sectors, shader_params.visible_grid_color, shader_params.invisible_grid_color, shader_params.grid_width)
 
 	shader_buf = (UIFxModifierPresets[shader_params.neutral_id] or XSatelliteViewMapBaseParams):ComposeBuffer(shader_buf)
-	UILDrawSatelliteViewMap(self.Image, white, dst_rect, src_rect, point(self.sector_max_x, self.sector_max_y), visible_sectors, shader_buf)
+	UILDrawSatelliteViewMap(self.Image, white, dst_rect, src_rect, sectorMax, visible_sectors, shader_buf)
 	
 	shader_buf = (UIFxModifierPresets[shader_params.neutral_sector_id] or XSatelliteViewMapBaseParams):ComposeBuffer(shader_buf)
-	UILDrawSatelliteViewMap(self.Image, white, dst_rect, src_rect, point(self.sector_max_x, self.sector_max_y), neutral_sectors, shader_buf)
+	UILDrawSatelliteViewMap(self.Image, white, dst_rect, src_rect, sectorMax, neutral_sectors, shader_buf)
 
 	shader_buf = (UIFxModifierPresets[shader_params.enemy_id] or XSatelliteViewMapBaseParams):ComposeBuffer(shader_buf)
-	UILDrawSatelliteViewMap(self.Image, white, dst_rect, src_rect, point(self.sector_max_x, self.sector_max_y), enemy_sectors, shader_buf)
+	UILDrawSatelliteViewMap(self.Image, white, dst_rect, src_rect, sectorMax, enemy_sectors, shader_buf)
 
 	shader_buf = (UIFxModifierPresets[shader_params.player_id] or XSatelliteViewMapBaseParams):ComposeBuffer(shader_buf)
-	UILDrawSatelliteViewMap(self.Image, white, dst_rect, src_rect, point(self.sector_max_x, self.sector_max_y), player_sectors, shader_buf)
+	UILDrawSatelliteViewMap(self.Image, white, dst_rect, src_rect, sectorMax, player_sectors, shader_buf)
 
 	shader_buf = (UIFxModifierPresets[shader_params.selected_id] or XSatelliteViewMapBaseParams):ComposeBuffer(shader_buf)
-	UILDrawSatelliteViewMap(self.Image, white, dst_rect, src_rect, point(self.sector_max_x, self.sector_max_y), selected_sectors, shader_buf)
+	UILDrawSatelliteViewMap(self.Image, white, dst_rect, src_rect, sectorMax, selected_sectors, shader_buf)
 
 	shader_buf = (UIFxModifierPresets[shader_params.rollover_id] or XSatelliteViewMapBaseParams):ComposeBuffer(shader_buf)
-	UILDrawSatelliteViewMap(self.Image, white, dst_rect, src_rect, point(self.sector_max_x, self.sector_max_y), rollover_sectors, shader_buf)
+	UILDrawSatelliteViewMap(self.Image, white, dst_rect, src_rect, sectorMax, rollover_sectors, shader_buf)
 
 	-- Debug visualize satellite shortcut path
 --[[	local shortcutPreset = SatelliteShortcuts[1]
@@ -1380,9 +1502,16 @@ function OnMsg.SatelliteNewSquadSelected(selected_squad, old_squad, force)
 		
 		local sectorUnderground = IsSectorUnderground(sectorId)
 		local sectorWin = satDiag.sector_to_wnd[sectorId]
-		if sectorWin and sectorWin.idUnderground and not sectorWin.visible then
-			sectorWin.idUnderground:SwapSector()
+		if sectorWin.layer ~= g_SatelliteUI.layer then
+			g_SatelliteUI:SetLayerMode(sectorWin.layer)
 		end
+	end
+			
+	local firstUnit = selected_squad and selected_squad.units
+	firstUnit = firstUnit and firstUnit[1]
+	firstUnit = firstUnit and g_Units[firstUnit]
+	if firstUnit and firstUnit:CanBeControlled() then
+		SelectObj(firstUnit)
 	end
 
 	ObjModified(satDiag)
@@ -1732,42 +1861,8 @@ function XSatelliteViewMap:TravelWithSquad(squadId)
 
 	self:SelectSector(false)
 
-	-- Decide which sector the initial selected destination will be when travel mode is
-	-- opened while the mouse is on top of the squad's sector.
 	local squadSector = gv_Squads[squadId].CurrentSector
-	local squadSectorX, squadSectorY = sector_unpack(squadSector)
-	local bestSector, firstAvail = squadSector
-	ForEachSectorAround(squadSector, 1,
-		function(s_id)
-			-- Skip diagonal sectors and we can't check travel blocked for them trivially.
-			local sX, sY = sector_unpack(s_id)
-			if abs(sX - squadSectorX) == 1 and abs(sY - squadSectorY) == 1 then return end
-		
-			firstAvail = firstAvail or s_id
-			local sectorObj = gv_Sectors[s_id]
-			if (sectorObj.Passability == "Land" or sectorObj.Passability == "Land and Water")
-				and not IsTravelBlocked(squadSector, s_id)
-				and s_id ~= squadSector then
-				bestSector = s_id
-				return "break"
-			end
-		end
-	)
-		
---[[	for i, wnd in pairs(self.sector_to_wnd) do
-		wnd:ShowTravelBlockLines(true)
-	end]]
-	
-	-- Show the underground/overground sector if the squad traveling is on it.
-	local squadSectorWnd = self.sector_to_wnd[squadSector]
-	if squadSectorWnd and squadSectorWnd.idUnderground and not squadSectorWnd.visible then
-		squadSectorWnd.idUnderground:SwapSector()
-	end
-		
-	local travelDest = bestSector or firstAvail
-	local squadSectPreset = gv_Sectors[squadSector]
-	assert(squadSectPreset.Passability ~= "Land" or squadSectPreset.Passability ~= "Land and Water" or travelDest ~= squadSector)
-	self:TravelDestinationSelect(travelDest)
+	self:TravelDestinationSelect(squadSector)
 	Msg("TravelModeChanged", true)
 end
 
@@ -1793,6 +1888,7 @@ function XSatelliteViewMap:ExitTravelMode()
 
 	SetCampaignSpeed(nil, GetUICampaignPauseReason("SatelliteTravel"))
 	self.desktop:SetMouseCursor()
+	self:ShowCursorHint(false, "travel_mode")
 	Msg("TravelModeChanged", false)
 end
 
@@ -1831,16 +1927,32 @@ function XSatelliteViewMap:TravelDestinationSelect(sectorId)
 	if sectorId then
 		local travelCtx = self.travel_mode
 		local squad = travelCtx.squad
-		if sectorId == squad.CurrentSector then return end
-
-		if travelCtx.route_valid then
-			travelCtx.route = travelCtx.route_valid
-			travelCtx.route_valid = false
+		if travelCtx.route and travelCtx.route.invalid_shim then
+			travelCtx.route = false
 		end
 	
 		local newCalculatedRoute = GenerateSquadRoute(travelCtx.route, false, sectorId, squad)
-		if travelCtx.route and not newCalculatedRoute then
-			travelCtx.route_valid = travelCtx.route
+		
+		local otherSectorId = GetUnderOrOvergroundId(sectorId)
+		if (otherSectorId and otherSectorId == squad.CurrentSector) or sectorId == squad.CurrentSector then
+			newCalculatedRoute = false 
+		end
+		
+		-- If no valid route then display a fake route with errors
+		if not newCalculatedRoute then
+			local fakeInvalidRoute = GenerateRouteDijkstra(squad.CurrentSector, sectorId, false, false, "display_invalid")
+			newCalculatedRoute = {
+				(fakeInvalidRoute or { sectorId }),
+				breakdown = {
+					total = {
+						travelTime = 0,
+					},
+					errors = {
+						sectorId == squad.CurrentSector and T(510578241684, "Already at destination.") or T(895994028402, "No path available.")
+					}
+				},
+				invalid_shim = true
+			}
 		end
 		travelCtx.route = newCalculatedRoute
 		
@@ -1891,21 +2003,6 @@ function XSatelliteViewMap:TravelDestinationSelect(sectorId)
 		
 		travelCtx.dest = sectorId
 		squadWin:DisplayRoute("main", squad.CurrentSector, newRoute)
-		
-		-- If invalid route show a fake route end decoration
-		if not newRoute then
-			local fakeEndingShownRoute = {}
-			squadWin.routes_displayed["main"] = fakeEndingShownRoute
-
-			local uimap = squadWin.map
-			local endDecoration = XTemplateSpawn("SquadRouteDecoration", uimap)
-			if uimap.window_state == "open" and endDecoration.window_state ~= "open" then endDecoration:Open() end
-			endDecoration:SetRouteEnd(sectorId, sectorId, true)
-			endDecoration:SetColor(GameColors.Enemy)
-			endDecoration:SetVisible(true)
-			
-			fakeEndingShownRoute.decorations = { endDecoration }
-		end
 		
 		local routeHashMap = {}
 		for i, wp in ipairs(newRoute) do
@@ -2127,4 +2224,36 @@ function GenerateEmptySector(sector_id)
 		name = sector_id,
 		generated = true, -- generated sectors won't be saved in the campaign, and are re-generated automatically upon load
 	}
+end
+
+---
+-- WOLF UPDATE
+---
+
+DefineClass.SatelliteViewDecoration = {
+	__parents = { "XMapWindow", "XImage" },
+	HAlign = "left",
+	VAlign = "top",
+	ZOrder = -2
+}
+
+AppendClass.SatelliteSector = {
+	properties = {
+		{ category = "Satellite Settings", id = "UndergroundImage", name = "UndergroundImage", editor = "ui_image", default = false }
+	}
+}
+
+DefineClass.SatelliteViewDecorationDef = {
+	__parents = { "PropertyObject" },
+	
+	properties = {
+		{ id = "image", editor = "ui_image", default = false },
+		{ id = "relativeSector", name = "Relative To Sector", editor = "combo", items = function() return GetCampaignSectorsCombo() end, default = false },
+		{ id = "offset", editor = "point", default = point20 },
+		{ id = "sat_layer", editor = "text", default = false },
+	}
+}
+
+function SatelliteViewDecorationDef:GetEditorView()
+	return Untranslated("Decoration: " .. (self.image or ""))
 end

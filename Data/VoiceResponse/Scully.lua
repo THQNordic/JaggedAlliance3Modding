@@ -266,7 +266,7 @@ PlaceObj('VoiceResponse', {
 		T(862195053327, --[[VoiceResponse Scully SelectionStealth VoiceResponse SelectionStealth - when selected or autoselected voice:Scully]] "Time to go around unnoticed.")
 	}),
 	SeriouslyWounded = TConcat({
-		T(355165596370, --[[VoiceResponse Scully SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds) voice:Scully]] "I can't die here. I got twenty-one kids depending on me.")
+		T(355165596370, --[[VoiceResponse Scully SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining. voice:Scully]] "I can't die here. I got twenty-one kids depending on me.")
 	}),
 	SpecialThrowGrenade = TConcat({
 		T(703856787469, --[[VoiceResponse Scully SpecialThrowGrenade VoiceResponse SpecialThrowGrenade - When throwing grenade voice:Scully]] "This special little beauty will add some excitement.")
@@ -333,9 +333,9 @@ PlaceObj('VoiceResponse', {
 		T(219705838390, --[[VoiceResponse Scully WeaponJammed VoiceResponse WeaponJammed - When weapon has jammed voice:Scully]] "My piece crapped out. Hang on a tic and I'll get it sorted.")
 	}),
 	Wounded = TConcat({
-		T(447075898149, --[[VoiceResponse Scully Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Scully]] "They winged me!"),
-		T(227951665660, --[[VoiceResponse Scully Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Scully]] "Gonna take more than that!"),
-		T(636627993840, --[[VoiceResponse Scully Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Scully]] "Sod off, ya tosser!")
+		T(447075898149, --[[VoiceResponse Scully Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Scully]] "They winged me!"),
+		T(227951665660, --[[VoiceResponse Scully Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Scully]] "Gonna take more than that!"),
+		T(636627993840, --[[VoiceResponse Scully Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Scully]] "Sod off, ya tosser!")
 	}),
 	group = "MercenariesOld",
 	id = "Scully",

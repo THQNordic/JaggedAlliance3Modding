@@ -395,13 +395,19 @@ PlaceObj('QuestsDef', {
 					Negate = true,
 					sector_id = "H3",
 				}),
+				PlaceObj('CheckExpression', {
+					Expression = function (self, obj) return AllUnitsOfGroupAreNeutral("JoseFamily_All") end,
+				}),
 				PlaceObj('UnitIsAroundOtherUnit', {
-					Distance = 12,
+					Distance = 8,
 					SecondTargetUnit = "JoseFamily_All",
 					TargetUnit = "any merc",
 				}),
-				PlaceObj('CheckExpression', {
-					Expression = function (self, obj) return AllUnitsOfGroupAreNeutral("JoseFamily_All") end,
+				PlaceObj('BanterHasPlayed', {
+					Banters = {
+						"JoseFamilyBanter",
+					},
+					WaitOver = true,
 				}),
 			},
 			Effects = {
@@ -444,12 +450,6 @@ PlaceObj('QuestsDef', {
 					SecondTargetUnit = "JoseFamily_All",
 					TargetUnit = "any merc",
 				}),
-				PlaceObj('BanterHasPlayed', {
-					Banters = {
-						"JoseFamilyBanter",
-					},
-					WaitOver = true,
-				}),
 				PlaceObj('CheckExpression', {
 					Expression = function (self, obj) return AllUnitsOfGroupAreNeutral("JoseFamily_All") end,
 				}),
@@ -459,11 +459,11 @@ PlaceObj('QuestsDef', {
 					Banters = {
 						"JoseFamilyBanter",
 					},
+					banterSequentialWaitFor = "BanterLineDone",
 					searchInMap = true,
 					searchInMarker = false,
 				}),
 			},
-			Once = true,
 			ParamId = "TCE_BanterSecondConvo",
 			QuestId = "JoseFamily",
 			requiredSectors = {

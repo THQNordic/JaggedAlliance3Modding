@@ -16,10 +16,10 @@ DefineClass.Psycho = {
 						local weapon = action:GetAttackWeapons(attacker)
 						if action.id == "SingleShot" and table.find(weapon.AvailableAttacks, "BurstFire") then
 							attack_args.replace_action = "BurstFire"
-							PlayVoiceResponse(self, "Psycho")
+							PlayVoiceResponse(attacker, "Psycho")
 						elseif action.id == "BurstFire" and table.find(weapon.AvailableAttacks, "AutoFire") then
 							attack_args.replace_action = "AutoFire"
-							PlayVoiceResponse(self, "Psycho")
+							PlayVoiceResponse(attacker, "Psycho")
 						end
 					end
 				end

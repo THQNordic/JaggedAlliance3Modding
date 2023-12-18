@@ -17,8 +17,8 @@ PlaceObj('XTemplate', {
 		PlaceObj('XTemplateFunc', {
 			'name', "Open(self,...)",
 			'func', function (self,...)
-				XContextWindow.Open(self)
-				self:OnSetRollover(false)
+				XContextWindow.Open(self, ...)
+				self:OnSetRollover_Override(false)
 				
 				self:CartUpdate()
 			end,
@@ -26,7 +26,7 @@ PlaceObj('XTemplate', {
 		PlaceObj('XTemplateFunc', {
 			'name', "CartUpdate(self,...)",
 			'func', function (self,...)
-				local ctx = self:GetContext()
+				local ctx = self:GetContext().item
 				if ctx == empty_table then return end
 				
 				self:ResolveId("idCartQuantity"):OnContextUpdate(ctx)
@@ -36,24 +36,43 @@ PlaceObj('XTemplate', {
 				self:ResolveId("idName"):OnContextUpdate(ctx)
 				self:ResolveId("idUnitCost"):OnContextUpdate(ctx)
 				self:ResolveId("idTotalCost"):OnContextUpdate(ctx)
+				
+				local parent = self:ResolveId("node"):ResolveId("node")
+				if parent:IsUsingNativeGamepad() and self:GetContext().index == parent:GetSelectedEntry() then
+					self:OnSetRollover_Override(true)
+				end
+			end,
+		}),
+		PlaceObj('XTemplateFunc', {
+			'name', "OnSetRollover_Override(self, rollover)",
+			'func', function (self, rollover)
+				local ctx = self:GetContext().item
+				if ctx ~= empty_table then
+					if rollover then
+						local parent = self:ResolveId("node"):ResolveId("node")
+						local entry = self:GetContext().index
+						if parent:GetSelectedEntry() ~= entry then parent:SelectEntry(entry) end
+						self:SetBackground(RGBA(53,46,39,230))
+						self:ResolveId("idButtonMinus"):SetVisible(true)
+						self:ResolveId("idButtonPlus"):SetVisible(true)
+						PlayFX("buttonRollover", "start")
+					else
+						self:SetBackground(RGBA(22,20,19,230))
+						self:ResolveId("idButtonMinus"):SetVisible(false)
+						self:ResolveId("idButtonPlus"):SetVisible(false)
+					end
+				end
+				XContentTemplate.OnSetRollover(self,rollover)
 			end,
 		}),
 		PlaceObj('XTemplateFunc', {
 			'name', "OnSetRollover(self, rollover)",
 			'func', function (self, rollover)
-				local ctx = self:GetContext()
-				
-				if ctx == empty_table then return end
-				
-				if rollover then 
-					self:SetBackground(RGBA(53,46,39,230))
-					self:ResolveId("idButtonMinus"):SetVisible(true)
-					self:ResolveId("idButtonPlus"):SetVisible(true)
-					PlayFX("buttonRollover", "start")
+				local parent = self:ResolveId("node"):ResolveId("node")
+				if not parent:IsUsingNativeGamepad() then
+					self:OnSetRollover_Override(rollover)
 				else
-					self:SetBackground(RGBA(22,20,19,230))
-					self:ResolveId("idButtonMinus"):SetVisible(false)
-					self:ResolveId("idButtonPlus"):SetVisible(false)
+					XContentTemplate.OnSetRollover(self,rollover)
 				end
 			end,
 		}),
@@ -83,13 +102,12 @@ PlaceObj('XTemplate', {
 				'FrameBox', box(7, 7, 7, 7),
 			}, {
 				PlaceObj('XTemplateWindow', {
-					'__condition', function (parent, context) return context ~= empty_table end,
+					'__condition', function (parent, context) return context.item ~= empty_table end,
 					'__class', "XText",
 					'Id', "idCartQuantity",
 					'HAlign', "center",
 					'VAlign', "center",
 					'TextStyle', "PDABobbyStore_SCP16C",
-					'ContextUpdateOnOpen', true,
 					'OnContextUpdate', function (self, context, ...)
 						local quantity = BobbyRayCartGetUnits()[context.id] or 0
 						quantity = quantity
@@ -102,7 +120,7 @@ PlaceObj('XTemplate', {
 					'Translate', true,
 				}),
 				PlaceObj('XTemplateWindow', {
-					'__condition', function (parent, context) return context ~= empty_table end,
+					'__condition', function (parent, context) return context.item ~= empty_table end,
 					'__class', "PDACommonButtonClass",
 					'Id', "idButtonMinus",
 					'Margins', box(7, 7, 2, 7),
@@ -111,13 +129,14 @@ PlaceObj('XTemplate', {
 					'HAlign', "center",
 					'MinWidth', 20,
 					'MaxWidth', 20,
+					'ContextUpdateOnOpen', false,
 					'OnContextUpdate', function (self, context, ...)
 						local quant = BobbyRayCartGetUnits()[context.id] or 0
 						self:SetEnabled(quant > 0)
 					end,
 					'DisabledBackground', RGBA(138, 138, 138, 178),
 					'OnPress', function (self, gamepad)
-						NetSyncEvent("BobbyRayCartRemove", self:GetContext().id)
+						NetSyncEvent("BobbyRayCartRemove", self:GetContext().item.id)
 					end,
 					'Image', "UI/PDA/WEBSites/Bobby Rays/shop_button",
 					'FrameBox', box(9, 9, 9, 9),
@@ -128,7 +147,7 @@ PlaceObj('XTemplate', {
 					'ColumnsUse', "abccd",
 				}),
 				PlaceObj('XTemplateWindow', {
-					'__condition', function (parent, context) return context ~= empty_table end,
+					'__condition', function (parent, context) return context.item ~= empty_table end,
 					'__class', "PDACommonButtonClass",
 					'Id', "idButtonPlus",
 					'Margins', box(2, 7, 7, 7),
@@ -136,12 +155,13 @@ PlaceObj('XTemplate', {
 					'Dock', "right",
 					'MinWidth', 20,
 					'MaxWidth', 20,
+					'ContextUpdateOnOpen', false,
 					'OnContextUpdate', function (self, context, ...)
 						self:SetEnabled(BobbyRayCartHasEnoughMoney(context) and BobbyRayCartHasEnoughStock(context))
 					end,
 					'DisabledBackground', RGBA(138, 138, 138, 178),
 					'OnPress', function (self, gamepad)
-						NetSyncEvent("BobbyRayCartAdd", self:GetContext().id)
+						NetSyncEvent("BobbyRayCartAdd", self:GetContext().item.id)
 					end,
 					'Image', "UI/PDA/WEBSites/Bobby Rays/shop_button",
 					'FrameBox', box(9, 9, 9, 9),
@@ -162,7 +182,7 @@ PlaceObj('XTemplate', {
 				'FrameBox', box(7, 7, 7, 7),
 			}, {
 				PlaceObj('XTemplateWindow', {
-					'__condition', function (parent, context) return context ~= empty_table end,
+					'__condition', function (parent, context) return context.item ~= empty_table end,
 					'__class', "XText",
 					'Id', "idName",
 					'Padding', box(17, 2, 17, 2),
@@ -187,7 +207,7 @@ PlaceObj('XTemplate', {
 				'FrameBox', box(7, 7, 7, 7),
 			}, {
 				PlaceObj('XTemplateWindow', {
-					'__condition', function (parent, context) return context ~= empty_table end,
+					'__condition', function (parent, context) return context.item ~= empty_table end,
 					'__class', "XText",
 					'Id', "idUnitCost",
 					'HAlign', "center",
@@ -209,7 +229,7 @@ PlaceObj('XTemplate', {
 				'FrameBox', box(7, 7, 7, 7),
 			}, {
 				PlaceObj('XTemplateWindow', {
-					'__condition', function (parent, context) return context ~= empty_table end,
+					'__condition', function (parent, context) return context.item ~= empty_table end,
 					'__class', "XText",
 					'Id', "idTotalCost",
 					'HAlign', "center",

@@ -28,6 +28,7 @@ function BobbyRayShopGetUnlockedTier()
 end
 
 function BobbyRayShopIsUnlocked()
+	if not gv_Quests["BobbyRayQuest"] then return end
 	return (GetQuestVar("BobbyRayQuest", "UnlockedTier") or 0) > 0
 end
 
@@ -40,11 +41,13 @@ function BobbyRayShopGetRestockTime()
 end
 
 function NetSyncEvents.Cheat_BobbyRaySetTier(tier)
+	if not gv_Quests["BobbyRayQuest"] then return end
 	SetQuestVar(QuestGetState("BobbyRayQuest"), "UnlockedTier", tier)
 	ObjModified("g_BobbyRayShop_UnlockedTier")
 end
 
 function NetSyncEvents.Cheat_BobbyRayToggleLock()
+	if not gv_Quests["BobbyRayQuest"] then return end
 	if BobbyRayShopGetUnlockedTier() > 0 then
 		SetQuestVar(QuestGetState("BobbyRayQuest"), "UnlockedTier", 0)
 		SetQuestVar(QuestGetState("BobbyRayQuest"), "RestockTimer", 0)
@@ -514,7 +517,6 @@ function PickRandomWeightItems(num, items_array, max_weight)
 end
 
 function PrepareShopItemsForRestock(unlocked_tier, used)
-	bobby_restock_print("Restocking shop")
 	local category_weights = {}
 	local category_count = {}
 	local category_items = {} -- array
@@ -549,6 +551,8 @@ function PrepareShopItemsForRestock(unlocked_tier, used)
 end
 
 function RandomlyModifyWeapon(weapon)
+	local weapon_component_chance = const.BobbyRay.Restock_UsedWeaponComponentPercentage
+	local weapon_component_price_modifier = const.BobbyRay.Restock_UsedWeaponComponentPriceMod
 	-- we shuffle first because blocked components could get a lower chance of being picked
 	local shuffledComponents = {}
 	for i, slotDef in ipairs(weapon.ComponentSlots) do
@@ -559,7 +563,7 @@ function RandomlyModifyWeapon(weapon)
 	local blocked_slots = {}
 	local applied_mods = {}
 	for i, slotDef in ipairs(shuffledComponents) do
-		if InteractionRand(100, "BobbyRayShop") <= const.BobbyRay.Restock_UsedWeaponComponentPercentage and not blocked_slots[slotDef.SlotType] then
+		if InteractionRand(100, "BobbyRayShop") <= weapon_component_chance and not blocked_slots[slotDef.SlotType] then
 			local comp_num = #slotDef.AvailableComponents
 			if slotDef.DefaultComponent and slotDef.DefaultComponent ~= "" then comp_num = comp_num - 1 end -- hack to skip the default component; on clash, we pick the last component, not included in the random gen
 			assert(comp_num >= 0)
@@ -585,7 +589,7 @@ function RandomlyModifyWeapon(weapon)
 	
 	local cost_modifier = 0
 	for slot, component in pairs(applied_mods) do
-		cost_modifier = cost_modifier + const.BobbyRay.Restock_UsedWeaponComponentPriceMod
+		cost_modifier = cost_modifier + weapon_component_price_modifier
 		weapon:SetWeaponComponent(slot, component)
 	end
 	
@@ -608,10 +612,15 @@ function RestockStandardItem(item_class)
 end
 
 function RestockUsedArmor(armor_id)
+	local used_price_min = const.BobbyRay.Restock_UsedPriceModMin
+	local used_price_max = const.BobbyRay.Restock_UsedPriceModMax
+	local used_condition_min = const.BobbyRay.Restock_UsedConditionMin
+	local used_condition_max = const.BobbyRay.Restock_UsedConditionMax
+	
 	local item = PlaceInventoryItem(armor_id)
 	item.Used = true
-	item.Condition = const.BobbyRay.Restock_UsedConditionMin + InteractionRand(const.BobbyRay.Restock_UsedConditionMax - const.BobbyRay.Restock_UsedConditionMin, "BobbyRayShop")
-	local usedCostMod = const.BobbyRay.Restock_UsedPriceModMin + InteractionRand(const.BobbyRay.Restock_UsedPriceModMax - const.BobbyRay.Restock_UsedPriceModMin, "BobbyRayShop")
+	item.Condition = used_condition_min + InteractionRand(used_condition_max - used_condition_min, "BobbyRayShop")
+	local usedCostMod = used_price_min + InteractionRand(used_price_max - used_price_min, "BobbyRayShop")
 	item.Stock = 1
 	item.LastRestock = Game.CampaignTime
 	g_BobbyRayStore.used[item.id] = item
@@ -622,10 +631,15 @@ function RestockUsedArmor(armor_id)
 end
 
 function RestockUsedWeapon(weapon_id)
+	local used_price_min = const.BobbyRay.Restock_UsedPriceModMin
+	local used_price_max = const.BobbyRay.Restock_UsedPriceModMax
+	local used_condition_min = const.BobbyRay.Restock_UsedConditionMin
+	local used_condition_max = const.BobbyRay.Restock_UsedConditionMax
+	
 	local item = PlaceInventoryItem(weapon_id)
 	item.Used = true
-	item.Condition = const.BobbyRay.Restock_UsedConditionMin + InteractionRand(const.BobbyRay.Restock_UsedConditionMax - const.BobbyRay.Restock_UsedConditionMin, "BobbyRayShop")
-	local usedCostMod = const.BobbyRay.Restock_UsedPriceModMin + InteractionRand(const.BobbyRay.Restock_UsedPriceModMax - const.BobbyRay.Restock_UsedPriceModMin, "BobbyRayShop")
+	item.Condition = used_condition_min + InteractionRand(used_condition_max - used_condition_min, "BobbyRayShop")
+	local usedCostMod = used_price_min + InteractionRand(used_price_max - used_price_min, "BobbyRayShop")
 	item.Stock = 1
 	item.LastRestock = Game.CampaignTime
 	local compCostMod = RandomlyModifyWeapon(item)
@@ -636,14 +650,22 @@ function RestockUsedWeapon(weapon_id)
 	item.New = true
 end
 
-function BobbyRayStoreRestock()
+function BobbyRayStoreRestock(restock_modifier_standard, restock_modifier_used)
+	if not BobbyRayShopIsUnlocked() then return end
+	
+	local restock_min_percent_used = MulDivRound(const.BobbyRay.Restock_UsedPercentageMin, restock_modifier_used or 100, 100)
+	local restock_max_percent_used = MulDivRound(const.BobbyRay.Restock_UsedPercentageMax, restock_modifier_used or 100, 100)
+	local restock_min_percent_standard = MulDivRound(const.BobbyRay.Restock_StandardPercentageMin, restock_modifier_standard or 100, 100)
+	local restock_max_percent_standard = MulDivRound(const.BobbyRay.Restock_StandardPercentageMax, restock_modifier_standard or 100, 100)
+
 	local category_items, category_count, category_weights, category_items_set = PrepareShopItemsForRestock(BobbyRayShopGetUnlockedTier(), "used")
 	-- restock random armor
 	--[[]]
 	local total_items = category_count["Armor"]
-	local restock_items = Max(1, MulDivRound(total_items, const.BobbyRay.Restock_UsedPercentageMin + InteractionRand(const.BobbyRay.Restock_UsedPercentageMax - const.BobbyRay.Restock_UsedPercentageMin + 1, "BobbyRayShop"), 100))
+	local restock_items = Max(1, MulDivRound(total_items, restock_min_percent_used + InteractionRand(restock_max_percent_used - restock_min_percent_used + 1, "BobbyRayShop"), 100))
+	restock_items = Min(restock_items, #category_items["Armor"])
 	local picked_items = PickRandomWeightItems(restock_items, category_items["Armor"], category_weights["Armor"])
-	bobby_restock_print("Restocking", restock_items, "out of", total_items, "used", "Armors")
+	if total_items > 0 then  bobby_restock_print("Restocking", restock_items, "out of", total_items, "used", "Armors", "or ", MulDivRound(restock_items, 100, total_items)) end
 	for _, item in ipairs(picked_items) do
 		RestockUsedArmor(item)
 	end
@@ -651,9 +673,10 @@ function BobbyRayStoreRestock()
 	
 	--[[]]
 	local total_items = category_count["Weapons"]
-	local restock_items = Max(1, MulDivRound(total_items, const.BobbyRay.Restock_UsedPercentageMin + InteractionRand(const.BobbyRay.Restock_UsedPercentageMax - const.BobbyRay.Restock_UsedPercentageMin + 1, "BobbyRayShop"), 100))
+	local restock_items = Max(1, MulDivRound(total_items, restock_min_percent_used + InteractionRand(restock_max_percent_used - restock_min_percent_used + 1, "BobbyRayShop"), 100))
+	restock_items = Min(restock_items, #category_items["Weapons"])
 	local picked_items = PickRandomWeightItems(restock_items, category_items["Weapons"], category_weights["Weapons"])
-	bobby_restock_print("Restocking", restock_items, "out of", total_items, "used", "Weapons")
+	if total_items > 0 then  bobby_restock_print("Restocking", restock_items, "out of", total_items, "used", "Weapons", "or ", MulDivRound(restock_items, 100, total_items)) end
 	for _, item in ipairs(picked_items) do
 		RestockUsedWeapon(item)
 	end
@@ -663,8 +686,9 @@ function BobbyRayStoreRestock()
 	local category_items, category_count, category_weights, category_items_set = PrepareShopItemsForRestock(BobbyRayShopGetUnlockedTier())
 	for cat, _ in sorted_pairs(category_weights) do
 		local total_items = category_count[cat]
-		local restock_items = Max(1, MulDivRound(total_items, const.BobbyRay.Restock_StandardPercentageMin + InteractionRand(const.BobbyRay.Restock_StandardPercentageMax - const.BobbyRay.Restock_StandardPercentageMin + 1, "BobbyRayShop"), 100))
-		bobby_restock_print("Restocking", restock_items, "out of", total_items, cat)
+		local restock_items = Max(1, MulDivRound(total_items, restock_min_percent_standard + InteractionRand(restock_max_percent_standard - restock_min_percent_standard + 1, "BobbyRayShop"), 100))
+		restock_items = Min(restock_items, #category_items[cat])
+		if total_items > 0 then bobby_restock_print("Restocking", restock_items, "out of", total_items, cat, "or ", MulDivRound(restock_items, 100, total_items)) end
 		local picked_items = PickRandomWeightItems(restock_items, category_items[cat], category_weights[cat])
 		for _, item in ipairs(picked_items) do
 			RestockStandardItem(item)
@@ -673,18 +697,23 @@ function BobbyRayStoreRestock()
 	CombatLog("important", T(938586124784, "Inventory restock at Bobby Ray's Guns 'n Things."))
 end
 
-
--- !TODO: remove consumed items from player's cart
-function BobbyRayStoreConsumeRandomStock()
+function BobbyRayStoreConsumeRandomStock(pick_probability, stock_min_percent, stock_max_percent)
+	pick_probability = pick_probability or const.BobbyRay.FakePurchase_PickProbability
+	stock_min_percent = stock_min_percent or const.BobbyRay.FakePurchase_StockConsumedMin
+	stock_max_percent = stock_max_percent or const.BobbyRay.FakePurchase_StockConsumedMax
 	-- standard items
+	local consumed_items = 0
+	local total_items = 0
 	for _, item in sorted_pairs(g_BobbyRayStore.standard) do
-		if item.CanBeConsumed and InteractionRand(100, "BobbyRayShop") < const.BobbyRay.FakePurchase_PickProbability then
+		total_items = total_items + 1
+		if item.CanBeConsumed and InteractionRand(100, "BobbyRayShop") < pick_probability then
+			consumed_items = consumed_items + 1
 			local current_stock = item.Stock
-			local stock_purchased = Max(1, MulDivRound(current_stock, const.BobbyRay.FakePurchase_StockConsumedMin, 100) + MulDivRound(current_stock, InteractionRand(const.BobbyRay.FakePurchase_StockConsumedMax - const.BobbyRay.FakePurchase_StockConsumedMin + 1, "BobbyRayShop"), 100))
+			local stock_purchased = Max(1, MulDivRound(current_stock, stock_min_percent, 100) + MulDivRound(current_stock, InteractionRand(stock_max_percent - stock_min_percent + 1, "BobbyRayShop"), 100))
 			assert(current_stock >= stock_purchased)
 			local new_stock = current_stock - stock_purchased
 			item.Stock = new_stock
-			bobby_restock_print("Consumed", stock_purchased, "out of", current_stock, "of", item.class, "(Standard)")
+			bobby_restock_print("Consumed", stock_purchased, "out of", current_stock, "of", item.class, "(Standard)", "or", MulDivRound(stock_purchased, 100, current_stock))
 			-- remove if stock is depleted
 			if new_stock <= 0 then 
 				g_BobbyRayStore.standard[item.class] = nil
@@ -692,14 +721,20 @@ function BobbyRayStoreConsumeRandomStock()
 			end
 		end
 	end
+	if total_items > 0 then bobby_restock_print(" --------------------------- Consumed", consumed_items, "out of", total_items, "standard items", "or", MulDivRound(consumed_items, 100, total_items)) end
 	
 	-- used items
+	consumed_items = 0
+	total_items = 0
 	for item_id, item in sorted_pairs(g_BobbyRayStore.used) do
-		if item.CanBeConsumed and InteractionRand(100, "BobbyRayShop") < const.BobbyRay.FakePurchase_PickProbability then
+		total_items = total_items + 1
+		if item.CanBeConsumed and InteractionRand(100, "BobbyRayShop") < pick_probability then
+			consumed_items = consumed_items + 1
 			bobby_restock_print("Consumed", item.class, "(Used)")
 			g_BobbyRayStore.used[item.id] = nil
 		end
 	end
+	if total_items > 0 then bobby_restock_print(" --------------------------- Consumed", consumed_items, "out of", total_items, "used items", "or", MulDivRound(consumed_items, 100, total_items)) end
 end
 
 function BobbyRayShopSetCategory(category, subcategory)
@@ -782,7 +817,7 @@ end
 local function lCheckShipments()
 	local due_shipments = {}
 	for order_id, shipment in pairs(g_BobbyRay_CurrentShipments) do
-		if Game.CampaignTime > shipment.due_time then
+		if Game.CampaignTime >= shipment.due_time then
 			table.insert(due_shipments, shipment)
 		end
 	end
@@ -1119,35 +1154,14 @@ function ArrivingShipmentTravelThread(shipment_window)
 	local sectorId = shipment.sector_id
 	local sY, sX = sector_unpack(sectorId)
 	local sectorPos = gv_Sectors[sectorId].XMapPosition
-	
 	local leftMostSectorId = sector_pack(sY, 1)
-	local leftMostSector = gv_Sectors[leftMostSectorId]
-	local leftMostPos = leftMostSector.XMapPosition
 	
-	local lmX, lmY = leftMostPos:xy()
-	lmX = lmX - 1000
-	
-	local destX, destY = sectorPos:xy()
+	local positions, routeSegments = ComputeArrivingPath(leftMostSectorId, sectorId)
 
 	if not shipment.departure_time then -- save fixup, essentially
 		local preset = FindPreset("BobbyRayShopDeliveryDef", shipment.delivery_option)
 		assert(preset)
 		shipment.departure_time = shipment.due_time - preset.MaxTime * const.Scale.day
-	end
-
-	local totalTime = shipment.due_time - shipment.departure_time
-	local timeLeft = shipment.due_time - Game.CampaignTime
-
-	local percentPassed = MulDivRound(timeLeft, 1000, totalTime)
-	local curPosX = Lerp(destX, lmX, timeLeft, totalTime)
-	local curPosY = Lerp(destY, lmY, timeLeft, totalTime)
-	
-	shipment_window:SetPos(curPosX, curPosY)
-	shipment_window:SetPos(destX, destY, timeLeft)
-
-	local routeSegment = XTemplateSpawn("SquadRouteSegment", g_SatelliteUI)
-	if g_SatelliteUI.window_state == "open" then
-		routeSegment:Open()
 	end
 	
 	local routeEndDecoration = XTemplateSpawn("SquadRouteDecoration", g_SatelliteUI)
@@ -1158,24 +1172,12 @@ function ArrivingShipmentTravelThread(shipment_window)
 	routeEndDecoration:SetColor(GameColors.Player)
 	
 	if not shipment_window.routes_displayed then shipment_window.routes_displayed = {} end
-	shipment_window.routes_displayed["main"] = {
-		routeSegment,
-		decorations = {
-			routeEndDecoration
-		}
-	}
+	shipment_window.routes_displayed["main"] = routeSegments
+	routeSegments.decorations = { routeEndDecoration }
 	
-	routeSegment.direction = "right"
-	routeSegment.sectorToId = sectorId
-	routeSegment.sectorFromId = point(lmX, lmY)
-	
-	local _, __, ___, ____, startWidth, startHeight, startX, startY = routeSegment:GetInterpParams()
-	routeSegment.PosX = startX
-	routeSegment.PosY = startY
-	routeSegment:SetSize(startWidth, startHeight)
-	routeSegment:FastForwardToSquadPos(point(curPosX, curPosY))
-	routeSegment:StartReducing(timeLeft, 1000)
-	routeSegment:SetBackground(GameColors.Player)
+	local totalTime = shipment.due_time - shipment.departure_time
+	local timeLeft = shipment.due_time - Game.CampaignTime
+	DisplayArrivingPathRemainder(totalTime, timeLeft, routeSegments, positions, shipment_window)
 end
 
 ---------------------------------------------------------- Rollover Button

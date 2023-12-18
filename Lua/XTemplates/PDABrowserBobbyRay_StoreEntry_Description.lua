@@ -21,12 +21,12 @@ PlaceObj('XTemplate', {
 			'name', "Open(self,...)",
 			'func', function (self,...)
 				XWindow.Open(self,...)
-				local ctx = self:GetContext()
-				local rollover = ctx.category == "Armor" or ctx.category == "Other"
-				self:ResolveId("idDescriptionText"):SetText(rollover and ctx:GetRolloverHint() or ctx:GetShopDescription())
+				local item = self:GetContext()
+				local rollover = item.category == "Armor" or item.category == "Other"
+				self:ResolveId("idDescriptionText"):SetText(rollover and item:GetRolloverHint() or item:GetShopDescription())
 				
-				self:SetRolloverTitle(ctx.DisplayName)
-				self:SetRolloverText(ctx:GetShopDescription())
+				self:SetRolloverTitle(item.DisplayName)
+				self:SetRolloverText(item:GetShopDescription())
 			end,
 		}),
 		PlaceObj('XTemplateWindow', {

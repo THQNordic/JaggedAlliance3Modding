@@ -328,7 +328,7 @@ PlaceObj('VoiceResponse', {
 		T(199056151695, --[[VoiceResponse Len SelectionStealth VoiceResponse SelectionStealth - when selected or autoselected voice:Len]] "Going low and slow.")
 	}),
 	SeriouslyWounded = TConcat({
-		T(821488591804, --[[VoiceResponse Len SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds) voice:Len]] "Damn, that hurts. I gotta get these wounds cleaned up.")
+		T(821488591804, --[[VoiceResponse Len SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining. voice:Len]] "Damn, that hurts. I gotta get these wounds cleaned up.")
 	}),
 	Startled = TConcat({
 		T(696199921171, --[[VoiceResponse Len Startled VoiceResponse Startled - Startled by hearing a sudden noise voice:Len]] "Huh?"),
@@ -389,9 +389,9 @@ PlaceObj('VoiceResponse', {
 		T(834313901839, --[[VoiceResponse Len WeaponJammed VoiceResponse WeaponJammed - When weapon has jammed voice:Len]] "Weapon malfunction!")
 	}),
 	Wounded = TConcat({
-		T(774570250094, --[[VoiceResponse Len Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Len]] "Uff, dammit!"),
-		T(854994316648, --[[VoiceResponse Len Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Len]] "Agh, I've seen worse."),
-		T(110999122617, --[[VoiceResponse Len Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Len]] "Damn newbies!")
+		T(774570250094, --[[VoiceResponse Len Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Len]] "Uff, dammit!"),
+		T(854994316648, --[[VoiceResponse Len Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Len]] "Agh, I've seen worse."),
+		T(110999122617, --[[VoiceResponse Len Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Len]] "Damn newbies!")
 	}),
 	group = "MercenariesOld",
 	id = "Len",

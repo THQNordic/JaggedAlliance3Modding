@@ -818,11 +818,13 @@ PlaceObj('QuestsDef', {
 					Damage = 0,
 					ExplosionType = "ToxicGasGrenade",
 					LocationGroup = "Gas_2",
+					aoeType = "toxicgas",
 				}),
 				PlaceObj('Explosion', {
 					Damage = 0,
 					ExplosionType = "ToxicGasGrenade",
 					LocationGroup = "Gas_1",
+					aoeType = "toxicgas",
 				}),
 			},
 			Once = true,

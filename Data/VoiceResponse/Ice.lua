@@ -331,7 +331,7 @@ PlaceObj('VoiceResponse', {
 		T(150442610789, --[[VoiceResponse Ice SelectionStealth VoiceResponse SelectionStealth - when selected or autoselected voice:Ice]] "Playin' it smooth.")
 	}),
 	SeriouslyWounded = TConcat({
-		T(854480407438, --[[VoiceResponse Ice SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds) voice:Ice]] "I'm hurt real bad over here. Like, all critical and shit.")
+		T(854480407438, --[[VoiceResponse Ice SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining. voice:Ice]] "I'm hurt real bad over here. Like, all critical and shit.")
 	}),
 	Startled = TConcat({
 		T(169781015365, --[[VoiceResponse Ice Startled VoiceResponse Startled - Startled by hearing a sudden noise voice:Ice]] "Huh?"),
@@ -381,9 +381,9 @@ PlaceObj('VoiceResponse', {
 		T(424386569792, --[[VoiceResponse Ice WeaponJammed VoiceResponse WeaponJammed - When weapon has jammed voice:Ice]] "Yo! Need some WD-40 up in here!")
 	}),
 	Wounded = TConcat({
-		T(598725890047, --[[VoiceResponse Ice Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Ice]] "Taking fire over here."),
-		T(380296628428, --[[VoiceResponse Ice Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Ice]] "You did NOT just hit me!"),
-		T(115737201904, --[[VoiceResponse Ice Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Ice]] "Damn! These dudes mean business!")
+		T(598725890047, --[[VoiceResponse Ice Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Ice]] "Taking fire over here."),
+		T(380296628428, --[[VoiceResponse Ice Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Ice]] "You did NOT just hit me!"),
+		T(115737201904, --[[VoiceResponse Ice Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Ice]] "Damn! These dudes mean business!")
 	}),
 	group = "MercenariesOld",
 	id = "Ice",

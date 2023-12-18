@@ -562,6 +562,7 @@ PlaceObj('AIArchetype', {
 			},
 			'min_score', 100,
 			'MinDist', 3000,
+			'AllowedAoeTypes', set( "fire", "none", "teargas", "toxicgas" ),
 		}),
 		PlaceObj('AIActionCharge', {
 			'BiasId', "PierreCharge",
@@ -719,6 +720,7 @@ PlaceObj('AIArchetype', {
 			},
 			'team_score', 0,
 			'self_score_mod', -1000,
+			'AllowedAoeTypes', set( "fire", "none", "teargas", "toxicgas" ),
 		}),
 	},
 	TargetingPolicies = {
@@ -890,6 +892,7 @@ PlaceObj('AIArchetype', {
 			},
 			'min_score', 100,
 			'MinDist', 3000,
+			'AllowedAoeTypes', set( "fire", "none", "teargas", "toxicgas" ),
 		}),
 		PlaceObj('AIActionThrowGrenade', {
 			'BiasId', "Nova",
@@ -907,6 +910,7 @@ PlaceObj('AIArchetype', {
 			'self_score_mod', 100,
 			'MinDist', 0,
 			'MaxDist', 3000,
+			'AllowedAoeTypes', set( "fire", "none", "teargas", "toxicgas" ),
 		}),
 	},
 	TargetChangePolicy = "restart",
@@ -1160,6 +1164,7 @@ PlaceObj('AIArchetype', {
 			'RequiredKeywords', {
 				"Explosives",
 			},
+			'AllowedAoeTypes', set( "fire", "none", "teargas", "toxicgas" ),
 		}),
 	},
 	TargetScoreRandomization = 10,
@@ -1275,6 +1280,7 @@ PlaceObj('AIArchetype', {
 				"Explosives",
 			},
 			'self_score_mod', -1000,
+			'AllowedAoeTypes', set( "fire", "none", "teargas", "toxicgas" ),
 		}),
 		PlaceObj('AIActionThrowGrenade', {
 			'BiasId', "SmokeGrenade",
@@ -1297,7 +1303,7 @@ PlaceObj('AIArchetype', {
 			'team_score', 100,
 			'self_score_mod', 100,
 			'MinDist', 0,
-			'SmokeGrenade', true,
+			'AllowedAoeTypes', set( "smoke" ),
 		}),
 		PlaceObj('AIActionHeavyWeaponAttack', {
 			'BiasId', "LauncherFire",
@@ -1534,11 +1540,12 @@ PlaceObj('AIArchetype', {
 		PlaceObj('AIActionThrowGrenade', {
 			'BiasId', "FragGrenade",
 			'team_score', 0,
+			'AllowedAoeTypes', set( "fire", "none", "teargas", "toxicgas" ),
 		}),
 		PlaceObj('AIActionThrowGrenade', {
 			'BiasId', "SmokeGrenade",
 			'team_score', 0,
-			'SmokeGrenade', true,
+			'AllowedAoeTypes', set( "smoke" ),
 		}),
 	},
 	group = "System",
@@ -1578,6 +1585,7 @@ PlaceObj('AIArchetype', {
 		}),
 		PlaceObj('AIActionThrowGrenade', {
 			'BiasId', "AssaultGrenadeThrow",
+			'AllowedAoeTypes', set( "fire", "none", "teargas", "toxicgas" ),
 		}),
 	},
 	group = "System",

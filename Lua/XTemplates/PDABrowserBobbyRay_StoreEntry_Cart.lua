@@ -16,17 +16,17 @@ PlaceObj('XTemplate', {
 		PlaceObj('XTemplateFunc', {
 			'name', "Rebuild(self)",
 			'func', function (self)
-				local context = self.parent:GetContext()
-				local stock = BobbyRayStoreGetEntry(context) and BobbyRayStoreGetEntry(context).Stock or 0
-				local cart_number = (BobbyRayCartGetUnits()[context.id] or 0)
+				local item = self.parent:GetContext()
+				local stock = BobbyRayStoreGetEntry(item) and BobbyRayStoreGetEntry(item).Stock or 0
+				local cart_number = (BobbyRayCartGetUnits()[item.id] or 0)
 				stock = stock - cart_number
-				local cost = BobbyRayStoreGetEntry(context) and BobbyRayStoreGetEntry(context).Cost or 0
-				local stack = context.ShopStackSize or 1
+				local cost = BobbyRayStoreGetEntry(item) and BobbyRayStoreGetEntry(item).Cost or 0
+				local stack = item.ShopStackSize or 1
 				
 				-- money
 				local cost_value = self:ResolveId("idCost"):ResolveId("idValue")
 				cost_value:SetText(T{770368132801, "<money(Cost)>", Cost = cost})
-				if BobbyRayCartHasEnoughMoney(context) then
+				if BobbyRayCartHasEnoughMoney(item) then
 					cost_value:SetTextStyle("PDABobbyStore_HG16F")
 				else
 					cost_value:SetTextStyle("PDABobbyStore_HG16I")

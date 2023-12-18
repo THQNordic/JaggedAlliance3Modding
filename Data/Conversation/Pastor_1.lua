@@ -19,10 +19,11 @@ PlaceObj('Conversation', {
 			Vars = set({
 	ChurchFightDone = false,
 	LaBouePartDone = true,
+	SmileyDead = true,
 }),
 			__eval = function ()
 				local quest = gv_Quests['Smiley'] or QuestGetState('Smiley')
-				return not quest.ChurchFightDone or quest.LaBouePartDone
+				return not quest.ChurchFightDone or quest.LaBouePartDone or quest.SmileyDead
 			end,
 		}),
 	},

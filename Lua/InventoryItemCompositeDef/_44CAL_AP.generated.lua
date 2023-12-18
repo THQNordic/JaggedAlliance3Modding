@@ -28,5 +28,6 @@ DefineClass._44CAL_AP = {
 			target_prop = "PenetrationClass",
 		}),
 	},
+	ammo_type_icon = "UI/Icons/Items/ta_ap.png",
 }
 

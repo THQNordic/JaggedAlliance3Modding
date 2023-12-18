@@ -2451,7 +2451,7 @@ PlaceObj('AutoAttachPreset', {
 			'required_state', "Warm A Flicker",
 			'GameStatesFilter', set( "LightsOn" ),
 			'inherited_values', {
-				AttenuationRadius = 6000,
+				AttenuationRadius = 4000,
 				AttenuationShape = 0,
 				CastShadows = true,
 				Color0 = 4293114515,
@@ -2470,7 +2470,7 @@ PlaceObj('AutoAttachPreset', {
 			'required_state', "Warm B Flicker",
 			'GameStatesFilter', set( "LightsOn" ),
 			'inherited_values', {
-				AttenuationRadius = 6000,
+				AttenuationRadius = 4000,
 				AttenuationShape = 0,
 				CastShadows = true,
 				Color0 = 4293316773,
@@ -2489,7 +2489,7 @@ PlaceObj('AutoAttachPreset', {
 			'required_state', "Accent light Red Flicker",
 			'GameStatesFilter', set( "LightsOn" ),
 			'inherited_values', {
-				AttenuationRadius = 6000,
+				AttenuationRadius = 4000,
 				AttenuationShape = 0,
 				CastShadows = true,
 				Color0 = 4293097347,
@@ -2508,7 +2508,7 @@ PlaceObj('AutoAttachPreset', {
 			'required_state', "Accent light Green Flicker",
 			'GameStatesFilter', set( "LightsOn" ),
 			'inherited_values', {
-				AttenuationRadius = 6000,
+				AttenuationRadius = 4000,
 				AttenuationShape = 0,
 				CastShadows = true,
 				Color0 = 4286374775,
@@ -2528,7 +2528,7 @@ PlaceObj('AutoAttachPreset', {
 			'GameStatesFilter', set( "LightsOn" ),
 			'DetailClass', "Essential",
 			'inherited_values', {
-				AttenuationRadius = 6000,
+				AttenuationRadius = 4000,
 				AttenuationShape = 0,
 				CastShadows = true,
 				Color0 = 4289058278,
@@ -2548,7 +2548,7 @@ PlaceObj('AutoAttachPreset', {
 			'required_state', "Cold A Flicker Soft",
 			'GameStatesFilter', set( "LightsOn" ),
 			'inherited_values', {
-				AttenuationRadius = 6000,
+				AttenuationRadius = 4000,
 				AttenuationShape = 0,
 				CastShadows = true,
 				Color0 = 4289058278,
@@ -2568,7 +2568,7 @@ PlaceObj('AutoAttachPreset', {
 			'GameStatesFilter', set( "LightsOn" ),
 			'DetailClass', "Eye Candy",
 			'inherited_values', {
-				AttenuationRadius = 2000,
+				AttenuationRadius = 1000,
 				AttenuationShape = 0,
 				CastShadows = false,
 				Color0 = 4293315493,
@@ -7045,6 +7045,13 @@ PlaceObj('AutoAttachPreset', {
 			'required_state', "Cold light A Soft Flicker",
 			'inherited_values', {
 				SIModulation = 120,
+			},
+		}),
+		PlaceObj('AutoAttachRule', {
+			'attach_class', "AutoAttachSIModulator",
+			'required_state', "OFF",
+			'inherited_values', {
+				SIModulation = 0,
 			},
 		}),
 		}),
@@ -11795,8 +11802,8 @@ PlaceObj('AutoAttachPreset', {
 				ConeOuterAngle = 90,
 				ConstantIntensity = 120,
 				CutOff = 345,
-				Intensity0 = 9,
-				Intensity1 = 12,
+				Intensity0 = 13,
+				Intensity1 = 15,
 				Period = 17000,
 				SourceRadius = 100,
 			},
@@ -11816,8 +11823,8 @@ PlaceObj('AutoAttachPreset', {
 				ConeOuterAngle = 90,
 				ConstantIntensity = 120,
 				CutOff = 345,
-				Intensity0 = 9,
-				Intensity1 = 12,
+				Intensity0 = 13,
+				Intensity1 = 15,
 				Period = 17000,
 				SourceRadius = 100,
 			},

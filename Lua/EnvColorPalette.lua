@@ -339,7 +339,7 @@ function OnMsg.EditorCallback(id, objects, ...)
 		for i = 1, #objects do
 			local obj = objects[i]
 			ApplyCurrentEnvColorizedToObj(obj)
-			for _, attach in ipairs(obj:GetAttaches() or {}) do
+			for _, attach in ipairs(obj:GetAttaches()) do
 				ApplyCurrentEnvColorizedToObj(attach)
 			end
 		end

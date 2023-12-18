@@ -1,4 +1,5 @@
 MaxTrapTriggerRadius = 5
+local voxelSizeX = const.SlabSizeX
 
 DefineClass.TrapExplosionProperties = {
 	__parents = { "ExplosiveProperties" },
@@ -387,7 +388,8 @@ local lLandmineTriggerToInventoryText = {
 function ExplosiveSubstanceCombo()
 	local arr = {}
 	ForEachPreset("InventoryItemCompositeDef", function(o)
-		if o.object_class == "ExplosiveSubstance" then
+		local class = o.object_class and g_Classes[o.object_class]
+		if class and IsKindOf(class, "ExplosiveSubstance") then
 			arr[#arr + 1] = o.id
 		end
 	end)
@@ -498,7 +500,7 @@ end
 
 function Landmine:GetInteractionPos(unit)
 	local voxel_x, voxel_y, voxel_z = SnapToVoxel(self:GetPosXYZ())
-	local step = const.SlabSizeX
+	local step = voxelSizeX
 	local positions
 	
 	local unitPassSlab = unit and GetPassSlab(unit)
@@ -574,7 +576,7 @@ function Landmine:GetTriggerDistance()
 	-- The triggerRadius property is the number of voxels away from the trap that it should trigger from.
 	-- Since the trap is at the center of a voxel itself, we need to add half a voxel to that, and due to
 	-- the property being one-indexed, including the trap's voxel, we subtract one.
-	return (self.triggerRadius - 1) * const.SlabSizeX + const.SlabSizeX / 2
+	return (self.triggerRadius - 1) * voxelSizeX + voxelSizeX / 2
 end
 
 function UpdateTimedExplosives(timePassed, sideFilter)
@@ -739,8 +741,8 @@ function TriggerTimedExplosives()
 end
 
 function Landmine:UpdateTriggerRadiusFx(delete)
-	local range = (self.triggerRadius or 0) * const.SlabSizeX / 2
-	if self.done or not self.visible or range == 0 or self.TriggerType ~= "Proximity" or delete or not self:IsValidPos() then
+	local range = (self.triggerRadius or 0) * voxelSizeX / 2
+	if self.done or not self.visible or range == 0 or (self.TriggerType ~= "Proximity" and self.TriggerType ~= "Proximity-Timed") or delete or not self:IsValidPos() then
 		if self.trigger_radius_fx then
 			DoneObject(self.trigger_radius_fx)
 			self.trigger_radius_fx = false
@@ -779,6 +781,7 @@ function Landmine:TriggerTrap(victim, attacker)
 		self.TriggerType = "Timed"
 		self.triggerRadius = 0
 		self:UpdateTimedExplosionFx()
+		self:UpdateTriggerRadiusFx("delete")
 		return
 	end
 	
@@ -821,12 +824,24 @@ function Landmine:ExplodeAsGrenade(victim, fx_actor, state, attacker)
 	if not weapon then return end
 	
 	local target_pos = self:GetPos()
+	
+	local fxClass = fx_actor or weapon.class
+	local mineSpecificIdx = string.find(fxClass, "_Mine")
+	if mineSpecificIdx then
+		fxClass = string.sub(fxClass, 1, mineSpecificIdx - 1)
+	end
+	
+	local proj = PlaceObject("FXGrenade")
+	proj.fx_actor_class = fxClass
+	proj:SetPos(target_pos)
+	proj:SetOrientation(self:GetOrientation())
+	
 	CreateGameTimeThread(function()
 		local attackProps = weapon:GetAreaAttackParams(nil, self, target_pos)
 		local props = GetAreaAttackResults(attackProps)
 		props.trajectory = { { pos = target_pos } }
 		props.explosion_pos = target_pos
-		weapon:OnLand(self, props, self)
+		weapon:OnLand(self, props, proj)
 	end)
 
 	if not self.spawned_by_explosive_object then
@@ -841,11 +856,9 @@ function Landmine:AttemptDisarm(unit)
 	self:UpdateTimedExplosionFx("delete")
 	local success = Trap.AttemptDisarm(self, unit)
 	if success then
-		local onGroundAttach
-		self:ForEachAttach(function(attach) onGroundAttach = attach  end)
-		if onGroundAttach then
-			onGroundAttach:ForEachAttach(function(attach) DoneObject(attach)  end)
-		end
+		self:ForEachAttach(function(attach) 
+			attach:DestroyAttaches()
+		end)
 	end
 end
 
@@ -992,7 +1005,7 @@ end
 
 function ElectricalTrap(self, victim)
 	if not victim then
-		victim = MapGetFirst(self:GetPos(), const.SlabSizeX * 2, "Unit", function(o) return not o:IsDead() end)
+		victim = MapGetFirst(self:GetPos(), voxelSizeX * 2, "Unit", function(o) return not o:IsDead() end)
 		if not victim then
 			return
 		end
@@ -1054,86 +1067,114 @@ local function lTrapVisibilityUpdate(unit)
 	if not g_Traps then
 		g_Traps = MapGet("map", "Trap") or false
 	end
-	
+
 	-- Gather mines around the unit sight radius and inside the interactable's visibility range.
 	local unitSightRange = unit:GetSightRadius()
-	local minesAround = {}
+	local discoveredAround, hiddenAround
+
 	for i, t in ipairs(g_Traps) do
 		if not IsValid(t) then
 			goto continue
 		end
-	
-		if not t.discovered_trap and IsKindOf(t, "Landmine") and t:SeenBy(unit) then
+		local is_landmine = IsKindOf(t, "Landmine")
+		local discovered = t.discovered_trap
+
+		if not discovered and is_landmine and t:SeenBy(unit) then
+			discovered = true
 			t.discovered_trap = true
 		end
-		if not t.discovered_trap and t.done then
+		if not discovered and t.done then
+			discovered = true
 			t.discovered_trap = true
 		end
-		
-		if IsKindOf(t, "Landmine") then
-			if not t.visible and t.discovered_trap then
-				t:SetVisible(true)
-			end
+
+		if discovered and is_landmine and not t.visible then
+			t:SetVisible(true)
 		end
 
 		if not t:RunDiscoverability() then
 			goto continue
 		end
-		
-		local range = t.discovered_trap and unit:GetSightRadius(t) or ((t.visibilityRange - 1) * const.SlabSizeX + const.SlabSizeX / 2)
-		if IsCloser(unit, t, range) then
-			minesAround[#minesAround + 1] = t
+
+		if t.discovered_trap then
+			local range = unit:GetSightRadius(t)
+			if IsCloser(unit, t, range) then
+				if not discoveredAround then discoveredAround = {} end
+				discoveredAround[#discoveredAround + 1] = t
+			end
+		else
+			local range = (t.visibilityRange - 1) * voxelSizeX + voxelSizeX / 2
+			if IsCloser(unit, t, range) then
+				if not hiddenAround then hiddenAround = {} end
+				hiddenAround[#hiddenAround + 1] = t
+			end
 		end
-		
+
 		::continue::
 	end
 
 	-- Stuff like booby traps would prefer LOS checks to their visual objs rather than
 	-- the invisible marker itself.
-	local trapsLosCheck = {}
-	for i, int in ipairs(minesAround) do
-		trapsLosCheck[i] = int.los_check_obj or int
-	end
-	
-	-- Perform LOS check and record attackable traps which are currently visible.
-	local attackableVisibleFill = {}
-	g_AttackableVisibility[unit] = attackableVisibleFill
-	local los_any, losData = CheckLOS(trapsLosCheck, unit, unitSightRange)
-	for i, t in ipairs(minesAround) do
-		if not t.discovered_trap and losData and losData[i] then
-			t:CheckDiscovered(unit)
+	if hiddenAround then
+		local trapsLosCheck = {}
+		for i, t in ipairs(hiddenAround) do
+			trapsLosCheck[i] = t.los_check_obj or t
 		end
-		
-		if t.discovered_trap and t:CanBeAttacked() then
+		local los_any, losData = CheckLOS(trapsLosCheck, unit, unitSightRange)
+		if los_any then
+			for i, t in ipairs(hiddenAround) do
+				if losData[i] then
+					t:CheckDiscovered(unit)
+					if t.discovered_trap then
+						if not discoveredAround then discoveredAround = {} end
+						discoveredAround[#discoveredAround + 1] = t
+					end
+				end
+			end
+		end
+	end
+
+	-- Perform LOS check and record attackable traps which are currently visible.
+	local attackableVisibleFill
+	for i, t in ipairs(discoveredAround) do
+		if not t.visible and IsKindOf(t, "Landmine") then
+			t:SetVisible(true)
+		end
+		if t:CanBeAttacked() then
+			if not attackableVisibleFill then attackableVisibleFill = {} end
 			attackableVisibleFill[#attackableVisibleFill + 1] = t
 			attackableVisibleFill[t] = true
 		end
-
-		if IsKindOf(t, "Landmine") then
-			if not t.visible and t.discovered_trap then
-				t:SetVisible(true)
-			end
-		end
-		
-		::continue::
 	end
-	
-	ObjModified("combat_bar_traps")
+
+	local prevVisible = g_AttackableVisibility[unit]
+	g_AttackableVisibility[unit] = attackableVisibleFill
+
+	prevVisible = prevVisible or empty_table
+	local nowVisible = attackableVisibleFill or empty_table
+	if Selection and Selection[1] == unit and not table.iequal(prevVisible, nowVisible) then
+		ObjModified("combat_bar_traps")
+	end
 end
 
 local function lUpdateTrapVisibility()
 	local units = GetAllPlayerUnitsOnMap()
+	local vis = g_AttackableVisibility
 	for i, u in ipairs(units) do
 		lTrapVisibilityUpdate(u)
 		-- also build team visibility
-		local team = u.team
-		local tvis = g_AttackableVisibility[team] or {}
-		g_AttackableVisibility[team] = tvis
-		for _, obj in ipairs(g_AttackableVisibility[u]) do
-			table.insert_unique(tvis, obj)
-			tvis[obj] = true
+		local tvis = vis[u.team]
+		if not tvis then
+			tvis = {}
+			vis[u.team] = tvis
 		end
-	end	
+		for _, obj in ipairs(vis[u]) do
+			if not tvis[obj] then
+				tvis[#tvis + 1] = obj
+				tvis[obj] = true
+			end
+		end
+	end
 end
 
 function OnMsg.CombatApplyVisibility()
@@ -1464,6 +1505,9 @@ DefineClass.ExplosiveSubstance = {
 		{ id = "dbg_explosion_buttons", no_edit = true },
 	},
 }
+DefineClass.ExplosiveSubstanceSquadBagItem = {
+	__parents = { "ExplosiveSubstance" , "SquadBagItem"},
+}
 
 DefineClass.HideGrenadeExplosiveProperties = {
 	__parents = { "PropertyObject" }
@@ -1604,23 +1648,22 @@ function ThrowableTrapItem:ValidatePos(explosion_pos, attack_args)
 	local newGroundPos
 	if explosion_pos then
 		local slab, slab_z = WalkableSlabByPoint(explosion_pos, "downward only")
-		newGroundPos = explosion_pos:SetTerrainZ()
 		local z = explosion_pos:z()
 		if slab_z and slab_z <= z and slab_z >= z - guim then
 			newGroundPos = explosion_pos:SetZ(slab_z)
 		else
 			-- check for collision geometry between explosion_pos and ground
+			newGroundPos = explosion_pos:SetTerrainZ()
 			local col, pts = CollideSegmentsNearest(explosion_pos, newGroundPos)
 			if col then
 				newGroundPos = pts[1]
-			end			
+			end
 		end
 	end
-	
-	local isRetaliation = attack_args and attack_args.obj and attack_args.opportunity_attack_type and attack_args.opportunity_attack_type == "Retaliation"
-	local isAIAttacker = attack_args and attack_args.obj and (g_AIExecutionController or isRetaliation) 
-	if newGroundPos and IsTrapClose(newGroundPos) and isAIAttacker then
-		newGroundPos = false
+	if newGroundPos and attack_args and attack_args.obj and (g_AIExecutionController or attack_args.opportunity_attack_type == "Retaliation") then
+		if IsTrapClose(newGroundPos) then
+			newGroundPos = nil
+		end
 	end
 	return newGroundPos
 end
@@ -1651,7 +1694,7 @@ function TrapDetonator:GetAttackResults(action, attack_args)
 		target_pos = lof_data and lof_data.target_pos
 	end
 	
-	local traps = MapGet(target_pos, self.AreaOfEffect * const.SlabSizeX, "Landmine", function(o)
+	local traps = MapGet(target_pos, self.AreaOfEffect * voxelSizeX, "Landmine", function(o)
 		return o.TriggerType == "Remote" and not o.done
 	end)
 	
@@ -1716,11 +1759,10 @@ function GrenadeThrowMarker:ExecuteTriggerEffects(context)
 end
 
 function IsTrapClose(trapPos, distance)
-	distance = distance or const.SlabSizeX
+	distance = distance or voxelSizeX
 	for i, t in ipairs(g_Traps) do
 		if IsValid(t) and not t.done then
-			local tPos = t:GetPos()
-			if tPos:Dist(trapPos) < distance then
+			if IsCloser(t, trapPos, distance) then
 				return true
 			end
 		end

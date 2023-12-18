@@ -264,7 +264,7 @@ PlaceObj('VoiceResponse', {
 		T(857687237149, --[[VoiceResponse Meltdown SelectionStealth VoiceResponse SelectionStealth - when selected or autoselected voice:Meltdown]] "This sneaky shit ain't my style.")
 	}),
 	SeriouslyWounded = TConcat({
-		T(327012155638, --[[VoiceResponse Meltdown SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds) voice:Meltdown]] "Well I'll be goddamned! I'm about to die.")
+		T(327012155638, --[[VoiceResponse Meltdown SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining. voice:Meltdown]] "Well I'll be goddamned! I'm about to die.")
 	}),
 	Startled = TConcat({
 		T(338604958310, --[[VoiceResponse Meltdown Startled VoiceResponse Startled - Startled by hearing a sudden noise voice:Meltdown]] "Huh?"),
@@ -314,9 +314,9 @@ PlaceObj('VoiceResponse', {
 		T(806016786293, --[[VoiceResponse Meltdown WeaponJammed VoiceResponse WeaponJammed - When weapon has jammed voice:Meltdown]] "This thing's jammed up worse than my colon after a Fourth of July barbecue!")
 	}),
 	Wounded = TConcat({
-		T(931118217898, --[[VoiceResponse Meltdown Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Meltdown]] "Shit! Now you got me pissed!"),
-		T(826961397239, --[[VoiceResponse Meltdown Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Meltdown]] "This shit is pissing me off!"),
-		T(410021504378, --[[VoiceResponse Meltdown Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Meltdown]] "Fucking hell!")
+		T(931118217898, --[[VoiceResponse Meltdown Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Meltdown]] "Shit! Now you got me pissed!"),
+		T(826961397239, --[[VoiceResponse Meltdown Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Meltdown]] "This shit is pissing me off!"),
+		T(410021504378, --[[VoiceResponse Meltdown Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Meltdown]] "Fucking hell!")
 	}),
 	group = "MercenariesOld",
 	id = "Meltdown",

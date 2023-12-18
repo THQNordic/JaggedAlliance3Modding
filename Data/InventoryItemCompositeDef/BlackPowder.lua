@@ -3,7 +3,7 @@
 PlaceObj('InventoryItemCompositeDef', {
 	'Group', "Grenade - Component",
 	'Id', "BlackPowder",
-	'object_class', "ExplosiveSubstance",
+	'object_class', "ExplosiveSubstanceSquadBagItem",
 	'Repairable', false,
 	'Icon', "UI/Icons/Items/black_powder",
 	'DisplayName', T(435852653453, --[[InventoryItemCompositeDef BlackPowder DisplayName]] "Gunpowder"),

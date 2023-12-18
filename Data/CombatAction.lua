@@ -4696,10 +4696,7 @@ PlaceObj('CombatAction', {
 	end,
 	GetAPCost = function (self, unit, args)
 		if unit:HasStatusEffect("ManningEmplacement") then return -1 end
-		
-		if HasPerk(unit, "HeavyWeaponsTraining") then
-			return HeavyWeaponsTrainingCostMod(self.ActionPoints)
-		end
+		self.ActionPoints = unit:GetAttackAPCost(self.action, self.weapon, self.ActionPoints)
 		
 		return self.ActionPoints
 	end,
@@ -4820,10 +4817,7 @@ PlaceObj('CombatAction', {
 		local min_str = self:ResolveValue("min_str")
 		local cost = base - MulDivRound(Max(0, unit.Strength - min_str), base - min, 100 - min_str)
 		cost = Max(min, (cost / const.Scale.AP) * const.Scale.AP)
-		if HasPerk(unit, "HeavyWeaponsTraining") then
-			return HeavyWeaponsTrainingCostMod(cost)
-		end
-		return cost
+		return unit:GetAttackAPCost(self, self:GetAttackWeapons(unit), cost)
 	end,
 	GetActionDescription = function (self, units)
 		local unit = units[1]
@@ -8301,7 +8295,7 @@ PlaceObj('CombatAction', {
 		args.ap_cost_breakdown = args.ap_cost_breakdown or {}
 		local cost = self:GetAPCost(unit, args)
 		if cost < 0 then return "hidden" end
-		if not unit:UIHasAP(cost) then 
+		if not unit:UIHasAP(cost, self.id, args) then 
 			return "disabled", GetUnitNoApReason(unit) 
 		end
 		return "enabled"
@@ -8863,12 +8857,7 @@ PlaceObj('CombatAction', {
 	CostBasedOnWeapon = true,
 	DisplayName = T(401408176064, --[[CombatAction HundredKnives DisplayName]] "<placeholder>"),
 	GetAPCost = function (self, unit, args)
-		local ap = self.ActionPoints
-		if unit:HasStatusEffect("FirstThrow") then
-			local costReduction = CharacterEffectDefs.Throwing:ResolveValue("FirstThrowCostReduction") * const.Scale.AP
-			ap = Max(1 * const.Scale.AP, ap - costReduction)
-		end
-		return ap
+		return unit:GetAttackAPCost(self, self:GetAttackWeapons(unit, args), unit.ActionPoint)
 	end,
 	GetActionDamage = function (self, unit, target, args)
 		local weapon = self:GetAttackWeapons(unit, args)

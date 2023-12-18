@@ -5753,7 +5753,7 @@ EntityData["City_ElectricityLamp_01"] = {
 	editor_category = "Prop",
 	editor_subcategory = "Other",
 	entity = {
-		class_parent = "CombatObject, DecorStateFXAutoAttachObject,NonWallHidable",
+		class_parent = "CombatObject, DecorStateFXAutoAttachObject,NonWallHidable,WireSupporter",
 		fade_category = "Never",
 		material_type = "Metal_Solid_Hard",
 	},
@@ -12886,6 +12886,78 @@ EntityData["DecKelp_04"] = {
 		fade_category = "Never",
 	},
 }
+EntityData["DecLaboratoryFrozen_01"] = {
+	editor_artset = "Common",
+	editor_category = "Decal",
+	editor_subcategory = "Other",
+	entity = {
+		class_parent = "TerrainDecal",
+		fade_category = "Never",
+	},
+}
+EntityData["DecLaboratoryFrozen_02"] = {
+	editor_artset = "Common",
+	editor_category = "Decal",
+	editor_subcategory = "Other",
+	entity = {
+		class_parent = "TerrainDecal",
+		fade_category = "Never",
+	},
+}
+EntityData["DecLaboratoryFrozen_03"] = {
+	editor_artset = "Common",
+	editor_category = "Decal",
+	editor_subcategory = "Other",
+	entity = {
+		class_parent = "TerrainDecal",
+		fade_category = "Never",
+	},
+}
+EntityData["DecLaboratoryFrozen_04"] = {
+	editor_artset = "Common",
+	editor_category = "Decal",
+	editor_subcategory = "Other",
+	entity = {
+		class_parent = "TerrainDecal",
+		fade_category = "Never",
+	},
+}
+EntityData["DecLaboratoryFrozen_05"] = {
+	editor_artset = "Common",
+	editor_category = "Decal",
+	editor_subcategory = "Other",
+	entity = {
+		class_parent = "TerrainDecal",
+		fade_category = "Never",
+	},
+}
+EntityData["DecLaboratoryFrozen_06"] = {
+	editor_artset = "Common",
+	editor_category = "Decal",
+	editor_subcategory = "Other",
+	entity = {
+		class_parent = "TerrainDecal",
+		fade_category = "Never",
+	},
+}
+EntityData["DecLaboratoryFrozen_07"] = {
+	editor_artset = "Common",
+	editor_category = "Decal",
+	editor_subcategory = "Other",
+	entity = {
+		class_parent = "TerrainDecal",
+		fade_category = "Never",
+	},
+}
+EntityData["DecLaboratoryFrozen_08"] = {
+	editor_artset = "Common",
+	editor_category = "Decal",
+	editor_subcategory = "Other",
+	entity = {
+		class_parent = "TerrainDecal",
+		fade_category = "Never",
+	},
+}
 EntityData["DecLegion_01"] = {
 	editor_artset = "Common",
 	editor_category = "Decal",
@@ -12980,6 +13052,15 @@ EntityData["DecMercsPride"] = {
 	editor_artset = "Common",
 	editor_category = "Decal",
 	editor_subcategory = "Room",
+	entity = {
+		class_parent = "Decal",
+		fade_category = "Never",
+	},
+}
+EntityData["DecMetroMap_01"] = {
+	editor_artset = "Common",
+	editor_category = "Decal",
+	editor_subcategory = "Other",
 	entity = {
 		class_parent = "Decal",
 		fade_category = "Never",
@@ -16349,24 +16430,6 @@ EntityData["EquipmentBlaubert_Hair"] = {
 		fade_category = "Never",
 	},
 }
-EntityData["EquipmentBlender_Bottom"] = {
-	entity = {
-		class_parent = "CharacterPantsMale",
-		fade_category = "Never",
-	},
-}
-EntityData["EquipmentBlender_Hat"] = {
-	entity = {
-		class_parent = "CharacterHat",
-		fade_category = "Never",
-	},
-}
-EntityData["EquipmentBlender_Top"] = {
-	entity = {
-		class_parent = "CharacterBodyMale",
-		fade_category = "Never",
-	},
-}
 EntityData["EquipmentBlood_Bottom"] = {
 	entity = {
 		class_parent = "CharacterPantsMale",
@@ -16494,6 +16557,12 @@ EntityData["EquipmentDocRobert_Glasses"] = {
 	},
 }
 EntityData["EquipmentDocRobert_Top"] = {
+	entity = {
+		class_parent = "CharacterBodyMale",
+		fade_category = "Never",
+	},
+}
+EntityData["EquipmentDrGruselhaim_Top"] = {
 	entity = {
 		class_parent = "CharacterBodyMale",
 		fade_category = "Never",
@@ -24950,6 +25019,50 @@ EntityData["Hospital_Heater_02"] = {
 		material_type = "Metal_Props",
 	},
 }
+EntityData["Hospital_IVStand_01"] = {
+	default_colors = {
+		EditableColor1 = 4285694082,
+		EditableColor2 = 4281744956,
+		EditableColor3 = 4291341468,
+		EditableMetallic1 = 0,
+		EditableMetallic2 = 0,
+		EditableMetallic3 = 0,
+		EditableRoughness1 = 0,
+		EditableRoughness2 = 0,
+		EditableRoughness3 = 0,
+	},
+	editor_artset = "Hospital",
+	editor_category = "Prop",
+	editor_subcategory = "Furniture",
+	entity = {
+		FXTargetOverride = "Metalsheets",
+		fade_category = "Never",
+		material_type = "Metal_Props",
+		provide_cover = false,
+	},
+}
+EntityData["Hospital_IVStand_02"] = {
+	default_colors = {
+		EditableColor1 = 4285694082,
+		EditableColor2 = 4281744956,
+		EditableColor3 = 4291341468,
+		EditableMetallic1 = 0,
+		EditableMetallic2 = 0,
+		EditableMetallic3 = 0,
+		EditableRoughness1 = 0,
+		EditableRoughness2 = 0,
+		EditableRoughness3 = 0,
+	},
+	editor_artset = "Hospital",
+	editor_category = "Prop",
+	editor_subcategory = "Furniture",
+	entity = {
+		FXTargetOverride = "Metalsheets",
+		fade_category = "Never",
+		material_type = "Metal_Props",
+		provide_cover = false,
+	},
+}
 EntityData["Hospital_Screen_01"] = {
 	default_colors = {
 		EditableColor1 = 4281360798,
@@ -26238,6 +26351,477 @@ EntityData["Kelp_02"] = {
 		env_colorized = "Tropical_Plants",
 		fade_category = "Never",
 		material_type = "Plant_Props",
+	},
+}
+EntityData["Laboratory_Cables_01"] = {
+	default_colors = {
+		EditableColor1 = 4280626207,
+		EditableColor2 = 4281351244,
+		EditableColor3 = 4284900966,
+		EditableMetallic1 = 0,
+		EditableMetallic2 = 0,
+		EditableMetallic3 = 0,
+		EditableRoughness1 = 0,
+		EditableRoughness2 = 0,
+		EditableRoughness3 = 0,
+	},
+	editor_artset = "Common",
+	editor_category = "Prop",
+	editor_subcategory = "Other",
+	entity = {
+		FXTargetOverride = "Metal",
+		fade_category = "Never",
+		material_type = "Metal_Inv_Imp",
+	},
+}
+EntityData["Laboratory_Cables_02"] = {
+	default_colors = {
+		EditableColor1 = 4280626207,
+		EditableColor2 = 4281351244,
+		EditableColor3 = 4284900966,
+		EditableMetallic1 = 0,
+		EditableMetallic2 = 0,
+		EditableMetallic3 = 0,
+		EditableRoughness1 = 0,
+		EditableRoughness2 = 0,
+		EditableRoughness3 = 0,
+	},
+	editor_artset = "Common",
+	editor_category = "Prop",
+	editor_subcategory = "Other",
+	entity = {
+		FXTargetOverride = "Metal",
+		fade_category = "Never",
+		material_type = "Metal_Inv_Imp",
+	},
+}
+EntityData["Laboratory_Cables_03"] = {
+	default_colors = {
+		EditableColor1 = 4280626207,
+		EditableColor2 = 4281351244,
+		EditableColor3 = 4284900966,
+		EditableMetallic1 = 0,
+		EditableMetallic2 = 0,
+		EditableMetallic3 = 0,
+		EditableRoughness1 = 0,
+		EditableRoughness2 = 0,
+		EditableRoughness3 = 0,
+	},
+	editor_artset = "Common",
+	editor_category = "Prop",
+	editor_subcategory = "Other",
+	entity = {
+		FXTargetOverride = "Metal",
+		fade_category = "Never",
+		material_type = "Metal_Inv_Imp",
+	},
+}
+EntityData["Laboratory_Cables_04"] = {
+	default_colors = {
+		EditableColor1 = 4280626207,
+		EditableColor2 = 4281351244,
+		EditableColor3 = 4284900966,
+		EditableMetallic1 = 0,
+		EditableMetallic2 = 0,
+		EditableMetallic3 = 0,
+		EditableRoughness1 = 0,
+		EditableRoughness2 = 0,
+		EditableRoughness3 = 0,
+	},
+	editor_artset = "Common",
+	editor_category = "Prop",
+	editor_subcategory = "Other",
+	entity = {
+		FXTargetOverride = "Metal",
+		fade_category = "Never",
+		material_type = "Metal_Inv_Imp",
+	},
+}
+EntityData["Laboratory_Cables_05"] = {
+	default_colors = {
+		EditableColor1 = 4280626207,
+		EditableColor2 = 4281351244,
+		EditableColor3 = 4284900966,
+		EditableMetallic1 = 0,
+		EditableMetallic2 = 0,
+		EditableMetallic3 = 0,
+		EditableRoughness1 = 0,
+		EditableRoughness2 = 0,
+		EditableRoughness3 = 0,
+	},
+	editor_artset = "Common",
+	editor_category = "Prop",
+	editor_subcategory = "Other",
+	entity = {
+		FXTargetOverride = "Metal",
+		fade_category = "Never",
+		material_type = "Metal_Inv_Imp",
+	},
+}
+EntityData["Laboratory_Cables_06"] = {
+	default_colors = {
+		EditableColor1 = 4280626207,
+		EditableColor2 = 4281351244,
+		EditableColor3 = 4284900966,
+		EditableMetallic1 = 0,
+		EditableMetallic2 = 0,
+		EditableMetallic3 = 0,
+		EditableRoughness1 = 0,
+		EditableRoughness2 = 0,
+		EditableRoughness3 = 0,
+	},
+	editor_artset = "Common",
+	editor_category = "Prop",
+	editor_subcategory = "Other",
+	entity = {
+		FXTargetOverride = "Metal",
+		fade_category = "Never",
+		material_type = "Metal_Inv_Imp",
+	},
+}
+EntityData["Laboratory_Cables_07"] = {
+	default_colors = {
+		EditableColor1 = 4280626207,
+		EditableColor2 = 4281351244,
+		EditableColor3 = 4284900966,
+		EditableMetallic1 = 0,
+		EditableMetallic2 = 0,
+		EditableMetallic3 = 0,
+		EditableRoughness1 = 0,
+		EditableRoughness2 = 0,
+		EditableRoughness3 = 0,
+	},
+	editor_artset = "Common",
+	editor_category = "Prop",
+	editor_subcategory = "Other",
+	entity = {
+		FXTargetOverride = "Metal",
+		fade_category = "Never",
+		material_type = "Metal_Inv_Imp",
+	},
+}
+EntityData["Laboratory_ChemicalEquipment_01"] = {
+	default_colors = {
+		EditableColor1 = 4281607192,
+		EditableColor2 = 4282996822,
+		EditableColor3 = 4291348680,
+		EditableMetallic1 = 0,
+		EditableMetallic2 = 0,
+		EditableMetallic3 = 0,
+		EditableRoughness1 = 0,
+		EditableRoughness2 = 0,
+		EditableRoughness3 = 0,
+	},
+	editor_artset = "Common",
+	editor_category = "Prop",
+	editor_subcategory = "Other",
+	entity = {
+		FXTargetOverride = "Glass",
+		class_parent = "CombatObject, AutoAttachObject",
+		fade_category = "Never",
+		material_type = "Metal_Inv_Imp",
+	},
+}
+EntityData["Laboratory_ChemicalEquipment_02"] = {
+	default_colors = {
+		EditableColor1 = 4281607192,
+		EditableColor2 = 4282996822,
+		EditableColor3 = 4291348680,
+		EditableMetallic1 = 0,
+		EditableMetallic2 = 0,
+		EditableMetallic3 = 0,
+		EditableRoughness1 = 0,
+		EditableRoughness2 = 0,
+		EditableRoughness3 = 0,
+	},
+	editor_artset = "Common",
+	editor_category = "Prop",
+	editor_subcategory = "Other",
+	entity = {
+		FXTargetOverride = "Glass",
+		class_parent = "CombatObject, AutoAttachObject",
+		fade_category = "Never",
+		material_type = "Metal_Inv_Imp",
+	},
+}
+EntityData["Laboratory_ChemicalEquipment_03"] = {
+	default_colors = {
+		EditableColor1 = 4281607192,
+		EditableColor2 = 4282996822,
+		EditableColor3 = 4291348680,
+		EditableMetallic1 = 0,
+		EditableMetallic2 = 0,
+		EditableMetallic3 = 0,
+		EditableRoughness1 = 0,
+		EditableRoughness2 = 0,
+		EditableRoughness3 = 0,
+	},
+	editor_artset = "Common",
+	editor_category = "Prop",
+	editor_subcategory = "Other",
+	entity = {
+		FXTargetOverride = "Glass",
+		class_parent = "CombatObject, AutoAttachObject",
+		fade_category = "Never",
+		material_type = "Metal_Inv_Imp",
+	},
+}
+EntityData["Laboratory_ChemicalEquipment_04"] = {
+	default_colors = {
+		EditableColor1 = 4281607192,
+		EditableColor2 = 4282996822,
+		EditableColor3 = 4291348680,
+		EditableMetallic1 = 0,
+		EditableMetallic2 = 0,
+		EditableMetallic3 = 0,
+		EditableRoughness1 = 0,
+		EditableRoughness2 = 0,
+		EditableRoughness3 = 0,
+	},
+	editor_artset = "Common",
+	editor_category = "Prop",
+	editor_subcategory = "Other",
+	entity = {
+		FXTargetOverride = "Glass",
+		class_parent = "CombatObject, AutoAttachObject",
+		fade_category = "Never",
+		material_type = "Metal_Inv_Imp",
+	},
+}
+EntityData["Laboratory_ComputerEquipment_01"] = {
+	default_colors = {
+		EditableColor1 = 4280626207,
+		EditableColor2 = 4278979855,
+		EditableColor3 = 4284900966,
+		EditableMetallic1 = 0,
+		EditableMetallic2 = 0,
+		EditableMetallic3 = 0,
+		EditableRoughness1 = 0,
+		EditableRoughness2 = 0,
+		EditableRoughness3 = 0,
+	},
+	editor_artset = "Common",
+	editor_category = "Prop",
+	editor_subcategory = "Other",
+	entity = {
+		FXTargetOverride = "Metal",
+		class_parent = "CombatObject, AutoAttachObject",
+		fade_category = "Never",
+		material_type = "Metal_Inv_Imp",
+	},
+}
+EntityData["Laboratory_ComputerEquipment_02"] = {
+	default_colors = {
+		EditableColor1 = 4280626207,
+		EditableColor2 = 4278979855,
+		EditableColor3 = 4284900966,
+		EditableMetallic1 = 0,
+		EditableMetallic2 = 0,
+		EditableMetallic3 = 0,
+		EditableRoughness1 = 0,
+		EditableRoughness2 = 0,
+		EditableRoughness3 = 0,
+	},
+	editor_artset = "Common",
+	editor_category = "Prop",
+	editor_subcategory = "Other",
+	entity = {
+		FXTargetOverride = "Metal",
+		class_parent = "CombatObject, AutoAttachObject",
+		fade_category = "Never",
+		material_type = "Metal_Inv_Imp",
+	},
+}
+EntityData["Laboratory_CryoContainer_01"] = {
+	default_colors = {
+		EditableColor1 = 4291348680,
+		EditableColor2 = 4291348680,
+		EditableColor3 = 4291591706,
+		EditableMetallic1 = 0,
+		EditableMetallic2 = 0,
+		EditableMetallic3 = 0,
+		EditableRoughness1 = 0,
+		EditableRoughness2 = 0,
+		EditableRoughness3 = 0,
+	},
+	editor_artset = "Common",
+	editor_category = "Prop",
+	editor_subcategory = "Other",
+	entity = {
+		FXTargetOverride = "Metal",
+		class_parent = "CombatObject, AutoAttachObject",
+		fade_category = "Never",
+		material_type = "Metal_Inv_Imp",
+	},
+}
+EntityData["Laboratory_CryoTank_01"] = {
+	default_colors = {
+		EditableColor1 = 4280626207,
+		EditableColor2 = 4281351244,
+		EditableColor3 = 4284900966,
+		EditableMetallic1 = 0,
+		EditableMetallic2 = 0,
+		EditableMetallic3 = 0,
+		EditableRoughness1 = 0,
+		EditableRoughness2 = 0,
+		EditableRoughness3 = 0,
+	},
+	editor_artset = "Common",
+	editor_category = "Prop",
+	editor_subcategory = "Other",
+	entity = {
+		FXTargetOverride = "Metal",
+		class_parent = "CombatObject, AutoAttachObject",
+		fade_category = "Never",
+		material_type = "Metal_Inv_Imp",
+	},
+}
+EntityData["Laboratory_CryoTank_02"] = {
+	default_colors = {
+		EditableColor1 = 4280626207,
+		EditableColor2 = 4281351244,
+		EditableColor3 = 4284900966,
+		EditableMetallic1 = 0,
+		EditableMetallic2 = 0,
+		EditableMetallic3 = 0,
+		EditableRoughness1 = 0,
+		EditableRoughness2 = 0,
+		EditableRoughness3 = 0,
+	},
+	editor_artset = "Common",
+	editor_category = "Prop",
+	editor_subcategory = "Other",
+	entity = {
+		FXTargetOverride = "Metal",
+		class_parent = "CombatObject, AutoAttachObject",
+		fade_category = "Never",
+		material_type = "Metal_Inv_Imp",
+	},
+}
+EntityData["Laboratory_CryoTank_03"] = {
+	default_colors = {
+		EditableColor1 = 4280626207,
+		EditableColor2 = 4281351244,
+		EditableColor3 = 4284900966,
+		EditableMetallic1 = 0,
+		EditableMetallic2 = 0,
+		EditableMetallic3 = 0,
+		EditableRoughness1 = 0,
+		EditableRoughness2 = 0,
+		EditableRoughness3 = 0,
+	},
+	editor_artset = "Common",
+	editor_category = "Prop",
+	editor_subcategory = "Other",
+	entity = {
+		class_parent = "CombatObject, AutoAttachObject",
+		fade_category = "Never",
+		material_type = "Metal_Inv_Imp",
+	},
+}
+EntityData["Laboratory_Flag_Short"] = {
+	default_colors = {
+		EditableColor1 = 4283893254,
+		EditableColor2 = 4278913289,
+		EditableColor3 = 4281805593,
+		EditableMetallic1 = 0,
+		EditableMetallic2 = 0,
+		EditableMetallic3 = 0,
+		EditableRoughness1 = 0,
+		EditableRoughness2 = 0,
+		EditableRoughness3 = 0,
+	},
+	editor_artset = "MilitaryCamp",
+	editor_category = "Prop",
+	editor_subcategory = "Other",
+	entity = {
+		class_parent = "Canvas,DecorStateFXAutoAttachObject",
+		fade_category = "Never",
+		material_type = "Cloth_Prop",
+	},
+}
+EntityData["Laboratory_Pipes_01"] = {
+	default_colors = {
+		EditableColor1 = 4280626207,
+		EditableColor2 = 4281351244,
+		EditableColor3 = 4284900966,
+		EditableMetallic1 = 0,
+		EditableMetallic2 = 0,
+		EditableMetallic3 = 0,
+		EditableRoughness1 = 0,
+		EditableRoughness2 = 0,
+		EditableRoughness3 = 0,
+	},
+	editor_artset = "Common",
+	editor_category = "Prop",
+	editor_subcategory = "Other",
+	entity = {
+		FXTargetOverride = "Metal",
+		fade_category = "Never",
+		material_type = "Metal_Inv_Imp",
+	},
+}
+EntityData["Laboratory_Pipes_02"] = {
+	default_colors = {
+		EditableColor1 = 4280626207,
+		EditableColor2 = 4281351244,
+		EditableColor3 = 4284900966,
+		EditableMetallic1 = 0,
+		EditableMetallic2 = 0,
+		EditableMetallic3 = 0,
+		EditableRoughness1 = 0,
+		EditableRoughness2 = 0,
+		EditableRoughness3 = 0,
+	},
+	editor_artset = "Common",
+	editor_category = "Prop",
+	editor_subcategory = "Other",
+	entity = {
+		FXTargetOverride = "Metal",
+		fade_category = "Never",
+		material_type = "Metal_Inv_Imp",
+	},
+}
+EntityData["Laboratory_Pipes_03"] = {
+	default_colors = {
+		EditableColor1 = 4280626207,
+		EditableColor2 = 4281351244,
+		EditableColor3 = 4284900966,
+		EditableMetallic1 = 0,
+		EditableMetallic2 = 0,
+		EditableMetallic3 = 0,
+		EditableRoughness1 = 0,
+		EditableRoughness2 = 0,
+		EditableRoughness3 = 0,
+	},
+	editor_artset = "Common",
+	editor_category = "Prop",
+	editor_subcategory = "Other",
+	entity = {
+		FXTargetOverride = "Metal",
+		fade_category = "Never",
+		material_type = "Metal_Inv_Imp",
+	},
+}
+EntityData["Laboratory_Pipes_04"] = {
+	default_colors = {
+		EditableColor1 = 4280626207,
+		EditableColor2 = 4281351244,
+		EditableColor3 = 4284900966,
+		EditableMetallic1 = 0,
+		EditableMetallic2 = 0,
+		EditableMetallic3 = 0,
+		EditableRoughness1 = 0,
+		EditableRoughness2 = 0,
+		EditableRoughness3 = 0,
+	},
+	editor_artset = "Common",
+	editor_category = "Prop",
+	editor_subcategory = "Other",
+	entity = {
+		FXTargetOverride = "Metal",
+		fade_category = "Never",
+		material_type = "Metal_Inv_Imp",
 	},
 }
 EntityData["Ladder_Metal_01"] = {
@@ -28022,6 +28606,27 @@ EntityData["MilitaryCamp_MetalBarrier_01"] = {
 		material_type = "Metal_Inv_Penetrable",
 	},
 }
+EntityData["MilitaryCamp_NewFractionFlag_Short"] = {
+	default_colors = {
+		EditableColor1 = 4283893254,
+		EditableColor2 = 4278913289,
+		EditableColor3 = 4281805593,
+		EditableMetallic1 = 0,
+		EditableMetallic2 = 0,
+		EditableMetallic3 = 0,
+		EditableRoughness1 = 0,
+		EditableRoughness2 = 0,
+		EditableRoughness3 = 0,
+	},
+	editor_artset = "MilitaryCamp",
+	editor_category = "Prop",
+	editor_subcategory = "Other",
+	entity = {
+		class_parent = "Canvas,DecorStateFXAutoAttachObject",
+		fade_category = "Never",
+		material_type = "Cloth_Prop",
+	},
+}
 EntityData["MilitaryCamp_Pallete_01"] = {
 	editor_artset = "MilitaryCamp",
 	editor_category = "Prop",
@@ -28857,6 +29462,28 @@ EntityData["Mine_MiningCart_Rails"] = {
 		material_type = "Metal_Inv_Imp",
 	},
 }
+EntityData["Mine_MiningTrain_01"] = {
+	default_colors = {
+		EditableColor1 = 4283378182,
+		EditableColor2 = 4281213457,
+		EditableColor3 = 4281608480,
+		EditableMetallic1 = 0,
+		EditableMetallic2 = 0,
+		EditableMetallic3 = 0,
+		EditableRoughness1 = 0,
+		EditableRoughness2 = 0,
+		EditableRoughness3 = 0,
+	},
+	editor_artset = "Mine",
+	editor_category = "Prop",
+	editor_subcategory = "Other",
+	entity = {
+		FXTargetOverride = "Metal",
+		class_parent = "CombatObject",
+		fade_category = "Never",
+		material_type = "Metal_Inv_Imp",
+	},
+}
 EntityData["Mine_PickAxe"] = {
 	editor_artset = "Mine",
 	editor_category = "Prop",
@@ -28962,6 +29589,94 @@ EntityData["Mine_RailStopper"] = {
 	editor_category = "Prop",
 	editor_subcategory = "Other",
 	entity = {
+		fade_category = "Never",
+		material_type = "Metal_Inv_Penetrable",
+	},
+}
+EntityData["Mine_Rail_S_01"] = {
+	default_colors = {
+		EditableColor1 = 4280424983,
+		EditableColor2 = 4279633927,
+		EditableColor3 = 4284890921,
+		EditableMetallic1 = 0,
+		EditableMetallic2 = 0,
+		EditableMetallic3 = 0,
+		EditableRoughness1 = 0,
+		EditableRoughness2 = 0,
+		EditableRoughness3 = 0,
+	},
+	editor_artset = "Mine",
+	editor_category = "Prop",
+	editor_subcategory = "Other",
+	entity = {
+		FXTargetOverride = "Metal",
+		FXTargetSecondary = "Wood",
+		fade_category = "Never",
+		material_type = "Metal_Inv_Penetrable",
+	},
+}
+EntityData["Mine_Rail_S_02"] = {
+	default_colors = {
+		EditableColor1 = 4280424983,
+		EditableColor2 = 4279633927,
+		EditableColor3 = 4284890921,
+		EditableMetallic1 = 0,
+		EditableMetallic2 = 0,
+		EditableMetallic3 = 0,
+		EditableRoughness1 = 0,
+		EditableRoughness2 = 0,
+		EditableRoughness3 = 0,
+	},
+	editor_artset = "Mine",
+	editor_category = "Prop",
+	editor_subcategory = "Other",
+	entity = {
+		FXTargetOverride = "Metal",
+		FXTargetSecondary = "Wood",
+		fade_category = "Never",
+		material_type = "Metal_Inv_Penetrable",
+	},
+}
+EntityData["Mine_Rail_Turn90_01"] = {
+	default_colors = {
+		EditableColor1 = 4280424983,
+		EditableColor2 = 4279633927,
+		EditableColor3 = 4284890921,
+		EditableMetallic1 = 0,
+		EditableMetallic2 = 0,
+		EditableMetallic3 = 0,
+		EditableRoughness1 = 0,
+		EditableRoughness2 = 0,
+		EditableRoughness3 = 0,
+	},
+	editor_artset = "Mine",
+	editor_category = "Prop",
+	editor_subcategory = "Other",
+	entity = {
+		FXTargetOverride = "Metal",
+		FXTargetSecondary = "Wood",
+		fade_category = "Never",
+		material_type = "Metal_Inv_Penetrable",
+	},
+}
+EntityData["Mine_Rail_Turn90_02"] = {
+	default_colors = {
+		EditableColor1 = 4280424983,
+		EditableColor2 = 4279633927,
+		EditableColor3 = 4284890921,
+		EditableMetallic1 = 0,
+		EditableMetallic2 = 0,
+		EditableMetallic3 = 0,
+		EditableRoughness1 = 0,
+		EditableRoughness2 = 0,
+		EditableRoughness3 = 0,
+	},
+	editor_artset = "Mine",
+	editor_category = "Prop",
+	editor_subcategory = "Other",
+	entity = {
+		FXTargetOverride = "Metal",
+		FXTargetSecondary = "Wood",
 		fade_category = "Never",
 		material_type = "Metal_Inv_Penetrable",
 	},
@@ -40968,16 +41683,6 @@ EntityData["Shanty_Canvas_06"] = {
 	editor_subcategory = "Other",
 	entity = {
 		class_parent = "SkewAlign,Canvas, DecorStateFXAutoAttachObject",
-		fade_category = "Never",
-		material_type = "Cloth_Prop",
-	},
-}
-EntityData["Shanty_Canvas_07"] = {
-	editor_artset = "Shanty",
-	editor_category = "Prop",
-	editor_subcategory = "Other",
-	entity = {
-		class_parent = "SkewAlign, DecorStateFXAutoAttachObject",
 		fade_category = "Never",
 		material_type = "Cloth_Prop",
 	},
@@ -66288,7 +66993,7 @@ EntityData["World_HangingSkeleton_01"] = {
 	editor_category = "Prop",
 	editor_subcategory = "Other",
 	entity = {
-		class_parent = "CombatObject,DecorStateFXAutoAttachObject",
+		class_parent = "World_HangingSkeleton_Base",
 		fade_category = "Never",
 		material_type = "Bone_Prop",
 	},
@@ -66298,7 +67003,7 @@ EntityData["World_HangingSkeleton_02"] = {
 	editor_category = "Prop",
 	editor_subcategory = "Other",
 	entity = {
-		class_parent = "CombatObject,DecorStateFXAutoAttachObject",
+		class_parent = "World_HangingSkeleton_Base",
 		fade_category = "Never",
 		material_type = "Bone_Prop",
 	},
@@ -66308,7 +67013,7 @@ EntityData["World_HangingSkeleton_03"] = {
 	editor_category = "Prop",
 	editor_subcategory = "Other",
 	entity = {
-		class_parent = "CombatObject,DecorStateFXAutoAttachObject",
+		class_parent = "World_HangingSkeleton_Base",
 		fade_category = "Never",
 		material_type = "Bone_Prop",
 	},

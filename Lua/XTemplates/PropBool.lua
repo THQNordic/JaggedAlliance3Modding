@@ -14,7 +14,7 @@ PlaceObj('XTemplate', {
 		end,
 		'LayoutMethod', "HList",
 		'RolloverOnFocus', true,
-		'MouseCursor', "CommonAssets/UI/HandCursor.tga",
+		'MouseCursor', "UI/Cursors/Hand.tga",
 		'FocusedBorderColor', RGBA(0, 0, 0, 0),
 		'DisabledBorderColor', RGBA(0, 0, 0, 0),
 	}, {

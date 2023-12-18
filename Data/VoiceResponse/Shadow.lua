@@ -279,7 +279,7 @@ PlaceObj('VoiceResponse', {
 		T(472730150329, --[[VoiceResponse Shadow SelectionStealth VoiceResponse SelectionStealth - when selected or autoselected voice:Shadow]] "Still here.")
 	}),
 	SeriouslyWounded = TConcat({
-		T(478700155727, --[[VoiceResponse Shadow SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds) voice:Shadow]] "I'm so banged up even my shadow has wounds.")
+		T(478700155727, --[[VoiceResponse Shadow SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining. voice:Shadow]] "I'm so banged up even my shadow has wounds.")
 	}),
 	Startled = TConcat({
 		T(778581008312, --[[VoiceResponse Shadow Startled VoiceResponse Startled - Startled by hearing a sudden noise voice:Shadow]] "Huh?"),
@@ -326,9 +326,9 @@ PlaceObj('VoiceResponse', {
 		T(144786128320, --[[VoiceResponse Shadow WeaponJammed VoiceResponse WeaponJammed - When weapon has jammed voice:Shadow]] "Damn weapon doesn't want to fire.")
 	}),
 	Wounded = TConcat({
-		T(798275866160, --[[VoiceResponse Shadow Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Shadow]] "They winged me."),
-		T(511395404029, --[[VoiceResponse Shadow Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Shadow]] "I took a hit."),
-		T(780528358239, --[[VoiceResponse Shadow Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Shadow]] "Damn! Stings a little.")
+		T(798275866160, --[[VoiceResponse Shadow Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Shadow]] "They winged me."),
+		T(511395404029, --[[VoiceResponse Shadow Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Shadow]] "I took a hit."),
+		T(780528358239, --[[VoiceResponse Shadow Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Shadow]] "Damn! Stings a little.")
 	}),
 	group = "MercenariesOld",
 	id = "Shadow",

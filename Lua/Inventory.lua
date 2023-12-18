@@ -34,12 +34,14 @@ function InventoryItem:Init()
 end
 
 function InventoryItem:Done()
-	if not GameState.loading and self.owner then
-		local owner = self.owner
+	if not GameState.sync_loading and self.owner then
 		self.owner = false
 	end
-	g_ItemIdToItem[self.id] = nil
-	NetUpdateHash("InventoryItem:Done",self.id, nextItemId,  self.class)
+
+	if self.id then --only netcheck items with id, otherwise we get false desyncs when weapon mod preview items get nuked;
+		g_ItemIdToItem[self.id] = nil
+		NetUpdateHash("InventoryItem:Done", self.id, nextItemId, self.class)
+	end
 end
 
 local function lInventoryItemInitializeItemId(self)
@@ -144,8 +146,13 @@ DefineClass.Armor = { __parents = { "InventoryItem", "ArmorProperties", "BobbyRa
 DefineClass.Ammo = { __parents = { "SquadBagItem", "AmmoProperties", "BobbyRayShopAmmoProperties" } }
 DefineClass.QuickSlotItem = { __parents = { "InventoryItem" } }
 DefineClass.Medicine = { __parents = { "InventoryItem", "BobbyRayShopOtherProperties"},
-	properties = {{ id = "max_meds_parts", name = "Max Meds Parts", template = true, category = "Condition", editor = "number", default = 0},},
+	properties = {
+		{ id = "max_meds_parts", name = "Max Meds Parts", template = true, category = "Condition", editor = "number", default = 0},
+		{ id = "UsePriority", editor = "number", default = 0, template = true, },
+	},
 }
+
+DefineClass("GasMaskBase", "Armor")
 
 -- Armor --
 function Armor:GetRolloverHint()
@@ -311,7 +318,7 @@ DefineClass.InventoryItemCompositeDef = {
 }
 
 DefineModItemCompositeObject("InventoryItemCompositeDef", {
-	EditorName = "Inventory Item",
+	EditorName = "Inventory item",
 	EditorSubmenu = "Item",
 })
 
@@ -577,14 +584,14 @@ function InventoryItem:SaveToLuaCode(indent, pstr, GetPropFunc, pos)
 end
 
 function InventoryItem:RegisterReactions(owner)
-	owner = owner or ZuluReactionResolveUnitActorObj(self.owner)
+	owner = owner or self.owner and ZuluReactionResolveUnitActorObj(self.owner)
 	if owner then
 		owner:AddReactions(self, self.unit_reactions)
 	end
 end
 
 function InventoryItem:UnregisterReactions(owner)
-	owner = owner or ZuluReactionResolveUnitActorObj(self.owner)
+	owner = owner or self.owner and ZuluReactionResolveUnitActorObj(self.owner)
 	if owner then
 		owner:AddReactions(self, self.unit_reactions)
 	end
@@ -607,12 +614,16 @@ end
 DefineClass.InventoryFilter = {
 	__parents = {"GedFilter"},
 	properties = {
-		{ id = "Caliber", editor = "combo", default = "", items = PresetGroupCombo("Caliber", "Default"), },
-		{ id = "ItemClass", editor = "combo", default = "", items = ClassDescendantsCombo("InventoryItem"), },
+		{ id = "CanAppearInShop", editor = "choice", default = "don't care", items = { true, false, "don't care" }, },
+		{ id = "Caliber", editor = "choice", default = "", items = PresetGroupCombo("Caliber", "Default"), },
+		{ id = "ItemClass", editor = "choice", default = "", items = ClassDescendantsCombo("InventoryItem"), },
 	}
 }
 
 function InventoryFilter:FilterObject(preset)
+	if self.CanAppearInShop ~= "don't care" and preset:GetProperty("CanAppearInShop") ~= self.CanAppearInShop then
+		return false
+	end
 	if self.Caliber ~= "" then
 		if not (preset:HasMember("Caliber") and string.find(preset.Caliber or "", self.Caliber)) then
 			return false
@@ -1200,6 +1211,132 @@ function Inventory:FindEmptyPosition(slot_name, item, local_changes)
 			end
 		end
 	end
+end
+-- find empty position for more items at the same time
+function Inventory:FillEmptyPositions(slot_name)
+	local slot_data = self:GetSlotData(slot_name)
+	local width, height, last_row_width = self:GetSlotDataDim(slot_name)
+	
+	local 	space, free_amounts = {}, {}
+	for i=1, width do
+		space[i] = {}
+	end
+	local free_space = self:GetMaxTilesInSlot(slot_name)
+	
+	self:ForEachItemInSlot(slot_name, function(slot_item, slot_name, left, top, space) 
+		local item_width = slot_item:GetUIWidth()
+		local item_height = slot_item:GetUIHeight()
+		local is_stack = IsKindOf(slot_item,"InventoryStack") 
+		if is_stack and slot_item.MaxStacks - slot_item.Amount>0 then
+			local tbl = free_amounts[slot_item.class] or {}
+			tbl[#tbl+1] = {left = left, top = top, free_amount = slot_item.MaxStacks - slot_item.Amount }
+			free_amounts[slot_item.class] = tbl
+		end
+		for i=left, left+item_width-1 do
+			for j=top, top+item_height-1 do
+				space[i][j] = true
+			end
+		end	
+		free_space = free_space - item_width * item_height
+	end, space)
+		
+	-- mark space to rect size with full
+	if last_row_width~=width then
+		for i = last_row_width+1, width do
+			space[i][height] =  true
+		end
+	end
+	return space, free_amounts, free_space
+end
+
+function Inventory:FindEmptyPositions(slot_name, items, space, free_amounts)
+	local slot_data = self:GetSlotData(slot_name)
+	local space = space
+	local free_amounts = free_amounts
+	local width, height, last_row_width = self:GetSlotDataDim(slot_name)
+	
+	if not next(space) then
+		local free_space
+		space, free_amounts, free_space  = self:FillEmptyPositions(slot_name)
+		-- check for stacking
+		--if free_space<=0 then
+		--	return false,space
+		--end
+		local total_space = 0
+		for i=1 , #items do
+			local item =  items[i]
+			local iwidth = item:GetUIWidth()
+			local iheight = item:GetUIHeight()					
+			total_space = total_space + iwidth*iheight
+		end
+--		if free_space < total_space then
+--			return false,space
+--		end
+	end
+	
+	for i=1, #items do
+		local item =  items[i]
+		local iwidth = item:GetUIWidth()
+		local iheight = item:GetUIHeight()
+		local is_stack = IsKindOf(item,"InventoryStack") 
+		local item_amount = is_stack and item.Amount or 1
+		-- serach to stack
+		if is_stack and free_amounts and free_amounts[item.class] then
+			local tbl = free_amounts[item.class]
+			for  j = #tbl, 1, -1 do
+				local t = tbl[j]
+				local to_add =   Min(t.free_amount,item_amount)
+				item_amount = item_amount - to_add
+				t.free_amount = t.free_amount - to_add
+				if t.free_amount==0 then
+					table.remove(tbl,j)
+				end
+			end	
+			if item_amount==0 then	
+				return true, space, free_amounts
+			end
+		end
+		
+		
+		local x,y = 1,1
+		local raw_width = width
+		local placed = false
+		while x<=raw_width and y<=height and (x+iwidth-1)<=raw_width and (y+iheight-1)<=height do
+			local full =  false
+			for i=x, x+iwidth-1 do
+				for j=y, y+iheight-1 do
+					if not space[i] or space[i][j] then
+						full = true
+						break
+					end	
+				end
+				if full then
+					break
+				end	
+			end
+			if not full then				
+				for i=x, x+iwidth-1 do
+					for j=y, y+iheight-1 do
+						space[x][y] = true
+						placed = true
+					end
+				end
+				break
+			end	
+			x = x+1
+			if x>raw_width or (x+iwidth-1)>raw_width then
+				x = 1
+				y = y+1
+				if y == height then
+					raw_width = last_row_width
+				end
+			end
+		end
+		if not placed then 
+			return false, space, free_amounts
+		end
+	end
+	return true, space, free_amounts
 end
 
 function SortItemsArray(items)
@@ -2082,8 +2219,8 @@ function GetDropContainer(unit, pos, item_to_add)
 	return container
 end
 
-function SquadBagAction(srcInventory, srcSlotName, itemId, squadId, actionName)
-	NetUpdateHash("SquadBagAction", srcSlotName, itemId, squadId, actionName)
+function SquadBagAction(srcInventory, srcSlotName, itemIds, squadId, actionName)
+	NetUpdateHash("SquadBagAction", srcSlotName, itemIds, squadId, actionName)
 	local squadBag =squadId and GetSquadBagInventory(squadId)
 	
 	local srcType = type(srcInventory)
@@ -2101,42 +2238,48 @@ function SquadBagAction(srcInventory, srcSlotName, itemId, squadId, actionName)
 		end
 		srcInventory  = val
 	end
-	
-	local item = g_ItemIdToItem[itemId]
-	if item then
-		if actionName == "unload" then
-			UnloadWeapon(item, squadBag)
-		elseif actionName == "unload underslung" then
-			if IsKindOf(item, "FirearmBase") then
-				item = item:GetSubweapon("Firearm")
-				if item then
-					UnloadWeapon(item, squadBag)
-				end
+	for _, itemId in ipairs(itemIds) do
+		local item = g_ItemIdToItem[itemId]
+		if item then
+			local is_stack = IsKindOf(item, "InventoryStack")
+			if is_stack then
+				actionName = actionName=="scrap" and "scrapall" or actionName
+				actionName = actionName=="cashin" and "cashstack" or actionName
 			end
-		elseif actionName == "scrap" then
-			ScrapItem(srcInventory, srcSlotName, item, 1, squadBag, squadId)
-		elseif actionName == "scrapall" then
-			ScrapItem(srcInventory, srcSlotName, item, false, squadBag, squadId)
-		elseif actionName == "salvage" then	
-			SalvageItem(srcInventory, srcSlotName, item, squadBag)
-		elseif actionName == "refill" then	
-			RefillMedsItem(srcInventory, srcSlotName, item, squadBag)	
-		elseif actionName == "cashin" then
-			CashInItem(srcInventory, srcSlotName, item, 1)
-		elseif actionName == "cashstack" or actionName == "cashstack-nolog" then
-			CashInItem(srcInventory, srcSlotName, item, false, actionName == "cashstack-nolog")
-		elseif actionName == "unpack" then
-			UnpackItem(srcInventory, srcSlotName, item, 1)
+			if actionName == "unload" then
+				UnloadWeapon(item, squadBag)
+			elseif actionName == "unload underslung" then
+				if IsKindOf(item, "FirearmBase") then
+					item = item:GetSubweapon("Firearm")
+					if item then
+						UnloadWeapon(item, squadBag)
+					end
+				end
+			elseif actionName == "scrap" then
+				ScrapItem(srcInventory, srcSlotName, item, 1, squadBag, squadId)
+			elseif actionName == "scrapall" then
+				ScrapItem(srcInventory, srcSlotName, item, false, squadBag, squadId)
+			elseif actionName == "salvage" then	
+				SalvageItem(srcInventory, srcSlotName, item, squadBag)
+			elseif actionName == "refill" then	
+				RefillMedsItem(srcInventory, srcSlotName, item, squadBag)	
+			elseif actionName == "cashin" then
+				CashInItem(srcInventory, srcSlotName, item, 1)
+			elseif actionName == "cashstack" or actionName == "cashstack-nolog" then
+				CashInItem(srcInventory, srcSlotName, item, false, actionName == "cashstack-nolog")
+			elseif actionName == "unpack" then
+				UnpackItem(srcInventory, srcSlotName, item, 1)
+			end
 		end
-		Msg("InventoryChange", srcInventory)
-		Msg("InventoryChange", squadBag)
-		Msg("InventoryAddItem", squadBag)
-		Msg("InventoryRemoveItem", srcInventory)
-		ObjModified(srcInventory)
-		ObjModified(squadBag)
-		ObjModified("SquadBagAction")
-		if srcInventory:HasMember("CanBeControlled") and srcInventory:CanBeControlled() and not srcInventory:IsDead() then InventoryUpdate(srcInventory) end
 	end
+	Msg("InventoryChange", srcInventory)
+	Msg("InventoryChange", squadBag)
+	Msg("InventoryAddItem", squadBag)
+	Msg("InventoryRemoveItem", srcInventory)
+	ObjModified(srcInventory)
+	ObjModified(squadBag)
+	ObjModified("SquadBagAction")
+	if srcInventory:HasMember("CanBeControlled") and srcInventory:CanBeControlled() and not srcInventory:IsDead() then InventoryUpdate(srcInventory) end
 end
 
 function NetSyncEvents.SquadBagAction(session_id, pack)
@@ -2420,7 +2563,7 @@ function NetSyncEvents.WeaponModifyCondition(ownerId, weaponSlot, amount)
 	owner:ItemModifyCondition(weaponItem, amount)
 end
 
-function NetSyncEvents.WeaponModified(ownerId, weaponSlot, components, color, success, modAdded, mechanicId)
+function NetSyncEvents.WeaponModified(ownerId, weaponSlot, components, color, success, modAdded, mechanicId, modSlot, oldComponent)
 	local owner = gv_SatelliteView and gv_UnitData[ownerId] or g_Units[ownerId]
 	assert(owner)
 	if not owner then return end
@@ -2441,7 +2584,7 @@ function NetSyncEvents.WeaponModified(ownerId, weaponSlot, components, color, su
 	
 	local mechanic = gv_SatelliteView and gv_UnitData[mechanicId] or g_Units[mechanicId]
 	if success then
-		Msg("WeaponModifiedSuccessSync", weaponItem, owner, modAdded, mechanic)
+		Msg("WeaponModifiedSuccessSync", weaponItem, owner, modAdded, mechanic, modSlot, oldComponent)
 	end
 end
 
@@ -2528,7 +2671,11 @@ function ScrapItem(inventory, slot_name, item, amount, squadBag, squadId)
 				res_item.Amount = res.amount
 			end
 			local add_slot_name = GetContainerInventorySlotName(inventory)
-			inventory:AddItem(add_slot_name, res_item)
+			if add_slot_name=="Inventory" then
+				AddItemsToInventory(inventory, {res_item})
+			else
+				inventory:AddItem(add_slot_name, res_item)
+			end
 		end
 	end
 	
@@ -2553,6 +2700,8 @@ function ScrapItem(inventory, slot_name, item, amount, squadBag, squadId)
 	if IsKindOf(inventory, "Unit") and slot_name == inventory.current_weapon and inventory:IsIdleCommand() then
 		inventory:SetCommand("Idle")
 	end
+	
+	ObjModified("inventory tabs")
 end
 
 function MulDivScaled(a,b,c,scale)
@@ -2773,9 +2922,11 @@ function NetSyncEvents.InventoryTakeAllNet(playerId, net_units, net_containers)
 	
 	-- Looting itself; from all containers, starting from top one to first unit
 	local unit_done = {}
+	local sector_stash = false
 	local itemsTakenCount, itemsNonTakenCount = 0, 0
 	for _, container in ipairs(containers or empty_table) do
 		if IsKindOf(container, "SectorStash") then
+			sector_stash = true
 			container:ResetBinding() --make ForEachItemInSlot iterate in the same order for this container
 		end
 		local container_slot_name = GetContainerInventorySlotName(container)
@@ -2875,7 +3026,7 @@ function NetSyncEvents.InventoryTakeAllNet(playerId, net_units, net_containers)
 		end, units)
 	end
 	if is_local_player then
-		if itemsNonTakenCount <= 0 then
+		if itemsNonTakenCount <= 0 and not sector_stash then
 			local dlg = GetDialog("FullscreenGameDialogs")
 			if dlg then
 				dlg:SetMode("empty")

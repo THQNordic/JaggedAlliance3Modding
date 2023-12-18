@@ -17,9 +17,7 @@ PlaceObj('UnitDataCompositeDef', {
 	'Portrait', "UI/EnemiesPortraits/ArmyHeavy",
 	'Name', T(242481798231, --[[UnitDataCompositeDef Landsbach_SuperSoldier_Assault Name]] "Siegfried's Guard"),
 	'Randomization', true,
-	'elite', true,
-	'eliteCategory', "Foreigners",
-	'Affiliation', "Other",
+	'Affiliation', "SuperSoldiers",
 	'StartingLevel', 6,
 	'neutral_retaliate', true,
 	'AIKeywords', {
@@ -47,6 +45,6 @@ PlaceObj('UnitDataCompositeDef', {
 	'Tier', "Elite",
 	'pollyvoice', "Joey",
 	'gender', "Male",
-	'VoiceResponseId', "AdonisAssault",
+	'VoiceResponseId', "SuperSoldier_Assault",
 })
 

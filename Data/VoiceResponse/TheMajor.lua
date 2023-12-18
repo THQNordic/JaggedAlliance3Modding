@@ -68,8 +68,8 @@ PlaceObj('VoiceResponse', {
 		T(133754409677, --[[VoiceResponse TheMajor VillainDefeated VoiceResponse VillainDefeated - Enemy lieutenant defeated. voice:TheMajor]] "That's it. The Major's done. Go ahead and put an end to it already... What are you waiting for?!")
 	}),
 	Wounded = TConcat({
-		T(315654189692, --[[VoiceResponse TheMajor Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:TheMajor]] "Gonna take a hell of a lot more than that to slow me down!"),
-		T(695475476303, --[[VoiceResponse TheMajor Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:TheMajor]] "Not bad, soldier! The question is, can you finish me?")
+		T(315654189692, --[[VoiceResponse TheMajor Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:TheMajor]] "Gonna take a hell of a lot more than that to slow me down!"),
+		T(695475476303, --[[VoiceResponse TheMajor Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:TheMajor]] "Not bad, soldier! The question is, can you finish me?")
 	}),
 	group = "Villains",
 	id = "TheMajor",

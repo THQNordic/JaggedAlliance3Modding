@@ -400,9 +400,9 @@ function HealthBar:OnContextUpdate(context)
 	local values = {}
 	for i, prop_id in ipairs(prop_ids) do
 		if context then
-			local value = ResolveValue(context, prop_id)
+			local value = ResolveValue(context, prop_id) or 0
 			values[i] = value
-			if value ~= rawget(self, value) then
+			if value ~= rawget(self.Progress, i) then
 				self:OnPropUpdate(context, i, value)
 			end
 		end

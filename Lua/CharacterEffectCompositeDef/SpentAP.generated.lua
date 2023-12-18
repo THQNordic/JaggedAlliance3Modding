@@ -16,6 +16,7 @@ DefineClass.SpentAP = {
 					target:RemoveStatusEffect("FreeMove")
 					target:RemoveStatusEffect("Focused")
 					target:ConsumeAP(self.stacks)
+					target.performed_action_this_turn = true
 					target:RemoveStatusEffect(self.class, "all")
 				end
 			end,

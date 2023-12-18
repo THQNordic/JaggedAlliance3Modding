@@ -4,7 +4,7 @@ PlaceObj('QuestsDef', {
 	Chapter = "Act1",
 	DisplayName = T(277384033457, --[[QuestsDef Sanatorium DisplayName]] "The Outbreak"),
 	NoteDefs = {
-		LastNoteIdx = 45,
+		LastNoteIdx = 46,
 		PlaceObj('QuestNote', {
 			Badges = {
 				PlaceObj('QuestBadgePlacement', {
@@ -155,11 +155,20 @@ PlaceObj('QuestsDef', {
 							QuestId2 = "Sanatorium",
 						}),
 						PlaceObj('QuestIsVariableBool', {
+							Condition = "or",
 							QuestId = "Sanatorium",
-							Vars = set( "Failed" ),
+							Vars = set( "Completed", "Failed" ),
 							__eval = function ()
 								local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
-								return quest.Failed
+								return quest.Completed or quest.Failed
+							end,
+						}),
+						PlaceObj('QuestIsVariableBool', {
+							QuestId = "U-Bahn",
+							Vars = set( "OutcomeSanatorium" ),
+							__eval = function ()
+								local quest = gv_Quests['U-Bahn'] or QuestGetState('U-Bahn')
+								return quest.OutcomeSanatorium
 							end,
 						}),
 					},
@@ -217,6 +226,17 @@ PlaceObj('QuestsDef', {
 					},
 				}),
 			},
+			HideConditions = {
+				PlaceObj('QuestIsVariableBool', {
+					Condition = "or",
+					QuestId = "Sanatorium",
+					Vars = set( "Completed", "Failed", "MangelExposed" ),
+					__eval = function ()
+						local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
+						return quest.Completed or quest.Failed or quest.MangelExposed
+					end,
+				}),
+			},
 			Idx = 25,
 			ShowConditions = {
 				PlaceObj('QuestIsVariableBool', {
@@ -240,6 +260,17 @@ PlaceObj('QuestsDef', {
 					__eval = function ()
 						local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
 						return quest.Clue_Chalet
+					end,
+				}),
+			},
+			HideConditions = {
+				PlaceObj('QuestIsVariableBool', {
+					Condition = "or",
+					QuestId = "Sanatorium",
+					Vars = set( "Completed", "Failed", "MangelExposed" ),
+					__eval = function ()
+						local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
+						return quest.Completed or quest.Failed or quest.MangelExposed
 					end,
 				}),
 			},
@@ -268,6 +299,17 @@ PlaceObj('QuestsDef', {
 					end,
 				}),
 			},
+			HideConditions = {
+				PlaceObj('QuestIsVariableBool', {
+					Condition = "or",
+					QuestId = "Sanatorium",
+					Vars = set( "Completed", "Failed", "MangelExposed" ),
+					__eval = function ()
+						local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
+						return quest.Completed or quest.Failed or quest.MangelExposed
+					end,
+				}),
+			},
 			Idx = 26,
 			ShowConditions = {
 				PlaceObj('QuestIsVariableBool', {
@@ -289,6 +331,17 @@ PlaceObj('QuestsDef', {
 					__eval = function ()
 						local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
 						return quest.Clue_BodyPile
+					end,
+				}),
+			},
+			HideConditions = {
+				PlaceObj('QuestIsVariableBool', {
+					Condition = "or",
+					QuestId = "Sanatorium",
+					Vars = set( "Completed", "Failed", "MangelExposed" ),
+					__eval = function ()
+						local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
+						return quest.Completed or quest.Failed or quest.MangelExposed
 					end,
 				}),
 			},
@@ -316,6 +369,17 @@ PlaceObj('QuestsDef', {
 					end,
 				}),
 			},
+			HideConditions = {
+				PlaceObj('QuestIsVariableBool', {
+					Condition = "or",
+					QuestId = "Sanatorium",
+					Vars = set( "Completed", "Failed", "MangelExposed" ),
+					__eval = function ()
+						local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
+						return quest.Completed or quest.Failed or quest.MangelExposed
+					end,
+				}),
+			},
 			Idx = 28,
 			ShowConditions = {
 				PlaceObj('QuestIsVariableBool', {
@@ -337,6 +401,17 @@ PlaceObj('QuestsDef', {
 					__eval = function ()
 						local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
 						return quest.Clue_Incinerator
+					end,
+				}),
+			},
+			HideConditions = {
+				PlaceObj('QuestIsVariableBool', {
+					Condition = "or",
+					QuestId = "Sanatorium",
+					Vars = set( "Completed", "Failed", "MangelExposed" ),
+					__eval = function ()
+						local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
+						return quest.Completed or quest.Failed or quest.MangelExposed
 					end,
 				}),
 			},
@@ -364,6 +439,17 @@ PlaceObj('QuestsDef', {
 					end,
 				}),
 			},
+			HideConditions = {
+				PlaceObj('QuestIsVariableBool', {
+					Condition = "or",
+					QuestId = "Sanatorium",
+					Vars = set( "Completed", "Failed", "MangelExposed" ),
+					__eval = function ()
+						local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
+						return quest.Completed or quest.Failed or quest.MangelExposed
+					end,
+				}),
+			},
 			Idx = 31,
 			ShowConditions = {
 				PlaceObj('QuestIsVariableBool', {
@@ -388,6 +474,17 @@ PlaceObj('QuestsDef', {
 					end,
 				}),
 			},
+			HideConditions = {
+				PlaceObj('QuestIsVariableBool', {
+					Condition = "or",
+					QuestId = "Sanatorium",
+					Vars = set( "Completed", "Failed", "MangelExposed" ),
+					__eval = function ()
+						local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
+						return quest.Completed or quest.Failed or quest.MangelExposed
+					end,
+				}),
+			},
 			Idx = 32,
 			ShowConditions = {
 				PlaceObj('QuestIsVariableBool', {
@@ -409,6 +506,17 @@ PlaceObj('QuestsDef', {
 					__eval = function ()
 						local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
 						return quest.Clue_Dissection
+					end,
+				}),
+			},
+			HideConditions = {
+				PlaceObj('QuestIsVariableBool', {
+					Condition = "or",
+					QuestId = "Sanatorium",
+					Vars = set( "Completed", "Failed", "MangelExposed" ),
+					__eval = function ()
+						local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
+						return quest.Completed or quest.Failed or quest.MangelExposed
 					end,
 				}),
 			},
@@ -496,10 +604,10 @@ PlaceObj('QuestsDef', {
 				PlaceObj('QuestIsVariableBool', {
 					Condition = "or",
 					QuestId = "Sanatorium",
-					Vars = set( "MangelKilled" ),
+					Vars = set( "Completed", "MangelKilled" ),
 					__eval = function ()
 						local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
-						return quest.MangelKilled
+						return quest.Completed or quest.MangelKilled
 					end,
 				}),
 			},
@@ -539,10 +647,10 @@ PlaceObj('QuestsDef', {
 				PlaceObj('QuestIsVariableBool', {
 					Condition = "or",
 					QuestId = "Sanatorium",
-					Vars = set( "Failed" ),
+					Vars = set( "Completed", "Failed" ),
 					__eval = function ()
 						local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
-						return quest.Failed
+						return quest.Completed or quest.Failed
 					end,
 				}),
 			},
@@ -581,10 +689,10 @@ PlaceObj('QuestsDef', {
 				PlaceObj('QuestIsVariableBool', {
 					Condition = "or",
 					QuestId = "Sanatorium",
-					Vars = set( "Failed" ),
+					Vars = set( "Completed", "Failed" ),
 					__eval = function ()
 						local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
-						return quest.Failed
+						return quest.Completed or quest.Failed
 					end,
 				}),
 			},
@@ -623,10 +731,10 @@ PlaceObj('QuestsDef', {
 				PlaceObj('QuestIsVariableBool', {
 					Condition = "or",
 					QuestId = "Sanatorium",
-					Vars = set( "Failed" ),
+					Vars = set( "Completed", "Failed" ),
 					__eval = function ()
 						local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
-						return quest.Failed
+						return quest.Completed or quest.Failed
 					end,
 				}),
 			},
@@ -680,10 +788,10 @@ PlaceObj('QuestsDef', {
 						PlaceObj('QuestIsVariableBool', {
 							Condition = "or",
 							QuestId = "Sanatorium",
-							Vars = set( "Failed" ),
+							Vars = set( "Completed", "Failed" ),
 							__eval = function ()
 								local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
-								return quest.Failed
+								return quest.Completed or quest.Failed
 							end,
 						}),
 					},
@@ -760,10 +868,10 @@ PlaceObj('QuestsDef', {
 						PlaceObj('QuestIsVariableBool', {
 							Condition = "or",
 							QuestId = "Sanatorium",
-							Vars = set( "Failed" ),
+							Vars = set( "Completed", "Failed" ),
 							__eval = function ()
 								local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
-								return quest.Failed
+								return quest.Completed or quest.Failed
 							end,
 						}),
 					},
@@ -823,10 +931,10 @@ PlaceObj('QuestsDef', {
 				PlaceObj('QuestIsVariableBool', {
 					Condition = "or",
 					QuestId = "Sanatorium",
-					Vars = set( "Failed" ),
+					Vars = set( "Completed", "Failed" ),
 					__eval = function ()
 						local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
-						return quest.Failed
+						return quest.Completed or quest.Failed
 					end,
 				}),
 			},
@@ -868,10 +976,10 @@ PlaceObj('QuestsDef', {
 						PlaceObj('QuestIsVariableBool', {
 							Condition = "or",
 							QuestId = "Sanatorium",
-							Vars = set( "Failed" ),
+							Vars = set( "Completed", "Failed" ),
 							__eval = function ()
 								local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
-								return quest.Failed
+								return quest.Completed or quest.Failed
 							end,
 						}),
 						PlaceObj('QuestIsVariableBool', {
@@ -953,10 +1061,10 @@ PlaceObj('QuestsDef', {
 				PlaceObj('QuestIsVariableBool', {
 					Condition = "or",
 					QuestId = "Sanatorium",
-					Vars = set( "Failed" ),
+					Vars = set( "Completed", "Failed" ),
 					__eval = function ()
 						local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
-						return quest.Failed
+						return quest.Completed or quest.Failed
 					end,
 				}),
 			},
@@ -995,10 +1103,10 @@ PlaceObj('QuestsDef', {
 				PlaceObj('QuestIsVariableBool', {
 					Condition = "or",
 					QuestId = "Sanatorium",
-					Vars = set( "Failed" ),
+					Vars = set( "Completed", "Failed" ),
 					__eval = function ()
 						local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
-						return quest.Failed
+						return quest.Completed or quest.Failed
 					end,
 				}),
 			},
@@ -1036,6 +1144,17 @@ PlaceObj('QuestsDef', {
 					end,
 				}),
 			},
+			HideConditions = {
+				PlaceObj('QuestIsVariableBool', {
+					Condition = "or",
+					QuestId = "Sanatorium",
+					Vars = set( "Completed", "Failed" ),
+					__eval = function ()
+						local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
+						return quest.Completed or quest.Failed
+					end,
+				}),
+			},
 			Idx = 38,
 			ShowConditions = {
 				PlaceObj('QuestIsVariableBool', {
@@ -1061,10 +1180,10 @@ PlaceObj('QuestsDef', {
 				PlaceObj('QuestIsVariableBool', {
 					Condition = "or",
 					QuestId = "Sanatorium",
-					Vars = set( "MangelKilled", "SamplesGiven" ),
+					Vars = set( "Completed", "MangelKilled", "SamplesGiven" ),
 					__eval = function ()
 						local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
-						return quest.MangelKilled or quest.SamplesGiven
+						return quest.Completed or quest.MangelKilled or quest.SamplesGiven
 					end,
 				}),
 			},
@@ -1092,14 +1211,26 @@ PlaceObj('QuestsDef', {
 		PlaceObj('QuestNote', {
 			AddInHistory = true,
 			HideConditions = {
-				PlaceObj('QuestIsVariableBool', {
-					Condition = "or",
-					QuestId = "Sanatorium",
-					Vars = set( "MangelKilled", "SamplesGiven" ),
-					__eval = function ()
-						local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
-						return quest.MangelKilled or quest.SamplesGiven
-					end,
+				PlaceObj('OR', {
+					Conditions = {
+						PlaceObj('QuestIsVariableBool', {
+							Condition = "or",
+							QuestId = "Sanatorium",
+							Vars = set( "MangelKilled", "SamplesGiven" ),
+							__eval = function ()
+								local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
+								return quest.MangelKilled or quest.SamplesGiven
+							end,
+						}),
+						PlaceObj('QuestIsVariableBool', {
+							QuestId = "U-Bahn",
+							Vars = set( "OutcomeSanatorium" ),
+							__eval = function ()
+								local quest = gv_Quests['U-Bahn'] or QuestGetState('U-Bahn')
+								return quest.OutcomeSanatorium
+							end,
+						}),
+					},
 				}),
 			},
 			Idx = 10,
@@ -1141,6 +1272,16 @@ PlaceObj('QuestsDef', {
 					__eval = function ()
 						local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
 						return not quest.MangelKilled and quest.SamplesGiven
+					end,
+				}),
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "U-Bahn",
+					Vars = set({
+	OutcomeSanatorium = false,
+}),
+					__eval = function ()
+						local quest = gv_Quests['U-Bahn'] or QuestGetState('U-Bahn')
+						return not quest.OutcomeSanatorium
 					end,
 				}),
 			},
@@ -1188,6 +1329,16 @@ PlaceObj('QuestsDef', {
 					end,
 				}),
 			},
+			HideConditions = {
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "U-Bahn",
+					Vars = set( "OutcomeSanatorium" ),
+					__eval = function ()
+						local quest = gv_Quests['U-Bahn'] or QuestGetState('U-Bahn')
+						return quest.OutcomeSanatorium
+					end,
+				}),
+			},
 			Idx = 13,
 			ShowConditions = {
 				PlaceObj('QuestIsVariableBool', {
@@ -1201,6 +1352,16 @@ PlaceObj('QuestsDef', {
 					__eval = function ()
 						local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
 						return not quest.HumanExperiments and quest.MangelKilled and quest.MangelSamples and quest.MangelTimerExpired
+					end,
+				}),
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "U-Bahn",
+					Vars = set({
+	OutcomeSanatorium = false,
+}),
+					__eval = function ()
+						local quest = gv_Quests['U-Bahn'] or QuestGetState('U-Bahn')
+						return not quest.OutcomeSanatorium
 					end,
 				}),
 			},
@@ -1288,6 +1449,46 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			Text = T(708381306429, --[[QuestsDef Sanatorium Text]] "<em>Outcome:</em> Put a violent end to the inhumane experiments of <em>Dr. Kronenberg</em>"),
+		}),
+		PlaceObj('QuestNote', {
+			CompletionConditions = {
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "U-Bahn",
+					Vars = set( "OutcomeSanatorium" ),
+					__eval = function ()
+						local quest = gv_Quests['U-Bahn'] or QuestGetState('U-Bahn')
+						return quest.OutcomeSanatorium
+					end,
+				}),
+			},
+			Idx = 46,
+			ShowConditions = {
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "U-Bahn",
+					Vars = set( "OutcomeSanatorium" ),
+					__eval = function ()
+						local quest = gv_Quests['U-Bahn'] or QuestGetState('U-Bahn')
+						return quest.OutcomeSanatorium
+					end,
+				}),
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"H12",
+						"H12_Underground",
+					},
+				}),
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "Sanatorium",
+					Vars = set({
+	MangelKilled = false,
+}),
+					__eval = function ()
+						local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
+						return not quest.MangelKilled
+					end,
+				}),
+			},
+			Text = T(585287057531, --[[QuestsDef Sanatorium Text]] "<em>Outcome:</em> <em>Dr. Gruselheim</em> developed a vaccine for Red Rabies and cured <em>Dr. Kronenberg</em>"),
 		}),
 	},
 	QuestGroup = "Jungle",
@@ -1837,6 +2038,16 @@ PlaceObj('QuestsDef', {
 						return not quest.Completed
 					end,
 				}),
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "U-Bahn",
+					Vars = set({
+	OutcomeSanatorium = false,
+}),
+					__eval = function ()
+						local quest = gv_Quests['U-Bahn'] or QuestGetState('U-Bahn')
+						return not quest.OutcomeSanatorium
+					end,
+				}),
 			},
 			Effects = {
 				PlaceObj('QuestSetVariableBool', {
@@ -2117,6 +2328,36 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
+				PlaceObj('GroupIsDead', {
+					Group = "EscapedPatients",
+				}),
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"I12",
+					},
+				}),
+			},
+			Effects = {
+				PlaceObj('QuestSetVariableBool', {
+					Prop = "CampHope_PatientsKilled",
+					QuestId = "Sanatorium",
+				}),
+				PlaceObj('MusicSetSectorPlaylist', {
+					MusicCombat = "Battle_Normal",
+					MusicConflict = "SpecificSpooky_Conflict",
+					MusicExploration = "SpecificSpooky_Exploration",
+					SectorID = "I12",
+				}),
+			},
+			Once = true,
+			ParamId = "TCE_CampHopePatientsKilled",
+			QuestId = "Sanatorium",
+			requiredSectors = {
+				"I12",
+			},
+		}),
+		PlaceObj('TriggeredConditionalEvent', {
+			Conditions = {
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "Sanatorium",
 					Vars = set( "CampHopeVisit_Phase3" ),
@@ -2158,6 +2399,104 @@ PlaceObj('QuestsDef', {
 			QuestId = "Sanatorium",
 			requiredSectors = {
 				"I12",
+			},
+		}),
+		PlaceObj('TriggeredConditionalEvent', {
+			Conditions = {
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "U-Bahn",
+					Vars = set( "OutcomeSanatorium" ),
+					__eval = function ()
+						local quest = gv_Quests['U-Bahn'] or QuestGetState('U-Bahn')
+						return quest.OutcomeSanatorium
+					end,
+				}),
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "Sanatorium",
+					Vars = set({
+	CampHopeVisit_Phase1 = true,
+	CampHopeVisit_Phase3 = false,
+}),
+					__eval = function ()
+						local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
+						return quest.CampHopeVisit_Phase1 and not quest.CampHopeVisit_Phase3
+					end,
+				}),
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "CampHope",
+					Vars = set({
+	Completed = false,
+}),
+					__eval = function ()
+						local quest = gv_Quests['CampHope'] or QuestGetState('CampHope')
+						return not quest.Completed
+					end,
+				}),
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"I12",
+					},
+				}),
+			},
+			Effects = {
+				PlaceObj('GrantExperienceSector', {
+					Amount = "XPQuestReward_Medium",
+					logImportant = true,
+				}),
+				PlaceObj('MusicSetSectorPlaylist', {
+					MusicCombat = "Battle_Normal",
+					MusicConflict = "SpecificMilitary_Conflict",
+					MusicExploration = "SpecificSpooky_Complete",
+					SectorID = "I12",
+				}),
+				PlaceObj('QuestSetVariableBool', {
+					Prop = "Completed",
+					QuestId = "CampHope",
+				}),
+			},
+			Once = true,
+			ParamId = "TCE_CampHopeGoodEnding",
+			QuestId = "Sanatorium",
+			SequentialEffects = false,
+			requiredSectors = {
+				"I12",
+			},
+		}),
+		PlaceObj('TriggeredConditionalEvent', {
+			Conditions = {
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "U-Bahn",
+					Vars = set( "OutcomeSanatorium" ),
+					__eval = function ()
+						local quest = gv_Quests['U-Bahn'] or QuestGetState('U-Bahn')
+						return quest.OutcomeSanatorium
+					end,
+				}),
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"H12",
+						"H12_Underground",
+					},
+				}),
+			},
+			Effects = {
+				PlaceObj('QuestSetVariableBool', {
+					Prop = "Completed",
+					QuestId = "Sanatorium",
+				}),
+				PlaceObj('QuestSetVariableBool', {
+					Prop = "Failed",
+					QuestId = "Sanatorium",
+					Set = false,
+				}),
+			},
+			Once = true,
+			ParamId = "TCE_GruselheimOutcome",
+			QuestId = "Sanatorium",
+			SequentialEffects = false,
+			requiredSectors = {
+				"H12",
+				"H12_Underground",
 			},
 		}),
 	},
@@ -2297,6 +2636,9 @@ PlaceObj('QuestsDef', {
 			Name = "CampHopeVisit_Phase3",
 		}),
 		PlaceObj('QuestVarBool', {
+			Name = "CampHope_PatientsKilled",
+		}),
+		PlaceObj('QuestVarBool', {
 			Name = "CampHope_GameOver",
 		}),
 		PlaceObj('QuestVarTCEState', {
@@ -2306,7 +2648,13 @@ PlaceObj('QuestsDef', {
 			Name = "TCE_CampHopeVisit_Phase3",
 		}),
 		PlaceObj('QuestVarTCEState', {
+			Name = "TCE_CampHopePatientsKilled",
+		}),
+		PlaceObj('QuestVarTCEState', {
 			Name = "TCE_CampHopeDone",
+		}),
+		PlaceObj('QuestVarTCEState', {
+			Name = "TCE_CampHopeGoodEnding",
 		}),
 		PlaceObj('QuestVarTCEState', {
 			Name = "TCE_OutbreakStart",
@@ -2362,6 +2710,9 @@ PlaceObj('QuestsDef', {
 		PlaceObj('QuestVarBool', {
 			Name = "NotStarted",
 			Value = true,
+		}),
+		PlaceObj('QuestVarTCEState', {
+			Name = "TCE_GruselheimOutcome",
 		}),
 	},
 	group = "Jungle",

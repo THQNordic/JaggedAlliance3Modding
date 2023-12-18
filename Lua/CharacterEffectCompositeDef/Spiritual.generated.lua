@@ -7,6 +7,14 @@ DefineClass.Spiritual = {
 
 
 	object_class = "Perk",
+	unit_reactions = {
+		PlaceObj('UnitReaction', {
+			Event = "OnCalcChanceToHit",
+			Handler = function (self, target, attacker, action, attack_target, weapon1, weapon2, data)
+				data.min = self:ResolveValue("minAccuracy")
+			end,
+		}),
+	},
 	DisplayName = T(906477417382, --[[CharacterEffectCompositeDef Spiritual DisplayName]] "Spiritual"),
 	Description = T(233455514627, --[[CharacterEffectCompositeDef Spiritual Description]] "Guaranteed <em>Minimal Accuracy</em> with hopeless attacks."),
 	Icon = "UI/Icons/Perks/Spiritual",

@@ -349,7 +349,7 @@ PlaceObj('VoiceResponse', {
 		T(558211693396, --[[VoiceResponse Steroid SelectionStealth VoiceResponse SelectionStealth - when selected or autoselected voice:Steroid]] "I will fall on them like a tree in the forest.")
 	}),
 	SeriouslyWounded = TConcat({
-		T(779622722782, --[[VoiceResponse Steroid SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds) voice:Steroid]] "If I take any more hits, I will die and be dead.")
+		T(779622722782, --[[VoiceResponse Steroid SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining. voice:Steroid]] "If I take any more hits, I will die and be dead.")
 	}),
 	Startled = TConcat({
 		T(173989331719, --[[VoiceResponse Steroid Startled VoiceResponse Startled - Startled by hearing a sudden noise voice:Steroid]] "Huh?"),
@@ -395,9 +395,9 @@ PlaceObj('VoiceResponse', {
 		T(872710392214, --[[VoiceResponse Steroid WeaponJammed VoiceResponse WeaponJammed - When weapon has jammed voice:Steroid]] "Damn it to hell and back, this gun is jammed!")
 	}),
 	Wounded = TConcat({
-		T(256072916408, --[[VoiceResponse Steroid Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Steroid]] "Damn you, that hurt!"),
-		T(539741327324, --[[VoiceResponse Steroid Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Steroid]] "Bah! Pain is for wimpy people!"),
-		T(325571580363, --[[VoiceResponse Steroid Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Steroid]] "Do that again and I will crush you!")
+		T(256072916408, --[[VoiceResponse Steroid Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Steroid]] "Damn you, that hurt!"),
+		T(539741327324, --[[VoiceResponse Steroid Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Steroid]] "Bah! Pain is for wimpy people!"),
+		T(325571580363, --[[VoiceResponse Steroid Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Steroid]] "Do that again and I will crush you!")
 	}),
 	group = "MercenariesOld",
 	id = "Steroid",

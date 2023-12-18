@@ -9,6 +9,13 @@ PlaceObj('XTemplate', {
 		'Id', "idCombatLogButton",
 		'HAlign', "right",
 		'OnLayoutComplete', function (self)
+			if not CanYield() then
+				CreateRealTimeThread(self.OnLayoutComplete, self)
+				return
+			end
+			if not self.parent then return end
+			if self.window_state == "destroying" then return end
+			
 			if self.parent:IsVisible() then
 				CombatLogAnchorBox = self.content_box
 				Msg("CombatLogButtonChanged")

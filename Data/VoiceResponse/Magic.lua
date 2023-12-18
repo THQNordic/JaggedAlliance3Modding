@@ -305,9 +305,9 @@ PlaceObj('VoiceResponse', {
 		T(574283999362, --[[VoiceResponse Magic SelectionStealth VoiceResponse SelectionStealth - when selected or autoselected voice:Magic]] "Watch this magic trick.")
 	}),
 	SeriouslyWounded = TConcat({
-		T(738523869205, --[[VoiceResponse Magic SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds) voice:Magic]] "I'm real messed up and that ain't no jive."),
-		T(672860328457, --[[VoiceResponse Magic SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds) voice:Magic]] "Too much more of this and the magic show's over, ya dig?"),
-		T(147490472079, --[[VoiceResponse Magic SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds) voice:Magic]] "Be real cool if somebody could hook me up with some meds.")
+		T(738523869205, --[[VoiceResponse Magic SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining. voice:Magic]] "I'm real messed up and that ain't no jive."),
+		T(672860328457, --[[VoiceResponse Magic SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining. voice:Magic]] "Too much more of this and the magic show's over, ya dig?"),
+		T(147490472079, --[[VoiceResponse Magic SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining. voice:Magic]] "Be real cool if somebody could hook me up with some meds.")
 	}),
 	Startled = TConcat({
 		T(224660250786, --[[VoiceResponse Magic Startled VoiceResponse Startled - Startled by hearing a sudden noise voice:Magic]] "Huh?"),
@@ -350,9 +350,9 @@ PlaceObj('VoiceResponse', {
 		T(545361515485, --[[VoiceResponse Magic WeaponJammed VoiceResponse WeaponJammed - When weapon has jammed voice:Magic]] "My piece is jammed!")
 	}),
 	Wounded = TConcat({
-		T(284785767613, --[[VoiceResponse Magic Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Magic]] "Ah, shit!"),
-		T(901171554738, --[[VoiceResponse Magic Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Magic]] "They done hit me good."),
-		T(284429485457, --[[VoiceResponse Magic Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Magic]] "Stings like a mutha.")
+		T(284785767613, --[[VoiceResponse Magic Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Magic]] "Ah, shit!"),
+		T(901171554738, --[[VoiceResponse Magic Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Magic]] "They done hit me good."),
+		T(284429485457, --[[VoiceResponse Magic Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Magic]] "Stings like a mutha.")
 	}),
 	group = "MercenariesOld",
 	id = "Magic",

@@ -65,6 +65,66 @@ function BanterSetUnitInteraction:__exec(obj, context)
 	end
 end
 
+DefineClass.BobbyRayConsumeStock = {
+	__parents = { "Effect", },
+	__generated_by_class = "EffectDef",
+
+	properties = {
+		{ id = "ItemConsumeProbability", help = "Probability of each item to get picked for consumption", 
+			editor = "number", default = 13, 
+			default = const.BobbyRay.FakePurchase_PickProbability, scale = "%", slider = true, min = 0, max = 100, modifiable = true, },
+		{ id = "MinimumStockConsumption", help = "Minimum percentage of available stock consumed", 
+			editor = "number", default = 25, 
+			default = const.BobbyRay.FakePurchase_StockConsumedMin, scale = "%", slider = true, min = 0, max = 100, modifiable = true, },
+		{ id = "MaximumStockConsumption", help = "Maximum percentage of available stock consumed (if only one unit is available, it is always consumed)", 
+			editor = "number", default = 50, 
+			default = const.BobbyRay.FakePurchase_StockConsumedMax, scale = "%", slider = true, min = 0, max = 100, modifiable = true, },
+	},
+	EditorNestedObjCategory = "Bobby Ray",
+	EditorView = Untranslated("Consumes some of Bobby Ray's stock"),
+	Documentation = "Consumes some of Bobby Ray's stock to simulate other buyers.\n\nEach item is evaluated independently.\nA roll with ItemConsumeProbability change determines whether an item will be purchased or not.\nIf chosen, a percentage of its stock is consumed (at least one unit is always consumed), between Min and Max StockConsumption values.",
+}
+
+function BobbyRayConsumeStock:__exec(obj, context)
+	BobbyRayStoreConsumeRandomStock(self.ItemConsumeProbability, self.MinimumStockConsumption, self.MaximumStockConsumption)
+end
+
+DefineClass.BobbyRayRestockShop = {
+	__parents = { "Effect", },
+	__generated_by_class = "EffectDef",
+
+	properties = {
+		{ id = "RestockModifier_Standard", help = "Modifier to the number of standard items chosen for restock per event (applied to the Restock_StandardPercentage variables defined in the const editor).\n\n100 causes no change.", 
+			editor = "number", default = 100, scale = "%", slider = true, min = 10, max = 500, modifiable = true, },
+		{ id = "RestockModifier_Used", help = "Modifier to the number of used items chosen for restock per event (applied to the Restock_UsedPercentage variables defined in the const editor).\n\n100 causes no change.", 
+			editor = "number", default = 100, scale = "%", slider = true, min = 10, max = 500, modifiable = true, },
+	},
+	EditorNestedObjCategory = "Bobby Ray",
+	EditorView = Untranslated("Restocks Bobby Ray's Shop"),
+	Documentation = "Restocks Bobby Ray's Shop\n\nFrom the whole pool of items that can appear in the shop (with respect to tier), a percentage between Restock_PercentageMin and Restock_PercentageMax (see the const editor, with separate variables controlling standard and used items) is restocked.\n\nThe above values are further multiplied by this effect's RestockModifier. Values below 100 decrease the number of items picked for restocking, values above 100 increase it.\n\nItems already present in the shop get their stock recalculated (never decreased, but restocking may have no effect), otherwise a new entry is created.",
+}
+
+function BobbyRayRestockShop:__exec(obj, context)
+	BobbyRayStoreRestock(self.RestockModifier_Standard, self.RestockModifier_Used)
+end
+
+DefineClass.BobbyRaySetState = {
+	__parents = { "Effect", },
+	__generated_by_class = "EffectDef",
+
+	properties = {
+		{ id = "State", 
+			editor = "combo", default = "Closed", items = function (self) return {"Closed", 1, 2, 3, 4, 5, 6, 7, 8} end, },
+	},
+	EditorNestedObjCategory = "Bobby Ray",
+	EditorView = Untranslated("Sets shop tier availability"),
+	Documentation = "Possible values are:\nClosed (default, 0)\nTier-i unlocked (i>=1)",
+}
+
+function BobbyRaySetState:__exec(obj, context)
+	SetQuestVar(QuestGetState("BobbyRayQuest"), "UnlockedTier", self.State == "Closed" and 0 or self.State)
+end
+
 DefineClass.ChangeTiredness = {
 	__parents = { "Effect", },
 	__generated_by_class = "EffectDef",
@@ -2713,6 +2773,8 @@ DefineClass.RadioStartConversation = {
 	properties = {
 		{ id = "Conversation", name = "Conversation", help = "Conversation to start.", 
 			editor = "preset_id", default = false, preset_class = "Conversation", },
+		{ id = "Icon", 
+			editor = "combo", default = "UI/Hud/radio", items = function (self) return GetRadioConversationIconsCombo end, },
 	},
 	EditorView = Untranslated("Start radio conversation <u(Conversation)>."),
 	Documentation = "Starts a specific radio conversation - no groups or conditions are checked.",
@@ -2720,11 +2782,11 @@ DefineClass.RadioStartConversation = {
 }
 
 function RadioStartConversation:__exec(obj, context)
-	StartConversationEffect(self.Conversation, "radio_conversation")
+	StartConversationEffect(self.Conversation, {radio = true, icon = self.Icon})
 end
 
 function RadioStartConversation:__waitexec(obj, context)
-	StartConversationEffect(self.Conversation, "radio_conversation", "wait")
+	StartConversationEffect(self.Conversation, {radio = true, icon = self.Icon}, "wait")
 end
 
 function RadioStartConversation:GetError()
@@ -2734,7 +2796,7 @@ function RadioStartConversation:GetError()
 end
 
 function RadioStartConversation:GetResumeData(thread, stack, stack_index)
-	return "RadioStartConversation", self.Conversation
+	return "RadioStartConversation", self.Conversation, self.Icon
 end
 
 DefineClass.RandomEffect = {
@@ -2923,6 +2985,70 @@ DefineClass.RestoreHealth = {
 function RestoreHealth:__exec(obj, context)
 	if IsKindOfClasses(obj, "Unit", "UnitData") and not obj:IsDead() then
 		obj.HitPoints = Min(obj.MaxHitPoints, obj.HitPoints + self.amount)
+	end
+end
+
+DefineClass.SatelliteShortcutSetSpeed = {
+	__parents = { "Effect", },
+	__generated_by_class = "EffectDef",
+
+	properties = {
+		{ id = "shortcut_id", 
+			editor = "combo", default = false, items = function (self) return PresetsCombo("SatelliteShortcutPreset") end, },
+		{ id = "speed_const", help = "The constant denoting the shortcut's speed", 
+			editor = "combo", default = "RiverTravelTime", items = function (self) return ConstCategoryToCombo(const.SatelliteShortcut) end, },
+	},
+	Documentation = "Set the speed of a satellite shortcut",
+	EditorNestedObjCategory = "Sector effects",
+}
+
+function SatelliteShortcutSetSpeed:__exec(obj, context)
+	SatelliteShortcutChangeSpeed(self.shortcut_id, self.speed_const)
+end
+
+function SatelliteShortcutSetSpeed:GetError()
+	if not self.shortcut_id then
+		return "Specify shortcut!"
+	end
+end
+
+function SatelliteShortcutSetSpeed:GetEditorView()
+	if self.enable then
+		return Untranslated("Enable satellite shortcut <u(shortcut_id)>", self)
+	else
+		return Untranslated("Disable satellite shortcut <u(shortcut_id)>", self)
+	end
+end
+
+DefineClass.SatelliteShortcutUnlockEffect = {
+	__parents = { "Effect", },
+	__generated_by_class = "EffectDef",
+
+	properties = {
+		{ id = "shortcut_id", 
+			editor = "combo", default = false, items = function (self) return PresetsCombo("SatelliteShortcutPreset") end, },
+		{ id = "enable", 
+			editor = "bool", default = true, },
+	},
+	Documentation = "Enable a satellite shortcut",
+	EditorNestedObjCategory = "Sector effects",
+}
+
+function SatelliteShortcutUnlockEffect:__exec(obj, context)
+	SatelliteShortcutSetEnabled(self.shortcut_id, self.enable)
+end
+
+function SatelliteShortcutUnlockEffect:GetError()
+	if not self.shortcut_id then
+		return "Specify shortcut!"
+	end
+end
+
+function SatelliteShortcutUnlockEffect:GetEditorView()
+	if self.enable then
+		return Untranslated("Enable satellite shortcut <u(shortcut_id)>", self)
+	else
+		return Untranslated("Disable satellite shortcut <u(shortcut_id)>", self)
 	end
 end
 
@@ -3573,6 +3699,51 @@ function SectorSetHospital:GetError()
 	end
 end
 
+DefineClass.SectorSetMap = {
+	__parents = { "Effect", },
+	__generated_by_class = "EffectDef",
+
+	properties = {
+		{ id = "sector_id", name = "Sector Id", help = "Sector id.", 
+			editor = "combo", default = false, items = function (self) return GetCampaignSectorsCombo() end, },
+		{ id = "MapFile", 
+			editor = "combo", default = "", items = function (self) return ListMaps() end, },
+		{ id = "image", 
+			editor = "ui_image", default = false, },
+		{ id = "loading_screen", 
+			editor = "ui_image", default = false, },
+	},
+	Documentation = "Change the map of a sector",
+	EditorNestedObjCategory = "Sector effects",
+}
+
+function SectorSetMap:__exec(obj, context)
+	local sectorPreset = gv_Sectors[self.sector_id]
+	if sectorPreset then
+		sectorPreset.Map = self.MapFile
+		
+		if self.image and self.image ~= "" then
+			sectorPreset.image = self.image
+		end
+		
+		if self.loading_screen and self.loading_screen ~= "" then
+			sectorPreset.override_loading_screen = self.loading_screen
+		end
+	end
+end
+
+function SectorSetMap:GetEditorView()
+	return Untranslated("Change the sector map of <u(sector_id)> to <u(MapFile)>", self)
+end
+
+function SectorSetMap:GetError()
+	if not self.sector_id then
+		return "Specify sector!"
+	elseif self.enable_sticky and self.disable_sticky then
+		return "You cannot both enable and disable sticky side, choose one"
+	end
+end
+
 DefineClass.SectorSetMilitia = {
 	__parents = { "Effect", },
 	__generated_by_class = "EffectDef",
@@ -3764,7 +3935,7 @@ DefineClass.SectorSetSide = {
 		{ id = "sector_id", name = "Sector Id", help = "Sector id.", 
 			editor = "combo", default = false, items = function (self) return GetCampaignSectorsCombo() end, },
 		{ id = "side", name = "Side", help = "Choose side for sector.", 
-			editor = "combo", default = "player1", items = function (self) return Sides end, },
+			editor = "combo", default = "player1", items = function (self) return table.iappend(table.map(SideDefs, "Id"), {"dont-change"}) end, },
 		{ id = "enable_sticky", name = "Enable Sticky Side", help = "This will forcefully set sticky side to true.", 
 			editor = "bool", default = false, },
 		{ id = "disable_sticky", name = "Disable Sticky Side", help = "This will forcefully set sticky side to false.", 
@@ -3782,7 +3953,12 @@ function SectorSetSide:__exec(obj, context)
 	elseif self.disable_sticky then
 		sector.StickySide = false
 	end
-	SatelliteSectorSetSide(self.sector_id, self.side, "force")
+	if self.side == "dont-change" then
+		if g_StartingCombat then return end
+		UpdateSectorControl(self.sector_id)
+	else
+		SatelliteSectorSetSide(self.sector_id, self.side, "force")
+	end
 end
 
 function SectorSetSide:GetEditorView()

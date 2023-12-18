@@ -1529,6 +1529,16 @@ PlaceObj('Conversation', {
 				Prop = "CacaoGang",
 				QuestId = "Docks",
 			}),
+			PlaceObj('QuestIsVariableBool', {
+				QuestId = "AyeMom",
+				Vars = set({
+	ShotgunDonatedToGran = false,
+}),
+				__eval = function ()
+					local quest = gv_Quests['AyeMom'] or QuestGetState('AyeMom')
+					return not quest.ShotgunDonatedToGran
+				end,
+			}),
 		},
 		Effects = {
 			PlaceObj('ConditionalEffect', {

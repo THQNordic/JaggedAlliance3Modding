@@ -19,6 +19,7 @@ PlaceObj('UnitDataCompositeDef', {
 	'Name', T(188933600963, --[[UnitDataCompositeDef AdonisDedicatedGunner_Elite Name]] "Gunner"),
 	'Randomization', true,
 	'elite', true,
+	'eliteCategory', "Foreigners",
 	'Affiliation', "Adonis",
 	'StartingLevel', 6,
 	'neutral_retaliate', true,

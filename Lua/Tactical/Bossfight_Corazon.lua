@@ -77,9 +77,9 @@ DefineClass.BossfightCorazon = {
 
 	-- player progress
 	final_room_reached = false,
-	hallway_area_reached = 0,
-	left_area_reached = 0,
-	right_area_reached = 0,
+	hallway_area_reached = -1,
+	left_area_reached = -1,
+	right_area_reached = -1,
 	
 	-- state
 	right_gas_trigger = false,
@@ -309,27 +309,28 @@ function BossfightCorazon:UpdatePlayerProgress()
 			self.final_room_reached = true
 			self:OnAreaBreach(area)
 			return areaFinalRoom			
-		elseif area > areaHallwayBase and area <= areaHallwayCount then
+		elseif area > areaHallwayBase and area <= areaHallwayBase + areaHallwayCount then
 			hallway = Max(area, hallway)
-		elseif area > areaLeftCorridorBase and area <= areaLeftCorridorCount then
+		elseif area > areaLeftCorridorBase and area <= areaLeftCorridorBase + areaLeftCorridorCount then
 			left = Max(area, left)
-		elseif area > areaRightCorridorBase and area <= areaRightCorridorCount then
+		elseif area > areaRightCorridorBase and area <= areaRightCorridorBase + areaRightCorridorCount then
 			right = Max(area, right)
 		end
 	end
-	if hallway > self.hallway_area_reached then
-		self:OnAreaBreach(hallway)
+	
+	self.hallway_area_reached = Max(hallway, self.hallway_area_reached)
+	self.left_area_reached = Max(left, self.left_area_reached)
+	self.right_area_reached = Max(right, self.right_area_reached)
+	
+	if self.hallway_area_reached >= 0 then
+		self:OnAreaBreach(self.hallway_area_reached)
 	end
-	if left > self.left_area_reached then
-		self:OnAreaBreach(left)
+	if self.left_area_reached >= 0 then
+		self:OnAreaBreach(self.left_area_reached)
 	end
-	if right > self.right_area_reached then
-		self:OnAreaBreach(right)
+	if self.right_area_reached >= 0 then
+		self:OnAreaBreach(self.right_area_reached)
 	end
-
-	self.hallway_area_reached = hallway
-	self.left_area_reached = left
-	self.right_area_reached = right
 end
 
 function BossfightCorazon:ToFinalRoom()
@@ -344,7 +345,7 @@ end
 function BossfightCorazon:OnAreaBreach(area)
 	if area == areaFinalRoom then
 		self:ToFinalRoom()
-	elseif area > areaHallwayBase and area <= areaHallwayCount then -- hallway
+	elseif area > areaHallwayBase and area <= areaHallwayBase + areaHallwayCount then -- hallway
 		-- assign all units originally occupying lower hallway areas to the currently breached area
 		for _, unit in ipairs(g_Units) do
 			local original_area = self.original_area[unit] or 0
@@ -355,7 +356,7 @@ function BossfightCorazon:OnAreaBreach(area)
 		if area > areaHallwayBase + 4 then
 			self.hallway_smoke_trigger = true
 		end			
-	elseif area > areaLeftCorridorBase and area <= areaLeftCorridorCount then -- left corridor
+	elseif area > areaLeftCorridorBase and area <= areaLeftCorridorBase + areaLeftCorridorCount then -- left corridor
 		-- left side conflict base mechanic: units engage the player in their room and fall back to the next when one of them is killed
 		for _, unit in ipairs(g_Units) do
 			local unit_area = self:GetUnitArea(unit)
@@ -379,7 +380,7 @@ function BossfightCorazon:OnAreaBreach(area)
 				end
 			end
 		end		
-	elseif area > areaRightCorridorBase and area <= areaRightCorridorCount then -- right corridor
+	elseif area > areaRightCorridorBase and area <= areaRightCorridorBase + areaRightCorridorCount then -- right corridor
 		if area == areaRightCorridorBase then
 			-- assign units from first area to second one/Right_Kite_Back marker
 			for _, unit in ipairs(g_Units) do
@@ -463,7 +464,7 @@ function BossfightCorazon:UpdateUnitArchetypes()
 		end
 	end
 	
-	local use_tactics = boss.HitPoints > boss:GetInitialMaxHitPoints() / 2
+	local use_tactics = (boss.HitPoints > boss:GetInitialMaxHitPoints() / 2) and boss_area ~= areaFinalRoom
 	for _, unit in ipairs(g_Units) do
 		if unit.team == boss.team then
 			unit:RemoveStatusEffect("Unaware") -- all enemies are always aware in this fight
@@ -586,7 +587,7 @@ function CorazonEnumDestsInAssignedArea(unit, context)
 		local function dest_in_marker_filter(idx, dest)
 			local x, y, z = stance_pos_unpack(dest)
 			local ppos = point_pack(x, y, z)			
-			return band(ppos_to_logic_markers[ppos] or 0, marker_area) ~= 0
+			return band(g_Encounter.ppos_to_logic_markers[ppos] or 0, marker_area) ~= 0
 		end
 		local dests = table.ifilter(context.destinations, dest_in_marker_filter)
 		local all_dests = table.ifilter(context.all_destinations, dest_in_marker_filter)

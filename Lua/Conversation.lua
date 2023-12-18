@@ -261,6 +261,7 @@ function OpenConversationDebugPopup(button, phrase_data, merc_id, conv_id)
 	end
 	popup:SetAnchor(button.box)		
 	popup:SetAnchorType("top")
+	popup:SetDrawOnTop(true)
 	popup:Open()
 	
 	debug_popup = popup
@@ -731,7 +732,8 @@ function ConversationPlayer:GatherPhraseLines(phrase, phrase_seen, lines, is_rad
 			local unit = GetConversationUnit(line.Character)
 			
 			-- fallback when the character does not exists
-			local is_radio_unit = self.test == "radio_conversation" and not unit
+			local is_radio_unit = self.test and self.test.radio and not unit
+			if is_radio_unit and self.test.icon then is_radio_unit = self.test.icon end
 			
 			local unitFound = unit or is_radio_unit
 			if not unitFound then
@@ -1240,9 +1242,9 @@ local function PhraseHasEffects(phrase)
 	return false
 end
 
-function GedOpDeleteConversationPhrase(ged, root, selection, deleted_class)
+function GedOpDeleteConversationPhrase(ged, root, selection)
 	if IsTreeMultiSelection(selection) then
-		return GedTreeMultiOp(ged, root, "GedOpDeleteConversationPhrase", "delete", selection, deleted_class)
+		return GedTreeMultiOp(ged, root, "GedOpDeleteConversationPhrase", "delete", selection)
 	end
 	
 	local phrase = TreeNodeByPath(root, unpack_params(selection))
@@ -1250,10 +1252,10 @@ function GedOpDeleteConversationPhrase(ged, root, selection, deleted_class)
 	if has_effects then
 		local res = ged:WaitQuestion("Confirm Delete", string.format("The phrase %s or any of its subphrases has effects that will be deleted", phrase.id))
 		if res == "ok" then
-			return GedOpTreeDeleteItem(ged, root, selection, deleted_class)
+			return GedOpTreeDeleteItem(ged, root, selection)
 		end
 	else
-		return GedOpTreeDeleteItem(ged, root, selection, deleted_class)
+		return GedOpTreeDeleteItem(ged, root, selection)
 	end
 end
 
@@ -1263,7 +1265,7 @@ end
 
 function RebuildGroupToConversation()
 	g_GroupToConversation = {}
-	ForEachPreset("Conversation", function(preset)
+	ForEachPresetInCampaign("Conversation", function(preset)
 		if preset.AssignToGroup and preset.Enabled then
 			local t = g_GroupToConversation[preset.AssignToGroup] or {}
 			t[#t+1] = preset
@@ -1419,7 +1421,7 @@ function OnMsg.CloseConversationDialog()
 	g_LastConv = GameTime()
 end
 
-function OpenConversationDialog(merc, conversation_id, test_conversation, source, target)
+function OpenConversationDialog(merc, conversation_id, context, source, target)
 	if CanYield() then
 		CloseWeaponModificationCoOpAware()
 	end
@@ -1430,7 +1432,7 @@ function OpenConversationDialog(merc, conversation_id, test_conversation, source
 		return
 	end
 	local can_control = gv_UnitData[merc_id]:IsLocalPlayerControlled()
-	local radio_conversation = test_conversation=="radio_conversation"
+	local radio_conversation = context and context.radio
 	
 	for i, u in ipairs(g_Units) do
 		if not u:IsIdleCommand() and u.command == "InteractWith" and (source ~= "interaction" or u ~= merc) then
@@ -1458,9 +1460,20 @@ function OpenConversationDialog(merc, conversation_id, test_conversation, source
 	if can_control then
 		NetSyncEvent("ConversationDialogHostSettings", shouldPause)
 	end
-	local dlg = OpenDialog("ConversationDialog", terminal.desktop, {conversation_id = conversation_id, can_control = can_control, radio_conversation = radio_conversation})
-	local player = ConversationPlayer:new{ dlg = dlg, merc_id = merc_id, conv_id = conversation_id, test = test_conversation, target_groups = target and target.Groups, target_name = target and target:GetDisplayName(),
-													should_pause = shouldPause}
+	local dlg = OpenDialog("ConversationDialog", terminal.desktop, {
+		conversation_id = conversation_id,
+		can_control = can_control,
+		radio_conversation = radio_conversation
+	})
+	local player = ConversationPlayer:new{
+		dlg = dlg,
+		merc_id = merc_id,
+		conv_id = conversation_id,
+		test = context,
+		target_groups = target and target.Groups,
+		target_name = target and target:GetDisplayName(),
+		should_pause = shouldPause
+	}
 	player.seed = InteractionRand(nil, "Conversation")
 	dlg.player = player
 	dlg:CreateThread("RunConversation", ConversationPlayer.RunConversationProtected, player)
@@ -1599,7 +1612,7 @@ function ConversationDebugInfo:GetProperties()
 	local conversation = Conversations[self.id] or empty_table
 	local props = table.copy(PropertyObject.GetProperties(self))
 	-- from quests
-	ForEachPreset("QuestsDef",function(preset, group, filter)
+	ForEachPresetInCampaign("QuestsDef",function(preset, group, filter)
 		preset:ForEachSubObject("ConversationFunctionObjectBase", function(obj, parents)
 			if obj.Conversation == self.id then
 				local path = GedParentsListToSelection(parents)
@@ -1628,7 +1641,7 @@ function ConversationDebugInfo:GetProperties()
 
 	-- from markers
 	local map_name = GetMapName()
-	if not g_DebugMarkersInfo[map_name] then
+	if not g_DebugMarkersInfo or not g_DebugMarkersInfo[map_name] then
 		GatherMarkerScriptingData()
 	end
 -- filter for current conversation
@@ -1678,8 +1691,9 @@ end
 if Platform.developer then
 	function TestConversation(ged_or_id, conversation)
 		CreateRealTimeThread(function()
-			if not Game then
-				NewGame()
+			if type(ged_or_id) ~= "string" and not Game then
+				ged_or_id:ShowMessage("Warning", "Testing a conversation requires a game session.")
+				return
 			end
 			
 			-- use a unit from a squad under the player's control, preferably present on the map
@@ -1774,7 +1788,13 @@ function StartConversationEffect(conversation, context, wait)
 		unit = squads[1] and squads[1].units and squads[1].units[1]
 	end
 	if not unit then return end
-	OpenConversationDialog(unit, conversation, context == "radio_conversation" and context, context and type(context) == "string" and context)
+
+	OpenConversationDialog(
+		unit,
+		conversation,
+		context and context.radio and context,
+		context and type(context) == "string" and context
+	)
 	if wait then WaitMsg("CloseConversationDialog") end
 end
 
@@ -2115,4 +2135,11 @@ function CheckExecutedPhraseForPsycho(phrase)
 	end
 	
 	return PsychoCheck(phrase.Conditions)
+end
+
+function GetRadioConversationIconsCombo()
+	return {
+		{ text = "walkie talkie", value = "UI/Hud/radio" },
+		{ text = "old phone", value = "UI/Hud/radio_conversation" }
+	}
 end

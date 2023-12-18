@@ -288,7 +288,7 @@ PlaceObj('VoiceResponse', {
 		T(545944562913, --[[VoiceResponse Fauda SelectionStealth VoiceResponse SelectionStealth - when selected or autoselected voice:Fauda]] "I will be the hidden death on the battlefield.")
 	}),
 	SeriouslyWounded = TConcat({
-		T(189132532548, --[[VoiceResponse Fauda SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds) voice:Fauda]] "This is how my brother died.")
+		T(189132532548, --[[VoiceResponse Fauda SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining. voice:Fauda]] "This is how my brother died.")
 	}),
 	Startled = TConcat({
 		T(734067770645, --[[VoiceResponse Fauda Startled VoiceResponse Startled - Startled by hearing a sudden noise voice:Fauda]] "Huh?"),
@@ -347,9 +347,9 @@ PlaceObj('VoiceResponse', {
 		T(914628543332, --[[VoiceResponse Fauda WeaponJammed VoiceResponse WeaponJammed - When weapon has jammed voice:Fauda]] "Shaitan's trick! My weapon has betrayed me.")
 	}),
 	Wounded = TConcat({
-		T(982241930695, --[[VoiceResponse Fauda Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Fauda]] "Agh, don't give in."),
-		T(310793512643, --[[VoiceResponse Fauda Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Fauda]] "This is nothing."),
-		T(261646080293, --[[VoiceResponse Fauda Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Fauda]] "Pain is an illusion.")
+		T(982241930695, --[[VoiceResponse Fauda Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Fauda]] "Agh, don't give in."),
+		T(310793512643, --[[VoiceResponse Fauda Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Fauda]] "This is nothing."),
+		T(261646080293, --[[VoiceResponse Fauda Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Fauda]] "Pain is an illusion.")
 	}),
 	group = "MercenariesNew",
 	id = "Fauda",

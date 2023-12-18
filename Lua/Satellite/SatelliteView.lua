@@ -393,7 +393,7 @@ function NetSyncEvents.SatelliteCampaignTimeAdvance(time, old_time, step)
 		while Game.CampaignTime < time and not IsCampaignPaused() do
 			local ot = Game.CampaignTime
 			Game.CampaignTime = Game.CampaignTime + const.Scale.min
-			hr.UILLuaTime = Game.CampaignTime
+			hr.UIL_CustomTime = Game.CampaignTime
 			Game.DailyIncome = GetDailyIncome()
 			lFireCampaignTimeSyncMessages(Game.CampaignTime, ot)
 			ObjModified(Game)
@@ -412,7 +412,7 @@ function NetSyncEvents.SatelliteCampaignTimeAdvance(time, old_time, step)
 end
 
 function OnMsg.OpenSatelliteView()
-	hr.UILLuaTime = Game.CampaignTime
+	hr.UIL_CustomTime = Game.CampaignTime
 end
 
 function GetAmountPerTick(amount, tick, ticks)
@@ -1583,7 +1583,8 @@ function SpawnSquads(squad_ids, spawn_mode, spawn_markers, force_test_map, enter
 	-- add map objs for mercs which were not with the squad saved on the sector
 	for _, squad_id in ipairs(squad_ids) do
 		local squad = gv_Squads[squad_id]
-		for _, session_id in ipairs(squad.units) do
+		assert(squad) -- false when squad exists in SquadArray but not in gv_Squads
+		for _, session_id in ipairs(squad and squad.units) do
 			if not table.find_value(map_combat_units, "session_id", session_id) and not gv_UnitData[session_id].retreat_to_sector then
 				squads_to_spawn[squad_id] = squads_to_spawn[squad_id] or {}
 				table.insert(squads_to_spawn[squad_id], session_id)
@@ -1754,14 +1755,21 @@ function EnterSector(sector_id, spawn_mode, spawn_markers, save_sector, force_te
 	end
 	ChangeGameState { entering_sector = true }
 	
-	local sat_view_loading_screen = GameState.loading_savegame and gv_SatelliteView
-	local id = sat_view_loading_screen and "idSatelliteView" or "idEnterSector"
-	SectorLoadingScreenOpen(id, "enter sector", not sat_view_loading_screen and sector_id)	
-	
 	-- If there is a conflict auto save running, wait for it to finish cuz crashes can occur otherwise.
 	while IsAutosaveScheduled() do
 		Sleep(1)
 	end
+	
+	spawn_mode = force_test_map and "attack" or spawn_mode
+	local load_game = not spawn_mode and not spawn_markers
+	
+	if not load_game and not force_test_map and gv_Sectors[sector_id] then
+		ExecuteSectorEvents("SE_PreChangeMap", sector_id, "wait")
+	end
+	
+	local sat_view_loading_screen = GameState.loading_savegame and gv_SatelliteView
+	local id = sat_view_loading_screen and "idSatelliteView" or "idEnterSector"
+	SectorLoadingScreenOpen(id, "enter sector", not sat_view_loading_screen and sector_id)	
 	
 	local sector = gv_Sectors[sector_id]
 	local ambient_timeouted
@@ -1783,9 +1791,9 @@ function EnterSector(sector_id, spawn_mode, spawn_markers, save_sector, force_te
 	ChangeGameState("setpiece_playing", false)  --we've tried skipping setpieces gracefully, but if a setpiece hadn't started yet it may leave this on once change map kills its threads
 	
 	-- Wait for net sync events to end since the map change will delete them.
-	NetSyncEventFence("init_buffer")
+	NetSyncEventFence("EnterSector")
 	NetGameSend("rfnClearHash") --this clears passed caches stored server side so new hashes @ the same gametime doesn't cause desyncs
-	NetStartBufferEvents()
+	NetStartBufferEvents("EnterSector")
 
 	-- Leaving the map? Delete ephemeral units and fast forward commands
 	if not GameState.loading_savegame then
@@ -1836,13 +1844,6 @@ function EnterSector(sector_id, spawn_mode, spawn_markers, save_sector, force_te
 			end
 			return genSyncHandleOld(...)
 		end
-	end
-	
-	spawn_mode = force_test_map and "attack" or spawn_mode
-	local load_game = not spawn_mode and not spawn_markers
-	
-	if not load_game and not force_test_map and gv_Sectors[gv_CurrentSectorId] then
-		ExecuteSectorEvents("SE_PreChangeMap", gv_CurrentSectorId, "wait")
 	end
 	
 	ChangeGameState{loading_savegame = true}
@@ -1942,7 +1943,7 @@ function EnterSector(sector_id, spawn_mode, spawn_markers, save_sector, force_te
 	end
 	--apparently, this needs to be before netstopbuffer, idk why, otherwise we get the same events but with messed up thread order
 	SectorLoadingScreenClose(id, "enter sector", not sat_view_loading_screen and sector_id)
-	NetStopBufferEvents()
+	NetStopBufferEvents("EnterSector")
 	
 	if not load_game and gv_CurrentSectorId and gv_Sectors[gv_CurrentSectorId] and gv_Sectors[gv_CurrentSectorId].Map == GetMapName() then
 		ExecuteSectorEvents("SE_OnEnterMapVisual", gv_CurrentSectorId, true)

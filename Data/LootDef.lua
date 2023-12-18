@@ -35,6 +35,23 @@ PlaceObj('LootDef', {
 PlaceObj('LootDef', {
 	Comment = "enemy infected",
 	group = "Beasts",
+	id = "Biolab_Infected_Equipment",
+	loot = "all",
+	PlaceObj('LootEntryLootDef', {
+		loot_def = "Infected_Armor",
+	}),
+	PlaceObj('LootEntryLootDef', {
+		loot_def = "Infected_Unarmed",
+	}),
+	PlaceObj('LootEntryInventoryItem', {
+		guaranteed = true,
+		item = "Gasmaskenhelm",
+	}),
+})
+
+PlaceObj('LootDef', {
+	Comment = "enemy infected",
+	group = "Beasts",
 	id = "Infected_Armor",
 	PlaceObj('LootEntryInventoryItem', {
 		drop_chance_mod = 0,
@@ -5620,6 +5637,198 @@ PlaceObj('LootDef', {
 })
 
 PlaceObj('LootDef', {
+	group = "LaboratoryLoot",
+	id = "Bio_GunCrate",
+	loot = "all",
+	PlaceObj('LootEntryInventoryItem', {
+		Condition = 76,
+		RandomizeCondition = true,
+		item = "AA12",
+		stack_max = 1,
+		stack_min = 1,
+	}),
+	PlaceObj('LootEntryInventoryItem', {
+		item = "_12gauge_Breacher",
+		stack_max = 60,
+		stack_min = 60,
+	}),
+	PlaceObj('LootEntryInventoryItem', {
+		Condition = 78,
+		RandomizeCondition = true,
+		item = "M4Commando",
+		stack_max = 1,
+		stack_min = 1,
+	}),
+	PlaceObj('LootEntryInventoryItem', {
+		item = "_556_Tracer",
+		stack_max = 60,
+		stack_min = 60,
+	}),
+})
+
+PlaceObj('LootDef', {
+	group = "LaboratoryLoot",
+	id = "Cryo_Coffin",
+	loot = "all",
+	PlaceObj('LootEntryInventoryItem', {
+		Condition = 88,
+		RandomizeCondition = true,
+		item = "HeavyArmorTorso",
+		stack_max = 1,
+		stack_min = 1,
+	}),
+	PlaceObj('LootEntryInventoryItem', {
+		Condition = 87,
+		RandomizeCondition = true,
+		item = "NightVisionGoggles",
+		stack_max = 1,
+		stack_min = 1,
+	}),
+	PlaceObj('LootEntryInventoryItem', {
+		item = "_762WP_AP",
+		stack_max = 60,
+		stack_min = 60,
+	}),
+	PlaceObj('LootEntryUpgradedWeapon', {
+		upgrades = {
+			"LaserDot",
+			"ThermalScope",
+			"Compensator",
+		},
+		weapon = "AK74",
+	}),
+})
+
+PlaceObj('LootDef', {
+	group = "LaboratoryLoot",
+	id = "Cryo_LabEquipment",
+	loot = "all",
+	PlaceObj('LootEntryInventoryItem', {
+		item = "Combination_Kompositum58",
+		stack_max = 1,
+		stack_min = 1,
+	}),
+	PlaceObj('LootEntryInventoryItem', {
+		item = "ToxicGasGrenade",
+		stack_max = 2,
+		stack_min = 2,
+	}),
+	PlaceObj('LootEntryInventoryItem', {
+		item = "SkillMag_Strength",
+		stack_max = 1,
+		stack_min = 1,
+	}),
+	PlaceObj('LootEntryInventoryItem', {
+		item = "CombatStim",
+		stack_max = 4,
+		stack_min = 4,
+	}),
+})
+
+PlaceObj('LootDef', {
+	group = "LaboratoryLoot",
+	id = "Klinik_BookShelf",
+	loot = "all",
+	PlaceObj('LootEntryInventoryItem', {
+		item = "SkillMag_Health",
+		stack_max = 1,
+		stack_min = 1,
+	}),
+	PlaceObj('LootEntryInventoryItem', {
+		item = "SkillMag_Strength",
+	}),
+	PlaceObj('LootEntryInventoryItem', {
+		item = "MoneyBag",
+		stack_max = 1,
+		stack_min = 1,
+	}),
+})
+
+PlaceObj('LootDef', {
+	group = "LaboratoryLoot",
+	id = "Klinik_LabEquipment",
+	loot = "all",
+	PlaceObj('LootEntryInventoryItem', {
+		item = "Meds",
+		stack_max = 40,
+		stack_min = 40,
+	}),
+	PlaceObj('LootEntryInventoryItem', {
+		item = "Reanimationsset",
+		stack_max = 1,
+		stack_min = 1,
+	}),
+	PlaceObj('LootEntryInventoryItem', {
+		item = "CombatStim",
+		stack_max = 2,
+		stack_min = 2,
+	}),
+})
+
+PlaceObj('LootDef', {
+	group = "LaboratoryLoot",
+	id = "Military_AKS",
+	loot = "all",
+	PlaceObj('LootEntryInventoryItem', {
+		RandomizeCondition = true,
+		item = "AKSU",
+		stack_max = 1,
+		stack_min = 1,
+	}),
+	PlaceObj('LootEntryInventoryItem', {
+		item = "_762WP_HP",
+		stack_max = 60,
+		stack_min = 60,
+	}),
+	PlaceObj('LootEntryInventoryItem', {
+		item = "_762WP_AP",
+		stack_max = 60,
+		stack_min = 60,
+	}),
+})
+
+PlaceObj('LootDef', {
+	group = "LaboratoryLoot",
+	id = "Military_ArmorCase",
+	loot = "all",
+	PlaceObj('LootEntryInventoryItem', {
+		item = "Combination_Kompositum58",
+		stack_max = 1,
+		stack_min = 1,
+	}),
+	PlaceObj('LootEntryInventoryItem', {
+		Condition = 55,
+		RandomizeCondition = true,
+		item = "CamoArmor_Medium",
+		stack_max = 1,
+		stack_min = 1,
+	}),
+})
+
+PlaceObj('LootDef', {
+	group = "LaboratoryLoot",
+	id = "Military_Grenades",
+	PlaceObj('LootEntryInventoryItem', {
+		item = "HE_Grenade",
+		stack_max = 3,
+		stack_min = 3,
+		weight = 1000000,
+	}),
+	PlaceObj('LootEntryInventoryItem', {
+		item = "ProximityC4",
+		stack_max = 3,
+		stack_min = 3,
+		weight = 600000,
+	}),
+	PlaceObj('LootEntryInventoryItem', {
+		item = "_40mmFragGrenade",
+		stack_max = 3,
+		stack_min = 3,
+		weight = 700000,
+	}),
+})
+
+PlaceObj('LootDef', {
 	Comment = "enemy diesel",
 	group = "Landsbach_SuperSoldiers",
 	id = "Landsbach_SuperSoldier_Assault",
@@ -7684,6 +7893,17 @@ PlaceObj('LootDef', {
 		},
 		loot_def = "Container_AmmoBucket_Special",
 		weight = 500000,
+	}),
+})
+
+PlaceObj('LootDef', {
+	group = "MapContainers",
+	id = "KompositumCrafting",
+	PlaceObj('LootEntryInventoryItem', {
+		guaranteed = true,
+		item = "Combination_Kompositum58",
+		stack_max = 1,
+		stack_min = 1,
 	}),
 })
 
@@ -9840,7 +10060,6 @@ PlaceObj('LootDef', {
 	id = "BioLabArchives",
 	loot = "all",
 	PlaceObj('LootEntryInventoryItem', {
-		dlc = "Hans",
 		item = "Meds",
 		stack_max = 30,
 		stack_min = 10,
@@ -14455,6 +14674,291 @@ PlaceObj('LootDef', {
 	PlaceObj('LootEntryInventoryItem', {
 		guaranteed = true,
 		item = "WeirdosMap",
+	}),
+})
+
+PlaceObj('LootDef', {
+	group = "SiegfriedSuperSoldiers",
+	id = "SuperSoldier_Assault",
+	loot = "all",
+	PlaceObj('LootEntryInventoryItem', {
+		Condition = 92,
+		RandomizeCondition = true,
+		item = "FNFAL",
+		stack_max = 1,
+		stack_min = 1,
+	}),
+	PlaceObj('LootEntryInventoryItem', {
+		item = "_762NATO_Basic",
+		stack_max = 90,
+		stack_min = 60,
+	}),
+	PlaceObj('LootEntryInventoryItem', {
+		Condition = 97,
+		RandomizeCondition = true,
+		item = "KevlarChestplate",
+		stack_max = 1,
+		stack_min = 1,
+	}),
+})
+
+PlaceObj('LootDef', {
+	group = "SiegfriedSuperSoldiers",
+	id = "SuperSoldier_Assault_Stronger",
+	loot = "all",
+	PlaceObj('LootEntryInventoryItem', {
+		Condition = 92,
+		RandomizeCondition = true,
+		item = "FNFAL",
+		stack_max = 1,
+		stack_min = 1,
+	}),
+	PlaceObj('LootEntryInventoryItem', {
+		item = "_762NATO_Basic",
+		stack_max = 90,
+		stack_min = 60,
+	}),
+	PlaceObj('LootEntryInventoryItem', {
+		Condition = 97,
+		RandomizeCondition = true,
+		item = "KevlarChestplate",
+		stack_max = 1,
+		stack_min = 1,
+	}),
+})
+
+PlaceObj('LootDef', {
+	group = "SiegfriedSuperSoldiers",
+	id = "SuperSoldier_Linebreaker",
+	loot = "all",
+	PlaceObj('LootEntryInventoryItem', {
+		Condition = 92,
+		RandomizeCondition = true,
+		item = "Machete_Sharpened",
+		stack_max = 1,
+		stack_min = 1,
+	}),
+	PlaceObj('LootEntryInventoryItem', {
+		Condition = 97,
+		RandomizeCondition = true,
+		item = "KevlarChestplate",
+		stack_max = 1,
+		stack_min = 1,
+	}),
+	PlaceObj('LootEntryInventoryItem', {
+		Condition = 97,
+		RandomizeCondition = true,
+		item = "Gasmaskenhelm",
+		stack_max = 1,
+		stack_min = 1,
+	}),
+	PlaceObj('LootEntryInventoryItem', {
+		item = "ToxicGasGrenade",
+		stack_max = 4,
+		stack_min = 2,
+	}),
+})
+
+PlaceObj('LootDef', {
+	group = "SiegfriedSuperSoldiers",
+	id = "SuperSoldier_Linebreaker_Stronger",
+	loot = "all",
+	PlaceObj('LootEntryInventoryItem', {
+		Condition = 92,
+		RandomizeCondition = true,
+		item = "Machete_Sharpened",
+		stack_max = 1,
+		stack_min = 1,
+	}),
+	PlaceObj('LootEntryInventoryItem', {
+		Condition = 97,
+		RandomizeCondition = true,
+		item = "KevlarChestplate",
+		stack_max = 1,
+		stack_min = 1,
+	}),
+	PlaceObj('LootEntryInventoryItem', {
+		Condition = 97,
+		RandomizeCondition = true,
+		item = "Gasmaskenhelm",
+		stack_max = 1,
+		stack_min = 1,
+	}),
+	PlaceObj('LootEntryInventoryItem', {
+		item = "ToxicGasGrenade",
+		stack_max = 4,
+		stack_min = 2,
+	}),
+})
+
+PlaceObj('LootDef', {
+	group = "SiegfriedSuperSoldiers",
+	id = "SuperSoldier_Medic",
+	loot = "all",
+	PlaceObj('LootEntryInventoryItem', {
+		Condition = 97,
+		RandomizeCondition = true,
+		item = "KevlarChestplate",
+		stack_max = 1,
+		stack_min = 1,
+	}),
+	PlaceObj('LootEntryLootDef', {
+		amount_modifier = 2000000,
+		loot_def = "Drop_12gauge_Saltshot",
+	}),
+	PlaceObj('LootEntryInventoryItem', {
+		item = "CombatStim",
+		stack_max = 6,
+		stack_min = 3,
+	}),
+	PlaceObj('LootEntryUpgradedWeapon', {
+		Condition = 97,
+		RandomizeCondition = true,
+		upgrades = {
+			"UVDot",
+		},
+		weapon = "M41Shotgun",
+	}),
+})
+
+PlaceObj('LootDef', {
+	group = "SiegfriedSuperSoldiers",
+	id = "SuperSoldier_Ordnance",
+	loot = "all",
+	PlaceObj('LootEntryInventoryItem', {
+		Condition = 92,
+		RandomizeCondition = true,
+		item = "MGL",
+		stack_max = 1,
+		stack_min = 1,
+	}),
+	PlaceObj('LootEntryInventoryItem', {
+		Condition = 97,
+		RandomizeCondition = true,
+		item = "HeavyArmorChestplate",
+		stack_max = 1,
+		stack_min = 1,
+	}),
+	PlaceObj('LootEntryInventoryItem', {
+		Condition = 97,
+		RandomizeCondition = true,
+		item = "HeavyArmorHelmet",
+		stack_max = 1,
+		stack_min = 1,
+	}),
+	PlaceObj('LootEntryLootDef', {
+		amount_modifier = 2000000,
+		loot_def = "Drop_40mm_Flashbang",
+	}),
+	PlaceObj('LootEntryInventoryItem', {
+		RandomizeCondition = true,
+		item = "Machete",
+		stack_max = 1,
+		stack_min = 1,
+	}),
+})
+
+PlaceObj('LootDef', {
+	group = "SiegfriedSuperSoldiers",
+	id = "SuperSoldier_Skirmisher",
+	loot = "all",
+	PlaceObj('LootEntryInventoryItem', {
+		Condition = 92,
+		RandomizeCondition = true,
+		item = "MP5",
+		stack_max = 1,
+		stack_min = 1,
+	}),
+	PlaceObj('LootEntryInventoryItem', {
+		Condition = 97,
+		RandomizeCondition = true,
+		item = "KevlarChestplate",
+		stack_max = 1,
+		stack_min = 1,
+	}),
+	PlaceObj('LootEntryLootDef', {
+		loot_def = "Drop_9mm_Varied",
+	}),
+	PlaceObj('LootEntryInventoryItem', {
+		item = "HE_Grenade",
+		stack_max = 2,
+		stack_min = 1,
+	}),
+})
+
+PlaceObj('LootDef', {
+	group = "SiegfriedSuperSoldiers",
+	id = "SuperSoldier_Skirmisher_Stronger",
+	loot = "all",
+	PlaceObj('LootEntryInventoryItem', {
+		Condition = 92,
+		RandomizeCondition = true,
+		item = "MP5",
+		stack_max = 1,
+		stack_min = 1,
+	}),
+	PlaceObj('LootEntryInventoryItem', {
+		Condition = 97,
+		RandomizeCondition = true,
+		item = "KevlarChestplate",
+		stack_max = 1,
+		stack_min = 1,
+	}),
+	PlaceObj('LootEntryLootDef', {
+		loot_def = "Drop_9mm_Varied",
+	}),
+	PlaceObj('LootEntryInventoryItem', {
+		item = "HE_Grenade",
+		stack_max = 2,
+		stack_min = 1,
+	}),
+})
+
+PlaceObj('LootDef', {
+	group = "SiegfriedSuperSoldiers",
+	id = "SuperSoldier_Stormer",
+	loot = "all",
+	PlaceObj('LootEntryInventoryItem', {
+		Condition = 92,
+		RandomizeCondition = true,
+		item = "M41Shotgun",
+		stack_max = 1,
+		stack_min = 1,
+	}),
+	PlaceObj('LootEntryInventoryItem', {
+		Condition = 97,
+		RandomizeCondition = true,
+		item = "KevlarChestplate",
+		stack_max = 1,
+		stack_min = 1,
+	}),
+	PlaceObj('LootEntryLootDef', {
+		amount_modifier = 2000000,
+		loot_def = "Drop_12gauge_Varied",
+	}),
+})
+
+PlaceObj('LootDef', {
+	group = "SiegfriedSuperSoldiers",
+	id = "SuperSoldier_Stormer_Stronger",
+	loot = "all",
+	PlaceObj('LootEntryInventoryItem', {
+		Condition = 92,
+		RandomizeCondition = true,
+		item = "M41Shotgun",
+		stack_max = 1,
+		stack_min = 1,
+	}),
+	PlaceObj('LootEntryInventoryItem', {
+		Condition = 97,
+		RandomizeCondition = true,
+		item = "KevlarChestplate",
+		stack_max = 1,
+		stack_min = 1,
+	}),
+	PlaceObj('LootEntryLootDef', {
+		amount_modifier = 2000000,
+		loot_def = "Drop_12gauge_Varied",
 	}),
 })
 

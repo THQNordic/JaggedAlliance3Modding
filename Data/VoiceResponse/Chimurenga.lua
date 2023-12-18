@@ -71,8 +71,8 @@ PlaceObj('VoiceResponse', {
 		T(837661682329, --[[VoiceResponse Chimurenga VillainDefeated VoiceResponse VillainDefeated - Enemy lieutenant defeated. voice:Chimurenga]] "I... surrender. Come, you greedy pigs. Come and make your demands.")
 	}),
 	Wounded = TConcat({
-		T(883598518447, --[[VoiceResponse Chimurenga Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Chimurenga]] "Je suis blessé!"),
-		T(992093699910, --[[VoiceResponse Chimurenga Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Chimurenga]] "You may wound my body, but never my zeal!")
+		T(883598518447, --[[VoiceResponse Chimurenga Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Chimurenga]] "Je suis blessé!"),
+		T(992093699910, --[[VoiceResponse Chimurenga Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Chimurenga]] "You may wound my body, but never my zeal!")
 	}),
 	group = "Villains",
 	id = "Chimurenga",

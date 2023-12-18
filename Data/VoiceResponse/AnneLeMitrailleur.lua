@@ -185,12 +185,12 @@ PlaceObj('VoiceResponse', {
 		T(373899425334, --[[VoiceResponse AnneLeMitrailleur TakeCover VoiceResponse TakeCover - Played when the Take Cover action is used voice:AnneLeMitrailleur]] "Laying low!")
 	}),
 	Wounded = TConcat({
-		T(141409090332, --[[VoiceResponse AnneLeMitrailleur Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:AnneLeMitrailleur]] "Je suis blessé!"),
-		T(896346988249, --[[VoiceResponse AnneLeMitrailleur Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:AnneLeMitrailleur]] "Uff, that hurt!"),
-		T(219841225301, --[[VoiceResponse AnneLeMitrailleur Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:AnneLeMitrailleur]] "Je suis grièvement blessé!"),
-		T(119907476528, --[[VoiceResponse AnneLeMitrailleur Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:AnneLeMitrailleur]] "This pain is too much!"),
-		T(754598057078, --[[VoiceResponse AnneLeMitrailleur Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:AnneLeMitrailleur]] "I am wounded!"),
-		T(920344061717, --[[VoiceResponse AnneLeMitrailleur Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:AnneLeMitrailleur]] "Uff, Ça fait mal!")
+		T(141409090332, --[[VoiceResponse AnneLeMitrailleur Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:AnneLeMitrailleur]] "Je suis blessé!"),
+		T(896346988249, --[[VoiceResponse AnneLeMitrailleur Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:AnneLeMitrailleur]] "Uff, that hurt!"),
+		T(219841225301, --[[VoiceResponse AnneLeMitrailleur Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:AnneLeMitrailleur]] "Je suis grièvement blessé!"),
+		T(119907476528, --[[VoiceResponse AnneLeMitrailleur Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:AnneLeMitrailleur]] "This pain is too much!"),
+		T(754598057078, --[[VoiceResponse AnneLeMitrailleur Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:AnneLeMitrailleur]] "I am wounded!"),
+		T(920344061717, --[[VoiceResponse AnneLeMitrailleur Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:AnneLeMitrailleur]] "Uff, Ça fait mal!")
 	}),
 	group = "Enemies",
 	id = "AnneLeMitrailleur",

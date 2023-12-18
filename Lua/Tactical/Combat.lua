@@ -320,7 +320,7 @@ function Combat:Start(dynamic_data)
 		--snap units to closest free pass slab
 		for i, unit in ipairs(g_Units) do
 			unit:ClearCommandQueue()
-			if not unit:IsDead() and (not unit:IsDefeatedVillain() or unit.command ~= "VillainDefeat")then
+			if not unit:IsDead() and not (unit:IsDefeatedVillain() or UnitIgnoreEnterCombatCommands[unit.command]) then
 				local overwatch = g_Overwatch[unit]
 				local interruptable_cmd = unit.command ~= "Cower" and unit.command ~= "EnterMap"
 				if interruptable_cmd and (not overwatch or not overwatch.permanent or unit.command ~= "PreparedAttackIdle") then
@@ -472,7 +472,7 @@ function CombatCollectOutnumbered(team_id, except)
 	local units = {}
 	local team = g_Teams[team_id]
 	for _, unit in ipairs(team.units) do
-		if (not except or not table.find(except, unit.session_id)) and IsMerc(unit) and CombatAreEnemiesOutnumbered(unit) then
+		if (not except or not table.find(except, unit.session_id)) and IsMerc(unit) and not unit:IsDead() and CombatAreEnemiesOutnumbered(unit) then
 			units[#units + 1] = unit.session_id
 		end
 	end
@@ -683,7 +683,7 @@ function Combat:MainLoop(dynamic_data)
 			end
 		end
 		NetUpdateHash("Combat_MainLoop_TurnEnded")
-		Msg("TurnEnded", g_CurrentTeam, self.current_turn)
+		Msg("TurnEnded", g_CurrentTeam, self.current_turn, self.end_combat)
 		
 		if IsNetPlayerTurn() then
 			if not self:AreEnemiesAware(g_CurrentTeam) then
@@ -882,23 +882,14 @@ function Combat:IsLocalPlayerEndTurn()
 end
 
 function GetUnitEquippedMedicine(unit)
-	-- try to find medkit first and than first aid
 	local item
-	local res = unit:ForEachItem("Medkit", function(itm, slot)
-		if itm.Condition>0 then
-			item = itm
-			return "break"
+	unit:ForEachItem("Medicine", function(itm)
+		if itm.Condition > 0 then
+			if not item or (item.UsePriority < itm.UsePriority) then
+				item = itm
+			end
 		end
-	end,item)
-	if res=="break" and item then
-		return item 
-	end	
-	local res = unit:ForEachItem("FirstAidKit", function(itm, slot)
-		if itm.Condition>0 then
-			item = itm
-			return "break"
-		end
-	end,item)
+	end)
 	return item
 end
 
@@ -1474,7 +1465,7 @@ function CombatTeam:SetDynamicData(team_data)
 	self.team_color  = team_data.team_color
 	self.spawn_marker_group = team_data.spawn_marker_group
 	self.morale = team_data.morale
-	self.tactical_situations_vr = table.copy(self.tactical_situations_vr or {}, "deep")
+	self.tactical_situations_vr = table.copy(self.tactical_situations_vr, "deep")
 
 	self.units = {}
 	for _, handle in ipairs(team_data.units) do
@@ -1681,7 +1672,7 @@ function Combat:SetDynamicData(combat_data)
 	self.unit_reposition_shown = combat_data.unit_reposition_shown
 	self.start_reposition_ended = combat_data.start_reposition_ended
 	self.retreat_enemies = combat_data.retreat_enemies or false
-	self.queued_bombards = table.copy(combat_data.queued_bombards or {}, "deep")
+	self.queued_bombards = table.copy(combat_data.queued_bombards, "deep")
 	self.autosave_enabled = combat_data.autosave_enabled
 	self.lastStandingVR = combat_data.lastStandingVR
 	self.starting_unit = combat_data.starting_unit and HandleToObject[combat_data.starting_unit]
@@ -2041,7 +2032,11 @@ function ApplyDamagePrediction(attacker, action, args, actionResult)
 					local shot_damage = data.direct_hit_damage / Max(1, args.num_shots or 1)
 					obj.PotentialDamageConditional = shot_damage
 					obj.PotentialSecondaryConditional = data.direct_hit_damage - shot_damage
-					death = data.total_damage - obj.PotentialSecondaryConditional >= obj:GetTotalHitPoints()
+					if targetIsTrap and obj == target then
+						death = data.total_damage >= obj:GetTotalHitPoints()
+					else
+						death = data.total_damage - obj.PotentialSecondaryConditional >= obj:GetTotalHitPoints()
+					end
 				else
 					obj.PotentialDamageConditional = data.direct_hit_damage
 					obj.PotentialSecondaryConditional = data.stray_hit_damage

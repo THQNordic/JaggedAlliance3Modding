@@ -775,7 +775,7 @@ function HandleGatherIntelCompleted(sector_id, mercs)
 			end
 		end, interesting_sectors)
 	if next(interesting_sectors) then
-		local interesting_sectors_text = T{769686665237, "Possible Operation in sectors - <sectors>", sectors = table.concat(interesting_sectors, ", ")}
+		local interesting_sectors_text = T{769686665237, "There may be something of interest in sectors - <sectors>", sectors = table.concat(interesting_sectors, ", ")}
 		text = text.."\n"..interesting_sectors_text
 	end
 	

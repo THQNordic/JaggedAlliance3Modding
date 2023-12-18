@@ -2375,6 +2375,10 @@ PlaceObj('XTemplate', {
 											end
 											new_context = SubContext(new_context, {context[sub_context_idx], prop_meta = context.prop_meta})
 											child:SetContext(new_context, false)
+											local scroll = child.idSlider
+											if scroll then
+												scroll:SetContext(new_context, false)
+											end
 										end
 									end,
 								}, {
@@ -3830,7 +3834,7 @@ PlaceObj('XTemplate', {
 									'condition', function (parent, context, item, i)
 										local ns = item.not_selectable 
 										if type(ns) == "function" then 
-											ns = ns(item, OptionsObj) 
+											ns = OptionsObj and ns(item, OptionsObj) 
 										end 
 										return not ns
 									end,
@@ -4478,10 +4482,16 @@ PlaceObj('XTemplate', {
 												'__class', "XText",
 												'Id', "idDescrText",
 												'OnLayoutComplete', function (self)  end,
-												'HandleMouse', false,
 												'TextStyle', "ModDescription",
 												'Shorten', true,
-											}),
+											}, {
+												PlaceObj('XTemplateFunc', {
+													'name', "OnHyperLink(self, hyperlink, argument, hyperlink_box, pos, button)",
+													'func', function (self, hyperlink, argument, hyperlink_box, pos, button)
+														OpenUrl(hyperlink, "force external browser")
+													end,
+												}),
+												}),
 											PlaceObj('XTemplateWindow', {
 												'__class', "XZuluScroll",
 												'Id', "idDescrScroll",
@@ -4495,6 +4505,8 @@ PlaceObj('XTemplate', {
 											'Id', "idRequiredMods",
 											'Margins', box(0, 10, 0, 0),
 											'LayoutMethod', "HList",
+											'Visible', false,
+											'FoldWhenHidden', true,
 										}, {
 											PlaceObj('XTemplateWindow', {
 												'__class', "XText",

@@ -21,3 +21,13 @@ T(894158313589, "Finish the game on “Mission Impossible”, “Dead is Dead”
 T(284695860080, --[[GameRuleDef ForgivingMode Playstation description]] 'Lowers the impact of attrition and makes it easier to recover from bad situations (faster healing and repair, better income).<newline><newline><flavor>You cannot unlock the "Ironman" trophy while Forgiving mode is enabled.</flavor><newline><newline><flavor>You can change this option at any time during gameplay.</flavor>')
 T{393813156807, --[[Warning popup on changing to 'Ultra' settings preset]] "You have selected the '<ultra_preset>' video preset! This choice is extremely demanding on the hardware and may strain even configurations well above the recommended system requirements.", ultra_preset = T(3551, "Ultra") }
 T{782520163252, --[[Warning popup on changing to 'Ultra' settings preset]] "Are you certain you want to change the video preset to '<ultra_preset>'?", ultra_preset = T(3551, "Ultra") }
+
+
+--Buttons for sector stash http://mantis.haemimontgames.com/view.php?id=233626
+T(428919950691, "Select All")
+T(412551668833, "Autosort")
+
+--Sector names for Hans
+T(343661191093, "Waffenlabor")
+T(851145674759, "Biolabor")
+T(571831212629, "Cryolabor")

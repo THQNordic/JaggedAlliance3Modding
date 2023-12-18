@@ -44,13 +44,6 @@ function MeleeWeapon:PrecalcDamageAndStatusEffects(attacker, target, attack_pos,
 
 	local actionType = hit.actionType
 	if actionType == "Melee Attack" then
-		local drunk = attacker:GetStatusEffect("Drunk")
-		if drunk then
-			local drunkBonus = drunk:ResolveValue("melee_damage_mod")
-			mod = mod + drunkBonus
-			if record_breakdown then record_breakdown[#record_breakdown + 1] = { name = drunk.DisplayName, value = drunkBonus } end
-		end
-		
 		if IsKindOf(target, "Unit") then
 			if target.species == "Human" and target.stance == "Prone" then
 				local value = const.Combat.MeleeAttackProneMod

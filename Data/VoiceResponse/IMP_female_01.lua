@@ -267,8 +267,8 @@ PlaceObj('VoiceResponse', {
 		T(964855174760, --[[VoiceResponse IMP_female_01 Selection VoiceResponse Selection - when selected or autoselected voice:IMP_female_01]] "Ready.")
 	}),
 	SeriouslyWounded = TConcat({
-		T(822318770868, --[[VoiceResponse IMP_female_01 SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds) voice:IMP_female_01]] "These wounds are serious. I need a medic!"),
-		T(474727079332, --[[VoiceResponse IMP_female_01 SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds) voice:IMP_female_01]] "Not sure how much more punishment I can take.")
+		T(822318770868, --[[VoiceResponse IMP_female_01 SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining. voice:IMP_female_01]] "These wounds are serious. I need a medic!"),
+		T(474727079332, --[[VoiceResponse IMP_female_01 SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining. voice:IMP_female_01]] "Not sure how much more punishment I can take.")
 	}),
 	SpecialThrowGrenade = TConcat({
 		T(521947301500, --[[VoiceResponse IMP_female_01 SpecialThrowGrenade VoiceResponse SpecialThrowGrenade - When throwing grenade voice:IMP_female_01]] "Here goes something special.")
@@ -327,9 +327,9 @@ PlaceObj('VoiceResponse', {
 		T(949921233095, --[[VoiceResponse IMP_female_01 WeaponJammed VoiceResponse WeaponJammed - When weapon has jammed voice:IMP_female_01]] "My weapon has jammed. ")
 	}),
 	Wounded = TConcat({
-		T(852776115759, --[[VoiceResponse IMP_female_01 Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:IMP_female_01]] "I'm wounded!"),
-		T(641660994188, --[[VoiceResponse IMP_female_01 Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:IMP_female_01]] "That'll leave a bruise."),
-		T(487630297871, --[[VoiceResponse IMP_female_01 Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:IMP_female_01]] "Damn.")
+		T(852776115759, --[[VoiceResponse IMP_female_01 Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:IMP_female_01]] "I'm wounded!"),
+		T(641660994188, --[[VoiceResponse IMP_female_01 Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:IMP_female_01]] "That'll leave a bruise."),
+		T(487630297871, --[[VoiceResponse IMP_female_01 Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:IMP_female_01]] "Damn.")
 	}),
 	group = "IMP",
 	id = "IMP_female_01",

@@ -84,7 +84,19 @@ PlaceObj('XTemplate', {
 										
 								local ui_slot = context.slot_wnd
 								local dest_container = self:ResolveId("node").unit																				
-								 local cost_ap, unit = GetAPCostAndUnit(context.item, context.context, ui_slot.slot_name, dest_container,  GetContainerInventorySlotName(dest_container))							
+								local cost_ap, unit, action_name
+								if context.items then
+									local tbl = table.keys(context.items)
+									for _, item in ipairs(tbl)do
+										local lap_cost, lunit_ap, laction_name = GetAPCostAndUnit(item, context.context, ui_slot.slot_name, dest_container,  GetContainerInventorySlotName(dest_container))							
+										cost_ap = (cost_ap or 0)+ lap_cost
+										unit = unit or lunit_ap
+										action_name =  action_name or laction_name
+									end
+								else
+									cost_ap, unit, action_name = GetAPCostAndUnit(context.item, context.context, ui_slot.slot_name, dest_container,  GetContainerInventorySlotName(dest_container))							
+								end
+								 
 								self:SetTextStyle((rollover and self.enabled) and "SatelliteContextMenuTextRollover" or "SatelliteContextMenuText")
 								if cost_ap > 0 then
 									local text = "<ap(cost_ap)>"

@@ -70,8 +70,8 @@ PlaceObj('VoiceResponse', {
 		T(482055452650, --[[VoiceResponse DiamondRedBoss VillainDefeated VoiceResponse VillainDefeated - Enemy lieutenant defeated. voice:DiamondRedBoss]] "I give up! I give up! Please... let me serve you. I can be very helpful!")
 	}),
 	Wounded = TConcat({
-		T(161388215765, --[[VoiceResponse DiamondRedBoss Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:DiamondRedBoss]] "Ah! Shit, that hurts!"),
-		T(854210288589, --[[VoiceResponse DiamondRedBoss Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:DiamondRedBoss]] "No! I'm wounded! Help!")
+		T(161388215765, --[[VoiceResponse DiamondRedBoss Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:DiamondRedBoss]] "Ah! Shit, that hurts!"),
+		T(854210288589, --[[VoiceResponse DiamondRedBoss Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:DiamondRedBoss]] "No! I'm wounded! Help!")
 	}),
 	group = "Villains",
 	id = "DiamondRedBoss",

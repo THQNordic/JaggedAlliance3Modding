@@ -1,5 +1,3 @@
-IsInModTestingMode = empty_func
-
 if not config.Mods then return end
 
 --MODS
@@ -77,13 +75,13 @@ function CheatNewModGame(start_type)
 				return
 			end
 			ProtectedModsReloadItems(nil, "force_reload")
-			QuickStartCampaign(pickedCampaign, {difficulty = "Normal", testModGame = true})
+			QuickStartCampaign(pickedCampaign, {difficulty = "Normal"})
 		elseif start_type == "normal" then
 			if WaitQuestion(terminal.desktop, Untranslated("New Game"), Untranslated("A new test mod game will be started.\n\nUnsaved mod changes will not be applied. Continue?"), Untranslated("Yes"), Untranslated("No")) ~= "ok" then
 				return
 			end
 			ProtectedModsReloadItems(nil, "force_reload")
-			StartCampaign(pickedCampaign, {difficulty = "Normal", testModGame = true})
+			StartCampaign(pickedCampaign, {difficulty = "Normal"})
 		end
 	end)
 end
@@ -122,24 +120,45 @@ function ModEditorOpen(mod)
 	end)
 end
 
-function IsInModTestingMode()
-	return IsModEditorMap(CurrentMap) or (Game and Game.testModGame)
-end
-
 if not Platform.developer and not Platform.asserts then
 	function OnMsg.ChangeMapDone(map)
-		ConsoleSetEnabled(IsInModTestingMode())
+		ConsoleSetEnabled(AreModdingToolsActive())
 	end
 end
 
 function OpenModEditor(mod)
+	local editor = GedConnections[mod.mod_ged_id]
+	if editor then
+		local activated = editor:Call("rfnApp", "Activate")
+		if activated ~= "disconnected" then
+			return editor
+		end
+	end
+	
 	for _, presets in pairs(Presets) do
 		PopulateParentTableCache(presets)
 	end
-
+	
 	local mod_path = ModConvertSlashes(mod:GetModRootPath())
+	local mod_folder_supported = g_Classes.ModItemFolder and true or false
+	local mod_items = GedItemsMenu("ModItem")
+	
+	--exception for ModItemMapPatch, as it is not a leaf node because of ModItemSetpiecePrg
+	local modItemMapPatchClass = g_Classes.ModItemMapPatch
+	if modItemMapPatchClass then
+		table.insert_unique(mod_items, {
+			Class = "ModItemMapPatch",
+			EditorName = modItemMapPatchClass:HasMember("EditorName") and GedTranslate(modItemMapPatchClass.EditorName, modItemMapPatchClass, false) or "ModItemMapPatch",
+			EditorIcon = rawget(modItemMapPatchClass, "EditorIcon"),
+			EditorShortcut = rawget(modItemMapPatchClass, "EditorShortcut"),
+			EditorSubmenu = rawget(modItemMapPatchClass, "EditorSubmenu"),
+			ScriptDomain = rawget(modItemMapPatchClass, "ScriptDomain"), 
+		})
+	end
+	
 	local context = {
-		mod_items = GedItemsMenu("ModItem"),
+		mod_items = mod_items,
+		mod_folder_supported = mod_folder_supported,
 		dlcs = g_AvailableDlc or { },
 		mod_path = mod_path,
 		mod_os_path = ConvertToOSPath(mod_path),
@@ -154,8 +173,13 @@ function OpenModEditor(mod)
 		items = GetItemsIds(),
 	}
 	Msg("GatherModEditorLogins", context)
-	local editor = OpenGedApp("ModEditor", Container:new{ mod }, context)
-	if editor then editor:Send("rfnApp", "SetSelection", "root", { 1 }) end
+	local container = Container:new{ mod }
+	UpdateParentTable(mod, container)
+	local editor = OpenGedApp("ModEditor", container, context)
+	if editor then 
+		editor:Send("rfnApp", "SetSelection", "root", { 1 })
+		editor:Send("rfnApp", "SetTitle", string.format("Mod Editor - %s", mod.title))
+	end
 	return editor
 end
 
@@ -192,18 +216,18 @@ DefineModItemPreset("AppearancePreset", { EditorName = "Appearance preset", Edit
 AppendClass.ModItemAppearancePreset = {
 	properties = {
 				{ id = "helpInfo", editor = "help", category = "Mod",
-					help = Untranslated([[ <em>To see the different newly exported entities in the dropdowns below you need to add their appropriate class in the entity mod item.</em>
+					help = [[ <style GedHighlight>To see the different newly exported entities in the dropdowns below you need to add their appropriate class in the entity mod item.</style>
 					
-					<em>Part  -   Class</em>
+					<style GedHighlight>Part  -   Class</style>
 					Body  -   CharacterBodyMale/Female
 					Head  -   CharacterHeadMale/Female
 					Pants -   CharacterPantsMale/Female
 					Armor -   CharacterArmorMale/Female
 					Chest -   CharacterChestMale/Female
 					Hip   -   CharacterHipMale/Female
-					Hat   -   CharacterHat/Female
 					Hair  -   CharacterHairMale/Female
-					]]), },
+					Hat   -   CharacterHat
+					]], },
 					},
 }
 
@@ -263,20 +287,20 @@ end
 DefineClass.ModItemTranslatedVoices =  {
 	__parents = { "ModItem" },
 	
-	EditorName = "Translated Voices",
+	EditorName = "Translated voices",
 	EditorSubmenu = "Unit",
 	
 	properties = {
 		{ id = "_", default = false, editor = "help", 
-			help = Untranslated([[The <em>Translated Voices</em> mod item allows to supply to the game voices which will be used when the game is running in a specific language. You can use this to add new language voices of the existing voice lines, to override the existing voice lines, or to add entirely new voice content to the game.
+			help = [[The <style GedHighlight>Translated Voices</style> mod item allows to supply to the game voices which will be used when the game is running in a specific language. You can use this to add new language voices of the existing voice lines, to override the existing voice lines, or to add entirely new voice content to the game.
 
 1. Voice filenames need to match the localization IDs of the texts they correspond to; you can look up the localization IDs of existing lines in the game localization table (Game.csv) supplied with the mod tools.
-2. Voice files should be in Opus format; it is recommended to combine this mod item with an <em>Convert & Import Assets</em> mod item targeting a folder inside your mod folder structure.
-3. To supply voices in multiple languages, use one <em>Translated Voices</em> mod item per language.]]), },
-		{ id = "language", name = "Language", editor = "dropdownlist", default = "", help = Untranslated("Based on this value, the mod will decide if it should load the voices located in the translation folder."),
+2. Voice files should be in Opus format; it is recommended to combine this mod item with an <style GedHighlight>Convert & Import Assets</style> mod item targeting a folder inside your mod folder structure.
+3. To supply voices in multiple languages, use one <style GedHighlight>Translated Voices</style> mod item per language.]], },
+		{ id = "language", name = "Language", editor = "dropdownlist", default = "", help = "Based on this value, the mod will decide if it should load the voices located in the translation folder.",
 			items = GetAllLanguages(), 
 		},
-		{ id = "translatedVoicesFolder", name = "Translated Voices Folder", editor = "browse", filter = "folder", default = "", help = Untranslated("The folder inside the mod in which the translated voices should be placed. If you use the Convert & Import mod item for creating the files, pick the same path as the one defined there.") },
+		{ id = "translatedVoicesFolder", name = "Translated Voices Folder", editor = "browse", filter = "folder", default = "", help = "The folder inside the mod in which the translated voices should be placed. If you use the Convert & Import mod item for creating the files, pick the same path as the one defined there." },
 		{ id = "btn", editor = "buttons", default = false, buttons = {{name = "Force mount folder", func = "TryMountFolder"}}, untranslated = true},
 
 	}, 
@@ -313,12 +337,12 @@ end
 function OnMsg.TranslationChanged()
 	for _, loadedMod in ipairs(ModsLoaded) do
 		if loadedMod:ItemsLoaded() then
-			for _, loadedItem in ipairs(loadedMod.items) do
+			loadedMod:ForEachModItem(function(loadedItem)
 				if IsKindOf(loadedItem, "ModItemTranslatedVoices") then
 					loadedItem:UnmountFolders()
 					loadedItem:TryMountFolder()
 				end
-			end
+			end)
 		end
 	end
 end
@@ -330,7 +354,7 @@ function ModItemTranslatedVoices:GetError()
 end
 
 function OnMsg.UnableToUnlockAchievementReasons(reasons, achievement)
-	if IsInModTestingMode() then
-		reasons["in mod testing mode"] = true
+	if AreModdingToolsActive() then
+		reasons["modding tools active"] = true
 	end
 end

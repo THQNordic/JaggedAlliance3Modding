@@ -160,6 +160,16 @@ PlaceObj('XTemplate', {
 				OpenIngameMainMenu()
 			end,
 		}),
+		PlaceObj('XTemplateAction', {
+			'comment', "open ingame main menu",
+			'ActionId', "IGMainMenu_Guest",
+			'ActionShortcut', "Escape",
+			'ActionMouseBindable', false,
+			'OnAction', function (self, host, source, ...)
+				OpenIngameMainMenu()
+			end,
+			'__condition', function (parent, context) return not NetIsHost() end,
+		}),
 		PlaceObj('XTemplateWindow', {
 			'__class', "XContextWindow",
 			'Id', "idDlg",

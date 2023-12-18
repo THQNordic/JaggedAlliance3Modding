@@ -18,6 +18,8 @@ PlaceObj('UnitDataCompositeDef', {
 	'BigPortrait', "UI/Enemies/LegionRaider",
 	'Name', T(784278021240, --[[UnitDataCompositeDef PierreGuard_Ordnance Name]] "Pierre's Guard"),
 	'Randomization', true,
+	'elite', true,
+	'eliteCategory', "Legion",
 	'Affiliation', "Legion",
 	'StartingLevel', 4,
 	'neutral_retaliate', true,

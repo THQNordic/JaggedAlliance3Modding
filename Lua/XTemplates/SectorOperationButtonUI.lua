@@ -33,10 +33,13 @@ PlaceObj('XTemplate', {
 			end
 			local sector = GetDialog(self).context.sector
 			local mercs = GetOperationProfessionals(sector.Id,context.id)
-			self.idTimer:SetVisible(next(mercs))
+			local progress_visible = self:IsProgressPaused(context)
+			self.idTimer:SetVisible(next(mercs)  or progress_visible)
 			if next(mercs) then
 				local left_time  = GetOperationTimeLeft(mercs[1], context.id, {mercs = mercs ,prediction = true, all =true})
 				self.idTimer:SetText(T{847408442453, "<image UI/SectorOperations/T_Icon_Activity_Resting 900 130 128 120> <timeDuration(left_time)>", left_time = left_time})
+			elseif progress_visible then	
+				self.idTimer:SetText(T{961577265282, "<image UI/PDA/T_Icon_Pause 1000 130 128 120> Pause",})
 			end
 		end,
 		'DisabledBackground', RGBA(255, 255, 255, 255),
@@ -110,6 +113,17 @@ PlaceObj('XTemplate', {
 			'name', "IsSelectable(self)",
 			'func', function (self)
 				return self:GetEnabled()
+			end,
+		}),
+		PlaceObj('XTemplateFunc', {
+			'name', "IsProgressPaused(self, context)",
+			'func', function (self, context)
+				local sector = GetDialog(self).context.sector
+				local mercs = GetOperationProfessionals(sector.Id,context.id)
+				local progress = context:ProgressCurrent(false, sector, "prediction")
+				
+				return not next(mercs) and context.ShowPauseProgress and progress>0--(context.id=="GatherIntel" or context.id== "MilitiaTraining")
+				
 			end,
 		}),
 		PlaceObj('XTemplateWindow', {
@@ -195,7 +209,12 @@ PlaceObj('XTemplate', {
 						local progress 
 						local max
 						local mercs = GetOperationProfessionals(sector.Id,context.id)
-						if #mercs<=0 then 
+						local node = self:ResolveId("node")
+						local progress_visible = node:IsProgressPaused(context)
+						if progress_visible then
+							self:SetBackground(GameColors.D)
+						end
+						if #mercs<=0 and not progress_visible then 
 							self:SetVisible(false)
 							self.parent:SetVisible(false)
 							return 
@@ -227,8 +246,14 @@ PlaceObj('XTemplate', {
 							XWindow.DrawBackground(self)
 							local b = self.box
 							local w = Max(3, MulDivRound(b:sizex(), self.Progress, 100))
-							b = sizebox(b:minx(), b:miny(), w, b:sizey())		
-							UIL.DrawSolidRect(b, GameColors.J)
+							b = sizebox(b:minx(), b:miny(), w, b:sizey())
+							local color = GameColors.J
+							local node = self:ResolveId("node")
+							local progress_visible = node:IsProgressPaused(self.context)
+							if progress_visible then
+								color = GameColors.F
+							end
+							UIL.DrawSolidRect(b, color)
 						end,
 					}),
 					}),

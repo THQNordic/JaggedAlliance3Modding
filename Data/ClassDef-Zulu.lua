@@ -76,7 +76,7 @@ PlaceObj('ClassDef', {
 		'id', "Character",
 		'name', "Character",
 		'no_edit', "expression",
-		'no_edit_expression', function (self) return self.MultipleTexts end,
+		'no_edit_expression', function (self, prop_meta) return self.MultipleTexts end,
 		'default', "any",
 		'items', function (self) return GetTargetUnitCombo() end,
 	}),
@@ -88,7 +88,7 @@ PlaceObj('ClassDef', {
 	PlaceObj('PropertyDefText', {
 		'id', "Text",
 		'no_edit', "expression",
-		'no_edit_expression', function (self) return self.MultipleTexts end,
+		'no_edit_expression', function (self, prop_meta) return self.MultipleTexts end,
 		'wordwrap', true,
 		'lines', 4,
 		'max_lines', 6,
@@ -98,14 +98,14 @@ PlaceObj('ClassDef', {
 		'id', "AnyOfTheseCount",
 		'name', "Play Any Of List Count",
 		'no_edit', "expression",
-		'no_edit_expression', function (self) return not self.MultipleTexts end,
+		'no_edit_expression', function (self, prop_meta) return not self.MultipleTexts end,
 		'default', 1,
 	}),
 	PlaceObj('PropertyDefNestedList', {
 		'id', "AnyOfThese",
 		'name', "Play Any Of List",
 		'no_edit', "expression",
-		'no_edit_expression', function (self) return not self.MultipleTexts end,
+		'no_edit_expression', function (self, prop_meta) return not self.MultipleTexts end,
 		'base_class', "BanterLineThin",
 	}),
 	PlaceObj('PropertyDefBool', {
@@ -142,7 +142,7 @@ PlaceObj('ClassDef', {
 		'name', "Optional",
 		'help', "Optional lines don't report missing actors and include actors around the source regardless of whether were passed in.",
 		'no_edit', "expression",
-		'no_edit_expression', function (self) return self.MultipleTexts end,
+		'no_edit_expression', function (self, prop_meta) return self.MultipleTexts end,
 	}),
 	PlaceObj('PropertyDefBool', {
 		'id', "FloatUp",
@@ -227,14 +227,14 @@ PlaceObj('ClassDef', {
 		'id', "Character",
 		'name', "Character",
 		'no_edit', "expression",
-		'no_edit_expression', function (self) return self.IsInterjection end,
+		'no_edit_expression', function (self, prop_meta) return self.IsInterjection end,
 		'default', "any",
 		'items', function (self) return GetTargetUnitCombo() end,
 	}),
 	PlaceObj('PropertyDefText', {
 		'id', "Text",
 		'no_edit', "expression",
-		'no_edit_expression', function (self) return self.IsInterjection end,
+		'no_edit_expression', function (self, prop_meta) return self.IsInterjection end,
 		'wordwrap', true,
 		'lines', 4,
 		'max_lines', 6,
@@ -299,6 +299,33 @@ PlaceObj('ClassDef', {
 		'name', "place_name",
 		'type', "text",
 		'value', "DecorFX_Butterflies",
+	}),
+})
+
+PlaceObj('ClassDef', {
+	group = "Zulu",
+	id = "CampaignSpecific",
+	PlaceObj('PropertyDefCombo', {
+		'id', "campaign",
+		'name', "Campaign",
+		'help', "The relevant campaign for this preset.",
+		'default', "HotDiamonds",
+		'items', function (self)
+			local items = {}
+			if not IsKindOf(self, "ModItem") then
+				table.insert(items, "<all>")
+			end
+			table.iappend(items, PresetsCombo("CampaignPreset")())
+			return items
+		end,
+	}),
+	PlaceObj('PropertyDefFunc', {
+		'id', "IsRelatedToCurrentCampaign",
+		'name', "IsRelatedToCurrentCampaign",
+		'no_edit', true,
+		'default', function (self)
+			return self.campaign == GetCurrentCampaignPreset().id or self.campaign == "<all>"
+		end,
 	}),
 })
 
@@ -1901,7 +1928,7 @@ PlaceObj('ClassDef', {
 		'id', "Stat",
 		'name', "Related Stat",
 		'no_edit', "expression",
-		'no_edit_expression', function (self) return not (self.Tier == "Bronze" or self.Tier == "Silver" or self.Tier == "Gold") end,
+		'no_edit_expression', function (self, prop_meta) return not (self.Tier == "Bronze" or self.Tier == "Silver" or self.Tier == "Gold") end,
 		'template', true,
 		'items', function (self) return {"Health", "Agility", "Dexterity", "Strength", "Leadership", "Wisdom", "Marksmanship", "Mechanical", "Explosives", "Medical"} end,
 	}),
@@ -1910,7 +1937,7 @@ PlaceObj('ClassDef', {
 		'id', "StatValue",
 		'name', "Stat Requirement",
 		'no_edit', "expression",
-		'no_edit_expression', function (self) return not (self.Tier == "Bronze" or self.Tier == "Silver" or self.Tier == "Gold") end,
+		'no_edit_expression', function (self, prop_meta) return not (self.Tier == "Bronze" or self.Tier == "Silver" or self.Tier == "Gold") end,
 		'template', true,
 		'default', 30,
 		'slider', true,
@@ -3651,6 +3678,13 @@ PlaceObj('ClassDef', {
 			elseif oldValue > 0 and value <= 0 then
 				Msg("UnitTiredRemoved", self)
 			end
+			if value - oldValue > 0 then
+				Msg("UnitTiredLevelAdded", self, value)	
+			end
+			
+			if value - oldValue < 0 then
+				Msg("UnitTiredLevelRemoved", self, value)	
+			end
 		end,
 	}),
 	PlaceObj('ClassMethodDef', {
@@ -3742,6 +3776,7 @@ PlaceObj('ClassDef', {
 	PlaceObj('ClassMethodDef', {
 		'name', "IsDead",
 		'code', function (self)
+			if self.immortal then return false end
 			return self.HitPoints <= 0
 		end,
 	}),

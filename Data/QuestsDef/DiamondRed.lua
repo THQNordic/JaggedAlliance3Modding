@@ -398,8 +398,10 @@ PlaceObj('QuestsDef', {
 					RoutineArea = "AL_GraffForman",
 					TargetUnit = "DiamondRedBoss",
 				}),
-				PlaceObj('ExecuteCode', {
-					FuncCode = '-- Despawn the old unit\nDespawnUnitData("A2", "DiamondRedBoss", "unitToo")',
+				PlaceObj('GroupSetBehaviorExit', {
+					Running = true,
+					TargetUnit = "DiamondRedBoss",
+					closest = true,
 				}),
 			},
 			Once = true,

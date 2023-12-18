@@ -104,14 +104,14 @@ PlaceObj('VoiceResponse', {
 		T(148540879646, --[[VoiceResponse Pierre VillainHurt VoiceResponse VillainHurt - Played on villain hp less than 50% voice:Pierre]] "You hit hard, I will give you that.")
 	}),
 	Wounded = TConcat({
-		T(683686500543, --[[VoiceResponse Pierre Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Pierre]] "Damn it!"),
-		T(269042601572, --[[VoiceResponse Pierre Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Pierre]] "Won't die yet!"),
-		T(108434310331, --[[VoiceResponse Pierre Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Pierre]] "Bastards!"),
-		T(578294989619, --[[VoiceResponse Pierre Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Pierre]] "Je suis blessé!"),
-		T(526830046926, --[[VoiceResponse Pierre Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Pierre]] "I am wounded!"),
-		T(170573502397, --[[VoiceResponse Pierre Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Pierre]] "Uff, Ça fait mal!"),
-		T(655074008671, --[[VoiceResponse Pierre Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Pierre]] "It will take more than that to kill me!"),
-		T(634504852406, --[[VoiceResponse Pierre Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Pierre]] "Uff, that hurt!")
+		T(683686500543, --[[VoiceResponse Pierre Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Pierre]] "Damn it!"),
+		T(269042601572, --[[VoiceResponse Pierre Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Pierre]] "Won't die yet!"),
+		T(108434310331, --[[VoiceResponse Pierre Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Pierre]] "Bastards!"),
+		T(578294989619, --[[VoiceResponse Pierre Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Pierre]] "Je suis blessé!"),
+		T(526830046926, --[[VoiceResponse Pierre Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Pierre]] "I am wounded!"),
+		T(170573502397, --[[VoiceResponse Pierre Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Pierre]] "Uff, Ça fait mal!"),
+		T(655074008671, --[[VoiceResponse Pierre Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Pierre]] "It will take more than that to kill me!"),
+		T(634504852406, --[[VoiceResponse Pierre Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Pierre]] "Uff, that hurt!")
 	}),
 	group = "Villains",
 	id = "Pierre",

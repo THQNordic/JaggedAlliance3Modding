@@ -50,7 +50,7 @@ function UpdateLastCursor(walkable)
 		end
 	end
 	local src = camera.GetEye()
-	local dest = GetUIStyleGamepad() and GetTerrainGamepadCursor() or GetTerrainCursor()
+	local dest = (GetUIStyleGamepad() or not g_MouseConnected) and GetTerrainGamepadCursor() or GetTerrainCursor()
 	local closest_obj, closest_pos
 	if src and dest then
 		closest_obj, closest_pos = GetClosestRayObj(src, dest, walkable and flags_walkable or flags_enum, flags_game_ignore, CursorPosFilter, mask_all, flags_collision_mask)

@@ -168,7 +168,7 @@ PlaceObj('XTemplate', {
 			'OnAction', function (self, host, source, ...)
 				OpenGameUpdatesPopup(false, "force")
 			end,
-			'__condition', function (parent, context) return not Platform.console end,
+			'__condition', function (parent, context) return not Platform.console and not Platform.demo end,
 		}),
 		PlaceObj('XTemplateAction', {
 			'ActionId', "idMods",

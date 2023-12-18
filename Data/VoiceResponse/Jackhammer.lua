@@ -68,8 +68,8 @@ PlaceObj('VoiceResponse', {
 		T(627590478408, --[[VoiceResponse Jackhammer VillainDefeated VoiceResponse VillainDefeated - Enemy lieutenant defeated. voice:Jackhammer]] "All right, I get it! You are tough - really tough! Let me make you a deal.")
 	}),
 	Wounded = TConcat({
-		T(978774929835, --[[VoiceResponse Jackhammer Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Jackhammer]] "You think you can hurt me? Ha!"),
-		T(260548713651, --[[VoiceResponse Jackhammer Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Jackhammer]] "That is cute. You are trying so hard.")
+		T(978774929835, --[[VoiceResponse Jackhammer Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Jackhammer]] "You think you can hurt me? Ha!"),
+		T(260548713651, --[[VoiceResponse Jackhammer Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Jackhammer]] "That is cute. You are trying so hard.")
 	}),
 	group = "Villains",
 	id = "Jackhammer",

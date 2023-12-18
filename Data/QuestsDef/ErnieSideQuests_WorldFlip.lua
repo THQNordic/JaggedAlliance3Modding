@@ -218,7 +218,7 @@ PlaceObj('QuestsDef', {
 					Negate = true,
 				}),
 				PlaceObj('UnitIsAroundOtherUnit', {
-					Distance = 15,
+					Distance = 6,
 					SecondTargetUnit = "WorldFlip_Partisans",
 					TargetUnit = "any merc",
 				}),
@@ -338,7 +338,7 @@ PlaceObj('QuestsDef', {
 					per_ses_id = "NPC_Pierre",
 				}),
 				PlaceObj('UnitIsAroundOtherUnit', {
-					Distance = 15,
+					Distance = 6,
 					SecondTargetUnit = "Pierre",
 					TargetUnit = "any merc",
 				}),
@@ -393,6 +393,70 @@ PlaceObj('QuestsDef', {
 			QuestId = "ErnieSideQuests_WorldFlip",
 			requiredSectors = {
 				"H2",
+			},
+		}),
+		PlaceObj('TriggeredConditionalEvent', {
+			Conditions = {
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "04_Betrayal",
+					Vars = set( "WorldFlipDone" ),
+					__eval = function ()
+						local quest = gv_Quests['04_Betrayal'] or QuestGetState('04_Betrayal')
+						return quest.WorldFlipDone
+					end,
+				}),
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"H4",
+					},
+				}),
+				PlaceObj('CheckIsPersistentUnitDead', {
+					Negate = true,
+					per_ses_id = "NPC_Pierre",
+				}),
+				PlaceObj('UnitIsAroundOtherUnit', {
+					Distance = 6,
+					SecondTargetUnit = "Pierre",
+					TargetUnit = "any merc",
+				}),
+				PlaceObj('CombatIsActive', {
+					Negate = true,
+				}),
+				PlaceObj('SectorCheckOwner', {
+					owner = "any enemy",
+				}),
+				PlaceObj('BanterHasPlayed', {
+					Banters = {
+						"FortCorazon01_radio",
+					},
+					WaitOver = true,
+				}),
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "ErnieSideQuests_WorldFlip",
+					Vars = set({
+	FortAttackStarted = false,
+}),
+					__eval = function ()
+						local quest = gv_Quests['ErnieSideQuests_WorldFlip'] or QuestGetState('ErnieSideQuests_WorldFlip')
+						return not quest.FortAttackStarted
+					end,
+				}),
+			},
+			Effects = {
+				PlaceObj('PlayBanterEffect', {
+					Banters = {
+						"ErnieWorldFlip04_FortEntered",
+					},
+					banterSequentialWaitFor = "BanterStart",
+					searchInMap = true,
+					searchInMarker = false,
+				}),
+			},
+			Once = true,
+			ParamId = "TCE_PartisansFortress_Banter",
+			QuestId = "ErnieSideQuests_WorldFlip",
+			requiredSectors = {
+				"H4",
 			},
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
@@ -627,6 +691,9 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('QuestVarTCEState', {
 			Name = "TCE_PostErniePierre",
+		}),
+		PlaceObj('QuestVarTCEState', {
+			Name = "TCE_PartisansFortress_Banter",
 		}),
 		PlaceObj('QuestVarTCEState', {
 			Name = "TCE_PartisansFortress_Alert",

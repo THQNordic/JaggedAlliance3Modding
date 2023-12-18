@@ -216,7 +216,7 @@ PlaceObj('XTemplate', {
 					}),
 				PlaceObj('XTemplateTemplate', {
 					'comment', "SETPIECES",
-					'__condition', function (parent, context) return next(Presets.SetpiecePrg.Trailers or {}) end,
+					'__condition', function (parent, context) return next(Presets.SetpiecePrg.Trailers) end,
 					'__template', "DialogTitle",
 					'Margins', box(0, 0, 0, 0),
 					'Dock', false,

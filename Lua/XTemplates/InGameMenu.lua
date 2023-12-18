@@ -27,7 +27,7 @@ PlaceObj('XTemplate', {
 					table.restore(hr, "InGameMenu-Rain")
 					table.restore(hr, "InGameMenu-Marking")
 					HideCombatUI(false)
-					HideInWorldCombatUI(false)
+					HideInWorldCombatUI(false, "mainmenu")
 				end
 			end,
 		}),
@@ -39,7 +39,7 @@ PlaceObj('XTemplate', {
 				if not GetDialog("PDADialog") and not GetDialog("PDADialogSatellite") and not IsInMultiplayerGame() then
 					table.change(hr, "InGameMenu-Particles", {SimulateParticles = 0})
 					HideCombatUI(true)
-					HideInWorldCombatUI(true)
+					HideInWorldCombatUI(true, "mainmenu")
 					table.change(hr, "InGameMenu-Rain", {RenderRain = 0})
 					table.change(hr, "InGameMenu-Marking", {EnableObjectMarking = 0})
 				end

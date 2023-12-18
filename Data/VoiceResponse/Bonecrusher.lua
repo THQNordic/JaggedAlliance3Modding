@@ -23,8 +23,8 @@ PlaceObj('VoiceResponse', {
 		T(208886912936, --[[VoiceResponse Bonecrusher Pain VoiceResponse Pain - Hit by an attack (if surrounded SurroundedPain is played instead). Short. These are emotes - disregard the written text. voice:Bonecrusher]] "Pain5")
 	}),
 	Wounded = TConcat({
-		T(314135701062, --[[VoiceResponse Bonecrusher Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Bonecrusher]] "I'll break all your bones for that!"),
-		T(542484498489, --[[VoiceResponse Bonecrusher Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Bonecrusher]] "Is that all you got?")
+		T(314135701062, --[[VoiceResponse Bonecrusher Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Bonecrusher]] "I'll break all your bones for that!"),
+		T(542484498489, --[[VoiceResponse Bonecrusher Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Bonecrusher]] "Is that all you got?")
 	}),
 	group = "Villains",
 	id = "Bonecrusher",

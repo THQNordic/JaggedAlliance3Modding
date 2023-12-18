@@ -19,6 +19,14 @@ PlaceObj('XTemplate', {
 			if context then
 				HideCombatLog()
 			end
+			
+			-- enable/disable command button which appears behind panel and can be activated with Y on gamepad
+			local startButton = GetDialog(g_SatelliteUI).idStartButton
+			local active = g_SatelliteUI and g_SatelliteUI.travel_mode
+			if startButton then
+				startButton:SetVisible(not active)
+			end
+			
 			XContextWindow.OnContextUpdate(self, context, ...)
 		end,
 	}, {
@@ -54,8 +62,8 @@ PlaceObj('XTemplate', {
 				self.idTitle:SetText(destSector.display_name)
 				
 				local squad = context.squad
-				self.idSquadButton.idLogo:SetContext({squad = squad.UniqueId, side="ally"})
-				local breakdown = GetRouteInfoBreakdown(squad, route)
+				self.idSquadButton.idLogo:SetContext({squad = squad.UniqueId, side="player1"})
+				local breakdown = route.breakdown or GetRouteInfoBreakdown(squad, route)
 				self.idRouteBreakdown:SetContext(breakdown)
 				self.idRouteBreakdown.idErrors:SetContext(breakdown.errors)
 				

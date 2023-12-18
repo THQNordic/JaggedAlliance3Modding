@@ -12,6 +12,14 @@ PlaceObj('CharacterEffectCompositeDef', {
 		}),
 	},
 	'object_class', "Perk",
+	'unit_reactions', {
+		PlaceObj('UnitReaction', {
+			Event = "OnCalcOverwatchAttacks",
+			Handler = function (self, target, value, action, args)
+				return value + self:ResolveValue("bonusAttacks")
+			end,
+		}),
+	},
 	'DisplayName', T(166697763714, --[[CharacterEffectCompositeDef OverwatchExpert DisplayName]] "Sentinel"),
 	'Description', T(742338429877, --[[CharacterEffectCompositeDef OverwatchExpert Description]] "Gain an <em>extra attack</em> when using <GameTerm('Overwatch')>."),
 	'Icon', "UI/Icons/Perks/OverwatchExpert",

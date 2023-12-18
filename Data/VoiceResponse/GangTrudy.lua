@@ -30,9 +30,9 @@ PlaceObj('VoiceResponse', {
 		T(510214429350, --[[VoiceResponse GangTrudy Pain VoiceResponse Pain - Hit by an attack (if surrounded SurroundedPain is played instead). Short. These are emotes - disregard the written text. voice:GangTrudy]] "Ugh.")
 	}),
 	Wounded = TConcat({
-		T(508334753122, --[[VoiceResponse GangTrudy Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:GangTrudy]] "Is that the best you can do?!"),
-		T(505229170580, --[[VoiceResponse GangTrudy Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:GangTrudy]] "I'm too fucking old to die!"),
-		T(880041365549, --[[VoiceResponse GangTrudy Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:GangTrudy]] "My fucking bones ache.")
+		T(508334753122, --[[VoiceResponse GangTrudy Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:GangTrudy]] "Is that the best you can do?!"),
+		T(505229170580, --[[VoiceResponse GangTrudy Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:GangTrudy]] "I'm too fucking old to die!"),
+		T(880041365549, --[[VoiceResponse GangTrudy Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:GangTrudy]] "My fucking bones ache.")
 	}),
 	group = "Other",
 	id = "GangTrudy",

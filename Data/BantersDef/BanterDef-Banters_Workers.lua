@@ -4,8 +4,8 @@ PlaceObj('BanterDef', {
 	KillOnAnyActorAware = true,
 	Lines = {
 		PlaceObj('BanterLine', {
-			'Character', "DiamondRedBoss",
-			'Text', T(470241139063, --[[BanterDef DiamondRed_Boss_03_ally Text section:Banters_Workers/DiamondRed_Boss_03_ally voice:DiamondRedBoss]] "I got everything under control. I'll get these lazy maggots digging out more diamonds than you'll know what to do with!"),
+			'Character', "DiamondRedBossAlly",
+			'Text', T(470241139063, --[[BanterDef DiamondRed_Boss_03_ally Text section:Banters_Workers/DiamondRed_Boss_03_ally voice:DiamondRedBossAlly]] "I got everything under control. I'll get these lazy maggots digging out more diamonds than you'll know what to do with!"),
 		}),
 	},
 	disabledInConflict = true,
@@ -17,8 +17,8 @@ PlaceObj('BanterDef', {
 	KillOnAnyActorAware = true,
 	Lines = {
 		PlaceObj('BanterLine', {
-			'Character', "DiamondRedBoss",
-			'Text', T(287911907796, --[[BanterDef DiamondRed_Boss_04_ally Text section:Banters_Workers/DiamondRed_Boss_04_ally voice:DiamondRedBoss]] "Don't worry, those maggots will never steal from you! Not on my watch."),
+			'Character', "DiamondRedBossAlly",
+			'Text', T(287911907796, --[[BanterDef DiamondRed_Boss_04_ally Text section:Banters_Workers/DiamondRed_Boss_04_ally voice:DiamondRedBossAlly]] "Don't worry, those maggots will never steal from you! Not on my watch."),
 		}),
 	},
 	disabledInConflict = true,
@@ -254,8 +254,8 @@ PlaceObj('BanterDef', {
 			'Text', T(293376336386, --[[BanterDef DiamondRed_Worker05_BossHired Text section:Banters_Workers/DiamondRed_Worker05_BossHired just spared the Boss voice:CivilianMaleMiner_1]] "Non-non, why not shoot that crazy man dead?! "),
 		}),
 		PlaceObj('BanterLine', {
-			'Character', "DiamondRedBoss",
-			'Text', T(136376978573, --[[BanterDef DiamondRed_Worker05_BossHired Text section:Banters_Workers/DiamondRed_Worker05_BossHired just spared the Boss voice:DiamondRedBoss]] "Shut up! This is new boss! New boss says: you don't have to die here, and you get money for the diamonds you find. What more do you want? Now get back to work, maggots."),
+			'Character', "DiamondRedBossAlly",
+			'Text', T(136376978573, --[[BanterDef DiamondRed_Worker05_BossHired Text section:Banters_Workers/DiamondRed_Worker05_BossHired just spared the Boss voice:DiamondRedBossAlly]] "Shut up! This is new boss! New boss says: you don't have to die here, and you get money for the diamonds you find. What more do you want? Now get back to work, maggots."),
 		}),
 	},
 	Once = true,
@@ -566,16 +566,6 @@ PlaceObj('BanterDef', {
 				"I18",
 			},
 		}),
-		PlaceObj('CheckOR', {
-			Conditions = {
-				PlaceObj('CheckGameState', {
-					GameState = "Sunset",
-				}),
-				PlaceObj('CheckGameState', {
-					GameState = "Night",
-				}),
-			},
-		}),
 		PlaceObj('QuestIsVariableBool', {
 			QuestId = "Witch",
 			Vars = set({
@@ -695,8 +685,8 @@ PlaceObj('BanterDef', {
 PlaceObj('BanterDef', {
 	Lines = {
 		PlaceObj('BanterLine', {
-			'Character', "CivilianMaleMiner_2",
-			'Text', T(474136731915, --[[BanterDef Shared_NPC_WorkerMale_14_Wassergrab Text section:Banters_Workers/Shared_NPC_WorkerMale_14_Wassergrab voice:CivilianMaleMiner_2]] "The Witch doesn't summon men for her wicked rituals anymore. That's a relief... I guess."),
+			'Character', "CivilianMaleMiner_1",
+			'Text', T(474136731915, --[[BanterDef Shared_NPC_WorkerMale_14_Wassergrab Text section:Banters_Workers/Shared_NPC_WorkerMale_14_Wassergrab voice:CivilianMaleMiner_1]] "The Witch doesn't summon men for her wicked rituals anymore. That's a relief... I guess."),
 		}),
 		PlaceObj('BanterLine', {
 			'Character', "DrQ",
@@ -775,16 +765,6 @@ PlaceObj('BanterDef', {
 		PlaceObj('PlayerIsInSectors', {
 			Sectors = {
 				"I18",
-			},
-		}),
-		PlaceObj('CheckOR', {
-			Conditions = {
-				PlaceObj('CheckGameState', {
-					GameState = "Sunset",
-				}),
-				PlaceObj('CheckGameState', {
-					GameState = "Night",
-				}),
 			},
 		}),
 		PlaceObj('QuestIsVariableBool', {
@@ -897,10 +877,13 @@ PlaceObj('BanterDef', {
 		}),
 		PlaceObj('QuestIsVariableBool', {
 			QuestId = "Beast",
-			Vars = set( "BeastRecruited" ),
+			Vars = set({
+	BeastDead = false,
+	BeastRecruited = true,
+}),
 			__eval = function ()
 				local quest = gv_Quests['Beast'] or QuestGetState('Beast')
-				return quest.BeastRecruited
+				return not quest.BeastDead and quest.BeastRecruited
 			end,
 		}),
 	},

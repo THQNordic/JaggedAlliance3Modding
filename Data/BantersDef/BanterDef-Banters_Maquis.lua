@@ -825,8 +825,21 @@ PlaceObj('BanterDef', {
 		}),
 	},
 	conditions = {
-		PlaceObj('UnitSquadHasMerc', {
-			Name = "Spike",
+		PlaceObj('CityHasLoyalty', {
+			Amount = 90,
+			City = "Pantagruel",
+			Condition = ">=",
+		}),
+		PlaceObj('QuestIsVariableBool', {
+			QuestId = "05_TakeDownMajor",
+			Vars = set({
+	MajorDead = false,
+	MajorRecruited = true,
+}),
+			__eval = function ()
+				local quest = gv_Quests['05_TakeDownMajor'] or QuestGetState('05_TakeDownMajor')
+				return not quest.MajorDead and quest.MajorRecruited
+			end,
 		}),
 	},
 	disabledInConflict = true,

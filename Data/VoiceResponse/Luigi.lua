@@ -20,7 +20,7 @@ PlaceObj('VoiceResponse', {
 		T(426401190041, --[[VoiceResponse Luigi Pain VoiceResponse Pain - Hit by an attack (if surrounded SurroundedPain is played instead). Short. These are emotes - disregard the written text. voice:Luigi]] "Pain5")
 	}),
 	Wounded = TConcat({
-		T(537221459715, --[[VoiceResponse Luigi Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Luigi]] "I will make an omelette out of you!")
+		T(537221459715, --[[VoiceResponse Luigi Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Luigi]] "I will make an omelette out of you!")
 	}),
 	group = "Villains",
 	id = "Luigi",

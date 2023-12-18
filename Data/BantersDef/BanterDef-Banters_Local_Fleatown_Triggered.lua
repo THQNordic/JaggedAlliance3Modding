@@ -737,6 +737,19 @@ PlaceObj('BanterDef', {
 })
 
 PlaceObj('BanterDef', {
+	Comment = "whenever Mollie was killed",
+	Lines = {
+		PlaceObj('BanterLine', {
+			'Character', "FleatownBoss",
+			'Text', T(356882619841, --[[BanterDef RimvilleApproach_Blaubert_MollieKilled Text section:Banters_Local_Fleatown_Triggered/RimvilleApproach_Blaubert_MollieKilled whenever Mollie was killed voice:FleatownBoss]] "You will die now."),
+		}),
+	},
+	Once = true,
+	group = "Banters_Local_Fleatown_Triggered",
+	id = "RimvilleApproach_Blaubert_MollieKilled",
+})
+
+PlaceObj('BanterDef', {
 	Comment = "Smiley just killed",
 	Lines = {
 		PlaceObj('BanterLine', {

@@ -162,6 +162,50 @@ PlaceObj('SectorOperation', {
 })
 
 PlaceObj('SectorOperation', {
+	CustomRepeat = true,
+	GetOperationCost = function (self, merc, profession, idx)
+		return  {[1] = {value = self:ResolveValue("PartsCost") , resource = "Parts"}}
+	end,
+	GetSectorSlots = function (self, prof, sector)
+		return 1
+	end,
+	Parameters = {
+		PlaceObj('PresetParamNumber', {
+			'Name', "PartsCost",
+			'Value', 75,
+			'Tag', "<PartsCost>",
+		}),
+	},
+	Professions = {
+		PlaceObj('SectorOperationProfession', {
+			'id', "Kompositum 58 crafter",
+			'display_name', T(155183729162, --[[SectorOperation CraftKompositum display_name]] "Kompositum 58 crafter"),
+			'display_name_all_caps', T(157113191143, --[[SectorOperation CraftKompositum display_name_all_caps]] "KOMPOSITUM 58 CRAFTER"),
+			'display_name_plural', T(766138589937, --[[SectorOperation CraftKompositum display_name_plural]] "Kompositum 58 crafters"),
+			'display_name_plural_all_caps', T(181269497153, --[[SectorOperation CraftKompositum display_name_plural_all_caps]] "KOMPOSITUM 58 CRAFTERS"),
+		}),
+	},
+	bonus_perks = {
+		PlaceObj('SectorOperationBonusPerk', {
+			'perk', "MrFixit",
+			'bonus', 50,
+		}),
+	},
+	description = T(631213600901, --[[SectorOperation CraftKompositum description]] "Craft Kompositum 58 with Dr. Gruselheim"),
+	display_name = T(917359107533, --[[SectorOperation CraftKompositum display_name]] "Craft K-58"),
+	group = "Custom Operations",
+	icon = "UI/SectorOperations/T_Icon_Activity_QuestActivity",
+	id = "CraftKompositum",
+	image = "UI/Messages/Operations/quest_activity",
+	log_msg_start = T(116201485220, --[[SectorOperation CraftKompositum log_msg_start]] "<em><mercs></em> are <em>crafting Kompositum 58</em> at <SectorName(sector)>"),
+	min_requirement_stat = "Mechanical",
+	min_requirement_stat_value = 80,
+	related_stat = "Mechanical",
+	short_name = T(498597554080, --[[SectorOperation CraftKompositum short_name]] "Special"),
+	target_contribution = 36000,
+})
+
+PlaceObj('SectorOperation', {
 	GetSectorSlots = function (self, prof, sector)
 		return 4
 	end,
@@ -306,7 +350,7 @@ PlaceObj('SectorOperation', {
 	Parameters = {
 		PlaceObj('PresetParamNumber', {
 			'Name', "HealPerTickBase",
-			'Value', 20,
+			'Value', 40,
 			'Tag', "<HealPerTickBase>",
 		}),
 		PlaceObj('PresetParamNumber', {
@@ -321,7 +365,7 @@ PlaceObj('SectorOperation', {
 		}),
 		PlaceObj('PresetParamNumber', {
 			'Name', "MoneyPerWound",
-			'Value', 50,
+			'Value', 300,
 			'Tag', "<MoneyPerWound>",
 		}),
 	},
@@ -437,7 +481,7 @@ PlaceObj('SectorOperation', {
 	Parameters = {
 		PlaceObj('PresetParamNumber', {
 			'Name', "HealPerTickBase",
-			'Value', 30,
+			'Value', 40,
 			'Tag', "<HealPerTickBase>",
 		}),
 		PlaceObj('PresetParamNumber', {
@@ -452,7 +496,7 @@ PlaceObj('SectorOperation', {
 		}),
 		PlaceObj('PresetParamNumber', {
 			'Name', "MoneyPerWound",
-			'Value', 150,
+			'Value', 300,
 			'Tag', "<MoneyPerWound>",
 		}),
 	},
@@ -577,6 +621,53 @@ PlaceObj('SectorOperation', {
 })
 
 PlaceObj('SectorOperation', {
+	GetOperationCost = function (self, merc, profession, idx)
+		return  {[1] = {value = self:ResolveValue("MoneyCost") , resource = "Money"}}
+	end,
+	GetSectorSlots = function (self, prof, sector)
+		return 2
+	end,
+	Parameters = {
+		PlaceObj('PresetParamNumber', {
+			'Name', "MoneyCost",
+			'Value', 5000,
+			'Tag', "<MoneyCost>",
+		}),
+	},
+	Professions = {
+		PlaceObj('SectorOperationProfession', {
+			'id', "Mechanic",
+			'display_name', T(877552208713, --[[SectorOperation UBahn_ClearCollapse display_name]] "Mechanic"),
+			'display_name_all_caps', T(827308535597, --[[SectorOperation UBahn_ClearCollapse display_name_all_caps]] "MECHANIC"),
+			'display_name_plural', T(488193989796, --[[SectorOperation UBahn_ClearCollapse display_name_plural]] "Mercs"),
+			'display_name_plural_all_caps', T(754721385285, --[[SectorOperation UBahn_ClearCollapse display_name_plural_all_caps]] "MECHANICS"),
+		}),
+	},
+	RequiredResources = {
+		"Money",
+	},
+	bonus_perks = {
+		PlaceObj('SectorOperationBonusPerk', {
+			'perk', "MrFixit",
+			'bonus', 50,
+		}),
+	},
+	description = T(378063759365, --[[SectorOperation UBahn_ClearCollapse description]] "Repair the railroad connection to Landsbach"),
+	display_name = T(661991424554, --[[SectorOperation UBahn_ClearCollapse display_name]] "Clear the tracks"),
+	group = "Custom Operations",
+	icon = "UI/SectorOperations/T_Icon_Activity_QuestActivity",
+	id = "UBahn_ClearCollapse",
+	image = "UI/Messages/Operations/quest_activity",
+	log_msg_start = T(386227632422, --[[SectorOperation UBahn_ClearCollapse log_msg_start]] "<em><mercs></em> are clearing the tracks to <em>Landsbach</em> in <SectorName(sector)>"),
+	min_requirement_stat = "Mechanical",
+	min_requirement_stat_value = 30,
+	related_stat = "Mechanical",
+	related_stat_2 = "Strength",
+	short_name = T(653224364395, --[[SectorOperation UBahn_ClearCollapse short_name]] "Special"),
+	target_contribution = 12000,
+})
+
+PlaceObj('SectorOperation', {
 	CustomRepeat = true,
 	FilterAvailable = function (self, merc, profession)
 		if merc.session_id ~= "Larry" then return false end
@@ -624,6 +715,7 @@ PlaceObj('SectorOperation', {
 				merc:SetTired(merc.Tiredness>0 and Max(merc.Tiredness-1, 0) or merc.Tiredness)
 				merc.TravelTimerStart = 0
 				merc.TravelTime = 0
+				merc.WarnTired = true
 		end
 		merc.RestTimer = 0
 	end,
@@ -1129,7 +1221,7 @@ PlaceObj('SectorOperation', {
 			end
 			local event = GetWeightedRandom(weights, InteractionRand(nil, "EventOutcome"))
 			if event then
-				ShowPopupNotification(event.PopupId, {base_activity_info = text or "", event})
+				ShowPopupNotification(event.PopupId, SubContext(event,{base_activity_info = text or ""}))
 				popup = false
 				event:Effect(self.Id, sector,  mercs)
 			end	
@@ -1146,12 +1238,12 @@ PlaceObj('SectorOperation', {
 		}),
 		PlaceObj('PresetParamNumber', {
 			'Name', "base_progress_per_tick",
-			'Value', 60,
+			'Value', 75,
 			'Tag', "<base_progress_per_tick>",
 		}),
 		PlaceObj('PresetParamPercent', {
 			'Name', "outcome_chance",
-			'Value', 70,
+			'Value', 60,
 			'Tag', "<outcome_chance>%",
 		}),
 	},
@@ -1179,6 +1271,7 @@ PlaceObj('SectorOperation', {
 		end
 		return perTick
 	end,
+	ShowPauseProgress = true,
 	SortKey = 20,
 	Tick = function (self, merc)
 		local sector = merc:GetSector()
@@ -1347,6 +1440,7 @@ PlaceObj('SectorOperation', {
 		
 		return lines, progressVal
 	end,
+	ShowPauseProgress = true,
 	SortKey = 30,
 	StoreAsTable = true,
 	description = T(937310534976, --[[SectorOperation MilitiaTraining description]] "Whip the civilian population into shape, turning them into a local Militia able to defend against hostile troops. Picking a Trainer with high <em>Leadership</em> and a high <em>Loyalty</em> of the local population both contribute to faster training."),
@@ -1390,7 +1484,7 @@ PlaceObj('SectorOperation', {
 		end
 		self:OnComplete(sector, mercs)
 		if next (merc_names) then
-			CombatLog("important", T{449926986206, "<stat_name> Training (<sector_id>) finished.",stat_name = stat_name, sector_id = Untranslated(sector.Id)})
+			CombatLog("important", T{449926986206, "<stat_name> Training (<sector_id>) finished.",stat_name = stat_name, sector_id = GetSectorName(sector)})
 			for up_levels, names in sorted_pairs(merc_names) do
 				if up_levels == 0 then
 					CombatLog("important", T{964788160766, "<merc_names> improved but not enough to gain a stat increase.", merc_names = ConcatListWithAnd(names) })
@@ -1409,9 +1503,11 @@ PlaceObj('SectorOperation', {
 			if HasPerk(merc, "OldDog") then return false end
 			local teachers = GetOperationProfessionals(sector.Id, self.id, "Teacher")
 			local teacher = teachers[1]
-			if not teacher then return false end
+			local solo = not teacher
+			--if not teacher then return false end
 			local max_learned_stat = self:ResolveValue("max_learned_stat")
-			return  teacher[stat]>merc[stat] and merc[stat]<=max_learned_stat
+			local teacher_stat = teacher and teacher[stat] or  self:ResolveValue("SoloTrainingStat")
+			return  teacher_stat>merc[stat] and merc[stat]<=max_learned_stat
 		else-- teacher
 			local students = GetOperationProfessionals(sector.Id, self.id, "Student")
 			for i_, st in ipairs(students) do
@@ -1443,6 +1539,7 @@ PlaceObj('SectorOperation', {
 			prof = eventcontext.profession
 		end
 		local mercs = GetOperationProfessionalsGroupedByProfession(sector_id, self.id)
+		local solo = not  next(mercs["Teacher"] )
 		if prof then
 			if prof=="Teacher" then
 				teachers = evmercs 
@@ -1459,10 +1556,13 @@ PlaceObj('SectorOperation', {
 			teachers = mercs["Teacher"]
 			teachers = table.map(teachers, "Nick")
 		end
-		students = ConcatListWithAnd(students)
-		teachers = ConcatListWithAnd(teachers)
-		
-		return T{793160161691, "<em><teachers></em> will finish training <em><students></em>.", teachers = teachers, students = students}
+		students = ConcatListWithAnd(students or empty_table)
+		teachers = ConcatListWithAnd(teachers or empty_table)
+		if solo then
+			return T{178030548891, " <em><students></em> will finish training.", students = students}
+		else
+			return T{793160161691, "<em><teachers></em> will finish training <em><students></em>.", teachers = teachers, students = students}
+		end
 	end,
 	HasOperation = function (self, sector)
 		return true
@@ -1516,6 +1616,16 @@ PlaceObj('SectorOperation', {
 			'Value', 90,
 			'Tag', "<max_learned_stat>",
 		}),
+		PlaceObj('PresetParamNumber', {
+			'Name', "SoloTrainingStat",
+			'Value', 80,
+			'Tag', "<SoloTrainingStat>",
+		}),
+		PlaceObj('PresetParamPercent', {
+			'Name', "SoloTrainingSpeedModifier",
+			'Value', 300,
+			'Tag', "<SoloTrainingSpeedModifier>%",
+		}),
 	},
 	Professions = {
 		PlaceObj('SectorOperationProfession', {
@@ -1541,8 +1651,8 @@ PlaceObj('SectorOperation', {
 	end,
 	ProgressCurrent = function (self, merc, sector, prediction)
 		if not merc then
-			local mercs = GetOperationProfessionals(sector.Id, self.id, "Teacher")
-			merc = mercs[1]
+			local mercs = GetOperationProfessionals(sector.Id, self.id, "Teacher") or GetOperationProfessionals(sector.Id, self.id, "Student")
+			merc = mercs[1]	
 		end	
 		return merc and merc.training_activity_progress or 0
 	end,
@@ -1561,18 +1671,22 @@ PlaceObj('SectorOperation', {
 	SectorMercsTick = function (self, merc)
 		local sector = merc:GetSector()
 		local teacher = GetOperationProfessionals(sector.Id, self.id, "Teacher")
-		local progress_per_tick = self:ProgressPerTick(teacher[1])
+		local solo = not teacher
+		local progress_per_tick = self:ProgressPerTick(teacher and teacher[1])
 		local to_complete 
 		merc.training_activity_progress = merc.training_activity_progress + progress_per_tick
 		to_complete = self:ProgressCurrent(merc, sector) >= self:ProgressCompleteThreshold(merc, sector)
 		merc.training_activity_progress = merc.training_activity_progress - progress_per_tick
 		
+		-- solo trianing
+		--[[
 		if not to_complete then
 			local teachers = GetOperationProfessionals(sector.Id, self.id, "Teacher")
 			if  not next(teachers) then
-				to_complete = true
+				to_complete = true 
 			end
 		end
+		--]]
 		if not to_complete then
 			local students = GetOperationProfessionals(sector.Id, self.id, "Student")
 			if not next(students) then
@@ -1590,7 +1704,7 @@ PlaceObj('SectorOperation', {
 		end
 		if to_complete then
 			self:Complete(sector)
-		end		
+		end
 	end,
 	SortKey = 40,
 	Tick = function (self, merc)
@@ -1602,20 +1716,27 @@ PlaceObj('SectorOperation', {
 			return 
 		end	
 		local max_learned_stat = self:ResolveValue("max_learned_stat")
+		local solo = false
 		if merc.OperationProfession=="Student" then
 			local teachers = GetOperationProfessionals(sector.Id, self.id, "Teacher")
 			local teacher = teachers[1]
-			if not teacher then
-				return
-			end
-			local is_learned_max = merc[stat]>=teacher[stat] or merc[stat]>max_learned_stat
+			solo = not  teacher
+			local teacher_stat = teacher and teacher[stat] or  self:ResolveValue("SoloTrainingStat")
+			local is_learned_max = merc[stat]>=teacher_stat or merc[stat]>max_learned_stat
 			if is_learned_max then
 				merc:SetCurrentOperation("Idle")
 				return
 			end
-		else-- teacher
+		end
+		local solo_student =  solo and merc.OperationProfession=="Student"
+		if merc.OperationProfession=="Teacher" or solo_student then
+			-- teacher
 			local students = GetOperationProfessionals(sector.Id, self.id, "Student")
-			local t_stat = merc[stat]
+			local t_stat = merc[stat] 
+			if solo_student  then
+				t_stat = self:ResolveValue("SoloTrainingStat")
+				students = {merc}
+			end
 			for _, student in ipairs(students) do
 				local is_learned_max = student[stat]>=t_stat or student[stat]>max_learned_stat
 				if not is_learned_max then
@@ -1624,6 +1745,9 @@ PlaceObj('SectorOperation', {
 					if HasPerk(merc, "Teacher") then
 						local bonusPercent = CharacterEffectDefs.Teacher:ResolveValue("MercTrainingBonus")
 						progressPerTick = progressPerTick + MulDivRound(progressPerTick, bonusPercent, 100)
+					end			
+					if solo_student then
+						progressPerTick = MulDivRound(progressPerTick ,100, self:ResolveValue("SoloTrainingSpeedModifier"))--  training speed for solo practice should be 300% slower (3 times slower) 
 					end
 					student.stat_learning[stat] = student.stat_learning[stat] or {progress = 0, up_levels = 0}
 					local learning_progress = student.stat_learning[stat].progress
@@ -1650,7 +1774,7 @@ PlaceObj('SectorOperation', {
 			return
 		end
 	end,
-	description = T(536262688463, --[[SectorOperation TrainMercs description]] "Assign a Trainer to improve the stats of the other mercs. The trainer must have a higher stat than the trained mercs."),
+	description = T(536262688463, --[[SectorOperation TrainMercs description]] "Assign a Trainer to improve the stats of the other mercs. The trainer must have a higher stat than the trained mercs. Practicing without a teacher is considerably slower and can't improve stats beyond a certain point."),
 	display_name = T(555520982832, --[[SectorOperation TrainMercs display_name]] "Train mercs"),
 	group = "Default",
 	icon = "UI/SectorOperations/T_Icon_Activity_TrainingMercs_Teacher",
@@ -2042,11 +2166,11 @@ PlaceObj('SectorOperation', {
 		for i=1,ticks_left do
 			local item, data = SectorOperationItemToRepair(sector.Id)
 			if not item then
+				assert(not next(sector.sector_reapir_items_queued))
 				self:Complete(sector)
 				return
 			end
 			-- add progress
-			local forgiving_mode = IsGameRuleActive("ForgivingMode")
 			local sum_stat = GetSumOperationStats(mercs, "Mechanical", self:ResolveValue("stat_multiplier"))
 			local prev_cond = item.Condition
 			local prev_progress = item.repair_progress

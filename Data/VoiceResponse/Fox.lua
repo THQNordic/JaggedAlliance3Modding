@@ -344,7 +344,7 @@ PlaceObj('VoiceResponse', {
 		T(201325013142, --[[VoiceResponse Fox SelectionStealth VoiceResponse SelectionStealth - when selected or autoselected voice:Fox]] "Sometimes it's more fun when you have to try to be quiet.")
 	}),
 	SeriouslyWounded = TConcat({
-		T(736164274672, --[[VoiceResponse Fox SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds) voice:Fox]] "I have a whole career ahead of me. I can't die now.")
+		T(736164274672, --[[VoiceResponse Fox SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining. voice:Fox]] "I have a whole career ahead of me. I can't die now.")
 	}),
 	Startled = TConcat({
 		T(493288799772, --[[VoiceResponse Fox Startled VoiceResponse Startled - Startled by hearing a sudden noise voice:Fox]] "Huh?"),
@@ -387,9 +387,9 @@ PlaceObj('VoiceResponse', {
 		T(939248468236, --[[VoiceResponse Fox WeaponJammed VoiceResponse WeaponJammed - When weapon has jammed voice:Fox]] "I've got a jam! I need to clear it.")
 	}),
 	Wounded = TConcat({
-		T(917232845903, --[[VoiceResponse Fox Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Fox]] "Ow, I hope that won't leave a bruise."),
-		T(519069640420, --[[VoiceResponse Fox Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Fox]] "Hey! That hurt."),
-		T(773409837198, --[[VoiceResponse Fox Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Fox]] "That better not leave a scar!")
+		T(917232845903, --[[VoiceResponse Fox Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Fox]] "Ow, I hope that won't leave a bruise."),
+		T(519069640420, --[[VoiceResponse Fox Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Fox]] "Hey! That hurt."),
+		T(773409837198, --[[VoiceResponse Fox Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Fox]] "That better not leave a scar!")
 	}),
 	group = "MercenariesOld",
 	id = "Fox",

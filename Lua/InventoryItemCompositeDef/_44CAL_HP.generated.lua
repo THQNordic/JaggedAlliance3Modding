@@ -31,5 +31,6 @@ DefineClass._44CAL_HP = {
 	AppliedEffects = {
 		"Bleeding",
 	},
+	ammo_type_icon = "UI/Icons/Items/ta_hp.png",
 }
 

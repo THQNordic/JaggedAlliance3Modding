@@ -70,8 +70,8 @@ PlaceObj('VoiceResponse', {
 		T(786590369057, --[[VoiceResponse FleatownBoss VillainDefeated VoiceResponse VillainDefeated - Enemy lieutenant defeated. voice:FleatownBoss]] "Ugh. A man in my position can't afford to look like this.")
 	}),
 	Wounded = TConcat({
-		T(884853969531, --[[VoiceResponse FleatownBoss Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:FleatownBoss]] "You like playing rough, huh? I can play rough."),
-		T(297030687198, --[[VoiceResponse FleatownBoss Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:FleatownBoss]] "Merde! Do you have any idea how much these clothes cost? I will END you.")
+		T(884853969531, --[[VoiceResponse FleatownBoss Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:FleatownBoss]] "You like playing rough, huh? I can play rough."),
+		T(297030687198, --[[VoiceResponse FleatownBoss Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:FleatownBoss]] "Merde! Do you have any idea how much these clothes cost? I will END you.")
 	}),
 	group = "Villains",
 	id = "FleatownBoss",

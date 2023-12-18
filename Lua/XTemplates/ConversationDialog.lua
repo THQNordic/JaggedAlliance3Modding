@@ -198,8 +198,8 @@ PlaceObj('XTemplate', {
 			end,
 		}),
 		PlaceObj('XTemplateFunc', {
-			'name', "SetCharacter(self, position, unit_template_id, update_active, is_radio_unit)",
-			'func', function (self, position, unit_template_id, update_active, is_radio_unit)
+			'name', "SetCharacter(self, position, unit_template_id, update_active, radio_icon)",
+			'func', function (self, position, unit_template_id, update_active, radio_icon)
 				local unitTemplate = UnitDataDefs[unit_template_id]
 				if not unitTemplate then
 					return
@@ -216,10 +216,14 @@ PlaceObj('XTemplate', {
 					self.idCharacterMain:SetImage(portrait)						
 					self.idCharacterMain:SetMargins(ch_offset)
 					self:UpdateLayout()
-					self.idRadioImage:SetVisible(not not is_radio_unit)
 					self.idDlgBackground:SetVisible(false)
 					self.idEffect:SetVisible(false)
 					self.unit_template_id = unit_template_id
+					
+					self.idRadioImage:SetVisible(not not radio_icon)
+					if radio_icon then
+						self.idRadioImage:SetImage(radio_icon == true and "UI/Hud/radio" or radio_icon)
+					end
 					
 					self:CreateThread(function()
 						self:AnimPortrait(self.idCharacterMain)
@@ -245,7 +249,11 @@ PlaceObj('XTemplate', {
 					self.idCharacterMain:SetMargins(ch_offset)
 					self:UpdateLayout()
 					
-					self.idRadioImage:SetVisible(not not is_radio_unit)
+					self.idRadioImage:SetVisible(not not radio_icon)
+					if radio_icon then
+						self.idRadioImage:SetImage(radio_icon == true and "UI/Hud/radio" or radio_icon)
+					end
+					
 					self:AnimPortrait(self.idCharacterMain)
 					--Sleep(self:GetAnimDuration())
 				end
@@ -861,7 +869,7 @@ PlaceObj('XTemplate', {
 				end,
 			}),
 			PlaceObj('XTemplateWindow', {
-				'__condition', function (parent, context) return Platform.developer or IsModEditorOpened() end,
+				'__condition', function (parent, context) return Platform.developer or AreModdingToolsActive() end,
 				'DrawOnTop', true,
 			}, {
 				PlaceObj('XTemplateWindow', {

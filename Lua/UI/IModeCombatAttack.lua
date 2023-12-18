@@ -131,7 +131,7 @@ function IModeCombatAttack:SetTarget(target, dontMove)
 		end
 		if not actionCam then
 			if not LocalACWillStartPlaying and not CurrentActionCamera then
-				hr.CameraTacClampToTerrain = false
+				--hr.CameraTacClampToTerrain = false
 				local pause = false
 				if DoesTargetFitOnScreen(self, target) then
 					if IsVisibleFromCamera(target, true) then

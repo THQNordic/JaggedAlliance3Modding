@@ -24,5 +24,6 @@ DefineClass.Travis = {
 		}),
 	},
 	gender = "Male",
+	PersistentSessionId = "NPC_Travis",
 }
 

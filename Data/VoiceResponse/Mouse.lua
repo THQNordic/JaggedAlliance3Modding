@@ -306,7 +306,7 @@ PlaceObj('VoiceResponse', {
 		T(146037628301, --[[VoiceResponse Mouse SelectionStealth VoiceResponse SelectionStealth - when selected or autoselected voice:Mouse]] "Quiet as a church mouse.")
 	}),
 	SeriouslyWounded = TConcat({
-		T(519049161086, --[[VoiceResponse Mouse SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds) voice:Mouse]] "I feel like a cat just tossed me around and now I should just play dead.")
+		T(519049161086, --[[VoiceResponse Mouse SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining. voice:Mouse]] "I feel like a cat just tossed me around and now I should just play dead.")
 	}),
 	Startled = TConcat({
 		T(854085663537, --[[VoiceResponse Mouse Startled VoiceResponse Startled - Startled by hearing a sudden noise voice:Mouse]] "Huh?"),
@@ -346,9 +346,9 @@ PlaceObj('VoiceResponse', {
 		T(658064446417, --[[VoiceResponse Mouse WeaponJammed VoiceResponse WeaponJammed - When weapon has jammed voice:Mouse]] "Heyyy... who put gum in my gun?")
 	}),
 	Wounded = TConcat({
-		T(790131115287, --[[VoiceResponse Mouse Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Mouse]] "Hey, that hurt!"),
-		T(163482133851, --[[VoiceResponse Mouse Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Mouse]] "Eeek!"),
-		T(769192216524, --[[VoiceResponse Mouse Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Mouse]] "Wow, that's a bad scratch!")
+		T(790131115287, --[[VoiceResponse Mouse Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Mouse]] "Hey, that hurt!"),
+		T(163482133851, --[[VoiceResponse Mouse Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Mouse]] "Eeek!"),
+		T(769192216524, --[[VoiceResponse Mouse Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Mouse]] "Wow, that's a bad scratch!")
 	}),
 	group = "MercenariesOld",
 	id = "Mouse",

@@ -25,7 +25,7 @@ function OnMsg.PreGameMenuOpen()
 end
 
 function OpenGameUpdatesPopup(atHint, force)
-	if Platform.console then
+	if Platform.console or Platform.demo then
 		return 
 	end
 	local first = Presets.GameUpdate.Default[1].id

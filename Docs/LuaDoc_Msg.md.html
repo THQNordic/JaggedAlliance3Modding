@@ -1,7 +1,7 @@
 # ApplyModOptions
 
 
-function OnMsg.**ApplyModOptions**(mod_id)
+function OnMsg.**ApplyModOptions**( mod_id )
 : fired when loading the mod options and when the user applies changes to their mod options.
 
 
@@ -52,6 +52,20 @@ function OnMsg.**ClassesPreprocess**()
 
 function OnMsg.**LoadGame**( metadata, version )
 : fired after a game has been loaded.
+
+
+# ModUnloadLua
+
+
+function OnMsg.**ModUnloadLua**( mod_id )
+: fired just before unloading a mod with Lua code.
+
+
+# ModsReloaded
+
+
+function OnMsg.**ModsReloaded**()
+: fired right after mods are loaded, unloaded or changed.
 
 
 # NewMapLoadAdditionalObjects

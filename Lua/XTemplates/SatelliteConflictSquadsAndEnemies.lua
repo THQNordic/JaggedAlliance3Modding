@@ -6,254 +6,227 @@ PlaceObj('XTemplate', {
 	id = "SatelliteConflictSquadsAndEnemies",
 	PlaceObj('XTemplateWindow', {
 		'__class', "SatelliteConflictSquadsAndMercsClass",
+		'IdNode', false,
+		'Padding', box(0, 30, 0, 30),
+		'MinWidth', 498,
+		'MaxWidth', 498,
 		'LayoutMethod', "VList",
+		'LayoutVSpacing', 30,
 		'ContextUpdateOnOpen', true,
+		'OnContextUpdate', function (self, context, ...)
+			self.currentSquadIndex = table.find(self.context, self.selected_squad)
+			self[1].idTitle:SetContext(self.selected_squad, true)
+			SquadsAndMercsClass.OnContextUpdate(self, ...)
+		end,
 	}, {
-		PlaceObj('XTemplateWindow', {
-			'__context', function (parent, context) return parent.selected_squad end,
-			'__class', "XContextWindow",
-			'Id', "idTitle",
-			'VAlign', "top",
-			'MinWidth', 380,
-			'LayoutMethod', "HList",
-			'OnContextUpdate', function (self, context, ...)
-				self:ResolveId("idName"):SetContext(self.parent.selected_squad, true)
-			end,
+		PlaceObj('XTemplateForEach', {
+			'__context', function (parent, context, item, i, n) return item end,
 		}, {
 			PlaceObj('XTemplateWindow', {
-				'comment', "squad icon",
-				'__class', "XFrame",
-				'IdNode', false,
-				'Dock', "left",
-				'MinWidth', 28,
-				'MinHeight', 28,
-				'MaxWidth', 28,
-				'MaxHeight', 28,
-				'Image', "UI/PDA/os_header",
-				'FrameBox', box(8, 8, 8, 8),
-			}, {
-				PlaceObj('XTemplateWindow', {
-					'__class', "XImage",
-					'Id', "idSquadImage",
-					'Padding', box(3, 3, 3, 3),
-					'Image', "UI/PDA/T_Icon_SquadPlaceholder_Large_2",
-					'ImageFit', "scale-down",
-					'ImageColor', RGBA(182, 58, 52, 255),
-				}),
-				}),
-			PlaceObj('XTemplateWindow', {
-				'__class', "XFrame",
-				'IdNode', false,
-				'Dock', "box",
-				'Image', "UI/PDA/sector_enemy",
-				'FrameBox', box(8, 8, 8, 8),
-			}, {
-				PlaceObj('XTemplateWindow', {
-					'__class', "XText",
-					'Id', "idName",
-					'Padding', box(4, 2, 2, 2),
-					'HandleMouse', false,
-					'TextStyle', "ConflictSquadName",
-					'OnContextUpdate', function (self, context, ...)
-						local text
-						
-						if context then
-							local node = self:ResolveId("node")
-							local squadsCount = #node.context
-							local squadIndex = node.currentSquadIndex
-							local squadName = IsT(context.Name) and context.Name or Untranslated(context.Name)
-							if squadsCount > 1 then
-								text = T{658569841912, "<squadName> <squadIndex>/<squadsCount>",
-									squadName = squadName,
-									squadIndex = squadIndex,
-									squadsCount = squadsCount
-								}
-							else
-								text = squadName
-							end
-						else
-							text = T(496804530535, "UNKNOWN ENEMIES")
-						end
-						self:SetText(text)
-						
-						XContextControl.OnContextUpdate(self, context)
-					end,
-					'Translate', true,
-					'Text', T(512042932753, --[[XTemplate SatelliteConflictSquadsAndEnemies Text]] "<u(Name)>"),
-					'WordWrap', false,
-				}),
-				}),
-			PlaceObj('XTemplateTemplate', {
-				'comment', "next squad",
-				'__condition', function (parent, context) return parent and parent:ResolveId("node") and parent:ResolveId("node").context and #parent:ResolveId("node").context>1 end,
-				'__template', "PDASmallButton",
-				'IdNode', false,
-				'Dock', "right",
-				'MinWidth', 28,
-				'MinHeight', 28,
-				'MaxWidth', 28,
-				'MaxHeight', 28,
-				'ScaleModifier', point(1000, 1000),
-				'OnPress', function (self, gamepad)
-					self:ResolveId("node"):NextSquad()
+				'__class', "XContextWindow",
+				'IdNode', true,
+				'Padding', box(10, 0, 10, 0),
+				'LayoutMethod', "VList",
+				'ContextUpdateOnOpen', true,
+				'OnContextUpdate', function (self, context, ...)
+					local squad = context.arriving and context[1] or context
+					local is_squad_defeated = SatelliteConflict_IsSquadDefeated(squad)
+					self:ResolveId("idName"):SetContext(SubContext(context,{defeated = is_squad_defeated}), true)
+					self:ResolveId("idSquadImage"):SetContext(context, true)
+					self:ResolveId("idSquadImage"):SetEnabled(not is_squad_defeated)
 				end,
-				'CenterImage', "",
 			}, {
 				PlaceObj('XTemplateWindow', {
-					'__class', "XImage",
-					'Image', "UI/PDA/T_PDA_ScrollArrow",
-					'ImageColor', RGBA(191, 67, 77, 255),
-					'Angle', 5400,
-				}),
-				}),
-			}),
-		PlaceObj('XTemplateWindow', {
-			'comment', "Mercs Themselves (Updates on Sel Squad Change)",
-			'__context', function (parent, context) return parent.selected_squad end,
-			'__condition', function (parent, context) return context end,
-			'__class', "XContentTemplate",
-			'Id', "idParty",
-			'IdNode', false,
-			'Padding', box(12, 12, 12, 12),
-		}, {
-			PlaceObj('XTemplateWindow', {
-				'__context', function (parent, context) return GroupEnemyMercs({context}, "separateDead" and true) end,
-				'__class', "XScrollArea",
-				'Id', "idScrollArea",
-				'Margins', box(8, 8, 8, 8),
-				'Padding', box(16, 0, 28, 0),
-				'Dock', "box",
-				'MaxHeight', 230,
-				'GridStretchX', false,
-				'GridStretchY', false,
-				'LayoutMethod', "Grid",
-				'LayoutHSpacing', 16,
-				'LayoutVSpacing', 8,
-				'VScroll', "idScroll",
-			}, {
-				PlaceObj('XTemplateForEach', {
-					'comment', "Mercs in the Current Team",
-					'__context', function (parent, context, item, i, n) return item end,
-					'run_after', function (child, context, item, i, n, last)
-						local i = i-1
-						child:SetGridX(i%3 + 1)
-						child:SetGridY(i/3 + 1)
-						
-						if context.count > 1 then
-							child.idCountIcon:SetVisible(true)
-							child.idCountText:SetText(T{118551763994, "x<count>", count = context.count})
-						end
-						
-						if context.hasShipment then
-							child.idShipment:SetVisible(true)
-							child.idShipment:SetImage(context.hasShipment)
-						end
-						
-						child.idBar:SetVisible(false)
-						child.idBottomBar:SetVisible(false)
-						child.idBottomPart:SetVisible(false)
-					end,
+					'__class', "XContextWindow",
+					'Id', "idTitle",
+					'VAlign', "top",
+					'ContextUpdateOnOpen', true,
 				}, {
-					PlaceObj('XTemplateTemplate', {
-						'__context', function (parent, context) return context.template end,
-						'__template', "HUDMerc",
-						'RolloverTemplate', "SmallRolloverLine",
-						'RolloverAnchor', "center-bottom",
-						'RolloverAnchorId', "idPortraitBG",
-						'RolloverText', T(831801658535, --[[XTemplate SatelliteConflictSquadsAndEnemies RolloverText]] "<DisplayName>"),
-						'Margins', box(0, 7, 0, 0),
-						'LayoutMethod', "Box",
-						'ChildrenHandleMouse', false,
-					}, {
+					PlaceObj('XTemplateWindow', {
+						'__class', "XText",
+						'Id', "idName",
+						'Padding', box(4, 2, 2, 2),
+						'Dock', "left",
+						'HandleMouse', false,
+						'TextStyle', "ConflictSquadName",
+						'ContextUpdateOnOpen', true,
+						'OnContextUpdate', function (self, context, ...)
+							local text							
+							if context and context.Name then
+								text = IsT(context.Name) and context.Name or Untranslated(context.Name)
+							else
+								text = T(496804530535, "UNKNOWN ENEMIES")
+							end
+							local dlg_context = GetDialog(self).context
+							local color = TLookupTag("<GameColorI>")
+							if dlg_context.autoResolve then
+								if context.defeated then
+									self:SetText(color..T{705494748778, "<squadName> <style ConflictSquadNamePosition>/ exterminated</style>", squadName = text})
+								else
+									self:SetText(color..text)												
+								end
+							elseif context.arriving then
+								self:SetText(T{426342230032, "<time(value)> <color><squadName> <style ConflictSquadNamePosition>/ arriving</style>", squadName = text, value = context.arriving, color = color})							
+							else
+								self:SetText(color..T{484322448915, "<squadName> <style ConflictSquadNamePosition>/ in sector</style>", squadName = text})							
+							end
+							XContextControl.OnContextUpdate(self, context)
+						end,
+						'Translate', true,
+						'Text', T(512042932753, --[[XTemplate SatelliteConflictSquadsAndEnemies Text]] "<u(Name)>"),
+						'WordWrap', false,
+					}),
+					PlaceObj('XTemplateWindow', {
+						'__class', "XFrame",
+						'Margins', box(5, 0, 0, 0),
+						'BorderWidth', 1,
+						'VAlign', "center",
+						'Image', "UI/PDA/separate_line_vertical",
+						'FrameBox', box(3, 3, 3, 3),
+						'TileFrame', true,
+					}),
+					}),
+				PlaceObj('XTemplateWindow', {
+					'comment', "Mercs Themselves (Updates on Sel Squad Change)",
+					'__context', function (parent, context) return context and context.arriving and context[1] or  context end,
+					'__condition', function (parent, context) return context end,
+					'__class', "XContentTemplate",
+					'Id', "idParty",
+					'IdNode', false,
+					'LayoutMethod', "HList",
+				}, {
+					PlaceObj('XTemplateWindow', nil, {
 						PlaceObj('XTemplateWindow', {
-							'comment', "unit count icon",
-							'__class', "XImage",
-							'Id', "idCountIcon",
-							'IdNode', false,
-							'ZOrder', 0,
-							'Margins', box(0, 0, -32, 0),
+							'comment', "logo",
+							'__class', "XContextImage",
+							'Id', "idSquadImage",
+							'Margins', box(0, 10, 0, 0),
 							'HAlign', "left",
 							'VAlign', "top",
-							'Visible', false,
-							'DrawOnTop', true,
-							'Image', "UI/PDA/sector_enemy",
-							'ImageScale', point(600, 600),
+							'Image', "UI/Icons/SateliteView/enemy_squad",
+							'OnContextUpdate', function (self, context, ...)
+								if context.image then
+									self:SetImage(context.image)
+								end
+								if context.Villain then
+									self:SetImage("UI/Icons/SateliteView/enemy_boss")
+								end
+							end,
+						}),
+						}),
+					PlaceObj('XTemplateWindow', {
+						'__condition', function (parent, context) return context and context.arriving and context[1].units or  context.units end,
+						'__class', "XContextWindow",
+						'GridStretchY', false,
+						'LayoutMethod', "Grid",
+						'LayoutVSpacing', 60,
+						'ContextUpdateOnOpen', true,
+					}, {
+						PlaceObj('XTemplateForEach', {
+							'comment', "Mercs in the Current Team",
+							'array', function (parent, context) return GroupEnemyMercs({context}, "separateDead" and true) end,
+							'__context', function (parent, context, item, i, n) return item end,
+							'run_after', function (child, context, item, i, n, last)
+								local row_count = 6
+								local i = i-1
+								child:SetGridX(i%row_count + 1)
+								child:SetGridY(i/row_count + 1)
+								
+								if context.count and context.count>1 then
+									child.idName:SetTextHAlign("center")
+									local color = context.is_dead and GameColors.F or GameColors.I 
+									child.idBottomPart[1]:SetBackground(color)										
+									child.idName:SetScaleModifier(point(1333,1333))
+									child.idBottomPart:SetMinHeight(0)
+									child.idName:SetTextStyle("PDAMercNameCard_Large")
+									child.idName:SetPadding(box(0,-2,0,-2))
+									child.idName:SetText(Untranslated(context.count))									
+								else
+									child.idName:SetText(context.DisplayName)	
+								end
+								
+								if context.hasShipment then
+									child.idShipment:SetVisible(true)
+									child.idShipment:SetImage(context.hasShipment)
+								end
+								
+								child.idBar:SetVisible(false)
+								child.idBottomBar:SetVisible(false)
+								if not context.count or context.count==1 then
+									child.idBottomPart:SetVisible(false)
+									child.idName:SetText(context.DisplayName)
+								end
+							end,
 						}, {
-							PlaceObj('XTemplateWindow', {
-								'__class', "XText",
-								'Id', "idCountText",
-								'HAlign', "center",
-								'VAlign', "center",
-								'HandleMouse', false,
-								'TextStyle', "PDASelectedSquad",
-								'Translate', true,
-								'Text', T(600116519425, --[[XTemplate SatelliteConflictSquadsAndEnemies Text]] "x8"),
+							PlaceObj('XTemplateTemplate', {
+								'__context', function (parent, context) return context.template end,
+								'__template', "HUDMerc",
+								'RolloverTemplate', "SmallRolloverLine",
+								'RolloverAnchor', "center-bottom",
+								'RolloverAnchorId', "idPortraitBG",
+								'RolloverText', T(831801658535, --[[XTemplate SatelliteConflictSquadsAndEnemies RolloverText]] "<DisplayName>"),
+								'Margins', box(0, 7, 0, 0),
+								'ScaleModifier', point(750, 750),
+								'LayoutMethod', "Box",
+								'ChildrenHandleMouse', false,
+							}, {
+								PlaceObj('XTemplateWindow', {
+									'comment', "diamond shipment icon",
+									'__class', "XImage",
+									'Id', "idShipment",
+									'IdNode', false,
+									'ZOrder', 0,
+									'Margins', box(0, -16, 0, 0),
+									'HAlign', "right",
+									'VAlign', "top",
+									'MinWidth', 46,
+									'MaxWidth', 46,
+									'UseClipBox', false,
+									'Visible', false,
+									'DrawOnTop', true,
+									'ImageFit', "width",
+								}),
+								}),
 							}),
-							}),
+						}),
+					PlaceObj('XTemplateWindow', {
+						'__condition', function (parent, context) return not next(context) or not context.units end,
+						'Margins', box(0, 7, 0, 0),
+						'HAlign', "left",
+						'VAlign', "top",
+						'MinWidth', 80,
+						'MinHeight', 118,
+						'MaxWidth', 80,
+						'MaxHeight', 118,
+						'ScaleModifier', point(700, 700),
+					}, {
 						PlaceObj('XTemplateWindow', {
-							'comment', "diamond shipment icon",
-							'__class', "XImage",
-							'Id', "idShipment",
-							'IdNode', false,
-							'ZOrder', 0,
-							'Margins', box(0, -16, 0, 0),
-							'HAlign', "right",
-							'VAlign', "top",
-							'MinWidth', 46,
-							'MaxWidth', 46,
-							'UseClipBox', false,
+							'Dock', "bottom",
+							'VAlign', "bottom",
+							'MinHeight', 30,
+							'MaxHeight', 30,
 							'Visible', false,
-							'DrawOnTop', true,
-							'ImageFit', "width",
+							'Background', RGBA(32, 35, 47, 255),
+						}),
+						PlaceObj('XTemplateWindow', {
+							'__class', "XImage",
+							'IdNode', false,
+							'Margins', box(0, 10, 0, 0),
+							'Dock', "box",
+							'Image', "UI/Hud/portrait_background",
+							'ImageFit', "largest",
+						}),
+						PlaceObj('XTemplateWindow', {
+							'__class', "XImage",
+							'IdNode', false,
+							'Margins', box(0, 0, 0, -10),
+							'Dock', "box",
+							'Image', "UI/EnemiesPortraits/Unknown",
+							'ImageFit', "largest",
 						}),
 						}),
 					}),
 				}),
-			PlaceObj('XTemplateWindow', {
-				'__class', "MessengerScrollbar",
-				'Id', "idScroll",
-				'Margins', box(16, 0, 0, 32),
-				'HAlign', "right",
-				'ScaleModifier', point(750, 750),
-				'Target', "idScrollArea",
-				'SnapToItems', true,
-				'AutoHide', true,
-			}),
-			}),
-		PlaceObj('XTemplateWindow', {
-			'__condition', function (parent, context) return not parent.selected_squad end,
-			'Margins', box(40, 20, 0, 0),
-			'HAlign', "left",
-			'VAlign', "top",
-			'MinWidth', 80,
-			'MinHeight', 118,
-			'MaxWidth', 80,
-			'MaxHeight', 118,
-		}, {
-			PlaceObj('XTemplateWindow', {
-				'Dock', "bottom",
-				'VAlign', "bottom",
-				'MinHeight', 30,
-				'MaxHeight', 30,
-				'Visible', false,
-				'Background', RGBA(32, 35, 47, 255),
-			}),
-			PlaceObj('XTemplateWindow', {
-				'__class', "XImage",
-				'IdNode', false,
-				'Margins', box(0, 10, 0, 0),
-				'Dock', "box",
-				'Image', "UI/Hud/portrait_background",
-				'ImageFit', "largest",
-			}),
-			PlaceObj('XTemplateWindow', {
-				'__class', "XImage",
-				'IdNode', false,
-				'Margins', box(0, 0, 0, -10),
-				'Dock', "box",
-				'Image', "UI/EnemiesPortraits/Unknown",
-				'ImageFit', "largest",
-			}),
 			}),
 		}),
 })

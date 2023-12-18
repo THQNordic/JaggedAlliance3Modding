@@ -66,8 +66,8 @@ PlaceObj('VoiceResponse', {
 		T(765656240246, --[[VoiceResponse Butcher TacticalTaunt VoiceResponse TacticalTaunt - The team has visible enemies from the other team and is shouting things at them voice:Butcher]] "Jump on them! Hit 'em where it hurts!")
 	}),
 	Wounded = TConcat({
-		T(894396394588, --[[VoiceResponse Butcher Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Butcher]] "Ha! My croc bites me harder than that!"),
-		T(806611350373, --[[VoiceResponse Butcher Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Butcher]] "Was that supposed to hurt? Because, it did not.")
+		T(894396394588, --[[VoiceResponse Butcher Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Butcher]] "Ha! My croc bites me harder than that!"),
+		T(806611350373, --[[VoiceResponse Butcher Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Butcher]] "Was that supposed to hurt? Because, it did not.")
 	}),
 	group = "Villains",
 	id = "Butcher",

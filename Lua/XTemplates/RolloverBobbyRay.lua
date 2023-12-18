@@ -6,7 +6,7 @@ PlaceObj('XTemplate', {
 	id = "RolloverBobbyRay",
 	PlaceObj('XTemplateTemplate', {
 		'__template', "RolloverGeneric",
-		'Margins', box(10, 10, 10, 10),
+		'Margins', box(8, 6, 0, 50),
 		'MaxWidth', 350,
 	}),
 })

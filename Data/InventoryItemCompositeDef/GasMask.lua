@@ -3,7 +3,7 @@
 PlaceObj('InventoryItemCompositeDef', {
 	'Group', "Armor - Other",
 	'Id', "GasMask",
-	'object_class', "Armor",
+	'object_class', "GasMaskBase",
 	'ScrapParts', 2,
 	'Degradation', 12,
 	'Icon', "UI/Icons/Items/gas_mask",

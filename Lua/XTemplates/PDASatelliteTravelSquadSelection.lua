@@ -63,7 +63,7 @@ PlaceObj('XTemplate', {
 								self.idLocation:SetText(T{908950852075, "<clr><u(sectorId)>-</color><clrEnd><u(endSectorId)></color>",
 									clr = color, sectorId = startSectorId, clrEnd = colorEnd, endSectorId = endSectorId})
 							end
-							self.idLogo:SetContext({squad = context.UniqueId, side="ally"})
+							self.idLogo:SetContext({squad = context.UniqueId, side="player1"})
 						end,
 						'FocusedBorderColor', RGBA(0, 0, 0, 0),
 						'FocusedBackground', RGBA(0, 0, 0, 0),

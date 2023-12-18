@@ -189,6 +189,8 @@ PlaceObj('BanterDef', {
 		PlaceObj('BanterLine', {
 			'Character', "Maman",
 			'Text', T(681683808717, --[[BanterDef PantagruelChimurenga_Banter05 Text section:Banters_Local_Pantagruel/PantagruelChimurenga_Banter05 voice:Maman]] 'Of course it is because of you, my lion! And you know, one of them keeps calling me "Momma"... Always melts my heart.'),
+			'Optional', true,
+			'playOnce', true,
 		}),
 		PlaceObj('BanterLine', {
 			'MultipleTexts', true,
@@ -848,6 +850,7 @@ PlaceObj('BanterDef', {
 		PlaceObj('BanterLine', {
 			'MultipleTexts', true,
 			'Text', "",
+			'AnyOfTheseCount', 2,
 			'AnyOfThese', {
 				PlaceObj('BanterLineThin', {
 					'Character', "MD",
@@ -866,17 +869,8 @@ PlaceObj('BanterDef', {
 			'playOnce', true,
 		}),
 	},
+	Once = true,
 	conditions = {
-		PlaceObj('QuestIsVariableBool', {
-			QuestId = "PantagruelClinic",
-			Vars = set({
-	ClinicWorking = false,
-}),
-			__eval = function ()
-				local quest = gv_Quests['PantagruelClinic'] or QuestGetState('PantagruelClinic')
-				return not quest.ClinicWorking
-			end,
-		}),
 		PlaceObj('SectorIsInConflict', {}),
 	},
 	group = "Banters_Local_Pantagruel",
@@ -1248,8 +1242,8 @@ PlaceObj('BanterDef', {
 	Comment = ">> Mine income",
 	Lines = {
 		PlaceObj('BanterLine', {
-			'Character', "VillagerMale_1",
-			'Text', T(807302186210, --[[BanterDef Pantagruel_VillagerMale_02_Loyalty Text section:Banters_Local_Pantagruel/Pantagruel_VillagerMale_02_Loyalty >> Mine income voice:VillagerMale_1]] 'They got a "mine diggers night" every week at <em>Le Lys Rouge</em>, so... Me and my friends want to work for you. You don\'t even have to pay us, just keep us fed... and hydrated. '),
+			'Character', "CivilianMale_1",
+			'Text', T(807302186210, --[[BanterDef Pantagruel_VillagerMale_02_Loyalty Text section:Banters_Local_Pantagruel/Pantagruel_VillagerMale_02_Loyalty >> Mine income voice:CivilianMale_1]] 'They got a "mine diggers night" every week at <em>Le Lys Rouge</em>, so... Me and my friends want to work for you. You don\'t even have to pay us, just keep us fed... and hydrated. '),
 		}),
 		PlaceObj('BanterLine', {
 			'Text', T(469706329543, --[[BanterDef Pantagruel_VillagerMale_02_Loyalty Text]] "<em>Fosse Noire</em> mine income increased"),

@@ -9,7 +9,7 @@ PlaceObj('CharacterEffectCompositeDef', {
 		PlaceObj('UnitReaction', {
 			Event = "OnCombatStarted",
 			Handler = function (self, target, load_game)
-				if not target:HasStatusEffect("ClaustrophobiaChecked") then
+				if IsSectorUnderground(gv_CurrentSectorId) and not target:HasStatusEffect("ClaustrophobiaChecked") then
 					CombatLog("debug", T{Untranslated("<em>Claustrophobic</em> proc on <unit>"), unit = target.Name})
 					self:SetParameter("active", true)
 				end

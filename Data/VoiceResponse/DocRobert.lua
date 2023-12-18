@@ -20,8 +20,8 @@ PlaceObj('VoiceResponse', {
 		T(439896467477, --[[VoiceResponse DocRobert Pain VoiceResponse Pain - Hit by an attack (if surrounded SurroundedPain is played instead). Short. These are emotes - disregard the written text. voice:DocRobert]] "Pain5")
 	}),
 	Wounded = TConcat({
-		T(199902389067, --[[VoiceResponse DocRobert Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:DocRobert]] "Argh... Where are my painkillers?"),
-		T(172383399168, --[[VoiceResponse DocRobert Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:DocRobert]] "Nothing I won't be able to patch up later.")
+		T(199902389067, --[[VoiceResponse DocRobert Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:DocRobert]] "Argh... Where are my painkillers?"),
+		T(172383399168, --[[VoiceResponse DocRobert Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:DocRobert]] "Nothing I won't be able to patch up later.")
 	}),
 	group = "Other",
 	id = "DocRobert",

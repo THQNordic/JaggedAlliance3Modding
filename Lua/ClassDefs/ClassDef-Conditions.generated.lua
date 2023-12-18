@@ -520,6 +520,37 @@ function InteractingMercHasItem:GetError()
 	end
 end
 
+DefineClass.IsCurrentMap = {
+	__parents = { "Condition", },
+	__generated_by_class = "ConditionDef",
+
+	properties = {
+		{ id = "MapFile", 
+			editor = "combo", default = "", items = function (self) return ListMaps() end, },
+		{ id = "Negate", name = "Negate Condition", help = "If true, checks for the opposite condition.", 
+			editor = "bool", default = false, },
+	},
+	Documentation = "Check if currently in tactical view on the specified map",
+	EditorNestedObjCategory = "Sector effects",
+	EditorView = Untranslated("Currently in tactical view in <u(MapFile)>"),
+	EditorViewNeg = Untranslated("Currently not in tactical view in <u(MapFile)>"),
+}
+
+function IsCurrentMap:__eval(obj, context)
+	if gv_SatelliteView or not gv_Sectors then return false end
+	
+	local sectorPreset = gv_Sectors[gv_CurrentSectorId]
+	if sectorPreset then
+		return sectorPreset.Map == self.MapFile
+	end
+end
+
+function IsCurrentMap:GetError()
+	if not self.MapFile then
+		return "specify map!"
+	end
+end
+
 DefineClass.IsDayOfTheWeek = {
 	__parents = { "Condition", },
 	__generated_by_class = "ConditionDef",

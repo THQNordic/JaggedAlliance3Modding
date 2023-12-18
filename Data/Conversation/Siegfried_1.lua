@@ -446,221 +446,6 @@ PlaceObj('Conversation', {
 		id = "WhatisthisNightClub3",
 	}),
 	PlaceObj('ConversationPhrase', {
-		Conditions = {
-			PlaceObj('QuestIsVariableBool', {
-				QuestId = "Landsbach",
-				Vars = set({
-	Completed = false,
-	Failed = false,
-	Given = false,
-	Stolen = true,
-}),
-				__eval = function ()
-					local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
-					return not quest.Completed and not quest.Failed and not quest.Given and quest.Stolen
-				end,
-			}),
-		},
-		GiveQuests = {
-			"Landsbach",
-		},
-		Keyword = "What was stolen from you?",
-		KeywordT = T(830495501850, --[[Conversation Siegfried_1 KeywordT]] "What was stolen from you?"),
-		Lines = {
-			PlaceObj('ConversationLine', {
-				Character = "Gunther",
-				Text = T(106971859905, --[[Conversation Siegfried_1 Text voice:Gunther section:Siegfried_1 keyword:What was stolen from you?]] "<em>Diesel</em>. I don't know why, but several gallons of it were stolen from me. It may seem trivial to you, but I am not talking about the normal kind of diesel. It is... sehr special to me."),
-			}),
-			PlaceObj('ConversationInterjectionList', {
-				Interjections = {
-					PlaceObj('ConversationInterjection', {
-						Lines = {
-							PlaceObj('ConversationLine', {
-								Character = "Barry",
-								Text = T(245325809281, --[[Conversation Siegfried_1 Text voice:Barry section:Siegfried_1 keyword:What was stolen from you?]] "Could be dangerous. Diesel is not most ideal of explosive fuels, but it can still create destruction of noteworthy magnitudes."),
-							}),
-						},
-					}),
-					PlaceObj('ConversationInterjection', {
-						Lines = {
-							PlaceObj('ConversationLine', {
-								Character = "Gus",
-								Text = T(671641809007, --[[Conversation Siegfried_1 Text voice:Gus section:Siegfried_1 keyword:What was stolen from you?]] "People go crazy over fuel, Woodman. I saw an old lady shoot a biker who cut in front of her at the gas station during the shortage a while back."),
-							}),
-						},
-					}),
-					PlaceObj('ConversationInterjection', {
-						Lines = {
-							PlaceObj('ConversationLine', {
-								Character = "DrQ",
-								Text = T(398080637850, --[[Conversation Siegfried_1 Text voice:DrQ section:Siegfried_1 keyword:What was stolen from you?]] "I am always astonished, and distressed by the amount of emotional attachment people form to material items."),
-							}),
-						},
-					}),
-					PlaceObj('ConversationInterjection', {
-						Lines = {
-							PlaceObj('ConversationLine', {
-								Character = "Hitman",
-								Text = T(936140961684, --[[Conversation Siegfried_1 Text voice:Hitman section:Siegfried_1 keyword:What was stolen from you?]] "Everybody thinks their own gas is special and that everyone else's stinks."),
-							}),
-						},
-					}),
-				},
-			}),
-			PlaceObj('ConversationLine', {
-				Character = "Gunther",
-				Text = T(372655276695, --[[Conversation Siegfried_1 Text voice:Gunther section:Siegfried_1 keyword:What was stolen from you?]] "I need it back. Unfortunately, investigation is not something my men excel at, but I suspect you do. Help me retrieve what was stolen and <em>Landsbach Diamond Mine</em> will be yours. I am done with this place and I've no wish to fight you for it."),
-			}),
-			PlaceObj('ConversationInterjectionList', {
-				Interjections = {
-					PlaceObj('ConversationInterjection', {
-						Lines = {
-							PlaceObj('ConversationLine', {
-								Character = "Scope",
-								Text = T(611942124849, --[[Conversation Siegfried_1 Text voice:Scope section:Siegfried_1 keyword:What was stolen from you?]] "Not to be rude, but they also don't seem to excel at guarding your Diesel, either."),
-							}),
-							PlaceObj('ConversationLine', {
-								Character = "Gunther",
-								Text = T(723335777484, --[[Conversation Siegfried_1 Text voice:Gunther section:Siegfried_1 keyword:What was stolen from you?]] "And yet you managed to be rude, regardless. I do so enjoy the British and their ability to be childishly clever. For your information, the theft happened off the premises."),
-							}),
-						},
-					}),
-					PlaceObj('ConversationInterjection', {
-						Lines = {
-							PlaceObj('ConversationLine', {
-								Character = "Nails",
-								Text = T(613222119247, --[[Conversation Siegfried_1 Text voice:Nails section:Siegfried_1 keyword:What was stolen from you?]] "Scooter, you got yourself a deal. Any man who takes his fuel that seriously is a man I can respect."),
-							}),
-						},
-					}),
-					PlaceObj('ConversationInterjection', {
-						Lines = {
-							PlaceObj('ConversationLine', {
-								Character = "Grunty",
-								Text = T(824305414470, --[[Conversation Siegfried_1 Text voice:Grunty section:Siegfried_1 keyword:What was stolen from you?]] "That is a most generous offer. I look forward to toasting our success with brandy... and perhaps some schnitzel?"),
-							}),
-						},
-					}),
-					PlaceObj('ConversationInterjection', {
-						Lines = {
-							PlaceObj('ConversationLine', {
-								Annotation = "",
-								Character = "Shadow",
-								Text = T(535328480849, --[[Conversation Siegfried_1 Text  voice:Shadow section:Siegfried_1 keyword:What was stolen from you?]] "I don't get it. A whole mine full of diamonds for a few gallons of gas? Something doesn't add up."),
-							}),
-							PlaceObj('ConversationLine', {
-								Character = "Gunther",
-								Text = T(487921704822, --[[Conversation Siegfried_1 Text voice:Gunther section:Siegfried_1 keyword:What was stolen from you?]] "Math is hard. Don't strain yourself."),
-							}),
-						},
-					}),
-				},
-			}),
-		},
-		NoBackOption = true,
-		id = "Whatwasstolenfromyou",
-	}),
-	PlaceObj('ConversationPhrase', {
-		Conditions = {
-			PlaceObj('QuestIsVariableBool', {
-				QuestId = "Landsbach",
-				Vars = set({
-	Completed = false,
-	Failed = false,
-	Given = true,
-}),
-				__eval = function ()
-					local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
-					return not quest.Completed and not quest.Failed and quest.Given
-				end,
-			}),
-		},
-		Effects = {
-			PlaceObj('QuestSetVariableBool', {
-				Prop = "NightClub",
-				QuestId = "Landsbach",
-			}),
-		},
-		Keyword = "Who might have stolen the Diesel?",
-		KeywordT = T(238959637323, --[[Conversation Siegfried_1 KeywordT]] "Who might have stolen the Diesel?"),
-		Lines = {
-			PlaceObj('ConversationInterjectionList', {
-				Interjections = {
-					PlaceObj('ConversationInterjection', {
-						Lines = {
-							PlaceObj('ConversationLine', {
-								Character = "Raider",
-								Text = T(400475134349, --[[Conversation Siegfried_1 Text voice:Raider section:Siegfried_1 keyword:Who might have stolen the Diesel?]] "Have you seen anyone suspicious sniffing around your special gas, sir?"),
-							}),
-						},
-					}),
-					PlaceObj('ConversationInterjection', {
-						Lines = {
-							PlaceObj('ConversationLine', {
-								Character = "Raven",
-								Text = T(392653093359, --[[Conversation Siegfried_1 Text voice:Raven section:Siegfried_1 keyword:Who might have stolen the Diesel?]] "Do you have any enemies? Jilted partners, disgruntled employees, angry neighbors who don't like your dogs on their lawn... y'know, stuff like that."),
-							}),
-						},
-					}),
-					PlaceObj('ConversationInterjection', {
-						Lines = {
-							PlaceObj('ConversationLine', {
-								Character = "Sidney",
-								Text = T(566375956435, --[[Conversation Siegfried_1 Text voice:Sidney section:Siegfried_1 keyword:Who might have stolen the Diesel?]] 'Let us begin by eliminating the suspects... Pardon me, I meant to say "narrowing."'),
-							}),
-						},
-					}),
-				},
-			}),
-			PlaceObj('ConversationLine', {
-				Character = "Gunther",
-				Text = T(273624851204, --[[Conversation Siegfried_1 Text voice:Gunther section:Siegfried_1 keyword:Who might have stolen the Diesel?]] "I don't know who might have stolen it, but I do know it was not stolen from here. A van was transporting my <em>Diesel</em> to a... location I do not wish to disclose. The van left here on schedule but never arrived. I suspect it was ambushed en route."),
-			}),
-			PlaceObj('ConversationLine', {
-				Character = "Gunther",
-				Text = T(412487465603, --[[Conversation Siegfried_1 Text voice:Gunther section:Siegfried_1 keyword:Who might have stolen the Diesel?]] "As you can see, I don't get out much. I have few personal contacts. You should probably ask around in town and see if someone might know more. A good place to start is <em>Night Club</em>. I imagine many of the patrons know a good deal about local criminal activity."),
-			}),
-			PlaceObj('ConversationInterjectionList', {
-				Interjections = {
-					PlaceObj('ConversationInterjection', {
-						Lines = {
-							PlaceObj('ConversationLine', {
-								Character = "Larry",
-								Text = T(904926650316, --[[Conversation Siegfried_1 Text voice:Larry section:Siegfried_1 keyword:Who might have stolen the Diesel?]] "Heey, now we're talking. I'll ask everyone in the <em>Night Club</em> about drugs... No, wait - it's gas, right? I'll ask them about that, too."),
-							}),
-						},
-					}),
-					PlaceObj('ConversationInterjection', {
-						Lines = {
-							PlaceObj('ConversationLine', {
-								Character = "Vicki",
-								Text = T(473028067687, --[[Conversation Siegfried_1 Text voice:Vicki section:Siegfried_1 keyword:Who might have stolen the Diesel?]] "If we gonna be jammin' in a club, that place better be dropping some serious Reggae beats, mon."),
-							}),
-						},
-					}),
-					PlaceObj('ConversationInterjection', {
-						Lines = {
-							PlaceObj('ConversationLine', {
-								Character = "Scully",
-								Text = T(650123010176, --[[Conversation Siegfried_1 Text voice:Scully section:Siegfried_1 keyword:Who might have stolen the Diesel?]] "Careful there, Siegfried. Your class bias is showing."),
-							}),
-						},
-					}),
-					PlaceObj('ConversationInterjection', {
-						Lines = {
-							PlaceObj('ConversationLine', {
-								Character = "Ice",
-								Text = T(368475945970, --[[Conversation Siegfried_1 Text voice:Ice section:Siegfried_1 keyword:Who might have stolen the Diesel?]] 'Hell, yeah. We gonna walk into the club all like, "What\'s up? We lookin\' for a weasel wants to talk about Diesel."'),
-							}),
-						},
-					}),
-				},
-			}),
-		},
-		PhraseConditionRolloverText = "",
-		id = "Anyideaswhomighthavestolenthediesel",
-	}),
-	PlaceObj('ConversationPhrase', {
 		AutoRemove = true,
 		Conditions = {
 			PlaceObj('QuestIsVariableBool', {
@@ -939,6 +724,226 @@ PlaceObj('Conversation', {
 	}),
 	PlaceObj('ConversationPhrase', {
 		Align = "right",
+		Conditions = {
+			PlaceObj('QuestIsVariableBool', {
+				QuestId = "Landsbach",
+				Vars = set({
+	Completed = false,
+	Failed = false,
+	Given = false,
+	Stolen = true,
+}),
+				__eval = function ()
+					local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
+					return not quest.Completed and not quest.Failed and not quest.Given and quest.Stolen
+				end,
+			}),
+		},
+		GiveQuests = {
+			"Landsbach",
+		},
+		Keyword = "What was stolen from you?",
+		KeywordT = T(830495501850, --[[Conversation Siegfried_1 KeywordT]] "What was stolen from you?"),
+		Lines = {
+			PlaceObj('ConversationLine', {
+				Character = "Gunther",
+				Text = T(106971859905, --[[Conversation Siegfried_1 Text voice:Gunther section:Siegfried_1 keyword:What was stolen from you?]] "<em>Diesel</em>. I don't know why, but several gallons of it were stolen from me. It may seem trivial to you, but I am not talking about the normal kind of diesel. It is... sehr special to me."),
+			}),
+			PlaceObj('ConversationInterjectionList', {
+				Interjections = {
+					PlaceObj('ConversationInterjection', {
+						Lines = {
+							PlaceObj('ConversationLine', {
+								Character = "Barry",
+								Text = T(245325809281, --[[Conversation Siegfried_1 Text voice:Barry section:Siegfried_1 keyword:What was stolen from you?]] "Could be dangerous. Diesel is not most ideal of explosive fuels, but it can still create destruction of noteworthy magnitudes."),
+							}),
+						},
+					}),
+					PlaceObj('ConversationInterjection', {
+						Lines = {
+							PlaceObj('ConversationLine', {
+								Character = "Gus",
+								Text = T(671641809007, --[[Conversation Siegfried_1 Text voice:Gus section:Siegfried_1 keyword:What was stolen from you?]] "People go crazy over fuel, Woodman. I saw an old lady shoot a biker who cut in front of her at the gas station during the shortage a while back."),
+							}),
+						},
+					}),
+					PlaceObj('ConversationInterjection', {
+						Lines = {
+							PlaceObj('ConversationLine', {
+								Character = "DrQ",
+								Text = T(398080637850, --[[Conversation Siegfried_1 Text voice:DrQ section:Siegfried_1 keyword:What was stolen from you?]] "I am always astonished, and distressed by the amount of emotional attachment people form to material items."),
+							}),
+						},
+					}),
+					PlaceObj('ConversationInterjection', {
+						Lines = {
+							PlaceObj('ConversationLine', {
+								Character = "Hitman",
+								Text = T(936140961684, --[[Conversation Siegfried_1 Text voice:Hitman section:Siegfried_1 keyword:What was stolen from you?]] "Everybody thinks their own gas is special and that everyone else's stinks."),
+							}),
+						},
+					}),
+				},
+			}),
+			PlaceObj('ConversationLine', {
+				Character = "Gunther",
+				Text = T(372655276695, --[[Conversation Siegfried_1 Text voice:Gunther section:Siegfried_1 keyword:What was stolen from you?]] "I need it back. Unfortunately, investigation is not something my men excel at, but I suspect you do. Help me retrieve what was stolen and <em>Landsbach Diamond Mine</em> will be yours. I am done with this place and I've no wish to fight you for it."),
+			}),
+			PlaceObj('ConversationInterjectionList', {
+				Interjections = {
+					PlaceObj('ConversationInterjection', {
+						Lines = {
+							PlaceObj('ConversationLine', {
+								Character = "Scope",
+								Text = T(611942124849, --[[Conversation Siegfried_1 Text voice:Scope section:Siegfried_1 keyword:What was stolen from you?]] "Not to be rude, but they also don't seem to excel at guarding your Diesel, either."),
+							}),
+							PlaceObj('ConversationLine', {
+								Character = "Gunther",
+								Text = T(723335777484, --[[Conversation Siegfried_1 Text voice:Gunther section:Siegfried_1 keyword:What was stolen from you?]] "And yet you managed to be rude, regardless. I do so enjoy the British and their ability to be childishly clever. For your information, the theft happened off the premises."),
+							}),
+						},
+					}),
+					PlaceObj('ConversationInterjection', {
+						Lines = {
+							PlaceObj('ConversationLine', {
+								Character = "Nails",
+								Text = T(613222119247, --[[Conversation Siegfried_1 Text voice:Nails section:Siegfried_1 keyword:What was stolen from you?]] "Scooter, you got yourself a deal. Any man who takes his fuel that seriously is a man I can respect."),
+							}),
+						},
+					}),
+					PlaceObj('ConversationInterjection', {
+						Lines = {
+							PlaceObj('ConversationLine', {
+								Character = "Grunty",
+								Text = T(824305414470, --[[Conversation Siegfried_1 Text voice:Grunty section:Siegfried_1 keyword:What was stolen from you?]] "That is a most generous offer. I look forward to toasting our success with brandy... and perhaps some schnitzel?"),
+							}),
+						},
+					}),
+					PlaceObj('ConversationInterjection', {
+						Lines = {
+							PlaceObj('ConversationLine', {
+								Annotation = "",
+								Character = "Shadow",
+								Text = T(535328480849, --[[Conversation Siegfried_1 Text  voice:Shadow section:Siegfried_1 keyword:What was stolen from you?]] "I don't get it. A whole mine full of diamonds for a few gallons of gas? Something doesn't add up."),
+							}),
+							PlaceObj('ConversationLine', {
+								Character = "Gunther",
+								Text = T(487921704822, --[[Conversation Siegfried_1 Text voice:Gunther section:Siegfried_1 keyword:What was stolen from you?]] "Math is hard. Don't strain yourself."),
+							}),
+						},
+					}),
+				},
+			}),
+		},
+		NoBackOption = true,
+		StoryBranchIcon = "conversation_arrow",
+		id = "Whatwasstolenfromyou",
+	}),
+	PlaceObj('ConversationPhrase', {
+		Align = "right",
+		Conditions = {
+			PlaceObj('QuestIsVariableBool', {
+				QuestId = "Landsbach",
+				Vars = set({
+	BouncePartners = false,
+	Completed = false,
+	Failed = false,
+	Given = true,
+}),
+				__eval = function ()
+					local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
+					return not quest.BouncePartners and not quest.Completed and not quest.Failed and quest.Given
+				end,
+			}),
+		},
+		Effects = {
+			PlaceObj('QuestSetVariableBool', {
+				Prop = "NightClub",
+				QuestId = "Landsbach",
+			}),
+		},
+		Keyword = "Who might have stolen the Diesel?",
+		KeywordT = T(238959637323, --[[Conversation Siegfried_1 KeywordT]] "Who might have stolen the Diesel?"),
+		Lines = {
+			PlaceObj('ConversationInterjectionList', {
+				Interjections = {
+					PlaceObj('ConversationInterjection', {
+						Lines = {
+							PlaceObj('ConversationLine', {
+								Character = "Raider",
+								Text = T(400475134349, --[[Conversation Siegfried_1 Text voice:Raider section:Siegfried_1 keyword:Who might have stolen the Diesel?]] "Have you seen anyone suspicious sniffing around your special gas, sir?"),
+							}),
+						},
+					}),
+					PlaceObj('ConversationInterjection', {
+						Lines = {
+							PlaceObj('ConversationLine', {
+								Character = "Raven",
+								Text = T(392653093359, --[[Conversation Siegfried_1 Text voice:Raven section:Siegfried_1 keyword:Who might have stolen the Diesel?]] "Do you have any enemies? Jilted partners, disgruntled employees, angry neighbors who don't like your dogs on their lawn... y'know, stuff like that."),
+							}),
+						},
+					}),
+					PlaceObj('ConversationInterjection', {
+						Lines = {
+							PlaceObj('ConversationLine', {
+								Character = "Sidney",
+								Text = T(566375956435, --[[Conversation Siegfried_1 Text voice:Sidney section:Siegfried_1 keyword:Who might have stolen the Diesel?]] 'Let us begin by eliminating the suspects... Pardon me, I meant to say "narrowing."'),
+							}),
+						},
+					}),
+				},
+			}),
+			PlaceObj('ConversationLine', {
+				Character = "Gunther",
+				Text = T(273624851204, --[[Conversation Siegfried_1 Text voice:Gunther section:Siegfried_1 keyword:Who might have stolen the Diesel?]] "I don't know who might have stolen it, but I do know it was not stolen from here. A van was transporting my <em>Diesel</em> to a... location I do not wish to disclose. The van left here on schedule but never arrived. I suspect it was ambushed en route."),
+			}),
+			PlaceObj('ConversationLine', {
+				Character = "Gunther",
+				Text = T(412487465603, --[[Conversation Siegfried_1 Text voice:Gunther section:Siegfried_1 keyword:Who might have stolen the Diesel?]] "As you can see, I don't get out much. I have few personal contacts. You should probably ask around in town and see if someone might know more. A good place to start is <em>Night Club</em>. I imagine many of the patrons know a good deal about local criminal activity."),
+			}),
+			PlaceObj('ConversationInterjectionList', {
+				Interjections = {
+					PlaceObj('ConversationInterjection', {
+						Lines = {
+							PlaceObj('ConversationLine', {
+								Character = "Larry",
+								Text = T(904926650316, --[[Conversation Siegfried_1 Text voice:Larry section:Siegfried_1 keyword:Who might have stolen the Diesel?]] "Heey, now we're talking. I'll ask everyone in the <em>Night Club</em> about drugs... No, wait - it's gas, right? I'll ask them about that, too."),
+							}),
+						},
+					}),
+					PlaceObj('ConversationInterjection', {
+						Lines = {
+							PlaceObj('ConversationLine', {
+								Character = "Vicki",
+								Text = T(473028067687, --[[Conversation Siegfried_1 Text voice:Vicki section:Siegfried_1 keyword:Who might have stolen the Diesel?]] "If we gonna be jammin' in a club, that place better be dropping some serious Reggae beats, mon."),
+							}),
+						},
+					}),
+					PlaceObj('ConversationInterjection', {
+						Lines = {
+							PlaceObj('ConversationLine', {
+								Character = "Scully",
+								Text = T(650123010176, --[[Conversation Siegfried_1 Text voice:Scully section:Siegfried_1 keyword:Who might have stolen the Diesel?]] "Careful there, Siegfried. Your class bias is showing."),
+							}),
+						},
+					}),
+					PlaceObj('ConversationInterjection', {
+						Lines = {
+							PlaceObj('ConversationLine', {
+								Character = "Ice",
+								Text = T(368475945970, --[[Conversation Siegfried_1 Text voice:Ice section:Siegfried_1 keyword:Who might have stolen the Diesel?]] 'Hell, yeah. We gonna walk into the club all like, "What\'s up? We lookin\' for a weasel wants to talk about Diesel."'),
+							}),
+						},
+					}),
+				},
+			}),
+		},
+		PhraseConditionRolloverText = "",
+		StoryBranchIcon = "conversation_arrow",
+		id = "Anyideaswhomighthavestolenthediesel",
+	}),
+	PlaceObj('ConversationPhrase', {
+		Align = "right",
 		AutoRemove = true,
 		Conditions = {
 			PlaceObj('QuestIsVariableBool', {
@@ -1158,12 +1163,12 @@ PlaceObj('Conversation', {
 					}),
 				},
 				GoTo = "<end conversation>",
-				Keyword = "We are putting and end to this",
-				KeywordT = T(999342804006, --[[Conversation Siegfried_1 KeywordT]] "We are putting and end to this"),
+				Keyword = "We are putting an end to this",
+				KeywordT = T(131024770683, --[[Conversation Siegfried_1 KeywordT]] "We are putting an end to this"),
 				Lines = {
 					PlaceObj('ConversationLine', {
 						Character = "Gunther",
-						Text = T(356821242744, --[[Conversation Siegfried_1 Text voice:Gunther section:Siegfried_1 keyword:We are putting and end to this]] "And who is paying you to do that? No one. I am giving you the diamond mine - the very thing you are contracted to take - yet you wish to interfere in my business instead. Why?"),
+						Text = T(356821242744, --[[Conversation Siegfried_1 Text voice:Gunther section:Siegfried_1 keyword:We are putting an end to this]] "And who is paying you to do that? No one. I am giving you the diamond mine - the very thing you are contracted to take - yet you wish to interfere in my business instead. Why?"),
 					}),
 					PlaceObj('ConversationInterjectionList', {
 						Interjections = {
@@ -1171,7 +1176,7 @@ PlaceObj('Conversation', {
 								Lines = {
 									PlaceObj('ConversationLine', {
 										Character = "Meltdown",
-										Text = T(928156073156, --[[Conversation Siegfried_1 Text voice:Meltdown section:Siegfried_1 keyword:We are putting and end to this]] "Because you talk too much and I'm damn tired of it!"),
+										Text = T(928156073156, --[[Conversation Siegfried_1 Text voice:Meltdown section:Siegfried_1 keyword:We are putting an end to this]] "Because you talk too much and I'm damn tired of it!"),
 									}),
 								},
 							}),
@@ -1179,7 +1184,7 @@ PlaceObj('Conversation', {
 								Lines = {
 									PlaceObj('ConversationLine', {
 										Character = "Steroid",
-										Text = T(280218803358, --[[Conversation Siegfried_1 Text voice:Steroid section:Siegfried_1 keyword:We are putting and end to this]] "Because I hate Nazis!"),
+										Text = T(280218803358, --[[Conversation Siegfried_1 Text voice:Steroid section:Siegfried_1 keyword:We are putting an end to this]] "Because I hate Nazis!"),
 									}),
 								},
 							}),
@@ -1187,7 +1192,7 @@ PlaceObj('Conversation', {
 								Lines = {
 									PlaceObj('ConversationLine', {
 										Character = "Omryn",
-										Text = T(682244637080, --[[Conversation Siegfried_1 Text voice:Omryn section:Siegfried_1 keyword:We are putting and end to this]] "Because you are bad host who does not give snacks. I joke. It is because you are insane and also dangerous."),
+										Text = T(682244637080, --[[Conversation Siegfried_1 Text voice:Omryn section:Siegfried_1 keyword:We are putting an end to this]] "Because you are bad host who does not give snacks. I joke. It is because you are insane and also dangerous."),
 									}),
 								},
 							}),
@@ -1195,7 +1200,7 @@ PlaceObj('Conversation', {
 					}),
 					PlaceObj('ConversationLine', {
 						Character = "Gunther",
-						Text = T(556699772572, --[[Conversation Siegfried_1 Text voice:Gunther section:Siegfried_1 keyword:We are putting and end to this]] "You think it is because you are righteous? You are mercenaries! You have no cause beyond feeding your own bank account. Your kind solves problems with solutions that are only temporary, while I... I am trying to provide a final solution."),
+						Text = T(556699772572, --[[Conversation Siegfried_1 Text voice:Gunther section:Siegfried_1 keyword:We are putting an end to this]] "You think it is because you are righteous? You are mercenaries! You have no cause beyond feeding your own bank account. Your kind solves problems with solutions that are only temporary, while I... I am trying to provide a final solution."),
 					}),
 				},
 				PhraseRolloverText = T(342457648960, --[[Conversation Siegfried_1 PhraseRolloverText]] "Attack <em>Siegfried</em> and destroy his operation."),
@@ -1206,19 +1211,10 @@ PlaceObj('Conversation', {
 		PlaceObj('ConversationPhrase', {
 			Align = "right",
 			Effects = {
-				PlaceObj('GroupSetSide', {
-					Side = "enemy2",
+				PlaceObj('GroupSetBehaviorExit', {
+					Running = true,
 					TargetUnit = "Gunther",
-				}),
-				PlaceObj('GroupSetSide', {
-					Side = "enemy2",
-					TargetUnit = "OldMan_Guard",
-				}),
-				PlaceObj('GroupAlert', {
-					TargetUnit = "Gunther",
-				}),
-				PlaceObj('GroupAlert', {
-					TargetUnit = "OldMan_Guard",
+					closest = true,
 				}),
 			},
 			GoTo = "<end conversation>",

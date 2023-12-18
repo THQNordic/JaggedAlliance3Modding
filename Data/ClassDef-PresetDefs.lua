@@ -487,7 +487,11 @@ PlaceObj('PresetDef', {
 	DefGlobalMap = "Banters",
 	DefModItem = true,
 	DefModItemName = "Banter",
-	DefModItemSubmenu = "Unit",
+	DefModItemSubmenu = "Campaign & Maps",
+	DefParentClassList = {
+		"Preset",
+		"CampaignSpecific",
+	},
 	id = "BanterDef",
 	PlaceObj('PropertyDefText', {
 		'id', "Id",
@@ -719,6 +723,16 @@ PlaceObj('PresetDef', {
 		'id', "map_file",
 		'name', "Map image",
 	}),
+	PlaceObj('PropertyDefUIImage', {
+		'category', "Satellite Settings",
+		'id', "underground_file",
+		'name', "Underground map image",
+	}),
+	PlaceObj('PropertyDefNestedList', {
+		'category', "Satellite Settings",
+		'id', "decorations",
+		'base_class', "SatelliteViewDecorationDef",
+	}),
 	PlaceObj('PropertyDefText', {
 		'category', "Preset",
 		'id', "Description",
@@ -733,7 +747,7 @@ PlaceObj('PresetDef', {
 		'id', "InheritSectorsFrom",
 		'name', "Inherit sectors from",
 		'no_edit', "expression",
-		'no_edit_expression', function (self) return self.save_in == "" or IsKindOf(self, "ModItem") end,
+		'no_edit_expression', function (self, prop_meta) return self.save_in == "" or IsKindOf(self, "ModItem") end,
 		'no_validate', true,
 		'items', function (self)
 			-- can inherit the sectors from any CampaignPreset with the save id in the base game, or another DLC
@@ -751,7 +765,7 @@ PlaceObj('PresetDef', {
 		'id', "sector_topleft",
 		'name', "Top-left sector",
 		'read_only', "expression",
-		'read_only_expression', function (self) return next(self.Sectors or empty_table) and not self.editing_size end,
+		'read_only_expression', function (self, prop_meta) return next(self.Sectors or empty_table) and not self.editing_size end,
 		'validate', function (self, value) return ValidateSectorId(value) end,
 		'default', "A1",
 		'translate', false,
@@ -889,6 +903,7 @@ PlaceObj('PresetDef', {
 	PlaceObj('PropertyDefNestedList', {
 		'id', "Sectors",
 		'no_edit', true,
+		'no_validate', true,
 		'base_class', "SatelliteSector",
 		'inclusive', true,
 	}),
@@ -1293,7 +1308,7 @@ PlaceObj('PresetDef', {
 	PlaceObj('PropertyDefText', {
 		'id', "QueuedBadgeText",
 		'no_edit', "expression",
-		'no_edit_expression', function (self) return self.ActivePauseBehavior ~= "queue" end,
+		'no_edit_expression', function (self, prop_meta) return self.ActivePauseBehavior ~= "queue" end,
 		'template', true,
 	}),
 	PlaceObj('PropertyDefBool', {
@@ -1586,7 +1601,7 @@ PlaceObj('PresetDef', {
 	PlaceObj('PropertyDefFunc', {
 		'id', "IsToggledOn",
 		'no_edit', "expression",
-		'no_edit_expression', function (self) return self.ActionType ~= "Toggle" end,
+		'no_edit_expression', function (self, prop_meta) return self.ActionType ~= "Toggle" end,
 		'params', "self, unit",
 		'default', function (self, unit)
 			return false
@@ -1693,6 +1708,10 @@ PlaceObj('PresetDef', {
 	DefGedEditor = "ConversationEditor",
 	DefGlobalMap = "Conversations",
 	DefHasParameters = true,
+	DefParentClassList = {
+		"Preset",
+		"CampaignSpecific",
+	},
 	DefSingleFile = false,
 	DefSubItemFilterClass = "ConversationEditorPhraseFilter",
 	id = "Conversation",
@@ -2681,6 +2700,7 @@ PlaceObj('PresetDef', {
 	DefGlobalMap = "Emails",
 	DefParentClassList = {
 		"MsgReactionsPreset",
+		"CampaignSpecific",
 	},
 	id = "Email",
 	PlaceObj('PropertyDefText', {
@@ -2962,7 +2982,7 @@ PlaceObj('PresetDef', {
 		'id', "waypoints",
 		'name', "Waypoints",
 		'no_edit', "expression",
-		'no_edit_expression', function (self) return not self.patrolling end,
+		'no_edit_expression', function (self, prop_meta) return not self.patrolling end,
 		'items', function (self) return GetCampaignSectorsCombo() end,
 	}),
 	PlaceObj('PropertyDefCombo', {
@@ -3122,6 +3142,7 @@ PlaceObj('PresetDef', {
 	DefGlobalMap = "HistoryOccurences",
 	DefParentClassList = {
 		"MsgReactionsPreset",
+		"CampaignSpecific",
 	},
 	id = "HistoryOccurence",
 	PlaceObj('PropertyDefText', {
@@ -3144,7 +3165,7 @@ PlaceObj('PresetDef', {
 		'id', "conditions",
 		'name', "Conditions",
 		'no_edit', "expression",
-		'no_edit_expression', function (self) return self.repeatable end,
+		'no_edit_expression', function (self, prop_meta) return self.repeatable end,
 		'base_class', "Condition",
 	}),
 	PlaceObj('PropertyDefCombo', {
@@ -4271,7 +4292,11 @@ PlaceObj('PresetDef', {
 	DefGlobalMap = "PopupNotifications",
 	DefModItem = true,
 	DefModItemName = "Popup notification",
-	DefModItemSubmenu = "Gameplay",
+	DefModItemSubmenu = "Campaign & Maps",
+	DefParentClassList = {
+		"Preset",
+		"CampaignSpecific",
+	},
 	id = "PopupNotification",
 	PlaceObj('PropertyDefText', {
 		'id', "Title",
@@ -4676,6 +4701,10 @@ PlaceObj('PresetDef', {
 	DefFilterClass = "QuestEditorFilter",
 	DefGedEditor = "QuestsEditor",
 	DefGlobalMap = "Quests",
+	DefParentClassList = {
+		"Preset",
+		"CampaignSpecific",
+	},
 	DefSingleFile = false,
 	id = "QuestsDef",
 	PlaceObj('PropertyDefCombo', {
@@ -4739,6 +4768,8 @@ PlaceObj('PresetDef', {
 	}),
 	PlaceObj('PropertyDefPresetId', {
 		'id', "Author",
+		'no_edit', "expression",
+		'no_edit_expression', function (self, prop_meta) return not Platform.developer end,
 		'preset_class', "HGMember",
 	}),
 	PlaceObj('PropertyDefChoice', {
@@ -5299,6 +5330,16 @@ PlaceObj('PresetDef', {
 		'default', "Shortcut_River",
 		'items', function (self) return PresetsCombo("SectorTerrain") end,
 	}),
+	PlaceObj('PropertyDefCombo', {
+		'id', "entry_direction_start",
+		'name', "Deployment Entry At Start Sector",
+		'items', function (self) return { false, "North", "South", "East", "West" } end,
+	}),
+	PlaceObj('PropertyDefCombo', {
+		'id', "entry_direction_end",
+		'name', "Deployment Entry At End Sector",
+		'items', function (self) return { false, "North", "South", "East", "West" } end,
+	}),
 	PlaceObj('PropertyDefBool', {
 		'id', "one_way",
 		'name', "One way",
@@ -5343,13 +5384,25 @@ PlaceObj('PresetDef', {
 	PlaceObj('ClassMethodDef', {
 		'name', "GetShortcutEnabled",
 		'code', function (self)
+			gv_SatelliteShortcutState = gv_SatelliteShortcutState or {}
+			
+			local runtimeState = gv_SatelliteShortcutState[self.id]
+			if runtimeState and runtimeState.enabled then
+				return runtimeState.enabled
+			end
+			
 			return not self.disabled
 		end,
 	}),
 	PlaceObj('ClassMethodDef', {
 		'name', "GetTravelTime",
 		'code', function (self)
-			local timeConst = const.SatelliteShortcut[self.speed_const or "RiverTravelTime"]
+			gv_SatelliteShortcutState = gv_SatelliteShortcutState or {}
+			
+			local runtimeState = gv_SatelliteShortcutState[self.id]
+			local constName = runtimeState and runtimeState.speed_const or self.speed_const or "RiverTravelTime"
+			
+			local timeConst = const.SatelliteShortcut[constName]
 			return self.TravelTimeInSectors * timeConst
 		end,
 	}),
@@ -5695,7 +5748,7 @@ PlaceObj('PresetDef', {
 	PlaceObj('PropertyDefCombo', {
 		'id', "combatLogType",
 		'no_edit', "expression",
-		'no_edit_expression', function (self) return not self.combatLog end,
+		'no_edit_expression', function (self, prop_meta) return not self.combatLog end,
 		'default', "short",
 		'items', function (self) return { "short", "important", "debug" } end,
 	}),
@@ -6208,6 +6261,10 @@ PlaceObj('PresetDef', {
 	DefEditorName = "Tutorial Hints Editor",
 	DefGlobalMap = "TutorialHints",
 	DefHasSortKey = true,
+	DefParentClassList = {
+		"Preset",
+		"CampaignSpecific",
+	},
 	group = "PresetDefs",
 	id = "TutorialHint",
 	PlaceObj('ClassMethodDef', {
@@ -6235,7 +6292,7 @@ PlaceObj('PresetDef', {
 	PlaceObj('PropertyDefText', {
 		'id', "TutorialPopupTitle",
 		'no_edit', "expression",
-		'no_edit_expression', function (self) return self.group ~= "TutorialPopups" end,
+		'no_edit_expression', function (self, prop_meta) return self.group ~= "TutorialPopups" end,
 		'default', T(767566189526, --[[PresetDef TutorialHint default]] "Tutorial"),
 	}),
 	PlaceObj('PropertyDefText', {

@@ -26,8 +26,6 @@ PlaceObj('CharacterEffectCompositeDef', {
 	},
 	'DisplayName', T(707410221892, --[[CharacterEffectCompositeDef Exhausted DisplayName]] "Exhausted"),
 	'Description', T(787484805512, --[[CharacterEffectCompositeDef Exhausted Description]] "Penalty of <em><ap_loss> is applied to your maximum AP</em>. Cannot gain <em>Free Move</em>. Recover by being idle for <duration> hours in Sat View."),
-	'AddEffectText', T(264384902433, --[[CharacterEffectCompositeDef Exhausted AddEffectText]] "<em><DisplayName></em> is exhausted"),
-	'RemoveEffectText', T(377164938786, --[[CharacterEffectCompositeDef Exhausted RemoveEffectText]] "<em><DisplayName></em> is no longer exhausted"),
 	'OnAdded', function (self, obj)
 		obj:AddStatusEffectImmunity("FreeMove", self.class)
 	end,

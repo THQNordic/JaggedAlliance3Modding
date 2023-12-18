@@ -13,6 +13,8 @@ DefineClass.AmmoProperties = {
 			editor = "nested_list", default = false, template = true, base_class = "CaliberModification", inclusive = true, },
 		{ category = "Combat", id = "AppliedEffects", name = "Applied Effects", 
 			editor = "preset_id_list", default = {}, template = true, preset_class = "CharacterEffectCompositeDef", preset_group = "Default", item_default = "", },
+		{ category = "General", id = "ammo_type_icon", name = "Ammo Type Icon", help = "Ammo type icon", 
+			editor = "ui_image", default = false, template = true, },
 	},
 }
 
@@ -44,12 +46,12 @@ DefineClass.BobbyRayShopAmmoProperties = {
 	properties = {
 		{ category = "BobbyRayShop", id = "CategoryPair", 
 			editor = "preset_id", default = "12gauge", no_edit = function(self) return not self.CanAppearInShop end, template = true, preset_class = "BobbyRayShopSubCategory", preset_group = "Ammo", },
-		{ category = "BobbyRayShop", id = "GetShopStats", help = "returns an array of { statName, statValue }", 
-			editor = "func", default = function (self, stacks)
-return BobbyRayStoreGetStats_Ammo(self)
-end, no_edit = function(self) return not self.CanAppearInShop end, template = true, params = "self, stacks", },
 	},
 }
+
+function BobbyRayShopAmmoProperties:GetShopStats(stacks)
+	return BobbyRayStoreGetStats_Ammo(self)
+end
 
 DefineClass.BobbyRayShopArmorProperties = {
 	__parents = { "BobbyRayShopUsedItemProperties", },
@@ -58,74 +60,72 @@ DefineClass.BobbyRayShopArmorProperties = {
 	properties = {
 		{ category = "BobbyRayShop", id = "CategoryPair", 
 			editor = "preset_id", default = "UtilityArmor", no_edit = function(self) return not self.CanAppearInShop end, template = true, preset_class = "BobbyRayShopSubCategory", preset_group = "Armor", },
-		{ category = "BobbyRayShop", id = "GetShopStats", help = "returns an array of { statName, statValue }", 
-			editor = "func", default = function (self, stacks)
-return BobbyRayStoreGetStats_Armor(self)
-end, no_edit = function(self) return self.CanAppearInShop end, template = true, params = "self, stacks", },
-		{ category = "BobbyRayShop", id = "GetShopDescription", 
-			editor = "func", default = function (self)
-local hasDesc = self.Description and self.Description ~= ""
-local hasHint = self.AdditionalHint and self.AdditionalHint ~= ""
-local protectedParts = {}
-for part,val in sorted_pairs(self.ProtectedBodyParts) do
-	local preset= Presets.TargetBodyPart.Default[part]
-	table.insert(protectedParts, preset.display_name)
-end
-
-local protectedPartsText = ""
-if #protectedParts > 0 then 
-	protectedPartsText = T{378508273050, "<bullet_point> Body parts - <parts>", parts = table.concat(protectedParts, ", ")}
-end
-
---FindPreset("WeaponType", "Armor").Description
-
-local text = hasDesc and self.Description or hasHint and self.AdditionalHint or ""
-return protectedPartsText .. "\n" .. text
-end, no_edit = function(self) return self.CanAppearInShop end, },
 	},
 }
+
+function BobbyRayShopArmorProperties:GetShopStats(stacks)
+	return BobbyRayStoreGetStats_Armor(self)
+end
+
+function BobbyRayShopArmorProperties:GetShopDescription()
+	local hasDesc = self.Description and self.Description ~= ""
+	local hasHint = self.AdditionalHint and self.AdditionalHint ~= ""
+	local protectedParts = {}
+	for part,val in sorted_pairs(self.ProtectedBodyParts) do
+		local preset= Presets.TargetBodyPart.Default[part]
+		table.insert(protectedParts, preset.display_name)
+	end
+	
+	local protectedPartsText = ""
+	if #protectedParts > 0 then 
+		protectedPartsText = T{378508273050, "<bullet_point> Body parts - <parts>", parts = table.concat(protectedParts, ", ")}
+	end
+	
+	--FindPreset("WeaponType", "Armor").Description
+	
+	local text = hasDesc and self.Description or hasHint and self.AdditionalHint or ""
+	return protectedPartsText .. "\n" .. text
+end
 
 DefineClass.BobbyRayShopFirearmProperties = {
 	__parents = { "BobbyRayShopWeaponProperties", },
 	__generated_by_class = "ClassDef",
 
-	properties = {
-		{ category = "BobbyRayShop", id = "GetShopStats", help = "returns an array of { statName, statValue }", 
-			editor = "func", default = function (self, stacks)
-return BobbyRayStoreGetStats_Firearm(self)
-end, no_edit = function(self) return not self.CanAppearInShop end, template = true, params = "self, stacks", },
-		{ category = "BobbyRayShop", id = "GetShopSubIcon", 
-			editor = "func", default = function (self)
-return CountWeaponUpgrades(self) > 0 and "UI/Inventory/w_mod" or ""
-end, no_edit = function(self) return not self.CanAppearInShop end, },
-		{ category = "BobbyRayShop", id = "GenerateInventoryEntries", 
-			editor = "func", default = function (self, stacks)
-local items = {}
-if self.Used then
-	local new_item = PlaceInventoryItem(self.class, self)
-	new_item.Condition = self.Condition
-	RestoreCloneWeaponComponents(new_item, self)
-	new_item.Cost = new_item.Cost
-	table.insert(items, new_item)
-else
-	items = BobbyRayShopItemProperties.GenerateInventoryEntries(self, stacks)
-end
-
-for _, weapon in ipairs(items) do
-	-- make sure all equipped firearms have ammo
-	local ammo = GetAmmosWithCaliber(weapon.Caliber, "sort")[1]
-	if ammo then
-		local tempAmmo = PlaceInventoryItem(ammo.id)
-		tempAmmo.Amount = tempAmmo.MaxStacks
-		weapon:Reload(tempAmmo, "suspend_fx")
-		DoneObject(tempAmmo)
-	end
-end
-
-return items
-end, no_edit = function(self) return not self.CanAppearInShop end, template = true, params = "self, stacks", },
-	},
 }
+
+function BobbyRayShopFirearmProperties:GetShopStats(stacks)
+	return BobbyRayStoreGetStats_Firearm(self)
+end
+
+function BobbyRayShopFirearmProperties:GenerateInventoryEntries(stacks)
+	local items = {}
+	if self.Used then
+		local new_item = PlaceInventoryItem(self.class, self)
+		new_item.Condition = self.Condition
+		RestoreCloneWeaponComponents(new_item, self)
+		new_item.Cost = new_item.Cost
+		table.insert(items, new_item)
+	else
+		items = BobbyRayShopItemProperties.GenerateInventoryEntries(self, stacks)
+	end
+	
+	for _, weapon in ipairs(items) do
+		-- make sure all equipped firearms have ammo
+		local ammo = GetAmmosWithCaliber(weapon.Caliber, "sort")[1]
+		if ammo then
+			local tempAmmo = PlaceInventoryItem(ammo.id)
+			tempAmmo.Amount = tempAmmo.MaxStacks
+			weapon:Reload(tempAmmo, "suspend_fx")
+			DoneObject(tempAmmo)
+		end
+	end
+	
+	return items
+end
+
+function BobbyRayShopFirearmProperties:GetShopSubIcon()
+	return CountWeaponUpgrades(self) > 0 and "UI/Inventory/w_mod" or ""
+end
 
 DefineClass.BobbyRayShopItemProperties = {
 	__parents = { "PropertyObject", },
@@ -142,26 +142,6 @@ DefineClass.BobbyRayShopItemProperties = {
 			editor = "number", default = 100, no_edit = function(self) return not self.CanAppearInShop end, template = true, min = 0, },
 		{ category = "BobbyRayShop", id = "Stock", 
 			editor = "number", default = 0, no_edit = true, template = true, min = 0, },
-		{ category = "BobbyRayShop", id = "GetShopDescription", 
-			editor = "func", default = function (self)
-return (self.Description and self.Description ~= "" and self.Description) or self.AdditionalHint
-end, no_edit = function(self) return not self.CanAppearInShop end, },
-		{ category = "BobbyRayShop", id = "GetShopSubIcon", 
-			editor = "func", default = function (self)
-return self.SubIcon
-end, no_edit = function(self) return not self.CanAppearInShop end, },
-		{ category = "BobbyRayShop", id = "GetShopStats", help = "returns an array of { statName, statValue }", 
-			editor = "func", default = function (self, stacks)
-return {{ Untranslated("(design)"), Untranslated("Not implemented") }}
-end, no_edit = function(self) return not self.CanAppearInShop end, template = true, params = "self, stacks", },
-		{ category = "BobbyRayShop", id = "GetCategory", 
-			editor = "func", default = function (self)
-return BobbyRayShopGetCategory(BobbyRayShopGetSubCategory(self.CategoryPair).Category)
-end, no_edit = function(self) return not self.CanAppearInShop end, template = true, },
-		{ category = "BobbyRayShop", id = "GetSubCategory", 
-			editor = "func", default = function (self)
-return BobbyRayShopGetSubCategory(self.CategoryPair)
-end, no_edit = function(self) return not self.CanAppearInShop end, template = true, },
 		{ category = "BobbyRayShop", id = "New", 
 			editor = "bool", default = false, no_edit = true, },
 		{ category = "BobbyRayShop", id = "Seen", 
@@ -174,48 +154,66 @@ end, no_edit = function(self) return not self.CanAppearInShop end, template = tr
 			editor = "preset_id", default = "Missing", no_edit = function(self) return not self.CanAppearInShop end, template = true, preset_class = "BobbyRayShopSubCategory", preset_group = "_Missing", },
 		{ category = "BobbyRayShop", id = "ShopStackSize", 
 			editor = "number", default = 1, no_edit = function(self) return not (g_Classes[self.id] and g_Classes[self.id].MaxStacks) or not self.CanAppearInShop end, template = true, min = 1, max = 99, },
-		{ category = "BobbyRayShop", id = "GenerateInventoryEntries", 
-			editor = "func", default = function (self, stacks)
-local items = {}
-if self.MaxStacks then
-	local total_amount = stacks * (self.ShopStackSize or 1)
-	local stacks = DivCeil(total_amount, self.MaxStacks)
-	local remainder = total_amount - (stacks - 1) * self.MaxStacks
-	for i = 1, stacks - 1 do
-		local item = PlaceInventoryItem(self.class, self)
-		item.Amount = item.MaxStacks
-		table.insert(items, item)
-	end
-	local item = PlaceInventoryItem(self.class, self)
-	item.Amount = remainder
-	table.insert(items, item)
-else
-	for i = 1, stacks do
-		table.insert(items, PlaceInventoryItem(self.class, self))
-	end
-end
-return items
-end, no_edit = function(self) return not self.CanAppearInShop end, template = true, params = "self, stacks", },
 		{ category = "BobbyRayShop", id = "CanAppearStandard", 
 			editor = "bool", default = true, read_only = true, no_edit = true, },
 	},
 }
 
+function BobbyRayShopItemProperties:GetShopDescription()
+	return (self.Description and self.Description ~= "" and self.Description) or self.AdditionalHint
+end
+
+function BobbyRayShopItemProperties:GetShopSubIcon()
+	return self.SubIcon
+end
+
+function BobbyRayShopItemProperties:GetShopStats(stacks)
+	return {{ Untranslated("(design)"), Untranslated("Not implemented") }}
+end
+
+function BobbyRayShopItemProperties:GetCategory()
+	return BobbyRayShopGetCategory(BobbyRayShopGetSubCategory(self.CategoryPair).Category)
+end
+
+function BobbyRayShopItemProperties:GetSubCategory()
+	return BobbyRayShopGetSubCategory(self.CategoryPair)
+end
+
+function BobbyRayShopItemProperties:GenerateInventoryEntries(stacks)
+	local items = {}
+	if self.MaxStacks then
+		local total_amount = stacks * (self.ShopStackSize or 1)
+		local stacks = DivCeil(total_amount, self.MaxStacks)
+		local remainder = total_amount - (stacks - 1) * self.MaxStacks
+		for i = 1, stacks - 1 do
+			local item = PlaceInventoryItem(self.class, self)
+			item.Amount = item.MaxStacks
+			table.insert(items, item)
+		end
+		local item = PlaceInventoryItem(self.class, self)
+		item.Amount = remainder
+		table.insert(items, item)
+	else
+		for i = 1, stacks do
+			table.insert(items, PlaceInventoryItem(self.class, self))
+		end
+	end
+	return items
+end
+
 DefineClass.BobbyRayShopMeleeWeaponProperties = {
 	__parents = { "BobbyRayShopWeaponProperties", },
 	__generated_by_class = "ClassDef",
 
-	properties = {
-		{ category = "BobbyRayShop", id = "GetShopStats", help = "returns an array of { statName, statValue }", 
-			editor = "func", default = function (self, stacks)
-return BobbyRayStoreGetStats_MeleeWeapon(self)
-end, no_edit = function(self) return not self.CanAppearInShop end, template = true, params = "self, stacks", },
-		{ category = "BobbyRayShop", id = "GetShopSubIcon", 
-			editor = "func", default = function (self)
-return self.SubIcon
-end, no_edit = function(self) return not self.CanAppearInShop end, },
-	},
 }
+
+function BobbyRayShopMeleeWeaponProperties:GetShopStats(stacks)
+	return BobbyRayStoreGetStats_MeleeWeapon(self)
+end
+
+function BobbyRayShopMeleeWeaponProperties:GetShopSubIcon()
+	return self.SubIcon
+end
 
 DefineClass.BobbyRayShopOtherProperties = {
 	__parents = { "BobbyRayShopItemProperties", },
@@ -224,47 +222,47 @@ DefineClass.BobbyRayShopOtherProperties = {
 	properties = {
 		{ category = "BobbyRayShop", id = "CategoryPair", 
 			editor = "preset_id", default = "Other", no_edit = function(self) return not self.CanAppearInShop end, template = true, preset_class = "BobbyRayShopSubCategory", preset_group = "Other", },
-		{ category = "BobbyRayShop", id = "GetShopDescription", 
-			editor = "func", default = function (self)
-return self.AdditionalHint
-end, no_edit = function(self) return not self.CanAppearInShop end, },
-		{ category = "BobbyRayShop", id = "GetShopStats", help = "returns an array of { statName, statValue }", 
-			editor = "func", default = function (self, stacks)
-return BobbyRayStoreGetStats_Other(self)
-end, no_edit = function(self) return not self.CanAppearInShop end, template = true, params = "self, stacks", },
 	},
 }
+
+function BobbyRayShopOtherProperties:GetShopDescription()
+	return self.AdditionalHint
+end
+
+function BobbyRayShopOtherProperties:GetShopStats(stacks)
+	return BobbyRayStoreGetStats_Other(self)
+end
 
 DefineClass.BobbyRayShopUsedItemProperties = {
 	__parents = { "BobbyRayShopItemProperties", },
 	__generated_by_class = "ClassDef",
 
 	properties = {
-		{ category = "BobbyRayShop", id = "GenerateInventoryEntries", 
-			editor = "func", default = function (self, stacks)
-if self.Used then
-	local items = {}
-	local new_item = PlaceInventoryItem(self.class, self)
-	new_item.Condition = self.Condition
-	new_item.Cost = new_item.Cost
-	table.insert(items, new_item)
-	return items
-else
-	return BobbyRayShopItemProperties.GenerateInventoryEntries(self, stacks)
-end
-end, no_edit = function(self) return not self.CanAppearInShop end, template = true, params = "self, stacks", },
 		{ category = "BobbyRayShop", id = "CanAppearUsed", 
 			editor = "bool", default = true, no_edit = function(self) return not self.CanAppearInShop end, template = true, },
 		{ category = "BobbyRayShop", id = "CanAppearStandard", 
 			editor = "bool", default = true, no_edit = function(self) return not self.CanAppearInShop end, template = true, },
 		{ category = "BobbyRayShop", id = "Used", 
 			editor = "bool", default = false, no_edit = true, },
-		{ category = "BobbyRayShop", id = "GetShopConditionPercent", 
-			editor = "func", default = function (self, stacks)
-return Untranslated{"<percent(condPercent)>", condPercent = self:GetConditionPercent()}
-end, no_edit = function(self) return not self.CanAppearInShop end, template = true, params = "self, stacks", },
 	},
 }
+
+function BobbyRayShopUsedItemProperties:GenerateInventoryEntries(stacks)
+	if self.Used then
+		local items = {}
+		local new_item = PlaceInventoryItem(self.class, self)
+		new_item.Condition = self.Condition
+		new_item.Cost = new_item.Cost
+		table.insert(items, new_item)
+		return items
+	else
+		return BobbyRayShopItemProperties.GenerateInventoryEntries(self, stacks)
+	end
+end
+
+function BobbyRayShopUsedItemProperties:GetShopConditionPercent()
+	return Untranslated{"<percent(condPercent)>", condPercent = self:GetConditionPercent()}
+end
 
 DefineClass.BobbyRayShopWeaponProperties = {
 	__parents = { "BobbyRayShopUsedItemProperties", },
@@ -273,30 +271,30 @@ DefineClass.BobbyRayShopWeaponProperties = {
 	properties = {
 		{ category = "BobbyRayShop", id = "CategoryPair", 
 			editor = "preset_id", default = "UtilityWeapons", no_edit = function(self) return not self.CanAppearInShop end, template = true, preset_class = "BobbyRayShopSubCategory", preset_group = "Weapons", },
-		{ category = "BobbyRayShop", id = "GetShopStats", help = "returns an array of { statName, statValue }", 
-			editor = "func", default = function (self, stacks)
-if self:GetSubCategory().id == "MeleeWeapons" then
-	return BobbyRayStoreGetStats_MeleeWeapon(self)
-else
-	return BobbyRayStoreGetStats_Firearm(self)
-end
-end, no_edit = function(self) return not self.CanAppearInShop end, template = true, params = "self, stacks", },
-		{ category = "BobbyRayShop", id = "GetShopSubIcon", 
-			editor = "func", default = function (self)
-if IsKindOf(self, "Firearm") then
-	return CountWeaponUpgrades(self) > 0 and "UI/Inventory/w_mod" or ""
-else
-		return BobbyRayShopItemProperties.GetShopSubIcon(self)
-end
-end, no_edit = function(self) return not self.CanAppearInShop end, },
-		{ category = "BobbyRayShop", id = "GetShopDescription", 
-			editor = "func", default = function (self)
-local hasDesc = self.Description and self.Description ~= ""
-local hasHint = self.AdditionalHint and self.AdditionalHint ~= ""
-return hasDesc and self.Description or hasHint and self.AdditionalHint or FindPreset("WeaponType", self.WeaponType).Description
-end, no_edit = function(self) return not self.CanAppearInShop end, },
 	},
 }
+
+function BobbyRayShopWeaponProperties:GetShopStats(stacks)
+	if self:GetSubCategory().id == "MeleeWeapons" then
+		return BobbyRayStoreGetStats_MeleeWeapon(self)
+	else
+		return BobbyRayStoreGetStats_Firearm(self)
+	end
+end
+
+function BobbyRayShopWeaponProperties:GetShopDescription()
+	local hasDesc = self.Description and self.Description ~= ""
+	local hasHint = self.AdditionalHint and self.AdditionalHint ~= ""
+	return hasDesc and self.Description or hasHint and self.AdditionalHint or FindPreset("WeaponType", self.WeaponType).Description
+end
+
+function BobbyRayShopWeaponProperties:GetShopSubIcon()
+	if IsKindOf(self, "Firearm") then
+		return CountWeaponUpgrades(self) > 0 and "UI/Inventory/w_mod" or ""
+	else
+			return BobbyRayShopItemProperties.GetShopSubIcon(self)
+	end
+end
 
 DefineClass.CapacityItemProperties = {
 	__parents = { "PropertyObject", },
@@ -602,6 +600,28 @@ function InventoryItemProperties:IsValuable()
 	return self.Valuable ~= 0
 end
 
+DefineClass.InventoryTab = {
+	__parents = { "ListPreset", },
+	__generated_by_class = "PresetDef",
+
+	properties = {
+		{ id = "display_name", 
+			editor = "text", default = false, translate = true, lines = 2, max_lines = 100, },
+		{ id = "icon", 
+			editor = "ui_image", default = "UI/Inventory/tabs_all.png", image_preview_size = 100, },
+		{ id = "item_classes", 
+			editor = "string_list", default = {}, item_default = "", items = false, },
+		{ id = "FilterItem", 
+			editor = "func", default = function (self, item)
+if not next(self.item_classes) then
+	return true
+end	
+return IsKindOfClasses(item, self.item_classes)
+end, template = true, params = "self, item", },
+	},
+	GlobalMap = "InventoryTabs",
+}
+
 DefineClass.ItemUpgradeProperties = {
 	__parents = { "PropertyObject", },
 	__generated_by_class = "ClassDef",
@@ -731,6 +751,8 @@ DefineClass.OrdnanceProperties = {
 			editor = "bool", default = false, template = true, },
 		{ category = "General", id = "Entity", 
 			editor = "choice", default = false, read_only = true, no_edit = true, template = true, items = function (self) return ClassDescendantsCombo("GrenadeVisual") end, },
+		{ category = "General", id = "ammo_type_icon", name = "Ammo Type Icon", help = "Ammo type icon", 
+			editor = "ui_image", default = false, template = true, },
 	},
 }
 

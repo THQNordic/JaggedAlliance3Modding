@@ -332,6 +332,7 @@ PlaceObj('BanterDef', {
 		PlaceObj('BanterLine', {
 			'MultipleTexts', true,
 			'Text', "",
+			'AnyOfTheseCount', 2,
 			'AnyOfThese', {
 				PlaceObj('BanterLineThin', {
 					'Character', "Steroid",

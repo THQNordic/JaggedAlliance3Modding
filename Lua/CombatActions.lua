@@ -57,7 +57,7 @@ end
 function NetStartCombatAction(action_id, unit, ap, args, ...)
 	local net_cmd = NetStartCombatActions[action_id]
 	-- action_id ~= "MoveItems": temporary fix for not being able to execute many MoveItems actions one after another
-	if action_id ~= "MoveItems" and net_cmd and net_cmd.unit == unit and net_cmd.ap == ap then
+	if action_id ~= "MoveItems" and action_id ~= "MoveMultiItems" and net_cmd and net_cmd.unit == unit and net_cmd.ap == ap then
 		NetStartActionCanceled(action_id, unit)
 		return		-- already registered to travel the network, skip it
 	end

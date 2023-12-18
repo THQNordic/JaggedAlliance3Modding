@@ -30,6 +30,8 @@ function Unit:OnAttack(action, target, results, attack_args, holdXpLog)
 		end
 	end
 	
+	self.last_attack_pos = self:GetPos()
+	
 	-- Add Exposed on any Melee Attack hit
 	if action.ActionType == "Melee Attack" and IsKindOf(target, "Unit") and not results.miss then 
 		target:AddStatusEffect("Exposed")
@@ -174,6 +176,9 @@ function Unit:FirearmAttack(action_id, cost_ap, args, applied_status) -- SingleS
 	if IsKindOf(target, "Unit") then
 		target:CallReactions("OnFirearmAttackStart", self, target, CombatActions[action_id], args)
 	end
+	while not args.opportunity_attack and IsKindOf(target, "Unit") and not target:IsIdleOrRunningBehavior() do
+		WaitMsg("Idle", 50)
+	end
 	if args.replace_action then
 		action_id = args.replace_action
 	end
@@ -224,8 +229,6 @@ function Unit:FirearmAttack(action_id, cost_ap, args, applied_status) -- SingleS
 end
 
 function Unit:ExecFirearmAttacks(action, cost_ap, attack_args, results)
-	self:EndInterruptableMovement()
-
 	NetUpdateHash("ExecFirearmAttacks", action, cost_ap, not not g_Combat)
 	local lof_idx = table.find(attack_args.lof, "target_spot_group", attack_args.target_spot_group or "Torso")
 	local lof_data = attack_args.lof[lof_idx or 1]
@@ -254,14 +257,19 @@ function Unit:ExecFirearmAttacks(action, cost_ap, attack_args, results)
 		end
 	end
 
-	local can_provoke_opportunity_attacks = not action or action.id ~= "CancelShot" and action.id ~= "CancelShotCone"
+	local can_provoke_opportunity_attacks = not action or (action.id ~= "CancelShot" and action.id ~= "CancelShotCone")
 	if can_provoke_opportunity_attacks then
-		self:ProvokeOpportunityAttacks("attack interrupt")
+		self:ProvokeOpportunityAttacks(action, "attack interrupt")
 	end
 	self:PrepareToAttack(attack_args, results)
 	if can_provoke_opportunity_attacks then
-		self:ProvokeOpportunityAttacks("attack interrupt")
+		self:ProvokeOpportunityAttacks(action, "attack interrupt")
 	end
+	local was_interruptable = self.interruptable
+	if not was_interruptable then
+		self:EndInterruptableMovement()
+	end
+
 	NetUpdateHash("ExecFirearmAttacks_Start_Action_Cam")
 	-- camera effects
 	if attack_args.opportunity_attack_type ~= "Retaliation" then
@@ -346,6 +354,9 @@ function Unit:ExecFirearmAttacks(action, cost_ap, attack_args, results)
 	
 	if not fired then
 		-- none of the weapons fired, abort
+		if not was_interruptable then
+			self:BeginInterruptableMovement()
+		end
 		Sleep(self:TimeToAnimEnd())
 		self:PopAndCallDestructor()
 		NetUpdateHash("ExecFirearmAttacks_early_out")
@@ -502,9 +513,12 @@ function Unit:ExecFirearmAttacks(action, cost_ap, attack_args, results)
 	AttackReaction(action, attack_args, results, "can retaliate")
 	
 	if not action or (action.id ~= "CancelShot" and action.id ~= "CancelShotCone") then
-		self:ProvokeOpportunityAttacks("attack reaction")
+		self:ProvokeOpportunityAttacks(action, "attack reaction")
 	end
-	
+
+	if not was_interruptable then
+		self:BeginInterruptableMovement()
+	end
 	self:PopAndCallDestructor()
 	if interrupt then
 		self:PopAndCallDestructor()
@@ -775,8 +789,8 @@ function Unit:HeavyWeaponAttack(action_id, cost_ap, args)
 		CombatActionInterruped(self)
 		return
 	end
-	self:ProvokeOpportunityAttacks("attack interrupt")
 	local action = CombatActions[action_id]
+	self:ProvokeOpportunityAttacks(action, "attack interrupt")
 	local weapon = action:GetAttackWeapons(self)
 	args.prediction = false
 	local results, attack_args = action:GetActionResults(self, args)
@@ -787,7 +801,7 @@ function Unit:HeavyWeaponAttack(action_id, cost_ap, args)
 	end
 	
 	self:PrepareToAttack(attack_args, results)
-	self:ProvokeOpportunityAttacks("attack interrupt")
+	self:ProvokeOpportunityAttacks(action, "attack interrupt")
 
 	self:PushDestructor(function()
 		local ap = (cost_ap and cost_ap > 0) and cost_ap or action:GetAPCost(self, attack_args)
@@ -889,7 +903,7 @@ function Unit:HeavyWeaponAttack(action_id, cost_ap, args)
 			self:SetEffectExpirationTurn(action.id, "cooldown", g_Combat.current_turn + cooldown)
 		end
 		self.last_attack_session_id = false	
-		self:ProvokeOpportunityAttacks("attack reaction")
+		self:ProvokeOpportunityAttacks(action, "attack reaction")
 		table.remove(g_CurrentAttackActions)
 	end)
 	self:PopAndCallDestructor()
@@ -902,8 +916,8 @@ function Unit:FireFlare(action_id, cost_ap, args)
 		CombatActionInterruped(self)
 		return
 	end
-	self:ProvokeOpportunityAttacks("attack interrupt")
 	local action = CombatActions[action_id]
+	self:ProvokeOpportunityAttacks(action, "attack interrupt")
 	local weapon = action:GetAttackWeapons(self)
 	args.prediction = false
 	local results, attack_args = action:GetActionResults(self, args)
@@ -914,7 +928,7 @@ function Unit:FireFlare(action_id, cost_ap, args)
 	end
 	
 	self:PrepareToAttack(attack_args, results)
-	self:ProvokeOpportunityAttacks("attack interrupt")
+	self:ProvokeOpportunityAttacks(action, "attack interrupt")
 
 	local fire_anim = self:GetAttackAnim(action_id)
 	local aim_anim = self:GetAimAnim(action_id)
@@ -973,25 +987,24 @@ function Unit:FireFlare(action_id, cost_ap, args)
 	end
 	
 	self.last_attack_session_id = false	
-	self:ProvokeOpportunityAttacks("attack reaction")	
+	self:ProvokeOpportunityAttacks(action, "attack reaction")	
 end
 
 function Unit:ThrowGrenade(action_id, cost_ap, args)
-	self:EndInterruptableMovement()
-
 	local stealth_attack = not not self:HasStatusEffect("Hidden")
 	local target_pos = args.target
 	if self.stance ~= "Standing" then
 		self:ChangeStance(nil, nil, "Standing")
 	end
-	self:ProvokeOpportunityAttacks("attack interrupt")
 	local action = CombatActions[action_id]
+	self:ProvokeOpportunityAttacks(action, "attack interrupt")
 	local grenade = action:GetAttackWeapons(self)
 	args.prediction = false -- mishap needs to happen now
 	local results, attack_args = action:GetActionResults(self, args) -- early check for PrepareToAttack
 	self:PrepareToAttack(attack_args, results)
 	self:UpdateAttachedWeapons()
-	self:ProvokeOpportunityAttacks("attack interrupt")
+	self:ProvokeOpportunityAttacks(action, "attack interrupt")
+	self:EndInterruptableMovement()
 
 	-- camera effects
 	if not attack_args.opportunity_attack_type == "Retaliation" then
@@ -1114,7 +1127,7 @@ function Unit:ThrowGrenade(action_id, cost_ap, args)
 	if IsValidThread(thread) then
 		WaitMsg(thread)
 	end
-	self:ProvokeOpportunityAttacks("attack reaction")
+	self:ProvokeOpportunityAttacks(action, "attack reaction")
 	self:PopAndCallDestructor()
 end
 
@@ -1123,6 +1136,7 @@ function Unit:RemoteDetonate(action_id, cost_ap, args)
 	local action = CombatActions[action_id]
 	local detonator = action:GetAttackWeapons(self)
 	local traps = detonator:GetAttackResults(false, { target_pos = target_pos })
+	self.performed_action_this_turn = true -- the action doesn't consume ap, so set it manually
 	for i, t in ipairs(traps) do
 		t.obj:TriggerTrap(nil, self)
 	end
@@ -1140,8 +1154,6 @@ function Unit:WaitAttacker(timeout)
 end
 
 function Unit:MeleeAttack(action_id, cost_ap, args)
-	self:EndInterruptableMovement()
-
 	local new_stance = self.stance ~= "Standing" and self.species == "Human" and "Standing"
 	local stealth_attack = not not self:GetStatusEffect("Hidden")
 	if new_stance then
@@ -1173,11 +1185,13 @@ function Unit:MeleeAttack(action_id, cost_ap, args)
 	end
 	args.prediction = false
 
+	local face_thread
 	self:PushDestructor(function(self)
 		table.remove(g_CurrentAttackActions)
 		if IsValid(target) and (target.command == "WaitAttacker" or target.command == "FaceAttackerCommand") then
 			target:SetCommand("Idle")
 		end
+		DeleteThread(face_thread)
 	end)
 
 	local results, attack_args = action:GetActionResults(self, args)
@@ -1186,10 +1200,8 @@ function Unit:MeleeAttack(action_id, cost_ap, args)
 	table.insert(g_CurrentAttackActions, { action = action, cost_ap = ap, attack_args = attack_args, results = results })
 	self:AttackReveal(action, attack_args, results)
 	self.marked_target_attack_args = nil
-
-	if not HasPerk(self, "HardBlow") then
-		self:ProvokeOpportunityAttacks("attack interrupt", nil, "melee")
-	end
+	
+	self:ProvokeOpportunityAttacks(action, "attack interrupt", nil, "melee")
 	
 	-- camera effects 
 	if not attack_args.opportunity_attack_type == "Retaliation" then
@@ -1202,6 +1214,7 @@ function Unit:MeleeAttack(action_id, cost_ap, args)
 			SetAutoRemoveActionCamera(self, target, false, false, false, default_interpolation_time)
 		end
 	end
+	self:EndInterruptableMovement()
 
 	local anim, face_angle, fx_actor
 	if self.species == "Human" then
@@ -1256,13 +1269,14 @@ function Unit:MeleeAttack(action_id, cost_ap, args)
 			end
 		end
 	end
-	if face_angle then
-		if self.body_type == "Large animal" then
+	face_thread = CreateGameTimeThread(function(self, anim, face_angle)
+		self:PlayTransitionAnims(anim)
+		if face_angle then
 			self:AnimatedRotation(face_angle)
-		else
-			self:SetOrientationAngle(face_angle, 100)
 		end
-	end
+		self:SetRandomAnim(self:GetIdleBaseAnim("anim"))
+		Msg(self)
+	end, self, anim, face_angle)
 
 	-- target face attacker
 	if g_Combat
@@ -1293,7 +1307,6 @@ function Unit:MeleeAttack(action_id, cost_ap, args)
 				target:SetAnimSpeedModifier(speed_mod)
 			else
 				if target:IsInterruptable() then
-					self:SetRandomAnim(self:GetIdleBaseAnim())
 					target:SetCommand("FaceAttackerCommand", self, target_face_angle)
 					for i = 1, 200 do
 						if target.command ~= "FaceAttackerCommand" then
@@ -1305,7 +1318,13 @@ function Unit:MeleeAttack(action_id, cost_ap, args)
 			end
 		end
 	end
-	
+
+	if IsValidThread(face_thread) then
+		WaitMsg(self, 2000)
+	end
+	DeleteThread(face_thread)
+	face_thread = nil
+
 	if g_AIExecutionController and not ActionCameraPlaying then
 		local targetPos = target:GetVisualPos()
 		local cameraIsNear = DoPointsFitScreen({targetPos}, nil, const.Camera.BufferSizeNoCameraMov)
@@ -1371,9 +1390,7 @@ function Unit:MeleeAttack(action_id, cost_ap, args)
 	Sleep(self:TimeToAnimEnd())
 
 	LogAttack(action, attack_args, results)
-	if not HasPerk(self, "HardBlow") then
-		self:ProvokeOpportunityAttacks("attack reaction", nil, "melee")
-	end	
+	self:ProvokeOpportunityAttacks(action, "attack reaction", nil, "melee")
 	AttackReaction(action, attack_args, results, "can retaliate")
 	ShowBadgesOfTargets({target}, "hide")
 
@@ -1485,20 +1502,19 @@ function Unit:ThrowKnife(action_id, cost_ap, args)
 end
 
 function Unit:ExecKnifeThrow(action, cost_ap, attack_args, results)
-	self:EndInterruptableMovement()
-
 	local target = attack_args.target
 	local target_unit = IsKindOf(target, "Unit") and IsValidTarget(target) and target
 	local target_pos = IsPoint(target) and target or target:GetPos()
 
 	results.attack_from_stealth = not not self:HasStatusEffect("Hidden")
 	self:AttackReveal(action, attack_args, results)
-	self:ProvokeOpportunityAttacks("attack interrupt")
+	self:ProvokeOpportunityAttacks(action, "attack interrupt")
 	if self.stance == "Prone" then
 		self:DoChangeStance("Standing")
 	end
 	self:PrepareToAttack(attack_args, results)
-	self:ProvokeOpportunityAttacks("attack interrupt")
+	self:ProvokeOpportunityAttacks(action, "attack interrupt")
+	self:EndInterruptableMovement()
 
 	-- animation
 	local weapon = action:GetAttackWeapons(self)
@@ -1637,7 +1653,7 @@ function Unit:ExecKnifeThrow(action, cost_ap, attack_args, results)
 		end	
 		
 		
-		self:ProvokeOpportunityAttacks("attack reaction")
+		self:ProvokeOpportunityAttacks(action, "attack reaction")
 
 		self.last_attack_session_id = false
 		table.remove(g_CurrentAttackActions)
@@ -1731,7 +1747,7 @@ function Unit:Bandage(action_id, cost_ap, args)
 		self:SetState(target_self and "nw_Bandaging_Self_Start" or "nw_Bandaging_Start")
 		Sleep(self:TimeToAnimEnd() or 100)
 		if not args.provoked then
-			self:ProvokeOpportunityAttacks("attack interrupt")
+			self:ProvokeOpportunityAttacks(action, "attack interrupt")
 			args.provoked = true
 			self:SetBehavior("Bandage", {action_id, cost_ap, args})
 			self:SetCombatBehavior("Bandage", {action_id, cost_ap, args})
@@ -2061,7 +2077,7 @@ function Unit:ReloadAction(action_id, cost_ap, args)
 end
 
 function Unit:UnjamWeapon(action_id, cost_ap, args)
-	self:ProvokeOpportunityAttacks("attack interrupt")
+	self:ProvokeOpportunityAttacks(action_id and CombatActions[action_id], "attack interrupt")
 	local weapon = false
 	if args and args.pos then
 		weapon = self:GetItemAtPackedPos(args.pos)
@@ -2118,15 +2134,13 @@ function Unit:LeaveEmplacement(instant, exit_combat)
 	if not self:HasStatusEffect("ManningEmplacement") then return end
 	local handle = self:GetEffectValue("hmg_emplacement")
 	local obj = HandleToObject[handle]
-	if not obj then return end
-
-	if exit_combat and obj.exploration_manned and self.team.player_enemy then
-		-- enemy units manning important emplacements should stay in them
-		return
+	if obj then
+		if exit_combat and obj.exploration_manned and self.team.player_enemy then
+			-- enemy units manning important emplacements should stay in them
+			return
+		end
+		obj.manned_by = nil
 	end
-
-	obj.manned_by = nil
-
 	local exit_pos = not IsPassSlab(self) and SnapToPassSlab(self)
 	if instant then
 		if exit_pos then
@@ -2146,7 +2160,7 @@ function Unit:LeaveEmplacement(instant, exit_combat)
 	end
 	self:RemoveStatusEffect("ManningEmplacement")
 	self:SetEffectValue("hmg_emplacement")
-	if obj.weapon then obj.weapon.owner = nil end
+	if obj and obj.weapon then obj.weapon.owner = nil end
 	self:InterruptPreparedAttack()
 	self:FlushCombatCache()
 	self:RecalcUIActions(true)
@@ -2607,8 +2621,8 @@ function Unit:HyenaCharge(action_id, cost_ap, args)
 	self:CombatGoto(action_id, attack_args.move_ap, atk_jmp_pos)
 	self:Face(atk_pos)
 
-	if not HasPerk(self, "HardBlow") then
-		self:ProvokeOpportunityAttacks("attack interrupt", nil, "melee")
+	if self:CallReactions_And("OnCheckInterruptAttackAvailable", target, action) then
+		self:ProvokeOpportunityAttacks(action, "attack interrupt", nil, "melee")
 	end
 	
 	--handle badges as melee doesn't use prepare to attack logic
@@ -2758,4 +2772,10 @@ end
 
 function Unit:GrizzlyPerk(action_id, cost_ap, args)
 	self:FirearmAttack(action_id, 0, args)
+end
+
+function OnMsg.CombatEnd()
+	for _, unit in ipairs(g_Units) do
+		unit.last_attack_pos = false
+	end
 end

@@ -391,8 +391,10 @@ function PrecalcLOFUI(unit, action, pos, cacheTable)
 		if targets and #targets > 0 then
 			anyGoodAttack = true
 			for i, e in ipairs(targets) do
-				goodAttackCache[e] = true
-				anyEnemyGoodAttack = anyEnemyGoodAttack or unit:IsOnEnemySide(e)
+				if unit:IsOnEnemySide(e) then
+					goodAttackCache[e] = true
+					anyEnemyGoodAttack = true
+				end
 			end
 		end
 	else -- fallback

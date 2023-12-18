@@ -7,9 +7,6 @@ DefineClass.Panicked = {
 
 
 	object_class = "CharacterEffect",
-	Conditions = {
-		PlaceObj('CombatIsActive', {}),
-	},
 	DisplayName = T(179133370621, --[[CharacterEffectCompositeDef Panicked DisplayName]] "Panicked"),
 	Description = T(583680307590, --[[CharacterEffectCompositeDef Panicked Description]] "Uncontrollable. Runs away from the enemies."),
 	AddEffectText = T(629484886928, --[[CharacterEffectCompositeDef Panicked AddEffectText]] "<em><DisplayName></em> panicked"),

@@ -8,7 +8,8 @@ PlaceObj('XTemplate', {
 		'Id', "idDeployMenu",
 		'IdNode', true,
 		'Visible', false,
-		'FoldWhenHidden', true,
+		'FoldWhenHidden', true,--
+		'__context', function (parent, context) return false end,
 	}, {
 		PlaceObj('XTemplateWindow', {
 			'__class', "XContextWindow",
@@ -23,7 +24,7 @@ PlaceObj('XTemplate', {
 			'BackgroundRectGlowColor', RGBA(52, 55, 61, 255),
 		}, {
 			PlaceObj('XTemplateWindow', {
-				'__context', function (parent, context) return SubContext(context, {"CornerIntelRespawn"}) end,
+				'__context', function (parent, context) return {"CornerIntelRespawn"} end,
 				'__class', "XContentTemplateList",
 				'Id', "idList",
 				'IdNode', false,
@@ -299,6 +300,7 @@ PlaceObj('XTemplate', {
 				'UseClipBox', false,
 				'DrawOnTop', true,
 				'Background', RGBA(52, 55, 61, 255),
+				'__context', function (parent, context) return false end,
 			}, {
 				PlaceObj('XTemplateWindow', {
 					'__class', "XText",

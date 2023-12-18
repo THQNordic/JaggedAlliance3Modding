@@ -2,7 +2,7 @@
 
 PlaceObj('ActionFXSound', {
 	Action = "Anim:inf_Standing_Attack",
-	Actor = "Female",
+	Actor = "AmbientFemale",
 	AnimRevision = 55192,
 	AnimRevisionEntity = "Faction_Adonis_Top_03",
 	Disabled = true,
@@ -14,7 +14,7 @@ PlaceObj('ActionFXSound', {
 
 PlaceObj('ActionFXSound', {
 	Action = "Anim:inf_Standing_Attack2",
-	Actor = "Female",
+	Actor = "AmbientFemale",
 	AnimRevision = 55192,
 	AnimRevisionEntity = "Faction_Adonis_Top_03",
 	Disabled = true,
@@ -26,7 +26,7 @@ PlaceObj('ActionFXSound', {
 
 PlaceObj('ActionFXSound', {
 	Action = "Anim:inf_Standing_CombatBegin",
-	Actor = "Female",
+	Actor = "AmbientFemale",
 	AnimRevision = 55359,
 	AnimRevisionEntity = "Faction_Adonis_Top_03",
 	Disabled = true,
@@ -38,7 +38,7 @@ PlaceObj('ActionFXSound', {
 
 PlaceObj('ActionFXSound', {
 	Action = "Anim:inf_Standing_Idle",
-	Actor = "Female",
+	Actor = "AmbientFemale",
 	AnimRevision = 57174,
 	AnimRevisionEntity = "Faction_Adonis_Top_03",
 	Chance = 50,
@@ -51,7 +51,7 @@ PlaceObj('ActionFXSound', {
 
 PlaceObj('ActionFXSound', {
 	Action = "Anim:inf_Standing_Idle2",
-	Actor = "Female",
+	Actor = "AmbientFemale",
 	AnimRevision = 57174,
 	AnimRevisionEntity = "Faction_Adonis_Top_03",
 	Chance = 50,
@@ -64,7 +64,7 @@ PlaceObj('ActionFXSound', {
 
 PlaceObj('ActionFXSound', {
 	Action = "Anim:inf_Standing_IdlePassive",
-	Actor = "Female",
+	Actor = "AmbientFemale",
 	AnimRevision = 57162,
 	AnimRevisionEntity = "Faction_Adonis_Top_03",
 	Chance = 50,
@@ -77,7 +77,7 @@ PlaceObj('ActionFXSound', {
 
 PlaceObj('ActionFXSound', {
 	Action = "Anim:inf_Standing_IdlePassive2",
-	Actor = "Female",
+	Actor = "AmbientFemale",
 	AnimRevision = 57162,
 	AnimRevisionEntity = "Faction_Adonis_Top_03",
 	Chance = 50,
@@ -90,7 +90,7 @@ PlaceObj('ActionFXSound', {
 
 PlaceObj('ActionFXSound', {
 	Action = "Anim:inf_Standing_IdlePassive3",
-	Actor = "Female",
+	Actor = "AmbientFemale",
 	AnimRevision = 57127,
 	AnimRevisionEntity = "Faction_Adonis_Top_03",
 	Chance = 50,
@@ -103,7 +103,7 @@ PlaceObj('ActionFXSound', {
 
 PlaceObj('ActionFXSound', {
 	Action = "Anim:inf_Standing_IdlePassive4",
-	Actor = "Female",
+	Actor = "AmbientFemale",
 	AnimRevision = 57162,
 	AnimRevisionEntity = "Faction_Adonis_Top_03",
 	Chance = 50,
@@ -116,7 +116,7 @@ PlaceObj('ActionFXSound', {
 
 PlaceObj('ActionFXSound', {
 	Action = "Anim:inf_Standing_IdlePassive5",
-	Actor = "Female",
+	Actor = "AmbientFemale",
 	AnimRevision = 57162,
 	AnimRevisionEntity = "Faction_Adonis_Top_03",
 	Chance = 50,
@@ -129,7 +129,7 @@ PlaceObj('ActionFXSound', {
 
 PlaceObj('ActionFXSound', {
 	Action = "Anim:inf_Standing_IdlePassive6",
-	Actor = "Female",
+	Actor = "AmbientFemale",
 	AnimRevision = 57162,
 	AnimRevisionEntity = "Faction_Adonis_Top_03",
 	Chance = 50,
@@ -142,7 +142,7 @@ PlaceObj('ActionFXSound', {
 
 PlaceObj('ActionFXSound', {
 	Action = "Anim:inf_Standing_IdlePassive7",
-	Actor = "Female",
+	Actor = "AmbientFemale",
 	AnimRevision = 57162,
 	AnimRevisionEntity = "Faction_Adonis_Top_03",
 	Chance = 50,
@@ -155,7 +155,7 @@ PlaceObj('ActionFXSound', {
 
 PlaceObj('ActionFXSound', {
 	Action = "Anim:inf_Standing_IdlePassive8",
-	Actor = "Female",
+	Actor = "AmbientFemale",
 	AnimRevision = 57162,
 	AnimRevisionEntity = "Faction_Adonis_Top_03",
 	Chance = 50,
@@ -168,7 +168,7 @@ PlaceObj('ActionFXSound', {
 
 PlaceObj('ActionFXSound', {
 	Action = "Anim:inf_Standing_Run",
-	Actor = "Female",
+	Actor = "AmbientFemale",
 	AnimRevision = 55192,
 	AnimRevisionEntity = "Faction_Adonis_Top_03",
 	Chance = 50,
@@ -181,7 +181,7 @@ PlaceObj('ActionFXSound', {
 
 PlaceObj('ActionFXSound', {
 	Action = "Anim:inf_Standing_Walk",
-	Actor = "Female",
+	Actor = "AmbientFemale",
 	AnimRevision = 55192,
 	AnimRevisionEntity = "Faction_Adonis_Top_03",
 	Chance = 50,
@@ -194,7 +194,7 @@ PlaceObj('ActionFXSound', {
 
 PlaceObj('ActionFXSound', {
 	Action = "Anim:inf_Standing_Walk2",
-	Actor = "Female",
+	Actor = "AmbientFemale",
 	AnimRevision = 55359,
 	AnimRevisionEntity = "Faction_Adonis_Top_03",
 	Chance = 50,
@@ -207,7 +207,7 @@ PlaceObj('ActionFXSound', {
 
 PlaceObj('ActionFXSound', {
 	Action = "Anim:inf_Standing_Walk2",
-	Actor = "Female",
+	Actor = "AmbientFemale",
 	AnimRevision = 55359,
 	AnimRevisionEntity = "Faction_Adonis_Top_03",
 	Chance = 50,
@@ -220,7 +220,7 @@ PlaceObj('ActionFXSound', {
 
 PlaceObj('ActionFXSound', {
 	Action = "Anim:inf_Standing_Walk3",
-	Actor = "Female",
+	Actor = "AmbientFemale",
 	AnimRevision = 55359,
 	AnimRevisionEntity = "Faction_Adonis_Top_03",
 	Chance = 50,
@@ -233,7 +233,7 @@ PlaceObj('ActionFXSound', {
 
 PlaceObj('ActionFXSound', {
 	Action = "Anim:civ_Ambient_Angry",
-	Actor = "Female",
+	Actor = "AmbientFemale",
 	AnimRevision = 60529,
 	AnimRevisionEntity = "Faction_Adonis_Top_03",
 	Moment = "hit",
@@ -244,7 +244,7 @@ PlaceObj('ActionFXSound', {
 
 PlaceObj('ActionFXSound', {
 	Action = "Anim:civ_Ambient_Angry",
-	Actor = "Male",
+	Actor = "AmbientMale",
 	AnimRevision = 60529,
 	AnimRevisionEntity = "Faction_Adonis_Top_03",
 	Moment = "hit",
@@ -255,7 +255,7 @@ PlaceObj('ActionFXSound', {
 
 PlaceObj('ActionFXSound', {
 	Action = "Anim:civ_Ambient_Begging",
-	Actor = "Female",
+	Actor = "AmbientFemale",
 	AnimRevision = 48974,
 	AnimRevisionEntity = "Faction_Adonis_Top_03",
 	Moment = "hit",
@@ -266,7 +266,7 @@ PlaceObj('ActionFXSound', {
 
 PlaceObj('ActionFXSound', {
 	Action = "Anim:civ_Ambient_Begging",
-	Actor = "Male",
+	Actor = "AmbientMale",
 	AnimRevision = 48974,
 	AnimRevisionEntity = "Faction_Adonis_Top_03",
 	Moment = "hit",
@@ -277,7 +277,7 @@ PlaceObj('ActionFXSound', {
 
 PlaceObj('ActionFXSound', {
 	Action = "Anim:civ_Ambient_Cheering",
-	Actor = "Female",
+	Actor = "AmbientFemale",
 	AnimRevision = 59509,
 	AnimRevisionEntity = "Faction_Adonis_Top_03",
 	Moment = "hit",
@@ -288,7 +288,7 @@ PlaceObj('ActionFXSound', {
 
 PlaceObj('ActionFXSound', {
 	Action = "Anim:civ_Ambient_Cheering",
-	Actor = "Male",
+	Actor = "AmbientMale",
 	AnimRevision = 59509,
 	AnimRevisionEntity = "Faction_Adonis_Top_03",
 	Moment = "hit",
@@ -309,7 +309,7 @@ PlaceObj('ActionFXSound', {
 
 PlaceObj('ActionFXSound', {
 	Action = "Anim:civ_Ambient_Cooking2",
-	Actor = "Female",
+	Actor = "AmbientFemale",
 	AnimRevision = 59048,
 	AnimRevisionEntity = "Faction_Adonis_Top_03",
 	Moment = "hit",
@@ -320,7 +320,7 @@ PlaceObj('ActionFXSound', {
 
 PlaceObj('ActionFXSound', {
 	Action = "Anim:civ_Ambient_Cooking2",
-	Actor = "Male",
+	Actor = "AmbientMale",
 	AnimRevision = 59048,
 	AnimRevisionEntity = "Faction_Adonis_Top_03",
 	Moment = "hit",
@@ -341,7 +341,7 @@ PlaceObj('ActionFXSound', {
 
 PlaceObj('ActionFXSound', {
 	Action = "Anim:civ_Ambient_Cooking3",
-	Actor = "Female",
+	Actor = "AmbientFemale",
 	AnimRevision = 59048,
 	AnimRevisionEntity = "Faction_Adonis_Top_03",
 	Moment = "hit",
@@ -352,7 +352,7 @@ PlaceObj('ActionFXSound', {
 
 PlaceObj('ActionFXSound', {
 	Action = "Anim:civ_Ambient_Cooking3",
-	Actor = "Male",
+	Actor = "AmbientMale",
 	AnimRevision = 59048,
 	AnimRevisionEntity = "Faction_Adonis_Top_03",
 	Moment = "hit",
@@ -373,7 +373,7 @@ PlaceObj('ActionFXSound', {
 
 PlaceObj('ActionFXSound', {
 	Action = "Anim:civ_Ambient_Cooking4",
-	Actor = "Female",
+	Actor = "AmbientFemale",
 	AnimRevision = 59048,
 	AnimRevisionEntity = "Faction_Adonis_Top_03",
 	Moment = "hit",
@@ -384,7 +384,7 @@ PlaceObj('ActionFXSound', {
 
 PlaceObj('ActionFXSound', {
 	Action = "Anim:civ_Ambient_Cooking4",
-	Actor = "Male",
+	Actor = "AmbientMale",
 	AnimRevision = 59048,
 	AnimRevisionEntity = "Faction_Adonis_Top_03",
 	Moment = "hit",
@@ -405,7 +405,7 @@ PlaceObj('ActionFXSound', {
 
 PlaceObj('ActionFXSound', {
 	Action = "Anim:civ_Ambient_DrinkingAtTable",
-	Actor = "Female",
+	Actor = "AmbientFemale",
 	AnimRevision = 49172,
 	AnimRevisionEntity = "Faction_Adonis_Top_03",
 	Moment = "hit",
@@ -416,7 +416,7 @@ PlaceObj('ActionFXSound', {
 
 PlaceObj('ActionFXSound', {
 	Action = "Anim:civ_Ambient_DrinkingAtTable",
-	Actor = "Male",
+	Actor = "AmbientMale",
 	AnimRevision = 49172,
 	AnimRevisionEntity = "Faction_Adonis_Top_03",
 	Moment = "hit",
@@ -756,7 +756,7 @@ PlaceObj('ActionFXSound', {
 
 PlaceObj('ActionFXSound', {
 	Action = "Anim:civ_Ambient_SadCrying",
-	Actor = "Female",
+	Actor = "AmbientFemale",
 	AnimRevision = 27852,
 	AnimRevisionEntity = "Faction_Adonis_Top_03",
 	Moment = "hit",
@@ -767,7 +767,7 @@ PlaceObj('ActionFXSound', {
 
 PlaceObj('ActionFXSound', {
 	Action = "Anim:civ_Ambient_SadCrying",
-	Actor = "Male",
+	Actor = "AmbientMale",
 	AnimRevision = 27852,
 	AnimRevisionEntity = "Faction_Adonis_Top_03",
 	Moment = "hit",
@@ -877,12 +877,35 @@ PlaceObj('ActionFXSound', {
 
 PlaceObj('ActionFXSound', {
 	Action = "Anim:inf_Standing_Attack",
+	Actor = "AmbientFemale",
+	AnimRevision = 55192,
+	AnimRevisionEntity = "Faction_Adonis_Top_03",
+	Moment = "start",
+	Sound = "VO_infected-attackmelee-female",
+	Source = "ActionPos",
+	group = "AmbientLife SFX",
+	id = "2795182830271004255",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "Anim:inf_Standing_Attack",
 	AnimRevision = 55192,
 	AnimRevisionEntity = "Faction_Adonis_Top_03",
 	Moment = "start",
 	Sound = "AL_infected-attack-male",
 	group = "AmbientLife SFX",
 	id = "LfYCHPlN",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "Anim:inf_Standing_Attack",
+	AnimRevision = 55192,
+	AnimRevisionEntity = "Faction_Adonis_Top_03",
+	Moment = "start",
+	Sound = "VO_infected-attackmelee-male",
+	Source = "ActionPos",
+	group = "AmbientLife SFX",
+	id = "1726846172314738249",
 })
 
 PlaceObj('ActionFXSound', {
@@ -9786,30 +9809,6 @@ PlaceObj('ActionFXSound', {
 })
 
 PlaceObj('ActionFXSound', {
-	Action = "Anim:inf_Standing_Attack",
-	Actor = "Female",
-	AnimRevision = 55192,
-	AnimRevisionEntity = "Faction_Adonis_Top_03",
-	Moment = "start",
-	Sound = "VO_infected-attackmelee-female",
-	Source = "ActionPos",
-	group = "Default",
-	id = "2795182830271004255",
-})
-
-PlaceObj('ActionFXSound', {
-	Action = "Anim:inf_Standing_Attack",
-	Actor = "Male",
-	AnimRevision = 55192,
-	AnimRevisionEntity = "Faction_Adonis_Top_03",
-	Moment = "start",
-	Sound = "VO_infected-attackmelee-male",
-	Source = "ActionPos",
-	group = "Default",
-	id = "1726846172314738249",
-})
-
-PlaceObj('ActionFXSound', {
 	Action = "Anim:inf_Standing_Attack2",
 	AnimRevision = 55192,
 	AnimRevisionEntity = "Faction_Adonis_Top_03",
@@ -13338,50 +13337,6 @@ PlaceObj('ActionFXSound', {
 	Target = "idle_Wind_No_Wall",
 	group = "Default",
 	id = "9176392101551263803",
-})
-
-PlaceObj('ActionFXSound', {
-	Action = "DecorState",
-	Actor = "Shanty_Canvas_07",
-	AttachToObj = true,
-	EndRules = {
-		PlaceObj('ActionFXEndRule', {
-			'EndMoment', "end",
-		}),
-		PlaceObj('ActionFXEndRule', {
-			'EndAction', "Death",
-			'EndMoment', "start",
-		}),
-	},
-	FadeIn = 1000,
-	FadeOut = 1000,
-	Moment = "start",
-	Sound = "canvas_medium-windB",
-	Target = "idle_Wind",
-	group = "Default",
-	id = "4077232775267592852",
-})
-
-PlaceObj('ActionFXSound', {
-	Action = "DecorState",
-	Actor = "Shanty_Canvas_07",
-	AttachToObj = true,
-	EndRules = {
-		PlaceObj('ActionFXEndRule', {
-			'EndMoment', "end",
-		}),
-		PlaceObj('ActionFXEndRule', {
-			'EndAction', "Death",
-			'EndMoment', "start",
-		}),
-	},
-	FadeIn = 1000,
-	FadeOut = 1000,
-	Moment = "start",
-	Sound = "canvas_medium-windB",
-	Target = "idle_Wind_No_Wall",
-	group = "Default",
-	id = "4520297853299877293",
 })
 
 PlaceObj('ActionFXSound', {
@@ -23218,6 +23173,17 @@ PlaceObj('ActionFXSound', {
 	Action = "UnjamWeapon",
 	DetailLevel = 100,
 	Moment = "start",
+	Sound = "MG42_reload",
+	Source = "ActionPos",
+	Target = "MG58",
+	group = "Default",
+	id = "oMwUUTHB",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "UnjamWeapon",
+	DetailLevel = 100,
+	Moment = "start",
 	Sound = "fix_rocketlauncher",
 	Target = "MGL",
 	group = "Default",
@@ -24496,6 +24462,18 @@ PlaceObj('ActionFXSound', {
 	Target = "MachineGun",
 	group = "Default",
 	id = "7765027720012926452",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "WeaponEquip",
+	Actor = "MG58",
+	DetailLevel = 100,
+	Moment = "start",
+	Sound = "MG42_reload",
+	Source = "Camera",
+	Target = "MachineGun",
+	group = "Default",
+	id = "U541t8ku",
 })
 
 PlaceObj('ActionFXSound', {
@@ -26324,6 +26302,56 @@ PlaceObj('ActionFXSound', {
 
 PlaceObj('ActionFXSound', {
 	Action = "WeaponFire",
+	Actor = "MG58",
+	DetailLevel = 100,
+	Moment = "start",
+	Sound = "MG42_shot_single",
+	Source = "ActionPos",
+	Target = "Basic",
+	group = "Default",
+	id = "1Iirgk3W",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "WeaponFire",
+	Actor = "MG58",
+	DetailLevel = 100,
+	Moment = "start",
+	Sound = "silencer_machinegun",
+	Source = "ActionPos",
+	Target = "Silencer",
+	group = "Default",
+	id = "o4yJHUw1",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "WeaponFire",
+	Actor = "MG58",
+	Delay = 100,
+	DetailLevel = 100,
+	GameTime = true,
+	Moment = "start",
+	Sound = "bullet_casingA_release",
+	Source = "ActionPos",
+	group = "Default",
+	id = "j5OodHK_",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "WeaponFire",
+	Actor = "MG58",
+	Delay = 200,
+	DetailLevel = 100,
+	GameTime = true,
+	Moment = "start",
+	Sound = "bullet_casingC_fall",
+	Source = "ActionPos",
+	group = "Default",
+	id = "tQXONOgt",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "WeaponFire",
 	Actor = "MGL",
 	DetailLevel = 100,
 	Moment = "start",
@@ -27190,6 +27218,17 @@ PlaceObj('ActionFXSound', {
 	Source = "ActionPos",
 	group = "Default",
 	id = "2983965800417653973",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "WeaponJam",
+	Actor = "MG58",
+	DetailLevel = 100,
+	Moment = "start",
+	Sound = "empty_machinegun",
+	Source = "ActionPos",
+	group = "Default",
+	id = "CDuTjjAb",
 })
 
 PlaceObj('ActionFXSound', {
@@ -28543,6 +28582,18 @@ PlaceObj('ActionFXSound', {
 	Target = "MG42",
 	group = "Default",
 	id = "2272283283512867031",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "WeaponLoad",
+	Delay = 1000,
+	DetailLevel = 100,
+	Moment = "start",
+	Sound = "belt_machinegun-attach",
+	Source = "Camera",
+	Target = "MG58",
+	group = "Default",
+	id = "s-z1HgCN",
 })
 
 PlaceObj('ActionFXSound', {
@@ -30049,6 +30100,49 @@ PlaceObj('ActionFXSound', {
 	Sound = "belt_machinegun-open",
 	group = "Default",
 	id = "1719487177959309880",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "WeaponReload",
+	Actor = "MG58",
+	Delay = 3200,
+	DetailLevel = 100,
+	Moment = "start",
+	Sound = "MG42_reload",
+	group = "Default",
+	id = "38w10_qv",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "WeaponReload",
+	Actor = "MG58",
+	Delay = 700,
+	DetailLevel = 100,
+	Moment = "start",
+	Sound = "belt_machinegun-attach",
+	group = "Default",
+	id = "9d89rJrI",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "WeaponReload",
+	Actor = "MG58",
+	Delay = 2600,
+	DetailLevel = 100,
+	Moment = "start",
+	Sound = "belt_machinegun-close",
+	group = "Default",
+	id = "DflX_f01",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "WeaponReload",
+	Actor = "MG58",
+	DetailLevel = 100,
+	Moment = "start",
+	Sound = "belt_machinegun-open",
+	group = "Default",
+	id = "VVrH8Xo-",
 })
 
 PlaceObj('ActionFXSound', {
@@ -31760,6 +31854,17 @@ PlaceObj('ActionFXSound', {
 	Target = "MG42",
 	group = "Default",
 	id = "7901349051005166062",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "WeaponUnload",
+	DetailLevel = 100,
+	Moment = "start",
+	Sound = "belt_machinegun-detach",
+	Source = "Camera",
+	Target = "MG58",
+	group = "Default",
+	id = "mCQtw7l1",
 })
 
 PlaceObj('ActionFXSound', {
@@ -42758,6 +42863,1163 @@ PlaceObj('ActionFXSound', {
 
 PlaceObj('ActionFXSound', {
 	Action = "DropItem",
+	Actor = "12gauge",
+	Sound = "ui_itemammodrop-all-ground",
+	Source = "UI",
+	group = "UI",
+	id = "ANQwNItC",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "44CAL",
+	Sound = "ui_itemammodrop-all-ground",
+	Source = "UI",
+	group = "UI",
+	id = "Ppwsnu1j",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "50BMG",
+	Sound = "ui_itemammodrop-all-ground",
+	Source = "UI",
+	group = "UI",
+	id = "Q1Jh88mh",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "556",
+	Sound = "ui_itemammodrop-all-ground",
+	Source = "UI",
+	group = "UI",
+	id = "3Sh6xLxo",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "762NATO",
+	Sound = "ui_itemammodrop-all-ground",
+	Source = "UI",
+	group = "UI",
+	id = "wEjRetM-",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "762WP",
+	Sound = "ui_itemammodrop-all-ground",
+	Source = "UI",
+	group = "UI",
+	id = "PFTDw9Jk",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "9mm",
+	Sound = "ui_itemammodrop-all-ground",
+	Source = "UI",
+	group = "UI",
+	id = "s80Z7_ZZ",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "ArmorHeavy",
+	Sound = "ui_itemarmorheavydrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "BtWsWeba",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "ArmorHelmet",
+	Sound = "ui_itemarmorhelmetdrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "EYhLTx8c",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "ArmorLight",
+	Sound = "ui_itemarmorlightdrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "6jxcGqRI",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "BigDiamond",
+	Sound = "ui_itemdiamonddrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "qSSWU-fr",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "BlackPowder",
+	Sound = "ui_itemblackpowderdrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "fJTaupc3",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "C4",
+	Sound = "ui_itemexplosivedrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "Kq2wLaeM",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "ChippedSapphire",
+	Sound = "ui_itemdiamonddrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "qJGbr7Oq",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "Coin",
+	Sound = "ui_itemcoindrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "vKoxmjCV",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "CombatStim",
+	Sound = "ui_itemmeddrop-syringe-ground",
+	Source = "UI",
+	group = "UI",
+	id = "pSWJwaaW",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "Combination_BalancingWeight",
+	Sound = "ui_itemstonedrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "07H44eLT",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "Combination_CeramicPlates",
+	Sound = "ui_itemceramicplatesdrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "S47z50x6",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "Combination_Detonator_Proximity",
+	Sound = "ui_itemdetonatordrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "25VSSNXs",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "Combination_Detonator_Remote",
+	Sound = "ui_itemdetonatordrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "6hM2GTnP",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "Combination_Detonator_Time",
+	Sound = "ui_itemdetonatordrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "-3VVS7fc",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "Combination_Kompositum58",
+	Sound = "ui_itemkompositum58drop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "LIyE8Y9Q",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "Combination_Sharpener",
+	Sound = "ui_itemstonedrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "MYXaDV9s",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "Combination_Simple_fuse",
+	Sound = "ui_itemfusedrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "P3qdlVQh",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "Combination_WeavePadding",
+	Sound = "ui_itemweavepaddingdrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "g79cKK9R",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "ConcussiveGrenade",
+	Sound = "ui_itemgrenadeconcussivedrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "HUccmz7k",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "Cookie",
+	Sound = "ui_itemcookiedrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "47G4Mr9h",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "Crowbar",
+	Sound = "ui_itemcrowbardrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "WXkbW0ge",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "Detonator",
+	Sound = "ui_itemdetonatordrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "NaYEnXgb",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "DiamondBriefcase",
+	Sound = "ui_itemdiamondcasedrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "ii6A8Jj9",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "DiamondNecklace",
+	Sound = "ui_itemdiamondnecklacedrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "oXv5MY4C",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "Diesel",
+	Sound = "ui_itemdieseldrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "_6Ea240E",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "ExplosiveSubstance",
+	Sound = "ui_itemexplosivedrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "ZG3G0CES",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "FineSteelPipe",
+	Sound = "ui_itemfinesteelpipedrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "z3hxNE96",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "Firearm",
+	Sound = "ui_itemgundrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "9KxfyExQ",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "FirstAidKit",
+	Sound = "ui_itemmeddrop-1stAID",
+	Source = "UI",
+	group = "UI",
+	id = "Quxsno3n",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "Flare",
+	Sound = "ui_itemflarestickdrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "xFqR3Qxy",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "FlareAmmo",
+	Sound = "ui_itemammodrop-flare-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "dk-7lfew",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "FlareHandgun",
+	Sound = "ui_itemgundrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "xgFD6c1c",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "FlareStick",
+	Sound = "ui_itemflarestickdrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "HlvmQeTl",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "FragGrenade",
+	Sound = "ui_itemgrenadefragdrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "HjPBNwa3",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "GasMask",
+	Sound = "ui_itemgasmaskdrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "HxXkDPly",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "GlowStick",
+	Sound = "ui_itemglowstickdrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "1hXfkCA6",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "GoldBar",
+	Sound = "ui_itemgoldbardrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "gy0NIuau",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "GoldenWatch",
+	Sound = "ui_itemwatchdrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "m10sWGc4",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "HE_Grenade",
+	Sound = "ui_itemgrenadedrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "WJRQD3RQ",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "HerbalMedicine",
+	Sound = "ui_itemmeddrop-herbs-ground",
+	Source = "UI",
+	group = "UI",
+	id = "QAdEnhm7",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "Knife",
+	Sound = "ui_itemknifedrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "03ZI72e7",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "Knife_Balanced",
+	Sound = "ui_itemknifedrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "5ZNe9VBl",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "Knife_Sharpened",
+	Sound = "ui_itemknifedrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "HvgDWv34",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "Lockpick",
+	Sound = "ui_itemlockpickdrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "Y2vQrQNA",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "Machete",
+	Sound = "ui_itembladedrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "HPesJmJ0",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "Machete_Balanced",
+	Sound = "ui_itembladedrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "f0RpNriF",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "Machete_Crafted",
+	Sound = "ui_itembladedrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "RdLqgH5s",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "Machete_Sharpened",
+	Sound = "ui_itembladedrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "z6SHSrJC",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "Magazines",
+	DetailLevel = 100,
+	Sound = "ui_itemmagazinedrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "Y7G2oMmC",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "MedicalReport",
+	Sound = "ui_itembookdrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "hEKRv62j",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "Medicine",
+	Sound = "ui_itemmeddrop-medkit-ground",
+	Source = "UI",
+	group = "UI",
+	id = "n9fhthh2",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "Medkit",
+	Sound = "ui_itemmeddrop-medkit-ground",
+	Source = "UI",
+	group = "UI",
+	id = "XF6Z-cZp",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "Meds",
+	Sound = "ui_itemmeddrop-meds-ground",
+	Source = "UI",
+	group = "UI",
+	id = "tO_djJZ-",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "MetaviraShot",
+	Sound = "ui_itemmeddrop-syringe-ground",
+	Source = "UI",
+	group = "UI",
+	id = "2-D-gQjL",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "Microchip",
+	Sound = "ui_itemmicrochipdrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "SExsiN0Q",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "Molotov",
+	DetailLevel = 100,
+	Sound = "ui_itemmolotovdrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "hCBpLB9y",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "MoneyBag",
+	Sound = "ui_itemmoneybagdrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "qRc1qjlf",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "MortarShell_Gas",
+	Sound = "ui_itemammodrop-mortarshell-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "zZfFlLI6",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "MortarShell_HE",
+	Sound = "ui_itemammodrop-mortarshell-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "2wnOpCxz",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "MortarShell_Smoke",
+	Sound = "ui_itemammodrop-mortarshell-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "eHxNaBmJ",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "NightVisionGoggles",
+	Sound = "ui_itemnightgooglesdrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "3h90hpw9",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "OpticalLens",
+	Sound = "ui_itemopticallensdrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "QRmAXkVp",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "PETN",
+	Sound = "ui_itemexplosivedrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "wasLB4Si",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "PaBaggzWill",
+	Sound = "ui_itempaperdrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "7ebTZeWL",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "Pamphlets",
+	DetailLevel = 100,
+	Sound = "ui_itemmagazinedrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "nJZrsYkx",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "Pamphlets_LysRouge",
+	DetailLevel = 100,
+	Sound = "ui_itemmagazinedrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "1bV5014P",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "Parts",
+	Sound = "ui_itempartsdrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "AoemSakf",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "PipeBomb",
+	Sound = "ui_itempipebombdrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "qR7o2XUU",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "PlasmaGun_Crowbar",
+	Sound = "ui_itemcrowbardrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "gvPAzLvo",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "ProximityC4",
+	Sound = "ui_itemdetonatordrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "KQ4m3eG_",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "ProximityC4",
+	Sound = "ui_itemexplosivedrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "eYTtVOG1",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "ProximityPETN",
+	Sound = "ui_itemdetonatordrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "3gW4Pmgj",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "ProximityPETN",
+	Sound = "ui_itemexplosivedrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "BUrq0fa7",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "ProximityTNT",
+	Sound = "ui_itemdetonatordrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "g-fTymlT",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "ProximityTNT",
+	Sound = "ui_itemexplosivedrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "J2-JghY6",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "Reanimationsset",
+	Sound = "ui_itemreanimationssetdrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "YPvken9I",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "RemoteC4",
+	Sound = "ui_itemdetonatordrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "RQI2LbzS",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "RemoteC4",
+	Sound = "ui_itemexplosivedrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "2ADhcTEx",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "RemotePETN",
+	Sound = "ui_itemdetonatordrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "EvgUYDGy",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "RemotePETN",
+	Sound = "ui_itemexplosivedrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "qXWcUn_p",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "RemoteTNT",
+	Sound = "ui_itemdetonatordrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "kNhlnzYv",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "RemoteTNT",
+	Sound = "ui_itemexplosivedrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "wtuIA1cb",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "ResourceItem",
+	Sound = "ui_itemmeddrop-meds-ground",
+	Source = "UI",
+	group = "UI",
+	id = "wOkr35PJ",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "ShapedCharge",
+	DetailLevel = 100,
+	Sound = "ui_itemgrenadeshapedchargedrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "TolEIOaR",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "SmokeGrenade",
+	Sound = "ui_itemgrenadegasdrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "-DMlKfcG",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "Super_HE_Grenade",
+	Sound = "ui_itemgrenadedrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "DQP3yG7N",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "TNT",
+	Sound = "ui_itemexplosivedrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "g7SrUth7",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "TearGasGrenade",
+	Sound = "ui_itemgrenadegasdrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "Xdyl2XFM",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "TheGreenDiamond",
+	Sound = "ui_itemdiamonddrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "lpXtFZgM",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "TheThing",
+	Sound = "ui_itembladedrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "x00wK7P3",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "TimedC4",
+	Sound = "ui_itemdetonatordrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "uUHUI089",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "TimedC4",
+	Sound = "ui_itemexplosivedrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "FWBrFCBs",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "TimedC4",
+	Sound = "ui_itemexplosivedrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "ixpl_12P",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "TimedPETN",
+	Sound = "ui_itemdetonatordrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "xlCFvAT0",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "TimedPETN",
+	Sound = "ui_itemexplosivedrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "S01-vKLo",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "TimedTNT",
+	Sound = "ui_itemdetonatordrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "iGSOTaQk",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "TimedTNT",
+	Sound = "ui_itemexplosivedrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "fGitb3HN",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "TinyDiamonds",
+	Sound = "ui_itemdiamondsbagdrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "u_j42Jaw",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "ToolItem",
+	Sound = "ui_itemtooldrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "-SIZnB_a",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "ToxicGasGrenade",
+	Sound = "ui_itemgrenadegasdrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "6NXqYzxB",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "TrapDetonator",
+	Sound = "ui_itemdetonatordrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "Ly_aEueK",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "TreasureFigurine",
+	Sound = "ui_itemgoldbardrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "bwLemd53",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "TreasureGoldenDog",
+	Sound = "ui_itemgoldbardrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "8oPF74qM",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "TreasureIdol",
+	Sound = "ui_itemidoldrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "0o2ZpFpY",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "TreasureMask",
+	Sound = "ui_itemgoldbardrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "8rUjo11k",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "TreasureTablet",
+	Sound = "ui_itemstonedrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "Z7ubEIb-",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "Trophy",
+	Sound = "ui_itemtrophydrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "6s1gY-bk",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "VirusSample",
+	Sound = "ui_itemvirusdrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "jVw0gnOz",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "Warhead_Frag",
+	Sound = "ui_itemammodrop-warhead-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "qifuJu84",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "WeirdosMap",
+	Sound = "ui_itemmapdrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "urUAk8ZP",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "Wirecutter",
+	Sound = "ui_itemtooldrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "1De4AGl7",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "WorkerDiary",
+	Sound = "ui_itembookdrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "d2zuanKG",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "WriterDiary",
+	Sound = "ui_itembookdrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "nYg8u83R",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "WriterNote1",
+	Sound = "ui_itempaperdrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "XVsYfNNy",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "WriterNote2",
+	Sound = "ui_itempaperdrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "tkKLBbmp",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "WriterNote3",
+	Sound = "ui_itempaperdrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "M5awbHO2",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "WriterNote4",
+	Sound = "ui_itempaperdrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "HRaLdn43",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "WriterNote5",
+	Sound = "ui_itempaperdrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "5YKDbecb",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "WriterPage",
+	Sound = "ui_itempaperdrop-ground",
+	Source = "UI",
+	group = "UI",
+	id = "yexclIl9",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "_40mmFlashbangGrenade",
+	Sound = "ui_itemammodrop-40mmGrenade-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "OhX-gbV3",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
+	Actor = "_40mmFragGrenade",
+	Sound = "ui_itemammodrop-40mmGrenade-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "rokvIfTr",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "DropItem",
 	Moment = "start",
 	Sound = "ui_item_drop-dirt",
 	Source = "UI",
@@ -43203,11 +44465,1277 @@ PlaceObj('ActionFXSound', {
 
 PlaceObj('ActionFXSound', {
 	Action = "GiveItem",
+	Actor = "12gauge",
 	Moment = "start",
-	Sound = "ui_item_give-ammo-SMALL",
+	Sound = "ui_itemammodrop-12gauge-inventory",
 	Source = "UI",
 	group = "UI",
-	id = "1293773378223477004",
+	id = "ky4qp0Nh",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "44CAL",
+	Moment = "start",
+	Sound = "ui_itemammodrop-45cal-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "O6yP0DmO",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "50BMG",
+	Moment = "start",
+	Sound = "ui_itemammodrop-50BMG-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "l1zLLrxt",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "556",
+	Moment = "start",
+	Sound = "ui_itemammodrop-556-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "Q6sGTsxd",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "762NATO",
+	Moment = "start",
+	Sound = "ui_itemammodrop-762-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "O5u-pXw_",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "762WP",
+	Moment = "start",
+	Sound = "ui_itemammodrop-762-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "TIbz4pmj",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "9mm",
+	Moment = "start",
+	Sound = "ui_itemammodrop-9mm-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "7j9oH4vj",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "ArmorHeavy",
+	Moment = "start",
+	Sound = "ui_itemarmorheavydrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "POb3Xdg6",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "ArmorHelmet",
+	Moment = "start",
+	Sound = "ui_itemarmorhelmetdrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "_xnwDLQO",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "ArmorLight",
+	Moment = "start",
+	Sound = "ui_itemarmorlightdrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "pPO7wxef",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "BigDiamond",
+	Moment = "start",
+	Sound = "ui_itemdiamonddrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "aSgjofxV",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "BlackPowder",
+	Moment = "start",
+	Sound = "ui_itemblackpowderdrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "LP9762X2",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "C4",
+	Moment = "start",
+	Sound = "ui_itemexplosivedrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "Z_ooQUuw",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "ChippedSapphire",
+	Moment = "start",
+	Sound = "ui_itemdiamonddrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "oSAYLPY8",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "Coin",
+	Moment = "start",
+	Sound = "ui_itemcoindrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "7ghm1VUU",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "CombatStim",
+	Moment = "start",
+	Sound = "ui_itemmeddrop-syringe-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "O5582bDv",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "Combination_BalancingWeight",
+	Moment = "start",
+	Sound = "ui_itemstonedrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "CV9I4iW-",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "Combination_CeramicPlates",
+	Moment = "start",
+	Sound = "ui_itemceramicplatesdrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "3K4knhZC",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "Combination_Detonator_Proximity",
+	Moment = "start",
+	Sound = "ui_itemdetonatordrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "iZdwWdg_",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "Combination_Detonator_Remote",
+	Moment = "start",
+	Sound = "ui_itemdetonatordrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "BadDZTxC",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "Combination_Detonator_Time",
+	Moment = "start",
+	Sound = "ui_itemdetonatordrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "TomYbFCn",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "Combination_Kompositum58",
+	Moment = "start",
+	Sound = "ui_itemkompositum58drop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "snCyzTou",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "Combination_Sharpener",
+	Moment = "start",
+	Sound = "ui_itemstonedrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "qx3gttwf",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "Combination_Simple_fuse",
+	Moment = "start",
+	Sound = "ui_itemfusedrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "10rRVc-j",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "Combination_WeavePadding",
+	Moment = "start",
+	Sound = "ui_itemweavepaddingdrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "-tGt0VDP",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "ConcussiveGrenade",
+	Moment = "start",
+	Sound = "ui_itemgrenadeconcussivedrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "RV-V286O",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "Cookie",
+	Moment = "start",
+	Sound = "ui_itemcookiedrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "GzkfMQKV",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "Crowbar",
+	Moment = "start",
+	Sound = "ui_itemcrowbardrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "ogW5isIQ",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "Detonator",
+	Moment = "start",
+	Sound = "ui_itemdetonatordrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "GTmbZ9vW",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "DiamondBriefcase",
+	Moment = "start",
+	Sound = "ui_itemdiamondcasedrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "x7LkxJ1F",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "DiamondNecklace",
+	Moment = "start",
+	Sound = "ui_itemdiamondnecklacedrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "XGROUZpQ",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "Diesel",
+	Moment = "start",
+	Sound = "ui_itemdieseldrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "vK8JHH7A",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "ExplosiveSubstance",
+	Moment = "start",
+	Sound = "ui_itemexplosivedrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "ehXDSMxp",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "FineSteelPipe",
+	Moment = "start",
+	Sound = "ui_itemfinesteelpipedrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "lpDHKjSj",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "Firearm",
+	Moment = "start",
+	Sound = "ui_itemgundrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "CzfKaAAq",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "FirstAidKit",
+	Moment = "start",
+	Sound = "ui_itemmeddrop-1stAID",
+	Source = "UI",
+	group = "UI",
+	id = "WsraADDd",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "Flare",
+	Moment = "start",
+	Sound = "ui_itemflarestickdrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "YFm-jXvx",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "FlareAmmo",
+	Moment = "start",
+	Sound = "ui_itemammodrop-40mmGrenade-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "zqjpn2Ea",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "FlareHandgun",
+	Moment = "start",
+	Sound = "ui_itemgundrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "oCwG8PUx",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "FlareStick",
+	Moment = "start",
+	Sound = "ui_itemflarestickdrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "ZZJ-cu3J",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "FragGrenade",
+	Moment = "start",
+	Sound = "ui_itemgrenadefragdrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "Toq9-bQg",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "GasMask",
+	Moment = "start",
+	Sound = "ui_itemgasmaskdrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "xfzB9cfE",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "GlowStick",
+	Moment = "start",
+	Sound = "ui_itemglowstickdrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "iNhwODSO",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "GoldBar",
+	Moment = "start",
+	Sound = "ui_itemgoldbardrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "fd3fy3M4",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "GoldenWatch",
+	Moment = "start",
+	Sound = "ui_itemwatchdrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "jTDna3Du",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "HE_Grenade",
+	Moment = "start",
+	Sound = "ui_itemgrenadedrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "jCwsTvwt",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "HerbalMedicine",
+	Moment = "start",
+	Sound = "ui_itemmeddrop-herbs-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "oH2jfJOm",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "Knife",
+	Moment = "start",
+	Sound = "ui_itemknifedrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "0VaP5ccb",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "Knife_Balanced",
+	Moment = "start",
+	Sound = "ui_itemknifedrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "mSjNB-2H",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "Knife_Sharpened",
+	Moment = "start",
+	Sound = "ui_itemknifedrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "O5oQhxG4",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "Lockpick",
+	Moment = "start",
+	Sound = "ui_itemlockpickdrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "yEcpgmQk",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "Machete",
+	Moment = "start",
+	Sound = "ui_itembladedrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "TTgJwfM4",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "Machete_Balanced",
+	Moment = "start",
+	Sound = "ui_itembladedrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "_gzznGxB",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "Machete_Crafted",
+	Moment = "start",
+	Sound = "ui_itembladedrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "NEQpYWHW",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "Machete_Sharpened",
+	Moment = "start",
+	Sound = "ui_itembladedrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "ZGt1Of1D",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "Magazines",
+	DetailLevel = 100,
+	Moment = "start",
+	Sound = "ui_itemmagazinedrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "12JcD-c3",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "MedicalReport",
+	Moment = "start",
+	Sound = "ui_itembookdrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "v5S10MkV",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "Medicine",
+	Moment = "start",
+	Sound = "ui_itemmeddrop-medkit-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "tJBV0G6w",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "Medkit",
+	Moment = "start",
+	Sound = "ui_itemmeddrop-medkit-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "hnM3CQxS",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "Meds",
+	Moment = "start",
+	Sound = "ui_itemmeddrop-meds-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "n9FuM3Pf",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "MetaviraShot",
+	Moment = "start",
+	Sound = "ui_itemmeddrop-syringe-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "1a84UQY_",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "Microchip",
+	Moment = "start",
+	Sound = "ui_itemmicrochipdrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "xEHP-wC-",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "Molotov",
+	DetailLevel = 100,
+	Moment = "start",
+	Sound = "ui_itemmolotovdrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "f3foQIZ6",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "MoneyBag",
+	Moment = "start",
+	Sound = "ui_itemmoneybagdrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "Y4NcCYb9",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "MortarShell_Gas",
+	Moment = "start",
+	Sound = "ui_itemammodrop-mortarshell-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "J7dCMcxe",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "MortarShell_HE",
+	Moment = "start",
+	Sound = "ui_itemammodrop-mortarshell-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "Z-Aw07eG",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "MortarShell_Smoke",
+	Moment = "start",
+	Sound = "ui_itemammodrop-mortarshell-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "lRyC6nES",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "NightVisionGoggles",
+	Moment = "start",
+	Sound = "ui_itemnightgooglesdrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "ykQSiMlD",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "OpticalLens",
+	Moment = "start",
+	Sound = "ui_itemopticallensdrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "xruYv253",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "PETN",
+	Moment = "start",
+	Sound = "ui_itemexplosivedrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "fUA-VwIu",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "PaBaggzWill",
+	Moment = "start",
+	Sound = "ui_itempaperdrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "Aco4wDQJ",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "Pamphlets",
+	DetailLevel = 100,
+	Moment = "start",
+	Sound = "ui_itemmagazinedrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "lpMSs4x0",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "Pamphlets_LysRouge",
+	DetailLevel = 100,
+	Moment = "start",
+	Sound = "ui_itemmagazinedrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "5WiflJkl",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "Parts",
+	Moment = "start",
+	Sound = "ui_itempartsdrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "PVSnF3Q6",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "PipeBomb",
+	Moment = "start",
+	Sound = "ui_itempipebombdrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "iCGx4BM9",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "PlasmaGun_Crowbar",
+	Moment = "start",
+	Sound = "ui_itemcrowbardrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "CUcKkuSc",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "ProximityC4",
+	Moment = "start",
+	Sound = "ui_itemdetonatordrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "kyq6xLr6",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "ProximityC4",
+	Moment = "start",
+	Sound = "ui_itemexplosivedrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "VxgakwTA",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "ProximityPETN",
+	Moment = "start",
+	Sound = "ui_itemdetonatordrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "1mwGFEX5",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "ProximityPETN",
+	Moment = "start",
+	Sound = "ui_itemexplosivedrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "qaKkdFmL",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "ProximityTNT",
+	Moment = "start",
+	Sound = "ui_itemdetonatordrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "Z32WHx2Y",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "ProximityTNT",
+	Moment = "start",
+	Sound = "ui_itemexplosivedrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "icjewJD6",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "Reanimationsset",
+	Moment = "start",
+	Sound = "ui_itemreanimationssetdrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "bmDs6Cef",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "RemoteC4",
+	Moment = "start",
+	Sound = "ui_itemdetonatordrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "7ygG4oty",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "RemoteC4",
+	Moment = "start",
+	Sound = "ui_itemexplosivedrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "TyllfWuW",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "RemotePETN",
+	Moment = "start",
+	Sound = "ui_itemdetonatordrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "twuQHyto",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "RemotePETN",
+	Moment = "start",
+	Sound = "ui_itemexplosivedrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "Llx6yrdh",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "RemoteTNT",
+	Moment = "start",
+	Sound = "ui_itemdetonatordrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "poRz-j5M",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "RemoteTNT",
+	Moment = "start",
+	Sound = "ui_itemexplosivedrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "Xxdv-8SO",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "ResourceItem",
+	Moment = "start",
+	Sound = "ui_itemmeddrop-meds-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "SM09zXEB",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "ShapedCharge",
+	DetailLevel = 100,
+	Moment = "start",
+	Sound = "ui_itemgrenadeshapedchargedrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "q2HLYfzC",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "SmokeGrenade",
+	Moment = "start",
+	Sound = "ui_itemgrenadegasdrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "82G3hAvT",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "Super_HE_Grenade",
+	Moment = "start",
+	Sound = "ui_itemgrenadedrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "KaXJYhro",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "TNT",
+	Moment = "start",
+	Sound = "ui_itemexplosivedrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "S6PTM0G7",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "TearGasGrenade",
+	Moment = "start",
+	Sound = "ui_itemgrenadegasdrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "SIeSA-ke",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "TheGreenDiamond",
+	Moment = "start",
+	Sound = "ui_itemdiamonddrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "RACMuZ6d",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "TheThing",
+	Moment = "start",
+	Sound = "ui_itembladedrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "E-OjAwtC",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "TimedC4",
+	Moment = "start",
+	Sound = "ui_itemdetonatordrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "9TMlnVqs",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "TimedC4",
+	Moment = "start",
+	Sound = "ui_itemexplosivedrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "4fGFUKKK",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "TimedPETN",
+	Moment = "start",
+	Sound = "ui_itemdetonatordrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "SDoVLxBf",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "TimedPETN",
+	Moment = "start",
+	Sound = "ui_itemexplosivedrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "Z0IPyI4n",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "TimedTNT",
+	Moment = "start",
+	Sound = "ui_itemdetonatordrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "3ppqi6vs",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "TimedTNT",
+	Moment = "start",
+	Sound = "ui_itemexplosivedrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "Dh18aHuB",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "TinyDiamonds",
+	Moment = "start",
+	Sound = "ui_itemdiamondsbagdrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "4EW-Sqek",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "ToolItem",
+	Moment = "start",
+	Sound = "ui_itemtooldrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "TqVPvY6j",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "ToxicGasGrenade",
+	Moment = "start",
+	Sound = "ui_itemgrenadegasdrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "nvb-lSrE",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "TrapDetonator",
+	Moment = "start",
+	Sound = "ui_itemdetonatordrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "nwPWdtgW",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "TreasureFigurine",
+	Moment = "start",
+	Sound = "ui_itemgoldbardrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "KH79qZm-",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "TreasureGoldenDog",
+	Moment = "start",
+	Sound = "ui_itemgoldbardrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "mnxXJER8",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "TreasureIdol",
+	Moment = "start",
+	Sound = "ui_itemidoldrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "1TPtGkky",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "TreasureMask",
+	Moment = "start",
+	Sound = "ui_itemgoldbardrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "ZJGVyQfq",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "TreasureTablet",
+	Moment = "start",
+	Sound = "ui_itemstonedrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "3OOyCds-",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "Trophy",
+	Moment = "start",
+	Sound = "ui_itemtrophydrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "TMhfvO5v",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "VirusSample",
+	Moment = "start",
+	Sound = "ui_itemvirusdrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "cMzxDhwX",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "Warhead_Frag",
+	Moment = "start",
+	Sound = "ui_itemammodrop-warhead-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "30WlBdTn",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "WeirdosMap",
+	Moment = "start",
+	Sound = "ui_itemmapdrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "7vkeNTSf",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "Wirecutter",
+	Moment = "start",
+	Sound = "ui_itemtooldrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "L0G9afMr",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "WorkerDiary",
+	Moment = "start",
+	Sound = "ui_itembookdrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "qoq2UOqt",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "WriterDiary",
+	Moment = "start",
+	Sound = "ui_itembookdrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "RF-J39Wd",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "WriterNote1",
+	Moment = "start",
+	Sound = "ui_itempaperdrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "5Lc8mdq7",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "WriterNote2",
+	Moment = "start",
+	Sound = "ui_itempaperdrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "sZ0EnDkt",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "WriterNote3",
+	Moment = "start",
+	Sound = "ui_itempaperdrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "fWdf22_L",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "WriterNote4",
+	Moment = "start",
+	Sound = "ui_itempaperdrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "3xfAYsGK",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "WriterNote5",
+	Moment = "start",
+	Sound = "ui_itempaperdrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "AjvAr4Af",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "WriterPage",
+	Moment = "start",
+	Sound = "ui_itempaperdrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "D3_iV7Bh",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "_40mmFlashbangGrenade",
+	Moment = "start",
+	Sound = "ui_itemammodrop-40mmGrenade-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "kbhLA-nt",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "GiveItem",
+	Actor = "_40mmFragGrenade",
+	Moment = "start",
+	Sound = "ui_itemammodrop-40mmGrenade-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "KM_GqOPX",
 })
 
 PlaceObj('ActionFXSound', {
@@ -43587,6 +46115,15 @@ PlaceObj('ActionFXSound', {
 	Source = "UI",
 	group = "UI",
 	id = "8639548489944784146",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "InventoryItemDrag",
+	Actor = "Combination_Kompositum58",
+	Sound = "ui_itemkompositum58collect",
+	Source = "UI",
+	group = "UI",
+	id = "RLUsbPju",
 })
 
 PlaceObj('ActionFXSound', {
@@ -44122,6 +46659,15 @@ PlaceObj('ActionFXSound', {
 	Source = "UI",
 	group = "UI",
 	id = "53130399647945051",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "InventoryItemDrag",
+	Actor = "Reanimationsset",
+	Sound = "ui_itemreanimationssetcollect",
+	Source = "UI",
+	group = "UI",
+	id = "3t_dOi0M",
 })
 
 PlaceObj('ActionFXSound', {
@@ -44712,6 +47258,15 @@ PlaceObj('ActionFXSound', {
 
 PlaceObj('ActionFXSound', {
 	Action = "InventoryItemDrop",
+	Actor = "Combination_Kompositum58",
+	Sound = "ui_itemkompositum58drop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "IeoDzXSi",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "InventoryItemDrop",
 	Actor = "Combination_Sharpener",
 	Sound = "ui_itemstonedrop-inventory",
 	Source = "UI",
@@ -45252,6 +47807,15 @@ PlaceObj('ActionFXSound', {
 	Source = "UI",
 	group = "UI",
 	id = "5607384079362304432",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "InventoryItemDrop",
+	Actor = "Reanimationsset",
+	Sound = "ui_itemreanimationssetdrop-inventory",
+	Source = "UI",
+	group = "UI",
+	id = "qIayMyQp",
 })
 
 PlaceObj('ActionFXSound', {
@@ -46284,6 +48848,30 @@ PlaceObj('ActionFXSound', {
 	Source = "UI",
 	group = "UI",
 	id = "2276240267459244080",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "TradingNotEnough",
+	Sound = "ui_TradingNotEnough",
+	Source = "UI",
+	group = "UI",
+	id = "jV98039q",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "TradingPurchased",
+	Sound = "ui_TradingPurchased",
+	Source = "UI",
+	group = "UI",
+	id = "sFG80R6G",
+})
+
+PlaceObj('ActionFXSound', {
+	Action = "TradingSold",
+	Sound = "ui_TradingSold",
+	Source = "UI",
+	group = "UI",
+	id = "pGnATnbd",
 })
 
 PlaceObj('ActionFXSound', {

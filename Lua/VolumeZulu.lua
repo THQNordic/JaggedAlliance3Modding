@@ -978,6 +978,10 @@ function dbg3()
 	return MapGetFirst("map", "BlackPlaneBase")
 end
 
+function MapHasBlackPlanes()
+	return MapGetFirst("map", "BlackPlaneBase")
+end
+
 function CleanBlackPlanes(floor)
 	DoneObjects(MapGet("map", "BlackPlaneBase", function(o) return not floor or floor == o.floor end))
 end
@@ -1000,14 +1004,15 @@ function HideBlackPlanesNotOnFloor(floor)
 		return
 	end
 	
-	MapForEach("map", "BlackPlaneBase", function(o, edit, floor)
+	local cmtPaused = g_CMTPaused
+	MapForEach("map", "BlackPlaneBase", function(o, edit, floor, cmtPaused)
 		local hide = o.floor ~= floor
-		if edit then
+		if edit or cmtPaused then
 			o:SetShadowOnlyImmediate(hide)
 		else
 			o:SetShadowOnly(hide)
 		end
-	end, edit, floor)
+	end, edit, floor, cmtPaused)
 end
 
 function OnMsg.GameEnterEditor()
@@ -1032,6 +1037,7 @@ function UpdateBlackPlaneVisibilityOnFloorChange()
 	local camFloor = cameraTac.GetFloor()
 	camFloor = camFloor + 1
 	if not WallInvisibilityThread and mapdata then
+		--basically, hide everything if WallInvisibilityThread is off except top floor planes
 		camFloor = mapdata.CameraMaxFloor + 1
 	end
 	
@@ -1043,7 +1049,8 @@ end
 
 function ShowAllBlackPlanes()
 	MapForEach("map", "BlackPlaneBase", function(o)
-		o:SetOpacity(100)
+		o:SetShadowOnlyImmediate(false) --in case cmt is off
+		o:SetShadowOnly(false) --in case cmt is on
 	end)
 	blackPlanesLastVisibleFloor = false
 end
@@ -1189,3 +1196,84 @@ function XBlackPlaneSelectionTool:OnMouseButtonDown(pt, button)
 end
 
 UndefineClass("CompositeBodyPresetColor")
+
+function OnMsg.NewMapLoaded()
+	local hasBlackPlanes = MapHasBlackPlanes()
+	if MapPatchesApplied and hasBlackPlanes then
+		AnalyseRoomsAndPlaceBlackPlanesOnEdges()
+	end
+	if hasBlackPlanes then
+		PlaceBlackBoxThatHidesTheSkyOnUndergroundMaps()
+	end
+end
+
+DefineClass("BlackCylinder", "Mesh") --this class gets hidden by the blackplanes filter, along with black plane base
+local AppendVertex = pstr().AppendVertex
+function PlaceBoxDefaultMesh(box, color)
+	color = color or RGB(0, 0, 0)
+	local vpstr = pstr("", 1024)
+	local p1, p2, p3, p4 = box:ToPoints2D()
+	local center = box:Center()
+	local minz, maxz = box:minz(), box:maxz()
+	p1 = p1 - center
+	p2 = p2 - center
+	p3 = p3 - center
+	p4 = p4 - center
+	minz = minz - center:z()
+	maxz = maxz - center:z()
+	
+	for _, z in ipairs{minz, maxz} do
+		for _, p in ipairs{p1, p2, p3, p3, p4, p1} do
+			local x, y = p:xy()
+			AppendVertex(vpstr, x, y, z, color)
+		end
+	end
+	
+	local function addPlane(p1, p2, p3)
+		local p4 = p2:SetZ(p3:z())
+		AppendVertex(vpstr, p1, color)
+		AppendVertex(vpstr, p2, color)
+		AppendVertex(vpstr, p3, color)
+		AppendVertex(vpstr, p3, color)
+		AppendVertex(vpstr, p2, color)
+		AppendVertex(vpstr, p4, color)
+	end
+	
+	addPlane(p1:SetZ(minz), p2:SetZ(minz), p1:SetZ(maxz))
+	addPlane(p4:SetZ(minz), p1:SetZ(minz), p4:SetZ(maxz))
+	addPlane(p2:SetZ(minz), p3:SetZ(minz), p2:SetZ(maxz))
+	addPlane(p3:SetZ(minz), p4:SetZ(minz), p3:SetZ(maxz))
+	
+	local m = Mesh:new()
+	m:SetMesh(vpstr)
+	m:SetShader(ProceduralMeshShaders.default_mesh)
+	m:SetDepthTest(true)
+	m:SetPos(center)
+
+	return m
+end
+
+function PlaceBlackBoxThatHidesTheSkyOnUndergroundMaps()
+	local sizex, sizey = terrain.GetMapSize()
+	local mapbb = box(0, 0, 0, sizex, sizey, 1000 * guim)
+	local m = PlaceBoxDefaultMesh(mapbb)
+	m:ClearGameFlags(const.gofPermanent)
+	setmetatable(m, BlackCylinder)
+end
+
+function PlaceBlackCylinderThatHidesTheSkyOnUndergroundMaps()
+	local b = box()
+	MapForEach("map", "CObject", function(o)
+		b = Extend(b, o:GetObjectBBox())
+	end)
+
+	local sizex, sizey = b:sizex()/2, b:sizey()/2
+	local radius = sqrt(sizex * sizex + sizey * sizey) --+ 10 * guim
+	local wall = CreateCylinderMesh(point(0, 0, 0), point(0, 0, 1000 * guim), radius, point(0, 0, 4096), 0, black)
+	wall:SetShader(ProceduralMeshShaders.default_mesh)
+	wall:SetDepthTest(true)
+	wall:SetPos(b:Center():SetTerrainZ())
+	wall:ClearGameFlags(const.gofPermanent)
+	setmetatable(wall, BlackCylinder) --so it hides with the same editor filter as other blackplanes
+	return wall
+end

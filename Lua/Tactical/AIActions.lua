@@ -222,7 +222,8 @@ DefineClass.AIActionThrowGrenade = {
 	properties = {
 		{ id = "MinDist", editor = "number", scale = "m", default = 2*guim, min = 0 },
 		{ id = "MaxDist", editor = "number", scale = "m", default = 100*guim, min = 0 },
-		{ id = "SmokeGrenade", editor = "bool", default = false, },
+		{ id = "AllowedAoeTypes", editor = "set", items = {"none", "fire", "smoke", "teargas", "toxicgas"}, default = set("none") },
+		{ id = "TargetLastAttackPos", editpr = "bool", default = false },
  	},
 	hidden = false,
 	voice_response = "AIThrowGrenade",
@@ -238,7 +239,8 @@ function AIActionThrowGrenade:PrecalcAction(context, action_state)
 		if cost > 0 and context.unit:HasAP(cost) then
 			action_id = id
 			local weapon = caction:GetAttackWeapons(context.unit)
-			if IsKindOf(weapon, "Grenade") and (self.SmokeGrenade == (weapon.aoeType == "smoke")) then
+			local aoetype = weapon.aoeType or "none"
+			if IsKindOf(weapon, "Grenade") and self.AllowedAoeTypes[aoetype] then
 				grenade = weapon			
 				break
 			end
@@ -251,7 +253,17 @@ function AIActionThrowGrenade:PrecalcAction(context, action_state)
 	
 	local max_range = Min(self.MaxDist, grenade:GetMaxAimRange(context.unit) * const.SlabSizeX)
 	local blast_radius = grenade.AreaOfEffect * const.SlabSizeX
-	local zones = AIPrecalcGrenadeZones(context, action_id, self.MinDist, max_range, blast_radius, grenade.aoeType)
+	local target_pts
+	if self.TargetLastAttackPos then 
+		-- collect enemy last attack positions and pass them as target_pos array to AIPrecalcGrenadeZones
+		for _, enemy in ipairs(context.enemies) do
+			if enemy.last_attack_pos then
+				target_pts = target_pts or {}
+				target_pts[#target_pts + 1] = enemy.last_attack_pos
+			end
+		end
+	end
+	local zones = AIPrecalcGrenadeZones(context, action_id, self.MinDist, max_range, blast_radius, grenade.aoeType, target_pts)
 	local zone, score = self:EvalZones(context, zones)
 	if zone then
 		action_state.action_id = action_id

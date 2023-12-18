@@ -3413,6 +3413,11 @@ PlaceObj('WeaponComponent', {
 			Entity = "WeaponAttA_BipodMG42",
 			Slot = "Bipod",
 		}),
+		PlaceObj('WeaponComponentVisual', {
+			ApplyTo = "MG58",
+			Entity = "WeaponAttA_BipodMG42",
+			Slot = "Bipod",
+		}),
 	},
 	group = "MG42 Specific",
 	id = "Bipod_MG42",

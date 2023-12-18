@@ -142,7 +142,7 @@ function SmoothBar:SetEnabled(enabled)
 				if propVal ~= self.progress then
 					self:UpdateVisual(propVal)
 				end
-				Sleep(10)
+				WaitFramesOrSleepAtLeast(1, 10)
 			end
 		end)
 	end

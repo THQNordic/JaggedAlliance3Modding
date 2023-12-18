@@ -68,8 +68,8 @@ PlaceObj('VoiceResponse', {
 		T(731040045341, --[[VoiceResponse CorazonSantiagoEnemy VillainDefeated VoiceResponse VillainDefeated - Enemy lieutenant defeated. voice:CorazonSantiagoEnemy]] "Stop! Stop!!! I... I... I am prepared to discuss terms of surrender.")
 	}),
 	Wounded = TConcat({
-		T(879751605912, --[[VoiceResponse CorazonSantiagoEnemy Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:CorazonSantiagoEnemy]] "Damn! Do you have any idea how expensive this outfit is?"),
-		T(348474833633, --[[VoiceResponse CorazonSantiagoEnemy Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:CorazonSantiagoEnemy]] "You'll pay for that! I'll crush you under my heel!")
+		T(879751605912, --[[VoiceResponse CorazonSantiagoEnemy Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:CorazonSantiagoEnemy]] "Damn! Do you have any idea how expensive this outfit is?"),
+		T(348474833633, --[[VoiceResponse CorazonSantiagoEnemy Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:CorazonSantiagoEnemy]] "You'll pay for that! I'll crush you under my heel!")
 	}),
 	group = "Villains",
 	id = "CorazonSantiagoEnemy",

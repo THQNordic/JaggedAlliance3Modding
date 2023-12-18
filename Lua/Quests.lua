@@ -129,7 +129,8 @@ function GetQuestNoteCampaignTimestamp(quest_lines)
 end
 
 function InitQuests()
-	for id, quest in sorted_pairs(Quests) do
+	ForEachPresetInCampaign("QuestsDef", function(quest) 
+		local id = quest.id
 		quest = QuestGetState(id)
 		local questPreset = Quests[id]
 		
@@ -164,7 +165,7 @@ function InitQuests()
 				rawset(quest, "notes_state", {})
 			end
 		end
-	end	
+	end)
 end
 
 if FirstLoad then
@@ -178,7 +179,8 @@ function QuestTCEEvaluation(specificQuests)
 	
 	local quests = specificQuests or Quests or empty_table
 
-	for questId, quest in sorted_pairs(quests) do
+	ForEachPresetInCampaign("QuestsDef", function(quest) 
+		local questId = quest.id
 		quest = QuestGetState(questId)
 		if not quest then goto continue end
 		
@@ -253,7 +255,7 @@ function QuestTCEEvaluation(specificQuests)
 		end
 		
 		::continue::
-	end
+	end)
 end
 
 MapGameTimeRepeat("QuestTCEEvaluation", 1010, function(sleep)
@@ -623,8 +625,11 @@ function QuestCheckValidVariables()
 	end)
 end
 
-if Platform.developer then
-	OnMsg.NewMapLoaded = QuestCheckValidVariables
+function OnMsg.NewMapLoaded()
+	if Platform.developer or 
+		AreModdingToolsActive() then
+		QuestCheckValidVariables()
+	end
 end
 
 local function lEditorViewAbridged(obj, quest_id)
@@ -678,7 +683,7 @@ function QuestGatherRefsFromConversations(depending, quest_id, check_var)
 	
 	local out = depending.conversations or {}
 	local res = {val = false}
-	ForEachPreset("Conversation", function(preset, g, res)
+	ForEachPresetInCampaign("Conversation", function(preset, g, res)
 		local rs = preset:ForEachSubObject("QuestFunctionObjectBase", function(obj, parents)
 			if obj.QuestId == quest_id then
 				local var = rawget(obj, "Prop") or rawget(obj, "Vars")
@@ -740,7 +745,7 @@ end
 
 function QuestGatherRefsFromMaps(depending, quest_id, check_var)
 	local map_name = GetMapName()
-	if not g_DebugMarkersInfo[map_name] then
+	if not g_DebugMarkersInfo or not g_DebugMarkersInfo[map_name] then
 		GatherMarkerScriptingData()
 	end
 	local out = depending.markers or {}
@@ -797,7 +802,7 @@ function QuestGatherRefsFromQuests(depending, quest_id, check_var)
 function QuestGatherRefsFromQuests(depending, quest_id, check_var)
 	local out = depending.quests or {}
 	local res = {val = false}
-	ForEachPreset("QuestsDef", function(preset, group, res)
+	ForEachPresetInCampaign("QuestsDef", function(preset, group, res)
 		res.val = QuestGatherRefsFromPreset(preset, out, quest_id, check_var)
 		if check_var and res.val then
 			return "break"
@@ -811,7 +816,7 @@ end
 function QuestGatherRefsFromBanters(depending, quest_id, check_var)
 	local out = depending.banters or {}
 	local res = {val = false}
-	ForEachPreset("BanterDef", function(preset, group, res)
+	ForEachPresetInCampaign("BanterDef", function(preset, group, res)
 		res.val = QuestGatherRefsFromPreset(preset, out, quest_id, check_var)
 		if check_var and res.val then
 			return "break"
@@ -992,13 +997,19 @@ DefineClass.QuestEditorFilter = {
 	__parents = { "GedFilter", "XEditorToolSettings" },
 	properties = {
 		{ id = "Chapter", editor = "choice", default = "All", items = PresetsPropCombo("QuestsDef", "Chapter", "All") },
+		{ id = "Campaign", editor = "choice", default = "All", items = PresetsPropCombo("QuestsDef", "campaign", "All") },
 		{ id = "CheckVars", name = "Check for unreferences variables (slow!)", editor = "bool", default = false, persisted_setting = true, },
 	}
 }
 
 function QuestEditorFilter:FilterObject(quest)
 	local chapter = self:GetProperty("Chapter")
-	return chapter == "All" or quest.Chapter == chapter
+	local chapterCond = chapter == "All" or quest.Chapter == chapter
+	
+	local campaign = self:GetProperty("Campaign")
+	local campaignCond = campaign == "All" or quest.campaign == campaign
+	
+	return chapterCond and campaignCond
 end
 
 function QuestEditorFilter:OnEditorSetProperty(prop_id, old_value, ged)
@@ -1244,7 +1255,9 @@ function BuildQuestToSectorCache()
 		gameId = Game.id
 	}
 	
-	for questName, questPreset in pairs(Quests) do
+	ForEachPresetInCampaign("QuestsDef", function(preset) 
+		local questName = preset.id
+		local questPreset = preset
 		for i, notePreset in ipairs(questPreset.NoteDefs) do
 			local badges = notePreset and notePreset.Badges
 			if not badges then goto continue end
@@ -1285,7 +1298,7 @@ function BuildQuestToSectorCache()
 			
 			::continue::
 		end
-	end
+	end)
 end
 
 function BuildHiddenBadgesCache()
@@ -1300,9 +1313,10 @@ function BuildHiddenBadgesCache()
 		time = RealTime()
 	}
 	
-	for questName, questPreset in pairs(Quests) do
+	ForEachPresetInCampaign("QuestsDef", function(preset) 
+		local questName = preset.id
 		QuestToHiddenBadgesCache[questName] = GetQuestHiddenBadges(questName)
-	end
+	end)
 end
 
 function GetAllQuestsAssociatedWithSector(sector_id, list, onlyThisQuest)
@@ -1658,14 +1672,15 @@ end
 function GetQuestsThatCanProvideHints(sectorId)
 	local _, sectorsAround = GetAvailableIntelSectors(sectorId)
 	local questsWithHintsAvailable = {}
-	for name, questDef in sorted_pairs(Quests) do
+	ForEachPresetInCampaign("QuestsDef", function(questDef) 
+		local name = questDef.id
 		local questState = gv_Quests[name]
 		local questNonGivenOrGiven = (QuestIsBoolVar(questState, "Given", true) or QuestIsBoolVar(questState, "NotStarted", true))
 		local notes = lGetQuestScoutingNotesInSector(questDef, sectorsAround)
 		if questNonGivenOrGiven and notes then
 			questsWithHintsAvailable[#questsWithHintsAvailable + 1] = notes
 		end
-	end
+	end)
 	
 	return questsWithHintsAvailable
 end
@@ -1785,7 +1800,8 @@ function TutorialHintVisibilityEvaluate()
 	local state = TutorialHintsState
 	if not state then return end
 	
-	for hintId, note in sorted_pairs(TutorialHints) do
+	ForEachPresetInCampaign("TutorialHint", function(note)
+		local hintId = note.id
  		local mode = state.mode[hintId]
 		if mode == "completed" or mode == "dismissed" then goto continue end
 
@@ -1821,7 +1837,7 @@ function TutorialHintVisibilityEvaluate()
 		end
 		
 		::continue::
-	end
+	end)
 end
 
 function OnMsg.OnBandage(healer,self)

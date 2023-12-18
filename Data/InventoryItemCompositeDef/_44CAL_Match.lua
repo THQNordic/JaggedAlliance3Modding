@@ -25,5 +25,6 @@ PlaceObj('InventoryItemCompositeDef', {
 			target_prop = "AimAccuracy",
 		}),
 	},
+	'ammo_type_icon', "UI/Icons/Items/ta_match.png",
 })
 

@@ -92,7 +92,7 @@ PlaceObj('XTemplate', {
 						'__condition', function (parent, context) return IsKindOf(GetDialog(parent), "IModeCommonUnitControl") or IsKindOf(GetDialog(parent), "IModeDeployment") end,
 						'__class', "XContextWindow",
 						'RolloverTemplate', "RolloverGeneric",
-						'RolloverTitle', T(329770654888, --[[XTemplate SquadsAndMercs RolloverTitle]] "Morale"),
+						'RolloverTitle', T(695061456619, --[[XTemplate SquadsAndMercs RolloverTitle]] "Morale"),
 						'Id', "idMorale",
 						'Margins', box(7, 1, 0, 0),
 						'Dock', "left",
@@ -134,7 +134,7 @@ PlaceObj('XTemplate', {
 								'__class', "XImage",
 								'RolloverTemplate', "RolloverGeneric",
 								'RolloverOffset', box(10, 0, 0, 0),
-								'RolloverTitle', T(588205032436, --[[XTemplate SquadsAndMercs RolloverTitle]] "Morale"),
+								'RolloverTitle', T(410859376283, --[[XTemplate SquadsAndMercs RolloverTitle]] "Morale"),
 								'Id', "idMoraleIcon",
 								'IdNode', false,
 								'HAlign', "center",
@@ -157,9 +157,11 @@ PlaceObj('XTemplate', {
 						'run_after', function (child, context, item, i, n, last)
 							local image = item.image or "UI/Icons/SquadLogo/squad_logo_01"
 							child.idSquadIcon:SetImage(image .. "_s")
+							child.drop_reason = false
 						end,
 					}, {
 						PlaceObj('XTemplateWindow', {
+							'__condition', function (parent, context) return GetDialog(GetDialog(parent).parent) ~= GetDialog("FullscreenGameDialogs") end,
 							'__class', "XButton",
 							'VAlign', "top",
 							'BorderColor', RGBA(0, 0, 0, 0),
@@ -214,6 +216,123 @@ PlaceObj('XTemplate', {
 									
 									local squad = self.context
 									SatelliteSetCameraDest(squad.CurrentSector, 300)
+								end,
+							}),
+							}),
+						PlaceObj('XTemplateWindow', {
+							'comment', "inventory",
+							'__condition', function (parent, context) return GetDialog(GetDialog(parent).parent) == GetDialog("FullscreenGameDialogs") end,
+							'__class', "XButton",
+							'VAlign', "top",
+							'BorderColor', RGBA(0, 0, 0, 0),
+							'Background', RGBA(0, 0, 0, 0),
+							'BackgroundRectGlowColor', RGBA(0, 0, 0, 0),
+							'OnContextUpdate', function (self, context, ...)
+								
+							end,
+							'FocusedBorderColor', RGBA(0, 0, 0, 0),
+							'FocusedBackground', RGBA(0, 0, 0, 0),
+							'DisabledBorderColor', RGBA(0, 0, 0, 0),
+							'OnPress', function (self, gamepad)
+								local dlg = GetDialog(self)
+								InventoryClosePopup(dlg)
+								local deploymentOrCommonUnit = IsKindOf(dlg, "IModeCommonUnitControl") or
+									   														IsKindOf(dlg, "IModeDeployment")
+								
+								if deploymentOrCommonUnit and self.context.UniqueId == g_CurrentSquad then
+									ToggleAllUnitsSelectionInSquad(true)
+								else
+									local node = self:ResolveId("node")
+									node:SelectSquad(self.context)
+									ObjModified(self.context)
+								end
+							end,
+							'RolloverBackground', RGBA(0, 0, 0, 0),
+							'PressedBackground', RGBA(0, 0, 0, 0),
+						}, {
+							PlaceObj('XTemplateWindow', {
+								'__class', "XImage",
+								'Image', "UI/Icons/SateliteView/merc_squad_2",
+							}),
+							PlaceObj('XTemplateWindow', {
+								'__class', "XImage",
+								'Id', "idSquadIcon",
+								'Margins', box(0, 4, 0, 0),
+								'HAlign', "center",
+								'VAlign', "top",
+								'ScaleModifier', point(800, 800),
+							}),
+							PlaceObj('XTemplateWindow', {
+								'__class', "XImage",
+								'Id', "idSelected",
+								'HAlign', "center",
+								'VAlign', "center",
+								'Visible', false,
+								'Image', "UI/Icons/SateliteView/squad_selection",
+							}),
+							PlaceObj('XTemplateFunc', {
+								'name', "OnMouseButtonDoubleClick(self, pt, button)",
+								'func', function (self, pt, button)
+									if not IsKindOf(GetDialog(self), "XSatelliteDialog") then return end
+									
+									local squad = self.context
+									SatelliteSetCameraDest(squad.CurrentSector, 300)
+								end,
+							}),
+							PlaceObj('XTemplateFunc', {
+								'name', "IsDropTarget(self, draw_win, pt)",
+								'func', function (self, draw_win, pt)
+									if InventoryIsCombatMode() 
+										or not InventoryStartDragContext 
+										or InventoryStartDragContext.Squad == self.context.UniqueId 
+									then
+										return false
+									end										
+									local cur_sector
+									if IsKindOf(InventoryStartDragContext, "SectorStash") then
+										cur_sector = InventoryStartDragContext.sector_id
+									elseif IsKindOf(InventoryStartDragContext, "ItemContainer") then	
+										cur_sector = self:GetContext().CurrentSector
+									else									
+										local squad_id = IsKindOf(InventoryStartDragContext, "SquadBag") and InventoryStartDragContext.squad_id or InventoryStartDragContext.Squad
+										cur_sector = squad_id and gv_Squads[squad_id].CurrentSector or self.context.CurrentSector
+									end
+									local drag_sector = self.context.CurrentSector
+									return cur_sector==drag_sector
+								end,
+							}),
+							PlaceObj('XTemplateFunc', {
+								'name', "OnDropEnter(self, draw_win, pt, drag_source)",
+								'func', function (self, draw_win, pt, drag_source)
+									self:SetRollover(true)
+									local squad = self:GetContext()
+									local mouse_text 
+									mouse_text =  T{386181237071, "Give to <merc>",merc = squad.Name}
+									local r1 = InventoryDropMoveItemsToSquad(squad, "check_only")
+									self.drop_reason = r1 or "ok" 
+									if r1 then
+										mouse_text = mouse_text.."\n".. Untranslated("<style InventoryHintTextRed>")..T(719913116871, "Not enough space")										
+									end
+									InventoryShowMouseText(not not mouse_text,mouse_text)
+								end,
+							}),
+							PlaceObj('XTemplateFunc', {
+								'name', "OnDropLeave(self, drag_win)",
+								'func', function (self, drag_win)
+									self:SetRollover(false)
+									InventoryShowMouseText(false)
+									self.drop_reason = false
+								end,
+							}),
+							PlaceObj('XTemplateFunc', {
+								'name', "OnDrop(self, drag_win, pt, drag_source_win)",
+								'func', function (self, drag_win, pt, drag_source_win)
+									self.drop_reason = self.drop_reason or InventoryDropMoveItemsToSquad(self.context, "check_only")
+									if self.drop_reason=="ok" then 	
+										InventoryDropMoveItemsToSquad(self.context)
+										self.drop_reason = false
+									end
+									return "not valid target"
 								end,
 							}),
 							}),
@@ -405,7 +524,7 @@ PlaceObj('XTemplate', {
 											'RolloverTemplate', "PDAOperationRollover",
 											'RolloverAnchor', "right",
 											'RolloverAnchorId', "idContent",
-											'RolloverText', T(963268514062, --[[XTemplate SquadsAndMercs RolloverText]] "placeholder"),
+											'RolloverText', T(502410419676, --[[XTemplate SquadsAndMercs RolloverText]] "placeholder"),
 											'Id', "idOperationContainer",
 											'Margins', box(-5, 4, 0, 0),
 											'Dock', "bottom",
@@ -622,15 +741,28 @@ PlaceObj('XTemplate', {
 										local myUnit = self.unit
 										local invUnit = dlg.selected_unit
 										if IsCoOpGame() then
-											if not myUnit:IsLocalPlayerControlled() then
-												if InventoryDragItem and InventoryIsValidGiveDistance(InventoryStartDragContext, myUnit)then
-													--give drag item
-													local args = {item = InventoryDragItem, src_container = InventoryStartDragContext, src_slot = InventoryStartDragSlotName,
+											if not myUnit:IsLocalPlayerControlled() then											
+												if InventoryIsValidGiveDistance(InventoryStartDragContext, myUnit)then
+													local args = { src_container = InventoryStartDragContext, src_slot = InventoryStartDragSlotName,
 																	dest_container = myUnit, dest_slot = GetContainerInventorySlotName(myUnit)}
-													MoveItem(args)
-													CancelDrag(dlg)
+													if InventoryDragItems then
+														args.multi_items = true
+														for i, item in ipairs(InventoryDragItems) do		
+															args.item = item
+															args.no_ui_respawn = i~=#InventoryDragItems
+															local r1, r2  = MoveItem(args) --this will merge stacks and move, if you want only move use amount = item.Amount				
+															--		print(item.class, r1, r2)
+														end															
+														InventoryDeselectMultiItems()
+														PlayFX("GiveItem", "start",  GetInventoryItemDragDropFXActor(item))
+													elseif InventoryDragItem then
+														--give drag item
+														args.item = InventoryDragItem
+														MoveItem(args)
+													end
+													--CancelDrag(dlg)
+													return
 												end
-												return
 											end
 										end
 										
@@ -638,7 +770,9 @@ PlaceObj('XTemplate', {
 										if myUnit and invUnit and myUnit.session_id == invUnit.session_id then
 											return
 										end
-										if g_Units[myUnit.session_id] then
+										
+										local tacticalUnit = g_Units[myUnit.session_id]
+										if tacticalUnit and tacticalUnit:CanBeControlled() then
 											SelectObj(g_Units[myUnit.session_id])
 										end
 										
@@ -659,6 +793,7 @@ PlaceObj('XTemplate', {
 										dlg.compare_mode_weaponslot = self.unit.current_weapon=="Handheld A" and 1 or 2
 										local context = dlg:GetContext()
 										context.unit = myUnit
+										InventoryClosePopup(dlg)
 										dlg:SetContext(context)
 										dlg:OnContextUpdate(context)
 										dlg.idUnitInfo:RespawnContent()
@@ -694,7 +829,7 @@ PlaceObj('XTemplate', {
 											DragSource = slot_ctrl
 											slot_ctrl.desktop:SetMouseCapture(slot_ctrl)
 										end
-										if InventoryDragItem then
+										if InventoryDragItem and not InventoryDragItems then
 											HighlightEquipSlots(InventoryDragItem, true)
 											HighlightWeaponsForAmmo(InventoryDragItem, true)
 											--HighlightAPCost(InventoryDragItem, true, StartDragSource)
@@ -721,7 +856,7 @@ PlaceObj('XTemplate', {
 										elseif InventoryDragItem then											
 											mouse_text = InventoryGetMoveIsInvalidReason(self.context, InventoryStartDragContext)
 											if not mouse_text then
-												local ap_cost, unit_ap, action_name = GetAPCostAndUnit(InventoryDragItem, InventoryStartDragContext, InventoryStartDragSlotName, self.context, "Inventory", false, false)
+												local ap_cost, unit_ap, action_name = InventoryItemsAPCost(self.context, "Inventory", false, false)
 												mouse_text = action_name or ""
 												if InventoryIsCombatMode() and ap_cost and ap_cost>0 then
 													mouse_text = InventoryFormatAPMouseText(unit_ap, ap_cost, mouse_text)
@@ -994,7 +1129,7 @@ PlaceObj('XTemplate', {
 													XContextControl.OnContextUpdate(self, context)
 												end,
 												'Translate', true,
-												'Text', T(219068997732, --[[XTemplate SquadsAndMercs Text]] "<apn(GetUIActionPoints())>"),
+												'Text', T(284604819801, --[[XTemplate SquadsAndMercs Text]] "<apn(GetUIActionPoints())>"),
 											}),
 											}),
 										}),
@@ -1177,7 +1312,7 @@ PlaceObj('XTemplate', {
 											'__class', "XImage",
 											'RolloverTemplate', "RolloverGeneric",
 											'RolloverAnchor', "right",
-											'RolloverText', T(563596618440, --[[XTemplate SquadsAndMercs RolloverText]] "Wounds are being bandaged."),
+											'RolloverText', T(749503136429, --[[XTemplate SquadsAndMercs RolloverText]] "Wounds are being bandaged."),
 											'RolloverOffset', box(15, 0, 0, 0),
 											'Id', "idBeingBandagedIndicator",
 											'HAlign', "center",
@@ -1302,7 +1437,7 @@ PlaceObj('XTemplate', {
 												XContextControl.OnContextUpdate(self, context)
 											end,
 											'Translate', true,
-											'Text', T(219068997732, --[[XTemplate SquadsAndMercs Text]] "<apn(GetUIActionPoints())>"),
+											'Text', T(106414160747, --[[XTemplate SquadsAndMercs Text]] "<apn(GetUIActionPoints())>"),
 										}),
 										PlaceObj('XTemplateWindow', {
 											'__class', "XImage",
@@ -1316,7 +1451,7 @@ PlaceObj('XTemplate', {
 										'__condition', function (parent, context) return IsKindOf(GetDialog(parent), "IModeDeployment") end,
 										'RolloverTemplate', "SmallRolloverGeneric",
 										'RolloverAnchor', "top",
-										'RolloverText', T(337393247430, --[[XTemplate SquadsAndMercs RolloverText]] "Аwaiting deployment"),
+										'RolloverText', T(651816911668, --[[XTemplate SquadsAndMercs RolloverText]] "Аwaiting deployment"),
 										'RolloverOffset', box(-15, 0, 0, -15),
 										'Id', "idDeployed",
 										'Margins', box(-5, 0, 0, -5),

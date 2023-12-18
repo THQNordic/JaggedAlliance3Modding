@@ -8,6 +8,7 @@ end
 
 function PhotoModeDialogOpen()
     OpenDialog("PhotoMode")
+	PhotoModeObj:ToggleFrame() -- This should be called after the dialog is opened
 end
 
 function OnMsg.InGameMenuOpen()
@@ -16,7 +17,6 @@ end
 
 function OnMsg.PhotoModeEnd()
 	SetCamera(unpack_params(PhotoModeObj.prev_camera))
-	PhotoModeObj.freeCamera = false
 	UnlockCamera("PhotoModeFlyCamera")
 	cameraTac.Activate()
 end
@@ -70,26 +70,6 @@ function OnMsg.GamepadUIStyleChanged()
 	end
 end
 
-function HideWorldUI(hide)	
-	if hide then 
-		PhotoModeObj.hiddenObjectsVisibility = {}
-		MapForEach("map", "CodeRenderableObject", function(o)
-			if not o:IsKindOf("Wire") then 
-				if not (o:GetEnumFlags(const.efVisible) == 0) then 
-					table.insert(PhotoModeObj.hiddenObjectsVisibility, o)
-					o:ClearEnumFlags(const.efVisible)
-				end
-			end
-		end)
-	else
-		for _, o in ipairs(PhotoModeObj.hiddenObjectsVisibility) do
-			if IsValid(o) then
-				o:SetEnumFlags(const.efVisible)
-			end
-		end
-	end
-end
-
 function OnMsg.PhotoModePropertyChanged()
 	local pm = GetDialog("PhotoMode")
 	if pm and pm.areValuesDefault then
@@ -98,15 +78,6 @@ function OnMsg.PhotoModePropertyChanged()
 	end
 end
 
-function OnMsg.PhotoModePropertyChanged()
-	if PhotoModeObj and PhotoModeObj.freeCamera then
-		PhotoModeObj:DeactivateFreeCamera()
-		local pm = GetDialog("PhotoMode")
-		if pm then
-			pm.idScrollArea:RespawnContent()
-		end
-	end
-end
 
 function PhotoModeObject:AreValuesDefault()
 	local pm = GetDialog("PhotoMode")

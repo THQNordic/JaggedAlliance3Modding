@@ -1601,11 +1601,11 @@ PlaceObj('BanterDef', {
 })
 
 PlaceObj('BanterDef', {
-	Comment = "Fort not taken",
+	Comment = "Fort not taken - NOT USED",
 	Lines = {
 		PlaceObj('BanterLine', {
 			'Character', "Pierre",
-			'Text', T(163925737506, --[[BanterDef Ernie_Pierre_06 Text section:Banters_Local_Ernie/Ernie_Pierre_06 Fort not taken voice:Pierre]] "Time to put <em>Santiago</em> down. Whenever you are ready to storm the Fort, the Ernie Rangers will be there to help you."),
+			'Text', T(163925737506, --[[BanterDef Ernie_Pierre_06 Text section:Banters_Local_Ernie/Ernie_Pierre_06 Fort not taken - NOT USED voice:Pierre]] "Time to put <em>Santiago</em> down. Whenever you are ready to storm the Fort, the Ernie Rangers will be there to help you."),
 		}),
 	},
 	conditions = {
@@ -1780,6 +1780,7 @@ PlaceObj('BanterDef', {
 		PlaceObj('BanterLine', {
 			'Character', "Spike",
 			'Text', T(915557129336, --[[BanterDef Ernie_Pierre_11 Text section:Banters_Local_Ernie/Ernie_Pierre_11 Major recruited voice:Spike]] "You don't have to trust me, kid. But I'm not the Major anymore. Now I am just Spike, and that's that."),
+			'Optional', true,
 			'playOnce', true,
 		}),
 		PlaceObj('BanterLine', {
@@ -1790,22 +1791,16 @@ PlaceObj('BanterDef', {
 		PlaceObj('BanterLine', {
 			'Character', "Spike",
 			'Text', T(490917415827, --[[BanterDef Ernie_Pierre_11 Text section:Banters_Local_Ernie/Ernie_Pierre_11 Major recruited voice:Spike]] "I'll keep that in mind."),
+			'Optional', true,
 			'playOnce', true,
 		}),
 	},
 	conditions = {
 		PlaceObj('SectorCheckCity', {}),
-		PlaceObj('QuestIsVariableBool', {
-			Condition = "or",
-			QuestId = "05_TakeDownMajor",
-			Vars = set( "MajorRecruited" ),
-			__eval = function ()
-				local quest = gv_Quests['05_TakeDownMajor'] or QuestGetState('05_TakeDownMajor')
-				return quest.MajorRecruited
-			end,
-		}),
-		PlaceObj('UnitSquadHasMerc', {
-			Name = "Spike",
+		PlaceObj('UnitIsAroundOtherUnit', {
+			Distance = 10,
+			SecondTargetUnit = "Pierre",
+			TargetUnit = "Spike",
 		}),
 	},
 	disabledInConflict = true,
@@ -2121,6 +2116,7 @@ PlaceObj('BanterDef', {
 		PlaceObj('BanterLine', {
 			'Character', "PierreMerc",
 			'Text', T(684189484022, --[[BanterDef Ernie_VillagerFemale_09 Text section:Banters_Local_Ernie/Ernie_VillagerFemale_09 Pierre recruited voice:PierreMerc]] "Um... Thanks, auntie Michelle. I'm sure that did the trick."),
+			'Optional', true,
 		}),
 	},
 	Once = true,
@@ -2146,6 +2142,7 @@ PlaceObj('BanterDef', {
 		PlaceObj('BanterLine', {
 			'Character', "PierreMerc",
 			'Text', T(461164992788, --[[BanterDef Ernie_VillagerFemale_10 Text section:Banters_Local_Ernie/Ernie_VillagerFemale_10 Pierre recruited voice:PierreMerc]] "Has he ever not been sad, Mrs. Dubois? Come now, look to your chickens and quit pecking at me."),
+			'Optional', true,
 			'playOnce', true,
 		}),
 	},
@@ -2171,6 +2168,7 @@ PlaceObj('BanterDef', {
 		PlaceObj('BanterLine', {
 			'Character', "PierreMerc",
 			'Text', T(172181739093, --[[BanterDef Ernie_VillagerFemale_11 Text section:Banters_Local_Ernie/Ernie_VillagerFemale_11 Pierre recruited voice:PierreMerc]] "But I... Yes, auntie Liz. Of course, you're right."),
+			'Optional', true,
 		}),
 	},
 	Once = true,
@@ -2928,6 +2926,7 @@ PlaceObj('BanterDef', {
 		PlaceObj('BanterLine', {
 			'Character', "PierreMerc",
 			'Text', T(554530371281, --[[BanterDef Ernie_VillagerMale_14 Text section:Banters_Local_Ernie/Ernie_VillagerMale_14 Pierre recruited voice:PierreMerc]] "Get out of my way, old fool."),
+			'Optional', true,
 			'playOnce', true,
 		}),
 	},
@@ -2953,6 +2952,7 @@ PlaceObj('BanterDef', {
 		PlaceObj('BanterLine', {
 			'Character', "PierreMerc",
 			'Text', T(644254049880, --[[BanterDef Ernie_VillagerMale_15 Text section:Banters_Local_Ernie/Ernie_VillagerMale_15 Pierre recruited voice:PierreMerc]] "Yes. It's true, but perhaps I have only found a different kind of trouble, eh?"),
+			'Optional', true,
 		}),
 	},
 	Once = true,

@@ -1,22 +1,22 @@
 -- not specified animations continue to "Idle"
 local s_TransitionRules = {
 	["%s_Standing_Idle"] = {
-		{ "%s_Standing_Run", moment = "any" },
-		{ "%s_Standing_Walk", moment = "any" },
-		{ "%s_Standing_CombatRun", moment = "any" },
-		{ "%s_Standing_CombatWalk", moment = "any" },
+		{ "%s_Standing_Run", moment = "any", last = true },
+		{ "%s_Standing_Walk", moment = "any", last = true },
+		{ "%s_Standing_CombatRun", moment = "any", last = true },
+		{ "%s_Standing_CombatWalk", moment = "any", last = true },
 		{ "%s_Standing_To_Crouch", moment = "any" },
 		{ "%s_Standing_To_Prone", moment = "any" },
-		{ "%s_Standing_Aim", moment = "any",  },
+		{ "%s_Standing_Aim", moment = "any", last = true },
 		{ "%s_Standing_ExposeLeft_Start", moment = "any",  },
 		{ "%s_Standing_ExposeRight_Start", moment = "any",  },
-		{ "gr_Standing_Aim", moment = "any" },
+		{ "gr_Standing_Aim", moment = "any", last = true },
 	},
 	["%s_Crouch_Idle"] = {
-		{ "%s_Standing_Run", moment = "any" },
-		{ "%s_Standing_Walk", moment = "any" },
-		{ "%s_Standing_CombatRun", moment = "any" },
-		{ "%s_Standing_CombatWalk", moment = "any" },
+		{ "%s_Standing_Run", moment = "any", last = true },
+		{ "%s_Standing_Walk", moment = "any", last = true },
+		{ "%s_Standing_CombatRun", moment = "any", last = true },
+		{ "%s_Standing_CombatWalk", moment = "any", last = true },
 		{ "%s_Crouch_To_Standing", moment = "any" },
 		{ "%s_Crouch_To_Prone", moment = "any" },
 		{ "%s_TakeCover_Idle", moment = "any" },
@@ -252,8 +252,10 @@ function GetAnimPath(obj, start_anim, target_anim)
 					queue[new_anim] = idx
 					local dist = GetAnimDist(new_anim)
 					if dist - best_dist < 2 then
-						table.insert(queue, new_anim)
-						table.insert(queue_transitions, transition)
+						if not transition.last then
+							table.insert(queue, new_anim)
+							table.insert(queue_transitions, transition)
+						end
 						if IsValidAnim(obj, new_anim) then
 							if dist < best_dist then
 								best_idx, best_dist = #queue, dist

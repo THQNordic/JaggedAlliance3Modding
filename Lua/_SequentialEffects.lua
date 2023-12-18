@@ -75,8 +75,8 @@ function ResumeFuncs.UnitStartConversation(stacks, params, conversation)
 	StartConversationEffect(conversation, nil, "wait")
 end
 
-function ResumeFuncs.RadioStartConversation(stacks, params, conversation)
-	StartConversationEffect(conversation, "radio_conversation", "wait")
+function ResumeFuncs.RadioStartConversation(stacks, params, conversation, icon)
+	StartConversationEffect(conversation, { radio = true, icon = icon }, "wait")
 end
 
 function ResumeExecution(stack, params, func_name, ...)

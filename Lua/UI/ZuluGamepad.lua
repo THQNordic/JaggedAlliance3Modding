@@ -159,7 +159,11 @@ function ZuluMouseViaGamepad:OnXButtonDown(button, controller_id)
 	if button == self.LeftClickButton then
 		mouse_btn = "L"
 	elseif button == self.RightClickButton then
-		if #(ZuluMouseViaGamepadDisableRightClickReasons or empty_table) == 0 then
+		local leftTriggerOn = XInput.IsCtrlButtonPressed(controller_id, "LeftTrigger")
+		local rightTriggerOff = XInput.IsCtrlButtonPressed(controller_id, "RightTrigger")
+		local noTriggerOn = not leftTriggerOn and not rightTriggerOff
+	
+		if noTriggerOn and #(ZuluMouseViaGamepadDisableRightClickReasons or empty_table) == 0 then
 			mouse_btn = "R"
 		end
 	end

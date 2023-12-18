@@ -57,19 +57,27 @@ local function CheckKillUIBirds()
 	end
 end
 
-function OnMsg.PreGameMenuOpen()
-	CheckKillUIBirds()
-	
-	local units = {}
+local function GetDummyUnitsForMercs()
+	local units, slot_conflicts = {}, {}
 	MapForEach("map", "DummyUnit", function(unit)
 		for _, group in ipairs(unit.Groups or empty_table) do
 			local slot = tonumber(group)
 			if slot then
+				if units[slot] then
+					slot_conflicts[slot] = (slot_conflicts[slot] or 1) + 1					
+				end
 				units[slot] = unit
 			end
 		end
 	end)
 	
+	return units, slot_conflicts
+end
+
+function OnMsg.PreGameMenuOpen()
+	CheckKillUIBirds()
+	
+	local units = GetDummyUnitsForMercs()
 	-- place mercs to corresponding units via slot mapping
 	local mercs = AccountStorage.Mercs
 	if not next(mercs) then
@@ -227,4 +235,30 @@ function OnMsg.OptionsApply()
 	if IsMainMenuMap() then
 		CheckKillUIBirds()
 	end
+end
+
+if Platform.developer then
+
+function GameTestsNightly.MainMenu_DummyUnits()
+	local maps = {}
+	for map_name, map in pairs(MapData) do
+		if string.match(map_name, "^MainMenu_") then
+			table.insert(maps, map.id)
+		end
+	end
+	
+	for _, map in ipairs(maps) do
+		GameTestsPrintf("Testing map '%s' for DummyUnit Group usage conflicts ...", map)
+		ChangeMap(map)
+		local units, slot_conflicts = GetDummyUnitsForMercs()
+		if next(slot_conflicts) then
+			local texts = {}
+			for slot, usage in pairs(slot_conflicts) do
+				table.insert(texts, string.format("Slot %d: %d", slot, usage))
+			end
+			GameTestsErrorf("'%s' DummyUnit conflicts[%s]", map, table.concat(texts, ", "))
+		end
+	end
+end
+
 end

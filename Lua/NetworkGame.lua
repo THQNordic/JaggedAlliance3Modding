@@ -111,10 +111,10 @@ function _LoadNetGame(game_type, game_data, metadata)
 	
 	Sleep(10) --give ui time to close "gracefully"...
 	assert(game_data and #game_data > 0)
-	NetSyncEventFence("init_buffer")
-	NetStartBufferEvents()
+	NetSyncEventFence("_LoadNetGame")
+	NetStartBufferEvents("_LoadNetGame")
 	local err = LoadGameSessionData(game_data, metadata)
-	NetStopBufferEvents()
+	NetStopBufferEvents("_LoadNetGame")
 	if not err then
 		Msg("NetGameLoaded")
 	end
@@ -357,11 +357,6 @@ function FireNetSyncEventOnHost(...)
 	end
 end
 
-function NetStartBufferEvents()
-	--print("start buffering", netBufferedEvents)
-	netBufferedEvents = netBufferedEvents or {}
-	--print("start buffering", netBufferedEvents)
-end
 --------------------------------------------------------
 --synced clickage on uis and things common impl.
 --------------------------------------------------------
@@ -837,7 +832,7 @@ function StartBufferingAfterFence()
 	--we want to start buffering asap after fence
 	--basically, all events before the fence are for the current map and all events after the fence are for the next map
 	--we don't want to drop any, which may happen if next map events are already scheduled for some reason or another
-	NetStartBufferEvents()
+	NetStartBufferEvents(g_NetSyncFenceInitBuffer)
 	local q = SyncEventsQueue
 	for i = 1, #(q or "") do
 		--if events are already scheduled after the fence they will get dropped or executed before map change
@@ -857,6 +852,9 @@ end
 -- Ensures that all previous net sync events in flight have been processed by the client
 function NetSyncEventFence(init_buffer)
 	assert(CanYield())
+	if netBufferedEvents then
+		return "Cant fence while buffering"
+	end
 	
 	if IsGameReplayRunning() then
 		if not g_NetSyncFence then g_NetSyncFence = {} end
@@ -1527,4 +1525,24 @@ end
 
 function NetSyncEvents.UpdateWindAffected()
 	UpdateWindAffected("sync")
+end
+
+if FirstLoad then
+	netBufferedEventsReasons = {}
+	Original_NetStopBufferEvents = NetStopBufferEvents
+end
+
+
+function NetStopBufferEvents(reason)
+	reason = reason or false
+	netBufferedEventsReasons[reason] = nil
+	if not next(netBufferedEventsReasons) then
+		Original_NetStopBufferEvents()
+	end
+end
+
+function NetStartBufferEvents(reason)
+	reason = reason or false
+	netBufferedEventsReasons[reason] = true
+	netBufferedEvents = netBufferedEvents or {}
 end

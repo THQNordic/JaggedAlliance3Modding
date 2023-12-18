@@ -22,7 +22,23 @@ DefineClass.Building = {
 
 function Building:DailyUpdate()
 end
-~~~~~~~~~~	
+~~~~~~~~~~
+
+It also supports an out-of-order extension of classes defined elsewhere, which looks like this:
+
+~~~~~~~~~~ Lua
+AppendClass.Building = {
+	__parents = { "Destructable" },
+	properties = {
+		{ id = "CanBeDestructed", editor = "bool", default = true },
+	},
+	flags = { efDestructable = true },
+	is_destructed = false,
+	Destroy = function(self)
+		self.is_destructed = true
+	end,
+}
+~~~~~~~~~~
 
 Members
 -------

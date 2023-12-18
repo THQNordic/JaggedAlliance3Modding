@@ -84,6 +84,7 @@ PlaceObj('BanterDef', {
 		PlaceObj('BanterLine', {
 			'Character', "Flay",
 			'Text', T(250497059357, --[[BanterDef NPC_VillagerFemale_02 Text section:Banters_Civilians/NPC_VillagerFemale_02 universal - have Flay voice:Flay]] "Yes, I made them sign a contract in blood. If you are not busy, we need a little more ink."),
+			'Optional', true,
 			'playOnce', true,
 		}),
 		PlaceObj('BanterLine', {
@@ -936,6 +937,12 @@ PlaceObj('BanterDef', {
 						return quest.ClinicCombat
 					end,
 				}),
+			},
+		}),
+		PlaceObj('PlayerIsInSectors', {
+			Negate = true,
+			Sectors = {
+				"I19",
 			},
 		}),
 	},

@@ -1259,7 +1259,8 @@ Hubert Fradczyk
 Eryk Glen
 Rafal Stepien-Miernikowski
 Pawel Giersz
-Aleksander Jones</crn>
+Aleksander Jones
+Filip Ćwiek</crn>
 
 <crp>COMPATIBILITY TESTERS</crp>
 <crn>Pawel Warzecha

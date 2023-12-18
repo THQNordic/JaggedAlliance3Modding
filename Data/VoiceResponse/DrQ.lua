@@ -277,7 +277,7 @@ PlaceObj('VoiceResponse', {
 		T(103101849040, --[[VoiceResponse DrQ SelectionStealth VoiceResponse SelectionStealth - when selected or autoselected voice:DrQ]] "May the spirits hide me from the opposition.")
 	}),
 	SeriouslyWounded = TConcat({
-		T(274836425410, --[[VoiceResponse DrQ SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds) voice:DrQ]] "The assaults on my body have brought me close to death.")
+		T(274836425410, --[[VoiceResponse DrQ SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining. voice:DrQ]] "The assaults on my body have brought me close to death.")
 	}),
 	Startled = TConcat({
 		T(970874829651, --[[VoiceResponse DrQ Startled VoiceResponse Startled - Startled by hearing a sudden noise voice:DrQ]] "Huh?"),
@@ -327,9 +327,9 @@ PlaceObj('VoiceResponse', {
 		T(282716201665, --[[VoiceResponse DrQ WeaponJammed VoiceResponse WeaponJammed - When weapon has jammed voice:DrQ]] "The gun has decided it will not fire. Most disappointing.")
 	}),
 	Wounded = TConcat({
-		T(100260608642, --[[VoiceResponse DrQ Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:DrQ]] "This pain shall pass."),
-		T(764674062595, --[[VoiceResponse DrQ Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:DrQ]] "This assault on my flesh will heal."),
-		T(217133920682, --[[VoiceResponse DrQ Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:DrQ]] "I am hit, but I will recover.")
+		T(100260608642, --[[VoiceResponse DrQ Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:DrQ]] "This pain shall pass."),
+		T(764674062595, --[[VoiceResponse DrQ Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:DrQ]] "This assault on my flesh will heal."),
+		T(217133920682, --[[VoiceResponse DrQ Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:DrQ]] "I am hit, but I will recover.")
 	}),
 	group = "MercenariesOld",
 	id = "DrQ",

@@ -265,7 +265,7 @@ PlaceObj('VoiceResponse', {
 		T(444502920299, --[[VoiceResponse Omryn SelectionStealth VoiceResponse SelectionStealth - when selected or autoselected voice:Omryn]] "(grunt)")
 	}),
 	SeriouslyWounded = TConcat({
-		T(754877893270, --[[VoiceResponse Omryn SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds) voice:Omryn]] "Many wounds. Need rest and snacks.")
+		T(754877893270, --[[VoiceResponse Omryn SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining. voice:Omryn]] "Many wounds. Need rest and snacks.")
 	}),
 	Startled = TConcat({
 		T(265089062945, --[[VoiceResponse Omryn Startled VoiceResponse Startled - Startled by hearing a sudden noise voice:Omryn]] "Huh?"),
@@ -317,9 +317,9 @@ PlaceObj('VoiceResponse', {
 		T(562013284386, --[[VoiceResponse Omryn WeaponJammed VoiceResponse WeaponJammed - When weapon has jammed voice:Omryn]] "Gun no shoot. I can fix with elk grease and spit.")
 	}),
 	Wounded = TConcat({
-		T(148603702047, --[[VoiceResponse Omryn Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Omryn]] "Aiee."),
-		T(602773440320, --[[VoiceResponse Omryn Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Omryn]] "May bear eat you."),
-		T(460317619106, --[[VoiceResponse Omryn Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Omryn]] "Very bad.")
+		T(148603702047, --[[VoiceResponse Omryn Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Omryn]] "Aiee."),
+		T(602773440320, --[[VoiceResponse Omryn Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Omryn]] "May bear eat you."),
+		T(460317619106, --[[VoiceResponse Omryn Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Omryn]] "Very bad.")
 	}),
 	group = "MercenariesNew",
 	id = "Omryn",

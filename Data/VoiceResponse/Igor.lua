@@ -302,7 +302,7 @@ PlaceObj('VoiceResponse', {
 		T(512271988603, --[[VoiceResponse Igor SelectionStealth VoiceResponse SelectionStealth - when selected or autoselected voice:Igor]] "Did I tell you, I am great at hiding?")
 	}),
 	SeriouslyWounded = TConcat({
-		T(300592523745, --[[VoiceResponse Igor SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds) voice:Igor]] "I get medal for great number of wounds, yes?")
+		T(300592523745, --[[VoiceResponse Igor SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining. voice:Igor]] "I get medal for great number of wounds, yes?")
 	}),
 	Startled = TConcat({
 		T(603654192623, --[[VoiceResponse Igor Startled VoiceResponse Startled - Startled by hearing a sudden noise voice:Igor]] "Huh?"),
@@ -355,9 +355,9 @@ PlaceObj('VoiceResponse', {
 		T(257509836059, --[[VoiceResponse Igor WeaponJammed VoiceResponse WeaponJammed - When weapon has jammed voice:Igor]] "This gun will not shoot. ")
 	}),
 	Wounded = TConcat({
-		T(653652966753, --[[VoiceResponse Igor Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Igor]] "Aargh!"),
-		T(517234737440, --[[VoiceResponse Igor Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Igor]] "Curse you! Son of cossack."),
-		T(702730979739, --[[VoiceResponse Igor Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Igor]] "It will take more than that to kill a Dolvich!")
+		T(653652966753, --[[VoiceResponse Igor Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Igor]] "Aargh!"),
+		T(517234737440, --[[VoiceResponse Igor Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Igor]] "Curse you! Son of cossack."),
+		T(702730979739, --[[VoiceResponse Igor Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Igor]] "It will take more than that to kill a Dolvich!")
 	}),
 	group = "MercenariesOld",
 	id = "Igor",

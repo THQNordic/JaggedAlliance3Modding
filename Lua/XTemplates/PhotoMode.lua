@@ -56,7 +56,7 @@ PlaceObj('XTemplate', {
 			'func', function (self, ...)
 				PhotoModeEnd()
 				HighlightAllInteractables(self.prev_interactablesOn)
-				HideWorldUI(false)
+				HideInWorldCombatUI(false, "photomode")
 				local mode_dlg = GetInGameInterfaceModeDlg()
 				if self.prev_gamepadOn and mode_dlg and IsKindOf(mode_dlg, "GamepadUnitControl") then mode_dlg:ResumeGamepadThread() end
 				XDialog.Close(self, ...)
@@ -79,19 +79,78 @@ PlaceObj('XTemplate', {
 			'func', function (self, ...)
 				local value = not self.idSubMenu:GetVisible()
 				self.idSubMenu:SetVisible(value)
-				if Platform.console then
+				if Platform.console or Platform.steamdeck then
 					self.idActionBar:SetVisible(value)
 					self.idFreeCameraWarning:SetVisible(value and cameraFly.IsActive())
 				end
 				if value and GetUIStyleGamepad() then
 					self.idScrollArea:SetSelection(self.idScrollArea.focused_item or 1)
 				end
-				if not value and self.idSubSubContent.idItemsContent then
+				self:CloseFrameMenu(not value)
+			end,
+		}),
+		PlaceObj('XTemplateFunc', {
+			'name', "CloseFrameMenu(self, value)",
+			'func', function (self, value)
+				if (value or self.idSubMenu:GetVisible()) and self.idSubSubContent.idItemsContent then
 					self.idSubSubContent.idItemsContent:Close()
 					CloseOptionsChoiceSubmenu(self.idSubSubContent)
 				end
 			end,
 		}),
+		PlaceObj('XTemplateWindow', {
+			'comment', "Frame",
+			'__condition', function (parent, context) return not config.PhotoMode_DisablePhotoFrame end,
+			'Id', "idFrameWindow",
+			'IdNode', true,
+			'OnLayoutComplete', function (self)  end,
+		}, {
+			PlaceObj('XTemplateWindow', {
+				'Id', "left",
+				'HAlign', "left",
+				'Background', RGBA(0, 0, 0, 255),
+			}),
+			PlaceObj('XTemplateWindow', {
+				'Id', "right",
+				'HAlign', "right",
+				'Background', RGBA(0, 0, 0, 255),
+			}),
+			PlaceObj('XTemplateWindow', {
+				'Id', "top",
+				'VAlign', "top",
+				'Background', RGBA(0, 0, 0, 255),
+			}),
+			PlaceObj('XTemplateWindow', {
+				'Id', "bottom",
+				'VAlign', "bottom",
+				'Background', RGBA(0, 0, 0, 255),
+			}),
+			PlaceObj('XTemplateWindow', {
+				'comment', "Frame",
+				'__class', "XImage",
+				'Id', "idFrame",
+				'HAlign', "center",
+				'VAlign', "center",
+				'OnLayoutComplete', function (self)
+					local left = self:ResolveId("left")
+					local right = self:ResolveId("right")
+					local top = self:ResolveId("top")
+					local bottom = self:ResolveId("bottom")
+					
+					local minX = MulDivRound(self.box:minx(), 1000, self.scale:x())
+					local minY = MulDivRound(self.box:miny(), 1000, self.scale:y())
+					local maxX = MulDivRound(self.box:maxx(), 1000, self.scale:x())
+					local maxY = MulDivRound(self.box:maxy(), 1000, self.scale:y())
+					
+					-- Plus one to prevent mistakes due to rounding
+					left:SetMinWidth(minX + 1)
+					right:SetMinWidth(MulDivRound(self.parent.box:maxx(), 1000, self.scale:x()) - maxX + 1)
+					top:SetMinHeight(minY + 1)
+					bottom:SetMinHeight(MulDivRound(self.parent.box:maxy(), 1000, self.scale:y()) - maxY + 1)
+				end,
+				'ImageFit', "smallest",
+			}),
+			}),
 		PlaceObj('XTemplateWindow', {
 			'comment', "UI elements to be hidden in screenshots",
 			'Id', "idHideUIWindow",
@@ -207,7 +266,7 @@ PlaceObj('XTemplate', {
 							'HandleMouse', false,
 							'TextStyle', "PDABrowserHeader",
 							'Translate', true,
-							'Text', T(207584479877, --[[XTemplate PhotoMode Text]] "Photo Mode"),
+							'Text', T(361442247928, --[[XTemplate PhotoMode Text]] "Photo Mode"),
 							'WordWrap', false,
 							'TextVAlign', "center",
 						}),
@@ -231,8 +290,24 @@ PlaceObj('XTemplate', {
 								child.idSlider:SetMinWidth(150) 
 								child.idSlider:SetMaxWidth(150) 
 							elseif child.idValue then -- prop choice
-								child.idValue:SetMinWidth(150) 
-								child.idValue:SetMaxWidth(150) 
+								if item.id == "frame" then
+									if #context[1]:GetProperty(item.id) < 10 then
+										child.idValue:SetMinWidth(150) 
+										child.idValue:SetMaxWidth(150) 
+										child.idValue:SetTextHAlign("center") 
+										child.idName:SetMinWidth(300) 
+										child.idName:SetMaxWidth(300) 
+									else
+										child.idValue:SetMinWidth(200) 
+										child.idValue:SetMaxWidth(200) 
+										child.idValue:SetTextHAlign("right") 
+										child.idName:SetMinWidth(230) 
+										child.idName:SetMaxWidth(230) 
+									end
+								else
+									child.idValue:SetMinWidth(150) 
+									child.idValue:SetMaxWidth(150) 
+								end
 							elseif child.idOn then -- prop bool
 								child.idOn:SetMinWidth(150) 
 								child.idOn:SetMaxWidth(150) 
@@ -291,7 +366,7 @@ PlaceObj('XTemplate', {
 					'HandleMouse', false,
 					'TextStyle', "DescriptionTextLightYellowBigger",
 					'Translate', true,
-					'Text', T(679404141391, --[[XTemplate PhotoMode Text]] "<em><ShortcutName('actionPanUp')>,<ShortcutName('actionPanDown')>,<ShortcutName('actionPanLeft')>,<ShortcutName('actionPanRight')>,<ShortcutName('actionRotLeft')>,<ShortcutName('actionRotRight')></em> - Move, <em>Hold CTRL</em> - Move faster, <em>ALT</em> - Toggle mouse cursor"),
+					'Text', T(274692640218, --[[XTemplate PhotoMode Text]] "<em><ShortcutName('actionPanUp')>,<ShortcutName('actionPanDown')>,<ShortcutName('actionPanLeft')>,<ShortcutName('actionPanRight')>,<ShortcutName('actionRotLeft')>,<ShortcutName('actionRotRight')></em> - Move, <em>Hold CTRL</em> - Move faster, <em>ALT</em> - Toggle mouse cursor"),
 					'HideOnEmpty', true,
 				}),
 				PlaceObj('XTemplateWindow', {
@@ -305,7 +380,7 @@ PlaceObj('XTemplate', {
 					'HandleMouse', false,
 					'TextStyle', "DescriptionTextLightYellowBigger",
 					'Translate', true,
-					'Text', T(190145861232, --[[XTemplate PhotoMode Text]] "<LS> - Move, <RS> - Rotate, <LT><RT> - Move up/down."),
+					'Text', T(693641439148, --[[XTemplate PhotoMode Text]] "<LS> - Move, <RS> - Rotate, <LT><RT> - Move up/down."),
 					'HideOnEmpty', true,
 				}),
 				}),
@@ -323,21 +398,22 @@ PlaceObj('XTemplate', {
 			}, {
 				PlaceObj('XTemplateAction', {
 					'ActionId', "idTakeScreenshot",
-					'ActionName', T(877014493476, --[[XTemplate PhotoMode ActionName]] "Take Photo"),
+					'ActionName', T(702903627120, --[[XTemplate PhotoMode ActionName]] "Take Photo"),
 					'ActionToolbar', "ActionBar",
 					'ActionShortcut', "T",
 					'ActionGamepad', "ButtonY",
 					'OnAction', function (self, host, source, ...)
 						local meta = host.context:GetPropertyMetadata("frameDuration")
 						host.context:DeactivateFreeCamera()
+						host:CloseFrameMenu()
 						host.idScrollArea:RespawnContent()
 						PhotoModeTake(host.context.frameDuration, meta.max)
 					end,
-					'__condition', function (parent, context) return not Platform.console end,
+					'__condition', function (parent, context) return not (Platform.console or Platform.steamdeck) end,
 				}),
 				PlaceObj('XTemplateAction', {
 					'ActionId', "idReset",
-					'ActionName', T(800696391681, --[[XTemplate PhotoMode ActionName]] "Reset"),
+					'ActionName', T(982908674047, --[[XTemplate PhotoMode ActionName]] "Reset"),
 					'ActionToolbar', "ActionBar",
 					'ActionShortcut', "R",
 					'ActionGamepad', "RightThumbClick",
@@ -347,6 +423,7 @@ PlaceObj('XTemplate', {
 					'OnAction', function (self, host, source, ...)
 						host.context:ResetProperties()
 						host.context:DeactivateFreeCamera()
+						host:CloseFrameMenu()
 						host.areValuesDefault = true
 						host.idActionBar:RespawnContent()
 						host.idScrollArea:RespawnContent()
@@ -355,7 +432,7 @@ PlaceObj('XTemplate', {
 				}),
 				PlaceObj('XTemplateAction', {
 					'ActionId', "idToggleUI",
-					'ActionName', T(778946363517, --[[XTemplate PhotoMode ActionName]] "Toggle UI"),
+					'ActionName', T(231783788212, --[[XTemplate PhotoMode ActionName]] "Toggle UI"),
 					'ActionToolbar', "ActionBar",
 					'ActionShortcut', "U",
 					'ActionGamepad', "LeftShoulder",
@@ -365,26 +442,26 @@ PlaceObj('XTemplate', {
 				}),
 				PlaceObj('XTemplateAction', {
 					'ActionId', "idToggleCombatUI",
-					'ActionName', T(879213936162, --[[XTemplate PhotoMode ActionName]] "Toggle World UI"),
+					'ActionName', T(838021492398, --[[XTemplate PhotoMode ActionName]] "Toggle World UI"),
 					'ActionToolbar', "ActionBar",
 					'ActionShortcut', "Y",
 					'ActionGamepad', "RightShoulder",
 					'OnAction', function (self, host, source, ...)
 						host.isWorldUIHidden = not host.isWorldUIHidden
-						host.context:DeactivateFreeCamera()
-						host.idScrollArea:RespawnContent()
-						HideWorldUI(host.isWorldUIHidden)
+						host:CloseFrameMenu()
+						HideInWorldCombatUI(host.isWorldUIHidden, "photomode")
 					end,
 				}),
 				PlaceObj('XTemplateAction', {
 					'ActionId', "close",
-					'ActionName', T(676109205191, --[[XTemplate PhotoMode ActionName]] "Close"),
+					'ActionName', T(496223303144, --[[XTemplate PhotoMode ActionName]] "Close"),
 					'ActionToolbar', "ActionBar",
 					'ActionShortcut', "Escape",
 					'ActionGamepad', "ButtonB",
 					'OnAction', function (self, host, source, ...)
 						CreateRealTimeThread(function(host)
 							host.context:DeactivateFreeCamera()
+							host:CloseFrameMenu()
 							host.idScrollArea:RespawnContent()
 							host.idActionBar:RespawnContent()
 							if WaitQuestion(terminal.desktop, T(463488345232, "Exit Photo Mode"), T(528652976882, "Are you sure you want to exit?"), T(1138, "Yes"), T(1139, "No")) == "ok" then
@@ -400,6 +477,13 @@ PlaceObj('XTemplate', {
 					'HAlign', "left",
 					'VAlign', "center",
 					'MinWidth', 512,
+					'OnLayoutComplete', function (self)
+						for i, text in ipairs(GetChildrenOfKind(self, "XTextButton")) do
+								local label = text:ResolveId("idLabel")
+								label:SetTextVAlign("center")
+								label:SetTextHAlign("center")
+						end
+					end,
 					'UniformColumnWidth', true,
 					'Background', RGBA(255, 255, 255, 0),
 					'Toolbar', "ActionBar",
@@ -423,7 +507,7 @@ PlaceObj('XTemplate', {
 				'comment', "for choice properties",
 				'__class', "XDialog",
 				'Id', "idSubSubContent",
-				'Margins', box(10, 0, 0, 0),
+				'Margins', box(10, 65, 0, 0),
 				'UseClipBox', false,
 				'InternalModes', "items, empty",
 			}, {
@@ -431,6 +515,7 @@ PlaceObj('XTemplate', {
 					'__class', "XContentTemplate",
 					'Id', "idSubSubMenu",
 					'IdNode', false,
+					'LayoutVSpacing', -2,
 					'UseClipBox', false,
 				}, {
 					PlaceObj('XTemplateMode', {
@@ -441,11 +526,9 @@ PlaceObj('XTemplate', {
 						'mode', "items",
 					}, {
 						PlaceObj('XTemplateWindow', {
-							'Margins', box(-20, 0, 0, 0),
-							'Padding', box(0, 3, 0, 0),
 							'VAlign', "top",
 							'MinHeight', 587,
-							'MaxHeight', 587,
+							'MaxHeight', 650,
 						}, {
 							PlaceObj('XTemplateWindow', {
 								'__class', "XPopup",
@@ -453,6 +536,15 @@ PlaceObj('XTemplate', {
 								'Dock', false,
 								'MinWidth', 315,
 								'MaxWidth', 315,
+								'OnLayoutComplete', function (self)
+									if not self.SetupDone then
+										local frameName = GetDialog(self).context:GetProperty("frame")
+										local scrollArea = self.idItemsScrollArea
+										local frame = scrollArea:ResolveId(frameName)
+										scrollArea:ScrollIntoView(frame)
+										self.SetupDone = true
+									end
+								end,
 								'BorderColor', RGBA(128, 128, 128, 0),
 								'Background', RGBA(240, 240, 240, 0),
 								'FocusedBorderColor', RGBA(128, 128, 128, 0),
@@ -482,12 +574,16 @@ PlaceObj('XTemplate', {
 												child.idBtnText:SetEnabled(false)
 											end
 											child.idBtnText:SetText(item.text)
+											child:SetId(context.value)
 										end,
 									}, {
 										PlaceObj('XTemplateTemplate', {
 											'__template', "SubSubMenuButton",
 											'RolloverTemplate', "RolloverGeneric",
 											'IdNode', false,
+											'OnContextUpdate', function (self, context, ...)
+												self.idBtnText:SetMaxWidth(self:GetMaxWidth() - 30)
+											end,
 											'OnPress', function (self, gamepad)
 												local prop_meta = GetDialogModeParam(self).prop_meta
 												local obj = ResolvePropObj(GetDialogModeParam(self).context)

@@ -265,9 +265,9 @@ PlaceObj('VoiceResponse', {
 		T(574610397973, --[[VoiceResponse Larry_Clean SelectionStealth VoiceResponse SelectionStealth - when selected or autoselected voice:Larry_Clean]] "I can do this real quiet, man.")
 	}),
 	SeriouslyWounded = TConcat({
-		T(866406748827, --[[VoiceResponse Larry_Clean SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds) voice:Larry_Clean]] "I know I said to ignore me when I asked for drugs, but... I could use some drugs."),
-		T(853274459410, --[[VoiceResponse Larry_Clean SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds) voice:Larry_Clean]] "I haven't felt this bad since the Doctor caught me with a half bottle of tequila."),
-		T(868329036686, --[[VoiceResponse Larry_Clean SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds) voice:Larry_Clean]] "I'm seeing stars. Is anyone else seeing stars?")
+		T(866406748827, --[[VoiceResponse Larry_Clean SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining. voice:Larry_Clean]] "I know I said to ignore me when I asked for drugs, but... I could use some drugs."),
+		T(853274459410, --[[VoiceResponse Larry_Clean SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining. voice:Larry_Clean]] "I haven't felt this bad since the Doctor caught me with a half bottle of tequila."),
+		T(868329036686, --[[VoiceResponse Larry_Clean SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining. voice:Larry_Clean]] "I'm seeing stars. Is anyone else seeing stars?")
 	}),
 	SpecialThrowGrenade = TConcat({
 		T(837875204195, --[[VoiceResponse Larry_Clean SpecialThrowGrenade VoiceResponse SpecialThrowGrenade - When throwing grenade voice:Larry_Clean]] "This party needs some special sauce!")
@@ -314,9 +314,9 @@ PlaceObj('VoiceResponse', {
 		T(463316216974, --[[VoiceResponse Larry_Clean WeaponJammed VoiceResponse WeaponJammed - When weapon has jammed voice:Larry_Clean]] "Bummer. Gun's jammed.")
 	}),
 	Wounded = TConcat({
-		T(207337541944, --[[VoiceResponse Larry_Clean Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Larry_Clean]] "Under fire here, man!"),
-		T(167530910612, --[[VoiceResponse Larry_Clean Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Larry_Clean]] "Crap! Crap, crap, crap!"),
-		T(290618535817, --[[VoiceResponse Larry_Clean Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Larry_Clean]] "Gonna need a painkiller!")
+		T(207337541944, --[[VoiceResponse Larry_Clean Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Larry_Clean]] "Under fire here, man!"),
+		T(167530910612, --[[VoiceResponse Larry_Clean Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Larry_Clean]] "Crap! Crap, crap, crap!"),
+		T(290618535817, --[[VoiceResponse Larry_Clean Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Larry_Clean]] "Gonna need a painkiller!")
 	}),
 	group = "MercenariesOld",
 	id = "Larry_Clean",

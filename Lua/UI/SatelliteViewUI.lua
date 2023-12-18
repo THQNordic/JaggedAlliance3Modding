@@ -53,6 +53,7 @@ end
 
 MapVar("g_RevealedSectors", {})
 GameVar("gv_RevealedSectorsTemporarily", {})
+GameVar("AllSectorsRevealed", false)
 
 function AllowRevealSectors(array)
 	for i, s in ipairs(array) do
@@ -67,6 +68,21 @@ function RevealAllSectors()
 	end
 	RecalcRevealedSectors()
 	Msg("AllSectorsRevealed")
+	AllSectorsRevealed = true
+end
+
+function SavegameSessionDataFixups.AllSectorsRevealed(session_data)
+	local sectors = table.get(session_data, "gvars", "gv_Sectors")
+	if not sectors then return end
+
+	local allRevealed = true
+	for id, sector in pairs(sectors) do
+		if not sector.reveal_allowed then
+			allRevealed = false
+		end
+	end
+	if not allRevealed then return end
+	session_data.gvars.AllSectorsRevealed = true
 end
 
 function RecalcRevealedSectors()
@@ -82,17 +98,17 @@ function RecalcRevealedSectors()
 			local shortcut = GetShortcutByStartEnd(squad.traversing_shortcut_start_sId, nextSectorId)
 			local visibleSectors = shortcut:GetShortcutVisibilitySectors()
 			for i, s in ipairs(visibleSectors) do
-				AllowRevealAllSectors(s, 0)
+				RevealSectorsAround(s, 0)
 			end
-			AllowRevealAllSectors(sector_id, 0)
+			RevealSectorsAround(sector_id, 0)
 		elseif sector_id then
-			AllowRevealAllSectors(sector_id, 1)
+			RevealSectorsAround(sector_id, 1)
 		end
 	end
 	
 	for sector_id, sector in sorted_pairs(gv_Sectors) do
 		if sector.Guardpost and (sector.Side == "player1" or sector.Side == "player2") then
-			AllowRevealAllSectors(sector_id, 2)
+			RevealSectorsAround(sector_id, 2)
 		end
 		if not sector.reveal_allowed then -- Force revealed is more like "allow to be revealed".
 			g_RevealedSectors[sector_id] = false
@@ -135,8 +151,13 @@ function ForEachSectorAround(center_sector_id, radius, fn, ... )
 	end	
 end
 
-function AllowRevealAllSectors(center_sector_id, radius)
+function RevealSectorsAround(center_sector_id, radius)
+	local centerIsUnderground = IsSectorUnderground(center_sector_id)
 	ForEachSectorAround(center_sector_id, radius, function(sector_id)
+		if centerIsUnderground then
+			sector_id = sector_id .. "_Underground"
+		end
+	
 		g_RevealedSectors[sector_id] = true
 	end)
 end
@@ -157,10 +178,7 @@ end
 function IsSectorRevealed(sector)
 	if GedSatelliteSectorEditor then return true end
 	if sector then
-		if IsSectorUnderground(sector.Id) then
-			sector = gv_Sectors[sector.GroundSector]
-		end
-		return sector and g_RevealedSectors[sector.Id]
+		return sector and g_RevealedSectors[sector.Id] and sector.discovered
 	end
 end
 

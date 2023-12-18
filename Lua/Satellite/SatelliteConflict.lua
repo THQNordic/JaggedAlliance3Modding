@@ -110,8 +110,9 @@ function SatelliteRetreat(sector_id, sides_to_retreat)
 		end
 		if not prev_sector_id then goto continue end
 		
-		if IsSectorUnderground(sector_id) or IsSectorUnderground(prev_sector_id) then
-			SetSatelliteSquadCurrentSector(squad, prev_sector_id)
+		if (IsSectorUnderground(sector_id) and not IsSectorUnderground(prev_sector_id)) or
+			(IsSectorUnderground(prev_sector_id) and not IsSectorUnderground(sector_id)) then
+			SetSatelliteSquadCurrentSector(squad, prev_sector_id, true, true)
 		else
 			-- Find best retreat sector if previous sector is a bad idea.
 			local badRetreat = false
@@ -304,18 +305,26 @@ function EnterConflict(sector, prev_sector_id, spawn_mode, disable_travel, locke
 	ExecuteSectorEvents("SE_OnConflictStarted", sector_id)
 end
 
-function EnemyWantsToWait(sector)
+function EnemyWantsToWait(sector, get_squads)
 	local enemySquadsEnroute = GetSquadsEnroute(sector, "enemy1")
 	if #enemySquadsEnroute == 0 then return false end
-
+	local squads = {}
 	local waitTime = const.Satellite.EnemySquadWaitTime
 	for i, s in ipairs(enemySquadsEnroute) do
 		local estimatedTravelTime = GetTotalRouteTravelTime(s.CurrentSector, s.route, s)
 		if estimatedTravelTime < waitTime then
-			return true
+			if not get_squads then
+				return true
+			else
+				squads[#squads+1] = {s, arriving = estimatedTravelTime>0 and estimatedTravelTime or 0}
+			end
 		end
 	end
-	return false
+	if not next(squads) then	
+		return false
+	else
+		return true, squads
+	end
 end
 
 function CanGoInMap(sector)
@@ -453,7 +462,7 @@ end
 -- Similar code to above but used for SectorEnterConflict effect.
 -- The squads returned are the same as the ones returned from PlayerPresentInSector
 -- as the two effects are often used together
-function ForceEnterConflictEffect(sector, ...)
+function ForceEnterConflictEffect(sector, spawnMode, ...)
 	local sector_id = sector.Id
 	local playerSquads, enemySquads = GetSquadsInSector(sector_id, false, false, true)
 	
@@ -471,7 +480,13 @@ function ForceEnterConflictEffect(sector, ...)
 			SatelliteReachSectorCenter(squad.UniqueId, sector_id, squad.PreviousSector, not movingToConflict, true)
 		end
 	end
-	EnterConflict(sector, nil, ...)
+	
+	-- Ensure the conflict has a proper spawn mode
+	if not spawnMode then
+		spawnMode = sector.Side == "player1" and "defend" or "attack"
+	end
+	
+	EnterConflict(sector, nil, spawnMode, ...)
 end
 
 function OnMsg.EnterSector(gameStart, gameLoaded)
@@ -621,6 +636,35 @@ function GetSectorConflict(sector_id)
 	return sector and sector.conflict
 end
 
+function SatelliteConflict_IsSquadDefeated(squad)
+	local is_squad_defeated = true
+	for _, unit_id in ipairs(squad.units) do
+		if gv_UnitData[unit_id] and not gv_UnitData[unit_id]:IsDead() then
+			is_squad_defeated = false
+			break
+		end
+	end
+	return is_squad_defeated
+end
+
+function SatelliteConflict_SurviveDefeatedText(squads, lost_text)
+	local defeated = 0
+	for _, s in ipairs(squads) do
+		if SatelliteConflict_IsSquadDefeated(s) then
+			defeated = defeated + 1
+		end
+	end
+	local survived = #squads - defeated 	
+	local surv = T{221106911816, "<survive> survived", survive = survived==1 and T(792634263677, "1 squad") or T{811215070300, "<count> squads", count = survived}}
+	local lost = T{949500986907, "<lost> lost", lost    = defeated==1 and T(792634263677, "1 squad") or T{811215070300, "<count> squads", count = defeated}}
+	if lost_text then
+		lost = (defeated==1 and T(792634263677, "1 squad") or T{811215070300, "<count> squads", count = defeated}) .." "..lost_text		
+	end
+	if defeated<=0 then return surv end	
+	if survived<=0 then return lost end	
+	
+	return Untranslated(surv.." / "..lost)
+end
 function CheckMapConflictResolved(no_voice)
 	local sector = gv_Sectors[gv_CurrentSectorId]
 	local playerUnits = GetCurrentMapUnits("player")
@@ -675,7 +719,7 @@ function OnMsg.ExplorationTick()
 	if sector.conflict.no_exploration_resolve then return end
 	if sector.ForceConflict then return end
 	
-	lCheckMapConflictResolved()
+	CheckMapConflictResolved()
 end
 
 local function lTacticalModeCheckEnterConflict()
@@ -684,7 +728,7 @@ local function lTacticalModeCheckEnterConflict()
 	
 	-- start conflict if there are aware units of opposing sides
 	for _, unit in ipairs(g_Units) do
-		if not unit:IsAware() then goto continue end
+		if not unit:IsAware("pending") then goto continue end
 		
 		local unitSquad = unit.Squad
 		unitSquad = unitSquad and gv_Squads[unitSquad]
@@ -693,7 +737,7 @@ local function lTacticalModeCheckEnterConflict()
 		
 		local enemies = GetAllEnemyUnits(unit)
 		for _, enemy in ipairs(enemies) do
-			if not enemy:IsAware() then goto continue end
+			if not enemy:IsAware("pending") then goto continue end
 
 			local enemySquad = enemy.Squad
 			enemySquad = enemySquad and gv_Squads[enemySquad]
@@ -1782,27 +1826,30 @@ function OnMsg.ConflictEnd(sector, _, playerAttacked, playerWon, autoResolve, is
 	-- you get loyalty for that city.
 	local allySquads = GetGroupedSquads(sector.Id, true, false, "no_retreating", "non_travelling")
 	if playerWon then
-		if (not playerAttacked and not startedFromMap) or not sector.conflictLoyaltyGained then
-			local city = GetLoyaltyCityNearby(sector)
-			
-			assert(allySquads and #allySquads > 0)
-			
-			local nonMilitiaSquad = false
-			for i, sq in ipairs(allySquads) do
-				if not sq.militia then
-					nonMilitiaSquad = true
+		if sector.RunLoyaltyLogic then
+			if (not playerAttacked and not startedFromMap) or not sector.conflictLoyaltyGained then
+				local city = GetLoyaltyCityNearby(sector)
+				
+				assert(allySquads and #allySquads > 0)
+				
+				local nonMilitiaSquad = false
+				for i, sq in ipairs(allySquads) do
+					if not sq.militia then
+						nonMilitiaSquad = true
+					end
+				end
+				
+				-- Militia won alone!
+				if not nonMilitiaSquad then
+					assert(autoResolve)
+					CityModifyLoyalty(city, const.Loyalty.ConflictMilitiaOnlyWinBonus, T(469271409848, "Enemies cleared by militia"))
+					sector.conflictLoyaltyGained = true
+				else
+					CityModifyLoyalty(city, const.Loyalty.ConflictWinBonus, T(133483288436, "Enemies cleared"))
+					sector.conflictLoyaltyGained = true
 				end
 			end
-			
-			-- Militia won alone!
-			if not nonMilitiaSquad then
-				assert(autoResolve)
-				CityModifyLoyalty(city, const.Loyalty.ConflictMilitiaOnlyWinBonus, T(469271409848, "Enemies cleared by militia"))
-				sector.conflictLoyaltyGained = true
-			else
-				CityModifyLoyalty(city, const.Loyalty.ConflictWinBonus, T(133483288436, "Enemies cleared"))
-				sector.conflictLoyaltyGained = true
-			end
+
 			--world flip that has caused disable autoresolve should be cleared
 			sector.autoresolve_disabled = false
 		end
@@ -1818,7 +1865,7 @@ function OnMsg.ConflictEnd(sector, _, playerAttacked, playerWon, autoResolve, is
 		end
 		LocalCheckUnitsMapPresence()
 	-- If you retreat (this also happens when losing an auto resolve)
-	elseif isRetreat then
+	elseif isRetreat and sector.RunLoyaltyLogic then
 		local city = GetLoyaltyCityNearby(sector)
 		CityModifyLoyalty(city, const.Loyalty.ConflictRetreatPenalty, T(186425120178, "Retreat"))
 		
@@ -1826,7 +1873,7 @@ function OnMsg.ConflictEnd(sector, _, playerAttacked, playerWon, autoResolve, is
 		LostLoyaltyWithSectorsThisTick[sector.Id] = true
 		
 	-- If you get defeated (regardless of whether militia got defeated or mercs)
-	elseif not playerWon and (not allySquads or #allySquads == 0) then
+	elseif not playerWon and (not allySquads or #allySquads == 0) and sector.RunLoyaltyLogic then
 		local city = GetLoyaltyCityNearby(sector, "adjacent_only")
 		CityModifyLoyalty(city, const.Loyalty.ConflictDefeatedLoyaltyLoss, T(703208874704, "Defeat"))
 	end
@@ -1909,6 +1956,10 @@ function DespawnUnitData(sectorId, class, despawnUnitToo)
 end
 
 function IsAutoResolveEnabled(sector)
+	if sector.never_autoresolve then
+		return false
+	end
+
 	if not sector.conflict then
 		return false
 	end
@@ -1973,7 +2024,8 @@ function OnMsg.ConflictEnd(sector)
 	local militia_squad = gv_Squads[militia_squad_id]
 	if not militia_squad or #(militia_squad.units or "") == 0 then return end	
 	
-	local quest = QuestGetState("05_TakeDownMajor")
+	local quest = gv_Quests["05_TakeDownMajor"] and QuestGetState("05_TakeDownMajor")
+	if not quest then return end
 	SetQuestVar(quest, "LegionBeatenByMilitia", true)
 end
 

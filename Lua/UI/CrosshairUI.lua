@@ -680,7 +680,7 @@ function CrosshairUI:UpdateAim()
 			local combatPath = GetMeleeAttackCombatPath(action, attacker)
 			local targetPath = combatPath and combatPath:GetCombatPathFromPos(args.goto_pos)
 			if targetPath then
-				self.context.danger = AnyInterruptsAlongPath(attacker, targetPath, "all")
+				self.context.danger = AnyInterruptsAlongPath(attacker, targetPath, "all", action)
 			end
 		end
 	end
@@ -841,8 +841,10 @@ function CrosshairUI:UpdateBadgeHiding(restore)
 
 		for i, b in ipairs(unitBadges) do
 			if not b.ui or b.ui.window_state ~= "open" then goto continue end
+			if b.preset == "AwareBadge" then goto continue end
+			
 			b.ui:SetVisible(show, "crosshair")
-			if not IsKindOf(b.ui, "CombatBadge") then goto continue end
+			if b.preset ~= "CombatBadge" then goto continue end
 			
 			-- Special logic for allies in the lof	
 			local ally = u ~= attacker and u.team and not u.team:IsEnemySide(attacker.team)
@@ -938,7 +940,7 @@ function SpawnCrosshair(self, action, closeOnAttack, meleeTargetPos, target, don
 		closeOnAttack = closeOnAttack,
 		step_pos = self.move_step_position,
 		body_parts = target:GetBodyParts(weapon1),
-		firingModes = firingModes,
+		firingModes = table.icopy(firingModes),
 		actionCamera = self.target_action_camera,
 		free_aim = self.context and self.context.free_aim
 	})
@@ -1139,14 +1141,7 @@ end
 function CrosshairUI:SetVisible(visible, ...)
 	XContextWindow.SetVisible(self, visible, ...)
 	if visible then
-		-- Delay auto-select to after camera has finished moving.
-		self:DeleteThread("when-ready")
-		self:CreateThread("when-ready", function()
-			while self:GetThread("actionCameraWait") do
-				Sleep(1)
-			end
-			self:MoveInCurrentGamepadList(0)
-		end)
+		self:MoveInCurrentGamepadList(0)
 	end
 end
 

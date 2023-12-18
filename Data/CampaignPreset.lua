@@ -115,7 +115,7 @@ PlaceObj('CampaignPreset', {
 		if interfaceType == "QuickStart" then
 			TutorialHintsState.LandingPageShown = true
 			Game.CampaignTime = Game.CampaignTimeStart + const.Satellite.MercArrivalTime / 2
-			hr.UILLuaTime = Game.CampaignTime
+			hr.UIL_CustomTime = Game.CampaignTime
 			return
 		end
 		
@@ -130,7 +130,7 @@ PlaceObj('CampaignPreset', {
 	Initialize = function (self)
 		RandomizeOfflineMercs()
 		InitDiamondBriefcaseSquads()
-		AllowRevealSectors({ "H2", "H3", "H4", "I1", "I2", "I3" })
+		AllowRevealSectors({ "H2", "H3", "H3_Underground", "H4", "I1", "I2", "I3" })
 	end,
 	Sectors = {
 		PlaceObj('SatelliteSector', {
@@ -162,6 +162,7 @@ PlaceObj('CampaignPreset', {
 			'BlockTravel', {
 				East = false,
 				North = true,
+				South = false,
 				West = false,
 			},
 			'image', "UI/SatelliteView/SectorImages/A10",
@@ -254,6 +255,9 @@ PlaceObj('CampaignPreset', {
 			'WeatherZone', "Barrens",
 			'Passability', "Blocked",
 			'Intel', false,
+			'Roads', set({
+	East = false,
+}),
 			'BlockTravel', set({
 	South = false,
 	West = false,
@@ -276,6 +280,7 @@ PlaceObj('CampaignPreset', {
 			'InitialSquads', {
 				"A16",
 			},
+			'Roads', set( "East", "South" ),
 			'BlockTravel', {
 				North = true,
 				South = false,
@@ -297,6 +302,7 @@ PlaceObj('CampaignPreset', {
 			'InitialSquads', {
 				"A17",
 			},
+			'Roads', set( "South", "West" ),
 			'BlockTravel', {
 				North = true,
 			},
@@ -317,6 +323,10 @@ PlaceObj('CampaignPreset', {
 			'InitialSquads', {
 				"A18",
 			},
+			'Roads', set({
+	South = false,
+	West = false,
+}),
 			'BlockTravel', {
 				North = true,
 				South = false,
@@ -338,6 +348,9 @@ PlaceObj('CampaignPreset', {
 			'InitialSquads', {
 				"A19",
 			},
+			'Roads', set({
+	South = false,
+}),
 			'BlockTravel', {
 				North = true,
 			},
@@ -497,6 +510,7 @@ PlaceObj('CampaignPreset', {
 			'InitialSquads', {
 				"A20_TheMajorsCamp",
 			},
+			'Roads', set( "South" ),
 			'BlockTravel', {
 				East = true,
 				North = true,
@@ -742,9 +756,12 @@ PlaceObj('CampaignPreset', {
 			'Map', "B-10U - Lost Basin",
 			'MapTier', 40,
 			'Label1', "Dungeon",
+			'RunLoyaltyLogic', false,
 			'GroundSector', "B10",
 			'display_name', T(973030525390, --[[CampaignPreset HotDiamonds display_name Sector name for B10_Underground]] "Lost Basin"),
+			'discovered', false,
 			'Intel', false,
+			'BlockTravel', set( "East" ),
 			'image', "UI/SatelliteView/SectorImages/B10U",
 			'MusicCombat', "Battle_Normal",
 			'MusicConflict', "Underground_Conflict",
@@ -772,11 +789,31 @@ PlaceObj('CampaignPreset', {
 			'MusicExploration', "Cursed_Exploration",
 		}),
 		PlaceObj('SatelliteSector', {
+			'Id', "B11_Underground",
+			'CanGoUp', false,
+			'Map', "B-11U - U-Bahn Station",
+			'MapTier', 30,
+			'RunLoyaltyLogic', false,
+			'GroundSector', "B11",
+			'display_name', T(828544218367, --[[CampaignPreset HotDiamonds display_name Sector name for B11_Underground]] "U-Bahn Station A"),
+			'discovered', false,
+			'InitialSquads', {
+				"SmallStations",
+			},
+			'Intel', false,
+			'BlockTravel', set( "West" ),
+			'image', "UI/SatelliteView/SectorImages/B11U.png",
+			'MusicCombat', "Battle_Normal",
+			'MusicConflict', "Underground_Conflict",
+			'MusicExploration', "Underground_Exploration",
+			'UndergroundImage', "UI/SatelliteView/sector_underground_2",
+		}),
+		PlaceObj('SatelliteSector', {
 			'Id', "B12",
+			'HideUnderground', true,
 			'Map', "B-12 - Landsbach Mine",
 			'MapTier', 40,
 			'Label1', "Mine",
-			'HideUnderground', true,
 			'display_name', T(246964272688, --[[CampaignPreset HotDiamonds display_name Sector name for B12]] "Drachenberg Mine"),
 			'Side', "neutral",
 			'StickySide', true,
@@ -825,6 +862,26 @@ PlaceObj('CampaignPreset', {
 			'MusicCombat', "Battle_Tough",
 			'MusicConflict', "Town_Conflict",
 			'MusicExploration', "Town_Exploration",
+		}),
+		PlaceObj('SatelliteSector', {
+			'Id', "B12_Underground",
+			'Map', "B-12U - Diesel Klinik",
+			'MapTier', 30,
+			'RunLoyaltyLogic', false,
+			'GroundSector', "B12",
+			'display_name', T(765521273692, --[[CampaignPreset HotDiamonds display_name Sector name for B12_Underground]] "Diesel Klinik"),
+			'discovered', false,
+			'InitialSquads', {
+				"Klinik",
+			},
+			'Intel', false,
+			'InterestingSector', true,
+			'image', "UI/SatelliteView/SectorImages/B12U.png",
+			'MusicCombat', "Battle_Tough",
+			'MusicConflict', "Underground_Conflict",
+			'MusicExploration', "Underground_Exploration",
+			'combatTaskAmount', 2,
+			'UndergroundImage', "UI/SatelliteView/sector_underground_2",
 		}),
 		PlaceObj('SatelliteSector', {
 			'Id', "B13",
@@ -884,6 +941,9 @@ PlaceObj('CampaignPreset', {
 			'TerrainType', "Highlands",
 			'Passability', "Blocked",
 			'Intel', false,
+			'Roads', set({
+	East = false,
+}),
 			'BlockTravel', set( "East" ),
 			'MusicCombat', "Battle_Normal",
 			'MusicConflict', "Cursed_Conflict",
@@ -898,7 +958,11 @@ PlaceObj('CampaignPreset', {
 			'TerrainType', "Highlands",
 			'WeatherZone', "Barrens",
 			'ForceConflict', true,
-			'Roads', set( "South" ),
+			'Roads', set({
+	East = false,
+	North = true,
+	South = true,
+}),
 			'BlockTravel', {
 				East = true,
 				West = true,
@@ -920,6 +984,11 @@ PlaceObj('CampaignPreset', {
 			'InitialSquads', {
 				"B17",
 			},
+			'Roads', set({
+	East = true,
+	North = true,
+	West = false,
+}),
 			'BlockTravel', {
 				East = false,
 				South = false,
@@ -942,6 +1011,7 @@ PlaceObj('CampaignPreset', {
 			'InitialSquads', {
 				"B18",
 			},
+			'Roads', set( "East", "West" ),
 			'BlockTravel', {
 				South = false,
 			},
@@ -961,6 +1031,7 @@ PlaceObj('CampaignPreset', {
 			'InitialSquads', {
 				"B19",
 			},
+			'Roads', set( "East", "West" ),
 			'BlockTravel', {
 				South = false,
 				West = false,
@@ -990,7 +1061,7 @@ PlaceObj('CampaignPreset', {
 			'Port', true,
 			'CanBeUsedForArrival', true,
 			'BobbyRayDeliveryCostMultiplier', 150,
-			'SectorImagePreview', "UI/PDA/ss_b2.png",
+			'SectorImagePreview', "UI/PDA/ss_b2",
 			'MusicCombat', "Battle_Normal",
 			'MusicConflict', "Savanna_Conflict",
 			'MusicExploration', "Savanna_Exploration",
@@ -1007,6 +1078,7 @@ PlaceObj('CampaignPreset', {
 				"LegionDefenders_Balanced_Hard",
 			},
 			'InterestingSector', true,
+			'Roads', set( "North", "West" ),
 			'BlockTravel', {
 				East = true,
 				South = true,
@@ -1138,6 +1210,7 @@ PlaceObj('CampaignPreset', {
 				West = true,
 			},
 			'BlockTravel', set({
+	East = false,
 	West = false,
 }),
 			'image', "UI/SatelliteView/SectorImages/B09",
@@ -1173,6 +1246,9 @@ PlaceObj('CampaignPreset', {
 				South = true,
 				West = true,
 			},
+			'BlockTravel', set({
+	North = false,
+}),
 			'image', "UI/SatelliteView/SectorImages/C10",
 			'Events', {
 				PlaceObj('SE_OnEnterMapVisual', {
@@ -1325,6 +1401,7 @@ PlaceObj('CampaignPreset', {
 			'Passability', "Blocked",
 			'Intel', false,
 			'Roads', set({
+	North = false,
 	South = false,
 	West = false,
 }),
@@ -1346,6 +1423,7 @@ PlaceObj('CampaignPreset', {
 			'Passability', "Blocked",
 			'Intel', false,
 			'Roads', set({
+	North = false,
 	South = false,
 }),
 			'BlockTravel', set({
@@ -1367,6 +1445,7 @@ PlaceObj('CampaignPreset', {
 			'Passability', "Blocked",
 			'Intel', false,
 			'Roads', set({
+	North = false,
 	South = false,
 }),
 			'BlockTravel', set({
@@ -1408,7 +1487,10 @@ PlaceObj('CampaignPreset', {
 				"LegionDefenders_Mobile_Hard",
 			},
 			'InterestingSector', true,
-			'Roads', set( "South" ),
+			'Roads', set({
+	North = false,
+	South = true,
+}),
 			'BlockTravel', {
 				East = true,
 				North = true,
@@ -1425,8 +1507,10 @@ PlaceObj('CampaignPreset', {
 			'Map', "C-20U - Freeloaders Cavern",
 			'MapTier', 40,
 			'Label1', "Dungeon",
+			'RunLoyaltyLogic', false,
 			'GroundSector', "C20",
 			'display_name', T(592602310517, --[[CampaignPreset HotDiamonds display_name Sector name for C20_Underground]] "Freeloader's Cavern"),
+			'discovered', false,
 			'ForceConflict', true,
 			'Intel', false,
 			'image', "UI/SatelliteView/SectorImages/C20U",
@@ -1581,6 +1665,7 @@ PlaceObj('CampaignPreset', {
 			'display_name', T(925017807752, --[[CampaignPreset HotDiamonds display_name Sector name for C7_Underground]] "Fosse Noire Mine"),
 			'StickySide', true,
 			'City', "Pantagruel",
+			'discovered', false,
 			'Mine', true,
 			'DailyIncome', 10000,
 			'ForceConflict', true,
@@ -1824,6 +1909,7 @@ PlaceObj('CampaignPreset', {
 			'Passability', "Land and Water",
 			'City', "IlleMorat",
 			'ShowCity', true,
+			'Hospital', true,
 			'Militia', true,
 			'ForceConflict', true,
 			'InitialSquads', {
@@ -2871,9 +2957,12 @@ PlaceObj('CampaignPreset', {
 			'Map', "F-11U - The Drop",
 			'MapTier', 20,
 			'Label1', "Dungeon",
+			'RunLoyaltyLogic', false,
 			'GroundSector', "F11",
 			'display_name', T(600611190579, --[[CampaignPreset HotDiamonds display_name Sector name for F11_Underground]] "The Drop"),
+			'discovered', false,
 			'Intel', false,
+			'InterestingSector', true,
 			'image', "UI/SatelliteView/SectorImages/F11U",
 			'MusicCombat', "Battle_Normal",
 			'MusicConflict', "Underground_Conflict",
@@ -2891,6 +2980,25 @@ PlaceObj('CampaignPreset', {
 			'image', "UI/SatelliteView/SectorImages/F12",
 			'MusicCombat', "Battle_Normal",
 			'MusicConflict', "Jungle_Conflict",
+		}),
+		PlaceObj('SatelliteSector', {
+			'Id', "F12_Underground",
+			'CanGoUp', false,
+			'Map', "F-12U - U-Bahn Station",
+			'MapTier', 30,
+			'RunLoyaltyLogic', false,
+			'GroundSector', "F12",
+			'display_name', T(785033708635, --[[CampaignPreset HotDiamonds display_name Sector name for F12_Underground]] "U-Bahn Station B"),
+			'discovered', false,
+			'InitialSquads', {
+				"BigStation",
+			},
+			'Intel', false,
+			'image', "UI/SatelliteView/SectorImages/F12U.png",
+			'MusicCombat', "Battle_Normal",
+			'MusicConflict', "Underground_Conflict",
+			'MusicExploration', "Underground_Exploration",
+			'UndergroundImage', "UI/SatelliteView/sector_underground_2",
 		}),
 		PlaceObj('SatelliteSector', {
 			'Id', "F13",
@@ -3205,7 +3313,7 @@ PlaceObj('CampaignPreset', {
 			'PortLocked', true,
 			'CanBeUsedForArrival', true,
 			'BobbyRayDeliveryCostMultiplier', 130,
-			'SectorImagePreview', "UI/PDA/ss_f5.png",
+			'SectorImagePreview', "UI/PDA/ss_f5",
 			'PricePerTile', 500,
 			'MusicCombat', "Battle_Normal",
 			'MusicConflict', "Savanna_Conflict",
@@ -3436,6 +3544,143 @@ PlaceObj('CampaignPreset', {
 			'MusicConflict', "Jungle_Conflict",
 		}),
 		PlaceObj('SatelliteSector', {
+			'Id', "G12_Underground",
+			'CanGoUp', false,
+			'Map', "G-12U - Waffenlabor",
+			'MapTier', 30,
+			'RunLoyaltyLogic', false,
+			'GroundSector', "G12",
+			'display_name', T(811240053992, --[[CampaignPreset HotDiamonds display_name Sector name for G12_Underground]] "<UndergroundLabName('G12U')>"),
+			'never_autoresolve', true,
+			'discovered', false,
+			'ForceConflict', true,
+			'Intel', false,
+			'InterestingSector', true,
+			'BlockTravel', set( "South" ),
+			'image', "UI/SatelliteView/SectorImages/Sector_Lab.png",
+			'Events', {
+				PlaceObj('SE_PreChangeMap', {
+					'Conditions', {
+						PlaceObj('QuestIsVariableText', {
+							Prop = "LabForG12U",
+							QuestId = "RandomLab",
+						}),
+					},
+					'Effects', {
+						PlaceObj('RandomEffectWithCondition', {
+							Effects = {
+								PlaceObj('ConditionalEffect', {
+									'Conditions', {
+										PlaceObj('QuestIsVariableBool', {
+											QuestId = "RandomLab",
+											Vars = set( "WaffenFree" ),
+											__eval = function ()
+												local quest = gv_Quests['RandomLab'] or QuestGetState('RandomLab')
+												return quest.WaffenFree
+											end,
+										}),
+									},
+									'Effects', {
+										PlaceObj('QuestSetVariableBool', {
+											Prop = "WaffenFree",
+											QuestId = "RandomLab",
+											Set = false,
+										}),
+										PlaceObj('SectorSetMap', {
+											MapFile = "G-12U - Waffenlabor",
+											image = "UI/SatelliteView/SectorImages/G12U",
+											loading_screen = "UI/LoadingScreens/HotDiamonds/G12_Underground.png",
+											sector_id = "G12_Underground",
+										}),
+										PlaceObj('QuestSetVariableText', {
+											Prop = "LabForG12U",
+											QuestId = "RandomLab",
+											Text = "Waffen",
+										}),
+										PlaceObj('SectorSpawnSquad', {
+											sector_id = "G12_Underground",
+											squad_def_id = "Waffenlabor",
+										}),
+									},
+								}),
+								PlaceObj('ConditionalEffect', {
+									'Conditions', {
+										PlaceObj('QuestIsVariableBool', {
+											QuestId = "RandomLab",
+											Vars = set( "BioFree" ),
+											__eval = function ()
+												local quest = gv_Quests['RandomLab'] or QuestGetState('RandomLab')
+												return quest.BioFree
+											end,
+										}),
+									},
+									'Effects', {
+										PlaceObj('QuestSetVariableBool', {
+											Prop = "BioFree",
+											QuestId = "RandomLab",
+											Set = false,
+										}),
+										PlaceObj('SectorSetMap', {
+											MapFile = "J-14U - Biolabor",
+											image = "UI/SatelliteView/SectorImages/J14U",
+											loading_screen = "UI/LoadingScreens/HotDiamonds/J14_Underground.png",
+											sector_id = "G12_Underground",
+										}),
+										PlaceObj('QuestSetVariableText', {
+											Prop = "LabForG12U",
+											QuestId = "RandomLab",
+											Text = "Bio",
+										}),
+										PlaceObj('SectorSpawnSquad', {
+											sector_id = "G12_Underground",
+											squad_def_id = "BioLabor",
+										}),
+									},
+								}),
+								PlaceObj('ConditionalEffect', {
+									'Conditions', {
+										PlaceObj('QuestIsVariableBool', {
+											QuestId = "RandomLab",
+											Vars = set({
+	BioFree = false,
+	CryoFree = true,
+	WaffenFree = false,
+}),
+											__eval = function ()
+												local quest = gv_Quests['RandomLab'] or QuestGetState('RandomLab')
+												return not quest.BioFree and quest.CryoFree and not quest.WaffenFree
+											end,
+										}),
+									},
+									'Effects', {
+										PlaceObj('SectorSetMap', {
+											MapFile = "K-11U - Cryolabor",
+											image = "UI/SatelliteView/SectorImages/K11U",
+											loading_screen = "UI/LoadingScreens/HotDiamonds/K11_Underground.png",
+											sector_id = "G12_Underground",
+										}),
+										PlaceObj('QuestSetVariableText', {
+											Prop = "LabForG12U",
+											QuestId = "RandomLab",
+											Text = "Cryo",
+										}),
+										PlaceObj('SectorSpawnSquad', {
+											sector_id = "G12_Underground",
+											squad_def_id = "Cryolabor",
+										}),
+									},
+								}),
+							},
+						}),
+					},
+				}),
+			},
+			'MusicCombat', "Battle_Normal",
+			'MusicConflict', "Underground_Conflict",
+			'MusicExploration', "Underground_Exploration",
+			'UndergroundImage', "UI/SatelliteView/sector_underground_2",
+		}),
+		PlaceObj('SatelliteSector', {
 			'Id', "G13",
 			'Map', "G-13 - Jungle",
 			'MapTier', 20,
@@ -3467,6 +3712,25 @@ PlaceObj('CampaignPreset', {
 			'MusicCombat', "Battle_Normal",
 			'MusicConflict', "Swamp_Conflict",
 			'MusicExploration', "Swamp_Exploration",
+		}),
+		PlaceObj('SatelliteSector', {
+			'Id', "G14_Underground",
+			'CanGoUp', false,
+			'Map', "G-14U - U-Bahn Station",
+			'MapTier', 30,
+			'RunLoyaltyLogic', false,
+			'GroundSector', "G14",
+			'display_name', T(648391059464, --[[CampaignPreset HotDiamonds display_name Sector name for G14_Underground]] "U-Bahn Station C"),
+			'discovered', false,
+			'InitialSquads', {
+				"SmallStations",
+			},
+			'Intel', false,
+			'image', "UI/SatelliteView/SectorImages/G14U.png",
+			'MusicCombat', "Battle_Normal",
+			'MusicConflict', "Underground_Conflict",
+			'MusicExploration', "Underground_Exploration",
+			'UndergroundImage', "UI/SatelliteView/sector_underground_2",
 		}),
 		PlaceObj('SatelliteSector', {
 			'Id', "G15",
@@ -3716,8 +3980,10 @@ PlaceObj('CampaignPreset', {
 			'Id', "G8_Underground",
 			'Map', "G-8U - The Cellar",
 			'MapTier', 20,
+			'RunLoyaltyLogic', false,
 			'GroundSector', "G8",
 			'display_name', T(330382796368, --[[CampaignPreset HotDiamonds display_name Sector name for G8_Underground]] "Mansion Cellar"),
+			'discovered', false,
 			'Intel', false,
 			'image', "UI/SatelliteView/SectorImages/G08U",
 			'MusicCombat', "Battle_Normal",
@@ -3789,6 +4055,9 @@ PlaceObj('CampaignPreset', {
 				South = false,
 				West = true,
 			},
+			'BlockTravel', set({
+	East = false,
+}),
 			'BlockTravelRiver', set(),
 			'image', "UI/SatelliteView/SectorImages/H11",
 			'MusicCombat', "Battle_Normal",
@@ -3830,8 +4099,11 @@ PlaceObj('CampaignPreset', {
 			'MapTier', 20,
 			'Label1', "Boss",
 			'Label2', "Dungeon",
+			'RunLoyaltyLogic', false,
 			'GroundSector', "H12",
 			'display_name', T(679563722650, --[[CampaignPreset HotDiamonds display_name Sector name for H12_Underground]] "Sanatorium Cellar"),
+			'discovered', false,
+			'BlockTravel', set( "North" ),
 			'image', "UI/SatelliteView/SectorImages/H12U",
 			'MusicCombat', "Battle_Normal",
 			'MusicConflict', "Underground_Conflict",
@@ -3850,6 +4122,9 @@ PlaceObj('CampaignPreset', {
 	North = false,
 	South = true,
 	West = true,
+}),
+			'BlockTravel', set({
+	West = false,
 }),
 			'image', "UI/SatelliteView/SectorImages/H13",
 			'MusicCombat', "Battle_Normal",
@@ -4131,7 +4406,7 @@ PlaceObj('CampaignPreset', {
 			'Port', true,
 			'PortLocked', true,
 			'CanBeUsedForArrival', true,
-			'SectorImagePreview', "UI/PDA/ss_h2.png",
+			'SectorImagePreview', "UI/PDA/ss_h2",
 			'PricePerTile', 10,
 			'MusicCombat', "Battle_Normal",
 			'MusicExploration', "Village_Exploration",
@@ -4198,8 +4473,10 @@ PlaceObj('CampaignPreset', {
 			'Label1', "Ernie",
 			'GroundSector', "H3",
 			'display_name', T(549697085851, --[[CampaignPreset HotDiamonds display_name Sector name for H3_Underground]] "Bunker FB45-68"),
+			'discovered', false,
 			'ForceConflict', true,
 			'Intel', false,
+			'BlockTravel', set( "East" ),
 			'image', "UI/SatelliteView/SectorImages/H03U",
 			'MusicCombat', "Battle_Normal",
 			'MusicConflict', "Underground_Conflict",
@@ -4208,11 +4485,11 @@ PlaceObj('CampaignPreset', {
 		}),
 		PlaceObj('SatelliteSector', {
 			'Id', "H4",
+			'HideUnderground', true,
 			'Map', "H-4 - The Fortress",
 			'MapTier', 40,
 			'Label1', "Ernie",
 			'Label2', "Outpost",
-			'HideUnderground', true,
 			'display_name', T(636794988947, --[[CampaignPreset HotDiamonds display_name Sector name for H4]] "Fort L'Eau Bleu"),
 			'TerrainType', "Jungle",
 			'WeatherZone', "Erny",
@@ -4349,6 +4626,7 @@ PlaceObj('CampaignPreset', {
 			'Label2', "Dungeon",
 			'GroundSector', "H4",
 			'display_name', T(802837271248, --[[CampaignPreset HotDiamonds display_name Sector name for H4_Underground]] "Chien Military Complex"),
+			'discovered', false,
 			'ForceConflict', true,
 			'Intel', false,
 			'image', "UI/SatelliteView/SectorImages/H04U",
@@ -4433,6 +4711,9 @@ PlaceObj('CampaignPreset', {
 	West = false,
 }),
 			'image', "UI/SatelliteView/SectorImages/H07",
+			'CanBeUsedForArrival', true,
+			'BobbyRayDeliveryCostMultiplier', 130,
+			'SectorImagePreview', "UI/PDA/ss_h7",
 			'MusicCombat', "Battle_Normal",
 			'MusicConflict', "Savanna_Conflict",
 			'MusicExploration', "Savanna_Exploration",
@@ -4576,6 +4857,25 @@ PlaceObj('CampaignPreset', {
 			'MusicConflict', "Jungle_Conflict",
 		}),
 		PlaceObj('SatelliteSector', {
+			'Id', "I11_Underground",
+			'Map', "I-11U - U-Bahn Station",
+			'MapTier', 30,
+			'RunLoyaltyLogic', false,
+			'GroundSector', "I11",
+			'display_name', T(247989068796, --[[CampaignPreset HotDiamonds display_name Sector name for I11_Underground]] "Secret Tunnel"),
+			'discovered', false,
+			'InitialSquads', {
+				"TunnelSentry",
+			},
+			'Intel', false,
+			'InterestingSector', true,
+			'image', "UI/SatelliteView/SectorImages/I11U.png",
+			'MusicCombat', "Battle_Normal",
+			'MusicConflict', "Underground_Conflict",
+			'MusicExploration', "Underground_Exploration",
+			'UndergroundImage', "UI/SatelliteView/sector_underground_2",
+		}),
+		PlaceObj('SatelliteSector', {
 			'Id', "I12",
 			'Map', "I-12 - Jungle",
 			'MapTier', 20,
@@ -4588,6 +4888,9 @@ PlaceObj('CampaignPreset', {
 	North = false,
 	South = true,
 	West = false,
+}),
+			'BlockTravel', set({
+	North = false,
 }),
 			'image', "UI/SatelliteView/SectorImages/I12",
 			'Events', {
@@ -4616,6 +4919,16 @@ PlaceObj('CampaignPreset', {
 						PlaceObj('GroupIsDead', {
 							Group = "EscapedPatients",
 							Negate = true,
+						}),
+						PlaceObj('QuestIsVariableBool', {
+							QuestId = "U-Bahn",
+							Vars = set({
+	OutcomeSanatorium = false,
+}),
+							__eval = function ()
+								local quest = gv_Quests['U-Bahn'] or QuestGetState('U-Bahn')
+								return not quest.OutcomeSanatorium
+							end,
 						}),
 					},
 					'SequentialEffects', true,
@@ -4653,6 +4966,16 @@ PlaceObj('CampaignPreset', {
 							Sectors = {
 								"I12",
 							},
+						}),
+						PlaceObj('QuestIsVariableBool', {
+							QuestId = "U-Bahn",
+							Vars = set({
+	OutcomeSanatorium = false,
+}),
+							__eval = function ()
+								local quest = gv_Quests['U-Bahn'] or QuestGetState('U-Bahn')
+								return not quest.OutcomeSanatorium
+							end,
 						}),
 					},
 					'SequentialEffects', true,
@@ -5166,6 +5489,142 @@ PlaceObj('CampaignPreset', {
 			'MusicExploration', "Swamp_Exploration",
 		}),
 		PlaceObj('SatelliteSector', {
+			'Id', "J14_Underground",
+			'CanGoUp', false,
+			'Map', "J-14U - Biolabor",
+			'MapTier', 30,
+			'RunLoyaltyLogic', false,
+			'GroundSector', "J14",
+			'display_name', T(758823159559, --[[CampaignPreset HotDiamonds display_name Sector name for J14_Underground]] "<UndergroundLabName('J14U')>"),
+			'never_autoresolve', true,
+			'discovered', false,
+			'ForceConflict', true,
+			'Intel', false,
+			'InterestingSector', true,
+			'image', "UI/SatelliteView/SectorImages/Sector_Lab.png",
+			'Events', {
+				PlaceObj('SE_PreChangeMap', {
+					'Conditions', {
+						PlaceObj('QuestIsVariableText', {
+							Prop = "LabForJ14U",
+							QuestId = "RandomLab",
+						}),
+					},
+					'Effects', {
+						PlaceObj('RandomEffectWithCondition', {
+							Effects = {
+								PlaceObj('ConditionalEffect', {
+									'Conditions', {
+										PlaceObj('QuestIsVariableBool', {
+											QuestId = "RandomLab",
+											Vars = set( "WaffenFree" ),
+											__eval = function ()
+												local quest = gv_Quests['RandomLab'] or QuestGetState('RandomLab')
+												return quest.WaffenFree
+											end,
+										}),
+									},
+									'Effects', {
+										PlaceObj('QuestSetVariableBool', {
+											Prop = "WaffenFree",
+											QuestId = "RandomLab",
+											Set = false,
+										}),
+										PlaceObj('SectorSetMap', {
+											MapFile = "G-12U - Waffenlabor",
+											image = "UI/SatelliteView/SectorImages/G12U",
+											loading_screen = "UI/LoadingScreens/HotDiamonds/G12_Underground",
+											sector_id = "J14_Underground",
+										}),
+										PlaceObj('QuestSetVariableText', {
+											Prop = "LabForJ14U",
+											QuestId = "RandomLab",
+											Text = "Waffen",
+										}),
+										PlaceObj('SectorSpawnSquad', {
+											sector_id = "J14_Underground",
+											squad_def_id = "Waffenlabor",
+										}),
+									},
+								}),
+								PlaceObj('ConditionalEffect', {
+									'Conditions', {
+										PlaceObj('QuestIsVariableBool', {
+											QuestId = "RandomLab",
+											Vars = set( "BioFree" ),
+											__eval = function ()
+												local quest = gv_Quests['RandomLab'] or QuestGetState('RandomLab')
+												return quest.BioFree
+											end,
+										}),
+									},
+									'Effects', {
+										PlaceObj('QuestSetVariableBool', {
+											Prop = "BioFree",
+											QuestId = "RandomLab",
+											Set = false,
+										}),
+										PlaceObj('SectorSetMap', {
+											MapFile = "J-14U - Biolabor",
+											image = "UI/SatelliteView/SectorImages/J14U",
+											loading_screen = "UI/LoadingScreens/HotDiamonds/J14_Underground",
+											sector_id = "J14_Underground",
+										}),
+										PlaceObj('QuestSetVariableText', {
+											Prop = "LabForJ14U",
+											QuestId = "RandomLab",
+											Text = "Bio",
+										}),
+										PlaceObj('SectorSpawnSquad', {
+											sector_id = "J14_Underground",
+											squad_def_id = "BioLabor",
+										}),
+									},
+								}),
+								PlaceObj('ConditionalEffect', {
+									'Conditions', {
+										PlaceObj('QuestIsVariableBool', {
+											QuestId = "RandomLab",
+											Vars = set({
+	BioFree = false,
+	CryoFree = true,
+	WaffenFree = false,
+}),
+											__eval = function ()
+												local quest = gv_Quests['RandomLab'] or QuestGetState('RandomLab')
+												return not quest.BioFree and quest.CryoFree and not quest.WaffenFree
+											end,
+										}),
+									},
+									'Effects', {
+										PlaceObj('SectorSetMap', {
+											MapFile = "K-11U - Cryolabor",
+											image = "UI/SatelliteView/SectorImages/K11U",
+											loading_screen = "UI/LoadingScreens/HotDiamonds/K11_Underground",
+											sector_id = "J14_Underground",
+										}),
+										PlaceObj('QuestSetVariableText', {
+											Prop = "LabForJ14U",
+											QuestId = "RandomLab",
+											Text = "Cryo",
+										}),
+										PlaceObj('SectorSpawnSquad', {
+											sector_id = "J14_Underground",
+											squad_def_id = "Cryolabor",
+										}),
+									},
+								}),
+							},
+						}),
+					},
+				}),
+			},
+			'MusicCombat', "Battle_Normal",
+			'MusicConflict', "Underground_Conflict",
+			'MusicExploration', "Underground_Exploration",
+			'UndergroundImage', "UI/SatelliteView/sector_underground_2",
+		}),
+		PlaceObj('SatelliteSector', {
 			'Id', "J15",
 			'Label1', "Blocked",
 			'display_name', T(214270492243, --[[CampaignPreset HotDiamonds display_name Sector name for J15]] "Swamp"),
@@ -5369,6 +5828,9 @@ PlaceObj('CampaignPreset', {
 }),
 			'image', "UI/SatelliteView/SectorImages/J08",
 			'Port', true,
+			'CanBeUsedForArrival', true,
+			'BobbyRayDeliveryCostMultiplier', 150,
+			'SectorImagePreview', "UI/PDA/ss_j8",
 			'MusicCombat', "Battle_Normal",
 			'MusicConflict', "Savanna_Conflict",
 			'MusicExploration', "Savanna_Exploration",
@@ -5463,6 +5925,146 @@ PlaceObj('CampaignPreset', {
 			'MusicConflict', "Jungle_Conflict",
 		}),
 		PlaceObj('SatelliteSector', {
+			'Id', "K11_Underground",
+			'CanGoUp', false,
+			'Map', "K-11U - Cryolabor",
+			'MapTier', 30,
+			'RunLoyaltyLogic', false,
+			'GroundSector', "K11",
+			'display_name', T(168675405279, --[[CampaignPreset HotDiamonds display_name Sector name for K11_Underground]] "<UndergroundLabName('K11U')>"),
+			'never_autoresolve', true,
+			'discovered', false,
+			'ForceConflict', true,
+			'Intel', false,
+			'InterestingSector', true,
+			'image', "UI/SatelliteView/SectorImages/Sector_Lab.png",
+			'Events', {
+				PlaceObj('SE_PreChangeMap', {
+					'Conditions', {
+						PlaceObj('QuestIsVariableText', {
+							Prop = "LabForK11U",
+							QuestId = "RandomLab",
+						}),
+					},
+					'Effects', {
+						PlaceObj('QuestSetVariableText', {
+							Prop = "LabForK11U",
+							QuestId = "RandomLab",
+						}),
+						PlaceObj('RandomEffectWithCondition', {
+							Effects = {
+								PlaceObj('ConditionalEffect', {
+									'Conditions', {
+										PlaceObj('QuestIsVariableBool', {
+											QuestId = "RandomLab",
+											Vars = set( "WaffenFree" ),
+											__eval = function ()
+												local quest = gv_Quests['RandomLab'] or QuestGetState('RandomLab')
+												return quest.WaffenFree
+											end,
+										}),
+									},
+									'Effects', {
+										PlaceObj('QuestSetVariableBool', {
+											Prop = "WaffenFree",
+											QuestId = "RandomLab",
+											Set = false,
+										}),
+										PlaceObj('SectorSetMap', {
+											MapFile = "G-12U - Waffenlabor",
+											image = "UI/SatelliteView/SectorImages/G12U",
+											loading_screen = "UI/LoadingScreens/HotDiamonds/G12_Underground",
+											sector_id = "K11_Underground",
+										}),
+										PlaceObj('QuestSetVariableText', {
+											Prop = "LabForK11U",
+											QuestId = "RandomLab",
+											Text = "Waffen",
+										}),
+										PlaceObj('SectorSpawnSquad', {
+											sector_id = "K11_Underground",
+											squad_def_id = "Waffenlabor",
+										}),
+									},
+								}),
+								PlaceObj('ConditionalEffect', {
+									'Conditions', {
+										PlaceObj('QuestIsVariableBool', {
+											QuestId = "RandomLab",
+											Vars = set( "BioFree" ),
+											__eval = function ()
+												local quest = gv_Quests['RandomLab'] or QuestGetState('RandomLab')
+												return quest.BioFree
+											end,
+										}),
+									},
+									'Effects', {
+										PlaceObj('QuestSetVariableBool', {
+											Prop = "BioFree",
+											QuestId = "RandomLab",
+											Set = false,
+										}),
+										PlaceObj('SectorSetMap', {
+											MapFile = "J-14U - Biolabor",
+											image = "UI/SatelliteView/SectorImages/J14U",
+											loading_screen = "UI/LoadingScreens/HotDiamonds/J14_Underground",
+											sector_id = "K11_Underground",
+										}),
+										PlaceObj('QuestSetVariableText', {
+											Prop = "LabForK11U",
+											QuestId = "RandomLab",
+											Text = "Bio",
+										}),
+										PlaceObj('SectorSpawnSquad', {
+											sector_id = "K11_Underground",
+											squad_def_id = "BioLabor",
+										}),
+									},
+								}),
+								PlaceObj('ConditionalEffect', {
+									'Conditions', {
+										PlaceObj('QuestIsVariableBool', {
+											QuestId = "RandomLab",
+											Vars = set({
+	BioFree = false,
+	CryoFree = true,
+	WaffenFree = false,
+}),
+											__eval = function ()
+												local quest = gv_Quests['RandomLab'] or QuestGetState('RandomLab')
+												return not quest.BioFree and quest.CryoFree and not quest.WaffenFree
+											end,
+										}),
+									},
+									'Effects', {
+										PlaceObj('SectorSetMap', {
+											MapFile = "K-11U - Cryolabor",
+											image = "UI/SatelliteView/SectorImages/K11U",
+											loading_screen = "UI/LoadingScreens/HotDiamonds/K11_Underground",
+											sector_id = "K11_Underground",
+										}),
+										PlaceObj('QuestSetVariableText', {
+											Prop = "LabForK11U",
+											QuestId = "RandomLab",
+											Text = "Cryo",
+										}),
+										PlaceObj('SectorSpawnSquad', {
+											sector_id = "K11_Underground",
+											squad_def_id = "Cryolabor",
+										}),
+									},
+								}),
+							},
+						}),
+					},
+				}),
+			},
+			'MusicCombat', "Battle_Normal",
+			'MusicConflict', "Underground_Conflict",
+			'MusicExploration', "Underground_Exploration",
+			'UndergroundImage', "UI/SatelliteView/sector_underground_2",
+		}),
+		PlaceObj('SatelliteSector', {
 			'Id', "K12",
 			'Map', "K-12 - Jungle Road",
 			'MapTier', 20,
@@ -5547,6 +6149,25 @@ PlaceObj('CampaignPreset', {
 			'MusicConflict', "Jungle_Conflict",
 		}),
 		PlaceObj('SatelliteSector', {
+			'Id', "K15_Underground",
+			'CanGoUp', false,
+			'Map', "K-15U - U-Bahn Station",
+			'MapTier', 30,
+			'RunLoyaltyLogic', false,
+			'GroundSector', "K15",
+			'display_name', T(733648875060, --[[CampaignPreset HotDiamonds display_name Sector name for K15_Underground]] "U-Bahn Station D"),
+			'discovered', false,
+			'InitialSquads', {
+				"SmallStations",
+			},
+			'Intel', false,
+			'image', "UI/SatelliteView/SectorImages/K-15U.png",
+			'MusicCombat', "Battle_Normal",
+			'MusicConflict', "Underground_Conflict",
+			'MusicExploration', "Underground_Exploration",
+			'UndergroundImage', "UI/SatelliteView/sector_underground_2",
+		}),
+		PlaceObj('SatelliteSector', {
 			'Id', "K16",
 			'Map', "K-16 - Fort Brigand",
 			'MapTier', 30,
@@ -5577,9 +6198,12 @@ PlaceObj('CampaignPreset', {
 			'Id', "K16_Underground",
 			'Map', "K-16U - Secret Entrance",
 			'MapTier', 30,
+			'RunLoyaltyLogic', false,
 			'GroundSector', "K16",
 			'display_name', T(465909367256, --[[CampaignPreset HotDiamonds display_name Sector name for K16_Underground]] "Underground Tunnel"),
+			'discovered', false,
 			'Intel', false,
+			'InterestingSector', true,
 			'image', "UI/SatelliteView/SectorImages/K16U",
 			'MusicCombat', "Battle_Normal",
 			'MusicConflict', "Underground_Conflict",
@@ -5796,7 +6420,7 @@ PlaceObj('CampaignPreset', {
 			'Port', true,
 			'CanBeUsedForArrival', true,
 			'BobbyRayDeliveryCostMultiplier', 200,
-			'SectorImagePreview', "UI/PDA/ss_k9.png",
+			'SectorImagePreview', "UI/PDA/ss_k9",
 			'DBDestinationSector', true,
 			'MusicCombat', "Battle_Normal",
 			'MusicConflict', "Town_Conflict",
@@ -6176,6 +6800,7 @@ PlaceObj('CampaignPreset', {
 			'Label1', "Dungeon",
 			'GroundSector', "L6",
 			'display_name', T(735717978531, --[[CampaignPreset HotDiamonds display_name Sector name for L6_Underground]] "The Good Place (Underground)"),
+			'discovered', false,
 			'Intel', false,
 			'image', "UI/SatelliteView/SectorImages/L06U",
 			'MusicCombat', "Battle_Tough",
@@ -6214,6 +6839,7 @@ PlaceObj('CampaignPreset', {
 			'Passability', "Land and Water",
 			'City', "PortDiancie",
 			'ShowCity', true,
+			'Hospital', true,
 			'Militia', true,
 			'ForceConflict', true,
 			'InitialSquads', {
@@ -6432,6 +7058,26 @@ PlaceObj('CampaignPreset', {
 			'combatTaskGenerate', "afterFirstConflict",
 		}),
 	},
+	decorations = {
+		PlaceObj('SatelliteViewDecorationDef', {
+			'image', "UI/SatelliteView/underground_passage",
+			'relativeSector', "H16",
+			'offset', point(-26, 0),
+			'sat_layer', "underground",
+		}),
+		PlaceObj('SatelliteViewDecorationDef', {
+			'image', "UI/SatelliteView/underground_entrance",
+			'relativeSector', "H16",
+			'offset', point(-75, -100),
+			'sat_layer', "underground",
+		}),
+		PlaceObj('SatelliteViewDecorationDef', {
+			'image', "UI/SatelliteView/underground_u-bahn",
+			'relativeSector', "B11",
+			'offset', point(-20, -8),
+			'sat_layer', "underground",
+		}),
+	},
 	group = "Default",
 	id = "HotDiamonds",
 	map_file = "UI/SatelliteView/SatView",
@@ -6442,5 +7088,6 @@ PlaceObj('CampaignPreset', {
 	starting_day = 3,
 	starting_hour = 14,
 	starting_timestamp = 986299200,
+	underground_file = "UI/SatelliteView/SatView_Underground",
 })
 

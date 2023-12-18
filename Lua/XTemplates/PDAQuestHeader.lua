@@ -102,7 +102,7 @@ PlaceObj('XTemplate', {
 						'func', function (self, pt, button)
 							if button ~= "L" then return end
 							local questId = self:ResolveId("node").context.questPreset.id
-							if self:ResolveId("node").context.state ~= "completed" then SetActiveQuest(questId) end
+							if not self:ResolveId("node").context.state then SetActiveQuest(questId) end
 						end,
 					}),
 					}),

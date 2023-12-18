@@ -68,7 +68,7 @@ PlaceObj('XTemplate', {
 		'ActionTranslate', false,
 		'ActionShortcut', "F9",
 		'OnAction', function (self, host, source, ...) cls() DbgClear() end,
-		'__condition', function (parent, context) return IsInModTestingMode() end,
+		'__condition', function (parent, context) return AreModdingToolsActive() end,
 		'replace_matching_id', true,
 	}),
 	PlaceObj('XTemplateAction', {
@@ -480,7 +480,8 @@ PlaceObj('XTemplate', {
 			'ActionName', "Reveal All Sectors(Satellite View)",
 			'ActionIcon', "CommonAssets/UI/Icons/group.png",
 			'OnAction', function (self, host, source, ...)
-				RevealAllSectors()
+				DbgDiscoverAllSectors()
+				RevealAllSectors()				
 			end,
 			'replace_matching_id', true,
 		}),
@@ -1187,6 +1188,48 @@ PlaceObj('XTemplate', {
 			'IgnoreRepeated', true,
 		}),
 		PlaceObj('XTemplateAction', {
+			'ActionId', "satelliteLayerUp",
+			'ActionSortKey', "1601",
+			'ActionName', T(362712122986, --[[XTemplate GameShortcuts ActionName]] "Satellite Layer Up"),
+			'ActionShortcut', "T",
+			'ActionGamepad', "LeftTrigger-RightThumbUp",
+			'ActionBindable', true,
+			'ActionMouseBindable', false,
+			'ActionBindSingleKey', true,
+			'ActionState', function (self, host)
+				return gv_SatelliteView and "enabled" or "disabled"
+			end,
+			'OnAction', function (self, host, source, ...)
+				local currentLayer = g_SatelliteUI.layer_mode or SatelliteLayers[1]
+				local currentLayerIdx = table.find(SatelliteLayers, currentLayer)
+				currentLayerIdx = currentLayerIdx - 1
+				if currentLayerIdx < 1 then return end
+				local newLayer = SatelliteLayers[currentLayerIdx]
+				g_SatelliteUI:SetLayerMode(newLayer)
+			end,
+		}),
+		PlaceObj('XTemplateAction', {
+			'ActionId', "satelliteLayerDown",
+			'ActionSortKey', "1602",
+			'ActionName', T(668829004648, --[[XTemplate GameShortcuts ActionName]] "Satellite Layer Down"),
+			'ActionShortcut', "G",
+			'ActionGamepad', "LeftTrigger-RightThumbDown",
+			'ActionBindable', true,
+			'ActionMouseBindable', false,
+			'ActionBindSingleKey', true,
+			'ActionState', function (self, host)
+				return gv_SatelliteView and "enabled" or "disabled"
+			end,
+			'OnAction', function (self, host, source, ...)
+				local currentLayer = g_SatelliteUI.layer_mode or SatelliteLayers[1]
+				local currentLayerIdx = table.find(SatelliteLayers, currentLayer)
+				currentLayerIdx = currentLayerIdx + 1
+				if currentLayerIdx > #SatelliteLayers then return end
+				local newLayer = SatelliteLayers[currentLayerIdx]
+				g_SatelliteUI:SetLayerMode(newLayer)
+			end,
+		}),
+		PlaceObj('XTemplateAction', {
 			'ActionId', "actionOpenCharacter",
 			'ActionSortKey', "1610",
 			'ActionName', T(686811210567, --[[XTemplate GameShortcuts ActionName]] "Merc Info"),
@@ -1287,7 +1330,7 @@ PlaceObj('XTemplate', {
 			'ActionShortcut', "F1",
 			'ActionBindable', true,
 			'ActionState', function (self, host)
-				return GetPreGameMainMenu() and "disabled" or "enabled"
+				return CanSaveGame() and "enabled" or "disabled"
 			end,
 			'OnAction', function (self, host, source, ...)
 				OpenHelpMenu()
@@ -1508,7 +1551,7 @@ PlaceObj('XTemplate', {
 			'ActionId', "idSquadManagement",
 			'ActionSortKey', "1701",
 			'ActionName', T(792201264072, --[[XTemplate GameShortcuts ActionName]] "Manage Squads"),
-			'ActionShortcut', "J",
+			'ActionShortcut', "Ctrl-M",
 			'ActionBindable', true,
 			'ActionButtonTemplate', "PDACommonButton",
 			'ActionState', function (self, host)
@@ -2501,20 +2544,6 @@ PlaceObj('XTemplate', {
 			'replace_matching_id', true,
 		}),
 		PlaceObj('XTemplateAction', {
-			'comment', "Report Bug (Ctrl-F1) currently disabled for steamdeck",
-			'RolloverText', "Report Bug (Ctrl-F1)",
-			'ActionId', "idBugReport",
-			'ActionSortKey', "2160",
-			'ActionTranslate', false,
-			'ActionName', "Report Bug",
-			'ActionShortcut', "Ctrl-F1",
-			'OnAction', function (self, host, source, ...)
-				CreateRealTimeThread(CreateXBugReportDlg)
-			end,
-			'__condition', function (parent, context) return not Platform.steamdeck and not Platform.demo end,
-			'replace_matching_id', true,
-		}),
-		PlaceObj('XTemplateAction', {
 			'ActionId', "TestCombatStartFromAltShortcut1",
 			'ActionSortKey', "2170",
 			'ActionTranslate', false,
@@ -2648,11 +2677,14 @@ PlaceObj('XTemplate', {
 				-- This is the first unit in the team, not in the squad.units array
 				for i, u in ipairs(team.units) do
 					local squad = u:GetSatelliteSquad()
-					if squad and squad.UniqueId == g_CurrentSquad then
+					if squad and squad.UniqueId == g_CurrentSquad and u:CanBeControlled() then
 						SelectObj(u)
-						return
+						break
 					end
 				end
+				
+				ObjModified("hud_squads")
+				
 				return "break"
 			end,
 			'IgnoreRepeated', true,
@@ -2683,11 +2715,14 @@ PlaceObj('XTemplate', {
 				-- This will also update the UI
 				for i, u in ipairs(team.units) do
 					local squad = u:GetSatelliteSquad()
-					if squad and squad.UniqueId == g_CurrentSquad then
+					if squad and squad.UniqueId == g_CurrentSquad and u:CanBeControlled() then
 						SelectObj(u)
-						return
+						break
 					end
 				end
+				
+				ObjModified("hud_squads")
+				
 				return "break"
 			end,
 			'IgnoreRepeated', true,
@@ -3169,7 +3204,7 @@ PlaceObj('XTemplate', {
 					SetMouseDeltaMode(true)
 				end
 			end,
-			'__condition', function (parent, context) return Platform.developer or Platform.cheats or Platform.trailer or IsInModTestingMode() end,
+			'__condition', function (parent, context) return Platform.developer or Platform.cheats or Platform.trailer or AreModdingToolsActive() end,
 			'replace_matching_id', true,
 		}),
 		PlaceObj('XTemplateAction', {
@@ -3624,7 +3659,7 @@ PlaceObj('XTemplate', {
 			QuickLoad()
 		end,
 		'IgnoreRepeated', true,
-		'__condition', function (parent, context) return not Platform.developer and not IsInModTestingMode() end,
+		'__condition', function (parent, context) return not Platform.developer and not AreModdingToolsActive() end,
 	}),
 	PlaceObj('XTemplateAction', {
 		'comment', "satellite",

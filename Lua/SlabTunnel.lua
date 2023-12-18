@@ -216,7 +216,6 @@ function SlabTunnelWalk:GetCost(context)
 end
 
 function TunnelGoto(unit, pos1, pos2, quick_play, use_stop_anim)
-	local anim = unit:GetMoveAnim()
 	local angle = CalcOrientation(pos1, pos2)
 	if quick_play then
 		unit:SetPos(pos2)
@@ -224,23 +223,51 @@ function TunnelGoto(unit, pos1, pos2, quick_play, use_stop_anim)
 		return
 	end
 	-- can't use goto, because it clears unit destlock
-	if unit:GetState() ~= anim then
-		unit:SetState(anim)
-	end
 	if not pos1:IsValidZ() and pos2:IsValidZ() then
-		unit:SetPos(pos1:SetTerrainZ())
+		unit:SetPos(pos1:x(), pos1:y(), terrain.GetHeight(pos1))
 	end
 	local dest = not pos2:IsValidZ() and pos1:IsValidZ() and pos2:SetTerrainZ() or pos2
 	while true do
+		if unit:TimeToPosInterpolationEnd() > 0 then
+			if unit:IsValidZ() then
+				unit:SetPos(unit:GetVisualPosXYZ())
+			else
+				local x, y, z = unit:GetVisualPosXYZ()
+				unit:SetPos(x, y)
+			end
+		end
 		local dist = unit:GetVisualDist2D(pos2)
 		if dist == 0 then
 			break
 		end
+		local anim = unit:GetMoveAnim()
+		if unit.cur_move_style and (unit:GetAnimPhase() == 0 or unit:IsAnimEnd()) then
+			if unit:UpdateMoveAnimFromStyle() then
+				anim = unit:GetMoveAnim()
+			end
+		end
+		if unit:GetState() ~= anim then
+			unit:SetState(anim)
+		end
 		local anim_speed = unit:GetMoveSpeed()
 		unit:SetAnimSpeed(1, anim_speed)
 		local time = dist * 1000 / Max(1, unit:GetSpeed())
+		local cur_dest = dest
+		if unit.cur_move_style then
+			local t = unit:TimeToAnimEnd()
+			if t > 0 and t < time then
+				local cur_pos = unit:GetVisualPos()
+				if unit:IsValidZ() then
+					cur_dest = cur_pos + SetLen(dest - cur_pos, dist * t / time)
+				else
+					cur_dest = cur_pos + SetLen2D(dest - cur_pos, dist * t / time)
+				end
+				time = t
+			end
+		end
+		unit:SetPos(cur_dest, time)
+
 		local rotate_time = Min(time, MulDivRound(300, 1000, Max(1, anim_speed)))
-		unit:SetPos(dest, time)
 		if unit.ground_orient then
 			local angle_diff = AngleDiff(unit:GetVisualOrientationAngle(), angle)
 			local steps = Max(1, rotate_time / 50)
@@ -1356,6 +1383,9 @@ end
 
 function SlabWallWindow:GetTunnelCost(...)
 	local cost, interact_cost, move_cost, drop_cost = WindowTunnelObject.GetTunnelCost(self, ...)
+	if not cost then
+		return
+	end
 	local openAP = self:GetOpenAPCost() or 0
 	if openAP > 0 then
 		cost = cost + openAP

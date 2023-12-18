@@ -275,7 +275,7 @@ PlaceObj('VoiceResponse', {
 		T(204805564997, --[[VoiceResponse Reaper SelectionStealth VoiceResponse SelectionStealth - when selected or autoselected voice:Reaper]] "Like a giant cat, I stalk my prey.")
 	}),
 	SeriouslyWounded = TConcat({
-		T(780260946027, --[[VoiceResponse Reaper SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds) voice:Reaper]] "I have suffered too many wounds. I will soon know Death's embrace.")
+		T(780260946027, --[[VoiceResponse Reaper SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining. voice:Reaper]] "I have suffered too many wounds. I will soon know Death's embrace.")
 	}),
 	Startled = TConcat({
 		T(406721179314, --[[VoiceResponse Reaper Startled VoiceResponse Startled - Startled by hearing a sudden noise voice:Reaper]] "Huh?"),
@@ -325,9 +325,9 @@ PlaceObj('VoiceResponse', {
 		T(658333130857, --[[VoiceResponse Reaper WeaponJammed VoiceResponse WeaponJammed - When weapon has jammed voice:Reaper]] "My target must have a guardian angel nearby. My weapon has jammed.")
 	}),
 	Wounded = TConcat({
-		T(413970808340, --[[VoiceResponse Reaper Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Reaper]] "This pain shall pass."),
-		T(615321470504, --[[VoiceResponse Reaper Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Reaper]] "Your aim is good but is your spirit pure?"),
-		T(777595777930, --[[VoiceResponse Reaper Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Reaper]] "Pain is transient, death is eternal.")
+		T(413970808340, --[[VoiceResponse Reaper Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Reaper]] "This pain shall pass."),
+		T(615321470504, --[[VoiceResponse Reaper Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Reaper]] "Your aim is good but is your spirit pure?"),
+		T(777595777930, --[[VoiceResponse Reaper Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Reaper]] "Pain is transient, death is eternal.")
 	}),
 	group = "MercenariesOld",
 	id = "Reaper",

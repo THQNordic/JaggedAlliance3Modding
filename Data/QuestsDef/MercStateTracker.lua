@@ -18,6 +18,7 @@ PlaceObj('QuestsDef', {
 			Value = true,
 		}),
 	},
+	campaign = "<all>",
 	group = "Default",
 	id = "MercStateTracker",
 })

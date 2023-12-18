@@ -67,8 +67,8 @@ PlaceObj('VoiceResponse', {
 		T(148605496177, --[[VoiceResponse FaucheuxEnemy TacticalTaunt VoiceResponse TacticalTaunt - The team has visible enemies from the other team and is shouting things at them voice:FaucheuxEnemy]] "Target in sight! Fire at will!")
 	}),
 	Wounded = TConcat({
-		T(217994520007, --[[VoiceResponse FaucheuxEnemy Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:FaucheuxEnemy]] "This pain is nothing compared to what I will do to you."),
-		T(142725387357, --[[VoiceResponse FaucheuxEnemy Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:FaucheuxEnemy]] "Very nice! But it will take more than that to kill me.")
+		T(217994520007, --[[VoiceResponse FaucheuxEnemy Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:FaucheuxEnemy]] "This pain is nothing compared to what I will do to you."),
+		T(142725387357, --[[VoiceResponse FaucheuxEnemy Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:FaucheuxEnemy]] "Very nice! But it will take more than that to kill me.")
 	}),
 	group = "Villains",
 	id = "FaucheuxEnemy",

@@ -272,6 +272,21 @@ PlaceObj('ThreePointLighting', {
 })
 
 PlaceObj('ThreePointLighting', {
+	'Id', "NewThreePointLighting_7",
+	'Active', true,
+})
+
+PlaceObj('ThreePointLighting', {
+	'Id', "NewThreePointLighting_8",
+	'Active', true,
+})
+
+PlaceObj('ThreePointLighting', {
+	'Id', "NewThreePointLighting_9",
+	'Active', true,
+})
+
+PlaceObj('ThreePointLighting', {
 	'Id', "Outro_09",
 	'KeyLightAngle', 17736,
 	'KeyLightDirX', -2475,
@@ -291,6 +306,28 @@ PlaceObj('ThreePointLighting', {
 	'BackLightDirZ', 2309,
 	'BackLightColor', RGBA(255, 190, 143, 255),
 	'BackLightIntensity', 153,
+})
+
+PlaceObj('ThreePointLighting', {
+	'Id', "Wet_DLC1_Neutral",
+	'KeyLightAngle', 17736,
+	'KeyLightDirX', -2475,
+	'KeyLightDirY', 1148,
+	'KeyLightDirZ', 3054,
+	'KeyLightColor', RGBA(255, 152, 101, 255),
+	'KeyLightIntensity', 51,
+	'FillLightAngle', 7477,
+	'FillLightDirX', 3918,
+	'FillLightDirY', 1046,
+	'FillLightDirZ', 576,
+	'FillLightColor', RGBA(255, 245, 101, 255),
+	'FillLightIntensity', 102,
+	'BackLightAngle', 18550,
+	'BackLightDirX', 3267,
+	'BackLightDirY', -875,
+	'BackLightDirZ', 2309,
+	'BackLightColor', RGBA(227, 255, 139, 255),
+	'BackLightIntensity', 26,
 })
 
 PlaceObj('ThreePointLighting', {
@@ -510,6 +547,29 @@ PlaceObj('ThreePointLighting', {
 	'BackLightDirY', -875,
 	'BackLightDirZ', 2309,
 	'BackLightColor', RGBA(204, 238, 255, 255),
+	'BackLightIntensity', 51,
+})
+
+PlaceObj('ThreePointLighting', {
+	'Id', "Wet_Underground_Lab_Neutral",
+	'Active', true,
+	'KeyLightAngle', 17736,
+	'KeyLightDirX', -2475,
+	'KeyLightDirY', 1148,
+	'KeyLightDirZ', 3054,
+	'KeyLightColor', RGBA(189, 255, 122, 255),
+	'KeyLightIntensity', 51,
+	'FillLightAngle', 7477,
+	'FillLightDirX', 3918,
+	'FillLightDirY', 1046,
+	'FillLightDirZ', 576,
+	'FillLightColor', RGBA(255, 203, 0, 255),
+	'FillLightIntensity', 26,
+	'BackLightAngle', 18550,
+	'BackLightDirX', 3267,
+	'BackLightDirY', -875,
+	'BackLightDirZ', 2309,
+	'BackLightColor', RGBA(255, 125, 0, 255),
 	'BackLightIntensity', 51,
 })
 

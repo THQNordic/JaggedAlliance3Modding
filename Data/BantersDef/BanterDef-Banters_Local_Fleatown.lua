@@ -5,7 +5,6 @@ PlaceObj('BanterDef', {
 		PlaceObj('BanterLine', {
 			'Character', "Broker",
 			'Text', T(995916200607, --[[BanterDef BrokerApproach Text section:Banters_Local_Fleatown/BrokerApproach voice:Broker]] "Is the shooting and screaming over? Not to complain, but why did you have to shoot my customers?"),
-			'playOnce', true,
 		}),
 		PlaceObj('BanterLine', {
 			'MultipleTexts', true,
@@ -25,7 +24,6 @@ PlaceObj('BanterDef', {
 			'Character', "Broker",
 			'Text', T(836641524567, --[[BanterDef BrokerApproach Text section:Banters_Local_Fleatown/BrokerApproach voice:Broker]] "It's alright though, they were all small fish. But you! Ah, I bet you would be interested in some serious trading."),
 			'Optional', true,
-			'playOnce', true,
 		}),
 	},
 	conditions = {
@@ -53,8 +51,10 @@ PlaceObj('BanterDef', {
 		PlaceObj('BanterLine', {
 			'Character', "Wolf",
 			'Text', T(921194855539, --[[BanterDef BrokerEnemiesInSector Text section:Banters_Local_Fleatown/BrokerEnemiesInSector voice:Wolf]] "Trouble IS our business."),
+			'Optional', true,
 		}),
 	},
+	Once = true,
 	conditions = {
 		PlaceObj('SectorIsInConflict', {
 			sector_id = "H9",

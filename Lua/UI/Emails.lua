@@ -75,6 +75,7 @@ end
 
 function ReceiveEmail(emailId, context)
 	local preset = Emails[emailId]
+	if not preset or not preset:IsRelatedToCurrentCampaign() then return end
 	if g_Combat and preset.delayAfterCombat then
 		gv_DelayedEmails[#gv_DelayedEmails+1] = { emailId = emailId, context = context }
 		gv_DelayedEmails[emailId] = true
@@ -105,7 +106,7 @@ function CheckConditionsAndReceiveEmail(emailId, context)
 end
 
 function EmailsSendConditionEvaluation()
-	local emailPresets = PresetArray("Email")
+	local emailPresets = PresetsInCampaignArray("Email")
 	local n = #emailPresets
 	for i, preset in ipairs(emailPresets) do
 		if not gv_ReceivedEmails[preset.id] and not gv_DelayedEmails[preset.id] and preset.sendConditions and #preset.sendConditions > 0 and EvalConditionList(preset.sendConditions, preset, nolog) then

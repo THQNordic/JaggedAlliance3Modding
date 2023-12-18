@@ -310,7 +310,7 @@ PlaceObj('VoiceResponse', {
 		T(228998221447, --[[VoiceResponse Buns SelectionStealth VoiceResponse SelectionStealth - when selected or autoselected voice:Buns]] "Observe. One sneaks up on the enemy like so.")
 	}),
 	SeriouslyWounded = TConcat({
-		T(701582160298, --[[VoiceResponse Buns SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds) voice:Buns]] "Death is just so messy. I'd rather avoid it.")
+		T(701582160298, --[[VoiceResponse Buns SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining. voice:Buns]] "Death is just so messy. I'd rather avoid it.")
 	}),
 	Startled = TConcat({
 		T(427720238947, --[[VoiceResponse Buns Startled VoiceResponse Startled - Startled by hearing a sudden noise voice:Buns]] "Huh?"),
@@ -360,9 +360,9 @@ PlaceObj('VoiceResponse', {
 		T(896163055151, --[[VoiceResponse Buns WeaponJammed VoiceResponse WeaponJammed - When weapon has jammed voice:Buns]] "Cursed... gun... won't... fire.")
 	}),
 	Wounded = TConcat({
-		T(485800883915, --[[VoiceResponse Buns Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Buns]] "This wound will require a clean and very precise bandaging."),
-		T(246955005332, --[[VoiceResponse Buns Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Buns]] "Lucky shot."),
-		T(147457488953, --[[VoiceResponse Buns Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Buns]] "Now my outfit has a tear in it! They'll pay for that!")
+		T(485800883915, --[[VoiceResponse Buns Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Buns]] "This wound will require a clean and very precise bandaging."),
+		T(246955005332, --[[VoiceResponse Buns Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Buns]] "Lucky shot."),
+		T(147457488953, --[[VoiceResponse Buns Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Buns]] "Now my outfit has a tear in it! They'll pay for that!")
 	}),
 	group = "MercenariesOld",
 	id = "Buns",

@@ -16,6 +16,12 @@ DefineClass.HardBlow = {
 				end
 			end,
 		}),
+		PlaceObj('UnitReaction', {
+			Event = "OnCheckInterruptAttackAvailable",
+			Handler = function (self, target, target_unit, action)
+				return action and action.ActionType ~= "Melee Attack"
+			end,
+		}),
 	},
 	DisplayName = T(373820313755, --[[CharacterEffectCompositeDef HardBlow DisplayName]] "Sudden Strike"),
 	Description = T(854979683764, --[[CharacterEffectCompositeDef HardBlow Description]] "Does not trigger <GameTerm('Interrupt')> attacks while making <em>Melee Attacks</em>.\n\nCancel <GameTerm('Overwatch')> and <GameTerm('PinDown')> with successful <em>Melee Attacks</em>.\n"),

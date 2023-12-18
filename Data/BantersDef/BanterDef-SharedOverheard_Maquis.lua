@@ -119,43 +119,38 @@ PlaceObj('BanterDef', {
 })
 
 PlaceObj('BanterDef', {
-	Comment = "have Fosse Noire",
+	Comment = "when enemies",
 	KillOnAnyActorAware = true,
 	Lines = {
 		PlaceObj('BanterLine', {
 			'Character', "MaquisMale_1",
-			'Text', T(503142956543, --[[BanterDef Shared_Conversation_Maquis_04 Text section:SharedOverheard_Maquis/Shared_Conversation_Maquis_04 have Fosse Noire voice:MaquisMale_1]] "We should never have trusted those capitalist mercenaries!"),
+			'Text', T(503142956543, --[[BanterDef Shared_Conversation_Maquis_04 Text section:SharedOverheard_Maquis/Shared_Conversation_Maquis_04 when enemies voice:MaquisMale_1]] "We should never have trusted those capitalist mercenaries!"),
 		}),
 		PlaceObj('BanterLine', {
 			'Character', "MaquisMale_2",
-			'Text', T(875971056707, --[[BanterDef Shared_Conversation_Maquis_04 Text section:SharedOverheard_Maquis/Shared_Conversation_Maquis_04 have Fosse Noire voice:MaquisMale_2]] "Actually, the great Chimurenga was planning to use them against our enemy just like the previous ones... But the treacherous dogs betrayed us!"),
+			'Text', T(875971056707, --[[BanterDef Shared_Conversation_Maquis_04 Text section:SharedOverheard_Maquis/Shared_Conversation_Maquis_04 when enemies voice:MaquisMale_2]] "Actually, the great Chimurenga was planning to use them against our enemy just like the previous ones... But the treacherous dogs betrayed us!"),
 		}),
 		PlaceObj('BanterLine', {
 			'Character', "MaquisMale_1",
-			'Text', T(186098177586, --[[BanterDef Shared_Conversation_Maquis_04 Text section:SharedOverheard_Maquis/Shared_Conversation_Maquis_04 have Fosse Noire voice:MaquisMale_1]] "We should have betrayed them first."),
+			'Text', T(186098177586, --[[BanterDef Shared_Conversation_Maquis_04 Text section:SharedOverheard_Maquis/Shared_Conversation_Maquis_04 when enemies voice:MaquisMale_1]] "We should have betrayed them first."),
 		}),
 		PlaceObj('BanterLine', {
 			'Character', "MaquisMale_2",
-			'Text', T(405571457975, --[[BanterDef Shared_Conversation_Maquis_04 Text section:SharedOverheard_Maquis/Shared_Conversation_Maquis_04 have Fosse Noire voice:MaquisMale_2]] "Yes, but it is not betrayal if it's done in the name of the Revolution."),
+			'Text', T(405571457975, --[[BanterDef Shared_Conversation_Maquis_04 Text section:SharedOverheard_Maquis/Shared_Conversation_Maquis_04 when enemies voice:MaquisMale_2]] "Yes, but it is not betrayal if it's done in the name of the Revolution."),
 		}),
 		PlaceObj('BanterLine', {
 			'Character', "MaquisMale_1",
-			'Text', T(475154462890, --[[BanterDef Shared_Conversation_Maquis_04 Text section:SharedOverheard_Maquis/Shared_Conversation_Maquis_04 have Fosse Noire voice:MaquisMale_1]] "Long live the Revolution!"),
+			'Text', T(475154462890, --[[BanterDef Shared_Conversation_Maquis_04 Text section:SharedOverheard_Maquis/Shared_Conversation_Maquis_04 when enemies voice:MaquisMale_1]] "Long live the Revolution!"),
 		}),
 	},
 	Once = true,
 	conditions = {
-		PlaceObj('SectorCheckOwner', {
-			sector_id = "C7",
-		}),
 		PlaceObj('QuestIsVariableBool', {
 			QuestId = "PantagruelRebels",
-			Vars = set({
-	MaquieAllies = false,
-}),
+			Vars = set( "MaquieEnemies" ),
 			__eval = function ()
 				local quest = gv_Quests['PantagruelRebels'] or QuestGetState('PantagruelRebels')
-				return not quest.MaquieAllies
+				return quest.MaquieEnemies
 			end,
 		}),
 	},

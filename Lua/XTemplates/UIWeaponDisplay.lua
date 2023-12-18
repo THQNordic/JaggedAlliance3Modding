@@ -407,7 +407,7 @@ PlaceObj('XTemplate', {
 										}),
 									}),
 								PlaceObj('XTemplateWindow', {
-									'__context', function (parent, context) return { action = CombatActions.Reload } end,
+									'__context', function (parent, context) return { action = CombatActions.Reload, item_id = parent.context and parent.context.id } end,
 									'__class', "XButton",
 									'RolloverTemplate', "CombatActionRollover",
 									'RolloverAnchor', "bottom-right",

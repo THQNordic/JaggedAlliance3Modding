@@ -30,8 +30,48 @@ PlaceObj('XTemplate', {
 			end,
 		}),
 		PlaceObj('XTemplateFunc', {
-			'name', "CanClose()",
-			'func', function ()
+			'name', "CanClose(self)",
+			'func', function (self)
+				local popupHost = GetDialog("PDADialog")
+				local popup_expected_response = false
+				popupHost = popupHost and popupHost:ResolveId("idDisplayPopupHost")
+				if not popupHost then return true end
+				
+				local hired = self.imp_hired
+				if not hired then
+					return true
+				end
+				
+				local popup = SpecifyMercSectorPopup({ self.imp_hired })
+				popup_expected_response = false
+				
+				self:CreateThread("popup-response", function()
+						local resp = popup:Wait()
+						if resp ~= popup_expected_response then return end
+						
+						self.imp_hired = false
+						
+						-- Run in another thread as it can call CanClose again.
+						local pdaDiag = GetDialog("PDADialog")
+						CreateRealTimeThread(function()
+							if mode == "close" then
+								if mode_param then
+									assert(false) -- Hopefully not a thing anymore (explore from browser)
+									UIEnterSectorInternal(table.unpack(mode_param))
+									return
+								end
+								pdaDiag:Close()
+							elseif mode == "sub_mode" then
+								local parentDlg = GetDialog(self.parent)
+								if mode_param then
+									parentDlg:SetMode(table.unpack(mode_param))
+								end
+							else
+								pdaDiag:SetMode(mode, mode_param, "skip_can_close")
+							end
+						end)
+				end)
+				
 				return true
 			end,
 		}),
@@ -1290,6 +1330,7 @@ PlaceObj('XTemplate', {
 											g_ImpTest.loggedin = false
 											SetCustomFilteredUserTexts({ g_ImpTest.final.name, g_ImpTest.final.nick }) -- in case My Team is open before player open IMPWeb to create merc; the UI updates before the NetSync event runs and attempts to translate the user texts
 											NetSyncEvent("HireIMPMerc", g_ImpTest, merc_id, const.Imp.CertificateCost)
+											SpecifyMercSectorPopup({ merc_id })
 											OpenAIMAndSelectMerc()
 										elseif host.impconfirm.back then
 											host:SetMode("test_result_stats")

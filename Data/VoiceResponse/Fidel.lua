@@ -276,7 +276,7 @@ PlaceObj('VoiceResponse', {
 		T(955216330025, --[[VoiceResponse Fidel SelectionStealth VoiceResponse SelectionStealth - when selected or autoselected voice:Fidel]] "Fidel is silent. And deadly. Hehehe.")
 	}),
 	SeriouslyWounded = TConcat({
-		T(129103521364, --[[VoiceResponse Fidel SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds) voice:Fidel]] "No! Enemy may go unkilled if Fidel dies.")
+		T(129103521364, --[[VoiceResponse Fidel SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining. voice:Fidel]] "No! Enemy may go unkilled if Fidel dies.")
 	}),
 	SpecialThrowGrenade = TConcat({
 		T(657215919522, --[[VoiceResponse Fidel SpecialThrowGrenade VoiceResponse SpecialThrowGrenade - When throwing grenade voice:Fidel]] "Fidel make something special happen!"),
@@ -328,9 +328,9 @@ PlaceObj('VoiceResponse', {
 		T(597963784077, --[[VoiceResponse Fidel WeaponJammed VoiceResponse WeaponJammed - When weapon has jammed voice:Fidel]] "Gun no fire! Give Fidel some time to beat gun for laziness.")
 	}),
 	Wounded = TConcat({
-		T(639043080635, --[[VoiceResponse Fidel Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Fidel]] "Ouch, Fidel get you back!"),
-		T(879523357973, --[[VoiceResponse Fidel Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Fidel]] "Agh hahaha, now you die!"),
-		T(652455453388, --[[VoiceResponse Fidel Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Fidel]] "Come at Fidel. Fidel kill you all.")
+		T(639043080635, --[[VoiceResponse Fidel Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Fidel]] "Ouch, Fidel get you back!"),
+		T(879523357973, --[[VoiceResponse Fidel Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Fidel]] "Agh hahaha, now you die!"),
+		T(652455453388, --[[VoiceResponse Fidel Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Fidel]] "Come at Fidel. Fidel kill you all.")
 	}),
 	group = "MercenariesOld",
 	id = "Fidel",

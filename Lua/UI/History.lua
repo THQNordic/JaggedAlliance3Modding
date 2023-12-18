@@ -10,6 +10,7 @@ GameVar("gv_HistoryOccurences", {})
 -- Occurences are sorted by game time
 
 function LogHistoryOccurence(presetId, context)
+	if not HistoryOccurences[presetId] or not HistoryOccurences[presetId]:IsRelatedToCurrentCampaign() then return end
 	local function MergeWith(idx, occurence)
 		local context = gv_HistoryOccurences[idx].context
 		if type(context) ~= "table" then
@@ -74,7 +75,7 @@ end
 
 -- for non repeatable occurences
 function HistoryOccurenceConditionEvaluation(interval)
-	local historyPresets = PresetArray("HistoryOccurence")
+	local historyPresets = PresetsInCampaignArray("HistoryOccurence")
 	local n = #historyPresets
 
 	for i, preset in ipairs(historyPresets) do

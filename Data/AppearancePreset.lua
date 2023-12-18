@@ -6258,6 +6258,72 @@ PlaceObj('AppearancePreset', {
 })
 
 PlaceObj('AppearancePreset', {
+	ArmorColor = PlaceObj('ColorizationPropSet', {
+		'EditableColor1', RGBA(0, 0, 0, 255),
+		'EditableColor2', RGBA(0, 0, 0, 255),
+		'EditableColor3', RGBA(0, 0, 0, 255),
+	}),
+	Body = "EquipmentDrGruselhaim_Top",
+	BodyColor = PlaceObj('ColorizationPropSet', {
+		'EditableColor1', RGBA(31, 17, 9, 255),
+		'EditableColor2', RGBA(105, 113, 116, 255),
+		'EditableColor3', RGBA(105, 113, 116, 255),
+	}),
+	ChestColor = PlaceObj('ColorizationPropSet', {
+		'EditableColor1', RGBA(0, 0, 0, 255),
+		'EditableColor2', RGBA(0, 0, 0, 255),
+		'EditableColor3', RGBA(0, 0, 0, 255),
+	}),
+	HairColor = PlaceObj('ColorizationPropSet', {
+		'EditableColor1', RGBA(56, 51, 46, 255),
+		'EditableRoughness1', 35,
+		'EditableMetallic1', -94,
+		'EditableColor2', RGBA(8, 7, 6, 255),
+		'EditableMetallic2', -128,
+		'EditableColor3', RGBA(0, 0, 0, 255),
+		'EditableRoughness3', 24,
+		'EditableMetallic3', 127,
+	}),
+	HairParam1 = 185,
+	HairParam2 = 23,
+	HairParam3 = 137,
+	Hat2 = "NPCHerman_Glasses_01",
+	Hat2Color = PlaceObj('ColorizationPropSet', {
+		'EditableColor1', RGBA(0, 0, 0, 255),
+		'EditableColor2', RGBA(0, 0, 0, 255),
+		'EditableColor3', RGBA(0, 0, 0, 255),
+	}),
+	HatColor = PlaceObj('ColorizationPropSet', {
+		'EditableColor1', RGBA(17, 21, 28, 255),
+		'EditableColor2', RGBA(32, 38, 49, 255),
+		'EditableColor3', RGBA(38, 40, 43, 255),
+	}),
+	Head = "Head_M_Senior_NPC_01",
+	HeadColor = PlaceObj('ColorizationPropSet', {
+		'EditableColor1', RGBA(0, 0, 0, 255),
+		'EditableColor2', RGBA(0, 0, 0, 255),
+		'EditableColor3', RGBA(0, 0, 0, 255),
+	}),
+	HipColor = PlaceObj('ColorizationPropSet', {
+		'EditableColor1', RGBA(0, 0, 0, 255),
+		'EditableColor2', RGBA(0, 0, 0, 255),
+		'EditableColor3', RGBA(0, 0, 0, 255),
+	}),
+	Pants = "EquipmentPresident_Bottom",
+	PantsColor = PlaceObj('ColorizationPropSet', {
+		'EditableColor2', RGBA(5, 3, 2, 255),
+		'EditableColor3', RGBA(0, 0, 0, 255),
+	}),
+	ShirtColor = PlaceObj('ColorizationPropSet', {
+		'EditableColor1', RGBA(19, 13, 7, 255),
+		'EditableColor2', RGBA(0, 0, 0, 255),
+		'EditableColor3', RGBA(0, 0, 0, 255),
+	}),
+	group = "DLC NPC",
+	id = "Dr_Gruselheim",
+})
+
+PlaceObj('AppearancePreset', {
 	Armor = "EquipmentMale_FlackVest",
 	ArmorColor = PlaceObj('ColorizationPropSet', {
 		'EditableColor1', RGBA(51, 34, 17, 255),
@@ -19738,7 +19804,7 @@ PlaceObj('AppearancePreset', {
 		'EditableColor2', RGBA(0, 0, 0, 255),
 		'EditableColor3', RGBA(0, 0, 0, 255),
 	}),
-	Hair = "EquipmentMagic_Hair",
+	Hair = "EquipmentWolf_Hair",
 	HairColor = PlaceObj('ColorizationPropSet', {
 		'EditableColor1', RGBA(172, 172, 172, 255),
 		'EditableRoughness1', -48,

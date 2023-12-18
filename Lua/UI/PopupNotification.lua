@@ -104,7 +104,9 @@ function OnMsg.ClassesGenerate(classdefs)
 end
 
 function OpenPopupNotification(context)
-	local tutorial = PopupNotifications[context.id].group == "Tutorial"
+	local preset = PopupNotifications[context.id]
+	if not preset:IsRelatedToCurrentCampaign() then return end
+	local tutorial = preset.group == "Tutorial"
 	local enabled_option
 	if IsInMultiplayerGame() and g_NetHintsEnabled then
 		enabled_option = g_NetHintsEnabled == "enabled"
@@ -112,7 +114,7 @@ function OpenPopupNotification(context)
 		enabled_option = GetAccountStorageOptionValue("HintsEnabled")
 	end
 	-- disable all tutorials in mp vs for now
-	if IsCompetitiveGame() or IsGameReplayRunning() or g_TestCombat or GetCurrentCampaignPreset().id ~= "HotDiamonds" then
+	if IsCompetitiveGame() or IsGameReplayRunning() or g_TestCombat then
 		enabled_option = false
 	end
 	if tutorial and not enabled_option then -- don't show pop-up, but run logic as if it was shown and closed (for quests)

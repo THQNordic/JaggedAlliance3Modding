@@ -201,14 +201,14 @@ PlaceObj('VoiceResponse', {
 		T(913300854560, --[[VoiceResponse ArmySoldier TakeCover VoiceResponse TakeCover - Played when the Take Cover action is used voice:ArmySoldier]] "Digging in!")
 	}),
 	Wounded = TConcat({
-		T(918967153114, --[[VoiceResponse ArmySoldier Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:ArmySoldier]] "I'm hit!"),
-		T(538261377350, --[[VoiceResponse ArmySoldier Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:ArmySoldier]] "Uff, that hurt!"),
-		T(387715281144, --[[VoiceResponse ArmySoldier Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:ArmySoldier]] "I am wounded!"),
-		T(796732336447, --[[VoiceResponse ArmySoldier Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:ArmySoldier]] "I'm in trouble!"),
-		T(197723494735, --[[VoiceResponse ArmySoldier Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:ArmySoldier]] "I need a medic!"),
-		T(427183162882, --[[VoiceResponse ArmySoldier Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:ArmySoldier]] "Fuck!"),
-		T(149860166686, --[[VoiceResponse ArmySoldier Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:ArmySoldier]] "Foreign bastards!"),
-		T(265782006381, --[[VoiceResponse ArmySoldier Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:ArmySoldier]] "Argh! I should have joined the navy!")
+		T(918967153114, --[[VoiceResponse ArmySoldier Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:ArmySoldier]] "I'm hit!"),
+		T(538261377350, --[[VoiceResponse ArmySoldier Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:ArmySoldier]] "Uff, that hurt!"),
+		T(387715281144, --[[VoiceResponse ArmySoldier Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:ArmySoldier]] "I am wounded!"),
+		T(796732336447, --[[VoiceResponse ArmySoldier Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:ArmySoldier]] "I'm in trouble!"),
+		T(197723494735, --[[VoiceResponse ArmySoldier Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:ArmySoldier]] "I need a medic!"),
+		T(427183162882, --[[VoiceResponse ArmySoldier Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:ArmySoldier]] "Fuck!"),
+		T(149860166686, --[[VoiceResponse ArmySoldier Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:ArmySoldier]] "Foreign bastards!"),
+		T(265782006381, --[[VoiceResponse ArmySoldier Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:ArmySoldier]] "Argh! I should have joined the navy!")
 	}),
 	group = "Enemies",
 	id = "ArmySoldier",

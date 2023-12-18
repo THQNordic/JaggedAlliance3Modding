@@ -129,6 +129,169 @@ PlaceObj('EffectDef', {
 })
 
 PlaceObj('EffectDef', {
+	group = "Effects",
+	id = "BobbyRayConsumeStock",
+	PlaceObj('ClassConstDef', {
+		'name', "EditorNestedObjCategory",
+		'type', "text",
+		'value', "Bobby Ray",
+	}),
+	PlaceObj('ClassConstDef', {
+		'name', "EditorView",
+		'type', "translate",
+		'value', T(161499412562, --[[EffectDef Effects BobbyRayConsumeStock value]] "Consumes some of Bobby Ray's stock"),
+		'untranslated', true,
+	}),
+	PlaceObj('ClassConstDef', {
+		'name', "Documentation",
+		'type', "text",
+		'value', "Consumes some of Bobby Ray's stock to simulate other buyers.\n\nEach item is evaluated independently.\nA roll with ItemConsumeProbability change determines whether an item will be purchased or not.\nIf chosen, a percentage of its stock is consumed (at least one unit is always consumed), between Min and Max StockConsumption values.",
+	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "__exec",
+		'params', "obj, context",
+		'code', function (self, obj, context)
+			BobbyRayStoreConsumeRandomStock(self.ItemConsumeProbability, self.MinimumStockConsumption, self.MaximumStockConsumption)
+		end,
+	}),
+	PlaceObj('PropertyDefNumber', {
+		'id', "ItemConsumeProbability",
+		'help', "Probability of each item to get picked for consumption",
+		'extra_code', "default = const.BobbyRay.FakePurchase_PickProbability",
+		'default', 13,
+		'scale', "%",
+		'slider', true,
+		'min', 0,
+		'max', 100,
+		'modifiable', true,
+	}),
+	PlaceObj('PropertyDefNumber', {
+		'id', "MinimumStockConsumption",
+		'help', "Minimum percentage of available stock consumed",
+		'extra_code', "default = const.BobbyRay.FakePurchase_StockConsumedMin",
+		'default', 25,
+		'scale', "%",
+		'slider', true,
+		'min', 0,
+		'max', 100,
+		'modifiable', true,
+	}),
+	PlaceObj('PropertyDefNumber', {
+		'id', "MaximumStockConsumption",
+		'help', "Maximum percentage of available stock consumed (if only one unit is available, it is always consumed)",
+		'extra_code', "default = const.BobbyRay.FakePurchase_StockConsumedMax",
+		'default', 50,
+		'scale', "%",
+		'slider', true,
+		'min', 0,
+		'max', 100,
+		'modifiable', true,
+	}),
+	PlaceObj('TestHarness', {
+		'name', "TestHarness",
+		'TestedOnce', true,
+		'Tested', true,
+		'GetTestSubject', function (self) return SelectedObj end,
+		'TestObject', PlaceObj('BobbyRaySetState', {}),
+	}),
+})
+
+PlaceObj('EffectDef', {
+	group = "Effects",
+	id = "BobbyRayRestockShop",
+	PlaceObj('ClassConstDef', {
+		'name', "EditorNestedObjCategory",
+		'type', "text",
+		'value', "Bobby Ray",
+	}),
+	PlaceObj('ClassConstDef', {
+		'name', "EditorView",
+		'type', "translate",
+		'value', T(879032376225, --[[EffectDef Effects BobbyRayRestockShop value]] "Restocks Bobby Ray's Shop"),
+		'untranslated', true,
+	}),
+	PlaceObj('ClassConstDef', {
+		'name', "Documentation",
+		'type', "text",
+		'value', "Restocks Bobby Ray's Shop\n\nFrom the whole pool of items that can appear in the shop (with respect to tier), a percentage between Restock_PercentageMin and Restock_PercentageMax (see the const editor, with separate variables controlling standard and used items) is restocked.\n\nThe above values are further multiplied by this effect's RestockModifier. Values below 100 decrease the number of items picked for restocking, values above 100 increase it.\n\nItems already present in the shop get their stock recalculated (never decreased, but restocking may have no effect), otherwise a new entry is created.",
+	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "__exec",
+		'params', "obj, context",
+		'code', function (self, obj, context)
+			BobbyRayStoreRestock(self.RestockModifier_Standard, self.RestockModifier_Used)
+		end,
+	}),
+	PlaceObj('PropertyDefNumber', {
+		'id', "RestockModifier_Standard",
+		'help', "Modifier to the number of standard items chosen for restock per event (applied to the Restock_StandardPercentage variables defined in the const editor).\n\n100 causes no change.",
+		'default', 100,
+		'scale', "%",
+		'slider', true,
+		'min', 10,
+		'max', 500,
+		'modifiable', true,
+	}),
+	PlaceObj('PropertyDefNumber', {
+		'id', "RestockModifier_Used",
+		'help', "Modifier to the number of used items chosen for restock per event (applied to the Restock_UsedPercentage variables defined in the const editor).\n\n100 causes no change.",
+		'default', 100,
+		'scale', "%",
+		'slider', true,
+		'min', 10,
+		'max', 500,
+		'modifiable', true,
+	}),
+	PlaceObj('TestHarness', {
+		'name', "TestHarness",
+		'TestedOnce', true,
+		'Tested', true,
+		'GetTestSubject', function (self) return SelectedObj end,
+		'TestObject', PlaceObj('BobbyRaySetState', {}),
+	}),
+})
+
+PlaceObj('EffectDef', {
+	id = "BobbyRaySetState",
+	PlaceObj('ClassConstDef', {
+		'name', "EditorNestedObjCategory",
+		'type', "text",
+		'value', "Bobby Ray",
+	}),
+	PlaceObj('ClassConstDef', {
+		'name', "EditorView",
+		'type', "translate",
+		'value', T(746538815418, --[[EffectDef Effects BobbyRaySetState value]] "Sets shop tier availability"),
+		'untranslated', true,
+	}),
+	PlaceObj('ClassConstDef', {
+		'name', "Documentation",
+		'type', "text",
+		'value', "Possible values are:\nClosed (default, 0)\nTier-i unlocked (i>=1)",
+	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "__exec",
+		'params', "obj, context",
+		'code', function (self, obj, context)
+			SetQuestVar(QuestGetState("BobbyRayQuest"), "UnlockedTier", self.State == "Closed" and 0 or self.State)
+		end,
+	}),
+	PlaceObj('PropertyDefCombo', {
+		'id', "State",
+		'default', "Closed",
+		'items', function (self) return {"Closed", 1, 2, 3, 4, 5, 6, 7, 8} end,
+		'translate', true,
+	}),
+	PlaceObj('TestHarness', {
+		'name', "TestHarness",
+		'TestedOnce', true,
+		'Tested', true,
+		'GetTestSubject', function (self) return SelectedObj end,
+		'TestObject', PlaceObj('BobbyRaySetState', {}),
+	}),
+})
+
+PlaceObj('EffectDef', {
 	id = "ChangeTiredness",
 	PlaceObj('ClassConstDef', {
 		'name', "RequiredObjClasses",
@@ -4882,6 +5045,11 @@ PlaceObj('EffectDef', {
 		'help', "Conversation to start.",
 		'preset_class', "Conversation",
 	}),
+	PlaceObj('PropertyDefCombo', {
+		'id', "Icon",
+		'default', "UI/Hud/radio",
+		'items', function (self) return GetRadioConversationIconsCombo end,
+	}),
 	PlaceObj('ClassConstDef', {
 		'name', "EditorView",
 		'type', "text",
@@ -4897,14 +5065,14 @@ PlaceObj('EffectDef', {
 		'name', "__exec",
 		'params', "obj, context",
 		'code', function (self, obj, context)
-			StartConversationEffect(self.Conversation, "radio_conversation")
+			StartConversationEffect(self.Conversation, {radio = true, icon = self.Icon})
 		end,
 	}),
 	PlaceObj('ClassMethodDef', {
 		'name', "__waitexec",
 		'params', "obj, context",
 		'code', function (self, obj, context)
-			StartConversationEffect(self.Conversation, "radio_conversation", "wait")
+			StartConversationEffect(self.Conversation, {radio = true, icon = self.Icon}, "wait")
 		end,
 	}),
 	PlaceObj('ClassMethodDef', {
@@ -4919,7 +5087,7 @@ PlaceObj('EffectDef', {
 		'name', "GetResumeData",
 		'params', "thread, stack, stack_index",
 		'code', function (self, thread, stack, stack_index)
-			return "RadioStartConversation", self.Conversation
+			return "RadioStartConversation", self.Conversation, self.Icon
 		end,
 	}),
 	PlaceObj('TestHarness', {
@@ -5362,6 +5530,121 @@ PlaceObj('EffectDef', {
 		'id', "amount",
 		'name', "Amount",
 		'default', 9999,
+	}),
+})
+
+PlaceObj('EffectDef', {
+	group = "Effects",
+	id = "SatelliteShortcutSetSpeed",
+	PlaceObj('PropertyDefCombo', {
+		'id', "shortcut_id",
+		'items', function (self) return PresetsCombo("SatelliteShortcutPreset") end,
+	}),
+	PlaceObj('PropertyDefCombo', {
+		'id', "speed_const",
+		'help', "The constant denoting the shortcut's speed",
+		'default', "RiverTravelTime",
+		'items', function (self) return ConstCategoryToCombo(const.SatelliteShortcut) end,
+	}),
+	PlaceObj('ClassConstDef', {
+		'name', "Documentation",
+		'type', "text",
+		'value', "Set the speed of a satellite shortcut",
+	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "__exec",
+		'params', "obj, context",
+		'code', function (self, obj, context)
+			SatelliteShortcutChangeSpeed(self.shortcut_id, self.speed_const)
+		end,
+	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "GetError",
+		'code', function (self)
+			if not self.shortcut_id then
+				return "Specify shortcut!"
+			end
+		end,
+	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "GetEditorView",
+		'code', function (self)
+			if self.enable then
+				return Untranslated("Enable satellite shortcut <u(shortcut_id)>", self)
+			else
+				return Untranslated("Disable satellite shortcut <u(shortcut_id)>", self)
+			end
+		end,
+	}),
+	PlaceObj('ClassConstDef', {
+		'name', "EditorNestedObjCategory",
+		'type', "text",
+		'value', "Sector effects",
+	}),
+	PlaceObj('TestHarness', {
+		'name', "TestHarness",
+		'TestedOnce', true,
+		'GetTestSubject', function (self) return SelectedObj end,
+		'TestObject', PlaceObj('SatelliteShortcutSetSpeed', {
+			shortcut_id = "SubwayB11toF12",
+			speed_const = "UBahnFast",
+		}),
+	}),
+})
+
+PlaceObj('EffectDef', {
+	group = "Effects",
+	id = "SatelliteShortcutUnlockEffect",
+	PlaceObj('PropertyDefCombo', {
+		'id', "shortcut_id",
+		'items', function (self) return PresetsCombo("SatelliteShortcutPreset") end,
+	}),
+	PlaceObj('PropertyDefBool', {
+		'id', "enable",
+		'default', true,
+	}),
+	PlaceObj('ClassConstDef', {
+		'name', "Documentation",
+		'type', "text",
+		'value', "Enable a satellite shortcut",
+	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "__exec",
+		'params', "obj, context",
+		'code', function (self, obj, context)
+			SatelliteShortcutSetEnabled(self.shortcut_id, self.enable)
+		end,
+	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "GetError",
+		'code', function (self)
+			if not self.shortcut_id then
+				return "Specify shortcut!"
+			end
+		end,
+	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "GetEditorView",
+		'code', function (self)
+			if self.enable then
+				return Untranslated("Enable satellite shortcut <u(shortcut_id)>", self)
+			else
+				return Untranslated("Disable satellite shortcut <u(shortcut_id)>", self)
+			end
+		end,
+	}),
+	PlaceObj('ClassConstDef', {
+		'name', "EditorNestedObjCategory",
+		'type', "text",
+		'value', "Sector effects",
+	}),
+	PlaceObj('TestHarness', {
+		'name', "TestHarness",
+		'TestedOnce', true,
+		'GetTestSubject', function (self) return SelectedObj end,
+		'TestObject', PlaceObj('SatelliteShortcutUnlockEffect', {
+			shortcut_id = "RiverStartK9toH9_Mid_3",
+		}),
 	}),
 })
 
@@ -6581,6 +6864,82 @@ PlaceObj('EffectDef', {
 
 PlaceObj('EffectDef', {
 	group = "Effects",
+	id = "SectorSetMap",
+	PlaceObj('PropertyDefCombo', {
+		'id', "sector_id",
+		'name', "Sector Id",
+		'help', "Sector id.",
+		'items', function (self) return GetCampaignSectorsCombo() end,
+	}),
+	PlaceObj('PropertyDefCombo', {
+		'id', "MapFile",
+		'default', "",
+		'items', function (self) return ListMaps() end,
+	}),
+	PlaceObj('PropertyDefUIImage', {
+		'id', "image",
+	}),
+	PlaceObj('PropertyDefUIImage', {
+		'id', "loading_screen",
+	}),
+	PlaceObj('ClassConstDef', {
+		'name', "Documentation",
+		'type', "text",
+		'value', "Change the map of a sector",
+	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "__exec",
+		'params', "obj, context",
+		'code', function (self, obj, context)
+			local sectorPreset = gv_Sectors[self.sector_id]
+			if sectorPreset then
+				sectorPreset.Map = self.MapFile
+				
+				if self.image and self.image ~= "" then
+					sectorPreset.image = self.image
+				end
+				
+				if self.loading_screen and self.loading_screen ~= "" then
+					sectorPreset.override_loading_screen = self.loading_screen
+				end
+			end
+		end,
+	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "GetEditorView",
+		'code', function (self)
+			return Untranslated("Change the sector map of <u(sector_id)> to <u(MapFile)>", self)
+		end,
+	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "GetError",
+		'code', function (self)
+			if not self.sector_id then
+				return "Specify sector!"
+			elseif self.enable_sticky and self.disable_sticky then
+				return "You cannot both enable and disable sticky side, choose one"
+			end
+		end,
+	}),
+	PlaceObj('TestHarness', {
+		'name', "TestHarness",
+		'TestedOnce', true,
+		'Tested', true,
+		'GetTestSubject', function (self) return SelectedObj end,
+		'TestObject', PlaceObj('SectorSetMap', {
+			MapFile = "K-11U - Cryolabor",
+			sector_id = "G12_Underground",
+		}),
+	}),
+	PlaceObj('ClassConstDef', {
+		'name', "EditorNestedObjCategory",
+		'type', "text",
+		'value', "Sector effects",
+	}),
+})
+
+PlaceObj('EffectDef', {
+	group = "Effects",
 	id = "SectorSetMilitia",
 	PlaceObj('PropertyDefBool', {
 		'id', "enable",
@@ -6923,7 +7282,7 @@ PlaceObj('EffectDef', {
 		'name', "Side",
 		'help', "Choose side for sector.",
 		'default', "player1",
-		'items', function (self) return Sides end,
+		'items', function (self) return table.iappend(table.map(SideDefs, "Id"), {"dont-change"}) end,
 	}),
 	PlaceObj('PropertyDefBool', {
 		'id', "enable_sticky",
@@ -6951,7 +7310,12 @@ PlaceObj('EffectDef', {
 			elseif self.disable_sticky then
 				sector.StickySide = false
 			end
-			SatelliteSectorSetSide(self.sector_id, self.side, "force")
+			if self.side == "dont-change" then
+				if g_StartingCombat then return end
+				UpdateSectorControl(self.sector_id)
+			else
+				SatelliteSectorSetSide(self.sector_id, self.side, "force")
+			end
 		end,
 	}),
 	PlaceObj('ClassMethodDef', {

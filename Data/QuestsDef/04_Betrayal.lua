@@ -444,6 +444,49 @@ PlaceObj('QuestsDef', {
 						return not quest.BetrayalStartCombat and quest.Given
 					end,
 				}),
+				PlaceObj('UnitIsOnMap', {
+					TargetUnit = "Soldier01",
+				}),
+			},
+			Effects = {
+				PlaceObj('GroupSetImmortal', {
+					TargetUnit = "Soldier01",
+					setImmortal = true,
+				}),
+				PlaceObj('GroupSetImmortal', {
+					TargetUnit = "Soldier02",
+					setImmortal = true,
+				}),
+				PlaceObj('GroupSetImmortal', {
+					TargetUnit = "Faucheux",
+					setImmortal = true,
+				}),
+			},
+			Once = true,
+			ParamId = "TCE_E9SetpieceOneShotPrevention",
+			QuestId = "04_Betrayal",
+			requiredSectors = {
+				"E9",
+			},
+		}),
+		PlaceObj('TriggeredConditionalEvent', {
+			Conditions = {
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"E9",
+					},
+				}),
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "04_Betrayal",
+					Vars = set({
+	BetrayalStartCombat = false,
+	Given = true,
+}),
+					__eval = function ()
+						local quest = gv_Quests['04_Betrayal'] or QuestGetState('04_Betrayal')
+						return not quest.BetrayalStartCombat and quest.Given
+					end,
+				}),
 				PlaceObj('CheckOR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
@@ -457,7 +500,12 @@ PlaceObj('QuestsDef', {
 						PlaceObj('CheckAND', {
 							Conditions = {
 								PlaceObj('SectorIsInConflict', {}),
-								PlaceObj('PlayerIsPlayerTurn', {}),
+								PlaceObj('CheckExpression', {
+									Expression = function (self, obj)
+										-- NetSyncEvents.ExplorationStartCombat
+										return g_StartingCombat
+									end,
+								}),
 							},
 						}),
 					},
@@ -1507,6 +1555,9 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('QuestVarTCEState', {
 			Name = "TCE_BetrayalPreemptiveCombat",
+		}),
+		PlaceObj('QuestVarTCEState', {
+			Name = "TCE_E9SetpieceOneShotPrevention",
 		}),
 	},
 	group = "Main",

@@ -284,7 +284,7 @@ PlaceObj('VoiceResponse', {
 		T(629457862945, --[[VoiceResponse Raider SelectionStealth VoiceResponse SelectionStealth - when selected or autoselected voice:Raider]] "Moving undercover.")
 	}),
 	SeriouslyWounded = TConcat({
-		T(825561320382, --[[VoiceResponse Raider SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds) voice:Raider]] "Officer requesting medical assistance!")
+		T(825561320382, --[[VoiceResponse Raider SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining. voice:Raider]] "Officer requesting medical assistance!")
 	}),
 	Startled = TConcat({
 		T(154479811829, --[[VoiceResponse Raider Startled VoiceResponse Startled - Startled by hearing a sudden noise voice:Raider]] "Huh?"),
@@ -346,9 +346,9 @@ PlaceObj('VoiceResponse', {
 		T(497735056613, --[[VoiceResponse Raider WeaponJammed VoiceResponse WeaponJammed - When weapon has jammed voice:Raider]] "Weapon malfunction! Weapon jammed!")
 	}),
 	Wounded = TConcat({
-		T(288096106037, --[[VoiceResponse Raider Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Raider]] "I'm hit! I'm hit!"),
-		T(357047761691, --[[VoiceResponse Raider Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Raider]] "Ouch! Taking heat!"),
-		T(406766104689, --[[VoiceResponse Raider Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Raider]] "Officer in distress! Requesting backup!")
+		T(288096106037, --[[VoiceResponse Raider Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Raider]] "I'm hit! I'm hit!"),
+		T(357047761691, --[[VoiceResponse Raider Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Raider]] "Ouch! Taking heat!"),
+		T(406766104689, --[[VoiceResponse Raider Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Raider]] "Officer in distress! Requesting backup!")
 	}),
 	group = "MercenariesOld",
 	id = "Raider",

@@ -219,7 +219,7 @@ function Targeting_AOE_Cone(dialog, blackboard, command, pt)
 	if shouldGamepadAim ~= wasGamepadAim then
 		if shouldGamepadAim then
 			LockCamera("AOE-Gamepad")
-			SnapCameraToObj(attacker, "force")
+			if not CurrentActionCamera then SnapCameraToObj(attacker, "force") end
 		else
 			UnlockCamera("AOE-Gamepad")
 		end

@@ -40,10 +40,10 @@ PlaceObj('VoiceResponse', {
 		T(646659333624, --[[VoiceResponse LegionRaider_Jose TacticalPressing VoiceResponse TacticalPressing - The team is making gains during the battle (2+ wounds have been inflicted) voice:LegionRaider_Jose]] "Good job, boys!")
 	}),
 	Wounded = TConcat({
-		T(392327212803, --[[VoiceResponse LegionRaider_Jose Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:LegionRaider_Jose]] "Merde!"),
-		T(468629444403, --[[VoiceResponse LegionRaider_Jose Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:LegionRaider_Jose]] "You bastards!"),
-		T(556093958442, --[[VoiceResponse LegionRaider_Jose Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:LegionRaider_Jose]] "Putain!"),
-		T(472906434610, --[[VoiceResponse LegionRaider_Jose Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:LegionRaider_Jose]] "Mon Dieu!")
+		T(392327212803, --[[VoiceResponse LegionRaider_Jose Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:LegionRaider_Jose]] "Merde!"),
+		T(468629444403, --[[VoiceResponse LegionRaider_Jose Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:LegionRaider_Jose]] "You bastards!"),
+		T(556093958442, --[[VoiceResponse LegionRaider_Jose Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:LegionRaider_Jose]] "Putain!"),
+		T(472906434610, --[[VoiceResponse LegionRaider_Jose Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:LegionRaider_Jose]] "Mon Dieu!")
 	}),
 	group = "Villains",
 	id = "LegionRaider_Jose",

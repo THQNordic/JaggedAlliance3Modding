@@ -17076,6 +17076,10 @@ PlaceObj('AnimMetadata', {
 PlaceObj('AnimMetadata', {
 	Moments = {
 		PlaceObj('AnimMoment', {
+			'Type', "start",
+			'AnimRevision', 55246,
+		}),
+		PlaceObj('AnimMoment', {
 			'Type', "FootLeft",
 			'Time', 164,
 			'AnimRevision', 55246,
@@ -17117,6 +17121,10 @@ PlaceObj('AnimMetadata', {
 
 PlaceObj('AnimMetadata', {
 	Moments = {
+		PlaceObj('AnimMoment', {
+			'Type', "start",
+			'AnimRevision', 55246,
+		}),
 		PlaceObj('AnimMoment', {
 			'Type', "FootRight",
 			'Time', 430,
@@ -17175,17 +17183,21 @@ PlaceObj('AnimMetadata', {
 PlaceObj('AnimMetadata', {
 	Moments = {
 		PlaceObj('AnimMoment', {
+			'Type', "start",
+			'AnimRevision', 55364,
+		}),
+		PlaceObj('AnimMoment', {
 			'Type', "FootLeft",
 			'Time', 331,
 			'AnimRevision', 55364,
 		}),
 		PlaceObj('AnimMoment', {
-			'Type', "FootRight",
+			'Type', "FootLeft",
 			'Time', 2698,
 			'AnimRevision', 55364,
 		}),
 		PlaceObj('AnimMoment', {
-			'Type', "FootLeft",
+			'Type', "FootRight",
 			'Time', 2698,
 			'AnimRevision', 55364,
 		}),

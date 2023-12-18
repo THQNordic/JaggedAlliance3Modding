@@ -74,7 +74,7 @@ PlaceObj('BanterDef', {
 			end,
 		}),
 		PlaceObj('UnitIsAroundOtherUnit', {
-			Distance = 16,
+			Distance = 10,
 			SecondTargetUnit = "GangHannah",
 			TargetUnit = "Granny",
 		}),
@@ -129,7 +129,7 @@ PlaceObj('BanterDef', {
 			end,
 		}),
 		PlaceObj('UnitIsAroundOtherUnit', {
-			Distance = 16,
+			Distance = 10,
 			SecondTargetUnit = "GangKayla",
 			TargetUnit = "Granny",
 		}),
@@ -166,7 +166,7 @@ PlaceObj('BanterDef', {
 			end,
 		}),
 		PlaceObj('UnitIsAroundOtherUnit', {
-			Distance = 16,
+			Distance = 10,
 			SecondTargetUnit = "GangTrudy",
 			TargetUnit = "Granny",
 		}),
@@ -205,7 +205,7 @@ PlaceObj('BanterDef', {
 			end,
 		}),
 		PlaceObj('UnitIsAroundOtherUnit', {
-			Distance = 16,
+			Distance = 10,
 			SecondTargetUnit = "GangVinnie",
 			TargetUnit = "Granny",
 		}),
@@ -242,7 +242,7 @@ PlaceObj('BanterDef', {
 			end,
 		}),
 		PlaceObj('UnitIsAroundOtherUnit', {
-			Distance = 16,
+			Distance = 10,
 			SecondTargetUnit = "GangWilma",
 			TargetUnit = "Granny",
 		}),

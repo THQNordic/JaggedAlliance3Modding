@@ -4,7 +4,7 @@ end
 Platform.cheats = rawget(_G, "g_CheatsEnabledInC")
 
 function AreCheatsEnabled()
-	return Platform.cheats or Platform.trailer or IsInModTestingMode()
+	return Platform.cheats or Platform.trailer or AreModdingToolsActive()
 end
 
 function OnMsg.InitSessionCampaignObjects()
@@ -92,7 +92,7 @@ function NetSyncEvents.CheatEnable(id, state, side, args)
 	elseif id == "CombatUIHidden" then
 		HideCombatUI(tbl.CombatUIHidden)
 	elseif id == "IWUIHidden" then
-		HideInWorldCombatUI(tbl.IWUIHidden)
+		HideInWorldCombatUI(tbl.IWUIHidden, "cheat")
 	elseif id == "ReplayUIHidden" then
 		HideReplayUI(tbl.ReplayUIHidden)
 	elseif id == "OptionalUIHidden" then
@@ -307,13 +307,49 @@ function HideCombatUI(hide)
 	end
 end
 
-function HideInWorldCombatUI(hide)
+MapVar("InWorldCombatUIHiddenCodeRenderables", false)
+
+if FirstLoad then
+	HiddenInWorldCombatUIReasons = {}
+end
+
+function HideInWorldCombatUI(hide, reason)
+	if hide then
+		if not next(HiddenInWorldCombatUIReasons) then
+			DoHideInWorldCombatUI(true)
+		end
+		HiddenInWorldCombatUIReasons[reason] = true
+	else
+		HiddenInWorldCombatUIReasons[reason] = nil
+		if not next(HiddenInWorldCombatUIReasons) then
+			DoHideInWorldCombatUI(false)
+		end
+	end
+end
+
+function DoHideInWorldCombatUI(hide)
 	local dlg = GetInGameInterfaceModeDlg()
 	if dlg and dlg:IsKindOf("IModeCommonUnitControl") then
 		dlg.effects_target_pos_last = false -- Reset fx
 	end
 
-	hr.RenderCodeRenderables = hide and 0 or 1
+	if hide then 
+		InWorldCombatUIHiddenCodeRenderables = setmetatable({}, weak_values_meta)
+		MapForEach("map", "CodeRenderableObject", function(o)
+			if not o:IsKindOfClasses("Wire", "BlackPlane") then 
+				if not (o:GetEnumFlags(const.efVisible) == 0) then 
+					table.insert(InWorldCombatUIHiddenCodeRenderables, o)
+					o:ClearEnumFlags(const.efVisible)
+				end
+			end
+		end)
+	else
+		for _, o in ipairs(InWorldCombatUIHiddenCodeRenderables) do
+			if IsValid(o) then
+				o:SetEnumFlags(const.efVisible)
+			end
+		end
+	end
 	
 	if GetMap() ~= "" then
 		MapForEach("map", "Interactable", function(o)

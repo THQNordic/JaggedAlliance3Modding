@@ -40,45 +40,6 @@ Additional parameters are supplied to the translatable texts, but can also be us
 - _'game_time'_ decides if the expiration countdown is done in _RealTime_ or _GameTime_ (default=_false_).
 
 
-## AddCustomGameNotification
-
-Display a custom on-screen notification.
-
-
-void **AddCustomGameNotification**(string id, string title, string text, string image, function callback, table params)
-string id
-: unique identifier of the notification.
-
-string title
-: title of the notification.
-
-string text
-: body text of the notification.
-
-string image
-: path to the notification icon.
-
-function callback
-: optional. Function called when the user clicks the notification.
-
-table params
-: optional. additional parameters.
-
-Additional parameters are supplied to the translatable texts, but can also be used to tweak the functionality of the notification:
-
-- _'cycle_objs'_ will cause the camera to cycle through a list of _GameObjects_ or _points_ when the user clicks the notification.
-
-- _'priority'_ changes the priority of the notification (choose between _"Normal"_, _"Important"_ and _"Critical"_; default=_"Normal"_).
-
-- _'dismissable'_ dictates the dismissability of the notification (default=_true_)
-
-- _'close_on_read'_ will cause the notification to disappear when the user clicks on it (default=_false_).
-
-- _'expiration'_ is the amount of time (in _milliseconds_) that the notification will stay on the screen (default=_0_).
-
-- _'game_time'_ decides if the expiration countdown is done in _RealTime_ or _GameTime_ (default=_false_).
-
-
 ## AsyncCompress
 
 Compresses a string using LZ4 or ZSTD compression.
@@ -379,6 +340,27 @@ Returns the max between the flight height and the terrain height at given positi
 int **FlightGetHeight**(grid, pos)
 point pos
 : position to check.
+
+
+## GetClosestVolume
+
+Gets the closest volume to the target position.
+
+
+volume **GetClosestVolume**(pos, max_dist, volumes, efAnd)
+pos point
+: - target position
+
+max_dist int
+: - max distance a volume can be from the target position(optional).
+
+volumes table
+: - volumes to search, if not passed will go through all volumes(optional).
+
+efAnd int
+: - filter volumes using bitwise and with this enum flag(optional).
+
+@return volume
 
 
 ## GetMinMaxVoxelHeight
@@ -760,6 +742,70 @@ bool wait_setpiece_end
 @returns BanterPlayer - object responsible for playing the banter.
 
 
+## PlayFX
+
+Triggers a global event that activates various game effects. These effects are specified by FX presets. All FX presets that match the combo **action - moment - actor - target** will be activated.
+
+Normally the FX-s are one-time events, but they can also be continuous effects. To stop continuous FX, another PlayFX call is made, with different *moment*. The ending moment is specified in the FX preset, with "end" as default.
+
+
+void **PlayFX**(string action, string moment, object actor, object target, point pos, point dir)
+string action
+: The name of the FX action.
+
+string moment
+: The action's moment. Normally an FX has a *start* and an *end*, but may have various moments in-between.
+
+object actor
+: Used to give context to the FX. Can be a string or an object. If object is provided, then it's member *fx_actor_class* is used, or its class if no such member is available. The object can be used for many purposes by the FX (e.g. attaching effects to it)
+
+object target
+: Similar to the **actor** argument. Used to give additional context to the FX.
+
+point pos
+: Optional FX position. Normally the position of the FX is determined by rules in the FX preset, based on the actor or the target.
+
+point dir
+: Optional FX direction. Normally the direction of the FX is determined by rules in the FX preset, based on the actor or the target.
+
+
+## PlaySound
+
+Associates a sound to be played from this object.
+
+
+int, string **PlaySound**(string sound, [string type, int volume, int crossfade, bool looping, point pos_or_obj, int loud_dist, int time_offset])
+string sound
+: a sound name (sound bank) or a sound filename
+
+string type
+: a sound type name to be used. Will override the type of the bank (if bank is provided as first argument). 
+
+int volume
+: forces the volume of the sound between 0 and 1000 (the sound bank volume is used by default).
+
+int crossfade
+: optional cross-fade time if changing the sound state.
+
+bool looping
+: forces sound looping.
+
+point pos_or_obj
+: point or object as sound position.
+
+int loud_dist
+: custom loud distance.
+
+int time_offset
+: initial time offset in teh sound.
+
+_returns_ int handle
+: the sound handle if successful.
+
+_returns_ string error
+: error if any (picking a silence sample from a bank would result in a missing handle but no error result).
+
+
 ## RGB
 
 Represent an RGB color in integer format.
@@ -1046,30 +1092,6 @@ table injected_props
 
 _returns_ string code
 : the supplied value, converted to Lua code.
-
-
-## WaitCustomPopup
-
-Displays a custom popup and waits for the players response.
-
-This function should always be called from within a GameTime thread.
-
-
-int choice **WaitCustomPopup**(string title, string text, table choices, window parent)
-string title
-: title of the popup.
-
-string text
-: body text of the popup.
-
-table choices
-: array of up to four choices for the user.
-
-window parent
-: parent window (this is optional only ingame).
-
-_returns_ int choice
-: The users choice.
 
 
 ## WaitCustomPopup

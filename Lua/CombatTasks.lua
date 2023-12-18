@@ -159,15 +159,6 @@ function FinishCombatTasks()
 	end
 end
 
-function OnMsg.UnitDieStart(unit)
-	if CountAnyEnemies() <= 0 then
-		CreateGameTimeThread( function()
-			WaitMsg("OnAttack", 1000) -- to ensure that task:Update is called before completion check
-			FinishCombatTasks()
-		end)
-	end
-end
-
 function OnMsg.CombatEnd()
 	if CountAnyEnemies() <= 0 then
 		FinishCombatTasks()

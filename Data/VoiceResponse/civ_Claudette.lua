@@ -22,9 +22,9 @@ PlaceObj('VoiceResponse', {
 		T(771179384575, --[[VoiceResponse civ_Claudette Pain VoiceResponse Pain - Hit by an attack (if surrounded SurroundedPain is played instead). Short. These are emotes - disregard the written text. voice:civ_Claudette]] "Ugh.")
 	}),
 	Wounded = TConcat({
-		T(771024219625, --[[VoiceResponse civ_Claudette Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:civ_Claudette]] "You won't take me alive!"),
-		T(345990498001, --[[VoiceResponse civ_Claudette Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:civ_Claudette]] "I'd rather be dead than with you!"),
-		T(100513380911, --[[VoiceResponse civ_Claudette Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:civ_Claudette]] "I'll fight to my last breath.")
+		T(771024219625, --[[VoiceResponse civ_Claudette Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:civ_Claudette]] "You won't take me alive!"),
+		T(345990498001, --[[VoiceResponse civ_Claudette Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:civ_Claudette]] "I'd rather be dead than with you!"),
+		T(100513380911, --[[VoiceResponse civ_Claudette Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:civ_Claudette]] "I'll fight to my last breath.")
 	}),
 	group = "Other",
 	id = "civ_Claudette",

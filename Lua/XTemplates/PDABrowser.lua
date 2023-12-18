@@ -13,10 +13,10 @@ PlaceObj('XTemplate', {
 		PlaceObj('XTemplateFunc', {
 			'name', "Open",
 			'func', function (self, ...)
-				PDABrowser.Open(self, ...)
 				self.clicked_links = {}
 				ClearVolatileBrowserTabs() -- required on Open because PDABrowserTabState is a GameVar, so its state can be saved with the browser open, even though the game reloads with it closed (so the clear from OnDelete never runs)
 				ObjModified("pda browser tabs")
+				PDABrowser.Open(self, ...)
 			end,
 		}),
 		PlaceObj('XTemplateFunc', {

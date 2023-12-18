@@ -115,7 +115,7 @@ function OnMsg.NewGame(game)
 	game.Components = game.Components or 0
 	game.DailyIncome = game.DailyIncome or 0
 	game.CampaignTime = game.CampaignTime or const.StoryBits.StartDate
-	hr.UILLuaTime = game.CampaignTime
+	hr.UIL_CustomTime = game.CampaignTime
 	game.CampaignTimeStart = game.CampaignTime
 	game.CampaignTimeFactor = game.CampaignTimeFactor or const.Satellite.CampaignTimeNormalSpeed
 	game.PersistableCampaignPauseReasons = {}
@@ -352,10 +352,8 @@ function NetSyncEvents.SetCampaignSpeed(speed, reason)
 	_SetCampaignSpeed(speed, reason)
 end
 
-function NetSyncEvents.SetLayerPause(pause, reason, keep_sounds)
-	CreateGameTimeThread(function()
-		_SetPauseLayerPause(pause, reason, keep_sounds)
-	end)
+function NetEvents.SetLayerPause(pause, reason, keep_sounds)
+	_SetPauseLayerPause(pause, reason, keep_sounds)
 end
 
 function OnMsg.ClassesGenerate(classes)
@@ -378,7 +376,7 @@ function SetPauseLayerPause(pause, layer, keep_sounds)
 	reason = GetUICampaignPauseReason(reason) -- Convert to co-op aware
 
 	if GetMapName() ~= "" and not IsChangingMap() then
-		NetSyncEvent("SetLayerPause", pause, reason, keep_sounds)
+		NetEchoEvent("SetLayerPause", pause, reason, keep_sounds)
 	else
 		_SetPauseLayerPause(pause, reason, keep_sounds)
 	end
@@ -633,6 +631,9 @@ function LoadGameSessionData(data, metadata)
 			count = count + 1
 		end
 		Msg("LoadSessionData")
+		if mapdata and metadata and mapdata.NetHash ~= metadata.mapNetHash then
+			ValidateMapGameplay()
+		end
 	end
 	
 	local browser_history = data.gvars.PDABrowserHistoryState
@@ -708,7 +709,7 @@ function ZuluNewGame(new_game_params, campaign)
 	if campaign then 
 		Game.Campaign = campaign.id
 		Game.CampaignTime = campaign.starting_timestamp
-		hr.UILLuaTime = Game.CampaignTime
+		hr.UIL_CustomTime = Game.CampaignTime
 		Game.CampaignTimeStart = Game.CampaignTime
 	end
 	if unit_data then
@@ -1560,7 +1561,7 @@ function ApplyNewGameOptions(newGameObj)
 		
 		OptionsObj = OptionsObj or OptionsCreateAndLoad()
 		Game.playthrough_name = newGameObj.campaign_name
-		Game.testModGame = newGameObj.testModGame
+		Game.testModGame = AreModdingToolsActive()
 		if newGameObj["difficulty"] then
 			Game.game_difficulty = newGameObj["difficulty"]
 			OptionsObj["Difficulty"] = newGameObj["difficulty"]
@@ -1613,5 +1614,118 @@ function OnMsg.GatherGameEntities(_, additional_blacklist_textures)
 	for _, sector in ipairs(sectors) do
 		local image = string.format("UI/LoadingScreens/%s/%s.dds", blacklist_sectors[sector], sector)
 		table.insert(additional_blacklist_textures, image)
+	end
+end
+
+local function FindUnitSafePos(unit, arrival_dir_destinations)
+	local new_pos, interaction_pos
+	if not unit:IsValidPos() then
+		return
+	end
+	if unit.behavior == "Visit" then
+		local marker = unit.behavior_params[1] and unit.behavior_params[1][1]
+		local visitable = IsKindOf(marker, "AmbientLifeMarker") and marker:GetVisitable()
+		local interaction_pos = visitable and (IsPoint(visitable[2]) and visitable[2] or marker:GetPos())
+		if not interaction_pos or not terrain.IsPassable(interaction_pos) then
+			unit:SetBehavior()
+			unit:SetCommand("Idle")
+		end
+	elseif unit:HasStatusEffect("ManningEmplacement") then
+		local handle = unit:GetEffectValue("hmg_emplacement")
+		local obj = HandleToObject[handle]
+		if IsKindOf(obj, "MachineGunEmplacement") then
+			interaction_pos = SnapToPassSlab(unit)
+		else
+			unit:LeaveEmplacement(true)
+		end
+	end
+	if not interaction_pos or not terrain.IsPassable(interaction_pos) then
+		local x, y, z = FindFallDownPos(interaction_pos or unit.traverse_tunnel and unit.traverse_tunnel:GetExit() or unit)
+		if x then
+			new_pos = point(x, y, z)
+		end
+	end
+	-- find destinations
+	local destinations
+	if IsValid(unit.routine_spawner) then
+		local dest = GetPassSlab(unit.routine_spawner)
+		if not dest then
+			local sx, sy, sz = FindFallDownPos(unit.routine_spawner)
+			if sx then
+				dest = point(sx, sy, sz)
+			end
+		end
+		if dest then
+			destinations = { dest }
+		end
+	end
+	if not destinations then
+		destinations = arrival_dir_destinations[unit.arrival_dir]
+		if not destinations then
+			destinations = {}
+			arrival_dir_destinations[unit.arrival_dir] = destinations
+			local markers = GetAvailableEntranceMarkers(unit.arrival_dir)
+			for i, marker in ipairs(markers) do
+				local pos = GetPassSlab(marker)
+				if pos then
+					table.insert(destinations, pos)
+				end
+			end
+		end
+	end
+	if destinations and #destinations > 0 then
+		local start_pos = new_pos or interaction_pos or GetPassSlab(unit) or unit:GetPos()
+		local pfclass = CalcPFClass("player1")
+		local pfflags = const.pfmImpassableSource
+		if not new_pos then
+			local has_path, closest_pos = pf.HasPosPath(start_pos, destinations, pfclass, 0, 0, nil, 0, nil, pfflags)
+			if has_path and table.find(destinations, closest_pos) then
+				return -- there is a path to destinations
+			end
+		end
+		local best_pos
+		for i, dest in ipairs(destinations) do
+			local has_path, closest_pos = pf.HasPosPath(dest, start_pos, pfclass, 0, 0, nil, 0, nil, pfflags)
+			if closest_pos and (not best_pos or IsCloser(start_pos, closest_pos, best_pos)) then
+				best_pos = closest_pos
+			end
+		end
+		if best_pos then
+			new_pos = best_pos
+		end
+	end
+	if unit:IsDead() then
+		if new_pos then
+			unit:SetPos(new_pos) -- the dead command will do the rest
+		end
+		return
+	end
+	if unit.ephemeral then
+		DoneObject(unit)
+		return
+	end
+	if not new_pos then
+		new_pos = unit:GetPos()
+	end
+	if not CanOccupy(unit, new_pos) then
+		local has_path, closest_pos = pf.HasPosPath(new_pos, new_pos, CalcPFClass("player1"), 0, 0, unit, 0, nil, const.pfmImpassableSource)
+		if closest_pos then
+			new_pos = closest_pos
+		end
+	end
+	if unit.behavior == "Visit" then
+		unit:SetBehavior()
+		unit:SetCommand("Idle")
+	elseif unit:HasStatusEffect("ManningEmplacement") then
+		unit:LeaveEmplacement(true)
+	end
+	unit:SetPos(new_pos)
+end
+
+function ValidateMapGameplay()
+	local arrival_dir_destinations = {}
+	local units = g_Units
+	for i = #units, 1, -1 do
+		FindUnitSafePos(units[i], arrival_dir_destinations)
 	end
 end

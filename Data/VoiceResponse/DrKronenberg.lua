@@ -64,8 +64,8 @@ PlaceObj('VoiceResponse', {
 		T(563265229089, --[[VoiceResponse DrKronenberg TacticalTaunt VoiceResponse TacticalTaunt - The team has visible enemies from the other team and is shouting things at them voice:DrKronenberg]] "Ah, it appears we have a fresh batch of test subjects. Delicious.")
 	}),
 	Wounded = TConcat({
-		T(594828846316, --[[VoiceResponse DrKronenberg Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:DrKronenberg]] "You will pay for that!"),
-		T(379525835924, --[[VoiceResponse DrKronenberg Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:DrKronenberg]] "That's odd. That... didn't hurt at all.")
+		T(594828846316, --[[VoiceResponse DrKronenberg Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:DrKronenberg]] "You will pay for that!"),
+		T(379525835924, --[[VoiceResponse DrKronenberg Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:DrKronenberg]] "That's odd. That... didn't hurt at all.")
 	}),
 	group = "Villains",
 	id = "DrKronenberg",

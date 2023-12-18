@@ -42,7 +42,7 @@ PlaceObj('PopupNotification', {
 
 PlaceObj('PopupNotification', {
 	Image = "UI/Messages/scouting_outcome",
-	Text = T(881752945849, --[[PopupNotification EnemyScuffle Text]] "<base_activity_info>\nOur scouts had a scuffle with an enemy patrol. Every scout received Wounds in the battle."),
+	Text = T(881752945849, --[[PopupNotification EnemyScuffle Text]] "<base_activity_info>\nOur scouts had a scuffle with an enemy patrol. Every scout received Wounds in the battle.. Gained <XP> Experience"),
 	Title = T(289863187874, --[[PopupNotification EnemyScuffle Title]] "Enemy Scuffle"),
 	group = "Outcome",
 	id = "EnemyScuffle",
@@ -82,7 +82,7 @@ PlaceObj('PopupNotification', {
 
 PlaceObj('PopupNotification', {
 	Image = "UI/Messages/scouting_outcome",
-	Text = T(178863161675, --[[PopupNotification WildAnimals Text]] "<base_activity_info>\nA Merc was severely mauled by wild animals."),
+	Text = T(178863161675, --[[PopupNotification WildAnimals Text]] "<base_activity_info>\nA Merc was severely mauled by wild animals. Gained <XP> Experience"),
 	Title = T(559246009177, --[[PopupNotification WildAnimals Title]] "Wild Animals"),
 	group = "Outcome",
 	id = "WildAnimals",

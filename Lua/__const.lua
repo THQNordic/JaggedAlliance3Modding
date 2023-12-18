@@ -2026,6 +2026,12 @@ DefineConst{
 	value = 43200,
 }
 DefineConst{
+	group = "SatelliteShortcut",
+	id = "UBahnDefault",
+	scale = "min",
+	value = 7200,
+}
+DefineConst{
 	Comment = "action points",
 	group = "Scale",
 	id = "AP",

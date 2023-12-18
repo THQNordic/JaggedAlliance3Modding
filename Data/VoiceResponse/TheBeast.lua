@@ -65,8 +65,8 @@ PlaceObj('VoiceResponse', {
 		T(681503330510, --[[VoiceResponse TheBeast TacticalTaunt VoiceResponse TacticalTaunt - The team has visible enemies from the other team and is shouting things at them voice:TheBeast]] "The enemy has come for the Beast. Their stupidity will destroy them.")
 	}),
 	Wounded = TConcat({
-		T(244318846034, --[[VoiceResponse TheBeast Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:TheBeast]] "Beware a wounded beast."),
-		T(522868195561, --[[VoiceResponse TheBeast Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:TheBeast]] "You'll have to hit harder than that if you seek to slay the Beast.")
+		T(244318846034, --[[VoiceResponse TheBeast Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:TheBeast]] "Beware a wounded beast."),
+		T(522868195561, --[[VoiceResponse TheBeast Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:TheBeast]] "You'll have to hit harder than that if you seek to slay the Beast.")
 	}),
 	group = "Villains",
 	id = "TheBeast",

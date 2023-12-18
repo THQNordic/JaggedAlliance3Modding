@@ -28,5 +28,6 @@ DefineClass._762NATO_AP = {
 			target_prop = "PenetrationClass",
 		}),
 	},
+	ammo_type_icon = "UI/Icons/Items/ta_ap.png",
 }
 

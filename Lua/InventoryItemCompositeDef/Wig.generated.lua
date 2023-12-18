@@ -2,11 +2,11 @@
 
 UndefineClass('Wig')
 DefineClass.Wig = {
-	__parents = { "QuestStackItem" },
+	__parents = { "QuestItem" },
 	__generated_by_class = "InventoryItemCompositeDef",
 
 
-	object_class = "QuestStackItem",
+	object_class = "QuestItem",
 	Repairable = false,
 	Icon = "UI/Icons/Items/red_wig",
 	DisplayName = T(348364466688, --[[InventoryItemCompositeDef Wig DisplayName]] "Red curly wig"),

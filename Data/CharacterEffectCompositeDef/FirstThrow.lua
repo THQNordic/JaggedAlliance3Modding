@@ -7,6 +7,17 @@ PlaceObj('CharacterEffectCompositeDef', {
 	'param_bindings', {},
 	'Comment', "For tracking of the first throw of the Throwing Perk",
 	'object_class', "StatusEffect",
+	'unit_reactions', {
+		PlaceObj('UnitReaction', {
+			Event = "OnCalcAPCost",
+			Handler = function (self, target, current_ap, action, weapon, aim)
+				if IsKindOfClasses(weapon, "MeleeWeapon", "Grenade") and action.ActionType == "Ranged Attack" then
+					local costReduction = CharacterEffectDefs.Throwing:ResolveValue("FirstThrowCostReduction") * const.Scale.AP
+					return Max(1 * const.Scale.AP, current_ap - costReduction)
+				end
+			end,
+		}),
+	},
 	'DisplayName', T(140998054787, --[[CharacterEffectCompositeDef FirstThrow DisplayName]] "First Throw"),
 	'Description', T(547228026943, --[[CharacterEffectCompositeDef FirstThrow Description]] "Reduced cost of the first throw."),
 })

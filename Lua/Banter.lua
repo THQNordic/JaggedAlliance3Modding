@@ -89,6 +89,7 @@ DefineClass.BanterPlayer = {
 	preset = false,
 	associated_units = false,
 	thread = false,
+	ui_closing_thread = false,
 	fallback_actor = false,
 	
 	current_line = false,
@@ -479,6 +480,31 @@ function WaitPlayingSetpiece()
 	end
 end
 
+function BanterPlayer:ClearUI()
+	if IsValidThread(self.ui_closing_thread) then return end
+
+	local isFinished = self:IsFinished()
+	self.ui_closing_thread = CreateRealTimeThread(function()
+		local dlg = GetDialog("RadioBanterDialog")
+		if dlg then
+			if not isFinished then -- skipped
+				dlg:Close()
+			else
+				dlg:AnimatedClose()
+			end
+		end
+
+		if self.active_talking_head then
+			self.active_talking_head:Stop()
+			self.active_talking_head = false
+		end
+		
+		if self.current_text_window and self.current_text_window.window_state ~= "destroying" then
+			self.current_text_window:delete()
+		end
+	end)
+end
+
 function BanterPlayer:Run()
 	assert(self.id)
 	BanterDebugLog(self.id, "played")
@@ -559,15 +585,17 @@ function BanterPlayer:Run()
 		self.current_line = self.current_line + 1
 	end
 
+	-- Wait for the last text to expire before Done-ing
 	self.thread = false
 	while self.current_text_window and self.current_text_window.window_state ~= "destroying" do
 		Sleep(100)
 	end
 	
-	-- currently only host can skip banter
-	-- if client skips it, he has to then wait for host
-	-- we could force skip it from client if we knew it was skipped, which we dont in the case of radio banters
-	-- regardless, skipping should probably wait for both players instead.
+	-- Clear up visuals for the local player
+	-- Note that this isn't sync, there is another attempt at clearing them in the DoneBanter event
+	-- for when the command only arrives over the network (such as when skipping or interrupting)
+	self:ClearUI()
+	
 	DoneBanter(self)
 end
 
@@ -609,6 +637,7 @@ end
 function BanterPlayer:PlayBanterLine(line)
 	local preset = self.preset
 	local current_line = line or preset.Lines[self.current_line]
+	local next_line = not line and preset.Lines[self.current_line + 1]
 	
 	local actor
 	if current_line.Optional then
@@ -756,7 +785,14 @@ function BanterPlayer:PlayBanterLine(line)
 		if current_line.Voiced then
 			soundDuration = ReadDurationFromText(_InternalTranslate(line))
 		else
-			soundDuration = nil --we don't want to wait for non-voiced lines
+			-- lyubo: we don't want to wait for non-voiced lines
+			-- vlad: unless the next line is also non-voiced
+			-- because then the entire banter will be played at once.
+			if next_line and not next_line.Voiced then
+				soundDuration = ReadDurationFromText(_InternalTranslate(next_line.Text))
+			else
+				soundDuration = nil 
+			end
 		end
 	end
 	
@@ -854,28 +890,8 @@ function BanterPlayer:Done()
 	if self.thread then
 		DeleteThread(self.thread)
 	end
-	local isFinished = self:IsFinished() --state will change later
-	CreateRealTimeThread(function()
-		--detach visuals from the sync code
-		--if banter is skipped rly fast dlg might not be up yet on both clients and animatedclose waits
-		local dlg = GetDialog("RadioBanterDialog")
-		if dlg then
-			if not isFinished then -- skipped
-				dlg:Close()
-			else
-				dlg:AnimatedClose()
-			end
-		end
-
-		if self.active_talking_head then
-			self.active_talking_head:Stop()
-			self.active_talking_head = false
-		end
-		
-		if self.current_text_window and self.current_text_window.window_state ~= "destroying" then
-			self.current_text_window:delete()
-		end
-	end)
+	
+	self:ClearUI()
 	
 	-- Banter was stopped before finishing, fire off all events.
 	self.current_line = self.current_line or 1
@@ -1800,7 +1816,7 @@ function PlayVoiceResponseGroup(unit, defaultEventType, force)
 	--If none passes the cond -> play the defaultEventType
 	if customGroup and customGroup ~= "" then
 		local vrFromGroupCanPlay = false
-		for _, event in pairs(VoiceResponseTypes) do
+		ForEachPresetInCampaign("VoiceResponseType", function(event) 
 			if event.CustomGroup == customGroup and EvalConditionList(event.PlayConditions) and event.id ~= defaultEventType then
 				if not vrFromGroupCanPlay then
 					vrFromGroupCanPlay = event.id
@@ -1808,7 +1824,7 @@ function PlayVoiceResponseGroup(unit, defaultEventType, force)
 					assert(false, string.format("More than one custom group VR can be played: %s %s", event.id, vrFromGroupCanPlay))
 				end
 			end
-		end
+		end)
 		
 		if vrFromGroupCanPlay and HasValidVoiceResponse(unit.VoiceResponseId, vrFromGroupCanPlay) then
 			PlayVoiceResponse(unit, vrFromGroupCanPlay, force)
@@ -1899,6 +1915,11 @@ function PlayVoiceResponseInternal(unit, eventType, force, delayedVR)
 	
 	if delayedVR and is_unit and unit:IsIncapacitated() and eventType ~= "Downed" then
 		DbgVoiceResponse(eventType, "Didn't play event group - unit is incapacitated.", unit and unit.Name)
+		return
+	end
+	
+	if is_unit and unit:IsDead() and eventType ~= "AIDeath" and eventType ~= "DramaticDeath" then
+		DbgVoiceResponse(eventType, "Didn't play - unit is dead and trying to speak.", unit and unit.Name)
 		return
 	end
 	
@@ -2424,7 +2445,7 @@ function BanterDebugInfo:GetProperties()
 
 	-- from markers
 	local map_name = GetMapName()
-	if not g_DebugMarkersInfo[map_name] then
+	if not g_DebugMarkersInfo or not g_DebugMarkersInfo[map_name] then
 		GatherMarkerScriptingData()
 	end
 	-- filter for current banter
@@ -3273,8 +3294,8 @@ local function BoredBanterCheck()
 			end
 		end
 	end
-	
-	local availableBanters = FilterAvailableBanters(Presets.BanterDef["MercDialogues"], nil, mainMercs)
+	local mercDlgs = PresetsGroupInCampaignArray("BanterDef", "MercDialogues")
+	local availableBanters = FilterAvailableBanters(mercDlgs, nil, mainMercs)
 	if availableBanters then
 		local banter = table.rand(availableBanters)
 		NetSyncEvent("Mp_PlayBoredBanter", banter)

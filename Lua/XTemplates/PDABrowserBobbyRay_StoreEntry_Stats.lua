@@ -11,7 +11,7 @@ PlaceObj('XTemplate', {
 		'MouseCursor', "UI/Cursors/Pda_Cursor.tga",
 	}, {
 		PlaceObj('XTemplateForEach', {
-			'array', function (parent, context) return parent:GetContext():GetShopStats() end,
+			'array', function (parent, context) return context:GetShopStats() end,
 			'item_in_context', "stat",
 			'run_after', function (child, context, item, i, n, last)
 				child.idStatName:SetText(item[1])
@@ -45,7 +45,7 @@ PlaceObj('XTemplate', {
 			}),
 		PlaceObj('XTemplateWindow', {
 			'__condition', function (parent, context)
-				local stats = parent:GetContext():GetShopStats()
+				local stats = context:GetShopStats()
 				return not stats or stats == {}
 			end,
 			'__class', "XText",

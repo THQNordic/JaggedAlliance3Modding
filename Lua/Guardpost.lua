@@ -180,7 +180,7 @@ function Guardpost:SpawnEnemySquad()
 		return
 	end
 	
-	local squadToSpawn = table.interaction_rand(sector.ExtraDefenderSquads or {}, "Guardpost")
+	local squadToSpawn = table.interaction_rand(sector.ExtraDefenderSquads, "Guardpost")
 	local squad_id = GenerateEnemySquad(squadToSpawn, so.SectorId, "Guardpost")
 	if not squad_id then -- Couldn't spawn?
 		return
@@ -297,7 +297,7 @@ function SavegameSessionDataFixups.FixupGuardpostImpassable(data)
 	end
 end
 
-function OnMsg.InitSessionCampaignObjects()
+function CampaignInitSpawnInitialSquads()
 	for id, sector in sorted_pairs(gv_Sectors) do
 		if sector.InitialSquads then
 			for i, s in ipairs(sector.InitialSquads) do
@@ -307,6 +307,8 @@ function OnMsg.InitSessionCampaignObjects()
 		end
 	end
 end
+
+OnMsg.InitSessionCampaignObjects = CampaignInitSpawnInitialSquads
 
 function GenerateUnitsFromTemplates(sector_id, unit_template_ids, base_session_id, new_unit_names, new_unit_appearance)
 	local units = {}

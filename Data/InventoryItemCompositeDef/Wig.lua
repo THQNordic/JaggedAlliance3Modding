@@ -3,7 +3,7 @@
 PlaceObj('InventoryItemCompositeDef', {
 	'Group', "Quest - Items",
 	'Id', "Wig",
-	'object_class', "QuestStackItem",
+	'object_class', "QuestItem",
 	'Repairable', false,
 	'Icon', "UI/Icons/Items/red_wig",
 	'DisplayName', T(348364466688, --[[InventoryItemCompositeDef Wig DisplayName]] "Red curly wig"),

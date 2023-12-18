@@ -261,7 +261,7 @@ PlaceObj('VoiceResponse', {
 		T(901927861566, --[[VoiceResponse Larry SelectionStealth VoiceResponse SelectionStealth - when selected or autoselected voice:Larry]] "I'm so quiet I can't even hear myself.")
 	}),
 	SeriouslyWounded = TConcat({
-		T(173444517663, --[[VoiceResponse Larry SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds) voice:Larry]] "Wait! I am invincible. I shouldn't be feeling like death.")
+		T(173444517663, --[[VoiceResponse Larry SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining. voice:Larry]] "Wait! I am invincible. I shouldn't be feeling like death.")
 	}),
 	SpecialThrowGrenade = TConcat({
 		T(235210165698, --[[VoiceResponse Larry SpecialThrowGrenade VoiceResponse SpecialThrowGrenade - When throwing grenade voice:Larry]] "Time for a special anti-zombie bomb!")
@@ -313,9 +313,9 @@ PlaceObj('VoiceResponse', {
 		T(128971100406, --[[VoiceResponse Larry WeaponJammed VoiceResponse WeaponJammed - When weapon has jammed voice:Larry]] "I think there's like, jam in my gun or something.")
 	}),
 	Wounded = TConcat({
-		T(686144215199, --[[VoiceResponse Larry Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Larry]] "I think I got hit, but I'm feeling no pain."),
-		T(290647288515, --[[VoiceResponse Larry Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Larry]] "Those zombies sure want to take a bite out of me!"),
-		T(540266358752, --[[VoiceResponse Larry Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Larry]] "Ow! All right, fine! I'll take another painkiller.")
+		T(686144215199, --[[VoiceResponse Larry Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Larry]] "I think I got hit, but I'm feeling no pain."),
+		T(290647288515, --[[VoiceResponse Larry Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Larry]] "Those zombies sure want to take a bite out of me!"),
+		T(540266358752, --[[VoiceResponse Larry Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Larry]] "Ow! All right, fine! I'll take another painkiller.")
 	}),
 	group = "MercenariesOld",
 	id = "Larry",

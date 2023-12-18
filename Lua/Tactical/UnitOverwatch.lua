@@ -180,7 +180,7 @@ function Unit:OverwatchAction(action_id, cost_ap, args)
 	self:UpdateOverwatchVisual(overwatch)
 
 	if not args.activated then
-		self:ProvokeOpportunityAttacks("attack interrupt")
+		self:ProvokeOpportunityAttacks(action, "attack interrupt")
 	end
 	if attack_args.stance and self.stance ~= attack_args.stance then
 		self:DoChangeStance(attack_args.stance)
@@ -188,7 +188,7 @@ function Unit:OverwatchAction(action_id, cost_ap, args)
 	self:PrepareToAttack(attack_args, results)
 
 	if not args.activated then
-		self:ProvokeOpportunityAttacks("attack reaction")		
+		self:ProvokeOpportunityAttacks(action, "attack reaction")		
 		PlayFX("OverwatchActivate", "start", self)
 	end
 
@@ -307,18 +307,11 @@ function Unit:GetOverwatchAttacksAndAim(action, args, unit_ap)
 	local atk_cost = attack:GetAPCost(self, args)
 	
 	local attacks = 1 + ap / atk_cost
-	if HasPerk(self, "OverwatchExpert") then
-		attacks = attacks + CharacterEffectDefs.OverwatchExpert:ResolveValue("bonusAttacks")
-	end
+	attacks = self:CallReactions_Modify("OnCalcOverwatchAttacks", attacks, action, args)
 
 	local minAim, maxAim = self:GetBaseAimLevelRange(action)
-	local aim = minAim or 0
-	local extraAttackBonus = GetComponentEffectValue(weapon, "ExtraOverwatchShots", "extra_attacks")
-	if extraAttackBonus then
-		attacks = attacks + extraAttackBonus
-	end
 	
-	return attacks, aim
+	return attacks, minAim or 0
 end
 
 function Unit:GetOverwatchTarget()
@@ -422,7 +415,7 @@ function Unit:PinDown(action_id, cost_ap, args)
 	}
 
 	if not args.activated then
-		self:ProvokeOpportunityAttacks("attack interrupt")
+		self:ProvokeOpportunityAttacks(action, "attack interrupt")
 	end
 	self:PrepareToAttack(attack_args, results)
 	if not args.activated then
@@ -431,7 +424,7 @@ function Unit:PinDown(action_id, cost_ap, args)
 		if HasPerk(self, "HawksEye") then
 			target:AddStatusEffect("Exposed")
 		end
-		self:ProvokeOpportunityAttacks("attack reaction")
+		self:ProvokeOpportunityAttacks(action, "attack reaction")
 		PlayFX("PindownActivate", "start", self)
 	end
 
@@ -488,7 +481,7 @@ function Unit:PrepareBombard(action_id, cost_ap, args)
 		self:SetCombatBehavior()
 	end)
 	local isPlayerTurn = self:IsMerc() and not g_AIExecutionController
-	self:ProvokeOpportunityAttacks("attack interrupt")
+	self:ProvokeOpportunityAttacks(action, "attack interrupt")
 	local results, attack_args = action:GetActionResults(self, args)
 	self:PrepareToAttack(attack_args, results)
 
@@ -564,7 +557,7 @@ function Unit:PrepareBombard(action_id, cost_ap, args)
 		SnapCameraToObj(zone,nil,nil,200)
 		Sleep(const.Combat.BombardSetupHoldTime)
 	end
-	self:ProvokeOpportunityAttacks("attack reaction")
+	self:ProvokeOpportunityAttacks(action, "attack reaction")
 
 	self:PopDestructor()
 	if g_Combat then
@@ -1046,7 +1039,7 @@ local function CheckProvokeOpportunityAttacks_Trap(self, target_dummies, interru
 			end
 		end
 		if posx then
-			MapForEach(posx, posy, MaxTrapTriggerRadius * const.SlabSizeX, "Landmine", function(obj, idx, posx, posy, posz, self, target_dummies, interrupts, return_result, visible_only, known_traps)
+			MapForEach(posx, posy, MaxTrapTriggerRadius * const.SlabSizeX, "Landmine", function(obj, idx, posx, posy, posz, prev_x, prev_y, self, target_dummies, interrupts, return_result, visible_only, known_traps)
 				if obj:IsDead() then
 					return
 				end
@@ -1126,7 +1119,7 @@ local function CheckProvokeOpportunityAttacks_Trap(self, target_dummies, interru
 						end
 					end
 				end
-			end, idx, posx, posy, posz, self, target_dummies, interrupts, return_result, visible_only, known_traps)
+			end, idx, posx, posy, posz, prev_x, prev_y, self, target_dummies, interrupts, return_result, visible_only, known_traps)
 			if return_result == "any" and _interrupts_traps then
 				return true
 			end
@@ -1206,7 +1199,7 @@ local function CheckProvokeOpportunityAttacks_Overwatch(self, target_dummies, in
 	local attackers = SortUnitsMap(g_Overwatch)
 	for _, data in ipairs(attackers) do
 		local attacker = data.unit
-		if attacker:IsOnEnemySide(self) and
+		if attacker:IsIdleCommand() and attacker:IsOnEnemySide(self) and
 			(g_Combat or (attacker.team.player_enemy and attacker:HasStatusEffect("ManningEmplacement"))) and
 			(not visible_only or HasVisibilityTo(self.team, attacker)) and
 			not table.find(self.passed_interrupts, 2, attacker)
@@ -1251,7 +1244,7 @@ end
 MapVar("__provoke_opportunity_attacks_target_dummies", {})
 MapVar("__provoke_opportunity_attacks_interrupts", {})
 
-function Unit:CheckProvokeOpportunityAttacks(trigger_type, target_dummies_all, visible_only, return_result, trigger_attack_type, known_traps)
+function Unit:CheckProvokeOpportunityAttacks(action, trigger_type, target_dummies_all, visible_only, return_result, trigger_attack_type, known_traps)
 	-- return by default the interrupts of the very first dummy
 	if not self.team or self.team.side == "neutral" then
 		return
@@ -1266,13 +1259,17 @@ function Unit:CheckProvokeOpportunityAttacks(trigger_type, target_dummies_all, v
 		return
 	end	
 
-	local hardblow
-	if trigger_type == "move" and self.move_attack_action_id then
-		local action = CombatActions[self.move_attack_action_id]
-		if action and action.ActionType == "Melee Attack" and HasPerk(self, "HardBlow") then
-			hardblow = true
-		end
+	local target
+	if IsKindOf(target_dummies_all[1], "Unit") then
+		target = target_dummies_all[1]
+	else
+		target = target_dummies_all[1].obj
 	end
+
+	if trigger_type == "move" and self.move_attack_action_id then
+		action = CombatActions[self.move_attack_action_id]
+	end
+	local interruptAttackAvailable = self:CallReactions_And("OnCheckInterruptAttackAvailable", target, action)
 
 	table.iclear(__provoke_opportunity_attacks_interrupts)
 	table.iclear(__provoke_opportunity_attacks_target_dummies)
@@ -1291,7 +1288,7 @@ function Unit:CheckProvokeOpportunityAttacks(trigger_type, target_dummies_all, v
 		end
 	end
 	-- melee interrupts (movement)
-	if trigger_type == "move" and g_Combat and not hardblow then
+	if trigger_type == "move" and g_Combat and interruptAttackAvailable then
 		if CheckProvokeOpportunityAttacks_MeleeInterruptsMovement(self, target_dummies, interrupts, return_result) then
 			if return_result == "any" then
 				return true
@@ -1299,7 +1296,7 @@ function Unit:CheckProvokeOpportunityAttacks(trigger_type, target_dummies_all, v
 		end
 	end
 	-- melee interrupts (ranged attacks;)
-	if g_Combat and not hardblow then
+	if g_Combat and interruptAttackAvailable then
 		local melee_trigger =
 			(trigger_type == "attack interrupt" and trigger_attack_type ~= "melee") or
 			(trigger_type == "attack reaction" and trigger_attack_type == "melee")
@@ -1312,7 +1309,7 @@ function Unit:CheckProvokeOpportunityAttacks(trigger_type, target_dummies_all, v
 		end
 	end
 	-- overwatch
-	if next(g_Overwatch) and not hardblow then
+	if next(g_Overwatch) and interruptAttackAvailable then
 		if trigger_type == "attack interrupt" or trigger_type == "move" and not HasPerk(self, "LightStep") then
 			if CheckProvokeOpportunityAttacks_Overwatch(self, target_dummies, interrupts, visible_only, return_result) then
 				if return_result == "any" then
@@ -1401,6 +1398,10 @@ function Unit:FinishOpportunityAttack_Overwatch()
 	end
 	local remaining = overwatch.num_attacks - 1
 	overwatch.num_attacks = remaining
+	if self.combat_behavior == "OverwatchAction" then
+		self.combat_behavior_params[3].num_attacks = remaining
+	end
+	
 	if jammed or out_of_ammo then
 		self:InterruptPreparedAttack()
 	elseif remaining <= 0 then
@@ -1638,9 +1639,9 @@ function Unit:ProvokeOpportunityAttacksWarning(trigger_type, interrupts)
 	end
 end
 
-function Unit:ProvokeOpportunityAttacks(trigger_type, target_dummy, trigger_attack_type)
+function Unit:ProvokeOpportunityAttacks(action, trigger_type, target_dummy, trigger_attack_type)
 	local target_dummies = { target_dummy or self.target_dummy or self }
-	local interrupts = self:CheckProvokeOpportunityAttacks(trigger_type, target_dummies, nil, nil, trigger_attack_type)
+	local interrupts = self:CheckProvokeOpportunityAttacks(action, trigger_type, target_dummies, nil, nil, trigger_attack_type)
 	if not interrupts then
 		return
 	end

@@ -205,14 +205,14 @@ PlaceObj('VoiceResponse', {
 		T(880515636244, --[[VoiceResponse RebelSoldier TakeCover VoiceResponse TakeCover - Played when the Take Cover action is used voice:RebelSoldier]] "I must get low!")
 	}),
 	Wounded = TConcat({
-		T(121191614050, --[[VoiceResponse RebelSoldier Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:RebelSoldier]] "Je suis blessé!"),
-		T(532017832162, --[[VoiceResponse RebelSoldier Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:RebelSoldier]] "Uff, that hurt!"),
-		T(449352444079, --[[VoiceResponse RebelSoldier Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:RebelSoldier]] "Fuck!"),
-		T(359290391667, --[[VoiceResponse RebelSoldier Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:RebelSoldier]] "Je suis grièvement blessé!"),
-		T(523285496937, --[[VoiceResponse RebelSoldier Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:RebelSoldier]] "This pain is too much!"),
-		T(971988009831, --[[VoiceResponse RebelSoldier Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:RebelSoldier]] "I am wounded!"),
-		T(404755955793, --[[VoiceResponse RebelSoldier Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:RebelSoldier]] "Uff, Ça fait mal!"),
-		T(972694585002, --[[VoiceResponse RebelSoldier Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:RebelSoldier]] "Putain!")
+		T(121191614050, --[[VoiceResponse RebelSoldier Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:RebelSoldier]] "Je suis blessé!"),
+		T(532017832162, --[[VoiceResponse RebelSoldier Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:RebelSoldier]] "Uff, that hurt!"),
+		T(449352444079, --[[VoiceResponse RebelSoldier Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:RebelSoldier]] "Fuck!"),
+		T(359290391667, --[[VoiceResponse RebelSoldier Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:RebelSoldier]] "Je suis grièvement blessé!"),
+		T(523285496937, --[[VoiceResponse RebelSoldier Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:RebelSoldier]] "This pain is too much!"),
+		T(971988009831, --[[VoiceResponse RebelSoldier Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:RebelSoldier]] "I am wounded!"),
+		T(404755955793, --[[VoiceResponse RebelSoldier Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:RebelSoldier]] "Uff, Ça fait mal!"),
+		T(972694585002, --[[VoiceResponse RebelSoldier Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:RebelSoldier]] "Putain!")
 	}),
 	group = "Enemies",
 	id = "RebelSoldier",

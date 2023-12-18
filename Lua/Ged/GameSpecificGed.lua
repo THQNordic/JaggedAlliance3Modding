@@ -157,3 +157,67 @@ function GetRangeAccuracy(props_cont, distance, unit, action)
 	local part = MulDivRound(MulDivRound(a, distance, const.SlabSizeX), distance, const.SlabSizeX*const.SlabSizeX)
 	return part + MulDivRound(b, distance, const.SlabSizeX) + c
 end
+
+if FirstLoad then
+	GedSatSectorSaveModsInProgress = false
+end
+
+function GedSatSectorSaveMods()
+	if not IsValidThread(GedSatSectorSaveModsInProgress) then
+		local thread = CanYield() and CurrentThread()
+		GedSatSectorSaveModsInProgress = CreateRealTimeThread(function()
+			GedSetUiStatus("mod_save", "Saving mods...")
+			
+			local mods = {}
+			ForEachPresetExtended("CampaignPreset", function(preset, group)
+				if preset:IsDirty() then
+					for _, satSectorPreset in ipairs(preset.Sectors) do
+						local modSector = satSectorPreset.modId
+						if modSector then
+							mods[modSector] = Mods[modSector]
+						end
+					end
+				end
+			end)
+			for _, mod in pairs(mods) do
+				mod:SaveWholeMod()
+			end
+			
+			GedSetUiStatus("mod_save")
+			GedSatSectorSaveModsInProgress = false
+			Wakeup(thread)
+		end)
+		if thread then WaitWakeup(30000) end
+	end
+end
+
+function GedCreateXBugReportDlg(summary, descr, files, params)
+	local endUserVersion = not not Platform.goldmaster
+	if Platform.steam and endUserVersion then
+		local steam_beta, steam_branch = g_GedApp:Call("GedGetSteamBetaName")
+		endUserVersion = not steam_beta or steam_branch == ""
+	end
+	
+	local minimalVersion = not insideHG() and endUserVersion
+	
+	params = params or {}
+	params.no_priority = not insideHG()
+	params.no_platform_tags = not insideHG()
+	params.force_save_check = "save as extra_info"
+	
+	if minimalVersion then
+		table.set(params, "no_platform_tags", true)
+		table.set(params, "no_game_tags", true)
+		table.set(params, "no_header_combos", true)
+		table.set(params, "no_attach_auto_save", true)
+		table.set(params, "no_api_token",true)
+	end
+	
+	local mod = g_GedApp:Call("GedGetLastEditedMod")
+	local modRelated = g_GedApp:Call("GedAreModdingToolsActive")
+
+	table.set(params, "mod", mod)
+	table.set(params, "mod_related", modRelated)
+	
+	return CreateXBugReportDlg(summary, descr, files, params)
+end

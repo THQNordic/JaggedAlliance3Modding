@@ -1,0 +1,43 @@
+[Keyword: Greeting]
+	DrGruselheim: Hallo? Are you agents of the Allies?
+	[Keyword: Yes]
+	[Keyword: No]
+	[Keyword: We are mercenaries]
+	[Keyword: More like a jagged alliance]
+[Keyword: InitialRedirect]
+	DrGruselheim: Ach, my memory is playing tricks on me once again. There are no Allies anymore! Are you here to capture me?
+[Keyword: Greeting]
+	DrGruselheim: Hallo! So happy that you're still alive! I am a bit concerned. There has been a significant movement of troops here!
+	DrGruselheim: Are you coming close to my <em>Cryolabor</em>?
+[Keyword: Greeting]
+	DrGruselheim: Ach, the Allied agents! Are you getting closer to my lab?
+[Keyword: Who are you?]
+	DrGruselheim: My name is Dr. Rudolph <em>Gruselheim</em>. I have personally designed this complex, and sadly, I am both its director and, um, prisoner.
+[Keyword: What is the role of Siegfried in all this?]
+	DrGruselheim: Die Gestapo appointed Siegfried as my, hmm, assistant. He was supposed to contribute as administrative director for the completion of <em>Projekt Eisdrache</em>.
+[Keyword: There are some inconsistencies in your story]
+	DrGruselheim: So... I was in the <em>Cryo camera</em> multiple times already and, hm, I keep losing track of the time. The <em>vitrification</em> technology was not meant to be used repeatedly on the same person, you see.
+[Keyword: Capture you?]
+	DrGruselheim: Ach, I admit ! I'm looking forward to it. 
+I am well aware how Von Braun capitulated to the Americans and got to play with his toy rockets again! I hope that the same could be arranged for me.
+	DrGruselheim: I don't want to spend the rest of my life working for Nazis. Please come and meet me at the <em>Cryo Lab</em> and I will gladly capitulate. Where are you now?
+[Keyword: We are at the Weapons Lab]
+	DrGruselheim: Ach, that brings me back... fifteen years. <em>Siegfried</em> devitrified me for the first time with his silly request for making "indestructible armor".
+	DrGruselheim: Of course, nothing is indestructible, but one must admit that <em>Kompositum 58</em> comes very close when applied to various polymers.
+[Keyword: We are at the Bio Lab]
+	DrGruselheim: Seven years ago, Siegfried ordered me to create "the perfect virus" that could be delivered behind enemy lines and cause chaos and mayhem.
+	DrGruselheim: I started with the common Rabies genome and developed its much more aggressive <em>Red Rabies</em> variant... And I only agreed because he promised he won't use the virus unless the very existence of my fatherland was threatened.
+	DrGruselheim: You can imagine my annoyance when I learned <em>Siegfried</em> tried to sell it to North Korea! For better or worse, the plane crashed in the jungle above us.
+[Keyword: We are at the Diesel Clinic]
+	DrGruselheim: Hmm, Diesel. Some ten or twelve years ago, the original troops who guarded us were starting to get old, and Siegfried himself wasn't the boy I remembered anymore. 
+	DrGruselheim: So, he devitrified me and asked me to create a "serum" that can make the old young again. Ha! That is not possible! Not within the time frame we had! 
+	DrGruselheim: I developed the <em>Super Soldat</em> program instead. <em>Siegfried</em> was happy with it and ever since has been using it to turning local boys into relentless war machines.
+[Keyword: We are near the Drop]
+	DrGruselheim: The last time he put me out of the glass, Siegfried ordered me to enhance the Diesel formula.
+	DrGruselheim: When the Legion appeared they attacked <em>The Drop</em>. Gott bless their savage little minds! They used explosives so extensively they severed the railway to <em>Landsbach</em>.
+	DrGruselheim: I had a good laugh when I heard <em>Siegfried</em> lost a whole shipment of <em>Altered Diesel</em> while trying to send it by truck to his troops here.
+[Keyword: We are at the U-Bahn]
+[Keyword: Goodbye]
+	DrGruselheim: Take your time, I'm not going anywhere.
+[Keyword: Goodbye]
+	DrGruselheim: I have to hang up anyway. The guards may overhear me talking on the telephone.

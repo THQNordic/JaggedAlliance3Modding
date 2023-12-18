@@ -3,7 +3,7 @@
 PlaceObj('InventoryItemCompositeDef', {
 	'Group', "MeleeWeapon",
 	'Id', "Machete_Sharpened",
-	'object_class', "TransmutedMachete",
+	'object_class', "MacheteWeapon",
 	'ScrapParts', 2,
 	'Reliability', 50,
 	'Icon', "UI/Icons/Weapons/Machete",

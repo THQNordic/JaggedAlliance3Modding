@@ -426,7 +426,7 @@ function Unit:InteractWith(action_id, cost_ap, pos, goto_ap, target, from_ui)
 	end)
 
 	-- approach target
-	local action_cost = g_Combat and cost_ap - goto_ap or 0
+	local action_cost = g_Combat and cost_ap and cost_ap - (goto_ap or 0) or 0
 	local can_interact
 	
 	-- Play VR for selected loot to be opened
@@ -439,7 +439,7 @@ function Unit:InteractWith(action_id, cost_ap, pos, goto_ap, target, from_ui)
 			self:GainAP(action_cost)
 		end)
 		PlayFX("InteractGoto", "start", self, target)
-		can_interact = self:CombatGoto(action_id, goto_ap, pos)
+		can_interact = self:CombatGoto(action_id, goto_ap or 0, pos)
 		self:PopDestructor()
 	else
 		self:PushDestructor(function(self)

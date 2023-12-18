@@ -1017,7 +1017,7 @@ PlaceObj('SoundPreset', {
 	id = "AL_infected-attack-female",
 	loud_distance = 9000,
 	silence_duration = 10000,
-	type = "AL-Movements",
+	type = "AL-Infected",
 	volume = 80,
 	PlaceObj('SoundFile', {
 		file = "Sounds/animations/AL_infected-female-attack10-01",
@@ -1066,7 +1066,7 @@ PlaceObj('SoundPreset', {
 	id = "AL_infected-attack-male",
 	loud_distance = 9000,
 	silence_duration = 10000,
-	type = "AL-Movements",
+	type = "AL-Infected",
 	volume = 90,
 	PlaceObj('SoundFile', {
 		file = "Sounds/animations/AL_infected-male-attackB10-01",
@@ -1115,7 +1115,7 @@ PlaceObj('SoundPreset', {
 	id = "AL_infected-combat-female",
 	loud_distance = 9000,
 	silence_duration = 10000,
-	type = "AL-Movements",
+	type = "AL-Infected",
 	PlaceObj('SoundFile', {
 		file = "Sounds/animations/AL_infected-female-combat9-01",
 		frequency = 12,
@@ -1159,7 +1159,7 @@ PlaceObj('SoundPreset', {
 	id = "AL_infected-combat-male",
 	loud_distance = 9000,
 	silence_duration = 10000,
-	type = "AL-Movements",
+	type = "AL-Infected",
 	PlaceObj('SoundFile', {
 		file = "Sounds/animations/AL_infected-male-combat9-01",
 		frequency = 12,
@@ -1203,7 +1203,7 @@ PlaceObj('SoundPreset', {
 	id = "AL_infected-death-female",
 	loud_distance = 9000,
 	silence_duration = 10000,
-	type = "AL-Movements",
+	type = "AL-Infected",
 	PlaceObj('SoundFile', {
 		file = "Sounds/animations/AL_infected-female-death8-01",
 		frequency = 13,
@@ -1243,7 +1243,7 @@ PlaceObj('SoundPreset', {
 	id = "AL_infected-death-male",
 	loud_distance = 9000,
 	silence_duration = 10000,
-	type = "AL-Movements",
+	type = "AL-Infected",
 	volume = 90,
 	PlaceObj('SoundFile', {
 		file = "Sounds/animations/AL_infected-male-deathB10-01",
@@ -1292,7 +1292,7 @@ PlaceObj('SoundPreset', {
 	id = "AL_infected-idle-female",
 	loud_distance = 5000,
 	silence_duration = 10000,
-	type = "AL-Movements",
+	type = "AL-Infected",
 	volume = 90,
 	PlaceObj('SoundFile', {
 		file = "Sounds/animations/AL_infected-female-idle20-01",
@@ -1381,7 +1381,7 @@ PlaceObj('SoundPreset', {
 	id = "AL_infected-idle-male",
 	loud_distance = 5000,
 	silence_duration = 10000,
-	type = "AL-Movements",
+	type = "AL-Infected",
 	volume = 70,
 	PlaceObj('SoundFile', {
 		file = "Sounds/animations/AL_infected-male-idle23-01",
@@ -1482,7 +1482,7 @@ PlaceObj('SoundPreset', {
 	id = "AL_infected-pain-female",
 	loud_distance = 7000,
 	silence_duration = 10000,
-	type = "AL-Movements",
+	type = "AL-Infected",
 	PlaceObj('SoundFile', {
 		file = "Sounds/animations/AL_infected-female-pain10-01",
 		frequency = 10,
@@ -1530,7 +1530,7 @@ PlaceObj('SoundPreset', {
 	id = "AL_infected-pain-male",
 	loud_distance = 7000,
 	silence_duration = 10000,
-	type = "AL-Movements",
+	type = "AL-Infected",
 	volume = 90,
 	PlaceObj('SoundFile', {
 		file = "Sounds/animations/AL_infected-male-pain9-01",
@@ -7307,6 +7307,18 @@ PlaceObj('SoundPreset', {
 })
 
 PlaceObj('SoundPreset', {
+	MapName = "F-12U - U-Bahn Station",
+	group = "ATMOSPHERIC",
+	id = "Bahn Station _F-12U",
+	looping = true,
+	type = "EnvironmentNonPositional",
+	volume = 45,
+	PlaceObj('SoundFile', {
+		file = "Sounds/environment-stereo/ATMO_Underground-tunnel-industrial",
+	}),
+})
+
+PlaceObj('SoundPreset', {
 	Regions = {
 		"CursedForest",
 	},
@@ -7867,6 +7879,48 @@ PlaceObj('SoundPreset', {
 	}),
 	PlaceObj('SoundFile', {
 		file = "Sounds/environment-stereo/ATMO_Jungle-Muddy-Far-Night02",
+	}),
+})
+
+PlaceObj('SoundPreset', {
+	MapName = "K-11U - Cryolabor",
+	Regions = {
+		"Underground",
+	},
+	group = "ATMOSPHERIC",
+	id = "Laboratory_Cold",
+	looping = true,
+	type = "EnvironmentNonPositional",
+	volume = 52,
+	PlaceObj('SoundFile', {
+		file = "Sounds/environment-stereo/ATMO_Lab COLD",
+	}),
+})
+
+PlaceObj('SoundPreset', {
+	MapName = "J-14U - Biolabor",
+	group = "ATMOSPHERIC",
+	id = "Laboratory_bio",
+	looping = true,
+	type = "EnvironmentNonPositional",
+	volume = 45,
+	PlaceObj('SoundFile', {
+		file = "Sounds/environment-stereo/ATMO_Biolab",
+	}),
+})
+
+PlaceObj('SoundPreset', {
+	MapName = "G-12U - Waffenlabor",
+	Regions = {
+		"Underground",
+	},
+	group = "ATMOSPHERIC",
+	id = "Laboratory_warm",
+	looping = true,
+	type = "EnvironmentNonPositional",
+	volume = 35,
+	PlaceObj('SoundFile', {
+		file = "Sounds/environment-stereo/ATMO_Lab WARM",
 	}),
 })
 
@@ -19487,6 +19541,17 @@ PlaceObj('SoundPreset', {
 
 PlaceObj('SoundPreset', {
 	group = "ENVIRONMENT",
+	id = "industrialmixer_work",
+	looping = true,
+	type = "Environment",
+	volume = 65,
+	PlaceObj('SoundFile', {
+		file = "Sounds/environment/amb_industrialmixer_work",
+	}),
+})
+
+PlaceObj('SoundPreset', {
+	group = "ENVIRONMENT",
 	id = "insects1",
 	loud_distance = 10000,
 	periodic = true,
@@ -24249,6 +24314,88 @@ PlaceObj('SoundPreset', {
 	PlaceObj('SoundFile', {
 		file = "Sounds/environment-stereo/amb_rain-thunderdistant5",
 		frequency = 20,
+	}),
+})
+
+PlaceObj('SoundPreset', {
+	group = "ENVIRONMENT",
+	id = "underground_coldpipe",
+	periodic = true,
+	periodic_delay = 13000,
+	type = "Environment",
+	PlaceObj('SoundFile', {
+		file = "Sounds/environment/amb_coldpipe_creak-08",
+	}),
+	PlaceObj('SoundFile', {
+		file = "Sounds/environment/amb_coldpipe_creak-07",
+	}),
+	PlaceObj('SoundFile', {
+		file = "Sounds/environment/amb_coldpipe_creak-06",
+	}),
+	PlaceObj('SoundFile', {
+		file = "Sounds/environment/amb_coldpipe_creak-05",
+	}),
+	PlaceObj('SoundFile', {
+		file = "Sounds/environment/amb_coldpipe_creak-04",
+	}),
+	PlaceObj('SoundFile', {
+		file = "Sounds/environment/amb_coldpipe_creak-03",
+	}),
+	PlaceObj('SoundFile', {
+		file = "Sounds/environment/amb_coldpipe_creak-02",
+	}),
+	PlaceObj('SoundFile', {
+		file = "Sounds/environment/amb_coldpipe_creak-01",
+	}),
+})
+
+PlaceObj('SoundPreset', {
+	group = "ENVIRONMENT",
+	id = "underground_metalcreaks-distant",
+	periodic = true,
+	periodic_delay = 15000,
+	type = "Environment",
+	volume = 40,
+	PlaceObj('SoundFile', {
+		file = "Sounds/environment/amb_underground_metalcreak-07",
+	}),
+	PlaceObj('SoundFile', {
+		file = "Sounds/environment/amb_underground_metalcreak-08",
+	}),
+	PlaceObj('SoundFile', {
+		file = "Sounds/environment/amb_underground_metalcreak-06",
+	}),
+	PlaceObj('SoundFile', {
+		file = "Sounds/environment/amb_underground_metalcreak-05",
+	}),
+	PlaceObj('SoundFile', {
+		file = "Sounds/environment/amb_underground_metalcreak-04",
+	}),
+	PlaceObj('SoundFile', {
+		file = "Sounds/environment/amb_underground_metalcreak-03",
+	}),
+	PlaceObj('SoundFile', {
+		file = "Sounds/environment/amb_underground_metalcreak-02",
+	}),
+	PlaceObj('SoundFile', {
+		file = "Sounds/environment/amb_underground_metalcreak-01",
+	}),
+})
+
+PlaceObj('SoundPreset', {
+	group = "ENVIRONMENT",
+	id = "underground_railways-distant",
+	periodic = true,
+	periodic_delay = 15000,
+	type = "Environment",
+	volume = 35,
+	PlaceObj('SoundFile', {
+		file = "Sounds/environment/amb_railways-distant-03",
+		frequency = 50,
+	}),
+	PlaceObj('SoundFile', {
+		file = "Sounds/environment/amb_railways-distant-01",
+		frequency = 50,
 	}),
 })
 
@@ -30047,6 +30194,36 @@ PlaceObj('SoundPreset', {
 
 PlaceObj('SoundPreset', {
 	group = "UI",
+	id = "ui_TradingNotEnough",
+	type = "IngameUI",
+	volume = 65,
+	PlaceObj('SoundFile', {
+		file = "Sounds/UI/ui_TradingNotEnough",
+	}),
+})
+
+PlaceObj('SoundPreset', {
+	group = "UI",
+	id = "ui_TradingPurchased",
+	type = "IngameUI",
+	volume = 65,
+	PlaceObj('SoundFile', {
+		file = "Sounds/UI/ui_TradingPurchased",
+	}),
+})
+
+PlaceObj('SoundPreset', {
+	group = "UI",
+	id = "ui_TradingSold",
+	type = "IngameUI",
+	volume = 65,
+	PlaceObj('SoundFile', {
+		file = "Sounds/UI/ui_TradingSold",
+	}),
+})
+
+PlaceObj('SoundPreset', {
+	group = "UI",
 	id = "ui_Typing",
 	type = "IngameUI",
 	volume = 47,
@@ -31917,6 +32094,36 @@ PlaceObj('SoundPreset', {
 
 PlaceObj('SoundPreset', {
 	group = "UI",
+	id = "ui_itemkompositum58collect",
+	type = "IngameUI",
+	volume = 50,
+	PlaceObj('SoundFile', {
+		file = "Sounds/UI/ui_itemKompositum58collect",
+	}),
+})
+
+PlaceObj('SoundPreset', {
+	group = "UI",
+	id = "ui_itemkompositum58drop-ground",
+	type = "IngameUI",
+	volume = 68,
+	PlaceObj('SoundFile', {
+		file = "Sounds/UI/ui_itemKompositum58drop-inventory",
+	}),
+})
+
+PlaceObj('SoundPreset', {
+	group = "UI",
+	id = "ui_itemkompositum58drop-inventory",
+	type = "IngameUI",
+	volume = 50,
+	PlaceObj('SoundFile', {
+		file = "Sounds/UI/ui_itemKompositum58drop-inventory",
+	}),
+})
+
+PlaceObj('SoundPreset', {
+	group = "UI",
 	id = "ui_itemlockpickcollect",
 	type = "IngameUI",
 	volume = 68,
@@ -32143,6 +32350,16 @@ PlaceObj('SoundPreset', {
 	volume = 68,
 	PlaceObj('SoundFile', {
 		file = "Sounds/UI/ui_itemmeddrop-meds-inventory",
+	}),
+})
+
+PlaceObj('SoundPreset', {
+	group = "UI",
+	id = "ui_itemmeddrop-syringe-ground",
+	type = "IngameUI",
+	volume = 51,
+	PlaceObj('SoundFile', {
+		file = "Sounds/UI/ui_itemsyringedrop-inventory",
 	}),
 })
 
@@ -32393,6 +32610,36 @@ PlaceObj('SoundPreset', {
 	volume = 68,
 	PlaceObj('SoundFile', {
 		file = "Sounds/UI/ui_itempipebombdrop-inventory",
+	}),
+})
+
+PlaceObj('SoundPreset', {
+	group = "UI",
+	id = "ui_itemreanimationssetcollect",
+	type = "IngameUI",
+	volume = 45,
+	PlaceObj('SoundFile', {
+		file = "Sounds/UI/ui_itemReanimationssetcollect",
+	}),
+})
+
+PlaceObj('SoundPreset', {
+	group = "UI",
+	id = "ui_itemreanimationssetdrop-ground",
+	type = "IngameUI",
+	volume = 68,
+	PlaceObj('SoundFile', {
+		file = "Sounds/UI/ui_itemReanimationssetdrop-inventory",
+	}),
+})
+
+PlaceObj('SoundPreset', {
+	group = "UI",
+	id = "ui_itemreanimationssetdrop-inventory",
+	type = "IngameUI",
+	volume = 45,
+	PlaceObj('SoundFile', {
+		file = "Sounds/UI/ui_itemReanimationssetdrop-inventory",
 	}),
 })
 
@@ -33244,16 +33491,96 @@ PlaceObj('SoundPreset', {
 	group = "VOICE",
 	id = "VO_infected-attackmelee-female",
 	loud_distance = 10000,
-	type = "Animations",
-	volume = 150,
+	type = "AL-Infected",
+	volume = 170,
+	PlaceObj('SoundFile', {
+		file = "Sounds/animations/AL_infected-female-attack1-01",
+		frequency = 10,
+	}),
+	PlaceObj('SoundFile', {
+		file = "Sounds/animations/AL_infected-female-attack2-01",
+		frequency = 10,
+	}),
+	PlaceObj('SoundFile', {
+		file = "Sounds/animations/AL_infected-female-attack3-01",
+		frequency = 10,
+	}),
+	PlaceObj('SoundFile', {
+		file = "Sounds/animations/AL_infected-female-attack4-01",
+		frequency = 10,
+	}),
+	PlaceObj('SoundFile', {
+		file = "Sounds/animations/AL_infected-female-attack5-01",
+		frequency = 10,
+	}),
+	PlaceObj('SoundFile', {
+		file = "Sounds/animations/AL_infected-female-attack6-01",
+		frequency = 10,
+	}),
+	PlaceObj('SoundFile', {
+		file = "Sounds/animations/AL_infected-female-attack7-01",
+		frequency = 10,
+	}),
+	PlaceObj('SoundFile', {
+		file = "Sounds/animations/AL_infected-female-attack8-01",
+		frequency = 10,
+	}),
+	PlaceObj('SoundFile', {
+		file = "Sounds/animations/AL_infected-female-attack9-01",
+		frequency = 10,
+	}),
+	PlaceObj('SoundFile', {
+		file = "Sounds/animations/AL_infected-female-attack10-01",
+		frequency = 10,
+	}),
 })
 
 PlaceObj('SoundPreset', {
 	group = "VOICE",
 	id = "VO_infected-attackmelee-male",
 	loud_distance = 10000,
-	type = "Animations",
-	volume = 150,
+	type = "AL-Infected",
+	volume = 170,
+	PlaceObj('SoundFile', {
+		file = "Sounds/animations/AL_infected-male-attackB1-01",
+		frequency = 10,
+	}),
+	PlaceObj('SoundFile', {
+		file = "Sounds/animations/AL_infected-male-attackB2-01",
+		frequency = 10,
+	}),
+	PlaceObj('SoundFile', {
+		file = "Sounds/animations/AL_infected-male-attackB3-01",
+		frequency = 10,
+	}),
+	PlaceObj('SoundFile', {
+		file = "Sounds/animations/AL_infected-male-attackB4-01",
+		frequency = 10,
+	}),
+	PlaceObj('SoundFile', {
+		file = "Sounds/animations/AL_infected-male-attackB5-01",
+		frequency = 10,
+	}),
+	PlaceObj('SoundFile', {
+		file = "Sounds/animations/AL_infected-male-attackB6-01",
+		frequency = 10,
+	}),
+	PlaceObj('SoundFile', {
+		file = "Sounds/animations/AL_infected-male-attackB7-01",
+		frequency = 10,
+	}),
+	PlaceObj('SoundFile', {
+		file = "Sounds/animations/AL_infected-male-attackB8-01",
+		frequency = 10,
+	}),
+	PlaceObj('SoundFile', {
+		file = "Sounds/animations/AL_infected-male-attackB9-01",
+		frequency = 10,
+	}),
+	PlaceObj('SoundFile', {
+		file = "Sounds/animations/AL_infected-male-attackB10-01",
+		frequency = 10,
+	}),
 })
 
 PlaceObj('SoundPreset', {

@@ -469,7 +469,7 @@ function SectorStash:GetVirtualContainerData()
 	end
 end
 
-function SectorStash:AddDeadUnitsItems()
+function SectorStash:AddDeadUnitsItems(filter)
 	if not gv_Sectors or not self.sector_id then
 		return
 	end
@@ -478,7 +478,9 @@ function SectorStash:AddDeadUnitsItems()
 		local ud = gv_UnitData[session_id]
 		if ud and ud:IsDead() then
 			ud:ForEachItemInSlot("InventoryDead", function(item, slot, left, top, self)
+				if not filter or filter(item) then
 				Inventory.AddItem(self, "Inventory", item)
+				end
 			end, self)
 		end
 	end
@@ -523,7 +525,7 @@ function SectorStash:AddVirtualContainer()
 	return cdata, #sector_inventory
 end
 
-function SectorStash:SetSectorId(sector_id)
+function SectorStash:SetSectorId(sector_id, filter)
 	local sector_id = sector_id or gv_CurrentSectorId	
 	
 	if self.sector_id == sector_id then
@@ -533,14 +535,16 @@ function SectorStash:SetSectorId(sector_id)
 	self:Clear()
 	
 	self.sector_id = sector_id
-	self:AddDeadUnitsItems()
+	self:AddDeadUnitsItems(filter)
 	local containers = gv_Sectors[sector_id].sector_inventory or empty_table
 	self:AddVirtualContainer()
 	for cidx, container in ipairs(containers) do
 		if container[2] then -- opened
 			local items = container[3] or empty_table
 			for idx, item in sorted_pairs(items) do
-				Inventory.AddItem(self,"Inventory", item)
+				if not filter or filter(item) then
+					Inventory.AddItem(self,"Inventory", item)
+				end
 			end
 		end
 	end

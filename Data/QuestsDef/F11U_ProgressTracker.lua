@@ -2,12 +2,72 @@
 
 PlaceObj('QuestsDef', {
 	Author = "Momchil",
-	DevNotes = '"What is my purpose?"\n"You flip one variable"\n"Oh God"\n"Welcome to the club, pal"',
+	DevNotes = "Activate hydraulics is activated by marker and runs the TCE that opens the doors. Alternatively if you arrive from underground, it will activate the variable and also raise ArrivedFromUnderground which will block the units around the entrance from spawning.",
 	Hidden = true,
 	KillTCEsConditions = {
 		PlaceObj('QuestKillTCEsOnCompleted', {}),
 	},
 	QuestGroup = "Other",
+	TCEs = {
+		PlaceObj('TriggeredConditionalEvent', {
+			Conditions = {
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "F11U_ProgressTracker",
+					Vars = set( "ActivateHydraulics" ),
+					__eval = function ()
+						local quest = gv_Quests['F11U_ProgressTracker'] or QuestGetState('F11U_ProgressTracker')
+						return quest.ActivateHydraulics
+					end,
+				}),
+				PlaceObj('CombatIsActive', {
+					Negate = true,
+				}),
+			},
+			Effects = {
+				PlaceObj('LockpickableSetState', {
+					Group = "Wave1Door",
+					State = "unlocked",
+				}),
+				PlaceObj('LockpickableSetState', {
+					Group = "Wave2Door",
+					State = "unlocked",
+				}),
+			},
+			ParamId = "TCE_ActivateHydraulics",
+			QuestId = "F11U_ProgressTracker",
+		}),
+		PlaceObj('TriggeredConditionalEvent', {
+			Conditions = {
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"F11_Underground",
+					},
+				}),
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "F11U_ProgressTracker",
+					Vars = set( "ActivateHydraulics" ),
+					__eval = function ()
+						local quest = gv_Quests['F11U_ProgressTracker'] or QuestGetState('F11U_ProgressTracker')
+						return quest.ActivateHydraulics
+					end,
+				}),
+				PlaceObj('UnitIsOnMap', {
+					TargetUnit = "Wave1",
+				}),
+			},
+			Effects = {
+				PlaceObj('GroupAlert', {
+					TargetUnit = "Wave1",
+				}),
+			},
+			Once = true,
+			ParamId = "TCE_AlertGroup1",
+			QuestId = "F11U_ProgressTracker",
+			requiredSectors = {
+				"F11_Underground",
+			},
+		}),
+	},
 	Variables = {
 		PlaceObj('QuestVarBool', {
 			Name = "Completed",
@@ -24,6 +84,15 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('QuestVarBool', {
 			Name = "ActivateHydraulics",
+		}),
+		PlaceObj('QuestVarTCEState', {
+			Name = "TCE_ActivateHydraulics",
+		}),
+		PlaceObj('QuestVarBool', {
+			Name = "ArrivedFromUnderground",
+		}),
+		PlaceObj('QuestVarTCEState', {
+			Name = "TCE_AlertGroup1",
 		}),
 	},
 	group = "Global",

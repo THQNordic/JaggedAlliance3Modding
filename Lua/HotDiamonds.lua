@@ -16,9 +16,9 @@ local function PlayOutroCredits()
 end
 
 function LocalHotDiamonds_SetupEnding(ending)
-	local quest_05 = QuestGetState("05_TakeDownMajor")
+	local quest_05 = gv_Quests["05_TakeDownMajor"] and QuestGetState("05_TakeDownMajor")
 	if not quest_05 then return end
-	local quest_06 = QuestGetState("06_Endgame")
+	local quest_06 = gv_Quests["06_Endgame"] and QuestGetState("06_Endgame")
 	if not quest_06 then return end
 	
 	SetQuestVar(quest_06, "Outro_PeaceRestored", ending == "peace")
@@ -80,6 +80,7 @@ function LocalCheatWorldFlip()
 		return
 	end
 
+	if not gv_Quests["04_Betrayal"] then return end
 	local squads = GetSectorSquadsFromSide(gv_CurrentSectorId, "player1", "player2")
 	SetQuestVar(QuestGetState("04_Betrayal"), "TriggerWorldFlip", true)
 	QuestTCEEvaluation()
@@ -181,6 +182,7 @@ end
 function OnMsg.EnterSector()
 	quest_PrisonerLogic = false
 	if not Groups["PrisonerLogic"] then return end
+	if not gv_Quests["Luigi"] then return end
 
 	local guiltyBanters = GetPrisonerBanters()
 	local innocentBanters = GetPrisonerBanters(true)
@@ -437,6 +439,7 @@ end
 function OnMsg.DoneEnterSector()
 	quest_GrimerHouses = false
 	if not Groups["InfectedHouseLogic"] then return end
+	if not gv_Quests["GrimerHamlet"] then return end
 	
 	if not gv_AITargetModifiers["Infected"] then
 		gv_AITargetModifiers["Infected"] = { 
@@ -584,6 +587,7 @@ function OnMsg.EnterSector(_, loading_save)
 	if loading_save then return end
 	if gv_CurrentSectorId ~= "B13" then return end
 	if not GameState.Night then return end
+	if not gv_Quests["Landsbach"] then return end
 	if GetQuestVar("Landsbach", "BreakAndEnter") or GetQuestVar("Landsbach", "Coin") then
 		CreateGameTimeThread(CheckStuckInsideCage)
 	else
@@ -1228,6 +1232,7 @@ end
 -- Pantagruel Rebels Logic:
 -- Auto Resolve Bonus
 function OnMsg.QuestParamChanged(questId, varId, prevVal, newVal)
+	if not gv_Quests["PantagruelRebels"] then return end
 	if varId == "MaquieAllies" and newVal == true then
 		local rebelSectorIds = {"D8", "D7", "C7", "C7_Underground"}
 		for _, sectorId in ipairs(rebelSectorIds) do
@@ -1242,6 +1247,7 @@ end
  
 -- Set MaquieAlliesKilled_ variables on sectors taken by enemies after Maquie have become allies
 function OnMsg.SectorSideChanged(sector_id, old_side, side)
+	if not gv_Quests["PantagruelRebels"] then return end
 	local sector = gv_Sectors[sector_id]
 	if sector_id == "D8" or sector_id == "C7" or sector_id == "C7_Underground" then
 		if not IsPlayerSide(side) and sector.enemy_squads then
@@ -1271,6 +1277,7 @@ end
 -- Clear rebels on sectors taken by enemies when Maquie are allies
 function OnMsg.EnterSector(game_start, load_game)
 	if game_start or load_game then return end
+	if not gv_Quests["PantagruelRebels"] then return end
 	if gv_CurrentSectorId == "D8" or gv_CurrentSectorId == "C7" or gv_CurrentSectorId == "C7_Underground" then
 		local sector = gv_Sectors[gv_CurrentSectorId]
 		if GetQuestVar("PantagruelRebels", "MaquieAllies") and GetQuestVar("PantagruelRebels", "MaquieAlliesKilled_" .. gv_CurrentSectorId) then
@@ -1293,13 +1300,13 @@ end
 
 -- A2 miners alive logic, cant be in TCE as they might execute after triggers that check this number
 function OnMsg.ConflictEnd(sector, _, playerAttacked, playerWon, autoResolve, isRetreat)
-	if sector.Id == "A2" and not gv_SatelliteView then
+	if sector.Id == "A2" and not gv_SatelliteView and gv_Quests["DiamondRed"] then
 		SetQuestVar(gv_Quests["DiamondRed"],"MinersAlive", GetNumAliveUnitsInGroup("Miners"))
 	end
 end
 
 function OnMsg.EnterSector()
-	if gv_CurrentSectorId == "A2" and not gv_Sectors[gv_CurrentSectorId].conflict then
+	if gv_CurrentSectorId == "A2" and not gv_Sectors[gv_CurrentSectorId].conflict and gv_Quests["DiamondRed"] then
 		SetQuestVar(gv_Quests["DiamondRed"],"MinersAlive", GetNumAliveUnitsInGroup("Miners"))
 	end
 end
@@ -1521,7 +1528,6 @@ function SavegameSessionDataFixups.TheDump(session_data)
 	session_data.gvars.gv_Quests["TheTrashFief"]["Failed"] = true	
 	session_data.gvars.gv_Sectors["L9"].ForceConflict = false	
 	session_data.gvars.gv_Sectors["L9"].conflict.locked = false
-	
 end
 
 function SavegameSessionDataFixups.ReturnToErnie(session_data)
@@ -1532,4 +1538,36 @@ function SavegameSessionDataFixups.ReturnToErnie(session_data)
 	if not session_data.gvars.gv_Quests["ErnieSideQuests_WorldFlip"]["TCE_GatherPartisans"] then return end
 	
 	session_data.gvars.gv_Quests["ErnieSideQuests_WorldFlip"]["TCE_GatherPartisans"] = false
+end
+
+function SavegameSessionDataFixups.BunkerReveal(session_data)
+	local bunkerSector = table.get(session_data, "gvars", "gv_Sectors", "H3_Underground")
+	if not bunkerSector then return end
+
+	bunkerSector.reveal_allowed = true
+end
+
+
+
+
+
+local LabStrings = {
+	Waffen = T(343661191093, "Waffenlabor"),
+	Bio = T(851145674759, "Biolabor"),
+	Cryo = T(571831212629, "Cryolabor"),
+	[""] = T(744626507262, "Underground Lab"),
+}
+
+function TFormat.UndergroundLabName(_, sector_id)
+	local LabQuestVar
+	if sector_id == "G12U" then
+		LabQuestVar = "LabForG12U"
+	elseif sector_id == "J14U" then
+		LabQuestVar = "LabForJ14U"
+	elseif sector_id == "K11U" then
+		LabQuestVar = "LabForK11U"
+	end
+		
+	local labString = gv_Quests and GetQuestVar("RandomLab", LabQuestVar) or ""
+	return LabStrings[labString]
 end

@@ -21,6 +21,8 @@ PlaceObj('CharacterEffectCompositeDef', {
 	'DisplayName', T(574672731472, --[[CharacterEffectCompositeDef FreeMove DisplayName]] "Free Move"),
 	'Description', T(824694494336, --[[CharacterEffectCompositeDef FreeMove Description]] "Move without spending AP. Removed after attacking or after moving the allowed distance (based on <agility>)."),
 	'OnAdded', function (self, obj)
+		if not IsKindOf(obj, "Unit") then return end
+		
 		local cur_free_ap = obj.free_move_ap
 		local free_ap = Max(0, MulDivRound(obj.Agility - 40, const.Scale.AP, 10))
 		local data = {min = 0, max = 999, add = 0, mul = 100}

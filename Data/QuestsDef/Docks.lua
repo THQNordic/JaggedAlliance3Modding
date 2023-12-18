@@ -52,14 +52,26 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('QuestIsVariableBool', {
-					Condition = "or",
-					QuestId = "Docks",
-					Vars = set( "Completed", "DocksLost", "Failed", "N-NightCombat" ),
-					__eval = function ()
-						local quest = gv_Quests['Docks'] or QuestGetState('Docks')
-						return quest.Completed or quest.DocksLost or quest.Failed or quest['N-NightCombat']
-					end,
+				PlaceObj('OR', {
+					Conditions = {
+						PlaceObj('QuestIsVariableBool', {
+							Condition = "or",
+							QuestId = "Docks",
+							Vars = set( "Completed", "DocksLost", "Failed", "N-NightCombat" ),
+							__eval = function ()
+								local quest = gv_Quests['Docks'] or QuestGetState('Docks')
+								return quest.Completed or quest.DocksLost or quest.Failed or quest['N-NightCombat']
+							end,
+						}),
+						PlaceObj('QuestIsVariableBool', {
+							QuestId = "AyeMom",
+							Vars = set( "ShotgunDonatedToGran" ),
+							__eval = function ()
+								local quest = gv_Quests['AyeMom'] or QuestGetState('AyeMom')
+								return quest.ShotgunDonatedToGran
+							end,
+						}),
+					},
 				}),
 			},
 			Idx = 2,
@@ -1369,6 +1381,236 @@ PlaceObj('QuestsDef', {
 			ParamId = "TCE_Completed",
 			QuestId = "Docks",
 		}),
+		PlaceObj('TriggeredConditionalEvent', {
+			Conditions = {
+				PlaceObj('IsCurrentMap', {
+					MapFile = "K-9 - Port Cacao Docks",
+				}),
+				PlaceObj('CheckIsPersistentUnitDead', {
+					Negate = true,
+					per_ses_id = "NPC_Wilma",
+				}),
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "Docks",
+					Vars = set({
+	BombsArmed = false,
+	CacaoGangWilma = true,
+	Completed = false,
+	Failed = false,
+}),
+					__eval = function ()
+						local quest = gv_Quests['Docks'] or QuestGetState('Docks')
+						return not quest.BombsArmed and quest.CacaoGangWilma and not quest.Completed and not quest.Failed
+					end,
+				}),
+				PlaceObj('UnitIsAroundMarkerOfGroup', {
+					DisableContextModification = true,
+					MarkerGroup = "GrannyStore",
+					Negate = true,
+					TargetUnit = "GangWilma",
+				}),
+			},
+			Effects = {
+				PlaceObj('QuestSetVariableNum', {
+					Amount = 1,
+					Prop = "CacaoGang",
+					QuestId = "Docks",
+				}),
+				PlaceObj('GroupSetRoutine', {
+					Routine = "AdvanceTo",
+					RoutineArea = "GrannyStore",
+					TargetUnit = "GangWilma",
+					UseWeapons = true,
+				}),
+			},
+			Once = true,
+			ParamId = "TCE_MoveWilma",
+			QuestId = "Docks",
+		}),
+		PlaceObj('TriggeredConditionalEvent', {
+			Conditions = {
+				PlaceObj('IsCurrentMap', {
+					MapFile = "K-9 - Port Cacao Docks",
+				}),
+				PlaceObj('CheckIsPersistentUnitDead', {
+					Negate = true,
+					per_ses_id = "NPC_Kayla",
+				}),
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "Docks",
+					Vars = set({
+	BombsArmed = false,
+	CacaoGangKayla = true,
+	Completed = false,
+	Failed = false,
+}),
+					__eval = function ()
+						local quest = gv_Quests['Docks'] or QuestGetState('Docks')
+						return not quest.BombsArmed and quest.CacaoGangKayla and not quest.Completed and not quest.Failed
+					end,
+				}),
+				PlaceObj('UnitIsAroundMarkerOfGroup', {
+					DisableContextModification = true,
+					MarkerGroup = "GrannyStore",
+					Negate = true,
+					TargetUnit = "GangKayla",
+				}),
+			},
+			Effects = {
+				PlaceObj('QuestSetVariableNum', {
+					Amount = 1,
+					Prop = "CacaoGang",
+					QuestId = "Docks",
+				}),
+				PlaceObj('GroupSetRoutine', {
+					Routine = "AdvanceTo",
+					RoutineArea = "GrannyStore",
+					TargetUnit = "GangKayla",
+					UseWeapons = true,
+				}),
+			},
+			Once = true,
+			ParamId = "TCE_MoveKayla",
+			QuestId = "Docks",
+		}),
+		PlaceObj('TriggeredConditionalEvent', {
+			Conditions = {
+				PlaceObj('IsCurrentMap', {
+					MapFile = "K-9 - Port Cacao Docks",
+				}),
+				PlaceObj('CheckIsPersistentUnitDead', {
+					Negate = true,
+					per_ses_id = "NPC_Trudy",
+				}),
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "Docks",
+					Vars = set({
+	BombsArmed = false,
+	CacaoGangTrudy = true,
+	Completed = false,
+	Failed = false,
+}),
+					__eval = function ()
+						local quest = gv_Quests['Docks'] or QuestGetState('Docks')
+						return not quest.BombsArmed and quest.CacaoGangTrudy and not quest.Completed and not quest.Failed
+					end,
+				}),
+				PlaceObj('UnitIsAroundMarkerOfGroup', {
+					DisableContextModification = true,
+					MarkerGroup = "GrannyStore",
+					Negate = true,
+					TargetUnit = "GangTrudy",
+				}),
+			},
+			Effects = {
+				PlaceObj('QuestSetVariableNum', {
+					Amount = 1,
+					Prop = "CacaoGang",
+					QuestId = "Docks",
+				}),
+				PlaceObj('GroupSetRoutine', {
+					Routine = "AdvanceTo",
+					RoutineArea = "GrannyStore",
+					TargetUnit = "GangTrudy",
+					UseWeapons = true,
+				}),
+			},
+			Once = true,
+			ParamId = "TCE_MoveTrudy",
+			QuestId = "Docks",
+		}),
+		PlaceObj('TriggeredConditionalEvent', {
+			Conditions = {
+				PlaceObj('IsCurrentMap', {
+					MapFile = "K-9 - Port Cacao Docks",
+				}),
+				PlaceObj('CheckIsPersistentUnitDead', {
+					Negate = true,
+					per_ses_id = "NPC_Vinnie",
+				}),
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "Docks",
+					Vars = set({
+	BombsArmed = false,
+	CacaoGangVinnie = true,
+	Completed = false,
+	Failed = false,
+}),
+					__eval = function ()
+						local quest = gv_Quests['Docks'] or QuestGetState('Docks')
+						return not quest.BombsArmed and quest.CacaoGangVinnie and not quest.Completed and not quest.Failed
+					end,
+				}),
+				PlaceObj('UnitIsAroundMarkerOfGroup', {
+					DisableContextModification = true,
+					MarkerGroup = "GrannyStore",
+					Negate = true,
+					TargetUnit = "GangVinnie",
+				}),
+			},
+			Effects = {
+				PlaceObj('QuestSetVariableNum', {
+					Amount = 1,
+					Prop = "CacaoGang",
+					QuestId = "Docks",
+				}),
+				PlaceObj('GroupSetRoutine', {
+					Routine = "AdvanceTo",
+					RoutineArea = "GrannyStore",
+					TargetUnit = "GangVinnie",
+					UseWeapons = true,
+				}),
+			},
+			Once = true,
+			ParamId = "TCE_MoveVinnie",
+			QuestId = "Docks",
+		}),
+		PlaceObj('TriggeredConditionalEvent', {
+			Conditions = {
+				PlaceObj('IsCurrentMap', {
+					MapFile = "K-9 - Port Cacao Docks",
+				}),
+				PlaceObj('CheckIsPersistentUnitDead', {
+					Negate = true,
+					per_ses_id = "NPC_Hannah",
+				}),
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "Docks",
+					Vars = set({
+	BombsArmed = false,
+	CacaoGangHannah = true,
+	Completed = false,
+	Failed = false,
+}),
+					__eval = function ()
+						local quest = gv_Quests['Docks'] or QuestGetState('Docks')
+						return not quest.BombsArmed and quest.CacaoGangHannah and not quest.Completed and not quest.Failed
+					end,
+				}),
+				PlaceObj('UnitIsAroundMarkerOfGroup', {
+					DisableContextModification = true,
+					MarkerGroup = "GrannyStore",
+					Negate = true,
+					TargetUnit = "GangHannah",
+				}),
+			},
+			Effects = {
+				PlaceObj('QuestSetVariableNum', {
+					Amount = 1,
+					Prop = "CacaoGang",
+					QuestId = "Docks",
+				}),
+				PlaceObj('GroupSetRoutine', {
+					Routine = "AdvanceTo",
+					RoutineArea = "GrannyStore",
+					TargetUnit = "GangHannah",
+					UseWeapons = true,
+				}),
+			},
+			Once = true,
+			ParamId = "TCE_MoveHannah",
+			QuestId = "Docks",
+		}),
 	},
 	Variables = {
 		PlaceObj('QuestVarBool', {
@@ -1479,6 +1721,21 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('QuestVarTCEState', {
 			Name = "TCE_GangInCombat",
+		}),
+		PlaceObj('QuestVarTCEState', {
+			Name = "TCE_MoveWilma",
+		}),
+		PlaceObj('QuestVarTCEState', {
+			Name = "TCE_MoveKayla",
+		}),
+		PlaceObj('QuestVarTCEState', {
+			Name = "TCE_MoveTrudy",
+		}),
+		PlaceObj('QuestVarTCEState', {
+			Name = "TCE_MoveVinnie",
+		}),
+		PlaceObj('QuestVarTCEState', {
+			Name = "TCE_MoveHannah",
 		}),
 	},
 	group = "PortCacao",

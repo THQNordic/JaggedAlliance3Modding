@@ -753,7 +753,7 @@ function GetGameMapEntities()
 	return used_entity, unit_markers_bantes_groups
 end
 
-function GetBlacklistEntities(entity_textures, used_textures, remap)
+function GetBlacklistEntities(entity_textures, used_textures, textures_data)
 	local used_entity, used_voices = GetGameMapEntities()
 	local additional_blacklist_textures = {}
 	Msg("GatherGameEntities", used_entity, additional_blacklist_textures, used_voices)
@@ -775,7 +775,8 @@ function GetBlacklistEntities(entity_textures, used_textures, remap)
 	local err, list = AsyncListFiles("Textures/", "*.dds", "size,relative")
 	local texture_sizes = {}
 	for k,v in ipairs(list) do
-		if remap[v] == v then
+		local file_data = textures_data[v]
+		if not file_data.alias then
 			texture_sizes["Textures/" .. v] = list.size[k]
 		else
 			texture_sizes["Textures/" .. v] = 0
@@ -811,11 +812,13 @@ function GetBlacklistEntities(entity_textures, used_textures, remap)
 	-- collapsing means out of multiple identical texture only one is shipped in the game
 	-- if a texture is shipped, blacklisted, but has identical textures which are not blacklisted, it should be removed from the blacklist
 	local siblings = {}
-	for k,v in pairs(remap) do
-		local v_siblings = siblings[v] or {}
-		v_siblings[#v_siblings+1] = "Textures/" .. k
-		siblings[v] = v_siblings
-		siblings[k] = v_siblings
+	for textureId, textureData in pairs(entity_textures) do
+		local texture_siblings = siblings[textureId] or {}
+		texture_siblings[#texture_siblings+1] = "Textures/" .. textureId
+		siblings[textureId] = texture_siblings
+		if textureData.alias then
+			siblings[textureData.alias] = texture_siblings
+		end
 	end
 	local remove_from_blacklist = {}
 	for texture in pairs(blacklist_textures) do
@@ -900,8 +903,8 @@ local function GetBlacklistSounds()
 	return GetBlacklistFiles("Sounds/environment-stereo", used_sounds, ".wav")
 end
 
-function OnMsg.BuildEngineBinAssets(entity_textures, used_tex, remap)
-	local blacklist_entities, blacklist_textures, blacklist_voices = GetBlacklistEntities(entity_textures, used_tex, remap)
+function OnMsg.BuildEngineBinAssets(entity_textures, used_tex, textures_data)
+	local blacklist_entities, blacklist_textures, blacklist_voices = GetBlacklistEntities(entity_textures, used_tex, textures_data)
 	AsyncStringToFile(EngineBinAssetsBlacklistEntitiesFilename, table.concat(blacklist_entities, "\n"))
 	SVNAddFile(EngineBinAssetsBlacklistEntitiesFilename)
 	AsyncStringToFile(EngineBinAssetsBlacklistTexturesFilename, table.concat(blacklist_textures, "\n"))

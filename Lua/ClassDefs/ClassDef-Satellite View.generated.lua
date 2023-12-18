@@ -146,12 +146,14 @@ DefineClass.SatelliteSector = {
 	properties = {
 		{ id = "SetId", 
 			editor = "func", default = function (self, id)
+if self.modId then return end
 self.name = id
 CampaignObject.SetId(self, id)
 end, no_edit = true, params = "self, id", },
 		{ id = "Setdisplay_name", 
 			editor = "func", default = function (self, display_name)
 self.display_name = display_name
+if self.modId then return end
 if display_name then
 	self.name = string.format("%s %s", self.Id, _InternalTranslate(display_name))
 else
@@ -160,7 +162,7 @@ end
 end, no_edit = true, params = "self, display_name", },
 		{ id = "OnEditorSetProperty", 
 			editor = "func", default = function (self, prop_id)
-if prop_id == "Roads" or prop_id == "BlockTravel" then
+if not self.modId and prop_id == "Roads" or prop_id == "BlockTravel" then
 	SatelliteSectorSetDirectionsProp(self, prop_id)
 end
 if g_SatelliteUI then
@@ -172,27 +174,31 @@ end, no_edit = true, params = "self, prop_id", },
 		{ category = "Data", id = "inherited_hint", help = "<center>This is an inherited sector - use the button below to override it in this DLC.", 
 			editor = "help", default = false, no_edit = function(self) return not self.inherited end, },
 		{ category = "Data", id = "edit_sector_button", 
-			editor = "buttons", default = false, buttons = { {name = "Edit sector", func = "EditGeneratedSector", is_hidden = function(self) if IsKindOf(self, "ModItem") then return true end
+			editor = "buttons", default = false, buttons = { {name = "Edit sector", func = "EditGeneratedSector", is_hidden = function(self) if self.modId or config.PresetEditorsModdingMode then return true end
 
 return IsKindOf(self, "GedMultiSelectAdapter") or not self.inherited and not self.generated end }, }, },
 		{ id = "Id", 
 			editor = "text", default = false, read_only = true, },
-		{ id = "underground_sector_buttons", 
+		{ category = "Underground", id = "HideUnderground", 
+			editor = "bool", default = false, no_edit = function(self) return self.GroundSector end, },
+		{ category = "Underground", id = "CanGoUp", name = "Can Go Overground", help = "Whether this underground sector has a travel connection to its overground sector.", 
+			editor = "bool", default = true, no_edit = function(self) return not self.GroundSector end, },
+		{ category = "Underground", id = "underground_sector_buttons", 
 			editor = "buttons", default = false, buttons = { {name = "Add underground sector", func = "AddUndergroundSector", is_hidden = function(self) if IsKindOf(self, "GedMultiSelectAdapter") then return true end
 
-if IsKindOf(self, "ModItem") then return true end
+if self.modId or config.PresetEditorsModdingMode then return true end
 
 local campaign = GetParentTableOfKind(self, "CampaignPreset")
 return not self.Id or
 			self.Id:ends_with("_Underground") or
 		(campaign and table.find(campaign.Sectors, "Id", self.Id .. "_Underground")) end },  {name = "Select underground sector", func = "SelectUndergroundSector", is_hidden = function(self) if IsKindOf(self, "GedMultiSelectAdapter") then return true end
 
-if IsKindOf(self, "ModItem") then return true end
+if self.modId or config.PresetEditorsModdingMode then return true end
 
 local campaign = GetParentTableOfKind(self, "CampaignPreset")
 return not self.Id or
 			self.Id:ends_with("_Underground") or
-		not (campaign and table.find(campaign.Sectors, "Id", self.Id .. "_Underground")) end },  {name = "Remove sector", func = "RemoveSector", is_hidden = function(self) if IsKindOf(self, "ModItem") then return true end
+		not (campaign and table.find(campaign.Sectors, "Id", self.Id .. "_Underground")) end },  {name = "Remove sector", func = "RemoveSector", is_hidden = function(self) if self.modId or config.PresetEditorsModdingMode then return true end
 
 return IsKindOf(self, "GedMultiSelectAdapter") or not self.Id or self.inherited or not self.Id:ends_with("_Underground") end }, }, },
 		{ id = "MapPosition", help = "delete me", 
@@ -207,10 +213,12 @@ return IsKindOf(self, "GedMultiSelectAdapter") or not self.Id or self.inherited 
 			editor = "number", default = 0, scale = 10, step = 5, min = 0, max = 50, },
 		{ id = "Label1", name = "Label 1", 
 			editor = "text", default = false, },
+		{ id = "modId", 
+			editor = "text", default = false, no_edit = true, },
 		{ id = "Label2", name = "Label 2", 
 			editor = "text", default = false, },
-		{ id = "HideUnderground", 
-			editor = "bool", default = false, no_edit = function(self) return self.GroundSector end, },
+		{ id = "RunLoyaltyLogic", help = "Whether this sector will grant/remove loyalty on conflict resolution", 
+			editor = "bool", default = true, },
 		{ id = "GroundSector", 
 			editor = "text", default = false, no_edit = true, },
 		{ id = "template_key", 
@@ -233,8 +241,12 @@ return IsKindOf(self, "GedMultiSelectAdapter") or not self.Id or self.inherited 
 			editor = "combo", default = "none", items = function (self) return table.iappend({"none"}, table.map(GetCurrentCampaignPreset().Cities, "Id")) end, },
 		{ category = "City", id = "ShowCity", name = "Show city name", help = "Whether to show the city name on the sector", 
 			editor = "bool", default = false, },
-		{ id = "reveal_allowed", help = "Treat sector as revealed even if there are no player squads nearby", 
+		{ id = "reveal_allowed", help = "This sector can be revealed by the player, and traits on them are shown in the satellite view. At the start of the campaign mainland sectors are not visible.", 
 			editor = "bool", default = false, no_edit = true, },
+		{ id = "never_autoresolve", help = "Conflicts on this sector can never be autoresolved", 
+			editor = "bool", default = false, },
+		{ id = "discovered", help = "The player has been to this sector, or has started travelling to it via some method. In use only for underground sectors.", 
+			editor = "bool", default = true, },
 		{ category = "Conflict", id = "AutoResolveDefenderBonus", help = "Percent by which defender power is increased in this sector", 
 			editor = "number", default = 0, min = 0, },
 		{ category = "Mine", id = "Mine", 
@@ -334,6 +346,8 @@ return IsKindOf(self, "GedMultiSelectAdapter") or not self.Id or self.inherited 
 			editor = "bool", default = false, },
 		{ id = "RepairShop", name = "Repair shop", help = "Allows Craft Ammo, Craft Explosives operations in this sector", 
 			editor = "bool", default = false, },
+		{ category = "Travel", id = "bidirectionalRoadApply", name = "Apply roads to adjacent sectors", 
+			editor = "bool", default = false, no_edit = function(self) return not self.modId end, },
 		{ category = "Travel", id = "Roads", name = "Roads", help = "Roads only improve the quality of travel and lack of a road doesn't prevent travel between sectors", 
 			editor = "directions_set", default = false, 
 			no_edit = function(self) return self.GroundSector end, },
@@ -341,9 +355,10 @@ return IsKindOf(self, "GedMultiSelectAdapter") or not self.Id or self.inherited 
 			editor = "bool", default = false, },
 		{ category = "Diamond Briefcase", id = "ImpassableForDiamonds", name = "Impassable for diamonds", help = "Diamond shipments can't pass through this sector", 
 			editor = "bool", default = false, },
+		{ category = "Travel", id = "bidirectionalBlockApply", name = "Apply block travel to adjacent sectors", 
+			editor = "bool", default = false, no_edit = function(self) return not self.modId end, },
 		{ category = "Travel", id = "BlockTravel", name = "Block travel", help = "Blocks travel and adds ui indication for that in the satellite view (red/white line)", 
-			editor = "directions_set", default = false, 
-			no_edit = function(self) return self.GroundSector end, },
+			editor = "directions_set", default = false, },
 		{ category = "Travel", id = "BlockTravelRiver", name = "Block travel - invisible", help = "Blocks travel without displaying it on the sat view", 
 			editor = "directions_set", default = false, 
 			no_edit = function(self) return self.GroundSector end, },
@@ -369,6 +384,8 @@ return IsKindOf(self, "GedMultiSelectAdapter") or not self.Id or self.inherited 
 			editor = "nested_obj", default = false, no_edit = true, base_class = "GuardpostSessionObject", },
 		{ id = "image", name = "Image", 
 			editor = "ui_image", default = "UI/SatelliteView/SectorImages/_Highlands", image_preview_size = 200, },
+		{ id = "override_loading_screen", 
+			editor = "ui_image", default = false, no_edit = true, image_preview_size = 200, },
 		{ category = "Events", id = "Events", 
 			editor = "nested_list", default = false, base_class = "SectorEvent", },
 		{ id = "ExecutedEvents", 
@@ -388,7 +405,7 @@ return IsKindOf(self, "GedMultiSelectAdapter") or not self.Id or self.inherited 
 		{ category = "Diamond Briefcase", id = "DBDestinationSector", name = "Destination sector", help = "Travelling squads carrying diamond shipments will path to this sector.", 
 			editor = "bool", default = false, },
 		{ category = "Diamond Briefcase", id = "DBRecalc", help = "You only need to run this once when applying multiple changes. It will take a while!", 
-			editor = "buttons", default = false, buttons = { {name = "Recalculate Diamond Routes", func = "GenerateDynamicDBPathCache"}, }, },
+			editor = "buttons", default = false, buttons = { {name = "Recalculate Diamond Routes", func = "GenerateDBCacheStatic", is_hidden = function(self) if not Platform.developer then return true end end }, }, },
 		{ category = "Port", id = "PricePerTile", name = "Price per tile", 
 			editor = "number", default = false, },
 		{ id = "enabled_auto_deploy", 
@@ -539,6 +556,10 @@ function SatelliteSector:RemoveSector(root, prop_id, ged)
 	end)
 end
 
+function SatelliteSector:GenerateDBCacheStatic(root, prop_id, ged)
+	GenerateDynamicDBPathCache("save")
+end
+
 function SatelliteSector:GetTravelPrice(squad)
 	local cost = self.PricePerTile or const.Satellite.DefaultPortPricePerTile
 	local discounts = false
@@ -575,7 +596,7 @@ function SatelliteSector:GetTravelPrice(squad)
 end
 
 function SatelliteSector:IsReadOnly()
-	return self.generated or self.inherited
+	return self.generated or self.inherited or (config.PresetEditorsModdingMode and not self.modId)
 end
 
 DefineClass.SatelliteSectorGedFilter = {
@@ -739,7 +760,7 @@ function SatelliteSquad:CancelTravel()
 end
 
 DefineClass.SectorOperation = {
-	__parents = { "Preset", },
+	__parents = { "Preset", "CampaignSpecific", },
 	__generated_by_class = "PresetDef",
 
 	properties = {
@@ -770,6 +791,8 @@ DefineClass.SectorOperation = {
 			editor = "nested_list", default = false, base_class = "SectorOperationProfession", auto_expand = true, },
 		{ id = "ShowInCombatBadge", help = "Show in Combat Badge", 
 			editor = "bool", default = true, },
+		{ id = "ShowPauseProgress", help = "Show saved operation progress when no mercs are attached", 
+			editor = "bool", default = false, },
 		{ id = "error_msg", name = "ErrorMessage", 
 			editor = "text", default = false, translate = true, },
 		{ id = "RequiredItem", name = "Required Item", 
@@ -1068,7 +1091,7 @@ end, params = "self, merc, sector", },
 	EditorMenubarSortKey = "4500",
 }
 
-DefineModItemPreset("SectorOperation", { EditorName = "Sector operation", EditorSubmenu = "Satellite" })
+DefineModItemPreset("SectorOperation", { EditorName = "Sector operation", EditorSubmenu = "Campaign & Maps" })
 
 function SectorOperation:Gettarget_example()
 	return self.target_contribution / (4*self:GetSectorSlots()*100)

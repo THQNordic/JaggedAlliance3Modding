@@ -1028,9 +1028,6 @@ PlaceObj('Conversation', {
 				PlaceObj('SectorCheckOwner', {
 					sector_id = "L8",
 				}),
-				PlaceObj('SectorCheckOwner', {
-					sector_id = "K9",
-				}),
 				PlaceObj('SectorMilitiaNumber', {
 					Condition = "<=",
 					sector_id = "L8",
@@ -1039,11 +1036,6 @@ PlaceObj('Conversation', {
 					Amount = 8,
 					Condition = "<",
 					sector_id = "L8",
-				}),
-				PlaceObj('SectorMilitiaNumber', {
-					Amount = 8,
-					Condition = "<",
-					sector_id = "K9",
 				}),
 				PlaceObj('QuestIsVariableNum', {
 					Condition = ">",
@@ -1074,11 +1066,6 @@ PlaceObj('Conversation', {
 					Condition = "<",
 					sector_id = "L8",
 				}),
-				PlaceObj('SectorMilitiaNumber', {
-					Amount = 8,
-					Condition = "<",
-					sector_id = "K9",
-				}),
 				PlaceObj('SectorCheckOwner', {
 					sector_id = "K9",
 				}),
@@ -1095,12 +1082,8 @@ PlaceObj('Conversation', {
 					QuestId = "PortCacaoSideQuests",
 				}),
 				PlaceObj('SectorTrainMilitia', {
-					Amount = 3,
+					Amount = 5,
 					sector_id = "L8",
-				}),
-				PlaceObj('SectorTrainMilitia', {
-					Amount = 2,
-					sector_id = "K9",
 				}),
 			},
 			Keyword = "Reinforce militia in Port Cacao",
@@ -3270,12 +3253,11 @@ PlaceObj('Conversation', {
 							PlaceObj('QuestIsVariableBool', {
 								QuestId = "RescueBiff",
 								Vars = set({
-	Completed = false,
-	Failed = false,
+	MERC_Scallion = false,
 }),
 								__eval = function ()
 									local quest = gv_Quests['RescueBiff'] or QuestGetState('RescueBiff')
-									return not quest.Completed and not quest.Failed
+									return not quest.MERC_Scallion
 								end,
 							}),
 						},
@@ -3289,12 +3271,11 @@ PlaceObj('Conversation', {
 					PlaceObj('ConversationInterjection', {
 						Conditions = {
 							PlaceObj('QuestIsVariableBool', {
-								Condition = "or",
 								QuestId = "RescueBiff",
-								Vars = set( "Completed", "Failed" ),
+								Vars = set( "MERC_Scallion" ),
 								__eval = function ()
 									local quest = gv_Quests['RescueBiff'] or QuestGetState('RescueBiff')
-									return quest.Completed or quest.Failed
+									return quest.MERC_Scallion
 								end,
 							}),
 						},

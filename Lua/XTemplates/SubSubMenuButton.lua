@@ -116,6 +116,8 @@ PlaceObj('XTemplate', {
 				'DisabledBorderColor', RGBA(0, 0, 0, 0),
 				'TextStyle', "MMOptionEntry",
 				'Translate', true,
+				'TextHAlign', "center",
+				'TextVAlign', "center",
 			}),
 			}),
 		}),

@@ -52,3 +52,17 @@ function AutoAttachObject:SetAutoAttachMode(value)
 		AttachObjectToFloatingDummy(self, floatingDummy, parent ~= floatingDummy and parent or nil)
 	end
 end
+
+function AutoAttachObject:OnEditorSetProperty(prop_id, old_value, ged)
+	if prop_id == "AllAttachedLightsToDetailLevel" or prop_id == "StateText" then
+		self:SetAutoAttachMode(self:GetAutoAttachMode())
+		if prop_id == "AllAttachedLightsToDetailLevel" then
+			self:ForEachAttach(function(attach)
+				if IsKindOf(attach, "Light") then
+					Stealth_HandleLight(attach)
+				end
+			end)
+		end
+	end
+	Object.OnEditorSetProperty(self, prop_id, old_value, ged)
+end

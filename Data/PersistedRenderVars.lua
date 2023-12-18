@@ -1074,6 +1074,7 @@ PlaceObj('UnitOverwatchConsts', {
 })
 
 PlaceObj('CRM_RangeContourControllerPreset', {
+	Active = true,
 	contour_base_inside = "CombatRange_Inner",
 	contour_base_outside = "CombatRange_Inner",
 	contour_fx_inside = "CombatRange_Inner",
@@ -1442,6 +1443,21 @@ PlaceObj('XSatelliteViewParams', {
 	enemy_id = "SatView_enemy",
 	id = "NewXSatelliteViewParams",
 	invisible_grid_color = 1601795700,
+	neutral_id = "SatView_reveal_glow",
+	neutral_sector_id = "SatView_neutral",
+	player_id = "SatView_player",
+	rollover_id = "SatView_rollover",
+	selected_id = "SatView_selected",
+	vision_blur_id = "SatView_reveal_mask_blur",
+	vision_id = "SatView_reveal_mask",
+})
+
+PlaceObj('XSatelliteViewParams', {
+	Active = true,
+	enemy_id = "SatView_enemy",
+	group = "XSatelliteViewParams",
+	id = "NewXSatelliteViewParamsUnderground",
+	invisible_grid_color = 762934900,
 	neutral_id = "SatView_reveal_glow",
 	neutral_sector_id = "SatView_neutral",
 	player_id = "SatView_player",

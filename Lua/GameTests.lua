@@ -965,7 +965,10 @@ function GameTestsNightly.TestBantersUsage()
 	local undefinedBanters, unusedBanters, ignoredGroups = TestBantersUsage()
 	
 	for _, undefinedBanterMarkers in ipairs(undefinedBanters) do
-		StoreErrorSource(undefinedBanterMarkers[2], string.format("Did not find a banter id or group '%s' on map: %s", undefinedBanterMarkers[1], undefinedBanterMarkers[2].map))
+		local id = undefinedBanterMarkers[1]
+		local obj = undefinedBanterMarkers[2]
+		local handle, map = obj.handle, obj.map
+		StoreErrorSource(HandleToObject[handle], string.format("Did not find a banter id or group '%s' for marker with handle %d on map: %s", id, handle, map))
 	end
 	
 	for _, unusedBanter in ipairs(unusedBanters) do

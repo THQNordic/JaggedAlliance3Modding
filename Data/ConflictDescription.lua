@@ -24,6 +24,20 @@ PlaceObj('ConflictDescription', {
 })
 
 PlaceObj('ConflictDescription', {
+	description = T(700353466140, --[[ConflictDescription AutoresolveDefeat description]] "Your forces have been defeated!"),
+	group = "Default",
+	id = "AutoresolveDefeat",
+	title = T(999008897020, --[[ConflictDescription AutoresolveDefeat title]] "Defeat"),
+})
+
+PlaceObj('ConflictDescription', {
+	description = T(737324982307, --[[ConflictDescription AutoresolveVictory description]] "The enemy forces have been defeated!"),
+	group = "Default",
+	id = "AutoresolveVictory",
+	title = T(815793239069, --[[ConflictDescription AutoresolveVictory title]] "Victory"),
+})
+
+PlaceObj('ConflictDescription', {
 	description = T(832748814315, --[[ConflictDescription DefaultAttack description]] "Enemy forces are present in the sector. Prepare to engage!"),
 	group = "Default",
 	id = "DefaultAttack",

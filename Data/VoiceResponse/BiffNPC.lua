@@ -24,9 +24,9 @@ PlaceObj('VoiceResponse', {
 		T(842795360677, --[[VoiceResponse BiffNPC Pain VoiceResponse Pain - Hit by an attack (if surrounded SurroundedPain is played instead). Short. These are emotes - disregard the written text. voice:BiffNPC]] "Pain6")
 	}),
 	Wounded = TConcat({
-		T(345822945991, --[[VoiceResponse BiffNPC Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:BiffNPC]] "Oh my God! I'm a dead man."),
-		T(252777169392, --[[VoiceResponse BiffNPC Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:BiffNPC]] "I'm gonna die."),
-		T(519638070752, --[[VoiceResponse BiffNPC Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:BiffNPC]] "Oh my God! That's my blood.")
+		T(345822945991, --[[VoiceResponse BiffNPC Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:BiffNPC]] "Oh my God! I'm a dead man."),
+		T(252777169392, --[[VoiceResponse BiffNPC Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:BiffNPC]] "I'm gonna die."),
+		T(519638070752, --[[VoiceResponse BiffNPC Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:BiffNPC]] "Oh my God! That's my blood.")
 	}),
 	group = "Other",
 	id = "BiffNPC",

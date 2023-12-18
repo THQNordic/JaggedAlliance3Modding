@@ -633,7 +633,7 @@ function PDAClass:Close(force)
 	XDialog.Close(self)
 end
 
-function NetEvents.AnyPlayerClosedFirstMercSelection()
+function NetSyncEvents.AnyPlayerClosedFirstMercSelection()
 	local pda = GetDialog("PDADialog")
 	if pda and pda.window_state ~= "destroying" and pda.window_state ~= "closing" then
 		pda:Close()
@@ -694,7 +694,7 @@ function PDAClass:CloseAction(host)
 				-- Temp override, new design is going to satellite view instead of enter sector
 				if true then
 					self:Close()
-					NetEvent("AnyPlayerClosedFirstMercSelection")
+					NetSyncEvent("AnyPlayerClosedFirstMercSelection")
 					return
 				end
 			
@@ -1784,6 +1784,7 @@ end
 function SquadsAndMercsClass:SelectSquad(squad, skipRespawn)
 	local old_squad = self.selected_squad or (g_CurrentSquad and gv_Squads[g_CurrentSquad])
 	
+	-- Ensure the squad with the selected units is current, in exploration.
 	if not g_SatelliteUI then
 		UpdateSquad()
 	end
@@ -1808,7 +1809,7 @@ function SquadsAndMercsClass:SelectSquad(squad, skipRespawn)
 	end
 
 	local changed = false
-	local new_squad = squad and squad.ref or squad or false
+	local new_squad = squad
 	-- This is always true as the selected_squads is always false because of the rebuild.
 	if new_squad and self.selected_squad ~= new_squad then
 		self.selected_squad = new_squad
@@ -2226,12 +2227,13 @@ end
 
 function HUDMercClass:SetupStyle()
 	local style = "default"
-
+	local is_unit = IsKindOf(self.context, "Unit")
+	
 	local selected = self.selected
-	local downed = IsKindOf(self.context, "Unit") and self.context:IsDowned()
-	local dead = IsKindOf(self.context, "PropertyObject") and self.context:HasMember("IsDead") and self.context:IsDead()
-	local bandaging = IsKindOf(self.context, "Unit") and self.context:HasStatusEffect("BandageInCombat")
-	local beingBandaged = IsKindOf(self.context, "Unit") and self.context:HasStatusEffect("BeingBandaged")
+	local downed = is_unit and self.context:IsDowned()
+	local dead = IsKindOf(self.context, "PropertyObject") and self.context:HasMember("IsDead") and self.context:IsDead() or self.context.is_dead
+	local bandaging = is_unit and self.context:HasStatusEffect("BandageInCombat")
+	local beingBandaged = is_unit and self.context:HasStatusEffect("BeingBandaged")
 	if dead then
 		style = "dead"
 		selected = false
@@ -2244,13 +2246,13 @@ function HUDMercClass:SetupStyle()
 		style = "selected"
 	end
 	
-	local noAP = IsKindOf(self.context, "Unit") and g_Combat and self.context.ActionPoints < const["Action Point Costs"].Walk	
+	local noAP = is_unit and g_Combat and self.context.ActionPoints < const["Action Point Costs"].Walk	
 	if not downed and not dead and noAP then
 		style = style .. "-noAP"
 	end
 	
 	local lowAP = noAP
-	if not noAP and IsKindOf(self.context, "Unit") then
+	if not noAP and is_unit then
 		local defaultAction = self.context:GetDefaultAttackAction()
 		local cost = defaultAction:GetAPCost(self.context)
 		lowAP = not self.context:HasAP(cost)
@@ -2264,7 +2266,7 @@ function HUDMercClass:SetupStyle()
 		style = style .. "-disabled"
 	end
 	
-	local stealthy = IsKindOf(self.context, "Unit") and self.context:HasStatusEffect("Hidden")
+	local stealthy = is_unit and self.context:HasStatusEffect("Hidden")
 	if stealthy then
 		style = style .. "-stealthy"
 	end
@@ -2434,7 +2436,7 @@ DefineClass.SatelliteConflictSquadsAndMercsClass = {
 
 function SatelliteConflictSquadsAndMercsClass:OnContextUpdate(...)
 	self.currentSquadIndex = table.find(self.context, self.selected_squad)
-	self.idTitle:SetContext(self.selected_squad, true)
+	self[1].idTitle:SetContext(self.selected_squad, true)
 	SquadsAndMercsClass.OnContextUpdate(self, ...)
 end
 

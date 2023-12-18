@@ -34,6 +34,21 @@ PlaceObj('CharacterEffectCompositeDef', {
 				end)
 			end,
 		}),
+		PlaceObj('UnitReaction', {
+			Event = "OnCheckIntelVisible",
+			Handler = function (self, target)
+				return gv_CurrentSectorId and gv_Sectors[gv_CurrentSectorId].intel_discovered
+			end,
+		}),
+		PlaceObj('UnitReaction', {
+			Event = "OnHackIntelDsicovered",
+			Handler = function (self, target)
+				local discoveredFor = DiscoverIntelForRandomSector(2, "no notification")
+				if discoveredFor then
+					CombatLog("important", T{312197955233, "Livewire used her custom PDA to discover additional Intel for <em><SectorName(sectorId)></em>", sectorId = discoveredFor})
+				end
+			end,
+		}),
 	},
 	'DisplayName', T(380316218017, --[[CharacterEffectCompositeDef InnerInfo DisplayName]] "Inside Dope"),
 	'Description', T(222768539188, --[[CharacterEffectCompositeDef InnerInfo Description]] "<em>Reveals</em> all <em>Enemies</em> if you have <em>Intel</em> for the Sector."),

@@ -28,5 +28,6 @@ DefineClass._9mm_Subsonic = {
 			target_prop = "Noise",
 		}),
 	},
+	ammo_type_icon = "UI/Icons/Items/ta_subsonic.png",
 }
 

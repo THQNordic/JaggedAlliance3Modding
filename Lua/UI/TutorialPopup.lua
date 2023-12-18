@@ -238,7 +238,8 @@ end
 function OpenTutorialPopup(onWindow, parent, preset, textContext)
 	local onWindow = onWindow or false
 	if not preset then return false end
-	local enabled_option = GetAccountStorageOptionValue("HintsEnabled") and GetCurrentCampaignPreset().id == "HotDiamonds"
+	if not preset:IsRelatedToCurrentCampaign() then return false end
+	local enabled_option = GetAccountStorageOptionValue("HintsEnabled")
 	if not enabled_option then
 		return false
 	end
@@ -296,7 +297,8 @@ end
 
 function OpenTutorialPopupSatelliteMap(onWindow, parent, preset, textContext)
 	if not preset then return false end
-	local enabled_option = GetAccountStorageOptionValue("HintsEnabled") and GetCurrentCampaignPreset().id == "HotDiamonds"
+	if not preset:IsRelatedToCurrentCampaign() then return false end
+	local enabled_option = GetAccountStorageOptionValue("HintsEnabled")
 	if not enabled_option then
 		return false
 	end
@@ -501,8 +503,7 @@ function OnMsg.OpenSatelliteView()
 	end)
 	
 	if not TutorialHintsState.TravelPlaced then
-		local canShow = GetCurrentCampaignPreset().id == "HotDiamonds" and
-			gv_InitialHiringDone and gv_Sectors and not gv_Sectors.I1.conflict and gv_Sectors.I1.Side == "player1"
+		local canShow = gv_InitialHiringDone and gv_Sectors and not gv_Sectors.I1.conflict and gv_Sectors.I1.Side == "player1"
 		if not canShow then return end
 		
 		local preset = TutorialHints.SatelliteTravelToErnie

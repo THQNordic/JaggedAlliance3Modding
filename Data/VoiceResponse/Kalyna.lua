@@ -304,7 +304,7 @@ PlaceObj('VoiceResponse', {
 		T(146879406881, --[[VoiceResponse Kalyna SelectionStealth VoiceResponse SelectionStealth - when selected or autoselected voice:Kalyna]] "When I was little, I would hide from everyone.")
 	}),
 	SeriouslyWounded = TConcat({
-		T(466446208095, --[[VoiceResponse Kalyna SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds) voice:Kalyna]] "Please take care of my babusya if I die.")
+		T(466446208095, --[[VoiceResponse Kalyna SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining. voice:Kalyna]] "Please take care of my babusya if I die.")
 	}),
 	Startled = TConcat({
 		T(469891899057, --[[VoiceResponse Kalyna Startled VoiceResponse Startled - Startled by hearing a sudden noise voice:Kalyna]] "Huh?"),
@@ -348,9 +348,9 @@ PlaceObj('VoiceResponse', {
 		T(895555111734, --[[VoiceResponse Kalyna WeaponJammed VoiceResponse WeaponJammed - When weapon has jammed voice:Kalyna]] "My weapon is fouled!")
 	}),
 	Wounded = TConcat({
-		T(210623767548, --[[VoiceResponse Kalyna Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Kalyna]] "Ow! Hey, that hurt!"),
-		T(993361725595, --[[VoiceResponse Kalyna Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Kalyna]] "Not as bad as a smack from my babusya."),
-		T(761009294022, --[[VoiceResponse Kalyna Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Kalyna]] "These villains are not playing around!")
+		T(210623767548, --[[VoiceResponse Kalyna Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Kalyna]] "Ow! Hey, that hurt!"),
+		T(993361725595, --[[VoiceResponse Kalyna Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Kalyna]] "Not as bad as a smack from my babusya."),
+		T(761009294022, --[[VoiceResponse Kalyna Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Kalyna]] "These villains are not playing around!")
 	}),
 	group = "MercenariesNew",
 	id = "Kalyna",

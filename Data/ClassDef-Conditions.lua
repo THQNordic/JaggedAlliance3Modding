@@ -1032,6 +1032,71 @@ PlaceObj('ConditionDef', {
 
 PlaceObj('ConditionDef', {
 	group = "Conditions",
+	id = "IsCurrentMap",
+	PlaceObj('PropertyDefCombo', {
+		'id', "MapFile",
+		'default', "",
+		'items', function (self) return ListMaps() end,
+	}),
+	PlaceObj('ClassConstDef', {
+		'name', "Documentation",
+		'type', "text",
+		'value', "Check if currently in tactical view on the specified map",
+	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "__eval",
+		'params', "obj, context",
+		'code', function (self, obj, context)
+			if gv_SatelliteView or not gv_Sectors then return false end
+			
+			local sectorPreset = gv_Sectors[gv_CurrentSectorId]
+			if sectorPreset then
+				return sectorPreset.Map == self.MapFile
+			end
+		end,
+	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "GetError",
+		'code', function (self)
+			if not self.MapFile then
+				return "specify map!"
+			end
+		end,
+	}),
+	PlaceObj('TestHarness', {
+		'name', "TestHarness",
+		'TestedOnce', true,
+		'GetTestSubject', function (self) return SelectedObj end,
+		'TestObject', PlaceObj('IsCurrentMap', {
+			MapFile = "I-1 - Flag Hill",
+		}),
+	}),
+	PlaceObj('ClassConstDef', {
+		'name', "EditorNestedObjCategory",
+		'type', "text",
+		'value', "Sector effects",
+	}),
+	PlaceObj('PropertyDefBool', {
+		'id', "Negate",
+		'name', "Negate Condition",
+		'help', "If true, checks for the opposite condition.",
+	}),
+	PlaceObj('ClassConstDef', {
+		'name', "EditorView",
+		'type', "text",
+		'value', "Currently in tactical view in <u(MapFile)>",
+		'untranslated', true,
+	}),
+	PlaceObj('ClassConstDef', {
+		'name', "EditorViewNeg",
+		'type', "text",
+		'value', "Currently not in tactical view in <u(MapFile)>",
+		'untranslated', true,
+	}),
+})
+
+PlaceObj('ConditionDef', {
+	group = "Conditions",
 	id = "IsDayOfTheWeek",
 	PlaceObj('ClassMethodDef', {
 		'name', "__eval",

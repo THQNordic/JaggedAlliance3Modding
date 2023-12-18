@@ -545,7 +545,9 @@ function UIInteractWith(unit, target)
 end
 
 function OnMsg.NewMapLoaded()
-	local radius, surf = CalcMapMaxObjRadius(const.efSelectable, 0)
+	-- covers: passability update(efCollision + efApplyToGrids) and interface calling IntersectSegmentWithObjects(efCollision + efSelectable)
+	-- want to avoid very big objects placed outside the playable area
+	local radius, surf = CalcMapMaxObjRadius(const.efCollision, const.efApplyToGrids + const.efSelectable, 0)
 	SetMapMaxObjRadius(radius, surf)
 end
 
@@ -729,8 +731,17 @@ function IModeCommonUnitControl:UpdateInteractablesHighlight(noNew, force)
 		end
 		self.fx_interactable = fx_interactable
 		if fx_interactable then
+			if not fx_interactable.discovered then
+				NetSyncEvent("InteractableCursorDiscovered", fx_interactable)
+			end
 			fx_interactable:HighlightIntensely(true, "cursor")
 		end
+	end
+end
+
+function NetSyncEvents.InteractableCursorDiscovered(interactable)
+	if interactable then
+		interactable.discovered = true
 	end
 end
 
@@ -1355,6 +1366,8 @@ function GetRangeBasedMouseCursor(accuracy, action, willAttack)
 end
 
 function IModeCommonUnitControl:UpdateCursorImage()
+	if GetUIStyleGamepad() then return end
+
 	local movement = IsKindOf(self, "IModeCombatMovement")
 	local exploration = IsKindOf(self, "IModeExploration")
 	local canInteract = movement or exploration

@@ -63,7 +63,7 @@ function SectorWindow:Open()
 		txt:SetText(T{547402413356, "<cityName><cityLoyaltyConditional(city)>", {cityName = text, city = city }})
 		txt:SetUseClipBox(false)
 		txt:SetTextStyle("CityName")
-		txt:SetId("idLoayalty")
+		txt:SetId("idLoyalty")
 		txt:SetHAlign("center")
 		txt:SetVAlign("top")
 		txt:SetMargins(box(0, 5, 0, 0))
@@ -309,7 +309,12 @@ function SectorWindow:UpdateZoom(prevZoom, newZoom, time)
 	local map = self.map
 	local maxZoom = map:GetScaledMaxZoom()
 	if self.idUndergroundIconsList then
-		self.idUndergroundIconsList:SetVisible(not self.context.HideUnderground and newZoom > maxZoom / 2)
+		local otherSector = GetUnderOrOvergroundId(self.context.Id)
+		otherSector = otherSector and gv_Sectors[otherSector]
+		local otherSectorDiscovered = otherSector and otherSector.discovered
+		
+		self.idUndergroundIconsList:SetVisible(
+			not self.context.HideUnderground and otherSectorDiscovered and newZoom > maxZoom / 2)
 	end
 	if self.idPointOfInterest and IsKindOf(self.idPointOfInterest, "SatelliteSectorIconGuardpostClass") then
 		self.idPointOfInterest:SetMiniMode(newZoom <= maxZoom / 2)
@@ -325,13 +330,17 @@ function SectorWindow:SetVisible(visible, ...)
 			visible = false
 		end
 	end
+	
+	if not self.context.discovered then
+		visible = false
+	end
 
 	XMapWindow.SetVisible(self, visible, ...)
 	if self.idUndergroundImage then self.idUndergroundImage:SetVisible(visible) end
 end
 
 function SectorWindow:OnContextUpdate(context,update)
- --"XMapWindow", "XContextWindow"idLoayalty
+ --"XMapWindow", "XContextWindow"idLoyalty
  XContextWindow.OnContextUpdate(self, context,update)
  
  	local text = false
@@ -342,7 +351,7 @@ function SectorWindow:OnContextUpdate(context,update)
 	end
 	
 	if text then
-		self.idLoayalty:SetText(T{547402413356, "<cityName><cityLoyaltyConditional(city)>", {cityName = text, city = city }})
+		self.idLoyalty:SetText(T{547402413356, "<cityName><cityLoyaltyConditional(city)>", {cityName = text, city = city }})
 	end
 end
 
@@ -701,11 +710,13 @@ function SquadWindow:OnSetRollover(rollover)
 				w:SetColor(rollover and GameColors.C or GameColors.Enemy)
 			end
 			w:SetDrawOnTop(rollover)
+			self:SetDrawOnTop(rollover)
 		end
 		
 		for i, w in ipairs(displayedRoute.shortcuts) do
 			w:SetBackground(rollover and GameColors.C or GameColors.Enemy)
 			w:SetDrawOnTop(rollover)
+			self:SetDrawOnTop(rollover)
 		end
 	end
 end
@@ -1373,23 +1384,12 @@ function SatelliteSectorUndergroundIcon:Open()
 end
 
 function SatelliteSectorUndergroundIcon:SwapSector()
-	local parentSectorWin = self:ResolveId("node")
-	local sectorCtx = parentSectorWin.context
-	local groundSectorId = sectorCtx.GroundSector or sectorCtx.Id
-	local groundSectorWin = g_SatelliteUI and g_SatelliteUI.sector_to_wnd[groundSectorId]
-	if not groundSectorWin then return end
-	groundSectorWin:SetVisible(not groundSectorWin.visible)
-	
-	local undergroundSectorId = groundSectorId .. "_Underground"
-	local undergroundSectorWindow = g_SatelliteUI.sector_to_wnd[undergroundSectorId]
-	if not undergroundSectorWindow then return end
-	undergroundSectorWindow:SetVisible(not groundSectorWin.visible)
-	
-	g_SatelliteUI:UpdateSectorVisuals(groundSectorId)
-	g_SatelliteUI:UpdateSectorVisuals(undergroundSectorId)
-	
-	local visibleSector = undergroundSectorWindow.visible and undergroundSectorId or groundSectorId
-	return visibleSector, visibleSector == undergroundSectorId and groundSectorId or undergroundSectorId
+	local layer = g_SatelliteUI.layer_mode
+	if layer == "satellite" then
+		g_SatelliteUI:SetLayerMode("underground")
+	elseif layer == "underground" then
+		g_SatelliteUI:SetLayerMode("satellite")
+	end
 end
 
 function SatelliteSectorUndergroundIcon:OnPress()

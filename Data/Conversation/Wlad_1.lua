@@ -1072,6 +1072,7 @@ PlaceObj('Conversation', {
 		StoryBranchIcon = "conversation_trade",
 		id = "Craftsomethingforus8",
 		PlaceObj('ConversationPhrase', {
+			Align = "right",
 			AutoRemove = true,
 			Conditions = {
 				PlaceObj('UnitSquadHasItem', {
@@ -1159,6 +1160,7 @@ PlaceObj('Conversation', {
 			id = "Craftsomethingforus",
 		}),
 		PlaceObj('ConversationPhrase', {
+			Align = "right",
 			AutoRemove = true,
 			Conditions = {
 				PlaceObj('UnitSquadHasItem', {
@@ -1229,6 +1231,7 @@ PlaceObj('Conversation', {
 			id = "Craftsomethingforus2",
 		}),
 		PlaceObj('ConversationPhrase', {
+			Align = "right",
 			AutoRemove = true,
 			Conditions = {
 				PlaceObj('UnitSquadHasItem', {
@@ -1308,10 +1311,10 @@ PlaceObj('Conversation', {
 			id = "Craftsomethingforus3",
 		}),
 		PlaceObj('ConversationPhrase', {
+			Align = "right",
 			AutoRemove = true,
 			Conditions = {
 				PlaceObj('UnitSquadHasItem', {
-					Amount = 10,
 					ItemId = "KevlarHelmet",
 				}),
 				PlaceObj('UnitSquadHasItem', {
@@ -1383,15 +1386,16 @@ PlaceObj('Conversation', {
 			id = "Craftsomethingforus4",
 		}),
 		PlaceObj('ConversationPhrase', {
+			Align = "right",
 			Conditions = {
 				PlaceObj('UnitSquadHasItem', {
-					Amount = 40,
+					Amount = 25,
 					ItemId = "Parts",
 				}),
 			},
 			Effects = {
 				PlaceObj('UnitTakeItem', {
-					Amount = 40,
+					Amount = 25,
 					AnySquad = true,
 					ItemId = "Parts",
 				}),
@@ -1458,6 +1462,7 @@ PlaceObj('Conversation', {
 			id = "Craftsomethingforus5",
 		}),
 		PlaceObj('ConversationPhrase', {
+			Align = "right",
 			AutoRemove = true,
 			Conditions = {
 				PlaceObj('UnitSquadHasItem', {
@@ -1566,6 +1571,7 @@ PlaceObj('Conversation', {
 			id = "Craftsomethingforus6",
 		}),
 		PlaceObj('ConversationPhrase', {
+			Align = "right",
 			AutoRemove = true,
 			Conditions = {
 				PlaceObj('UnitSquadHasItem', {

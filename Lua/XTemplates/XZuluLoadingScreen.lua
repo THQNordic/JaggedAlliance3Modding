@@ -79,7 +79,16 @@ PlaceObj('XTemplate', {
 					if data.satellite then
 						img = GetSatelliteLoadingScreen(campaign_folder, img_ext~="") or img
 					elseif data.sector and data.campaign then
-						sector_img = campaign_folder .. data.sector .. img_ext
+						local sectorPreset = gv_Sectors and gv_Sectors[data.sector]
+						
+						if sectorPreset and sectorPreset.override_loading_screen then
+							sector_img = sectorPreset.override_loading_screen .. img_ext
+						elseif data.override_loading_screen then
+							sector_img = data.override_loading_screen .. img_ext
+						else
+							sector_img = campaign_folder .. data.sector .. img_ext
+						end
+				
 						if ResourceManager.GetResourceID(sector_img) ~= const.InvalidResourceID then
 							img = sector_img
 						end

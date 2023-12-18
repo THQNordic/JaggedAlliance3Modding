@@ -134,7 +134,7 @@ PlaceObj('XTemplate', {
 										PlaceObj('XTemplateForEach', {
 											'comment', "merc",
 											'array', function (parent, context) return context.units end,
-											'__context', function (parent, context, item, i, n) return gv_UnitData[item] end,
+											'__context', function (parent, context, item, i, n) return gv_SatelliteView and gv_UnitData[item] or g_Units[item] or gv_UnitData[item] end,
 										}, {
 											PlaceObj('XTemplateTemplate', {
 												'__template', "HUDMerc",

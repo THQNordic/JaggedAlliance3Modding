@@ -357,7 +357,7 @@ PlaceObj('XTemplate', {
 						PlaceObj('XTemplateWindow', {
 							'__class', "XText",
 							'Id', "idCrit2",
-							'HAlign', "center",
+							'HAlign', "right",
 							'VAlign', "bottom",
 							'TextStyle', "PDAActivitiesButtonSmall",
 							'Translate', true,

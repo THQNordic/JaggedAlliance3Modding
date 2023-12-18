@@ -7,6 +7,16 @@ DefineClass.HeavyWeaponsTraining = {
 
 
 	object_class = "Perk",
+	unit_reactions = {
+		PlaceObj('UnitReaction', {
+			Event = "OnCalcAPCost",
+			Handler = function (self, target, current_ap, action, weapon, aim)
+				local reduction = self:ResolveValue("ap_cost_reduction") * const.Scale.AP
+				local minCost = self:ResolveValue("min_ap_cost") * const.Scale.AP
+				return Max(minCost, current_ap - reduction)
+			end,
+		}),
+	},
 	DisplayName = T(575851829180, --[[CharacterEffectCompositeDef HeavyWeaponsTraining DisplayName]] "Heavy Weapons"),
 	Description = T(662768584689, --[[CharacterEffectCompositeDef HeavyWeaponsTraining Description]] "Attacks and <GameTerm('Setup')> with <em>Heavy Weapons</em> and <em>Machine Guns</em> have reduced <em>AP</em> cost."),
 	Icon = "UI/Icons/Perks/HeavyWeaponsTraining",

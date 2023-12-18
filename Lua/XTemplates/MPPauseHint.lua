@@ -42,7 +42,10 @@ PlaceObj('XTemplate', {
 				UpdateMsgText(msg, isSaveReason)
 				msg.idTitle:SetText(T(831917786270, "Pause"))
 				msg.idActionBar:SetVisible(false)
-				msg.OnShortcut = function() end
+				msg.OnShortcut = function(self, shortcut, ...)
+					if shortcut == "Escape" or shortcut == "Start" then return end -- Allow the escape menu so players can leave co-op
+					return ZuluModalDialog.OnShortcut(self, shortcut, ...)
+				end
 				if self.window_state == "open" then msg:Open() end
 			else
 				if msg then msg:Close() end

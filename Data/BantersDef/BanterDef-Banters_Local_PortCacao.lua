@@ -1652,19 +1652,16 @@ PlaceObj('BanterDef', {
 		PlaceObj('BanterLine', {
 			'Character', "CivilianFemale_1",
 			'Text', T(159357995767, --[[BanterDef PortCacao_VillagerFemale_01 Text section:Banters_Local_PortCacao/PortCacao_VillagerFemale_01 killed Lurch >> Guilty voice:CivilianFemale_1]] "How could you kill <em>Lurch</em>! He was just a big baby, he meant no harm to anyone!"),
-			'playOnce', true,
 		}),
 	},
+	Once = true,
 	conditions = {
-		PlaceObj('CheckIsPersistentUnitDead', {
-			per_ses_id = "NPC_Lurch",
-		}),
 		PlaceObj('QuestIsVariableBool', {
 			QuestId = "_GroupsAttacked",
-			Vars = set( "Lurch" ),
+			Vars = set( "Lurch_Killed" ),
 			__eval = function ()
 				local quest = gv_Quests['_GroupsAttacked'] or QuestGetState('_GroupsAttacked')
-				return quest.Lurch
+				return quest.Lurch_Killed
 			end,
 		}),
 		PlaceObj('SectorCheckCity', {

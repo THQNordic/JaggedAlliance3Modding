@@ -346,7 +346,7 @@ PlaceObj('VoiceResponse', {
 		T(881698090267, --[[VoiceResponse Livewire SelectionStealth VoiceResponse SelectionStealth - when selected or autoselected voice:Livewire]] "Hide and shoot, that is my game.")
 	}),
 	SeriouslyWounded = TConcat({
-		T(946197221408, --[[VoiceResponse Livewire SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds) voice:Livewire]] "I am not ready to die yet. I still haven't won the approval of my parents.")
+		T(946197221408, --[[VoiceResponse Livewire SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining. voice:Livewire]] "I am not ready to die yet. I still haven't won the approval of my parents.")
 	}),
 	Startled = TConcat({
 		T(622033912230, --[[VoiceResponse Livewire Startled VoiceResponse Startled - Startled by hearing a sudden noise voice:Livewire]] "Huh?"),
@@ -395,8 +395,8 @@ PlaceObj('VoiceResponse', {
 		T(494337509288, --[[VoiceResponse Livewire WeaponJammed VoiceResponse WeaponJammed - When weapon has jammed voice:Livewire]] "My gun is acting completely irrationally, and quite frankly, I can't even be bothered with it right now.")
 	}),
 	Wounded = TConcat({
-		T(599988131276, --[[VoiceResponse Livewire Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Livewire]] "That was rude and painful!"),
-		T(669826089641, --[[VoiceResponse Livewire Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Livewire]] "The enemy is showing no regard for my safety!")
+		T(599988131276, --[[VoiceResponse Livewire Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Livewire]] "That was rude and painful!"),
+		T(669826089641, --[[VoiceResponse Livewire Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Livewire]] "The enemy is showing no regard for my safety!")
 	}),
 	group = "MercenariesNew",
 	id = "Livewire",

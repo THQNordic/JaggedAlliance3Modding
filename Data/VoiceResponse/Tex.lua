@@ -293,7 +293,7 @@ PlaceObj('VoiceResponse', {
 		T(466865779563, --[[VoiceResponse Tex SelectionStealth VoiceResponse SelectionStealth - when selected or autoselected voice:Tex]] "Like a cowboy ninja.")
 	}),
 	SeriouslyWounded = TConcat({
-		T(725948529959, --[[VoiceResponse Tex SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds) voice:Tex]] "This here cowboy was supposed to ride into the sunset, not die.")
+		T(725948529959, --[[VoiceResponse Tex SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining. voice:Tex]] "This here cowboy was supposed to ride into the sunset, not die.")
 	}),
 	Startled = TConcat({
 		T(793005350698, --[[VoiceResponse Tex Startled VoiceResponse Startled - Startled by hearing a sudden noise voice:Tex]] "Huh?"),
@@ -339,9 +339,9 @@ PlaceObj('VoiceResponse', {
 		T(125363176037, --[[VoiceResponse Tex WeaponJammed VoiceResponse WeaponJammed - When weapon has jammed voice:Tex]] "Jammed! May as well be prop gun.")
 	}),
 	Wounded = TConcat({
-		T(867516507276, --[[VoiceResponse Tex Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Tex]] "This nothing! I do my own stunts."),
-		T(399313184366, --[[VoiceResponse Tex Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Tex]] "Nearly took my boot off! These boots never come off!"),
-		T(754821593579, --[[VoiceResponse Tex Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Tex]] "This no fight scene! This for real!")
+		T(867516507276, --[[VoiceResponse Tex Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Tex]] "This nothing! I do my own stunts."),
+		T(399313184366, --[[VoiceResponse Tex Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Tex]] "Nearly took my boot off! These boots never come off!"),
+		T(754821593579, --[[VoiceResponse Tex Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Tex]] "This no fight scene! This for real!")
 	}),
 	group = "MercenariesOld",
 	id = "Tex",

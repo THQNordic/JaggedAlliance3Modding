@@ -391,10 +391,6 @@ PlaceObj('BanterDef', {
 	Lines = {
 		PlaceObj('BanterLine', {
 			'Character', "LegionMale_1",
-			'Text', T(871747870663, --[[BanterDef Landsbach_Legion01 Text section:Banters_Local_Landsbach_Triggered/Landsbach_Legion01 overheard voice:LegionMale_1]] "I still do not understand this. We make this stuff ourselves, so why are we stealing it back from our top buyer?"),
-		}),
-		PlaceObj('BanterLine', {
-			'Character', "LegionMale_1",
 			'Text', T(402030268971, --[[BanterDef Landsbach_Legion01 Text section:Banters_Local_Landsbach_Triggered/Landsbach_Legion01 overheard voice:LegionMale_1]] "Boss said they're cutting our <em>Diesel</em> with something else, making it into something better. We gotta find out how."),
 		}),
 	},

@@ -583,7 +583,7 @@ function GridMarker:GetAreaPositions(ignore_occupied, outside_repulse, skip_tunn
 end
 
 function OnMsg.OnPassabilityChanged()
-	for _, marker in ipairs(g_GridMarkersContainer.labels.GridMarker) do
+	for _, marker in ipairs(g_GridMarkersContainer and g_GridMarkersContainer.labels.GridMarker) do
 		marker.area_positions = false
 	end
 end
@@ -787,7 +787,9 @@ end
 
 local updateBorderMarkerVisiblity = function(reason, hide)
 	local marker = GetBorderAreaMarker()
-	marker:UpdateHideReason(reason, hide)
+	if marker then
+		marker:UpdateHideReason(reason, hide)
+	end
 end
 function OnMsg.SettingActionCamera() updateBorderMarkerVisiblity("actioncamera", true) end
 function OnMsg.ActionCameraRemoved() updateBorderMarkerVisiblity("actioncamera", false) end
@@ -1004,6 +1006,9 @@ function GridMarker:GetRandomPositions(number, around_center, positions, req_pos
 		local scores = {}
 		for i, packedPos in ipairs(positions) do
 			local x, y, z = point_unpack(packedPos)
+			if not z and first_z then
+				z = terrain.GetHeight(x, y)
+			end
 			local distance = GetLen(x - first_x, y - first_y, z and first_z and z - first_z or 0)
 
 			local score
@@ -1629,7 +1634,9 @@ end
 function GetReachablePositionsFromPos(pos, count)
 	assert(count > 0)
 	if count == 1 then
-		return {pos}
+		local pfflags = const.pfmDestlock + const.pfmImpassableSource + const.pfmVoxelAligned
+		local has_path, closest_pos = pf.HasPosPath(pos, pos, CalcPFClass("player1"), 0, 0, nil, 0, nil, pfflags)
+		return { closest_pos or pos }
 	end
 	local width = count * slab_x
 	local height = count * slab_y
@@ -1639,8 +1646,9 @@ function GetReachablePositionsFromPos(pos, count)
 	path.restrict_area = box(area_left, area_top, area_left + width, area_top + height)
 	path:RebuildPaths(nil, 200000, pos)
 	local voxels = table.keys(path.paths_ap, true)
-	local positions = {pos}
-	RemoveNeighborVoxelsFromTable(pos, voxels)
+	local pos1 = path.closest_free_pos and point(point_unpack(path.closest_free_pos)) or pos
+	local positions = {pos1}
+	RemoveNeighborVoxelsFromTable(pos1, voxels)
 	for i = 1, count - 1 do
 		local v = table.rand(voxels, point_pack(pos))
 		assert(v)
@@ -1811,7 +1819,7 @@ function EditorViewAbridged(obj, id, filter_type)
 	return value
 end
 
-if Platform.developer and FirstLoad then
+if FirstLoad then
 	g_DebugMarkersInfo = false
 end
 

@@ -380,13 +380,13 @@ function RoomsPostProcess()
 			end
 		end
 	end)
-	--after we know which walls are visible for each room..
+	-- after we know which walls are visible for each room
 	MapForEach("map", "Room", function(r)
-		r.adjacent_rooms_per_side = {} --this data is for planA wall visibility, it's basically a more convinient data structure for runtime checks
+		r.adjacent_rooms_per_side = {} -- this data is for planA wall visibility, it's basically a more convenient data structure for runtime checks
 		local ars = r.adjacent_rooms
 		for _, ar in ipairs(ars or empty_table) do
 			local data = ars[ar]
-			if r.visible_walls.total >= 1 then  --only acknowledge rooms that have at least 1 visible wall
+			if r.visible_walls.total >= 1 then  -- only acknowledge rooms that have at least 1 visible wall
 				local sides = data[2]
 				for i = 1, #sides do
 					r.adjacent_rooms_per_side[sides[i]] = r.adjacent_rooms_per_side[sides[i]] or {}

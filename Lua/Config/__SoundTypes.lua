@@ -186,6 +186,16 @@ PlaceObj('SoundTypePreset', {
 })
 
 PlaceObj('SoundTypePreset', {
+	channels = 5,
+	ducking_preset = "NotImportant",
+	group = "AmbientLife",
+	id = "AL-Infected",
+	loud_distance = 0,
+	pause = false,
+	reverb = true,
+})
+
+PlaceObj('SoundTypePreset', {
 	channels = 10,
 	ducking_preset = "NotImportant",
 	group = "AmbientLife",
@@ -364,6 +374,15 @@ PlaceObj('SoundTypePreset', {
 	pause = false,
 	positional = false,
 	volume = 40,
+})
+
+PlaceObj('SoundTypePreset', {
+	Comment = "Used when playing sounds from the sound editor",
+	group = "Test",
+	id = "SoundTest",
+	options_group = "",
+	pause = false,
+	positional = false,
 })
 
 PlaceObj('SoundTypePreset', {

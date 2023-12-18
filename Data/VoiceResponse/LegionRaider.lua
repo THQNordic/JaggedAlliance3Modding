@@ -278,14 +278,14 @@ PlaceObj('VoiceResponse', {
 		T(595656376301, --[[VoiceResponse LegionRaider TakeCover VoiceResponse TakeCover - Played when the Take Cover action is used voice:LegionRaider]] "Keeping my head down!")
 	}),
 	Wounded = TConcat({
-		T(880499875218, --[[VoiceResponse LegionRaider Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:LegionRaider]] "Je suis blessé!"),
-		T(219244453722, --[[VoiceResponse LegionRaider Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:LegionRaider]] "Uff, that hurt!"),
-		T(325800291297, --[[VoiceResponse LegionRaider Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:LegionRaider]] "Fuck!"),
-		T(185269312207, --[[VoiceResponse LegionRaider Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:LegionRaider]] "Je suis grièvement blessé!"),
-		T(160432728220, --[[VoiceResponse LegionRaider Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:LegionRaider]] "It hurts! It hurts!"),
-		T(856426059381, --[[VoiceResponse LegionRaider Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:LegionRaider]] "I am wounded!"),
-		T(607572959898, --[[VoiceResponse LegionRaider Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:LegionRaider]] "Uff, Ça fait mal!"),
-		T(520049325300, --[[VoiceResponse LegionRaider Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:LegionRaider]] "Putain!")
+		T(880499875218, --[[VoiceResponse LegionRaider Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:LegionRaider]] "Je suis blessé!"),
+		T(219244453722, --[[VoiceResponse LegionRaider Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:LegionRaider]] "Uff, that hurt!"),
+		T(325800291297, --[[VoiceResponse LegionRaider Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:LegionRaider]] "Fuck!"),
+		T(185269312207, --[[VoiceResponse LegionRaider Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:LegionRaider]] "Je suis grièvement blessé!"),
+		T(160432728220, --[[VoiceResponse LegionRaider Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:LegionRaider]] "It hurts! It hurts!"),
+		T(856426059381, --[[VoiceResponse LegionRaider Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:LegionRaider]] "I am wounded!"),
+		T(607572959898, --[[VoiceResponse LegionRaider Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:LegionRaider]] "Uff, Ça fait mal!"),
+		T(520049325300, --[[VoiceResponse LegionRaider Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:LegionRaider]] "Putain!")
 	}),
 	group = "Enemies",
 	id = "LegionRaider",

@@ -298,7 +298,7 @@ PlaceObj('VoiceResponse', {
 		T(673980071427, --[[VoiceResponse Ivan SelectionStealth VoiceResponse SelectionStealth - when selected or autoselected voice:Ivan]] "Не шуметь!")
 	}),
 	SeriouslyWounded = TConcat({
-		T(612231296740, --[[VoiceResponse Ivan SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds) voice:Ivan]] "I am dead if more wounds arrive.")
+		T(612231296740, --[[VoiceResponse Ivan SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining. voice:Ivan]] "I am dead if more wounds arrive.")
 	}),
 	SpecialThrowGrenade = TConcat({
 		T(532737528319, --[[VoiceResponse Ivan SpecialThrowGrenade VoiceResponse SpecialThrowGrenade - When throwing grenade voice:Ivan]] "Special bomb make special boom.")
@@ -344,9 +344,9 @@ PlaceObj('VoiceResponse', {
 		T(577849513641, --[[VoiceResponse Ivan WeaponJammed VoiceResponse WeaponJammed - When weapon has jammed voice:Ivan]] "Оно меня не слушается!")
 	}),
 	Wounded = TConcat({
-		T(646477694891, --[[VoiceResponse Ivan Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Ivan]] "Уф, черт!"),
-		T(762343533487, --[[VoiceResponse Ivan Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Ivan]] "А ну сюда подошел!"),
-		T(506908654038, --[[VoiceResponse Ivan Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Ivan]] "Просто царапина.")
+		T(646477694891, --[[VoiceResponse Ivan Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Ivan]] "Уф, черт!"),
+		T(762343533487, --[[VoiceResponse Ivan Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Ivan]] "А ну сюда подошел!"),
+		T(506908654038, --[[VoiceResponse Ivan Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Ivan]] "Просто царапина.")
 	}),
 	group = "MercenariesOld",
 	id = "Ivan",

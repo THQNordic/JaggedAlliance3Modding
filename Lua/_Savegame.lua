@@ -109,7 +109,9 @@ function GatherGameMetadata()
 	metadata.intel_discovered = next(gv_Sectors) and gv_CurrentSectorId and gv_Sectors[gv_CurrentSectorId].intel_discovered
 	metadata.ground_sector = next(gv_Sectors) and gv_CurrentSectorId and gv_Sectors[gv_CurrentSectorId].GroundSector
 	metadata.mapName = next(gv_Sectors) and gv_CurrentSectorId and TGetID(gv_Sectors[gv_CurrentSectorId].display_name or "")
+	metadata.mapNetHash = mapdata and mapdata.NetHash
 	metadata.demoSave = Platform.demo
+	metadata.override_loading_screen = next(gv_Sectors) and gv_CurrentSectorId and gv_Sectors[gv_CurrentSectorId].override_loading_screen
 	
 	--store quest notes data as strings instead of T id's as some of the notes use T.Format which will not be displayed properly
 	local quest_tracker_quests = {}
@@ -276,7 +278,11 @@ function RequestAutosave(request)
 		if CanSaveGame() then 
 			SaveState = request.save_state or false
 			TurnPhase = request.turn_phase or false
+			
+			-- Immediate can also yield, so we need to keep track of the "request"
+			AutosaveRequest = request
 			SaveAutosaveGame(request.autosave_id, _InternalTranslate(request.display_name))
+			AutosaveRequest = false
 		end
 		
 		return
@@ -414,6 +420,12 @@ function FixupSectorData(sector_data, handle_data)
 	-- It is assumed that they have been merged into the
 	-- campaign preset by the modding/dlc magic.
 	PatchSessionCampaignObjects(SatelliteSector, gv_Sectors, "Sectors")
+	CampaignInitSpawnInitialSquads()
+	if AllSectorsRevealed then
+		for id, sector in pairs(gv_Sectors) do
+			sector.reveal_allowed = true
+		end
+	end
 	PatchSessionCampaignObjects(CampaignCity, gv_Cities, "Cities")
 
 	local applied_sector_fixups = sector_data.applied_sector_fixups or {}
@@ -1134,14 +1146,18 @@ function GameSpecificValidateSaveMetadata(metadata, broken, missing_mods_list)
 					DebugDownloadSavegameMods(missing_mods_list)
 					--update again the missing mods after the download attemp
 					table.clear(missing_mods_list)
-					GetMissingMods(metadata.active_mods, missing_mods_list)
+					for _, mod in ipairs(metadata.active_mods) do
+						if not table.find(ModsLoaded, "id", mod.id) then
+							table.insert(missing_mods_list, mod)
+						end
+					end
 					missing_mods_titles = table.concat(table.map(missing_mods_list, "title"), "\n")
 					if next(missing_mods_list) then
 						local dlg = GetDialog("XZuluLoadingScreen")
 						WaitMessage(
 							dlg or terminal.desktop, 
 							Untranslated("Warning - Developer only pop-up"), 
-							Untranslated{"Some of the mods failed to download and will be consider as ignored:\n\n<u(mod_list)>", mod_list = missing_mods_titles}, 
+							Untranslated{"Some of the mods failed to download/enable and will be consider as ignored:\n\n<u(mod_list)>", mod_list = missing_mods_titles}, 
 							Untranslated("Ok")
 						)
 					end
@@ -1243,7 +1259,7 @@ function GetLatestSave()
 end
 
 --fix focus with gamepad after the error
-function GamepadFocusAfterLoadErrorWorkaround()
+function GamepadFocusAfterLoadErrorWorkaround(dlg)
 	if not GetUIStyleGamepad() then return end
 
 	local parent = GetPreGameMainMenu() or GetInGameMainMenu() or (dlg and dlg.parent) or terminal.desktop
@@ -1274,7 +1290,7 @@ function SaveLoadObject:Load(dlg, item, skipAreYouSure)
 				-- not valid to load game anymore, something changed while we were for the user to close the message box above	
 				if not CanLoadGame() then
 					CloseMenuDialogs()
-					GamepadFocusAfterLoadErrorWorkaround()
+					GamepadFocusAfterLoadErrorWorkaround(dlg)
 					return
 				end
 				
@@ -1290,7 +1306,7 @@ function SaveLoadObject:Load(dlg, item, skipAreYouSure)
 				err = metadata and metadata.incompatible and "incompatible" or "corrupt"
 			end
 			if err then
-				GamepadFocusAfterLoadErrorWorkaround()
+				GamepadFocusAfterLoadErrorWorkaround(dlg)
 				CreateErrorMessageBox(err, "loadgame", nil, parent, {name = '"' .. Untranslated(item.text) .. '"'})
 			end
 		end, dlg, savename)

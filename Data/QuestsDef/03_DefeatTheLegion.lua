@@ -27,15 +27,28 @@ PlaceObj('QuestsDef', {
 	TCEs = {
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
-				PlaceObj('QuestIsVariableBool', {
-					QuestId = "03_DefeatTheLegion",
-					Vars = set( "StartBetrayal" ),
-					__eval = function ()
-						local quest = gv_Quests['03_DefeatTheLegion'] or QuestGetState('03_DefeatTheLegion')
-						return quest.StartBetrayal
-					end,
-				}),
 				PlaceObj('SatelliteGameplayRunning', {}),
+				PlaceObj('OR', {
+					Conditions = {
+						PlaceObj('QuestIsVariableBool', {
+							Condition = "or",
+							QuestId = "03_DefeatTheLegion",
+							Vars = set( "StartBetrayal" ),
+							__eval = function ()
+								local quest = gv_Quests['03_DefeatTheLegion'] or QuestGetState('03_DefeatTheLegion')
+								return quest.StartBetrayal
+							end,
+						}),
+						PlaceObj('QuestIsVariableBool', {
+							QuestId = "04_Betrayal",
+							Vars = set( "WorldFlipDone" ),
+							__eval = function ()
+								local quest = gv_Quests['04_Betrayal'] or QuestGetState('04_Betrayal')
+								return quest.WorldFlipDone
+							end,
+						}),
+					},
+				}),
 			},
 			Effects = {
 				PlaceObj('ConditionalEffect', {

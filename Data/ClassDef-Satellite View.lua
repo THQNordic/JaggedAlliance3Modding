@@ -252,6 +252,7 @@ PlaceObj('ClassDef', {
 		'no_edit', true,
 		'params', "self, id",
 		'default', function (self, id)
+			if self.modId then return end
 			self.name = id
 			CampaignObject.SetId(self, id)
 		end,
@@ -262,6 +263,7 @@ PlaceObj('ClassDef', {
 		'params', "self, display_name",
 		'default', function (self, display_name)
 			self.display_name = display_name
+			if self.modId then return end
 			if display_name then
 				self.name = string.format("%s %s", self.Id, _InternalTranslate(display_name))
 			else
@@ -274,7 +276,7 @@ PlaceObj('ClassDef', {
 		'no_edit', true,
 		'params', "self, prop_id",
 		'default', function (self, prop_id)
-			if prop_id == "Roads" or prop_id == "BlockTravel" then
+			if not self.modId and prop_id == "Roads" or prop_id == "BlockTravel" then
 				SatelliteSectorSetDirectionsProp(self, prop_id)
 			end
 			if g_SatelliteUI then
@@ -287,14 +289,14 @@ PlaceObj('ClassDef', {
 		'id', "generated_hint",
 		'help', "<center>This is an automatically-generated empty sector.",
 		'no_edit', "expression",
-		'no_edit_expression', function (self) return not self.generated end,
+		'no_edit_expression', function (self, prop_meta) return not self.generated end,
 	}),
 	PlaceObj('PropertyDefHelp', {
 		'category', "Data",
 		'id', "inherited_hint",
 		'help', "<center>This is an inherited sector - use the button below to override it in this DLC.",
 		'no_edit', "expression",
-		'no_edit_expression', function (self) return not self.inherited end,
+		'no_edit_expression', function (self, prop_meta) return not self.inherited end,
 	}),
 	PlaceObj('PropertyDefButtons', {
 		'category', "Data",
@@ -304,7 +306,7 @@ PlaceObj('ClassDef', {
 				'Name', "Edit sector",
 				'FuncName', "EditGeneratedSector",
 				'IsHidden', function (self)
-					if IsKindOf(self, "ModItem") then return true end
+					if self.modId or config.PresetEditorsModdingMode then return true end
 					
 					return IsKindOf(self, "GedMultiSelectAdapter") or not self.inherited and not self.generated
 				end,
@@ -338,7 +340,23 @@ PlaceObj('ClassDef', {
 		'value', T(153688941226, --[[ClassDef Satellite View SatelliteSector value]] "<if_any(inherited,generated)><color 128 128 128></if><Id><opt(u(display_name),' ','')><if(inherited)> [inherited]</if><if(generated)> [generated - empty]</if>"),
 		'untranslated', true,
 	}),
+	PlaceObj('PropertyDefBool', {
+		'category', "Underground",
+		'id', "HideUnderground",
+		'no_edit', "expression",
+		'no_edit_expression', function (self, prop_meta) return self.GroundSector end,
+	}),
+	PlaceObj('PropertyDefBool', {
+		'category', "Underground",
+		'id', "CanGoUp",
+		'name', "Can Go Overground",
+		'help', "Whether this underground sector has a travel connection to its overground sector.",
+		'no_edit', "expression",
+		'no_edit_expression', function (self, prop_meta) return not self.GroundSector end,
+		'default', true,
+	}),
 	PlaceObj('PropertyDefButtons', {
+		'category', "Underground",
 		'id', "underground_sector_buttons",
 		'buttons', {
 			PlaceObj('PropertyDefPropButton', {
@@ -347,7 +365,7 @@ PlaceObj('ClassDef', {
 				'IsHidden', function (self)
 					if IsKindOf(self, "GedMultiSelectAdapter") then return true end
 					
-					if IsKindOf(self, "ModItem") then return true end
+					if self.modId or config.PresetEditorsModdingMode then return true end
 					
 					local campaign = GetParentTableOfKind(self, "CampaignPreset")
 					return not self.Id or
@@ -361,7 +379,7 @@ PlaceObj('ClassDef', {
 				'IsHidden', function (self)
 					if IsKindOf(self, "GedMultiSelectAdapter") then return true end
 					
-					if IsKindOf(self, "ModItem") then return true end
+					if self.modId or config.PresetEditorsModdingMode then return true end
 					
 					local campaign = GetParentTableOfKind(self, "CampaignPreset")
 					return not self.Id or
@@ -373,7 +391,7 @@ PlaceObj('ClassDef', {
 				'Name', "Remove sector",
 				'FuncName', "RemoveSector",
 				'IsHidden', function (self)
-					if IsKindOf(self, "ModItem") then return true end
+					if self.modId or config.PresetEditorsModdingMode then return true end
 					
 					return IsKindOf(self, "GedMultiSelectAdapter") or not self.Id or self.inherited or not self.Id:ends_with("_Underground")
 				end,
@@ -441,6 +459,13 @@ PlaceObj('ClassDef', {
 			end)
 		end,
 	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "GenerateDBCacheStatic",
+		'params', "root, prop_id, ged",
+		'code', function (self, root, prop_id, ged)
+			GenerateDynamicDBPathCache("save")
+		end,
+	}),
 	PlaceObj('PropertyDefPoint', {
 		'id', "MapPosition",
 		'help', "delete me",
@@ -476,14 +501,19 @@ PlaceObj('ClassDef', {
 		'translate', false,
 	}),
 	PlaceObj('PropertyDefText', {
+		'id', "modId",
+		'no_edit', true,
+		'translate', false,
+	}),
+	PlaceObj('PropertyDefText', {
 		'id', "Label2",
 		'name', "Label 2",
 		'translate', false,
 	}),
 	PlaceObj('PropertyDefBool', {
-		'id', "HideUnderground",
-		'no_edit', "expression",
-		'no_edit_expression', function (self) return self.GroundSector end,
+		'id', "RunLoyaltyLogic",
+		'help', "Whether this sector will grant/remove loyalty on conflict resolution",
+		'default', true,
 	}),
 	PlaceObj('PropertyDefText', {
 		'id', "GroundSector",
@@ -549,8 +579,17 @@ PlaceObj('ClassDef', {
 	}),
 	PlaceObj('PropertyDefBool', {
 		'id', "reveal_allowed",
-		'help', "Treat sector as revealed even if there are no player squads nearby",
+		'help', "This sector can be revealed by the player, and traits on them are shown in the satellite view. At the start of the campaign mainland sectors are not visible.",
 		'no_edit', true,
+	}),
+	PlaceObj('PropertyDefBool', {
+		'id', "never_autoresolve",
+		'help', "Conflicts on this sector can never be autoresolved",
+	}),
+	PlaceObj('PropertyDefBool', {
+		'id', "discovered",
+		'help', "The player has been to this sector, or has started travelling to it via some method. In use only for underground sectors.",
+		'default', true,
 	}),
 	PlaceObj('PropertyDefNumber', {
 		'category', "Conflict",
@@ -809,6 +848,13 @@ PlaceObj('ClassDef', {
 		'name', "Repair shop",
 		'help', "Allows Craft Ammo, Craft Explosives operations in this sector",
 	}),
+	PlaceObj('PropertyDefBool', {
+		'category', "Travel",
+		'id', "bidirectionalRoadApply",
+		'name', "Apply roads to adjacent sectors",
+		'no_edit', "expression",
+		'no_edit_expression', function (self, prop_meta) return not self.modId end,
+	}),
 	PlaceObj('PropertyDefDirectionsSet', {
 		'category', "Travel",
 		'id', "Roads",
@@ -828,12 +874,18 @@ PlaceObj('ClassDef', {
 		'name', "Impassable for diamonds",
 		'help', "Diamond shipments can't pass through this sector",
 	}),
+	PlaceObj('PropertyDefBool', {
+		'category', "Travel",
+		'id', "bidirectionalBlockApply",
+		'name', "Apply block travel to adjacent sectors",
+		'no_edit', "expression",
+		'no_edit_expression', function (self, prop_meta) return not self.modId end,
+	}),
 	PlaceObj('PropertyDefDirectionsSet', {
 		'category', "Travel",
 		'id', "BlockTravel",
 		'name', "Block travel",
 		'help', "Blocks travel and adds ui indication for that in the satellite view (red/white line)",
-		'extra_code', "no_edit = function(self) return self.GroundSector end",
 	}),
 	PlaceObj('PropertyDefDirectionsSet', {
 		'category', "Travel",
@@ -897,6 +949,11 @@ PlaceObj('ClassDef', {
 		'default', "UI/SatelliteView/SectorImages/_Highlands",
 		'image_preview_size', 200,
 	}),
+	PlaceObj('PropertyDefUIImage', {
+		'id', "override_loading_screen",
+		'no_edit', true,
+		'image_preview_size', 200,
+	}),
 	PlaceObj('PropertyDefNestedList', {
 		'category', "Events",
 		'id', "Events",
@@ -924,7 +981,7 @@ PlaceObj('ClassDef', {
 		'category', "Port",
 		'id', "BobbyRayDeliveryCostMultiplier",
 		'no_edit', "expression",
-		'no_edit_expression', function (self) return not self.CanBeUsedForArrival end,
+		'no_edit_expression', function (self, prop_meta) return not self.CanBeUsedForArrival end,
 		'default', 100,
 		'scale', "%",
 	}),
@@ -953,7 +1010,10 @@ PlaceObj('ClassDef', {
 		'buttons', {
 			PlaceObj('PropertyDefPropButton', {
 				'Name', "Recalculate Diamond Routes",
-				'FuncName', "GenerateDynamicDBPathCache",
+				'FuncName', "GenerateDBCacheStatic",
+				'IsHidden', function (self)
+					if not Platform.developer then return true end
+				end,
 			}),
 		},
 	}),
@@ -1108,7 +1168,7 @@ PlaceObj('ClassDef', {
 		'name', "Warning timer text",
 		'help', "Text to display when the Warning State is active.",
 		'no_edit', "expression",
-		'no_edit_expression', function (self) return not self.warningStateEnabled end,
+		'no_edit_expression', function (self, prop_meta) return not self.warningStateEnabled end,
 		'default', T(888882045986, --[[ClassDef Satellite View SatelliteSector default]] "Exit the Area"),
 	}),
 	PlaceObj('PropertyDefNumber', {
@@ -1117,7 +1177,7 @@ PlaceObj('ClassDef', {
 		'name', "Warning state timer",
 		'help', "How long (sec) will the Warning State hold.",
 		'no_edit', "expression",
-		'no_edit_expression', function (self) return not self.warningStateEnabled end,
+		'no_edit_expression', function (self, prop_meta) return not self.warningStateEnabled end,
 		'default', 30000,
 		'scale', "sec",
 		'min', 0,
@@ -1128,7 +1188,7 @@ PlaceObj('ClassDef', {
 		'name', "Warning banters",
 		'help', "List of banters from which to choose one to play when spotted by the nearest enemy.",
 		'no_edit', "expression",
-		'no_edit_expression', function (self) return not self.warningStateEnabled end,
+		'no_edit_expression', function (self, prop_meta) return not self.warningStateEnabled end,
 		'preset_class', "BanterDef",
 	}),
 	PlaceObj('PropertyDefChoice', {
@@ -1167,7 +1227,7 @@ PlaceObj('ClassDef', {
 		'name', "IsReadOnly",
 		'comment', "for GED",
 		'code', function (self)
-			return self.generated or self.inherited
+			return self.generated or self.inherited or (config.PresetEditorsModdingMode and not self.modId)
 		end,
 	}),
 })
@@ -1450,7 +1510,11 @@ PlaceObj('PresetDef', {
 	DefHasSortKey = true,
 	DefModItem = true,
 	DefModItemName = "Sector operation",
-	DefModItemSubmenu = "Satellite",
+	DefModItemSubmenu = "Campaign & Maps",
+	DefParentClassList = {
+		"Preset",
+		"CampaignSpecific",
+	},
 	group = "Satellite View",
 	id = "SectorOperation",
 	PlaceObj('PropertyDefBool', {
@@ -1515,6 +1579,10 @@ PlaceObj('PresetDef', {
 		'id', "ShowInCombatBadge",
 		'help', "Show in Combat Badge",
 		'default', true,
+	}),
+	PlaceObj('PropertyDefBool', {
+		'id', "ShowPauseProgress",
+		'help', "Show saved operation progress when no mercs are attached",
 	}),
 	PlaceObj('PropertyDefText', {
 		'id', "error_msg",

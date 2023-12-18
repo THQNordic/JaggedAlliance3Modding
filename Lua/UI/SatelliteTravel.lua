@@ -412,12 +412,22 @@ DefineClass.SquadRouteSegment = {
 function SquadRouteSegment:SetDisplayedSection(sectorFromId, sectorToId, squad)
 	self.sectorFromId = sectorFromId
 	self.sectorToId = sectorToId
-
+	
 	local uimap = self.map
 
-	-- Determine route direction
-	local curY, curX = sector_unpack(sectorToId)
-	local preY, preX = sector_unpack(sectorFromId)
+	local curY, curX
+	local preY, preX
+	if IsPoint(sectorFromId) then
+		local sectorTo = gv_Sectors[sectorToId]
+		local sectorToPos = sectorTo.XMapPosition
+		curX, curY = sectorToPos:xy()
+		preX, preY = sectorFromId:xy()
+	else
+		-- Determine route direction
+		curY, curX = sector_unpack(sectorToId)
+		preY, preX = sector_unpack(sectorFromId)
+	end
+
 	if curX > preX then -- Right
 		self.direction = "right"
 	elseif curX < preX then -- Left
@@ -502,8 +512,12 @@ function SquadRouteSegment:GetInterpParams()
 		
 		startY = startY - startHeight / 2
 	elseif direction == "down" then
-		local sectorWindow = uimap.sector_to_wnd[self.sectorFromId]
-		startX, startY = sectorWindow:GetSectorCenter()
+		if IsPoint(self.sectorFromId) then
+			startX, startY = self.sectorFromId:xy()
+		else
+			local sectorWindow = uimap.sector_to_wnd[self.sectorFromId]
+			startX, startY = sectorWindow:GetSectorCenter()
+		end
 	
 		startWidth = 10
 		startHeight = uimap.sector_size:y()
@@ -799,62 +813,152 @@ function SquadCantMove(squad)
 	return false
 end
 
+function ComputeArrivingPath(leftMostSectorId, sectorId, squad)
+	local leftMostSector = gv_Sectors[leftMostSectorId]
+	local lfY, lfX = sector_unpack(leftMostSectorId)
+	local leftMostPos = leftMostSector.XMapPosition
+	local lmX, lmY = leftMostPos:xy()
+	lmX = lmX - 1000
+	
+	local sY, sX = sector_unpack(sectorId)
+	
+	local anyNonWater = false
+	for x = lfX, sX - 1 do
+		local sId = sector_pack(lfY, x)
+		local sectorPreset = gv_Sectors[sId]
+		if sectorPreset and sectorPreset.Passability ~= "Water" then
+			anyNonWater = true
+			break
+		end
+	end
+
+	local singleSegmentMode = false
+	local route = GenerateRouteDijkstra(leftMostSectorId, sectorId, false, false, "land_water_boatless")
+	if not route or not anyNonWater then
+		route = { leftMostSectorId }
+		singleSegmentMode = true
+	else
+		table.insert(route, 1, leftMostSectorId)
+	end
+	
+	local sectorPos = gv_Sectors[sectorId].XMapPosition
+	
+	local prevSector = false
+	local routeSegments = {}
+	local positions = {}
+	positions[#positions + 1] = point(lmX, lmY)
+	
+	-- First - outside map segment
+	if true then
+		local routeSegment = XTemplateSpawn("SquadRouteSegment", g_SatelliteUI)
+		routeSegment.direction = "right"
+		routeSegment.sectorToId = singleSegmentMode and sectorId or leftMostSectorId
+		routeSegment.sectorFromId = point(lmX, lmY)
+		
+		local _, __, ___, ____, startWidth, startHeight, startX, startY = routeSegment:GetInterpParams()
+		routeSegment.PosX = startX
+		routeSegment.PosY = startY
+		routeSegment:SetSize(startWidth, startHeight)
+		routeSegment:SetBackground(GameColors.Player)
+		
+		if g_SatelliteUI.window_state == "open" then
+			routeSegment:Open()
+		end
+		
+		prevSector = singleSegmentMode and sectorId or (route and route[1])
+		
+		routeSegments[#routeSegments + 1] = routeSegment
+		positions[#positions + 1] = gv_Sectors[prevSector].XMapPosition
+	end
+	
+	for i = 2, #route do
+		local nextSector = route[i]
+		local routeSegment = XTemplateSpawn("SquadRouteSegment", g_SatelliteUI)
+		routeSegment:SetDisplayedSection(prevSector, nextSector, squad)
+		routeSegment:SetBackground(GameColors.Player)
+		if g_SatelliteUI.window_state == "open" then
+			routeSegment:Open()
+		end
+		routeSegments[#routeSegments + 1] = routeSegment
+		
+		local nextSectorPos = gv_Sectors[nextSector]
+		nextSectorPos = nextSectorPos.XMapPosition
+		
+		positions[#positions + 1] = nextSectorPos
+		
+		prevSector = nextSector
+	end
+	--[[local destX, destY = sectorPos:xy()
+	positions[#positions + 1] = point(destX, destY)]]
+	
+	return positions, routeSegments
+end
+
+function DisplayArrivingPathRemainder(totalTime, timeLeft, routeSegments, positions, arriving_window)
+	local timePerSegment = totalTime / #routeSegments
+	local startSegment = #routeSegments - (timeLeft / timePerSegment)
+	for i = 1, startSegment - 1 do
+		routeSegments[i]:SetHeight(0)
+		routeSegments[i]:SetWidth(0)
+	end
+
+	startSegment = Max(startSegment, 1)
+	for i = startSegment, #routeSegments do
+		local segmentUI = routeSegments[i]
+		
+		local segmentsLeft = #routeSegments - i
+		local timeLeftInThisSegment = timeLeft - segmentsLeft * timePerSegment
+
+		local posStart = positions[i]
+		local posEnd = positions[i + 1]
+		local squadPos = posStart
+		if posStart and posEnd then
+			squadPos = Lerp(posEnd, posStart, timeLeftInThisSegment, timePerSegment)
+		end
+		if not posEnd then
+			return
+		end
+		
+		arriving_window:SetPos(squadPos:x(), squadPos:y())
+		segmentUI:FastForwardToSquadPos(squadPos)
+		
+		segmentUI:StartReducing(timeLeftInThisSegment, 1000)
+		arriving_window:SetPos(posEnd:x(), posEnd:y(), timeLeftInThisSegment)
+
+		local targetTime = Game.CampaignTime + timeLeftInThisSegment
+		while true do
+			WaitMsg("CampaignTimeAdvanced")
+			if targetTime <= Game.CampaignTime then
+				break
+			end
+		end
+		timeLeft = timeLeft - timeLeftInThisSegment
+	end
+end
+
 function ArrivingSquadTravelThread(squad)
 	local sectorId = squad.CurrentSector
 	local sY, sX = sector_unpack(sectorId)
 	local sectorPos = gv_Sectors[sectorId].XMapPosition
-
 	local leftMostSectorId = sector_pack(sY, 1)
-	local leftMostSector = gv_Sectors[leftMostSectorId]
-	local leftMostPos = leftMostSector.XMapPosition
 	
-	local lmX, lmY = leftMostPos:xy()
-	lmX = lmX - 1000
-	
-	local destX, destY = sectorPos:xy()
+	local positions, routeSegments = ComputeArrivingPath(leftMostSectorId, sectorId, squad)
 
-	local totalTime = SectorOperations.Arriving:ProgressCompleteThreshold()
-	local timeLeft = GetOperationTimeLeft(gv_UnitData[squad.units[1]], "Arriving")
-
-	local percentPassed = MulDivRound(timeLeft, 1000, totalTime)
-	local curPosX = Lerp(destX, lmX, timeLeft, totalTime)
-	local curPosY = Lerp(destY, lmY, timeLeft, totalTime)
-	
-	local squadWnd = g_SatelliteUI.squad_to_wnd[squad.UniqueId]
-	squadWnd:SetPos(curPosX, curPosY)
-	squadWnd:SetPos(destX, destY, timeLeft)
-	
-	local routeSegment = XTemplateSpawn("SquadRouteSegment", g_SatelliteUI)
-	if g_SatelliteUI.window_state == "open" then
-		routeSegment:Open()
-	end
-	
 	local routeEndDecoration = XTemplateSpawn("SquadRouteDecoration", g_SatelliteUI)
 	if g_SatelliteUI.window_state == "open" then
 		routeEndDecoration:Open()
 	end
 	routeEndDecoration:SetRouteEnd(point(0, sY), sectorId)
 	routeEndDecoration:SetColor(GameColors.Player)
-	
+
+	local squadWnd = g_SatelliteUI.squad_to_wnd[squad.UniqueId]
 	if not squadWnd.routes_displayed then squadWnd.routes_displayed = {} end
-	squadWnd.routes_displayed["main"] = {
-		routeSegment,
-		decorations = {
-			routeEndDecoration
-		}
-	}
+	squadWnd.routes_displayed["main"] = routeSegments
+	routeSegments.decorations = { routeEndDecoration }
 	
-	routeSegment.direction = "right"
-	routeSegment.sectorToId = sectorId
-	routeSegment.sectorFromId = point(lmX, lmY)
-	
-	local _, __, ___, ____, startWidth, startHeight, startX, startY = routeSegment:GetInterpParams()
-	routeSegment.PosX = startX
-	routeSegment.PosY = startY
-	routeSegment:SetSize(startWidth, startHeight)
-	routeSegment:FastForwardToSquadPos(point(curPosX, curPosY))
-	routeSegment:StartReducing(timeLeft, 1000)
-	routeSegment:SetBackground(GameColors.Player)
+	local totalTime = SectorOperations.Arriving:ProgressCompleteThreshold()
+	local timeLeft = GetOperationTimeLeft(gv_UnitData[squad.units[1]], "Arriving")
+	DisplayArrivingPathRemainder(totalTime, timeLeft, routeSegments, positions, squadWnd)
 end
 
 function SquadUIUpdateMovement(squadWnd)
@@ -1059,7 +1163,8 @@ function SquadUIMovementThread(squadWnd)
 				local travelTime = shortcut:GetTravelTime()
 				local timeResolution = const.Satellite.Tick
 				
-				local waterPrevSector = reversedShortcut and shortcut.shortcut_direction_entrance_sector or shortcut.shortcut_direction_exit_sector
+				local prevSectorShortcutId = reversedShortcut and shortcut.end_sector or shortcut.start_sector
+				local deployEntrance = reversedShortcut and shortcut.entry_direction_start or shortcut.entry_direction_end
 				
 				-- We can only interpolate in increments of satellite tick, but we
 				-- actually dont need to check if the travel time can be divided by it
@@ -1114,7 +1219,14 @@ function SquadUIMovementThread(squadWnd)
 				end
 				
 				NetUpdateHash("SatelliteReachSector", Game.CampaignTime, squad.UniqueId)
-				SetSatelliteSquadCurrentSector(squad, nextSectorId, "update-pos", false, waterPrevSector)
+				gv_DeploymentDir = deployEntrance
+				SetSatelliteSquadCurrentSector(squad, nextSectorId, "update-pos", false, prevSectorShortcutId)
+				
+				if shortcut.water_shortcut then
+					local cost = prevSector:GetTravelPrice(squad)
+					cost = cost * shortcut.TravelTimeInSectors
+					AddMoney(-cost, "expense")
+				end
 			elseif ((prevSectorPos - nextSectorPos):Len() / 2) > 0 then -- Normal travel of dist > 0
 				local _, time1, time2 = GetSectorTravelTime(prevSectorId, nextSectorId, squad.route, squad.units, nil, nil, squad.Side)
 				time1 = Max(time1, lMinVisualTravelTime);
@@ -1410,6 +1522,19 @@ function GetRouteInfoBreakdown(squad, route)
 				end
 			end
 			
+			-- Check if shortcut water shortcut
+			if sector then
+				local shortcuts = waypoint.shortcuts
+				if shortcuts and shortcuts[i] then
+					local shortcutPreset = GetShortcutByStartEnd(previousSId, sId)
+					if shortcutPreset and shortcutPreset.water_shortcut then
+						local cost = prevSector:GetTravelPrice(squad)
+						waterTravelCost = cost
+						waterTravelTiles = shortcutPreset.TravelTimeInSectors
+					end
+				end
+			end
+			
 			previousSId = sId
 		end
 	end
@@ -1511,8 +1636,43 @@ function IsTraversingShortcut(squad, regardlessSatelliteTickPassed)
 	return not not squad.traversing_shortcut_start
 end
 
-function IsRiverSector(sectorId, force_two_way)
-	return not not GetShortcutsAtSector(sectorId, force_two_way)
+function IsRiverSector(sectorId, force_two_way, cache_shortcuts)
+	if cache_shortcuts == nil then
+		return not not GetShortcutsAtSector(sectorId, force_two_way)
+	else
+		for _, shortcut in ipairs(cache_shortcuts) do
+			if force_two_way or not shortcut.one_way or shortcut.start_sector == sectorId then
+				return true
+			end
+		end
+		return false
+	end
 end
 
 DefineConstInt("SatelliteShortcut", "RiverTravelTime", 56, "min", "How many minutes it takes to travel one sector of river")
+DefineConstInt("SatelliteShortcut", "UBahnDefault", 30, "min")
+DefineConstInt("SatelliteShortcut", "UBahnFast", 15, "min")
+
+GameVar("gv_SatelliteShortcutState", function() return {} end)
+
+function SatelliteShortcutSetEnabled(shortcut_id, enable)
+	gv_SatelliteShortcutState = gv_SatelliteShortcutState or {}
+	
+	local dataForShortcut = gv_SatelliteShortcutState[shortcut_id]
+	if not dataForShortcut then
+		dataForShortcut = {}
+		gv_SatelliteShortcutState[shortcut_id] = dataForShortcut
+	end
+	dataForShortcut.enabled = enable
+end
+
+function SatelliteShortcutChangeSpeed(shortcut_id, speed_const)
+	gv_SatelliteShortcutState = gv_SatelliteShortcutState or {}
+
+	local dataForShortcut = gv_SatelliteShortcutState[shortcut_id]
+	if not dataForShortcut then
+		dataForShortcut = {}
+		gv_SatelliteShortcutState[shortcut_id] = dataForShortcut
+	end
+	dataForShortcut.speed_const = speed_const
+end

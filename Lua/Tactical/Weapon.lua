@@ -371,8 +371,8 @@ function BaseWeapon:UpdateColorMod(vis)
 	local metallic = color.Metallic or 0
 	color = color.color
 	
-	local count = vis:GetMaxColorizationMaterials()
-	for i = 1, count + 1 do
+	local count = Min(const.MaxColorizationMaterials, vis:GetMaxColorizationMaterials())
+	for i = 1, count do
 		vis[ "SetEditableColor" .. i ]   (vis, color)
 		vis[ "SetEditableRoughness" .. i](vis, roughness)
 		vis[ "SetEditableMetallic" .. i ](vis, metallic)
@@ -380,8 +380,8 @@ function BaseWeapon:UpdateColorMod(vis)
 
 	local attachments = vis:GetAttaches()
 	for i, attach in pairs(vis.parts) do
-		local count = attach:GetMaxColorizationMaterials()
-		for i = 1, count + 1 do
+		local count = Min(const.MaxColorizationMaterials, attach:GetMaxColorizationMaterials())
+		for i = 1, count do
 			attach[ "SetEditableColor" .. i ]   (attach, color)
 			attach[ "SetEditableRoughness" .. i](attach, roughness)
 			attach[ "SetEditableMetallic" .. i ](attach, metallic)
@@ -482,7 +482,7 @@ function FirearmBase:GetAccuracy(distance, unit, action)
 end
 
 function FirearmBase:RegisterReactions(owner)
-	owner = owner or ZuluReactionResolveUnitActorObj(self.owner)
+	owner = owner or self.owner and ZuluReactionResolveUnitActorObj(self.owner)
 	if owner then
 		InventoryItem.RegisterReactions(self, owner)
 		for slot, component in sorted_pairs(self.components) do
@@ -530,7 +530,7 @@ function FirearmBase:SetWeaponComponent(slot, id, is_init)
 	self:UnregisterReactions()
 
 	-- Remove old component
-	if self.components[slot] then
+	if (self.components[slot] or "") ~= "" then
 		local component = self.components[slot]
 		self:RemoveModifiers(component)
 		
@@ -561,9 +561,11 @@ function FirearmBase:SetWeaponComponent(slot, id, is_init)
 		
 		if componentPreset then
 			for i, v in ipairs(componentPreset.Visuals) do
-				local slotId = v.Slot
-				local componentSlot = table.find_value(self.ComponentSlots, "SlotType", slotId)
-				self.components[slotId] = componentSlot and componentSlot.DefaultComponent or ""
+				if v:Match(self.class) then
+					local slotId = v.Slot
+					local componentSlot = table.find_value(self.ComponentSlots, "SlotType", slotId)
+					self.components[slotId] = componentSlot and componentSlot.DefaultComponent or ""
+				end
 			end
 		end
 	end
@@ -825,7 +827,7 @@ function FirearmBase:UpdateVisualObj(vis)
 	-- Arrange in dependency order.
 	local componentSlots = self.ComponentSlots and table.copy(self.ComponentSlots) or empty_table
 	if #componentSlots > 0 then
-		for comp, dep in pairs(SlotDependencies) do
+		for comp, dep in sorted_pairs(SlotDependencies) do
 			local cIdx = table.find(componentSlots, "SlotType", comp)
 			local dIdx = table.find(componentSlots, "SlotType", dep)
 			if cIdx and dIdx and dIdx > cIdx then
@@ -1951,6 +1953,13 @@ local function compile_ignore_colliders(killed_colliders, colliders)
 	return list
 end
 
+function Firearm:GetShotGrazeTheshold(value)
+	return value
+end
+function Firearm:GetShotChanceToHit(value)
+	return value
+end
+
 function Firearm:GetAttackResults(action, attack_args)
 	-- unpack some params & init default values
 	local attacker = attack_args.obj
@@ -1970,7 +1979,7 @@ function Firearm:GetAttackResults(action, attack_args)
 	assert(target_pos)
 
 	local num_shots = attack_args.num_shots or 0
-	local aoe_params = attack_args.aoe_action_id and self:GetAreaAttackParams(attack_args.aoe_action_id, attacker, aoe_target_pos, attack_args.step_pos )
+	local aoe_params = attack_args.aoe_params or (attack_args.aoe_action_id and self:GetAreaAttackParams(attack_args.aoe_action_id, attacker, aoe_target_pos, attack_args.step_pos ))
 	local consumed_ammo = attack_args.consumed_ammo
 	if not consumed_ammo then
 		consumed_ammo = 1
@@ -2133,16 +2142,19 @@ function Firearm:GetAttackResults(action, attack_args)
 	
 	for i = 1, num_shots do
 		local shot_miss, shot_crit, shot_cth
+		shot_cth = self:GetShotChanceToHit(attack_results.chance_to_hit - shot_attack_args.cth_loss_per_shot * (i - 1))
+		shot_cth = attacker:CallReactions_Modify("OnCalcShotChanceToHit", shot_cth, attacker, target, i, num_shots)
+		if target_unit then
+			shot_cth = target_unit:CallReactions_Modify("OnCalcShotChanceToHit", shot_cth, attacker, target, i, num_shots)
+		end
 		if shot_attack_args.multishot then
 			roll = attack_results.attack_roll[i]
-			shot_cth = attack_results.chance_to_hit - shot_attack_args.cth_loss_per_shot * (i - 1)
 			shot_miss = roll > shot_cth
 			shot_crit = (not shot_miss) and (attack_results.crit_roll[i] <= attack_results.crit_chance)
 			-- update global miss/crit for the attack
 			miss = miss and shot_miss
 			crit = crit or shot_crit
 		else
-			shot_cth = attack_results.chance_to_hit - shot_attack_args.cth_loss_per_shot * (i - 1)
 			shot_miss = (not kill or i > 1) and roll > shot_cth
 			shot_crit = crit and (i == 1)
 		end
@@ -2151,9 +2163,16 @@ function Firearm:GetAttackResults(action, attack_args)
 		data = bor(data, shot_miss and 0 or sfHit)
 		data = bor(data, shot_crit and sfCrit or 0)
 		data = bor(data, (shot_attack_args.multishot or (i == 1)) and sfLeading or 0)
-		if shot_miss and shot_cth > 0 and roll < shot_cth + graze_threshold then
-			data = bor(data, sfAllowGrazing)
-			num_grazing = num_grazing + 1
+		if shot_miss and shot_cth > 0 then
+			local shot_graze_threshold = self:GetShotGrazeTheshold(graze_threshold)
+			shot_graze_threshold = attacker:CallReactions_Modify("OnCalcShotGrazeThreshold", shot_graze_threshold, attacker, target, i, num_shots)
+			if target_unit then
+				shot_graze_threshold = target_unit:CallReactions_Modify("OnCalcShotGrazeThreshold", shot_graze_threshold, attacker, target, i, num_shots)
+			end
+			if roll < shot_cth + shot_graze_threshold then
+				data = bor(data, sfAllowGrazing)
+				num_grazing = num_grazing + 1
+			end
 		end
 		shots_data[i] = data
 		num_hits = num_hits + (shot_miss and 0 or 1)
@@ -2716,7 +2735,7 @@ end
 function QuestAddAttackedGroups(groups, dead)
 	if not groups then return end
 	
-	local quest = QuestGetState("_GroupsAttacked")
+	local quest = gv_Quests["_GroupsAttacked"] and QuestGetState("_GroupsAttacked")
 	if not quest then return end
 	
 	for _, group in ipairs(groups) do
@@ -2781,14 +2800,12 @@ end
 function AttackReaction(action, attack_args, results, can_retaliate)
 	QuestTrackAttackedGroups(attack_args, results)
 
-	if attack_args and (attack_args.opportunity_attack and not attack_args.opening_attack) then
-		return
-	end
 	local attacker = attack_args.obj
 	local target = attack_args.target
 	can_retaliate = can_retaliate and (action.id ~= "CancelShot")
 	can_retaliate = can_retaliate and not attack_args.stealth_attack -- Cannot retaliate if attacker was stealthed
 	can_retaliate = can_retaliate and not attack_args.opening_attack
+	can_retaliate = can_retaliate and not attack_args.opportunity_attack
 	
 	if not IsKindOf(attacker, "Unit") then return end
 	if attacker.command ~= "RetaliationAttack" then
@@ -2811,9 +2828,10 @@ function AttackReaction(action, attack_args, results, can_retaliate)
 		target:CallReactions("OnUnitAttackReaction", attacker, target, action, attack_args, results, can_retaliate)
 	end
 	
+	local interruptAttackAvailable = not attack_args.opportunity_attack and attacker:CallReactions_And("OnCheckInterruptAttackAvailable", target, action)
 	-- Retaliation (Hotblood)
 	if can_retaliate and IsKindOf(target, "Unit") and teamPlaying ~= target.team and results.miss and
-	not (results.melee_attack and HasPerk(attacker, "HardBlow")) and HasPerk(target, "Hotblood") and not target:HasStatusEffect("Protected") then
+	not (results.melee_attack and interruptAttackAvailable) and HasPerk(target, "Hotblood") and not target:HasStatusEffect("Protected") then
 		local retaliationCounter = target:GetStatusEffect("RetaliationCounter")
 		retaliationCounter = retaliationCounter and retaliationCounter.stacks or 0
 		
@@ -2841,7 +2859,7 @@ function AttackReaction(action, attack_args, results, can_retaliate)
 		local unit = IsKindOf(hit.obj, "Unit") and not hit.obj:IsIncapacitated() and hit.obj
 		
 		if can_retaliate and unit and g_Combat and teamPlaying ~= unit.team and HasPerk(unit, "Shatterhand") and
-		not (results.melee_attack and HasPerk(attacker, "HardBlow")) and not unit:HasStatusEffect("KnockDown") and
+		not (results.melee_attack and interruptAttackAvailable) and not unit:HasStatusEffect("KnockDown") and
 		not unit:HasStatusEffect("Protected") and not table.find(hit_units, unit) then
 			local shatterhand = CharacterEffectDefs.Shatterhand
 			local shatterhandTreshold = shatterhand:ResolveValue("hp_loss_percent")
@@ -2949,7 +2967,7 @@ function AttackReaction(action, attack_args, results, can_retaliate)
 	if combat_starting and not g_Combat then
 		g_LastAttackStealth = not not (results and results.attack_from_stealth)
 		g_LastAttackKill = IsKindOf(target, "Unit") and target:IsDead() or false
-		if g_CurrentAttackActions[1] and g_CurrentAttackActions[1].attack_args.obj == attacker and not HasPerk(attacker, "FoxPerk") then
+		if g_CurrentAttackActions[1] and g_CurrentAttackActions[1].attack_args.obj == attacker then
 			-- combat might start because of this action, add the status effect to make the unit start their turn with the ap for the action spent
 			g_AttackSpentAPQueue[#g_AttackSpentAPQueue + 1] = attacker
 			g_AttackSpentAPQueue[#g_AttackSpentAPQueue + 1] = GameTime()
@@ -3157,6 +3175,17 @@ function Firearm:GetOverwatchConeParam(param)
 	assert(false, string.format("unknown Overwatch parameter '%s'", param))
 end
 
+function Firearm:FillConeAttackAoeParams(params, attacker)
+	if attacker then
+		params.attribute_bonus = MulDivRound(const.Combat.BuckshotAttribBonus, attacker.Marksmanship, 100)
+	end
+	params.falloff_start = self.BuckshotFalloffStart
+	params.falloff_damage = self.BuckshotFalloffDamage
+	params.cone_angle = self.BuckshotConeAngle
+	params.min_range = self.WeaponRange
+	params.max_range = self.WeaponRange
+end
+
 function Firearm:GetAreaAttackParams(action_id, attacker, target_pos, step_pos, stance)
 	local params = { 
 		attacker = attacker,
@@ -3173,14 +3202,7 @@ function Firearm:GetAreaAttackParams(action_id, attacker, target_pos, step_pos, 
 		params.stance = stance or attacker.stance
 	end
 	if action_id == "Buckshot" or action_id == "DoubleBarrel" or action_id == "BuckshotBurst" or action_id == "CancelShotCone" then
-		if attacker then
-			params.attribute_bonus = MulDivRound(const.Combat.BuckshotAttribBonus, attacker.Marksmanship, 100)
-		end
-		params.falloff_start = self.BuckshotFalloffStart
-		params.falloff_damage = self.BuckshotFalloffDamage
-		params.cone_angle = self.BuckshotConeAngle
-		params.min_range = self.WeaponRange
-		params.max_range = self.WeaponRange
+		self:FillConeAttackAoeParams(params, attacker)
 	elseif action_id == "EyesOnTheBack" then
 		local effect = attacker:GetStatusEffect("EyesOnTheBack")
 		params.cone_angle = effect and (effect:ResolveValue("cone_angle")*60)
@@ -3523,7 +3545,7 @@ DefineClass.WeaponVisual = {
 }
 
 DefineClass.AttachmentVisual = {
-	__parents = { "CObject", "ComponentCustomData", "ComponentAttach", "FXObject" },
+	__parents = { "Object", "ComponentCustomData", "ComponentAttach", "FXObject" },
 }
 
 function WeaponVisual:Init()

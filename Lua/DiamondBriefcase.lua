@@ -214,11 +214,41 @@ function HasAnyShipmentItem(unit)
 	return hasBriefcase, shipmentPresetId
 end
 
+
+if FirstLoad then
+	DBRoutesCacheDynamic = false
+	DBRoutesMaxDistanceForLandOnlyCheck = 10
+end
+
+if config.Mods then
+
+function OnMsg.NewGame()
+	DBRoutesCacheDynamic = false
+end
+
+function OnMsg.StartSatelliteGameplay()
+	if ModsLoaded and #ModsLoaded > 0 and not DBRoutesCacheDynamic then
+		DelayedCall(0, GenerateDynamicDBPathCache) --should only reach this line when loading a save in sat view
+	end
+end
+
+function OnMsg.GameMetadataLoaded()
+	if ModsLoaded and #ModsLoaded > 0 then
+		GenerateDynamicDBPathCache()
+	end
+end
+
+function OnMsg.CampaignStarted()
+	if ModsLoaded and #ModsLoaded > 0 then
+		GenerateDynamicDBPathCache()
+	end
+end
+
+end --config.Mods
+
 function SpawnDynamicDBSquad(overrideSourceDest, srcOrDstSectorFilter)
-	local routes = DBRoutesCache
-	local campaign = GetCurrentCampaignPreset()
-	if not routes or not routes[campaign.id] then return end
-	routes = routes[campaign.id]
+	local routes = DBRoutesCacheDynamic or DBRoutesCacheStatic
+	if not routes then return end
 
 	local weights = {}
 	if overrideSourceDest then
@@ -345,8 +375,13 @@ function SpawnDynamicDBSquad(overrideSourceDest, srcOrDstSectorFilter)
 	SetSatelliteSquadRoute(squad, randomRoute)
 end
 
-function GenerateDynamicDBPathCache()
+function GenerateDynamicDBPathCache(save)
+	if config.Mods and ModsLoaded and #ModsLoaded > 0 and DBRoutesCacheDynamic then
+		return
+	end
+
 	PauseInfiniteLoopDetection("DBPathfinding")
+	local st = GetPreciseTicks()
 	local routeCache = {}
 	local sources = {}
 	local destinations = {}
@@ -354,7 +389,16 @@ function GenerateDynamicDBPathCache()
 	local cols = campaign.sector_columns
 	local rows = campaign.sector_rows
 	
+	--caches for optimizing the GenerateRouteDijkstraSimplified
+	local cache_sorted_sectors = {}
+	local cache_sectors_shortcuts = {}
+	local cache_neighbors = {}
+	
 	for id, sector in sorted_pairs(gv_Sectors) do
+		cache_sorted_sectors[#cache_sorted_sectors + 1] = id
+		cache_sectors_shortcuts[#cache_sectors_shortcuts + 1] = GetShortcutsAtSector(id, "force_twoway")
+		cache_neighbors[id] = GetNeighborSectors(id)
+		
 		if IsSectorUnderground(id) then goto continue end
 		
 		if sector.DBSourceSector and not sources[id] then
@@ -379,11 +423,14 @@ function GenerateDynamicDBPathCache()
 		for i, dest in ipairs(destinations) do
 			if source == dest then goto continue end
 			
-			local r = GenerateRouteDijkstra(source, dest, false, empty_table, "land_only", nil, "diamonds", "no-shortcuts")
-			if not r then
-				r = GenerateRouteDijkstra(source, dest, false, empty_table, "land_water_boatless", nil, "diamonds", "no-shortcuts")
-				if not r then goto continue end
-			end
+			local dist = GetSectorDistance(source, dest)
+			local r
+			if dist <= DBRoutesMaxDistanceForLandOnlyCheck then
+				r = GenerateRouteDijkstraSimplified(source, dest, "land_only", "diamonds", cache_sorted_sectors, cache_sectors_shortcuts, cache_neighbors)
+			else
+				r = GenerateRouteDijkstraSimplified(source, dest, "land_water_boatless", "diamonds", cache_sorted_sectors, cache_sectors_shortcuts, cache_neighbors)
+ 			end
+			if not r then goto continue end
 			
 			-- Shave off weird looking routes at the edge of the map.
 			if destinations[dest] == "edge" then
@@ -427,13 +474,230 @@ function GenerateDynamicDBPathCache()
 		end
 	end
 
-	local data = {}
-	data[campaign.id] = routeCache
+	if save then
+		local data = {}
+		data = routeCache
 
-	local code = TableToLuaCode(data)
-	code = "if FirstLoad then \nDBRoutesCache = " .. code .. "\nend"
-	SaveSVNFile("svnProject/Lua/ExtrasGen/DiamondPaths.generated.lua", code)
+		local code = TableToLuaCode(data)
+		code = "if FirstLoad then \nDBRoutesCacheStatic = " .. code .. "\nend"
+		SaveSVNFile("svnProject/Lua/DiamondPaths.generated.lua", code)
+	else
+		DBRoutesCacheDynamic = routeCache
+	end
+	DebugPrint(string.format("GenerateDynamicDBPathCache finished after: %d ms/n", GetPreciseTicks() - st))
 	ResumeInfiniteLoopDetection("DBPathfinding")
+end
+
+local function pq_parent(i)
+	return DivRound(i - 1, 2)
+end
+
+local function pq_left_child(i)
+	return 2 * i
+end
+
+local function pq_right_child(i)
+	return 2 * i + 1
+end
+
+local function swap(t, i, j, key)
+	local tempid = t[i].id
+	local tempIdxCache = t[i].idx_in_cache
+	local tempWeight = t[i].weight
+
+	t[i].id = t[j].id
+	t[i].idx_in_cache = t[j].idx_in_cache
+	t[i].weight = t[j].weight
+	
+	t[j].id = tempid
+	t[j].idx_in_cache = tempIdxCache
+	t[j].weight = tempWeight
+	
+	if key then
+		t[t[i][key]] = i
+		t[t[j][key]] = j
+	end
+end
+
+local function pq_shift_up(t, i, field, key)
+	local parent = t[pq_parent(i)]
+	local parent_idx = pq_parent(i)
+	while i > 1 and (parent[field] > t[i][field] or (parent[field] == t[i][field] and parent.idx_in_cache > t[i].idx_in_cache and parent_idx ~= 1)) do
+		swap(t, parent_idx, i, key)
+		i = parent_idx
+		parent_idx = pq_parent(i)
+		parent = t[parent_idx]
+	end
+end
+
+local function pq_shift_down(t, i, field, key)
+	local curr_idx = i
+	local size = t.table_size
+	local curr_node = t[curr_idx]
+	
+	local left_child_idx = pq_left_child(i)
+	local left_node = t[left_child_idx]
+	if left_child_idx <= size and (left_node[field] < curr_node[field] or (left_node[field] == curr_node[field] and left_node.idx_in_cache < curr_node.idx_in_cache)) then
+		curr_idx = left_child_idx
+		curr_node = t[curr_idx]
+	end
+	
+	local right_child_idx = pq_right_child(i)
+	local right_node = t[right_child_idx]
+	if right_child_idx <= size and (right_node[field] < curr_node[field] or (right_node[field] == curr_node[field] and right_node.idx_in_cache < curr_node.idx_in_cache))  then
+		curr_idx = right_child_idx
+	end
+	
+	if i ~= curr_idx then
+		swap(t, i, curr_idx, key)
+		pq_shift_down(t, curr_idx, field, key)
+	end
+end
+
+function pq_insert(t, node, field, key)
+	t.table_size = t.table_size + 1
+	local size = t.table_size
+	t[size] = node
+	t[t[size][key]] = size
+	pq_shift_up(t, size, field, key)
+end
+
+function pq_pop_max(t, field, key)
+	local max_prio_node = t[1]
+	local size = t.table_size
+	swap(t, 1, size, key)
+	t[t[size][key]] = nil
+	t[size] = nil
+	t.table_size = t.table_size - 1
+	pq_shift_down(t, 1, field, key)
+	
+	return max_prio_node
+end
+
+function pq_change_prio(t, i, field, value, key)
+	local old_value = t[i][field]
+	t[i][field] = value
+	
+	if value > old_value then
+		pq_shift_down(t, i, field, key)
+	else
+		pq_shift_up(t, i, field, key)
+	end
+end
+
+function pq_remove(t, i, field, key)
+	t[i] = t[1]
+	
+	pq_shift_up(t, i, field, key)
+	pq_pop_max(t, field, key)
+end
+
+local function GetMinUnvisitedPathSizeSector(unvisited, sector_path_size)
+	local min = max_int
+	local min_sector
+	local min_sector_idx
+	for idx, sector in ipairs(unvisited) do
+		local sector_value = sector_path_size[sector]
+		if sector and sector_value < min then
+			min = sector_value
+			min_sector = sector
+			min_sector_idx = idx
+		end
+	end
+	if min == max_int then
+		return false 
+	end
+	return min_sector, min_sector_idx
+end
+
+function GenerateRouteDijkstraSimplified(start_sector, end_sector, pass_mode, side, cache_sorted_sectors, cache_sectors_shortcuts, cache_neighbors)
+	local startIsUnderground = gv_Sectors and gv_Sectors[start_sector] and gv_Sectors[start_sector].GroundSector
+	local endIsUnderground = gv_Sectors and gv_Sectors[end_sector] and gv_Sectors[end_sector].GroundSector
+	
+	assert(not startIsUnderground and not endIsUnderground, "Diamond briefcase routes should start/end on ground sectors.")
+
+	if start_sector == end_sector then
+		return false
+	end
+	
+	if GetSectorDistance(start_sector, end_sector) == 1 then
+		local dir = GetSectorDirection(start_sector, end_sector)
+		local time = GetSectorTravelTime(start_sector, end_sector, nil, nil, pass_mode, nil, side, dir, nil, cache_neighbors[start_sector])
+		if time then
+			return { end_sector }
+		end
+	end
+
+	local underground_sector_map = {}
+	local priority_queue = {}
+	priority_queue.table_size = 0
+	local prev = {}
+	
+	local currIdx
+	for idx, sector_id in ipairs(cache_sorted_sectors) do
+		if sector_id == start_sector then
+			pq_insert(priority_queue, {id = sector_id, weight = 0, idx_in_cache = idx}, "weight", "id")
+			currIdx = idx
+		else
+			pq_insert(priority_queue, {id = sector_id, weight = max_int, idx_in_cache = idx}, "weight", "id")
+		end
+		
+		local sectorPreset = gv_Sectors[sector_id]
+		if sectorPreset.GroundSector then
+			underground_sector_map[sectorPreset.GroundSector] = sector_id
+		end
+	end
+	
+	local curr = start_sector
+	while true do
+		local currPreset = gv_Sectors[curr]
+		local curr_node = priority_queue[1]
+		local currentIsUnderground = not not currPreset.GroundSector
+		
+		for _, dir in ipairs(const.WorldDirections) do
+			local neigh = cache_neighbors[curr] and cache_neighbors[curr][dir] or GetNeighborSector(curr, dir)
+			if neigh and currentIsUnderground then
+				neigh = neigh .. "_Underground"
+			end
+			
+			if priority_queue[neigh] then
+				local time = GetSectorTravelTime(curr, neigh, nil, nil, pass_mode, nil, side, dir, cache_sectors_shortcuts[currIdx], cache_neighbors[curr])
+				if time then
+					local time_value = time + curr_node.weight
+					if time_value < priority_queue[priority_queue[neigh]].weight then
+						pq_change_prio(priority_queue, priority_queue[neigh], "weight", time_value, "id")
+						prev[neigh] = curr
+					end
+				end
+			end
+		end
+		
+		local last_node = pq_pop_max(priority_queue, "weight", "id")
+		local new_node = priority_queue[1]
+		local weight = new_node and new_node.weight
+		if weight and weight ~= max_int then
+			curr = new_node.id
+			currIdx = new_node.idx_in_cache
+		else
+			curr = false
+		end
+		
+		if not curr then 
+			return false 
+		end
+		if curr == end_sector then
+			local s = curr
+			local route_rev = {}
+			local water_sectors = 0
+			while s ~= start_sector do
+				table.insert(route_rev, s)
+				s = prev[s]
+			end
+			
+			local reversedRoute = table.reverse(route_rev)
+			return reversedRoute
+		end
+	end
 end
 
 function GetStaticDiamondBriefcaseSquadOnSector(sectorId)

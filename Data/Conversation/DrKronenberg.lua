@@ -16,6 +16,16 @@ PlaceObj('Conversation', {
 				return quest.HospitalInfectedKilled
 			end,
 		}),
+		PlaceObj('QuestIsVariableBool', {
+			QuestId = "U-Bahn",
+			Vars = set({
+	OutcomeSanatorium = false,
+}),
+			__eval = function ()
+				local quest = gv_Quests['U-Bahn'] or QuestGetState('U-Bahn')
+				return not quest.OutcomeSanatorium
+			end,
+		}),
 	},
 	DefaultActor = "DrKronenberg",
 	Parameters = {

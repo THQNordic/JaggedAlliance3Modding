@@ -32,5 +32,6 @@ DefineClass._50BMG_SLAP = {
 			target_prop = "CritChance",
 		}),
 	},
+	ammo_type_icon = "UI/Icons/Items/ta_hp.png",
 }
 

@@ -14,8 +14,8 @@ PlaceObj('BanterDef', {
 PlaceObj('BanterDef', {
 	Lines = {
 		PlaceObj('BanterLine', {
-			'Character', "CivilianFemale_2",
-			'Text', T(384118954579, --[[BanterDef Grimer_VillagerFemale_02_Rescue Text section:Banters_Local_GrimerHamlet_Rescued/Grimer_VillagerFemale_02_Rescue voice:CivilianFemale_2]] "God and spirits! We're saved!"),
+			'Character', "CivilianFemale_1",
+			'Text', T(384118954579, --[[BanterDef Grimer_VillagerFemale_02_Rescue Text section:Banters_Local_GrimerHamlet_Rescued/Grimer_VillagerFemale_02_Rescue voice:CivilianFemale_1]] "God and spirits! We're saved!"),
 		}),
 	},
 	group = "Banters_Local_GrimerHamlet_Rescued",
@@ -36,8 +36,8 @@ PlaceObj('BanterDef', {
 PlaceObj('BanterDef', {
 	Lines = {
 		PlaceObj('BanterLine', {
-			'Character', "CivilianFemale_2",
-			'Text', T(867428097936, --[[BanterDef Grimer_VillagerFemale_04_Rescue Text section:Banters_Local_GrimerHamlet_Rescued/Grimer_VillagerFemale_04_Rescue voice:CivilianFemale_2]] "Don't eat us, don't eat... Ah! Don't shoot us, don't shoot us!"),
+			'Character', "CivilianFemale_1",
+			'Text', T(867428097936, --[[BanterDef Grimer_VillagerFemale_04_Rescue Text section:Banters_Local_GrimerHamlet_Rescued/Grimer_VillagerFemale_04_Rescue voice:CivilianFemale_1]] "Don't eat us, don't eat... Ah! Don't shoot us, don't shoot us!"),
 		}),
 		PlaceObj('BanterLine', {
 			'MultipleTexts', true,
@@ -68,8 +68,8 @@ PlaceObj('BanterDef', {
 PlaceObj('BanterDef', {
 	Lines = {
 		PlaceObj('BanterLine', {
-			'Character', "CivilianMale_2",
-			'Text', T(564319114001, --[[BanterDef Grimer_VillagerMale_02_Rescue Text section:Banters_Local_GrimerHamlet_Rescued/Grimer_VillagerMale_02_Rescue voice:CivilianMale_2]] "Finally! L'armée is here!"),
+			'Character', "CivilianMale_1",
+			'Text', T(564319114001, --[[BanterDef Grimer_VillagerMale_02_Rescue Text section:Banters_Local_GrimerHamlet_Rescued/Grimer_VillagerMale_02_Rescue voice:CivilianMale_1]] "Finally! L'armée is here!"),
 		}),
 	},
 	group = "Banters_Local_GrimerHamlet_Rescued",
@@ -79,8 +79,8 @@ PlaceObj('BanterDef', {
 PlaceObj('BanterDef', {
 	Lines = {
 		PlaceObj('BanterLine', {
-			'Character', "CivilianMale_3",
-			'Text', T(126477465736, --[[BanterDef Grimer_VillagerMale_03_Rescue Text section:Banters_Local_GrimerHamlet_Rescued/Grimer_VillagerMale_03_Rescue voice:CivilianMale_3]] "Non-non, don't kill us! We are not cadavérés, I swear!"),
+			'Character', "CivilianMale_1",
+			'Text', T(126477465736, --[[BanterDef Grimer_VillagerMale_03_Rescue Text section:Banters_Local_GrimerHamlet_Rescued/Grimer_VillagerMale_03_Rescue voice:CivilianMale_1]] "Non-non, don't kill us! We are not cadavérés, I swear!"),
 		}),
 	},
 	group = "Banters_Local_GrimerHamlet_Rescued",
@@ -90,8 +90,8 @@ PlaceObj('BanterDef', {
 PlaceObj('BanterDef', {
 	Lines = {
 		PlaceObj('BanterLine', {
-			'Character', "CivilianMale_3",
-			'Text', T(722284728515, --[[BanterDef Grimer_VillagerMale_04_Rescue Text section:Banters_Local_GrimerHamlet_Rescued/Grimer_VillagerMale_04_Rescue voice:CivilianMale_3]] "You're not here to shoot us, right?"),
+			'Character', "CivilianMale_1",
+			'Text', T(722284728515, --[[BanterDef Grimer_VillagerMale_04_Rescue Text section:Banters_Local_GrimerHamlet_Rescued/Grimer_VillagerMale_04_Rescue voice:CivilianMale_1]] "You're not here to shoot us, right?"),
 		}),
 		PlaceObj('BanterLine', {
 			'MultipleTexts', true,
@@ -115,8 +115,8 @@ PlaceObj('BanterDef', {
 PlaceObj('BanterDef', {
 	Lines = {
 		PlaceObj('BanterLine', {
-			'Character', "CivilianMale_3",
-			'Text', T(797917161798, --[[BanterDef Grimer_VillagerMale_05_Rescue Text section:Banters_Local_GrimerHamlet_Rescued/Grimer_VillagerMale_05_Rescue voice:CivilianMale_3]] "Non! Les cadavérés! Wait... They have guns. LES CADAVÉRÉS WITH GUNS!!!"),
+			'Character', "CivilianMale_1",
+			'Text', T(797917161798, --[[BanterDef Grimer_VillagerMale_05_Rescue Text section:Banters_Local_GrimerHamlet_Rescued/Grimer_VillagerMale_05_Rescue voice:CivilianMale_1]] "Non! Les cadavérés! Wait... They have guns. LES CADAVÉRÉS WITH GUNS!!!"),
 		}),
 	},
 	group = "Banters_Local_GrimerHamlet_Rescued",

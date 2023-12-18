@@ -283,7 +283,7 @@ PlaceObj('VoiceResponse', {
 		T(113668663415, --[[VoiceResponse Nails SelectionStealth VoiceResponse SelectionStealth - when selected or autoselected voice:Nails]] "Prefer to just walk up and kick their teeth in.")
 	}),
 	SeriouslyWounded = TConcat({
-		T(963576223706, --[[VoiceResponse Nails SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds) voice:Nails]] "We're looking at my last ride if I keep going like this, Scooter.")
+		T(963576223706, --[[VoiceResponse Nails SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining. voice:Nails]] "We're looking at my last ride if I keep going like this, Scooter.")
 	}),
 	SpecialThrowGrenade = TConcat({
 		T(891151648798, --[[VoiceResponse Nails SpecialThrowGrenade VoiceResponse SpecialThrowGrenade - When throwing grenade voice:Nails]] "Gonna deliver a special gift to this party.")
@@ -332,9 +332,9 @@ PlaceObj('VoiceResponse', {
 		T(230932668801, --[[VoiceResponse Nails WeaponJammed VoiceResponse WeaponJammed - When weapon has jammed voice:Nails]] "Misfire!")
 	}),
 	Wounded = TConcat({
-		T(972497826053, --[[VoiceResponse Nails Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Nails]] "Hey, watch the vest!"),
-		T(656975600069, --[[VoiceResponse Nails Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Nails]] "That tat needed a scar anyway."),
-		T(506776822788, --[[VoiceResponse Nails Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Nails]] "Starting to get a little irritated.")
+		T(972497826053, --[[VoiceResponse Nails Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Nails]] "Hey, watch the vest!"),
+		T(656975600069, --[[VoiceResponse Nails Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Nails]] "That tat needed a scar anyway."),
+		T(506776822788, --[[VoiceResponse Nails Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Nails]] "Starting to get a little irritated.")
 	}),
 	group = "MercenariesOld",
 	id = "Nails",

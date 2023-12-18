@@ -292,7 +292,7 @@ PlaceObj('VoiceResponse', {
 		T(681821736510, --[[VoiceResponse Hitman SelectionStealth VoiceResponse SelectionStealth - when selected or autoselected voice:Hitman]] "Like a scorpion in a boot, Ace.")
 	}),
 	SeriouslyWounded = TConcat({
-		T(617455887391, --[[VoiceResponse Hitman SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds) voice:Hitman]] "I think I see more of my insides than my outsides!")
+		T(617455887391, --[[VoiceResponse Hitman SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining. voice:Hitman]] "I think I see more of my insides than my outsides!")
 	}),
 	Startled = TConcat({
 		T(881361919482, --[[VoiceResponse Hitman Startled VoiceResponse Startled - Startled by hearing a sudden noise voice:Hitman]] "Huh?"),
@@ -351,9 +351,9 @@ PlaceObj('VoiceResponse', {
 		T(218676138480, --[[VoiceResponse Hitman WeaponJammed VoiceResponse WeaponJammed - When weapon has jammed voice:Hitman]] "Damn! Jammed gun's dangerous, Ace.")
 	}),
 	Wounded = TConcat({
-		T(493571173096, --[[VoiceResponse Hitman Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Hitman]] "Took a hit!"),
-		T(459241183701, --[[VoiceResponse Hitman Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Hitman]] "Taking fire, Ace!"),
-		T(868135051386, --[[VoiceResponse Hitman Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Hitman]] "Gonna need a medic!")
+		T(493571173096, --[[VoiceResponse Hitman Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Hitman]] "Took a hit!"),
+		T(459241183701, --[[VoiceResponse Hitman Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Hitman]] "Taking fire, Ace!"),
+		T(868135051386, --[[VoiceResponse Hitman Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Hitman]] "Gonna need a medic!")
 	}),
 	group = "MercenariesOld",
 	id = "Hitman",

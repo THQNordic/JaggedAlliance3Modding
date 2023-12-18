@@ -235,7 +235,7 @@ function CreateLateListMessageBox()
 		ActionGamepad = "ButtonA",
 		ActionToolbar = "ActionBar",
 		OnAction = function(self, host, source)
-			host:Close("open")
+			host:Close("public")
 			return "break"
 		end
 	})
@@ -247,7 +247,7 @@ function CreateLateListMessageBox()
 		ActionGamepad = "ButtonY",
 		ActionToolbar = "ActionBar",
 		OnAction = function(self, host, source)
-			host:Close("invite")
+			host:Close("private")
 			return "break"
 		end
 	})
@@ -333,6 +333,9 @@ function ShowMPLobbyError(context, err)
 		context_string = T(493609285611, "Player is busy.")
 	elseif context == "mods" then
 		msg = CreateMessageBox(parent, T(634182240966, "Error"), T{349914917388, "<ModsError(err)>", err = err}, T(325411474155, "OK"))
+		err = nil
+	elseif context == "dlc" then
+		context_string = err
 		err = nil
 	else
 		context_string = T(141784216225, "Error.")
@@ -481,7 +484,8 @@ function MultiplayerLobbySetUI(mode, param) -- todo: check if param actually doe
 	end
 	
 	if ui.Mode == "" and mode ~= "empty" then 
-		ui:SetMode("Multiplayer") 
+		ui:SetMode("Multiplayer")
+		ShowMultiplayerModsPopup("no_wait")
 	elseif mode == "empty" then
 		ui:SetMode("") 
 	end
@@ -1242,7 +1246,7 @@ function HandleJoinRequestMessageProc(someTableIdk, player_name, player_id, msg,
 		if dlcs then
 			for i, d in ipairs(dlcs) do
 				if not IsDlcAvailable(d) then
-					return T{270767785964, "Missing dlc: <dlc>", dlc = tostring(d)}
+					return T{270767785964, "Missing dlc: <dlc>", dlc = Untranslated(d)}, "dlc"
 				end
 			end
 		end
@@ -1253,7 +1257,7 @@ function HandleJoinRequestMessageProc(someTableIdk, player_name, player_id, msg,
 		for i, d in ipairs(myDlcs) do
 			local hasTheDlc = table.find(info.dlcs, d)
 			if not hasTheDlc then
-				return T{813744621008, "Host doesn't have dlc: <dlc>", dlc = tostring(d)}
+				return T{813744621008, "Host doesn't have dlc: <dlc>", dlc = Untranslated(d)}, "dlc"
 			end
 		end
 		
@@ -1376,6 +1380,9 @@ function MultiplayerInGameHostSetUI()
 		
 		return
 	end
+	
+	local r = ShowMultiplayerModsPopup()
+	if not r then return end
 
 	-- Try to connect to the server first
 	local err = MultiplayerConnect()
@@ -1388,7 +1395,7 @@ function MultiplayerInGameHostSetUI()
 	local resp = prompt:Wait()
 	if not resp or resp == "close" then return end
 	
-	if resp == "invite" then
+	if resp == "private" then
 		-- Auto-host a private game
 		local err = HostMultiplayerGame("private")
 		if err then
@@ -1401,7 +1408,7 @@ function MultiplayerInGameHostSetUI()
 		local ui = GetMultiplayerLobbyDialog()
 		local subMenu = ui and ui.idSubMenu
 		if not ui or not subMenu then return end
-	elseif resp == "open" then
+	elseif resp == "public" then
 		-- Auto-host a public game
 		local err = HostMultiplayerGame("public")
 		if err then
@@ -1411,7 +1418,6 @@ function MultiplayerInGameHostSetUI()
 	
 		MultiplayerLobbySetUI("multiplayer_host")
 	end
-	-- todo
 end
 
 function OnMsg.UnitDied(unit, attacker, results)
@@ -1649,4 +1655,18 @@ function OnMsg.ZuluGameLoaded(name)
 			day = Game and TFormat.day() or 1,
 		})
 	end
+end
+
+function ShowMultiplayerModsPopup(no_wait)
+	if not next(ModsLoaded) then return "no-mods" end
+	if netInGame then return end
+
+	local msg = CreateMessageBox(nil,
+		T(137802317861, "Warning"),
+		T(704807574482, "Playing multiplayer games with mods enabled may cause desyncs to occur during your playthrough."),
+		T(325411474155, "OK")
+	)
+	if no_wait then return "ok" end
+	
+	return msg:Wait()
 end

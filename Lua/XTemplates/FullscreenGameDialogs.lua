@@ -53,7 +53,10 @@ PlaceObj('XTemplate', {
 		PlaceObj('XTemplateFunc', {
 			'name', "OnMouseButtonDown(self, pos, button)",
 			'func', function (self, pos, button)
-				InventoryClosePopup(self:GetSubdialog())
+				local inv = self:GetSubdialog()
+				if not InventoryClosePopup(inv) then
+					inv:DeselectMultiItems()
+				end				
 			end,
 		}),
 		PlaceObj('XTemplateFunc', {
@@ -147,7 +150,7 @@ PlaceObj('XTemplate', {
 									PlaceObj('XTemplateAction', {
 										'comment', "exit",
 										'ActionId', "Close",
-										'ActionName', T(499807098574, --[[XTemplate FullscreenGameDialogs ActionName]] "CLOSE"),
+										'ActionName', T(314835029231, --[[XTemplate FullscreenGameDialogs ActionName]] "CLOSE"),
 										'ActionShortcut', "Escape",
 										'OnAction', function (self, host, source, ...)
 											if host.Mode~="inventory" or not host:GetSubdialog():OnEscape() then
@@ -174,7 +177,7 @@ PlaceObj('XTemplate', {
 									'VAlign', "top",
 									'TextStyle', "HeaderTitle",
 									'Translate', true,
-									'Text', T(245949906540, --[[XTemplate FullscreenGameDialogs Text]] "INVENTORY"),
+									'Text', T(379758732395, --[[XTemplate FullscreenGameDialogs Text]] "INVENTORY"),
 									'TextHAlign', "center",
 									'TextVAlign', "center",
 								}),

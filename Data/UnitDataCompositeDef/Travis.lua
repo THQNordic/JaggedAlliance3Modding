@@ -22,5 +22,6 @@ PlaceObj('UnitDataCompositeDef', {
 		}),
 	},
 	'gender', "Male",
+	'PersistentSessionId', "NPC_Travis",
 })
 

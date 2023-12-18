@@ -34,6 +34,13 @@ PlaceObj('ClassDef', {
 		'preset_class', "CharacterEffectCompositeDef",
 		'preset_group', "Default",
 	}),
+	PlaceObj('PropertyDefUIImage', {
+		'category', "General",
+		'id', "ammo_type_icon",
+		'name', "Ammo Type Icon",
+		'help', "Ammo type icon",
+		'template', true,
+	}),
 })
 
 PlaceObj('ClassDef', {
@@ -108,20 +115,16 @@ PlaceObj('ClassDef', {
 		'category', "BobbyRayShop",
 		'id', "CategoryPair",
 		'no_edit', "expression",
-		'no_edit_expression', function (self) return not self.CanAppearInShop end,
+		'no_edit_expression', function (self, prop_meta) return not self.CanAppearInShop end,
 		'template', true,
 		'preset_class', "BobbyRayShopSubCategory",
 		'preset_group', "Ammo",
 		'default', "12gauge",
 	}),
-	PlaceObj('PropertyDefFunc', {
-		'category', "BobbyRayShop",
-		'id', "GetShopStats",
-		'help', "returns an array of { statName, statValue }",
-		'no_edit', "CategoryPair.no_edit",
-		'template', true,
-		'params', "self, stacks",
-		'default', function (self, stacks)
+	PlaceObj('ClassMethodDef', {
+		'name', "GetShopStats",
+		'params', "stacks",
+		'code', function (self, stacks)
 			return BobbyRayStoreGetStats_Ammo(self)
 		end,
 	}),
@@ -137,28 +140,22 @@ PlaceObj('ClassDef', {
 		'category', "BobbyRayShop",
 		'id', "CategoryPair",
 		'no_edit', "expression",
-		'no_edit_expression', function (self) return not self.CanAppearInShop end,
+		'no_edit_expression', function (self, prop_meta) return not self.CanAppearInShop end,
 		'template', true,
 		'preset_class', "BobbyRayShopSubCategory",
 		'preset_group', "Armor",
 		'default', "UtilityArmor",
 	}),
-	PlaceObj('PropertyDefFunc', {
-		'category', "BobbyRayShop",
-		'id', "GetShopStats",
-		'help', "returns an array of { statName, statValue }",
-		'no_edit', "CategoryPair.no_edit",
-		'template', true,
-		'params', "self, stacks",
-		'default', function (self, stacks)
+	PlaceObj('ClassMethodDef', {
+		'name', "GetShopStats",
+		'params', "stacks",
+		'code', function (self, stacks)
 			return BobbyRayStoreGetStats_Armor(self)
 		end,
 	}),
-	PlaceObj('PropertyDefFunc', {
-		'category', "BobbyRayShop",
-		'id', "GetShopDescription",
-		'no_edit', "CategoryPair.no_edit",
-		'default', function (self)
+	PlaceObj('ClassMethodDef', {
+		'name', "GetShopDescription",
+		'code', function (self)
 			local hasDesc = self.Description and self.Description ~= ""
 			local hasHint = self.AdditionalHint and self.AdditionalHint ~= ""
 			local protectedParts = {}
@@ -186,34 +183,17 @@ PlaceObj('ClassDef', {
 	},
 	group = "Inventory",
 	id = "BobbyRayShopFirearmProperties",
-	PlaceObj('PropertyDefFunc', {
-		'category', "BobbyRayShop",
-		'id', "GetShopStats",
-		'help', "returns an array of { statName, statValue }",
-		'no_edit', "expression",
-		'no_edit_expression', function (self) return not self.CanAppearInShop end,
-		'template', true,
-		'params', "self, stacks",
-		'default', function (self, stacks)
+	PlaceObj('ClassMethodDef', {
+		'name', "GetShopStats",
+		'params', "stacks",
+		'code', function (self, stacks)
 			return BobbyRayStoreGetStats_Firearm(self)
 		end,
 	}),
-	PlaceObj('PropertyDefFunc', {
-		'category', "BobbyRayShop",
-		'id', "GetShopSubIcon",
-		'no_edit', "GetShopStats.no_edit",
-		'default', function (self)
-			return CountWeaponUpgrades(self) > 0 and "UI/Inventory/w_mod" or ""
-		end,
-	}),
-	PlaceObj('PropertyDefFunc', {
-		'category', "BobbyRayShop",
-		'id', "GenerateInventoryEntries",
-		'no_edit', "expression",
-		'no_edit_expression', function (self) return not self.CanAppearInShop end,
-		'template', true,
-		'params', "self, stacks",
-		'default', function (self, stacks)
+	PlaceObj('ClassMethodDef', {
+		'name', "GenerateInventoryEntries",
+		'params', "stacks",
+		'code', function (self, stacks)
 			local items = {}
 			if self.Used then
 				local new_item = PlaceInventoryItem(self.class, self)
@@ -239,6 +219,12 @@ PlaceObj('ClassDef', {
 			return items
 		end,
 	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "GetShopSubIcon",
+		'code', function (self)
+			return CountWeaponUpgrades(self) > 0 and "UI/Inventory/w_mod" or ""
+		end,
+	}),
 })
 
 PlaceObj('ClassDef', {
@@ -254,7 +240,7 @@ PlaceObj('ClassDef', {
 		'id', "Tier",
 		'name', "Tier",
 		'no_edit', "expression",
-		'no_edit_expression', function (self) return not self.CanAppearInShop end,
+		'no_edit_expression', function (self, prop_meta) return not self.CanAppearInShop end,
 		'template', true,
 		'default', 1,
 		'items', function (self) return { 1, 2, 3 } end,
@@ -284,49 +270,60 @@ PlaceObj('ClassDef', {
 		'default', 0,
 		'min', 0,
 	}),
-	PlaceObj('PropertyDefFunc', {
-		'category', "BobbyRayShop",
-		'id', "GetShopDescription",
-		'no_edit', "Tier.no_edit",
-		'default', function (self)
+	PlaceObj('ClassMethodDef', {
+		'name', "GetShopDescription",
+		'code', function (self)
 			return (self.Description and self.Description ~= "" and self.Description) or self.AdditionalHint
 		end,
 	}),
-	PlaceObj('PropertyDefFunc', {
-		'category', "BobbyRayShop",
-		'id', "GetShopSubIcon",
-		'no_edit', "Tier.no_edit",
-		'default', function (self)
+	PlaceObj('ClassMethodDef', {
+		'name', "GetShopSubIcon",
+		'code', function (self)
 			return self.SubIcon
 		end,
 	}),
-	PlaceObj('PropertyDefFunc', {
-		'category', "BobbyRayShop",
-		'id', "GetShopStats",
-		'help', "returns an array of { statName, statValue }",
-		'no_edit', "Tier.no_edit",
-		'template', true,
-		'params', "self, stacks",
-		'default', function (self, stacks)
+	PlaceObj('ClassMethodDef', {
+		'name', "GetShopStats",
+		'params', "stacks",
+		'code', function (self, stacks)
 			return {{ Untranslated("(design)"), Untranslated("Not implemented") }}
 		end,
 	}),
-	PlaceObj('PropertyDefFunc', {
-		'category', "BobbyRayShop",
-		'id', "GetCategory",
-		'no_edit', "Tier.no_edit",
-		'template', true,
-		'default', function (self)
+	PlaceObj('ClassMethodDef', {
+		'name', "GetCategory",
+		'code', function (self)
 			return BobbyRayShopGetCategory(BobbyRayShopGetSubCategory(self.CategoryPair).Category)
 		end,
 	}),
-	PlaceObj('PropertyDefFunc', {
-		'category', "BobbyRayShop",
-		'id', "GetSubCategory",
-		'no_edit', "Tier.no_edit",
-		'template', true,
-		'default', function (self)
+	PlaceObj('ClassMethodDef', {
+		'name', "GetSubCategory",
+		'code', function (self)
 			return BobbyRayShopGetSubCategory(self.CategoryPair)
+		end,
+	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "GenerateInventoryEntries",
+		'params', "stacks",
+		'code', function (self, stacks)
+			local items = {}
+			if self.MaxStacks then
+				local total_amount = stacks * (self.ShopStackSize or 1)
+				local stacks = DivCeil(total_amount, self.MaxStacks)
+				local remainder = total_amount - (stacks - 1) * self.MaxStacks
+				for i = 1, stacks - 1 do
+					local item = PlaceInventoryItem(self.class, self)
+					item.Amount = item.MaxStacks
+					table.insert(items, item)
+				end
+				local item = PlaceInventoryItem(self.class, self)
+				item.Amount = remainder
+				table.insert(items, item)
+			else
+				for i = 1, stacks do
+					table.insert(items, PlaceInventoryItem(self.class, self))
+				end
+			end
+			return items
 		end,
 	}),
 	PlaceObj('PropertyDefBool', {
@@ -367,39 +364,11 @@ PlaceObj('ClassDef', {
 		'category', "BobbyRayShop",
 		'id', "ShopStackSize",
 		'no_edit', "expression",
-		'no_edit_expression', function (self) return not (g_Classes[self.id] and g_Classes[self.id].MaxStacks) or not self.CanAppearInShop end,
+		'no_edit_expression', function (self, prop_meta) return not (g_Classes[self.id] and g_Classes[self.id].MaxStacks) or not self.CanAppearInShop end,
 		'template', true,
 		'default', 1,
 		'min', 1,
 		'max', 99,
-	}),
-	PlaceObj('PropertyDefFunc', {
-		'category', "BobbyRayShop",
-		'id', "GenerateInventoryEntries",
-		'no_edit', "Tier.no_edit",
-		'template', true,
-		'params', "self, stacks",
-		'default', function (self, stacks)
-			local items = {}
-			if self.MaxStacks then
-				local total_amount = stacks * (self.ShopStackSize or 1)
-				local stacks = DivCeil(total_amount, self.MaxStacks)
-				local remainder = total_amount - (stacks - 1) * self.MaxStacks
-				for i = 1, stacks - 1 do
-					local item = PlaceInventoryItem(self.class, self)
-					item.Amount = item.MaxStacks
-					table.insert(items, item)
-				end
-				local item = PlaceInventoryItem(self.class, self)
-				item.Amount = remainder
-				table.insert(items, item)
-			else
-				for i = 1, stacks do
-					table.insert(items, PlaceInventoryItem(self.class, self))
-				end
-			end
-			return items
-		end,
 	}),
 	PlaceObj('PropertyDefBool', {
 		'category', "BobbyRayShop",
@@ -416,23 +385,16 @@ PlaceObj('ClassDef', {
 	},
 	group = "Inventory",
 	id = "BobbyRayShopMeleeWeaponProperties",
-	PlaceObj('PropertyDefFunc', {
-		'category', "BobbyRayShop",
-		'id', "GetShopStats",
-		'help', "returns an array of { statName, statValue }",
-		'no_edit', "expression",
-		'no_edit_expression', function (self) return not self.CanAppearInShop end,
-		'template', true,
-		'params', "self, stacks",
-		'default', function (self, stacks)
+	PlaceObj('ClassMethodDef', {
+		'name', "GetShopStats",
+		'params', "stacks",
+		'code', function (self, stacks)
 			return BobbyRayStoreGetStats_MeleeWeapon(self)
 		end,
 	}),
-	PlaceObj('PropertyDefFunc', {
-		'category', "BobbyRayShop",
-		'id', "GetShopSubIcon",
-		'no_edit', "GetShopStats.no_edit",
-		'default', function (self)
+	PlaceObj('ClassMethodDef', {
+		'name', "GetShopSubIcon",
+		'code', function (self)
 			return self.SubIcon
 		end,
 	}),
@@ -448,28 +410,22 @@ PlaceObj('ClassDef', {
 		'category', "BobbyRayShop",
 		'id', "CategoryPair",
 		'no_edit', "expression",
-		'no_edit_expression', function (self) return not self.CanAppearInShop end,
+		'no_edit_expression', function (self, prop_meta) return not self.CanAppearInShop end,
 		'template', true,
 		'preset_class', "BobbyRayShopSubCategory",
 		'preset_group', "Other",
 		'default', "Other",
 	}),
-	PlaceObj('PropertyDefFunc', {
-		'category', "BobbyRayShop",
-		'id', "GetShopDescription",
-		'no_edit', "CategoryPair.no_edit",
-		'default', function (self)
+	PlaceObj('ClassMethodDef', {
+		'name', "GetShopDescription",
+		'code', function (self)
 			return self.AdditionalHint
 		end,
 	}),
-	PlaceObj('PropertyDefFunc', {
-		'category', "BobbyRayShop",
-		'id', "GetShopStats",
-		'help', "returns an array of { statName, statValue }",
-		'no_edit', "CategoryPair.no_edit",
-		'template', true,
-		'params', "self, stacks",
-		'default', function (self, stacks)
+	PlaceObj('ClassMethodDef', {
+		'name', "GetShopStats",
+		'params', "stacks",
+		'code', function (self, stacks)
 			return BobbyRayStoreGetStats_Other(self)
 		end,
 	}),
@@ -481,14 +437,10 @@ PlaceObj('ClassDef', {
 	},
 	group = "Inventory",
 	id = "BobbyRayShopUsedItemProperties",
-	PlaceObj('PropertyDefFunc', {
-		'category', "BobbyRayShop",
-		'id', "GenerateInventoryEntries",
-		'no_edit', "expression",
-		'no_edit_expression', function (self) return not self.CanAppearInShop end,
-		'template', true,
-		'params', "self, stacks",
-		'default', function (self, stacks)
+	PlaceObj('ClassMethodDef', {
+		'name', "GenerateInventoryEntries",
+		'params', "stacks",
+		'code', function (self, stacks)
 			if self.Used then
 				local items = {}
 				local new_item = PlaceInventoryItem(self.class, self)
@@ -501,17 +453,24 @@ PlaceObj('ClassDef', {
 			end
 		end,
 	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "GetShopConditionPercent",
+		'code', function (self)
+			return Untranslated{"<percent(condPercent)>", condPercent = self:GetConditionPercent()}
+		end,
+	}),
 	PlaceObj('PropertyDefBool', {
 		'category', "BobbyRayShop",
 		'id', "CanAppearUsed",
-		'no_edit', "GenerateInventoryEntries.no_edit",
+		'no_edit', "expression",
+		'no_edit_expression', function (self, prop_meta) return not self.CanAppearInShop end,
 		'template', true,
 		'default', true,
 	}),
 	PlaceObj('PropertyDefBool', {
 		'category', "BobbyRayShop",
 		'id', "CanAppearStandard",
-		'no_edit', "GenerateInventoryEntries.no_edit",
+		'no_edit', "CanAppearUsed.no_edit",
 		'template', true,
 		'default', true,
 	}),
@@ -519,17 +478,6 @@ PlaceObj('ClassDef', {
 		'category', "BobbyRayShop",
 		'id', "Used",
 		'no_edit', true,
-	}),
-	PlaceObj('PropertyDefFunc', {
-		'category', "BobbyRayShop",
-		'id', "GetShopConditionPercent",
-		'help', "",
-		'no_edit', "GenerateInventoryEntries.no_edit",
-		'template', true,
-		'params', "self, stacks",
-		'default', function (self, stacks)
-			return Untranslated{"<percent(condPercent)>", condPercent = self:GetConditionPercent()}
-		end,
 	}),
 })
 
@@ -543,20 +491,16 @@ PlaceObj('ClassDef', {
 		'category', "BobbyRayShop",
 		'id', "CategoryPair",
 		'no_edit', "expression",
-		'no_edit_expression', function (self) return not self.CanAppearInShop end,
+		'no_edit_expression', function (self, prop_meta) return not self.CanAppearInShop end,
 		'template', true,
 		'preset_class', "BobbyRayShopSubCategory",
 		'preset_group', "Weapons",
 		'default', "UtilityWeapons",
 	}),
-	PlaceObj('PropertyDefFunc', {
-		'category', "BobbyRayShop",
-		'id', "GetShopStats",
-		'help', "returns an array of { statName, statValue }",
-		'no_edit', "CategoryPair.no_edit",
-		'template', true,
-		'params', "self, stacks",
-		'default', function (self, stacks)
+	PlaceObj('ClassMethodDef', {
+		'name', "GetShopStats",
+		'params', "stacks",
+		'code', function (self, stacks)
 			if self:GetSubCategory().id == "MeleeWeapons" then
 				return BobbyRayStoreGetStats_MeleeWeapon(self)
 			else
@@ -564,26 +508,22 @@ PlaceObj('ClassDef', {
 			end
 		end,
 	}),
-	PlaceObj('PropertyDefFunc', {
-		'category', "BobbyRayShop",
-		'id', "GetShopSubIcon",
-		'no_edit', "CategoryPair.no_edit",
-		'default', function (self)
+	PlaceObj('ClassMethodDef', {
+		'name', "GetShopDescription",
+		'code', function (self)
+			local hasDesc = self.Description and self.Description ~= ""
+			local hasHint = self.AdditionalHint and self.AdditionalHint ~= ""
+			return hasDesc and self.Description or hasHint and self.AdditionalHint or FindPreset("WeaponType", self.WeaponType).Description
+		end,
+	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "GetShopSubIcon",
+		'code', function (self)
 			if IsKindOf(self, "Firearm") then
 				return CountWeaponUpgrades(self) > 0 and "UI/Inventory/w_mod" or ""
 			else
 					return BobbyRayShopItemProperties.GetShopSubIcon(self)
 			end
-		end,
-	}),
-	PlaceObj('PropertyDefFunc', {
-		'category', "BobbyRayShop",
-		'id', "GetShopDescription",
-		'no_edit', "CategoryPair.no_edit",
-		'default', function (self)
-			local hasDesc = self.Description and self.Description ~= ""
-			local hasHint = self.AdditionalHint and self.AdditionalHint ~= ""
-			return hasDesc and self.Description or hasHint and self.AdditionalHint or FindPreset("WeaponType", self.WeaponType).Description
 		end,
 	}),
 })
@@ -756,7 +696,7 @@ PlaceObj('ClassDef', {
 		'name', "Cone Angle",
 		'help', "The angle of the bigger cone arc",
 		'no_edit', "expression",
-		'no_edit_expression', function (self) return not self.coneShaped end,
+		'no_edit_expression', function (self, prop_meta) return not self.coneShaped end,
 		'template', true,
 		'default', 30,
 		'min', 1,
@@ -1462,7 +1402,7 @@ PlaceObj('ClassDef', {
 		'name', "LootDef",
 		'help', "Loot def for the items ValuableItemContainer contains",
 		'no_edit', "expression",
-		'no_edit_expression', function (self) return self.object_class ~= "ValuableItemContainer" end,
+		'no_edit_expression', function (self, prop_meta) return self.object_class ~= "ValuableItemContainer" end,
 		'template', true,
 		'preset_class', "LootDef",
 	}),
@@ -1567,6 +1507,39 @@ PlaceObj('ClassDef', {
 		'name', "IsValuable",
 		'code', function (self)
 			return self.Valuable ~= 0
+		end,
+	}),
+})
+
+PlaceObj('PresetDef', {
+	DefGlobalMap = "InventoryTabs",
+	DefParentClassList = {
+		"ListPreset",
+	},
+	group = "Inventory",
+	id = "InventoryTab",
+	PlaceObj('PropertyDefText', {
+		'id', "display_name",
+		'lines', 2,
+		'max_lines', 100,
+	}),
+	PlaceObj('PropertyDefUIImage', {
+		'id', "icon",
+		'default', "UI/Inventory/tabs_all.png",
+		'image_preview_size', 100,
+	}),
+	PlaceObj('PropertyDefStringList', {
+		'id', "item_classes",
+	}),
+	PlaceObj('PropertyDefFunc', {
+		'id', "FilterItem",
+		'template', true,
+		'params', "self, item",
+		'default', function (self, item)
+			if not next(self.item_classes) then
+				return true
+			end	
+			return IsKindOfClasses(item, self.item_classes)
 		end,
 	}),
 })
@@ -1962,6 +1935,13 @@ PlaceObj('ClassDef', {
 		'no_edit', true,
 		'template', true,
 		'items', function (self) return ClassDescendantsCombo("GrenadeVisual") end,
+	}),
+	PlaceObj('PropertyDefUIImage', {
+		'category', "General",
+		'id', "ammo_type_icon",
+		'name', "Ammo Type Icon",
+		'help', "Ammo type icon",
+		'template', true,
 	}),
 })
 

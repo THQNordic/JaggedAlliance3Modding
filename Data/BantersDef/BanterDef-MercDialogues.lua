@@ -277,15 +277,10 @@ PlaceObj('BanterDef', {
 	conditions = {
 		PlaceObj('QuestIsVariableBool', {
 			QuestId = "TreasureHunting",
-			Vars = set({
-	Completed = false,
-	Given = true,
-	TCE_VeinardMet = true,
-	VeinardDead = false,
-}),
+			Vars = set( "VeinardMet" ),
 			__eval = function ()
 				local quest = gv_Quests['TreasureHunting'] or QuestGetState('TreasureHunting')
-				return not quest.Completed and quest.Given and quest.TCE_VeinardMet and not quest.VeinardDead
+				return quest.VeinardMet
 			end,
 		}),
 	},

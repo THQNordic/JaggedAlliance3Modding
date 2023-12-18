@@ -92,8 +92,10 @@ function XInventoryTile:OnDrop(drag_win, pt, drag_source_win)
 end
 
 function XInventoryTile:OnDropEnter(drag_win, pt, drag_source_win)
+	InventoryOnDragEnterStash()
 	local drag_item = InventoryDragItem	
-	local slot = self:GetInventorySlotCtrl()
+	local slot = self:GetInventorySlotCtrl()	
+
 	local mouse_text = InventoryGetMoveIsInvalidReason(slot.context, InventoryStartDragContext)
 	-- pick + equip 
 	--this seems to be drag over empty slot
@@ -104,7 +106,7 @@ function XInventoryTile:OnDropEnter(drag_win, pt, drag_source_win)
 	
 	local is_reload = IsReload(drag_item, under_item)
 	
-	local ap_cost, unit_ap, action_name = GetAPCostAndUnit(drag_item, InventoryStartDragContext, InventoryStartDragSlotName, slot:GetContext(), slot.slot_name, under_item, is_reload)
+	local ap_cost, unit_ap, action_name = InventoryItemsAPCost(slot:GetContext(), slot.slot_name, under_item, is_reload)
 	if not mouse_text then
 		mouse_text = action_name or ""
 		if InventoryIsCombatMode() and ap_cost and ap_cost>0 then
@@ -146,6 +148,7 @@ if FirstLoad then
 	InventoryStartDragSlotName = false
 	InventoryStartDragContext = false
 	InventoryDragItem = false
+	InventoryDragItems = false
 	InventoryDragItemPos = false
 	InventoryDragItemPt = false
 	
@@ -158,6 +161,7 @@ function ClearDragGlobals()
 	InventoryStartDragSlotName = false
 	InventoryStartDragContext = false
 	InventoryDragItem = false
+	InventoryDragItems = false
 	InventoryDragItemPos = false
 	InventoryDragItemPt = false
 end
@@ -244,15 +248,16 @@ function XInventoryItem:Init()
 				InventoryShowMouseText(rollover,mouse_text)
 			end
 		end
-		item_pad.OnSetRollover = function(this,rollover)				
-			XImage.OnSetRollover(this,rollover)
+		item_pad.OnSetRollover = function(this,rollover)
+			local dlg = GetMercInventoryDlg()
 			local item = this:GetContext()
+			rollover = rollover or dlg and dlg.selected_items[item]
+			XImage.OnSetRollover(this,rollover)			
 			local slot = this.parent:GetInventorySlotCtrl()
 			if slot and slot.rollover_image_transparency then
 				this:SetTransparency(rollover and slot.rollover_image_transparency or slot.image_transparency)
 			end
 			if slot and next(GetSlotsToEquipItem(self.context)) then
-				local dlg = GetMercInventoryDlg()
 				if not dlg then return end
 				if InventoryIsCompareMode(dlg) then
 					dlg:CloseCompare()					
@@ -261,6 +266,9 @@ function XInventoryItem:Init()
 					end
 				end
 			end
+		end	
+		item_pad.OnSetSelected = function(this,selected)				
+			this:OnSetRollover(this,selected)
 		end	
 		
 	local slot = self:GetInventorySlotCtrl()
@@ -318,6 +326,20 @@ function XInventoryItem:Init()
 				item_modimg:SetMargins(box(-5,-5,0,0))
 			end		
 		end
+		-- amo type icon
+		if IsKindOfClasses(item, "Ammo", "Ordnance") and item.ammo_type_icon then
+			local item_ammo_type_img = XTemplateSpawn("XImage", item_img)	
+			item_ammo_type_img:SetHAlign("left")
+			item_ammo_type_img:SetVAlign("top")
+			--item_ammo_type_img:SetImageFit("width")
+			item_ammo_type_img:SetId("idItemAmmoTypeImg")
+			item_ammo_type_img:SetUseClipBox(false)	
+			item_ammo_type_img:SetHandleMouse(false)
+			item_ammo_type_img:SetImage(item.ammo_type_icon)
+			item_ammo_type_img:SetTransparency(45)
+			item_ammo_type_img:SetScaleModifier(point(500,500))
+			item_ammo_type_img:SetMargins(box(-5,-5,0,0))
+		end
 	-- texts 	
 	local text = XTemplateSpawn("XText", self) -- currently for weapon mag and stack size
 		text:SetTranslate(true)
@@ -364,11 +386,15 @@ function XInventoryItem:Init()
 		imgLocked:SetImage("UI/Inventory/padlock")
 		imgLocked:SetImageColor(GameColors.D)	
 		
-	rollover_image:SetVisible(false)
+	rollover_image:SetVisible(false)	
 end
 
 function XInventoryItem:OnSetRollover(rollover)
 	if self.HandleMouse then
+		local dlg = GetMercInventoryDlg()
+		local item = self:GetContext()
+		rollover = rollover or dlg and dlg.selected_items and dlg.selected_items[item]
+	
 		XHoldButtonControl.OnSetRollover(self, rollover)
 		local dlgContext = GetDialogContext(self)
 		if dlgContext then
@@ -378,6 +404,12 @@ function XInventoryItem:OnSetRollover(rollover)
 			end
 		end
 	end
+end
+
+function XInventoryItem:OnSetSelected(selected)
+	if self.window_state~="destroyed" then
+		return self.idItemPad:OnSetRollover(selected)
+	end	
 end
 
 function XInventoryItem:GetRolloverAnchor()
@@ -422,7 +454,11 @@ function XInventoryItem:OnContextUpdate(item,...)
 	self.idCenterText:SetTextStyle("DescriptionTextAPRed")
 	self.idCenterText:SetText(txt)			
 	self.idItemImg:SetTransparency(txt and txt~="" and 128 or 0)
-	self.idItemImg:SetImage(item:GetItemUIIcon())
+	if not table.find(InventoryDragItems, item) then
+		self.idItemImg:SetImage(item:GetItemUIIcon())
+		self.idItemImg:SetImageFit("width")
+	end
+
 	if item.SubIcon and item.SubIcon~= "" then
 		self.idItemImg.idItemSubImg:SetImage(item.SubIcon or "")
 	end
@@ -463,6 +499,7 @@ function XInventoryItem:OnDrop(drag_win, pt, drag_source_win)
 end
 
 function XInventoryItem:OnDropEnter(drag_win, pt, drag_source_win)
+	InventoryOnDragEnterStash()
 	local slot = self:GetInventorySlotCtrl()
 	local context = slot:GetContext()
 	local mouse_text = InventoryGetMoveIsInvalidReason(context, InventoryStartDragContext)
@@ -480,7 +517,8 @@ function XInventoryItem:OnDropEnter(drag_win, pt, drag_source_win)
 	-- pick + equip or reload + (repair...)]
 	local is_reload = IsReload(drag_item, cur_item)
 		
-	local ap_cost, unit_ap, action_name = GetAPCostAndUnit(drag_item, InventoryStartDragContext, InventoryStartDragSlotName, context, slot_name, cur_item, is_reload)
+	local ap_cost, unit_ap, action_name = InventoryItemsAPCost(context, slot_name, cur_item, is_reload)
+	
 	if not mouse_text then
 		mouse_text = action_name or ""
 		local is_combat  = InventoryIsCombatMode()
@@ -737,6 +775,7 @@ function XInventorySlot:SpawnRolloverUI(width, height, left, top)
 		end
 			
 		item_wnd.OnDropEnter = function(this, drag_win, pt, drag_source_win)
+			InventoryOnDragEnterStash()
 			local mouse_text = InventoryGetMoveIsInvalidReason(self.context, InventoryStartDragContext)
 
 			--this only happens when over empty slots
@@ -750,7 +789,7 @@ function XInventorySlot:SpawnRolloverUI(width, height, left, top)
 			if dest_container:CheckClass(drag_item, slot.slot_name) then
 				local wnd, l, t =  slot:FindTile(pt)
 				if l and t then
-					ap_cost, unit_ap, action_name = GetAPCostAndUnit(drag_item, InventoryStartDragContext, InventoryStartDragSlotName, dest_container, slot.slot_name)
+					ap_cost, unit_ap, action_name = InventoryItemsAPCost( dest_container, slot.slot_name)
 				end
 			end
 			local is_combat = InventoryIsCombatMode()
@@ -977,6 +1016,45 @@ function XInventorySlot:DropItem(item)
 	PlayFX("DropItem", "start", unit, surface_fx_type, item.class)
 end
 
+function XInventorySlot:DropItems(items)
+	local dlg = GetMercInventoryDlg()
+	local unit = GetInventoryUnit(dlg)
+	--local dest = dlg and dlg:GetContext()
+--	dest = dest and dest.container
+ 
+	local tbl = table.keys(items)
+	for i,item in ipairs(tbl)do
+		local args = {item = item, src_container = self.context, src_slot = self.slot_name,  multi_items = true}	
+		
+		if not g_GossipItemsMoveFromPlayerToContainer[item.id] then
+			g_GossipItemsMoveFromPlayerToContainer[item.id] = true
+		end
+		
+		--[[if dest and IsKindOf(dest, "SectorStash") then
+			local unit_sector = unit.Squad 
+			unit_sector = unit_sector and gv_Squads[unit_sector].CurrentSector
+			if dest.sector_id~=unit_sector then 
+				NetSyncEvent("DropToAnotherSectorStash",self.context.session_id, unit_sector, self.slot_name,item.id)
+				PlayFX("DropItem", "start", unit, false, item.class)
+				return
+			else
+				args.dest_container = dest
+				args.dest_slot = "Inventory"
+			end
+		else
+		--]]
+			args.dest_container = "drop"
+		--end
+		args.no_ui_respawn	= i~=#tbl
+		local r1, r2  = MoveItem(args)
+	end
+	local surface_fx_type =  false
+	if IsKindOf(unit, "Unit") then
+		local pos = SnapToPassSlab(unit) or unit:GetPos()
+		surface_fx_type  = GetObjMaterial(pos)
+	end
+	--PlayFX("DropItem", "start", unit, surface_fx_type, item.class)
+end
 function InventoryGetStartSlotControl(self)
 	local slot_ctrl = StartDragSource or self
 	local context = slot_ctrl and slot_ctrl:GetContext()
@@ -1010,6 +1088,37 @@ function XInventorySlot:OnMouseButtonUp(pt, button)
 
 	return XDragAndDropControl.OnMouseButtonUp(self, pt, button)
 end
+
+
+function InventoryToggleItemMultiselect(dlg, wnd_found,item)
+	local dlg = dlg or GetMercInventoryDlg()
+		-- multi select
+	InventoryClosePopup(dlg)
+	if dlg.selected_items and dlg.selected_items[item] then
+		dlg.selected_items[item] = nil			
+		wnd_found:OnSetSelected(false)			
+	else
+		local itm, wnd = next(dlg.selected_items) 
+		if wnd and wnd.window_state~="destroying" then	
+			local wnd_slot = wnd:GetInventorySlotCtrl()
+			local wnd_found_slot = wnd_found and wnd_found:GetInventorySlotCtrl()
+			if      wnd_slot and wnd_found_slot
+				and (   wnd_slot~=wnd_found_slot
+					  or wnd_slot.context~=wnd_found_slot.context) then
+				dlg:DeselectMultiItems()						
+			end
+		end
+		if item then
+			dlg.selected_items[item] = wnd_found			
+			wnd_found:OnSetSelected(true)			
+			return true
+		end
+	end	
+	if dlg and (not item or not dlg.selected_items[item]) then
+		dlg:DeselectMultiItems()		
+	end
+end		
+
 
 function XInventorySlot:OnMouseButtonDown(pt, button)
 	if button == "M" then
@@ -1046,11 +1155,21 @@ function XInventorySlot:OnMouseButtonDown(pt, button)
 			return "break"
 		end	
 	
+		local dlg = GetMercInventoryDlg()
+		if dlg and terminal.IsKeyPressed(const.vkControl) == true and wnd_found and item then
+			if InventoryToggleItemMultiselect(dlg, wnd_found, item) then
+				return "break"
+			end
+		end
+		if dlg and (not item or not dlg.selected_items[item]) then
+			dlg:DeselectMultiItems()		
+		end
+		
 		if terminal.IsKeyPressed(const.vkShift) == true and wnd_found then
 			-- Quick split stack
 			if not IsKindOf(item, "InventoryStack") or item.Amount < 2 then return "break" end
 			local container = self.context
-			if IsKindOfClasses(container, "SquadBag", "SectorStash", "ItemDropContainer") then return "break" end
+			if IsKindOfClasses(container, "SquadBag","ItemDropContainer") then return "break" end
 			local slot = GetContainerInventorySlotName(container)
 			local freeSpace = container:FindEmptyPosition(slot, item)
 			if not freeSpace then return "break" end
@@ -1070,10 +1189,19 @@ function XInventorySlot:OnMouseButtonDown(pt, button)
 				if dlg.item_wnd==wnd_found then
 					self:ClosePopup()
 				else
-					self:OpenPopup(wnd_found, item, dlg)
-					local context = self:GetContext()
-					if self.slot_name=="Inevnetory" and IsKindOfClasses(context, "Unit", "UnitData") then
-						InventoryUpdate(context)
+					local popup
+					if dlg.selected_items then 
+						if dlg.selected_items[item] then
+							popup = self:OpenPopup(wnd_found, item, dlg)
+						else
+							dlg:DeselectMultiItems()	
+							popup = self:OpenPopup(wnd_found, item, dlg)
+						end
+					else
+						popup = self:OpenPopup(wnd_found, item, dlg)
+					end
+					if not popup and dlg and next(dlg.selected_items) then
+						dlg:DeselectMultiItems()	
 					end
 				end	
 				return "break"
@@ -1098,16 +1226,31 @@ function XInventorySlot:OpenPopup(wnd_found, item, dlg)
 		dlg:ActionsUpdated()
 	end
 	wnd_found.RolloverTemplate = ""
-	local popup = XTemplateSpawn("InventoryContextMenu", terminal.desktop, {
-		item = item,
-		unit = unit,
-		container = IsKindOfClasses(context, "ItemContainer", "SectorStash") and context, 
-		context = context,
-		wnd = wnd_found,
-		slot_wnd = self,
-		
-		wnd_index = table.find(wnd_found.parent, wnd_found)
-	})
+	local popup 
+	if next(dlg.selected_items) then
+		popup = XTemplateSpawn("InventoryContextMenuMulti", terminal.desktop, {
+			item = item,
+			items = dlg.selected_items,
+			unit = unit,
+			container = IsKindOfClasses(context, "ItemContainer", "SectorStash") and context, 
+			context = context,
+			wnd = wnd_found,
+			slot_wnd = self,
+			
+			wnd_index = table.find(wnd_found.parent, wnd_found)		
+		})
+	else
+		popup = XTemplateSpawn("InventoryContextMenu", terminal.desktop, {
+			item = item,
+			unit = unit,
+			container = IsKindOfClasses(context, "ItemContainer", "SectorStash") and context, 
+			context = context,
+			wnd = wnd_found,
+			slot_wnd = self,
+			
+			wnd_index = table.find(wnd_found.parent, wnd_found)		
+		})
+	end	
 	dlg.spawned_popup = popup
 	dlg.item_wnd = wnd_found
 	popup:SetAnchor(wnd_found.box)
@@ -1118,6 +1261,7 @@ function XInventorySlot:OpenPopup(wnd_found, item, dlg)
 	end
 
 	popup:Open()
+	return popup
 end
 
 function XInventorySlot:ClosePopup()
@@ -1150,42 +1294,118 @@ function InventoryUpdatePopup(inventorySlot)
 	end
 end
 
+function InventoryDeselectMultiItems(dlg)
+	local dlg = dlg or GetMercInventoryDlg()
+	dlg:DeselectMultiItems()
+end		
+
 function XInventorySlot:ClearDragState(drag_win)
 	drag_win = drag_win or self.drag_win
 	if drag_win then
 		self:StopDrag()
-		ClearDragGlobals()
-
+		if next(InventoryDragItems) then
+			drag_win.idItemImg:SetImage(drag_win:GetContext():GetItemUIIcon())
+			drag_win.idItemImg:SetImageFit("width")
+		end
+		
+		ClearDragGlobals()	
+		InventoryDeselectMultiItems()
 		self.item_windows[drag_win] = nil
 		if drag_win.window_state ~= "destroying" then drag_win:delete() end
 		self.drag_win = false
 	end
 end
 
+function XInventorySlot:OnDrop(drag_win, pt, drag_source_win)
+	if next(InventoryDragItems) then
+		local inv = self.context
+		if InventoryStartDragContext~=inv and not inv:FindEmptyPositions(self.slot_name,InventoryDragItems) then
+			PlayFX("DropItemFail", "start")
+			return "not valid target"
+		end
+	elseif not self:CanDropAt(pt) then
+		PlayFX("DropItemFail", "start")
+		return "not valid target"
+	end
+
+	return self:DragDrop_MoveItem(pt, self, "check_only")
+end
+
+function XInventorySlot:DragDrop_MoveMultiItems(pt, target, check_only)
+	local dest_slot = target.slot_name
+	local _, pt = self:GetNearestTileInDropSlot(pt)
+
+	--swap items
+	local dest_container = target:GetContext()
+	local src_container = InventoryStartDragContext
+
+
+	local src_slot_name = InventoryStartDragSlotName	
+	local args = {src_container = src_container, src_slot = src_slot_name, dest_container = dest_container, dest_slot = dest_slot,
+						 check_only = check_only, exec_locally = false, multi_items = true}
+	local r1, r2, sync_unit
+	for i=1, #InventoryDragItems do
+		local item = InventoryDragItems[i]
+		args.item = item
+		args.no_ui_respawn = i~=#InventoryDragItems
+		r1, r2, sync_unit = MoveItem(args)
+--		print(item.class, r1, r2)
+		if r1 or not check_only then
+			PlayFXOnMoveItemResult(r1, item, dest_slot, sync_unit)	
+		end
+		if not r1 and not check_only and (not r2  or r2~="no change") then
+			self:Gossip(item, src_container, target)			
+		end
+	end	
+	if not r1 and not check_only then
+		local dlg = GetMercInventoryDlg()
+	--	dlg:DeselectMultiItems()
+	end
+	return r1, r2
+end
+
 function XInventorySlot:DragDrop_MoveItem(pt, target, check_only)
 	if not InventoryDragItem then
 		return "no item being dragged"
 	end
-	if	not target or
-		not InventoryIsValidTargetForUnit(self.context) or 
-		not InventoryIsValidTargetForUnit(InventoryStartDragContext) or
-		not InventoryIsValidGiveDistance(self.context, InventoryStartDragContext)
-	then	
+	
+	if	not target then 
 		return "not valid target"
 	end
-	local item = InventoryDragItem
+
 	local dest_slot = target.slot_name
 	local _, pt = self:GetNearestTileInDropSlot(pt)
 	local _, dx, dy = target:FindTile(pt)
 	if not dx then
 		return "no target tile"
 	end
+	local item = InventoryDragItem
+	local items = InventoryDragItems
 	local ssx, ssy, sdx = point_unpack(InventoryDragItemPos)
 	if item:IsLargeItem() then
 		dx = dx - sdx
 		if IsEquipSlot(dest_slot) then
 			dx = 1
 		end
+	end
+	if ssx==dx and ssy==dy and target == StartDragSource then
+		if not check_only then
+			PlayFXOnMoveItemResult(false, item, dest_slot)	
+			self:CancelDragging()
+		end
+		return false					
+	end
+
+	if not InventoryIsValidTargetForUnit(self.context) or 
+		not InventoryIsValidTargetForUnit(InventoryStartDragContext) or
+		not InventoryIsValidGiveDistance(self.context, InventoryStartDragContext)
+	then	
+		return "not valid target"
+	end
+	
+	if next(InventoryDragItems) then
+		-- move or give multiple items to slot , not specific destination
+		return self:DragDrop_MoveMultiItems(pt, target, check_only)		
 	end
 	
 	--swap items
@@ -1359,7 +1579,7 @@ function XInventorySlot:CanDropAt(pt)
 	if not unit then return end
 	
 	local stackable = IsKindOf(InventoryDragItem, "InventoryStack")
-	
+	local is_multi = next(InventoryDragItems)
 	local dest_slot = self.slot_name
 	local _, dx, dy = self:FindTile(pt)
 	if not dx then return true end
@@ -1367,40 +1587,63 @@ function XInventorySlot:CanDropAt(pt)
 	local item_at_dest = dx and unit:GetItemInSlot(dest_slot, nil, dx, dy)
 	stackable = stackable and item_at_dest and item_at_dest.class == InventoryDragItem.class
 	
-	if 	IsReload(InventoryDragItem, item_at_dest) 
-		or IsMedicineRefill(InventoryDragItem, item_at_dest) 
-		or InventoryIsCombineTarget(InventoryDragItem, item_at_dest) 
-	then
-		return true
+	if not is_multi then
+		if 	IsReload(InventoryDragItem, item_at_dest) 
+			or IsMedicineRefill(InventoryDragItem, item_at_dest) 
+			or InventoryIsCombineTarget(InventoryDragItem, item_at_dest) 
+		then
+			return true
+		end
 	end
-	
 	if not unit:CheckClass(InventoryDragItem, dest_slot) then
 		return false, "different class"		
 	end
-	
 	local is_equip_slot = IsEquipSlot(dest_slot)
-	if not is_equip_slot and item_at_dest and (item_at_dest ~= InventoryDragItem and not stackable) then
-		--swapping is now allowed for items of the same size
-		if InventoryDragItem:IsLargeItem() ~= item_at_dest:IsLargeItem() then
-			--print("CanDropAt", InventoryDragItem.class, item_at_dest.class, "false")
-			return false, "cannot swap"
-		end
-	end
-	
-	if not is_equip_slot and InventoryDragItem:IsLargeItem() then
-		local ssx, ssy, sdx = point_unpack(InventoryDragItemPos)
-		if sdx>=0 then
-			dx = dx - sdx
+	if is_multi and is_equip_slot then 
+		return false, "cannot multi equip"
+	end	
+	if not is_multi then
+		if not is_equip_slot and item_at_dest and (item_at_dest ~= InventoryDragItem and not stackable) then
+			--swapping is now allowed for items of the same size
+			if InventoryDragItem:IsLargeItem() ~= item_at_dest:IsLargeItem() then
+				--print("CanDropAt", InventoryDragItem.class, item_at_dest.class, "false")
+				return false, "cannot swap"
 			end
-	
-		local otherItem = unit:GetItemInSlot(dest_slot, nil, dx, dy) --item at other slot
-		if otherItem and (otherItem:IsLargeItem() ~= InventoryDragItem:IsLargeItem() or (item_at_dest and item_at_dest ~= otherItem)) then
-			--allow swap when both are large and there is only one underneath
-			return false,"cannot swap"
 		end
-	end
-	--print("CanDropAt", InventoryDragItem.class, item_at_dest and item_at_dest.class or "n/a", "true")
+		if not is_equip_slot and InventoryDragItem:IsLargeItem() then
+			local ssx, ssy, sdx = point_unpack(InventoryDragItemPos)
+			if sdx>=0 then
+				dx = dx - sdx
+			end
+		
+			local otherItem = unit:GetItemInSlot(dest_slot, nil, dx, dy) --item at other slot
+			
+			if ssx==dx and ssy==dy and self == StartDragSource then
+				return true
+			end
+			if otherItem and (otherItem:IsLargeItem() ~= InventoryDragItem:IsLargeItem() or (item_at_dest and item_at_dest ~= otherItem)) then
+				--allow swap when both are large and there is only one underneath
+				return false,"cannot swap"
+			end
+		end
+	end	
 	return true
+end
+
+function XInventorySlot:ItemWndStartDrag(wnd_found, item)
+	wnd_found.idItemPad:SetHandleMouse(false)
+	wnd_found.idItemPad:SetVisible(false)
+	wnd_found.idText:SetVisible(false)
+	wnd_found.idTopRightText:SetVisible(false)
+	local img_mod = rawget(wnd_found.idItemImg, "idItemModImg")
+	if img_mod then img_mod:SetVisible(false) end
+	wnd_found.idDropshadow:SetVisible(false)
+	wnd_found:SetHandleMouse(false)
+	wnd_found.idRollover:SetVisible(false)
+	local left, top = self.context:GetItemPosInSlot(self.slot_name, item)
+	if left and top then
+		self:ShowTiles(true, item:GetUIWidth(), left, top)
+	end
 end
 
 function XInventorySlot:OnDrop(drag_win, pt, drag_source_win)
@@ -1453,7 +1696,20 @@ function XInventorySlot:FindNearestTile(pt)
 end
 
 function XInventorySlot:OnDragStart(pt, button)
+	local dlg = GetDialog(self)
 	local context = self:GetContext()
+	if InventoryUIGrayOut(context) then
+		local left = dlg:ResolveId("idPartyContainer")						
+		local squad_list = left.idParty and left.idParty.idContainer or empty_table
+		for _, button in ipairs(squad_list) do	
+			local member = button:GetContext()
+			if member.session_id==context.session_id then
+				button:SelectUnit()
+				return
+			end	
+		end
+	end
+	
 	local unit = IsKindOf(context, "Unit") and context or not IsKindOf(context, "SquadBag") and g_Units[context.session_id]
 	if unit and IsMerc(unit) and (not unit:IsLocalPlayerControlled() and not unit:IsDead() or not InventoryIsValidTargetForUnit(unit)) then
 		return
@@ -1467,21 +1723,29 @@ function XInventorySlot:OnDragStart(pt, button)
 			self:StopDrag()
 			return
 		end
-
-		wnd_found.idItemPad:SetHandleMouse(false)
-		wnd_found.idItemPad:SetVisible(false)
-		wnd_found.idText:SetVisible(false)
-		wnd_found.idTopRightText:SetVisible(false)
-		local img_mod = rawget(wnd_found.idItemImg, "idItemModImg")
-		if img_mod then img_mod:SetVisible(false) end
-		wnd_found.idDropshadow:SetVisible(false)
-		wnd_found:SetHandleMouse(false)
-		wnd_found.idRollover:SetVisible(false)
-		self:ShowTiles(true, item:GetUIWidth(), left, top)
-		
+		self:ItemWndStartDrag(wnd_found, item)
 		InventoryDragItem = item
-		HighlightEquipSlots(InventoryDragItem, true)
-		HighlightWeaponsForAmmo(InventoryDragItem, true)
+		if next(dlg.selected_items) then
+			InventoryDragItems = InventoryDragItems or {}
+			for item, wnd in pairs(dlg.selected_items) do
+				table.insert(InventoryDragItems, item)
+				if wnd~=wnd_found and wnd.window_state~="destroying" then
+					self:ItemWndStartDrag(wnd, item)
+				end
+				if wnd~=wnd_found then
+					wnd:SetVisible(false)
+				else
+					wnd.idItemImg:SetImage("UI/Icons/Items/multiple_items")
+					wnd.idItemImg:SetImageFit("height")
+				end
+			end
+			table.sort(InventoryDragItems, function(a,b) return a:GetUIWidth()>b:GetUIWidth() end) 
+		end
+		
+		if InventoryDragItem and not InventoryDragItems then
+			HighlightEquipSlots(InventoryDragItem, true)
+			HighlightWeaponsForAmmo(InventoryDragItem, true)
+		end
 		
 		local  w,lleft, ltop = self:FindTile(pt) -- check where the dragged item's anchor spot is and adjust dest, this is when a large item is clicked in the right part
 		InventoryDragItemPos = point_pack(left, top,lleft>left and 1 or 0)
@@ -2095,8 +2359,8 @@ function HighlightWoundedCharacterPortraits(item, show)
 end
 
 function InventoryGetDragWidthHeight()
-	local width = InventoryDragItem and InventoryDragItem:GetUIWidth()
-	local height = InventoryDragItem and InventoryDragItem:GetUIHeight()
+	local width = next(InventoryDragItems) and 1 or InventoryDragItem and InventoryDragItem:GetUIWidth()
+	local height = next(InventoryDragItems) and 1 or InventoryDragItem and InventoryDragItem:GetUIHeight()
 	return width, height
 end
 
@@ -2513,7 +2777,7 @@ function EquipInventorySlot:HasItemUnderDragWin(drag_win, pt, drag_size)
 end
 --]]
 ------------------------------
-function XInventorySlot:GetCostAP(dest, dest_slot_name, dest_pos, is_reload, drag_item, src_context)
+--[[function XInventorySlot:GetCostAP(dest, dest_slot_name, dest_pos, is_reload, drag_item, src_context)
 	if not InventoryIsCombatMode() or (not dest and not dest_pos) then
 		return 0
 	end
@@ -2544,7 +2808,7 @@ function XInventorySlot:GetCostAP(dest, dest_slot_name, dest_pos, is_reload, dra
 	end
 	return GetAPCostAndUnit(drag_item, src, self.slot_name, dest, dest_slot_name, item, is_reload)
 end
-
+--]]
 function NetSquadBagAction(unit, srcInventory, src_slot_name, item, squadBag, actionName, ap)
 	local unit = unit or GetInventoryUnit()
 
@@ -2553,8 +2817,15 @@ function NetSquadBagAction(unit, srcInventory, src_slot_name, item, squadBag, ac
 	local net_src = GetContainerNetId(srcInventory)
 	local squadId = squadBag and squadBag.squad_id or false
 	
-	local pack = {}
-	table.insert(pack, pack_params(net_src, src_slot_name, item.id, squadId, actionName))
+	local pack = {}	
+	
+	local ids = {}
+	if IsKindOf(item, "InventoryItem") then
+		ids[1] = item.id
+	else	
+		ids = item
+	end
+	table.insert(pack, pack_params(net_src, src_slot_name, ids, squadId, actionName))
 
 	if IsKindOf(unit, "UnitData") then
 		NetSyncEvent("SquadBagAction", unit.session_id, pack)
@@ -2602,13 +2873,13 @@ function NetEvents.OpenSectorInventory(unit_id)
 	OpenInventory(unit)
 end
 
-function GetSectorInventory(sector_id)
+function GetSectorInventory(sector_id, filter)
 	if not gv_SatelliteView or not gv_Sectors[sector_id] then return end
 
 	if not gv_SectorInventory then
 		gv_SectorInventory = PlaceObject("SectorStash")
 	end
-	gv_SectorInventory:SetSectorId(sector_id)
+	gv_SectorInventory:SetSectorId(sector_id, filter)
 	return gv_SectorInventory
 end
 
@@ -3591,7 +3862,9 @@ if Platform.developer then
 				if popup then
 					popup = popup.spawned_subpopup
 				end
-				popup.idPopupWindow[#popup.idPopupWindow]:Press()
+				if popup and popup.idPopupWindow then
+					popup.idPopupWindow[#popup.idPopupWindow]:Press()
+				end
 				Sleep(30)
 				break
 			end 
@@ -3725,43 +3998,52 @@ function PopupMenuGiveItem(node)
 	if context then
 		local ui_slot = context.slot_wnd
 		local dest_container = node.unit
-		local args = {item = context.item, src_container = context.context, src_slot = ui_slot.slot_name, dest_container = dest_container,
-							dest_slot = GetContainerInventorySlotName(dest_container)}
-		MoveItem(args) --this will merge stacks and move, if you want only move use amount = item.Amount
+		if context.items then			
+			local tbl = table.keys(context.items)
+			for i, item in ipairs(tbl) do			
+				local args = {item = item, src_container = context.context, src_slot = ui_slot.slot_name, dest_container = dest_container,
+									dest_slot = GetContainerInventorySlotName(dest_container)}
+				args.no_ui_respawn = i~=#tbl
+				local r1, r2  = MoveItem(args) --this will merge stacks and move, if you want only move use amount = item.Amount				
+			end
+		else
+			local args = {item = context.item, src_container = context.context, src_slot = ui_slot.slot_name, dest_container = dest_container,
+								dest_slot = GetContainerInventorySlotName(dest_container)}
+			MoveItem(args) --this will merge stacks and move, if you want only move use amount = item.Amount
+		end
 		ui_slot:ClosePopup()
-		PlayFX("GiveItem", "start")
+		InventoryDeselectMultiItems()
+		PlayFX("GiveItem", "start", GetInventoryItemDragDropFXActor(context.item))
 	end
 end
 
 function PopupMenuGiveItemToSquad(node)
 	local context = node and node.context
 	if not context then return end
-	local ui_slot = context.slot_wnd
-	local dest_squad = node.squad
-	local src_container = context.context
-	local item = context.item
-	local squadBag = dest_squad.UniqueId
-	
-	local args = {item = item, src_container = src_container, src_slot = ui_slot.slot_name,
-					dest_container = squadBag, dest_slot = "Inventory"}
-	local rez = MoveItem(args)
+	local rez = _PopupMenuGiveItemToSquad(node,context, "check_only")
 	if rez then
-		local su = dest_squad.units
-		for _, unitName in ipairs(su) do
-			local dest_container = gv_SatelliteView and gv_UnitData[unitName] or g_Units[unitName]
-			args.dest_container = dest_container
-			args.dest_slot = GetContainerInventorySlotName(dest_container)
-			rez = MoveItem(args)
-			if not rez then
-				break
+		CreateRealTimeThread(function(node, context)
+			local popupHost = GetInGameInterface()
+			local scrapPrompt = CreateQuestionBox(
+				popupHost,
+				T(333299723785, "GIVE TO SQUAD"),
+				T(118439464722, "No space for all items. Are you sure you want to give some of them?"),
+				T(689884995409, "Yes"), 
+				T(782927325160, "No"))
+						
+			local resp = scrapPrompt:Wait()
+			if resp ~= "ok" then
+				return
+			else
+				_PopupMenuGiveItemToSquad(node, context)					
 			end
-		end
+		end, node, context)
+	else	
+		_PopupMenuGiveItemToSquad(node,context)
 	end
-
-	if rez then
-		print("failed to transfer to squad", rez)
-	end
+	InventoryDeselectMultiItems()
 end
+
 
 function PopupMenuSplitGiveToSquad(node)
 	local context = node and node.context
@@ -3803,12 +4085,131 @@ function PopupMenuSplitGiveToSquad(node)
 								dest_slot = GetContainerInventorySlotName(dest_container), amount = splitAmount}
 			MoveItem(args) --this will merge stacks and move, if you want only move use amount = item.Amount
 			ui_slot:ClosePopup()
-			PlayFX("GiveItem", "start")
+			PlayFX("GiveItem", "start", GetInventoryItemDragDropFXActor(context.item))
 			end})
 		)
 	end
 end
 
+function _PopupMenuGiveItemToSquad(node, context,check_only)
+	local context = context or (node and node.context)
+	local ui_slot = context.slot_wnd
+	local dest_squad = node.squad
+	local src_container = context.context
+	local item = context.item
+	local squadBag = dest_squad.UniqueId
+	local items = context.items or {[item] = true}
+		
+	for item, wnd in pairs(items) do
+		local args = {item = item, src_container = src_container, src_slot = ui_slot.slot_name,
+						dest_container = squadBag, dest_slot = "Inventory" , check_only =check_only}
+		local rez = MoveItem(args)
+		if rez then
+			local su = dest_squad.units
+			for _, unitName in ipairs(su) do
+				local dest_container = gv_SatelliteView and gv_UnitData[unitName] or g_Units[unitName]
+				args.dest_container = dest_container
+				args.dest_slot = GetContainerInventorySlotName(dest_container)
+				rez = MoveItem(args)
+				if not rez then
+					break
+				end
+			end
+		end
+
+		if rez then
+			print("failed to transfer to squad", rez)
+			if check_only then 
+				return rez
+			end	
+		end
+	end	
+end
+
+function PopupMoveItemsToStash(node)
+	local context = node and node.context
+	if not context then return end
+	local ui_slot = context.slot_wnd
+	local sector_id = gv_Squads[context.unit.Squad].CurrentSector
+	local dest_container = GetSectorInventory(sector_id)
+	InventoryOnDragEnterStash(table.keys(context.items))
+	NetSyncEvent("MoveItemsToStash",GetItemsNetIds(table.keys(context.items)), sector_id, context.slot_wnd.slot_name, GetContainerNetId(context.context))
+	ui_slot:ClosePopup()
+	InventoryDeselectMultiItems()	
+	PlayFX("GiveItem", "start",  GetInventoryItemDragDropFXActor(context.item))
+end
+
+function NetSyncEvents.MoveItemsToStash(ids, sector_id, slot_name, inv)
+	local items = GetItemsFromItemsNetId(ids)
+	local stash = GetSectorInventory(sector_id)		
+	local container = GetContainerFromContainerNetId(inv)
+	if stash then 
+		for i=1, #items do
+			container:RemoveItem(slot_name,items[i])
+		end
+		AddItemsToInventory(stash, items, true)
+		InventoryUIRespawn()
+		InventoryDeselectMultiItems()	
+	end
+end
+
+function InventoryFindTabItems(items)
+	local tab = InventoryFindTab(items[1])
+	if tab=="all" then return tab end
+	
+	local preset = InventoryTabs[tab]	
+	for i=2,#items do
+		if not preset:FilterItem(items[i]) then
+			tab = "all"
+			break
+		end		
+	end
+	return tab
+end
+
+function InventoryFindTab(item)
+	for i, preset in ipairs(Presets.InventoryTab.Default) do
+		if preset.id~="all" then
+			if preset:FilterItem(item)then
+				return preset.id
+			end	
+		end
+	end
+	return "all"
+end
+
+function InventoryOnDragEnterStash(items)
+	local dlg = GetMercInventoryDlg()
+	if gv_SatelliteView and dlg.Mode=="loot" and IsKindOf(dlg.context.container, "SectorStash") then
+		if dlg.selected_tab~="all" then
+			local tab
+			if items or InventoryDragItems then
+				tab = InventoryFindTabItems(items or InventoryDragItems)
+			else 	
+				tab = InventoryFindTab(InventoryDragItem)
+			end
+			if dlg.selected_tab~=tab then
+				local tabs = dlg.idTabs
+				tabs[tab]:OnPress()
+			end
+		end
+	end
+end
 DefineClass.CombineItemPopupClass = {
 	__parents = { "ZuluModalDialog" } 
 }
+
+function InventoryItemsAPCost(slotcontext, slot_name, under_item, is_reload)
+	local ap_cost, unit_ap, action_name
+	if InventoryDragItems then
+		for _, item in ipairs(InventoryDragItems)do
+			local lap_cost, lunit_ap, laction_name = GetAPCostAndUnit(item, InventoryStartDragContext, InventoryStartDragSlotName, slotcontext, slot_name, false, false)
+			ap_cost = (ap_cost or 0)+ lap_cost
+			unit_ap = unit_ap or lunit_ap
+			action_name = action_name or laction_name
+		end
+	else
+		ap_cost, unit_ap, action_name = GetAPCostAndUnit(InventoryDragItem, InventoryStartDragContext, InventoryStartDragSlotName, slotcontext, slot_name, under_item, is_reload)
+	end
+	return ap_cost, unit_ap, action_name
+end	

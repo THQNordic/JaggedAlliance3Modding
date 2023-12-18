@@ -3,7 +3,7 @@ DefineClass.VoiceResponsesEventGroups = {
 }
 
 DefineClass.VoiceResponseType = {
-	__parents = { "Preset" },
+	__parents = { "Preset", "CampaignSpecific" },
 	properties = {
 		{ id = "BelongsTo", name = "Belongs to", editor = "choice", default = "Merc", items = { "All", "Merc", "Villain", "AI" }, horizontal = true, },
 		{ id = "Mandatory", name = "Mandatory", editor = "bool", default = false },

@@ -6,24 +6,23 @@ PlaceObj('BanterDef', {
 		PlaceObj('BanterLine', {
 			'Character', "Justine",
 			'Text', T(646842156912, --[[BanterDef NowhereJustine01_BeforeAttack Text section:Banters_Local_MiddleOfWhere/NowhereJustine01_BeforeAttack once when not AttackRepelled voice:Justine]] "Would you like a cup of tea?"),
-			'playOnce', true,
 		}),
 		PlaceObj('BanterLine', {
 			'Character', "Mario",
 			'Text', T(227913406967, --[[BanterDef NowhereJustine01_BeforeAttack Text section:Banters_Local_MiddleOfWhere/NowhereJustine01_BeforeAttack once when not AttackRepelled voice:Mario]] "They don't need no tea!"),
-			'playOnce', true,
+			'Optional', true,
 		}),
 		PlaceObj('BanterLine', {
 			'Character', "Justine",
 			'Text', T(367227213787, --[[BanterDef NowhereJustine01_BeforeAttack Text section:Banters_Local_MiddleOfWhere/NowhereJustine01_BeforeAttack once when not AttackRepelled voice:Justine]] "Mario! Have you no sense of hospitality?"),
-			'playOnce', true,
 		}),
 		PlaceObj('BanterLine', {
 			'Character', "Mario",
 			'Text', T(268127222888, --[[BanterDef NowhereJustine01_BeforeAttack Text section:Banters_Local_MiddleOfWhere/NowhereJustine01_BeforeAttack once when not AttackRepelled voice:Mario]] "N-nope!"),
-			'playOnce', true,
+			'Optional', true,
 		}),
 	},
+	Once = true,
 	conditions = {
 		PlaceObj('QuestIsVariableBool', {
 			QuestId = "MiddleOfNowhere",
@@ -76,6 +75,7 @@ PlaceObj('BanterDef', {
 		PlaceObj('BanterLine', {
 			'Character', "Mario",
 			'Text', T(753142257563, --[[BanterDef NowhereJustine03_BeforeAttack Text section:Banters_Local_MiddleOfWhere/NowhereJustine03_BeforeAttack repeated when not AttackRepelled voice:Mario]] "I wish we had a diamond... PERIOD!"),
+			'Optional', true,
 		}),
 	},
 	conditions = {
@@ -100,23 +100,22 @@ PlaceObj('BanterDef', {
 		PlaceObj('BanterLine', {
 			'Character', "Justine",
 			'Text', T(129572777148, --[[BanterDef NowhereJustine04_AfterAttack Text section:Banters_Local_MiddleOfWhere/NowhereJustine04_AfterAttack once when AttackRepelled voice:Justine]] "Oh my... I bet you are hungry after all that work. I will make you some cookies."),
-			'playOnce', true,
 		}),
 		PlaceObj('BanterLine', {
 			'Character', "Mario",
 			'Text', T(847323192550, --[[BanterDef NowhereJustine04_AfterAttack Text section:Banters_Local_MiddleOfWhere/NowhereJustine04_AfterAttack once when AttackRepelled voice:Mario]] "I want some cookies, too!"),
-			'playOnce', true,
+			'Optional', true,
 		}),
 		PlaceObj('BanterLine', {
 			'Character', "Justine",
 			'Text', T(900806716915, --[[BanterDef NowhereJustine04_AfterAttack Text section:Banters_Local_MiddleOfWhere/NowhereJustine04_AfterAttack once when AttackRepelled voice:Justine]] "You will be busy, dear. Someone has to bury all those hooligans."),
-			'playOnce', true,
+			'Optional', true,
 		}),
 		PlaceObj('BanterLine', {
 			'Annotation', "(indistinct muttering)",
 			'Character', "Mario",
 			'Text', T(172547379587, --[[BanterDef NowhereJustine04_AfterAttack Text section:Banters_Local_MiddleOfWhere/NowhereJustine04_AfterAttack (indistinct muttering) once when AttackRepelled voice:Mario]] "Hummdrmm... stupid hyena..."),
-			'playOnce', true,
+			'Optional', true,
 		}),
 		PlaceObj('BanterLine', {
 			'MultipleTexts', true,
@@ -134,6 +133,7 @@ PlaceObj('BanterDef', {
 			'playOnce', true,
 		}),
 	},
+	Once = true,
 	conditions = {
 		PlaceObj('QuestIsVariableBool', {
 			QuestId = "MiddleOfNowhere",

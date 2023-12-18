@@ -120,14 +120,14 @@ PlaceObj('VoiceResponse', {
 		T(578241496155, --[[VoiceResponse MilitiaRookie TakeCover VoiceResponse TakeCover - Played when the Take Cover action is used voice:MilitiaRookie]] "Digging in.")
 	}),
 	Wounded = TConcat({
-		T(796632730871, --[[VoiceResponse MilitiaRookie Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:MilitiaRookie]] "This is not good."),
-		T(322638327507, --[[VoiceResponse MilitiaRookie Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:MilitiaRookie]] "Help me, Boss."),
-		T(111535606205, --[[VoiceResponse MilitiaRookie Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:MilitiaRookie]] "I took a bad hit!"),
-		T(473923694101, --[[VoiceResponse MilitiaRookie Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:MilitiaRookie]] "Je suis blessé!"),
-		T(251415516020, --[[VoiceResponse MilitiaRookie Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:MilitiaRookie]] "I need a bandage!"),
-		T(768123769985, --[[VoiceResponse MilitiaRookie Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:MilitiaRookie]] "I am wounded!"),
-		T(875160147135, --[[VoiceResponse MilitiaRookie Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:MilitiaRookie]] "Uff, that hurt!"),
-		T(299400126624, --[[VoiceResponse MilitiaRookie Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:MilitiaRookie]] "Uff, Ça fait mal!")
+		T(796632730871, --[[VoiceResponse MilitiaRookie Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:MilitiaRookie]] "This is not good."),
+		T(322638327507, --[[VoiceResponse MilitiaRookie Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:MilitiaRookie]] "Help me, Boss."),
+		T(111535606205, --[[VoiceResponse MilitiaRookie Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:MilitiaRookie]] "I took a bad hit!"),
+		T(473923694101, --[[VoiceResponse MilitiaRookie Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:MilitiaRookie]] "Je suis blessé!"),
+		T(251415516020, --[[VoiceResponse MilitiaRookie Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:MilitiaRookie]] "I need a bandage!"),
+		T(768123769985, --[[VoiceResponse MilitiaRookie Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:MilitiaRookie]] "I am wounded!"),
+		T(875160147135, --[[VoiceResponse MilitiaRookie Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:MilitiaRookie]] "Uff, that hurt!"),
+		T(299400126624, --[[VoiceResponse MilitiaRookie Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:MilitiaRookie]] "Uff, Ça fait mal!")
 	}),
 	group = "Militia",
 	id = "MilitiaRookie",

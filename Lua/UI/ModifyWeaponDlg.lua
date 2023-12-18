@@ -96,7 +96,7 @@ function ModifyWeaponDlg:Open(...)
 	local allWeapons, selectedWeapon = GetPlayerWeapons(ownerSquad, owner, self.context.slot)
 	local playerUnits = GetPlayerMercsInSector(self.sector)
 	for idx, id in ipairs(playerUnits) do
-		playerUnits[idx] = gv_UnitData[id]
+		playerUnits[idx] = gv_SatelliteView and gv_UnitData[id] or g_Units[id] or gv_UnitData[id]
 	end
 	if looted then
 		allWeapons[#allWeapons + 1] = { weapon = self.context.weapon, slot = self.context.slot }
@@ -114,7 +114,26 @@ function ModifyWeaponDlg:Open(...)
 	self:SetWeapon(selectedWeaponIdx)
 end
 
+if FirstLoad then
+	g_SetWeaponWaitThread = false
+	g_CachedAnimation = { thread = false, index = false, direction = false}
+end
 function ModifyWeaponDlg:SetWeapon(index, direction)
+	-- if an animation delay is running, cache the input until it ends
+	if IsValidThread(g_SetWeaponWaitThread) then
+		g_CachedAnimation.index = index
+		g_CachedAnimation.direction = direction
+		if IsValidThread(g_CachedAnimation.thread) then DeleteThread(g_CachedAnimation.thread) end
+		g_CachedAnimation.thread = CreateGameTimeThread(function()
+			WaitWakeup()
+			self:SetWeapon(g_CachedAnimation.index, g_CachedAnimation.direction)
+		end)
+		return 
+	else
+		g_SetWeaponWaitThread = false
+		table.clear(g_CachedAnimation)
+	end
+	
 	self:CloseContextMenu()
 	direction = direction or 1
 
@@ -283,6 +302,12 @@ function ModifyWeaponDlg:SetWeapon(index, direction)
 			self:SetSelection(1)
 		end
 	end, self.idWeaponParts)
+	
+	-- add small delay while the animation is running
+	g_SetWeaponWaitThread = CreateRealTimeThread(function()
+		Sleep(250)
+		if IsValidThread(g_CachedAnimation.thread) then Wakeup(g_CachedAnimation.thread) end
+	end)
 	
 	--[[local wnd = XTemplateSpawn("WeaponColorWindow", self.idWeaponParts, 
 	SubContext(weapon, 
@@ -666,7 +691,7 @@ function ModifyWeaponDlg:ApplyChangesSlot(modSlot, skipChance)
 		clone:UpdateVisualObj(self.weaponModel)
 
 		local oldComponent = actualWeapon.components[modSlot]
-		NetSyncEvent("WeaponModified", owner, slot, clone.components, clone.components.Color, success, modAdded, bestMechSkillUnit)
+		NetSyncEvent("WeaponModified", owner, slot, clone.components, clone.components.Color, success, modAdded, bestMechSkillUnit, modSlot, oldComponent)
 		
 		CreateMapRealTimeThread(function()
 			if oldComponent and oldComponent ~= "" then
@@ -684,7 +709,7 @@ function ModifyWeaponDlg:ApplyChangesSlot(modSlot, skipChance)
 		self.idToolBar:OnUpdateActions()]]
 		if success then
 			local mechanic = gv_SatelliteView and gv_UnitData[bestMechSkillUnit] or g_Units[bestMechSkillUnit]
-			Msg("WeaponModifiedSuccess", actualWeapon, unit, modAdded, mechanic)
+			Msg("WeaponModifiedSuccess", actualWeapon, unit, modAdded, mechanic, modSlot, oldComponent)
 		end
 	end)
 end

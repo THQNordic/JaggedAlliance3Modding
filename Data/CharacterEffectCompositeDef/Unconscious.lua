@@ -35,7 +35,7 @@ PlaceObj('CharacterEffectCompositeDef', {
 			Event = "OnExplorationTick",
 			Handler = function (self, target)
 				local recovery = self:ResolveValue("recovery_time") 
-				if GameTime() >= recovery then
+				if not target:IsDead() and GameTime() >= recovery then
 					target:SetTired(const.utExhausted)
 					target:SetCommand("DownedRally")
 				end

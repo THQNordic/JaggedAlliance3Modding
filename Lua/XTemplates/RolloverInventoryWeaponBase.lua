@@ -379,7 +379,13 @@ PlaceObj('XTemplate', {
 						local cnt = ResolvePropObj(context)
 						local caliber = Presets.Caliber.Default[cnt.Caliber]
 						if cnt.ammo then
-							self.idAmmoIcon:SetImage(cnt.ammo.Icon)
+							if cnt.ammo.ammo_type_icon then
+								self.idAmmoIcon:SetImage(cnt.ammo.ammo_type_icon)
+								self.idAmmoIcon:SetImageScale(point(500,500))
+							else
+								self.idAmmoIcon:SetVisible(false)
+							--	self.idAmmoIcon:SetImage(cnt.ammo.Icon)
+							end
 						else
 							self.idAmmoIcon:SetImage("UI/Icons/Items/"..(caliber.id).."_empty")	
 						end
@@ -437,7 +443,12 @@ PlaceObj('XTemplate', {
 						local cnt = IsKindOf(weapon, "FirearmBase") and weapon:GetSubweapon("Firearm")
 						local caliber = Presets.Caliber.Default[cnt.Caliber]
 						if cnt.ammo then
-							self.idAmmoIcon:SetImage(cnt.ammo.Icon)
+							if cnt.ammo.ammo_type_icon then
+								self.idAmmoIcon:SetImage(cnt.ammo.ammo_type_icon)
+								self.idAmmoIcon:SetImageScale(point(500,500))
+							else
+								self.idAmmoIcon:SetImage(cnt.ammo.Icon)
+							end
 						else
 							self.idAmmoIcon:SetImage("UI/Icons/Items/"..(caliber.id).."_empty")	
 						end

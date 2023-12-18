@@ -232,7 +232,7 @@ PlaceObj('XTemplate', {
 						self:SetVisible(haveLevelUp)
 						
 						-- Handle constant animation
-						local havePulseAnim = not not self:GetThread("pulse-anim")
+						local havePulseAnim = not not self:FindModifier("pulse")
 						if haveLevelUp ~= havePulseAnim then
 							if haveLevelUp and not havePulseAnim then
 								-- Animation: Shrink and grow ping pong while image state changes
@@ -248,17 +248,8 @@ PlaceObj('XTemplate', {
 									OnLayoutComplete = IntRectCenterRelative
 								}
 								self:AddInterpolation(interpData)
-						
-								self:CreateThread("pulse-anim", function()
-									while self.window_state ~= "destroying" do
-										local column = (GetPreciseTicks() / stateChangeTime) % 2
-										self.idImage:SetColumn(column == 0 and 1 or 2)
-										Sleep(stateChangeTime)
-									end
-								end)
 							else
 								self:RemoveModifier("pulse")
-								self:DeleteThread("pulse-anim")
 							end
 						end
 					end,
@@ -270,6 +261,8 @@ PlaceObj('XTemplate', {
 						'HandleMouse', true,
 						'Image', "UI/Hud/hud_level_up",
 						'Columns', 2,
+						'Animate', true,
+						'FPS', 2,
 					}, {
 						PlaceObj('XTemplateFunc', {
 							'name', "OnMouseButtonDown(self, pos, button)",

@@ -20,7 +20,6 @@ DefineClass.ArmyCommander_Elite = {
 	Portrait = "UI/EnemiesPortraits/ArmyOfficer",
 	Name = T(651275698504, --[[UnitDataCompositeDef ArmyCommander_Elite Name]] "Lieutenant"),
 	Randomization = true,
-	elite = true,
 	Affiliation = "Army",
 	StartingLevel = 8,
 	neutral_retaliate = true,

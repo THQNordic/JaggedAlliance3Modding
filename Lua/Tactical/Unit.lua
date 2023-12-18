@@ -104,6 +104,12 @@ function UnitBase:RegisterReactions()
 	end, self)
 end
 
+function OnMsg.MercHired(merc_id, price, days, alreadyHired)
+	if not alreadyHired then
+		gv_UnitData[merc_id]:RegisterReactions()
+	end
+end
+
 function UnitBase:GetPersonalMorale()
 	local teamMorale = self.team and self.team.morale or 0
 	local personalMorale = 0
@@ -276,6 +282,7 @@ DefineClass.Unit = {
 	reposition_path = false,
 	reposition_marker = false,
 	last_orientation_angle = false,
+	last_attack_pos = false,
 
 	god_mode = false,
 	infinite_ammo = false,
@@ -611,6 +618,7 @@ function Unit:GetDynamicData(data)
 	data.maraud = self.maraud and self.maraud.handle or nil
 	data.enter_map_wait_time = self.enter_map_wait_time and (self.enter_map_wait_time - GameTime()) or nil
 	data.enter_map_pos = self.enter_map_pos or nil
+	data.last_attack_pos = self.last_attack_pos or nil
 
 	local unit_data = UnitDataDefs[self.unitdatadef_id]
 	if self.Name ~= (unit_data and unit_data.Name) then
@@ -645,6 +653,7 @@ function Unit:SetDynamicData(data)
 	end
 	self.enter_map_wait_time = data.enter_map_wait_time or false
 	self.enter_map_pos = data.enter_map_pos or false
+	self.last_attack_pos = data.last_attack_pos or false
 	if data.combat_behavior then
 		RestoreBehaviorParamTbl(data.combat_behavior_params)
 		self:SetCombatBehavior(data.combat_behavior, data.combat_behavior_params)
@@ -697,7 +706,7 @@ function Unit:SetDynamicData(data)
 	self.last_attack_session_id = data.last_attack_session_id
 	self.free_move_ap = data.free_move_ap
 	self.neutral_ai_dont_move = data.neutral_ai_dont_move
-	self.effect_values = table.copy(data.effect_values or data.effect_expirations or {}) -- savegame compat support (effect_expirations)
+	self.effect_values = table.copy(data.effect_values or data.effect_expirations) -- savegame compat support (effect_expirations)
 	self.is_melee_aim_last_turn = data.is_melee_aim_last_turn or false
 	self.enemy_visual_contact = data.enemy_visual_contact
 	self.suspicion = data.suspicion
@@ -803,6 +812,10 @@ function Unit:SetDynamicData(data)
 	self.throw_died_message = data.throw_died_message or false
 	self.lastFiringMode = data.lastFiringMode or false
 	self.queued_action_id = data.queued_action_id or false
+
+	if data.spawner and not self.spawner then
+		self:SetCommand("Despawn") -- the spawner is not present in the new map version
+	end
 end
 
 function OnMsg.UnitCreated(self)
@@ -1155,6 +1168,9 @@ function OnMsg.LoadSessionData()
 	for session_id, unit in pairs(gv_UnitData) do
 		if not g_Units[session_id] then
 			unit:ApplyModifiersList(unit.applied_modifiers)
+			if unit.HireStatus and unit.HireStatus == "Hired" then
+				unit:RegisterReactions()
+			end
 		end	
 	end	
 end
@@ -1419,6 +1435,10 @@ function Unit:IsIncapacitated()
 	return self:IsDead() or self:IsDowned() or self:IsGettingDowned() or self.command == "Die"
 end
 
+function Unit:CanPassThroughInCombat()
+	return self:GetEnumFlags(const.efResting) == 0 or self:IsDowned()
+end
+
 function Unit:CanContinueCombat()
 	local isDead = self.command == "Die" or self:IsDead()
 	local isDowned = self:IsDowned()
@@ -1650,6 +1670,7 @@ function Unit:Die(skip_anim)
 		return
 	end
 	
+	self.throw_died_message = true
 	self.HitPoints = 0 -- needs to be before RemoveAllStatusEffects so that Wounded can detect the death and leave any blood stains on
 	self:RemoveAllStatusEffects("death")
 	if self.villain then
@@ -1670,7 +1691,6 @@ function Unit:Die(skip_anim)
 	end
 	self.HitPoints = 0 -- in case statuses do some shenanigans I guess
 	self.time_of_death = Game.CampaignTime
-	self.throw_died_message = true
 	self.pending_aware_state = nil
 	self.killed_stance = self.stance
 
@@ -1995,11 +2015,24 @@ function Unit:Dead(anim, angle)
 		return
 	end
 	
+	-- Savegame fixup for 238866
+	-- Errored in RemoveStatusEffect BandageInCombat prior to moving throw_died_message above that call.
+	if not self.time_of_death then
+		self.throw_died_message = true
+	end
+	
 	-- This can happen when a save is made while the unit was running the "Die" command.
 	-- Upon load the unit will be dead (go straight here) without having thrown the message,
 	-- which could mean that the conflict isn't resolved.
 	if self.throw_died_message then
 		local killer = self.on_die_attacker
+		if self.villain then
+			Msg("VillainDefeated", self, killer)
+		end
+		
+		self.time_of_death = Game.CampaignTime
+		Msg("UnitDieStart", self, killer)
+		Msg("UnitDiedOnSector", self, gv_CurrentSectorId)
 		Msg("UnitDied", self, killer, empty_table)
 		self.throw_died_message = false
 	end
@@ -2041,6 +2074,12 @@ function Unit:Hang()
 		return
 	end
 	rope.SetAutoAttachMode = empty_func
+	self:ClearEnumFlags(const.efApplyToGrids)
+	self:ClearEnumFlags(const.efCollision)
+	--this unit is goind to be attached to a bone anim;
+	--in order to not net check its saved position/axis/angle on enter sector which could be a little different per client
+	--we clear the sync flag and switch its class to a class with gofSyncObject = false
+	self:MakeNotSync()
 	rope:Attach(self, hanging_spot_idx)
 	self:SetState("nw_Hanging", 0, 0)
 	self.HitPoints = 0
@@ -2048,6 +2087,18 @@ function Unit:Hang()
 	InvalidateDiplomacy()
 	Msg("UnitDieStart", self)
 	Halt()
+end
+
+DefineClass.NonSyncUnit = {
+	__parents = { "Unit" },
+	flags = { gofSyncObject = false },
+}
+
+function Unit:MakeNotSync()
+	if not self:IsSyncObject() then return end
+	self:ClearGameFlags(const.gofSyncObject)
+	--self:SetHandle(self:GenerateHandle()) --its probably fine to leave the old handle in case someone is refering to this
+	setmetatable(self, g_Classes.NonSyncUnit)
 end
 
 function Unit:IsPersistentDead()
@@ -2451,6 +2502,10 @@ function Unit:Pain(hit_descr, attacker)
 
 	if self.species ~= "Human" then
 		DeleteThread(self.pain_thread)
+		self.pain_thread = nil
+		if self:HasStatusEffect("Unconscious") then
+			return
+		end
 		if self.interrupted then
 			self.pain_thread = CreateGameTimeThread(function(self, alert_units)
 				self:PlayPainAnim(alert_units)
@@ -2640,6 +2695,9 @@ function Unit:BeginTurn(new_turn)
 			self:ConsumeAP(DivRound(self.free_move_ap, 2), "Move")
 		end
 		
+		-- ConsumeAP will flag this only when an action is given, so it is safe to mark this a bit earlier to allow OnBeginTurn effects to alter it
+		self.performed_action_this_turn = false
+		
 		Msg("UnitBeginTurn", self)
 		self:CallReactions("OnBeginTurn")
 		
@@ -2650,13 +2708,10 @@ function Unit:BeginTurn(new_turn)
 			self:ConsumeAP(Min(self.ActionPoints, -morale * const.Scale.AP))
 		end
 		
-		if self:GetItemInSlot("Head", "GasMask") then
+		if self:GetItemInSlot("Head", "GasMaskBase") then
 			self:ConsumeAP(const.Scale.AP)
 		end
-		
-		-- needs to be after all potential start-of-turn AP losses
-		self.performed_action_this_turn = false
-		
+
 		-- special-case: if the unit dies as a result of a status effect, show them and wait the command to end
 		-- doing this here makes sure the camera will not immediately jump to another unit (dying or selected)
 		-- similarly, executing the pindown attack has to be waited until it finishes
@@ -2773,23 +2828,26 @@ function Unit:CalcHealAmount(medkit, target)
 	local selfheal = CombatActions.Bandage:ResolveValue("selfheal")
 
 	local heal_percent = base_heal + MulDivRound(self.Medical, medical_heal, 100)
-		
-	if HasPerk(self, "Savior") then
-		heal_percent = heal_percent + CharacterEffectDefs.Savior:ResolveValue("bandageBonus")
-	end	
-	
-	if target == self then
-		heal_percent = MulDivRound(heal_percent, selfheal, 100)
-	end	
-	
-	local heal_mod = heal_percent
-	if IsKindOf(medkit, "Medkit") then
-		heal_mod = heal_mod + 25
+	local data = {
+		heal_amount = 0,
+		heal_percent = heal_percent,
+		self_heal_percent = 50,
+		heal_modifier = 100,
+	}
+	self:CallReactions("OnCalcHealAmount", target, self, medkit, data)
+	if target ~= self and IsKindOf(target, "UnitBase") then
+		target:CallReactions("OnCalcHealAmount", target, self, medkit, data)
 	end
 	
+	local heal_percent = data.heal_percent
+	if target == self then
+		heal_percent = MulDivRound(heal_percent, data.self_heal_percent, 100)
+	end
+	local heal_mod = MulDivRound(heal_percent, data.heal_modifier, 100)
+		
 	-- convert to raw hp
 	local max = IsValid(target) and target.MaxHitPoints or self.MaxHitPoints
-	return MulDivRound(max, heal_mod, 100), MulDivRound(heal_percent, 100, heal_mod)
+	return data.heal_amount + MulDivRound(max, heal_mod, 100), MulDivRound(heal_percent, 100, heal_mod)
 end
 
 function Unit:OnEndTurn()
@@ -2844,7 +2902,7 @@ function Unit:OnCommandStart()
 		self:SetGravity(0)
 		self:StopMoving()
 		self.interrupted = false
-		if not self:IsDead() and not IsActivePaused() then
+		if not self:IsDead() and not IsActivePaused() and not IsSetpieceActor(self) then
 			self:ClearPath()
 			if self.traverse_tunnel then
 				local tpos = self.traverse_tunnel:GetExit()
@@ -3241,7 +3299,7 @@ function Unit:CombatGoto(action_id, cost_ap, pos, interrupt_path, forced_run, st
 	end
 
 	local known_traps
-	local all_move_interrupts = self:CheckProvokeOpportunityAttacks("move", goto_dummies, true, "all")
+	local all_move_interrupts = self:CheckProvokeOpportunityAttacks(CombatActions.Move, "move", goto_dummies, true, "all")
 	for i, t in ipairs(all_move_interrupts) do
 		if t[1] == "trap" then
 			known_traps = known_traps or {}
@@ -3258,7 +3316,7 @@ function Unit:CombatGoto(action_id, cost_ap, pos, interrupt_path, forced_run, st
 		elseif not init then
 			return
 		end
-		interrupts, provoke_idx = self:CheckProvokeOpportunityAttacks("move", goto_dummies, nil, nil, nil, known_traps)
+		interrupts, provoke_idx = self:CheckProvokeOpportunityAttacks(CombatActions.Move, "move", goto_dummies, nil, nil, nil, known_traps)
 		provoke_pos = provoke_idx and goto_dummies[provoke_idx].pos
 		if provoke_pos then
 			-- add the provoke point in the path if not present
@@ -3304,6 +3362,7 @@ function Unit:CombatGoto(action_id, cost_ap, pos, interrupt_path, forced_run, st
 	end
 	UpdateProvokePos(true)
 	if provoke_pos then
+		self:SetTargetDummy(false)
 		WaitOtherCombatActionsEnd(self)
 	end
 
@@ -3677,7 +3736,7 @@ function Unit:Teleport(pos, angle)
 		self:SetFootPlant(true, 0)
 		self:SetTargetDummy(pos, orientation_angle, base_idle, 0)
 		CombatPathReset(self)
-		self:ProvokeOpportunityAttacks("move")
+		self:ProvokeOpportunityAttacks(CombatActions.Move, "move")
 		Msg("UnitMovementDone", self)
 		RedeploymentCheckDelayed()
 	end
@@ -4042,7 +4101,7 @@ function Unit:TraverseTunnel(tunnel, pos1, pos2, collision_avoidance, quick_play
 		local target_dummy = __unit_step_target_dummies[1]
 		target_dummy.obj = self
 		target_dummy.anim = self:GetWaitAnim()
-		interrupts = self:CheckProvokeOpportunityAttacks("move", __unit_step_target_dummies)
+		interrupts = self:CheckProvokeOpportunityAttacks(CombatActions.Move, "move", __unit_step_target_dummies)
 		if interrupts then
 			self:ProvokeOpportunityAttacksWarning("move", interrupts)
 		end
@@ -4083,7 +4142,7 @@ function Unit:GotoStopCheck(stop_anim_tunnel_idx)
 	end
 	local pcount = self:GetPathPointCount()
 	if pcount <= stop_anim_tunnel_idx + 4 then
-		local pathlen = self:GetPathLen(false, stop_anim_tunnel_idx)
+		local pathlen = self:GetPathLen(stop_anim_tunnel_idx)
 		local step_dist = self:GetVisualDist2D(self:GetPosXYZ()) 
 		if pathlen - step_dist < self.move_stop_anim_len then
 			local dest = self:GetPathPoint(stop_anim_tunnel_idx)
@@ -4456,8 +4515,10 @@ function Unit:GotoSlab(pos, distance, min_distance, move_anim_type, follow_targe
 			local angle = next_pt and CalcOrientation(self.target_dummy or self, next_pt)
 			self:UpdateMoveAnim(nil, move_anim_type, next_pt)
 			local move_anim = GetStateName(self:GetMoveAnim())
-			if GameState.sync_loading then
-				self:Face(next_pt)
+			if not GameTimeAdvanced then
+				if next_pt then
+					self:Face(next_pt)
+				end
 				if self:GetStateText() ~= move_anim then
 					self:SetState(move_anim, 0, 0)
 					self:RandomizeAnimPhase()
@@ -4608,13 +4669,13 @@ function Unit:Step(...)
 	self:UpdateMoveSpeed()
 	local status = AnimMomentHook.Step(self, ...)
 	if status > 0 then
-		if not self.combat_path and self.team and self.team.side ~= "neutral" then
+		if not self.combat_path and self.team and not self.team.neutral then
 			local target_dummy = __unit_step_target_dummies[1]
 			target_dummy.obj = self
 			target_dummy.anim = self:GetWaitAnim()
-			local interrupts = self:CheckProvokeOpportunityAttacks("move", __unit_step_target_dummies)
+			local interrupts = self:CheckProvokeOpportunityAttacks(CombatActions.Move, "move", __unit_step_target_dummies)
 			self:ProvokeOpportunityAttacksWarning("move", interrupts)
-			self:ProvokeOpportunityAttacks("move", target_dummy) -- traps
+			self:ProvokeOpportunityAttacks(CombatActions.Move, "move", target_dummy) -- traps
 		end
 		self:UpdateInWaterFX()
 	end
@@ -4801,15 +4862,17 @@ function Unit:EnterCombat()
 	if wasInterruptable then
 		self:EndInterruptableMovement()
 	end
-	self:UninterruptableGoto(self:GetVisualPos()) -- stop on the nearest free slab
-	self:SetTargetDummyFromPos()
+	if not self:HasStatusEffect("ManningEmplacement") then
+		self:UninterruptableGoto(self:GetVisualPos()) -- stop on the nearest free slab
+		self:SetTargetDummyFromPos()
+	end
 	self:UpdateAttachedWeapons()
-	
+
 	if HasPerk(self, "SharpInstincts") then
 		if self.stance == "Standing" then self:DoChangeStance("Crouch") end
 		self:ApplyTempHitPoints(CharacterEffectDefs.SharpInstincts:ResolveValue("tempHP"))
 	end
-	
+
 	if self:HasStatusEffect("ManningEmplacement") and self == SelectedObj then
 		self:FlushCombatCache()
 		self:RecalcUIActions(true)
@@ -4939,15 +5002,8 @@ end
 
 function Unit:OnAnimMoment(moment, anim)
 	anim = anim or GetStateName(self)
-	
-	-- Some animations play gendered fx. In them the actor is substituted by the unit gender.
-	-- Try to play those before falling back to default Unit as actor.
-	local couldBeGendered = not self.fx_actor_class and moment == "start"
 	local animFxName = FXAnimToAction(anim)
-	local fxTarget = self.anim_moment_fx_target or nil
-	if not couldBeGendered or not PlayFX(animFxName, moment, self.gender, fxTarget) then
-		PlayFX(animFxName, moment, self, fxTarget)
-	end
+	PlayFX(animFxName, moment, self, self.anim_moment_fx_target)
 
 	local anim_moments_hook = self.anim_moments_hook
 	if type(anim_moments_hook) == "table" and anim_moments_hook[moment] then
@@ -4985,34 +5041,41 @@ function Unit:SetCommandParams(command, params)
 	end
 end
 
-local idle_commands = {
-	[false] = true,
-	["Idle"] = true,
-	["IdleSuspicious"] = true,
-	["AimIdle"] = true,
-	["PreparedAttackIdle"] = true,
-	["PreparedBombardIdle"] = true,
-	["Dead"] = true,
-	["VillainDefeat"] = true,
-	["Hang"] = true,
-	["Downed"] = true,
-	["Cower"] = true,
-	["CombatBandage"] = true,
-	["ExitMap"] = true,
-	["OverheardConversationHeadTo"] = true
-}
+if FirstLoad then
+	UnitIdleCommands = {
+		[false] = true,
+		["Idle"] = true,
+		["IdleSuspicious"] = true,
+		["AimIdle"] = true,
+		["PreparedAttackIdle"] = true,
+		["PreparedBombardIdle"] = true,
+		["Dead"] = true,
+		["VillainDefeat"] = true,
+		["Hang"] = true,
+		["Downed"] = true,
+		["Cower"] = true,
+		["CombatBandage"] = true,
+		["ExitMap"] = true,
+		["OverheardConversation"] = true,
+		["OverheardConversationHeadTo"] = true,
+	}
 
-local prepared_attacks = {
-	OverwatchAction = true,
-	PinDown = true,
-}
+	UnitPreparedAttackBehaviors = {
+		OverwatchAction = true,
+		PinDown = true,
+	}
+	
+	UnitIgnoreEnterCombatCommands = {
+		["VillainDefeat"] = true,
+	}
+end
 
 function Unit:IsUsingPreparedAttack()
-	return prepared_attacks[self.combat_behavior]
+	return UnitPreparedAttackBehaviors[self.combat_behavior]
 end
 
 function Unit:IsIdleCommand(check_pending)
-	return idle_commands[self.command or false] and (not check_pending or (not self.pending_aware_state and not HasCombatActionInProgress(self)))
+	return UnitIdleCommands[self.command or false] and (not check_pending or (not self.pending_aware_state and not HasCombatActionInProgress(self)))
 end
 
 function Unit:HasQueuedAction()
@@ -5020,9 +5083,18 @@ function Unit:HasQueuedAction()
 	return action and (action.ActivePauseBehavior == "queue") and IsActivePaused()
 end
 
+function Unit:IsIdleOrRunningBehavior()
+	if self:IsIdleCommand() then
+		return true
+	end
+	if g_Combat then
+		return self.command == self.combat_behavior
+	end
+	return self.command == self.behavior
+end
+
 function Unit:Idle()
 	assert(self:IsValidPos())
-	NetUpdateHash("sync loading state", GameState.sync_loading)
 	SetCombatActionState(self, nil)
 	self.being_interacted_with = false
 	if not self.move_attack_in_progress then
@@ -5112,7 +5184,7 @@ function Unit:Idle()
 	end
 
 	-- orient
-	if GameState.sync_loading then
+	if not GameTimeAdvanced then
 		self:SetOrientationAngle(orientation_angle)
 	else
 		self:EndInterruptableMovement()
@@ -5139,7 +5211,7 @@ function Unit:Idle()
 				Sleep(self:TimeToAnimEnd())
 			end
 			self:SetState(anim_style:GetRandomAnim(self), const.eKeepComponentTargets)
-			if GameState.sync_loading then
+			if not GameTimeAdvanced then
 				self:RandomizeAnimPhase()
 			end
 		else
@@ -5183,7 +5255,7 @@ function Unit:TakeSlabExploration()
 	if not pos then
 		return
 	end
-	if not GameState.sync_loading then
+	if GameTimeAdvanced then
 		local vx, vy = SnapToVoxel(self:GetVisualPosXYZ())
 		if not pos:Equal2D(vx, vy) then
 			self:Goto(pos, "sl")
@@ -5682,7 +5754,7 @@ function Unit:SetTargetDummy(pos, orientation_angle, anim, phase, stance, ground
 				dummy = PlaceObject("TargetDummy", { obj = self })
 			end
 			self.target_dummy = dummy
-			changed = changed or "uninit"
+			changed = changed or "unit"
 		end
 		-- pos
 		if changed or not dummy:IsEqualPos(pos) then
@@ -6045,7 +6117,7 @@ function Unit:ChangeStance(action_id, cost_ap, stance, args)
 		angle = FindProneAngle(self, nil, angle)
 	end
 	if angle then
-		self:SetOrientationAngle(angle, GameState.sync_loading and 0 or 100)
+		self:SetOrientationAngle(angle, not GameTimeAdvanced and 0 or 100)
 	end
 	self:DoChangeStance(stance)
 	self:PopAndCallDestructor() -- FX
@@ -6210,7 +6282,13 @@ function Unit:UpdateFXClass()
 	elseif self.species ~= "Human" then
 		self.fx_actor_class = self.species
 	elseif self:IsAmbientUnit() then
-		self.fx_actor_class = "AmbientUnit"
+		if self.gender == "Male" then
+			self.fx_actor_class = "AmbientMale"
+		elseif self.gender == "Female" then
+			self.fx_actor_class = "AmbientFemale"
+		else
+			self.fx_actor_class = "AmbientUnit"
+		end
 	else
 		self.fx_actor_class = nil
 	end
@@ -6219,6 +6297,10 @@ end
 function OnMsg.GetCustomFXInheritActorRules(rules)
 	rules[#rules + 1] = "ImportantUnit"
 	rules[#rules + 1] = "Unit"
+	rules[#rules + 1] = "AmbientMale"
+	rules[#rules + 1] = "AmbientUnit"
+	rules[#rules + 1] = "AmbientFemale"
+	rules[#rules + 1] = "AmbientUnit"
 end
 
 local function UpdateHiddenUnits()
@@ -6271,7 +6353,7 @@ function Unit:DoChangeStance(stance)
 	self:SetFootPlant(true)
 	self:SetTargetDummyFromPos()
 	self:UpdateMoveAnim()
-	if not GameState.sync_loading then
+	if GameTimeAdvanced then
 		local base_idle = self:GetIdleBaseAnim()
 		local angle = (self.target_dummy or self):GetOrientationAngle()
 		PlayTransitionAnims(self, base_idle, angle)
@@ -6284,25 +6366,28 @@ function Unit:DoChangeStance(stance)
 	Msg("UnitStanceChanged", self)
 end
 
-local stance_to_stance_def
-function FindStanceToStanceDef(start_stance, end_stance)
-	stance_to_stance_def = nil
-	ForEachPresetInGroup("StanceToStanceAP", "Default", function(def, group, start_stance, end_stance)
-		if def.start_stance == start_stance and def.end_stance == end_stance then
-			stance_to_stance_def = def
-		end
-	end, start_stance, end_stance)
-	return stance_to_stance_def
+if FirstLoad then
+	g_StanceToStanceAP = {}
 end
+local function UpdateStanceToStanceAPCache()
+	g_StanceToStanceAP = {}
+	ForEachPresetInGroup("StanceToStanceAP", "Default", function(def)
+		local t = g_StanceToStanceAP[def.start_stance]
+		if not t then
+			t = {}
+			g_StanceToStanceAP[def.start_stance] = t
+		end
+		t[def.end_stance] = def.ap_cost
+	end)
+end
+OnMsg.DataLoaded = UpdateStanceToStanceAPCache
+OnMsg.PresetSave = UpdateStanceToStanceAPCache
 
 function GetStanceToStanceAP(start_stance, end_stance)
 	if start_stance == end_stance then
 		return 0
 	end
-	local def = FindStanceToStanceDef(start_stance, end_stance)
-	if def then
-		return def.ap_cost
-	end
+	return (g_StanceToStanceAP[start_stance] or empty_table)[end_stance]
 end
 
 function Unit:GetStanceToStanceAP(stance, ownStanceOverride)
@@ -6883,6 +6968,8 @@ function Unit:CalcChanceToHit(target, action, args, chance_only)
 		opportunity_attack = opportunity_attack, 
 		attacker_pos = attacker_pos, 
 		target_pos = target_pos,
+		min = 0,
+		max = 100,
 	}
 
 
@@ -7005,12 +7092,8 @@ function Unit:CalcChanceToHit(target, action, args, chance_only)
 	local knife_throw = IsKindOf(weapon, "MeleeWeapon") and (action.ActionType == "Ranged Attack")
 	local penalty = weapon:GetAccuracy(attacker_pos:Dist(target_pos), self, action, knife_throw) - 100
 	local final = Clamp(base + penalty, 0, 100)
-	
-	if HasPerk(self, "Spiritual") then
-		local minAcc = CharacterEffectDefs.Spiritual:ResolveValue("minAccuracy")
-		final = Clamp(final, minAcc, 100)
-	end
-	
+	final = Clamp(final, mod_data.min, mod_data.max)
+		
 	if args and not args.prediction then
 		NetUpdateHash("CalcChanceToHit_Final", final)
 	end
@@ -7157,30 +7240,12 @@ function Unit:GetAttackAPCost(action, weapon, action_ap_cost, aim, delta)
 		aimCost = MulDivRound(aimCost, 100 + const.EnvEffects.RainAimingMultiplier, 100)
 	end
 	
-	local ap = 0
+	local ap = action_ap_cost or weapon.AttackAP or weapon.ShootAP or 0
+	ap = ap + delta 
+	ap = self:CallReactions_Modify("OnCalcAPCost", ap, action, weapon, aim)
+
 	if IsKindOf(weapon, "HeavyWeapon") then
-		ap = action_ap_cost or weapon.AttackAP
-		if HasPerk(self, "HeavyWeaponsTraining") then
-			ap = HeavyWeaponsTrainingCostMod(ap)
-		end
-	elseif IsKindOf(weapon, "Firearm") then
-		ap = action_ap_cost or weapon.ShootAP
-		if IsKindOf(weapon, "MachineGun") and HasPerk(self, "HeavyWeaponsTraining") then
-			ap = HeavyWeaponsTrainingCostMod(ap)
-		end
-		ap = ap + aim * aimCost + delta
-	elseif IsKindOf(weapon, "Grenade") then
-		ap = (action_ap_cost or weapon.AttackAP) + aim * aimCost + delta
-		if self:HasStatusEffect("FirstThrow") then
-			local costReduction = CharacterEffectDefs.Throwing:ResolveValue("FirstThrowCostReduction") * const.Scale.AP
-			ap = Max(1 * const.Scale.AP, ap - costReduction)
-		end
-	elseif IsKindOf(weapon, "MeleeWeapon") then
-		ap = (action_ap_cost or weapon.AttackAP) + delta
-		if self:HasStatusEffect("FirstThrow") and action.ActionType == "Ranged Attack" then
-			local costReduction = CharacterEffectDefs.Throwing:ResolveValue("FirstThrowCostReduction") * const.Scale.AP
-			ap = Max(1 * const.Scale.AP, ap - costReduction)
-		end
+	elseif IsKindOf(weapon, "Firearm") or IsKindOf(weapon, "Grenade") or IsKindOf(weapon, "MeleeWeapon") then
 		ap = ap + aim * aimCost
 	else
 		ap = -1
@@ -7319,12 +7384,12 @@ function Unit:PrepareToAttack(attack_args, attack_results)
 	--Show target
 	if not showMiddle then cameraPosChanged = not DoPointsFitScreen({targetPos}, nil, const.Camera.BufferSizeNoCameraMov) end
 	if isAIControlled and notInGivenCommand and g_LastUnitToShoot ~= self or isAIControlledMerc then
-		local interrupts = self:CheckProvokeOpportunityAttacks("attack interrupt", {self.target_dummy or self})
+		local interrupts = self:CheckProvokeOpportunityAttacks(attack_args.action_id and CombatActions[attack_args.action_id], "attack interrupt", {self.target_dummy or self})
 		local targetNotVisible = showMiddle and IsKindOf(attack_args.target, "Unit") and not IsVisibleFromCamera(attack_args.target)
 		CombatCam_ShowAttackNew(self, attack_args.target, interrupts, attack_results, dontMoveCamera or showMiddle, targetNotVisible)
 	elseif self:IsMerc() and not ActionCameraPlaying and not g_AIExecutionController then
 		--edge case where merc/player shoots but he is in overwatch so the overwatch will be shown first and then his attack
-		local interrupts = self:CheckProvokeOpportunityAttacks("attack interrupt", {self.target_dummy or self})
+		local interrupts = self:CheckProvokeOpportunityAttacks(attack_args.action_id and CombatActions[attack_args.action_id], "attack interrupt", {self.target_dummy or self})
 		if interrupts then
 			CombatCam_ShowAttackNew(self, attack_args.target, interrupts, attack_results)
 		else
@@ -7708,29 +7773,29 @@ function Unit:SetVisible(visible, force)
 		end
 	end
 	
-	if self.melee_threat_contour then
-		self.melee_threat_contour:SetVisible(visible)
-	end
-	
-	if self.ui_badge then
-		local badgeVisible = visible and not self:IsDead()
-		self.ui_badge:SetVisible(badgeVisible, "unit")
-	end
-	
 	if self.visible ~= visible then
+		if self.melee_threat_contour then
+			self.melee_threat_contour:SetVisible(visible)
+		end
+		
+		if self.ui_badge then
+			local badgeVisible = visible and not self:IsDead()
+			self.ui_badge:SetVisible(badgeVisible, "unit")
+		end
+		
 		self:SetSoundMute(not visible)
 		self:ForEachAttach("GrenadeVisual", function(obj) 
 			obj:SetSoundMute(not visible)
 		end)
 		self.visible = visible
 		ObjModified(self)
+		
+		if self.carry_flare then
+			self:UpdateOutfit()
+		end
+		
+		self:UpdateFXClass()
 	end
-	
-	if self.carry_flare then
-		self:UpdateOutfit()
-	end
-	
-	self:UpdateFXClass()
 end
 
 function Unit:GetVisibleEnemies()
@@ -7791,25 +7856,26 @@ end
 
 local _is_attack_available_units = {}
 
-function Unit:GetDefaultAttackAction(force_ranged, force_ungrouped, weapon, sync, ignore_stealth, args)
+function Unit:GetDefaultAttackAction(force_ranged, force_ungrouped, weapon, sync, ignore_stealth, args, ui)
 	local weapon2
 	if not weapon then
 		weapon, weapon2 = self:GetActiveWeapons()
 	end
-	local id
+	local id, action
 	
 	local weaponAttacks = IsKindOf(weapon, "Firearm") and not IsKindOfClasses(weapon, "HeavyWeapon", "FlareGun") and weapon.AvailableAttacks or empty_table
 	local weapon2Attacks = IsKindOf(weapon2, "Firearm") and not IsKindOfClasses(weapon2, "HeavyWeapon", "FlareGun") and weapon2.AvailableAttacks or empty_table
 	
-	-- If stealth then always prefer single shot
-	if not ignore_stealth and self:HasStatusEffect("Hidden") and (table.find(weaponAttacks, "SingleShot") or table.find(weapon2Attacks, "SingleShot")) then
-		id = "SingleShot"
-	end
+	_is_attack_available_units[1] = self
 	
 	-- Check if dual shot.
 	if #weaponAttacks > 0 and #weapon2Attacks > 0 then
-		local dualShotAvail = table.find(weaponAttacks, "DualShot") and table.find(weapon2Attacks, "DualShot")
-		id = dualShotAvail and "DualShot" or id
+		if table.find(weaponAttacks, "DualShot") and table.find(weapon2Attacks, "DualShot") then
+			action = CombatActions.AttackDual
+			if action:GetUIState(_is_attack_available_units, args) == "enabled" then
+				id = action.id
+			end
+		end
 	end
 
 	if force_ranged and IsKindOf(weapon, "MeleeWeapon") and weapon.CanThrow then
@@ -7827,8 +7893,8 @@ function Unit:GetDefaultAttackAction(force_ranged, force_ungrouped, weapon, sync
 		id = weapon and weapon:GetBaseAttack(self, force_ranged) or "UnarmedAttack"
 	end	
 	
-	local action = CombatActions[id]
-	_is_attack_available_units[1] = self
+	action = CombatActions[id]
+
 	if force_ungrouped and action:GetUIState(_is_attack_available_units, args) == "enabled" then
 		if sync then NetUpdateHash("GetDefaultAttackAction", self, id) end
 		return action 
@@ -7840,7 +7906,7 @@ function Unit:GetDefaultAttackAction(force_ranged, force_ungrouped, weapon, sync
 			if sync then NetUpdateHash("GetDefaultAttackAction", self, firingMode) end
 			return CombatActions[firingMode]
 		end
-		local action_id = self:ResolveDefaultFiringModeAction(CombatActions[firingMode], false, sync)
+		local action_id = self:ResolveDefaultFiringModeAction(CombatActions[firingMode], ui, sync)
 		if action_id then
 			return CombatActions[action_id]
 		end
@@ -7849,8 +7915,11 @@ function Unit:GetDefaultAttackAction(force_ranged, force_ungrouped, weapon, sync
 	return action
 end
 
+local _resolve_default_firing_mode_actions = {}
+
 function Unit:ResolveDefaultFiringModeAction(firingMode, ui, sync)
-	local actions = {}
+	local actions = _resolve_default_firing_mode_actions
+	table.iclear(actions)
 	local firing_id = firingMode.id
 
 	local weapon = firingMode:GetAttackWeapons(self)
@@ -7928,7 +7997,7 @@ function UpdateIndoors(unit)
 	end
 	local volume = EnumVolumes(unit, "smallest")
 	--unit.indoors = volume and not volume.dont_use_interior_lighting
-	unit.indoors = not not volume
+	unit.indoors = volume and volume:HasRoof(true)
 end
 
 OnMsg.UnitMovementDone = ResetIdleLookAt
@@ -8170,21 +8239,6 @@ function Unit:GetBaseAimLevelRange(action, target)
 			min = target:CallReactions_Modify("OnCalcMinAimActions", min, self, target, action, actionWep)
 		end
 		max = Max(max, min)
-		
-		-- weapon components
-		if IsKindOf(actionWep, "Firearm") then
-			if actionWep:HasComponent("MinAim") then
-				min = Max(min, GetComponentEffectValue(actionWep, "MinAim", "min_aim"))
-			end
-			
-			local startedCombat = g_Combat and g_Combat.current_turn == 1 and IsKindOf(g_AttackSpentAPQueue[1], "Unit") and g_AttackSpentAPQueue[1].session_id == self.session_id
-			local firstShotBoost = not self.performed_action_this_turn and not startedCombat and not IsOverwatchAction(action.id) and
-										GetComponentEffectValue(actionWep, "FirstShotIncreasedAim", "min_aim")
-			if firstShotBoost then
-				max = Max(max, firstShotBoost)
-				min = Min(max, firstShotBoost)
-			end
-		end
 	end
 	
 	return min, max
@@ -8378,7 +8432,7 @@ end
 
 function GetNumAliveUnitsInGroup(group)
 	local num = 0
-	for _, obj in ipairs(Groups[group]) do
+	for _, obj in ipairs(Groups and Groups[group]) do
 		if IsKindOf(obj, "Unit") and not obj:IsDead() then
 			num = num + 1
 		end
@@ -8751,7 +8805,7 @@ function Unit:OnSetActiveWeapon(action_id, cost_ap)
 		self:ActivatePerk("Scoundrel")
 		PlayVoiceResponse(self, "Scoundrel")
 	end
-	if not GameState.sync_loading then
+	if GameTimeAdvanced then
 		if g_Overwatch[self] and not self:FindWeaponInSlotById(self.current_weapon, g_Overwatch[self].weapon_id) or
 			g_Pindown[self] and not self:FindWeaponInSlotById(self.current_weapon, g_Pindown[self].weapon_id) or
 			self.prepared_bombard_zone and not self:FindWeaponInSlotById(self.current_weapon, self.prepared_bombard_zone.weapon_id)
@@ -9004,13 +9058,13 @@ function ValidateUnitGroupForEffectExec(group, effect, trigger_obj)
 		end
 		
 		-- check quest effects
-		for id, quest in sorted_pairs(Quests) do
+		ForEachPresetInCampaign("QuestsDef", function(quest)
 			if quest.TCEs and next(quest.TCEs) then
 				for _, tce in ipairs(quest.TCEs) do
 					tce:ForEachSubObject("Effect", addErr, quest)
 				end
 			end
-		end
+		end)
 		
 		-- check sector effects
 		local campaign_preset = Game.Campaign and CampaignPresets[Game.Campaign]
@@ -9849,3 +9903,8 @@ function Unit:SetCommandIfNotDead(...)
 	if self:IsDead() or self.command == "Die" then return end
 	self:SetCommand(...)
 end
+
+DefineClass.World_HangingSkeleton_Base = {
+	__parents = { "CombatObject", "DecorStateFXAutoAttachObject" },
+	flags = { efApplyToGrids = false },
+}

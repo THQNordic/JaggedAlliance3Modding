@@ -11,7 +11,7 @@ DefineClass.Unwell = {
 		PlaceObj('UnitReaction', {
 			Event = "OnCalcChanceToHit",
 			Handler = function (self, target, attacker, action, attack_target, weapon1, weapon2, data)
-				if action.ActionType == "Ranged Attack" then
+				if target == attacker and  action.ActionType == "Ranged Attack" then
 					data.mod_add = data.mod_add + self:ResolveValue("range_cth_mod")
 				end
 			end,

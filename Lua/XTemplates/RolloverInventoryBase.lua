@@ -111,12 +111,12 @@ PlaceObj('XTemplate', {
 				}, {
 					PlaceObj('XTemplateForEach', {
 						'array', function (parent, context)
-							if not context or not next(context.Modifications or {}) then return {} end
+							if not context or not next(context.Modifications) then return {} end
 							local mods = table.ifilter(context.Modifications, function(idx, mod) return mod and mod.display_name and mod.display_name~="" end)
 							return mods
 						end,
 						'condition', function (parent, context, item, i)
-							if not context or not next(context.Modifications or {}) then return false end
+							if not context or not next(context.Modifications) then return false end
 							local mods = table.ifilter(context.Modifications, function(idx, mod) return  mod and mod.display_name and mod.display_name~="" end)
 							return next(mods)
 						end,

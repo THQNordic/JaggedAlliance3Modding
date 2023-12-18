@@ -93,7 +93,7 @@ PlaceObj('XTemplate', {
 					end
 					
 					edit_ctrl.OnTextChanged = function(this, ...)
-						if this:GetText() == "" then
+						if this:IsFocused() and this:GetText() == "" then
 							local blinking_text = rawget(this, "FocusedBlinkingText")
 							if blinking_text then
 								this:SetHint(_InternalTranslate(blinking_text))

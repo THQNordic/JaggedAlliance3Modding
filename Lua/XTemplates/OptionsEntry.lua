@@ -102,7 +102,6 @@ PlaceObj('XTemplate', {
 	PlaceObj('XTemplateTemplate', {
 		'__condition', function (parent, context) return context.prop_meta.editor == "bool" end,
 		'__template', "PropBool",
-		'MouseCursor', "UI/Cursors/Hand.tga",
 		'FXPress', "MainMenuButtonClick",
 		'Message', "OptionsChanged",
 	}, {
@@ -116,7 +115,6 @@ PlaceObj('XTemplate', {
 	PlaceObj('XTemplateTemplate', {
 		'__condition', function (parent, context) return context.prop_meta.editor == "number" end,
 		'__template', "PropNumber",
-		'MouseCursor', "UI/Cursors/Hand.tga",
 		'FXPress', "MainMenuSliderClick",
 		'Message', "OptionsChanged",
 	}, {
@@ -130,7 +128,6 @@ PlaceObj('XTemplate', {
 	PlaceObj('XTemplateTemplate', {
 		'__condition', function (parent, context) return context.prop_meta.editor == "combo" or context.prop_meta.editor == "choice" end,
 		'__template', "PropChoice",
-		'MouseCursor', "UI/Cursors/Hand.tga",
 		'FXPress', "MainMenuButtonClick",
 		'Message', "OptionsChanged",
 	}, {
@@ -144,7 +141,6 @@ PlaceObj('XTemplate', {
 	PlaceObj('XTemplateTemplate', {
 		'__condition', function (parent, context) return context.prop_meta.editor == "hotkey" end,
 		'__template', "PropKeybinding",
-		'MouseCursor', "UI/Cursors/Hand.tga",
 		'FXPress', "MainMenuButtonClick",
 	}),
 })

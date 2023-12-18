@@ -404,13 +404,25 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
-				PlaceObj('QuestIsVariableBool', {
-					QuestId = "Sanatorium",
-					Vars = set( "Completed" ),
-					__eval = function ()
-						local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
-						return quest.Completed
-					end,
+				PlaceObj('OR', {
+					Conditions = {
+						PlaceObj('QuestIsVariableBool', {
+							QuestId = "Sanatorium",
+							Vars = set( "Completed" ),
+							__eval = function ()
+								local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
+								return quest.Completed
+							end,
+						}),
+						PlaceObj('QuestIsVariableBool', {
+							QuestId = "U-Bahn",
+							Vars = set( "OutcomeSanatorium" ),
+							__eval = function ()
+								local quest = gv_Quests['U-Bahn'] or QuestGetState('U-Bahn')
+								return quest.OutcomeSanatorium
+							end,
+						}),
+					},
 				}),
 			},
 			Effects = {
@@ -504,18 +516,30 @@ PlaceObj('QuestsDef', {
 			Effects = {
 				PlaceObj('ConditionalEffect', {
 					'Conditions', {
-						PlaceObj('QuestIsVariableBool', {
-							QuestId = "Landsbach",
-							Vars = set({
+						PlaceObj('OR', {
+							Conditions = {
+								PlaceObj('QuestIsVariableBool', {
+									QuestId = "Landsbach",
+									Vars = set({
 	Completed = true,
 	DieselBounce = false,
 	DieselSigfried = false,
 	SecretPlan = true,
 }),
-							__eval = function ()
-								local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
-								return quest.Completed and not quest.DieselBounce and not quest.DieselSigfried and quest.SecretPlan
-							end,
+									__eval = function ()
+										local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
+										return quest.Completed and not quest.DieselBounce and not quest.DieselSigfried and quest.SecretPlan
+									end,
+								}),
+								PlaceObj('QuestIsVariableBool', {
+									QuestId = "U-Bahn",
+									Vars = set( "OutcomeDiesel" ),
+									__eval = function ()
+										local quest = gv_Quests['U-Bahn'] or QuestGetState('U-Bahn')
+										return quest.OutcomeDiesel
+									end,
+								}),
+							},
 						}),
 					},
 					'Effects', {
@@ -527,22 +551,34 @@ PlaceObj('QuestsDef', {
 				}),
 				PlaceObj('ConditionalEffect', {
 					'Conditions', {
-						PlaceObj('CheckOR', {
+						PlaceObj('OR', {
 							Conditions = {
-								PlaceObj('QuestIsVariableBool', {
-									QuestId = "Landsbach",
-									Vars = set( "Failed", "SuperSoldiersDefeated" ),
-									__eval = function ()
-										local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
-										return quest.Failed and quest.SuperSoldiersDefeated
-									end,
+								PlaceObj('CheckOR', {
+									Conditions = {
+										PlaceObj('QuestIsVariableBool', {
+											QuestId = "Landsbach",
+											Vars = set( "Failed", "SuperSoldiersDefeated" ),
+											__eval = function ()
+												local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
+												return quest.Failed and quest.SuperSoldiersDefeated
+											end,
+										}),
+										PlaceObj('QuestIsVariableBool', {
+											QuestId = "Landsbach",
+											Vars = set( "BounceBattle", "Completed" ),
+											__eval = function ()
+												local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
+												return quest.BounceBattle and quest.Completed
+											end,
+										}),
+									},
 								}),
 								PlaceObj('QuestIsVariableBool', {
-									QuestId = "Landsbach",
-									Vars = set( "BounceBattle", "Completed" ),
+									QuestId = "U-Bahn",
+									Vars = set( "SiegfriedDefeated" ),
 									__eval = function ()
-										local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
-										return quest.BounceBattle and quest.Completed
+										local quest = gv_Quests['U-Bahn'] or QuestGetState('U-Bahn')
+										return quest.SiegfriedDefeated
 									end,
 								}),
 							},

@@ -17,6 +17,8 @@ PlaceObj('UnitDataCompositeDef', {
 	'Portrait', "UI/EnemiesPortraits/RebelOfficer",
 	'Name', T(423034905124, --[[UnitDataCompositeDef RebelSentry Name]] "Sentry"),
 	'Randomization', true,
+	'elite', true,
+	'eliteCategory', "Maquis",
 	'Affiliation', "Rebel",
 	'StartingLevel', 5,
 	'neutral_retaliate', true,

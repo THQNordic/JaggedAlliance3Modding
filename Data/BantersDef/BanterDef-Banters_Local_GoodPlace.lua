@@ -24,6 +24,7 @@ PlaceObj('BanterDef', {
 		PlaceObj('BanterLine', {
 			'Character', "Spike",
 			'Text', T(498846116103, --[[BanterDef GoodPlace_Jackhammer02 Text section:Banters_Local_GoodPlace/GoodPlace_Jackhammer02 have the Major as merc voice:Spike]] "Looks like you're back where I found you, Jack. How's life treating you in the Good Place?"),
+			'Optional', true,
 		}),
 		PlaceObj('BanterLine', {
 			'Character', "Jackhammer",
@@ -32,6 +33,7 @@ PlaceObj('BanterDef', {
 		PlaceObj('BanterLine', {
 			'Character', "Spike",
 			'Text', T(625953229252, --[[BanterDef GoodPlace_Jackhammer02 Text section:Banters_Local_GoodPlace/GoodPlace_Jackhammer02 have the Major as merc voice:Spike]] "Not my call to make anymore. Hell, they'll probably throw me in here with you before too long."),
+			'Optional', true,
 		}),
 		PlaceObj('BanterLine', {
 			'Character', "Jackhammer",
@@ -40,8 +42,10 @@ PlaceObj('BanterDef', {
 	},
 	Once = true,
 	conditions = {
-		PlaceObj('UnitSquadHasMerc', {
-			Name = "Spike",
+		PlaceObj('UnitIsAroundOtherUnit', {
+			Distance = 12,
+			SecondTargetUnit = "Jackhammer",
+			TargetUnit = "Spike",
 		}),
 	},
 	group = "Banters_Local_GoodPlace",
@@ -54,16 +58,19 @@ PlaceObj('BanterDef', {
 		PlaceObj('BanterLine', {
 			'Character', "PierreMerc",
 			'Text', T(957662811860, --[[BanterDef GoodPlace_Jackhammer03 Text section:Banters_Local_GoodPlace/GoodPlace_Jackhammer03 Pierre trying to be forgiving voice:PierreMerc]] "I am sorry it had to end like this, Jacques, but you have to pay for your crimes."),
-			'playOnce', true,
+			'Optional', true,
 		}),
 		PlaceObj('BanterLine', {
 			'Character', "Jackhammer",
 			'Text', T(290702002731, --[[BanterDef GoodPlace_Jackhammer03 Text section:Banters_Local_GoodPlace/GoodPlace_Jackhammer03 Pierre trying to be forgiving voice:Jackhammer]] "And what of your crimes, Pierre? Who is paying for those while you walk free? Me, that's who - so go fuck yourself."),
 		}),
 	},
+	Once = true,
 	conditions = {
-		PlaceObj('UnitSquadHasMerc', {
-			Name = "PierreMerc",
+		PlaceObj('UnitIsAroundOtherUnit', {
+			Distance = 12,
+			SecondTargetUnit = "Jackhammer",
+			TargetUnit = "PierreMerc",
 		}),
 	},
 	group = "Banters_Local_GoodPlace",
@@ -404,15 +411,15 @@ PlaceObj('BanterDef', {
 		}),
 		PlaceObj('QuestIsVariableBool', {
 			QuestId = "Luigi",
-			Vars = set( "JackhammerPrisoner" ),
+			Vars = set({
+	JackhammerDead = false,
+	JackhammerExecution = false,
+	JackhammerPrisoner = true,
+}),
 			__eval = function ()
 				local quest = gv_Quests['Luigi'] or QuestGetState('Luigi')
-				return quest.JackhammerPrisoner
+				return not quest.JackhammerDead and not quest.JackhammerExecution and quest.JackhammerPrisoner
 			end,
-		}),
-		PlaceObj('CheckIsPersistentUnitDead', {
-			Negate = true,
-			per_ses_id = "NPC_Jackhammer",
 		}),
 	},
 	disabledInConflict = true,

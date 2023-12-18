@@ -50,5 +50,6 @@ DefineClass._12gauge_Breacher = {
 	AppliedEffects = {
 		"Suppressed",
 	},
+	ammo_type_icon = "UI/Icons/Items/ta_ap.png",
 }
 

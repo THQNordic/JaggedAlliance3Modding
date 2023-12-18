@@ -616,7 +616,6 @@ PlaceObj('BanterDef', {
 				}),
 			},
 			'Optional', true,
-			'playOnce', true,
 		}),
 		PlaceObj('BanterLine', {
 			'MultipleTexts', true,
@@ -628,7 +627,6 @@ PlaceObj('BanterDef', {
 				}),
 			},
 			'Optional', true,
-			'playOnce', true,
 		}),
 	},
 	Once = true,

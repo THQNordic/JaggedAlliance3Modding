@@ -264,9 +264,9 @@ PlaceObj('VoiceResponse', {
 		T(755628393147, --[[VoiceResponse Flay SelectionStealth VoiceResponse SelectionStealth - when selected or autoselected voice:Flay]] "I am on the prowl.")
 	}),
 	SeriouslyWounded = TConcat({
-		T(648289939328, --[[VoiceResponse Flay SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds) voice:Flay]] "Death stalks me."),
-		T(834855175544, --[[VoiceResponse Flay SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds) voice:Flay]] "Les jeux sont faits."),
-		T(759807879424, --[[VoiceResponse Flay SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds) voice:Flay]] "I am in no condition to hunt.")
+		T(648289939328, --[[VoiceResponse Flay SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining. voice:Flay]] "Death stalks me."),
+		T(834855175544, --[[VoiceResponse Flay SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining. voice:Flay]] "Les jeux sont faits."),
+		T(759807879424, --[[VoiceResponse Flay SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining. voice:Flay]] "I am in no condition to hunt.")
 	}),
 	Startled = TConcat({
 		T(861205913574, --[[VoiceResponse Flay Startled VoiceResponse Startled - Startled by hearing a sudden noise voice:Flay]] "Huh?"),
@@ -312,9 +312,9 @@ PlaceObj('VoiceResponse', {
 		T(715652424130, --[[VoiceResponse Flay WeaponJammed VoiceResponse WeaponJammed - When weapon has jammed voice:Flay]] "My gun, she is jammed.")
 	}),
 	Wounded = TConcat({
-		T(848700374871, --[[VoiceResponse Flay Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Flay]] "Damn buckhead bit me!"),
-		T(538550697614, --[[VoiceResponse Flay Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Flay]] "Merde!"),
-		T(118412267884, --[[VoiceResponse Flay Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Flay]] "*angry grunt*")
+		T(848700374871, --[[VoiceResponse Flay Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Flay]] "Damn buckhead bit me!"),
+		T(538550697614, --[[VoiceResponse Flay Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Flay]] "Merde!"),
+		T(118412267884, --[[VoiceResponse Flay Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Flay]] "*angry grunt*")
 	}),
 	group = "MercenariesNew",
 	id = "Flay",

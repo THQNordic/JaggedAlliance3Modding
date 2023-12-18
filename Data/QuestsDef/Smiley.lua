@@ -397,10 +397,10 @@ PlaceObj('QuestsDef', {
 				PlaceObj('QuestIsVariableBool', {
 					Condition = "or",
 					QuestId = "Smiley",
-					Vars = set( "MollieMet", "Mollie_return", "Mollie_stay" ),
+					Vars = set( "MollieMet", "Mollie_return", "Mollie_stay", "SmileyDead" ),
 					__eval = function ()
 						local quest = gv_Quests['Smiley'] or QuestGetState('Smiley')
-						return quest.MollieMet or quest.Mollie_return or quest.Mollie_stay
+						return quest.MollieMet or quest.Mollie_return or quest.Mollie_stay or quest.SmileyDead
 					end,
 				}),
 			},
@@ -1612,6 +1612,7 @@ PlaceObj('QuestsDef', {
 					QuestId = "Smiley",
 					Vars = set({
 	BossCombat = false,
+	BossDead = false,
 	Completed = false,
 	Failed = false,
 	MollieDead = false,
@@ -1624,7 +1625,7 @@ PlaceObj('QuestsDef', {
 }),
 					__eval = function ()
 						local quest = gv_Quests['Smiley'] or QuestGetState('Smiley')
-						return not quest.BossCombat and not quest.Completed and not quest.Failed and not quest.MollieDead and not quest.Mollie_return and not quest.Mollie_stay and not quest.SmileyDead and not quest.Smiley_EndChoice and not quest.Smiley_join and not quest.Smiley_leave
+						return not quest.BossCombat and not quest.BossDead and not quest.Completed and not quest.Failed and not quest.MollieDead and not quest.Mollie_return and not quest.Mollie_stay and not quest.SmileyDead and not quest.Smiley_EndChoice and not quest.Smiley_join and not quest.Smiley_leave
 					end,
 				}),
 				PlaceObj('CombatIsActive', {

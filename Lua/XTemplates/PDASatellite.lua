@@ -331,11 +331,13 @@ PlaceObj('XTemplate', {
 						end
 						self:CreateThread("listener", function()
 							while self.window_state ~= "destroying" do
-								local _, currentGamepadId = GetActiveGamepadState()
-								local show = XInput.IsCtrlButtonPressed(currentGamepadId, "LeftTrigger")
-								show = show and (not g_ZuluMessagePopup or #g_ZuluMessagePopup == 0)
-								self:SetVisible(show)
-								Sleep(150)
+								local state, currentGamepadId = GetActiveGamepadState()
+								if state then
+									local show = XInput.IsCtrlButtonPressed(currentGamepadId, "LeftTrigger")
+									show = show and (not g_ZuluMessagePopup or #g_ZuluMessagePopup == 0)
+									self:SetVisible(show)
+								end
+								WaitFramesOrSleepAtLeast(1, 33)
 							end
 						end)
 					end,
@@ -798,6 +800,47 @@ PlaceObj('XTemplate', {
 			PlaceObj('XTemplateTemplate', {
 				'__template', "CoOpButton",
 			}),
+			PlaceObj('XTemplateWindow', {
+				'__context', function (parent, context) return "satellite_layer" end,
+				'__class', "XContextWindow",
+				'Margins', box(0, 5, 0, 0),
+				'VAlign', "bottom",
+				'LayoutMethod', "VList",
+				'LayoutVSpacing', 5,
+				'HandleMouse', true,
+				'ContextUpdateOnOpen', true,
+				'OnContextUpdate', function (self, context, ...)
+					local mode = g_SatelliteUI.layer_mode
+					if not mode then mode = "satellite" end
+					for i, b in ipairs(self) do
+						local selected = b.OnPressParam == mode
+						b:SetSelected(selected)
+					end
+				end,
+			}, {
+				PlaceObj('XTemplateTemplate', {
+					'__template', "PDAFilterSmallButton",
+					'RolloverText', T(833577443912, --[[XTemplate PDASatellite RolloverText]] "Satellite"),
+					'RolloverOffset', box(0, 5, 15, 0),
+					'OnPressParam', "satellite",
+					'OnPress', function (self, gamepad)
+						if not g_SatelliteUI then return end
+						g_SatelliteUI:SetLayerMode(self.OnPressParam)
+					end,
+					'CenterImage', "UI/PDA/SatelliteFilters/overground",
+				}),
+				PlaceObj('XTemplateTemplate', {
+					'__template', "PDAFilterSmallButton",
+					'RolloverText', T(779780168479, --[[XTemplate PDASatellite RolloverText]] "Underground"),
+					'RolloverOffset', box(0, 5, 15, 0),
+					'OnPressParam', "underground",
+					'OnPress', function (self, gamepad)
+						if not g_SatelliteUI then return end
+						g_SatelliteUI:SetLayerMode(self.OnPressParam)
+					end,
+					'CenterImage', "UI/PDA/SatelliteFilters/underground",
+				}),
+				}),
 			PlaceObj('XTemplateWindow', {
 				'__context', function (parent, context) return "satellite_filters" end,
 				'__class', "XContextWindow",

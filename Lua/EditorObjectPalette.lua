@@ -28,13 +28,13 @@ function XEditorEnumPlaceableObjects(callback)
 end
 
 local old_XEditorPlaceObject = XEditorPlaceObject
-function XEditorPlaceObject(id)
+function XEditorPlaceObject(id, is_cursor_object)
 	if id:starts_with("GridMarker-") then
 		local marker = GridMarker:new()
 		marker:SetType(id:sub(12))
 		return marker
 	end
-	return old_XEditorPlaceObject(id)
+	return old_XEditorPlaceObject(id, is_cursor_object)
 end
 
 local old_EditorCanSelect = editor.CanSelect

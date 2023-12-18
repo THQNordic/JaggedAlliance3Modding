@@ -588,10 +588,13 @@ PlaceObj('Conversation', {
 			}),
 			PlaceObj('QuestIsVariableBool', {
 				QuestId = "Smiley",
-				Vars = set( "Given" ),
+				Vars = set({
+	Given = true,
+	SmileyDead = false,
+}),
 				__eval = function ()
 					local quest = gv_Quests['Smiley'] or QuestGetState('Smiley')
-					return quest.Given
+					return quest.Given and not quest.SmileyDead
 				end,
 			}),
 		},
@@ -643,6 +646,10 @@ PlaceObj('Conversation', {
 				Prop = "MollieBooboo",
 				QuestId = "Smiley",
 			}),
+			PlaceObj('QuestSetVariableBool', {
+				Prop = "MollieMet",
+				QuestId = "Smiley",
+			}),
 		},
 		Keyword = "Greeting",
 		KeywordT = T(774381032385, --[[Conversation Mollie_1 KeywordT]] "Greeting"),
@@ -684,6 +691,16 @@ PlaceObj('Conversation', {
 					Amount = 2,
 					Prop = "Clues",
 					QuestId = "Smiley",
+				}),
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "Smiley",
+					Vars = set({
+	SmileyDead = false,
+}),
+					__eval = function ()
+						local quest = gv_Quests['Smiley'] or QuestGetState('Smiley')
+						return not quest.SmileyDead
+					end,
 				}),
 			},
 			Enabled = false,
@@ -1256,10 +1273,11 @@ PlaceObj('Conversation', {
 				Vars = set({
 	Given = true,
 	LaBouePartDone = false,
+	SmileyDead = false,
 }),
 				__eval = function ()
 					local quest = gv_Quests['Smiley'] or QuestGetState('Smiley')
-					return quest.Given and not quest.LaBouePartDone
+					return quest.Given and not quest.LaBouePartDone and not quest.SmileyDead
 				end,
 			}),
 		},
@@ -1334,10 +1352,11 @@ PlaceObj('Conversation', {
 				QuestId = "Smiley",
 				Vars = set({
 	LaBouePartDone = false,
+	SmileyDead = false,
 }),
 				__eval = function ()
 					local quest = gv_Quests['Smiley'] or QuestGetState('Smiley')
-					return not quest.LaBouePartDone
+					return not quest.LaBouePartDone and not quest.SmileyDead
 				end,
 			}),
 			PlaceObj('QuestIsVariableBool', {
@@ -1408,10 +1427,11 @@ PlaceObj('Conversation', {
 				QuestId = "Smiley",
 				Vars = set({
 	LaBouePartDone = false,
+	SmileyDead = false,
 }),
 				__eval = function ()
 					local quest = gv_Quests['Smiley'] or QuestGetState('Smiley')
-					return not quest.LaBouePartDone
+					return not quest.LaBouePartDone and not quest.SmileyDead
 				end,
 			}),
 			PlaceObj('QuestIsVariableBool', {
@@ -1479,10 +1499,11 @@ PlaceObj('Conversation', {
 				QuestId = "Smiley",
 				Vars = set({
 	LaBouePartDone = false,
+	SmileyDead = false,
 }),
 				__eval = function ()
 					local quest = gv_Quests['Smiley'] or QuestGetState('Smiley')
-					return not quest.LaBouePartDone
+					return not quest.LaBouePartDone and not quest.SmileyDead
 				end,
 			}),
 			PlaceObj('QuestIsVariableBool', {

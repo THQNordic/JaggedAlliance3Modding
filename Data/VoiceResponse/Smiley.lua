@@ -310,7 +310,7 @@ PlaceObj('VoiceResponse', {
 		T(671076052433, --[[VoiceResponse Smiley SelectionStealth VoiceResponse SelectionStealth - when selected or autoselected voice:Smiley]] "I'm like a super-cool spy right now.")
 	}),
 	SeriouslyWounded = TConcat({
-		T(583799550961, --[[VoiceResponse Smiley SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds) voice:Smiley]] "Death is so uncool. I don't want to do it.")
+		T(583799550961, --[[VoiceResponse Smiley SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining. voice:Smiley]] "Death is so uncool. I don't want to do it.")
 	}),
 	Startled = TConcat({
 		T(477911555849, --[[VoiceResponse Smiley Startled VoiceResponse Startled - Startled by hearing a sudden noise voice:Smiley]] "Huh?"),
@@ -353,9 +353,9 @@ PlaceObj('VoiceResponse', {
 		T(483851928526, --[[VoiceResponse Smiley WeaponJammed VoiceResponse WeaponJammed - When weapon has jammed voice:Smiley]] "I am certain this happens to a lot of other men.")
 	}),
 	Wounded = TConcat({
-		T(648422165566, --[[VoiceResponse Smiley Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Smiley]] "That hurts! I mean, it's no big deal. "),
-		T(950431246600, --[[VoiceResponse Smiley Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Smiley]] "Ouch! Don't mess with my look, man."),
-		T(392953876696, --[[VoiceResponse Smiley Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Smiley]] "It's cool. No big deal.")
+		T(648422165566, --[[VoiceResponse Smiley Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Smiley]] "That hurts! I mean, it's no big deal. "),
+		T(950431246600, --[[VoiceResponse Smiley Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Smiley]] "Ouch! Don't mess with my look, man."),
+		T(392953876696, --[[VoiceResponse Smiley Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Smiley]] "It's cool. No big deal.")
 	}),
 	group = "MercenariesNew",
 	id = "Smiley",

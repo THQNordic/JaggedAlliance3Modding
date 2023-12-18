@@ -1052,7 +1052,6 @@ PlaceObj('BanterDef', {
 			end,
 		}),
 	},
-	disabledInConflict = true,
 	group = "Banters_Local_Landsbach",
 	id = "Landsbach_Siegfried01",
 })
@@ -1716,8 +1715,8 @@ PlaceObj('BanterDef', {
 	Comment = ">> Proud",
 	Lines = {
 		PlaceObj('BanterLine', {
-			'Character', "VillagerFemale_1",
-			'Text', T(198233087662, --[[BanterDef Landsbach_VillagersFemale09_Loyalty Text section:Banters_Local_Landsbach/Landsbach_VillagersFemale09_Loyalty >> Proud voice:VillagerFemale_1]] "The only kind of super-soldier I see around here is you! How do you do it?"),
+			'Character', "VillagerFemale",
+			'Text', T(198233087662, --[[BanterDef Landsbach_VillagersFemale09_Loyalty Text section:Banters_Local_Landsbach/Landsbach_VillagersFemale09_Loyalty >> Proud voice:VillagerFemale]] "The only kind of super-soldier I see around here is you! How do you do it?"),
 		}),
 		PlaceObj('BanterLine', {
 			'MultipleTexts', true,
@@ -1738,7 +1737,6 @@ PlaceObj('BanterDef', {
 			'playOnce', true,
 		}),
 	},
-	Once = true,
 	conditions = {
 		PlaceObj('CityHasLoyalty', {
 			Amount = 25,
@@ -2025,10 +2023,5 @@ PlaceObj('BanterDef', {
 	disabledInConflict = true,
 	group = "Banters_Local_Landsbach",
 	id = "Landsbach_VillagersMale11",
-})
-
-PlaceObj('BanterDef', {
-	group = "Banters_Local_Landsbach",
-	id = "NewBanterDef",
 })
 

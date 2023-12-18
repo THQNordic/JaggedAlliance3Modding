@@ -25,9 +25,9 @@ PlaceObj('VoiceResponse', {
 		T(403414137956, --[[VoiceResponse Granny Pain VoiceResponse Pain - Hit by an attack (if surrounded SurroundedPain is played instead). Short. These are emotes - disregard the written text. voice:Granny]] "Pain5")
 	}),
 	Wounded = TConcat({
-		T(417402017806, --[[VoiceResponse Granny Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Granny]] "You'll fucking pay for that."),
-		T(119758344279, --[[VoiceResponse Granny Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Granny]] "I'm too fucking old for this shit."),
-		T(414019011902, --[[VoiceResponse Granny Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Granny]] "You'll have to do better than that, fuckface!")
+		T(417402017806, --[[VoiceResponse Granny Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Granny]] "You'll fucking pay for that."),
+		T(119758344279, --[[VoiceResponse Granny Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Granny]] "I'm too fucking old for this shit."),
+		T(414019011902, --[[VoiceResponse Granny Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Granny]] "You'll have to do better than that, fuckface!")
 	}),
 	group = "Other",
 	id = "Granny",

@@ -199,8 +199,6 @@ function OnMsg.OnPassabilityChanged(bbox)
 end
 
 local function CoversUpdate(op_finished, objects)
-	if EditorSelectionInProgress then return end
-	
 	local bbox = GetObjectsBBox(objects):SetInvalidZ()
 	local ptExtend = point(const.SlabSizeX, const.SlabSizeY)
 	bbox = box(bbox:min() - ptExtend, bbox:max() + ptExtend)

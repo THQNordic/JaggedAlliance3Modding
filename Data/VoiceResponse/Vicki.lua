@@ -283,9 +283,9 @@ PlaceObj('VoiceResponse', {
 		T(975555338759, --[[VoiceResponse Vicki SelectionStealth VoiceResponse SelectionStealth - when selected or autoselected voice:Vicki]] "Quietly.")
 	}),
 	SeriouslyWounded = TConcat({
-		T(288825391025, --[[VoiceResponse Vicki SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds) voice:Vicki]] "I got all banged about. Gonna need some help with mi wounds."),
-		T(839301389386, --[[VoiceResponse Vicki SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds) voice:Vicki]] "Jeezum Pees! I don't think I gonna make it, mon!"),
-		T(715502417196, --[[VoiceResponse Vicki SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds) voice:Vicki]] "If I take another hit, I'll be a dead one for sure.")
+		T(288825391025, --[[VoiceResponse Vicki SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining. voice:Vicki]] "I got all banged about. Gonna need some help with mi wounds."),
+		T(839301389386, --[[VoiceResponse Vicki SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining. voice:Vicki]] "Jeezum Pees! I don't think I gonna make it, mon!"),
+		T(715502417196, --[[VoiceResponse Vicki SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining. voice:Vicki]] "If I take another hit, I'll be a dead one for sure.")
 	}),
 	Startled = TConcat({
 		T(989888040933, --[[VoiceResponse Vicki Startled VoiceResponse Startled - Startled by hearing a sudden noise voice:Vicki]] "Huh?"),
@@ -330,9 +330,9 @@ PlaceObj('VoiceResponse', {
 		T(440011612278, --[[VoiceResponse Vicki WeaponJammed VoiceResponse WeaponJammed - When weapon has jammed voice:Vicki]] "What? Why you be jammin' on me?")
 	}),
 	Wounded = TConcat({
-		T(136380207450, --[[VoiceResponse Vicki Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Vicki]] "Ugh, not again!"),
-		T(295103513285, --[[VoiceResponse Vicki Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Vicki]] "Blasted!"),
-		T(548770804711, --[[VoiceResponse Vicki Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Vicki]] "Dat be nothing... I don't bruise easily.")
+		T(136380207450, --[[VoiceResponse Vicki Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Vicki]] "Ugh, not again!"),
+		T(295103513285, --[[VoiceResponse Vicki Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Vicki]] "Blasted!"),
+		T(548770804711, --[[VoiceResponse Vicki Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Vicki]] "Dat be nothing... I don't bruise easily.")
 	}),
 	group = "MercenariesOld",
 	id = "Vicki",

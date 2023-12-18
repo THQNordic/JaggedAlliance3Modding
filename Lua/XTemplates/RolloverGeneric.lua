@@ -14,9 +14,8 @@ PlaceObj('XTemplate', {
 		PlaceObj('XTemplateWindow', {
 			'__class', "XContextControl",
 			'Id', "idContent",
-			'Padding', box(6, 4, 6, 6),
+			'Padding', box(6, 6, 6, 6),
 			'LayoutMethod', "VList",
-			'LayoutVSpacing', 5,
 			'UseClipBox', false,
 			'Background', RGBA(52, 55, 61, 255),
 			'BackgroundRectGlowSize', 2,
@@ -51,6 +50,7 @@ PlaceObj('XTemplate', {
 			}),
 			PlaceObj('XTemplateWindow', {
 				'Id', "idTitlebar",
+				'Margins', box(0, -2, 0, 5),
 				'FoldWhenHidden', true,
 			}, {
 				PlaceObj('XTemplateWindow', {

@@ -1109,10 +1109,6 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			Effects = {
-				PlaceObj('QuestSetVariableBool', {
-					Prop = "MollieDead",
-					QuestId = "Smiley",
-				}),
 				PlaceObj('CityGrantLoyalty', {
 					Amount = -10,
 					City = "Pantagruel",
@@ -1123,9 +1119,70 @@ PlaceObj('QuestsDef', {
 					City = "Fleatown",
 					SpecialConversationMessage = T(709613172874, --[[QuestsDef _GroupsAttacked SpecialConversationMessage]] "<em>Mollie</em> is dead"),
 				}),
+				PlaceObj('QuestSetVariableBool', {
+					Prop = "MollieDead",
+					QuestId = "Smiley",
+				}),
 			},
 			Once = true,
 			ParamId = "TCE_Mollie",
+			QuestId = "_GroupsAttacked",
+		}),
+		PlaceObj('TriggeredConditionalEvent', {
+			Conditions = {
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "_GroupsAttacked",
+					Vars = set( "Mollie_Killed" ),
+					__eval = function ()
+						local quest = gv_Quests['_GroupsAttacked'] or QuestGetState('_GroupsAttacked')
+						return quest.Mollie_Killed
+					end,
+				}),
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "Smiley",
+					Vars = set({
+	BossDead = false,
+	MollieDead = true,
+}),
+					__eval = function ()
+						local quest = gv_Quests['Smiley'] or QuestGetState('Smiley')
+						return not quest.BossDead and quest.MollieDead
+					end,
+				}),
+				PlaceObj('VillainIsDefeated', {
+					Group = "FleatownBoss",
+					Negate = true,
+				}),
+				PlaceObj('UnitIsOnMap', {
+					TargetUnit = "FleatownBoss",
+				}),
+			},
+			Effects = {
+				PlaceObj('GroupSetSide', {
+					Side = "enemy1",
+					TargetUnit = "FleatownBoss",
+				}),
+				PlaceObj('GroupAlert', {
+					TargetUnit = "FleatownBoss",
+				}),
+				PlaceObj('PlayBanterEffect', {
+					Banters = {
+						"RimvilleApproach_Blaubert_MollieKilled",
+					},
+					banterSequentialWaitFor = "BanterStart",
+					searchInMap = true,
+					searchInMarker = false,
+				}),
+				PlaceObj('GroupSetSide', {
+					Side = "enemy1",
+					TargetUnit = "RimvilleGuardsAll",
+				}),
+				PlaceObj('GroupAlert', {
+					TargetUnit = "RimvilleGuardsAll",
+				}),
+			},
+			Once = true,
+			ParamId = "TCE_Mollie_Killed",
 			QuestId = "_GroupsAttacked",
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
@@ -2164,6 +2221,128 @@ PlaceObj('QuestsDef', {
 			ParamId = "TCE_Pierre",
 			QuestId = "_GroupsAttacked",
 		}),
+		PlaceObj('TriggeredConditionalEvent', {
+			Conditions = {
+				PlaceObj('CheckIsPersistentUnitDead', {
+					per_ses_id = "NPC_DrGruselheim",
+				}),
+			},
+			Effects = {
+				PlaceObj('QuestSetVariableBool', {
+					Prop = "GruselheimDead",
+					QuestId = "U-Bahn",
+				}),
+				PlaceObj('ConditionalEffect', {
+					'Conditions', {
+						PlaceObj('QuestIsVariableBool', {
+							QuestId = "U-Bahn",
+							Vars = set({
+	Completed = false,
+}),
+							__eval = function ()
+								local quest = gv_Quests['U-Bahn'] or QuestGetState('U-Bahn')
+								return not quest.Completed
+							end,
+						}),
+					},
+					'Effects', {
+						PlaceObj('QuestSetVariableBool', {
+							Prop = "Failed",
+							QuestId = "U-Bahn",
+						}),
+					},
+					'EffectsElse', {
+						PlaceObj('ApplyGuiltyOrRighteous', {
+							effectType = "negative",
+						}),
+					},
+				}),
+				PlaceObj('ConditionalEffect', {
+					'Conditions', {
+						PlaceObj('QuestIsVariableBool', {
+							Condition = "or",
+							QuestId = "U-Bahn",
+							Vars = set( "OutcomePrison", "OutcomeSanatorium" ),
+							__eval = function ()
+								local quest = gv_Quests['U-Bahn'] or QuestGetState('U-Bahn')
+								return quest.OutcomePrison or quest.OutcomeSanatorium
+							end,
+						}),
+					},
+					'Effects', {
+						PlaceObj('CityGrantLoyalty', {
+							Amount = -15,
+							City = "PortDiancie",
+						}),
+					},
+				}),
+				PlaceObj('ConditionalEffect', {
+					'Conditions', {
+						PlaceObj('QuestIsVariableBool', {
+							QuestId = "U-Bahn",
+							Vars = set( "OutcomeDiesel" ),
+							__eval = function ()
+								local quest = gv_Quests['U-Bahn'] or QuestGetState('U-Bahn')
+								return quest.OutcomeDiesel
+							end,
+						}),
+					},
+					'Effects', {
+						PlaceObj('CityGrantLoyalty', {
+							Amount = -50,
+							City = "Landsbach",
+						}),
+					},
+				}),
+				PlaceObj('ConditionalEffect', {
+					'Conditions', {
+						PlaceObj('QuestIsVariableBool', {
+							QuestId = "U-Bahn",
+							Vars = set( "OutcomeLeave" ),
+							__eval = function ()
+								local quest = gv_Quests['U-Bahn'] or QuestGetState('U-Bahn')
+								return quest.OutcomeLeave
+							end,
+						}),
+					},
+					'Effects', {
+						PlaceObj('CityGrantLoyalty', {
+							Amount = -20,
+							City = "Landsbach",
+						}),
+					},
+				}),
+				PlaceObj('ConditionalEffect', {
+					'Conditions', {
+						PlaceObj('QuestIsVariableBool', {
+							QuestId = "U-Bahn",
+							Vars = set( "OutcomeWorkshop" ),
+							__eval = function ()
+								local quest = gv_Quests['U-Bahn'] or QuestGetState('U-Bahn')
+								return quest.OutcomeWorkshop
+							end,
+						}),
+					},
+					'Effects', {
+						PlaceObj('SectorRemoveCustomOperation', {
+							operation = "CraftKompositum",
+							sector_id = "G12_Underground",
+						}),
+						PlaceObj('SectorRemoveCustomOperation', {
+							operation = "CraftKompositum",
+							sector_id = "J14_Underground",
+						}),
+						PlaceObj('SectorRemoveCustomOperation', {
+							operation = "CraftKompositum",
+							sector_id = "K11_Underground",
+						}),
+					},
+				}),
+			},
+			Once = true,
+			ParamId = "TCE_DrGruselheim",
+			QuestId = "_GroupsAttacked",
+		}),
 	},
 	Variables = {
 		PlaceObj('QuestVarBool', {
@@ -2344,6 +2523,9 @@ PlaceObj('QuestsDef', {
 		PlaceObj('QuestVarBool', {
 			Name = "civ_Claudette_Killed",
 		}),
+		PlaceObj('QuestVarBool', {
+			Name = "Mollie_Killed",
+		}),
 		PlaceObj('QuestVarTCEState', {
 			Name = "TCE_Poachers",
 		}),
@@ -2423,6 +2605,9 @@ PlaceObj('QuestsDef', {
 			Name = "TCE_Mollie",
 		}),
 		PlaceObj('QuestVarTCEState', {
+			Name = "TCE_Mollie_Killed",
+		}),
+		PlaceObj('QuestVarTCEState', {
 			Name = "TCE_Blaubert_Defeated",
 		}),
 		PlaceObj('QuestVarTCEState', {
@@ -2496,6 +2681,9 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('QuestVarTCEState', {
 			Name = "TCE_Pierre",
+		}),
+		PlaceObj('QuestVarTCEState', {
+			Name = "TCE_DrGruselheim",
 		}),
 	},
 	group = "Default",

@@ -89,7 +89,7 @@ pathfind_water_pass_type_idx = (table.find(pathfind_pass_types, pathfind_water_p
 local default_pfcontext_meta = { __index = {
 	depth = 100000,
 	min_depth = 100000,
-	max_path_search_radius_coef = 1000,
+	max_path_search_radius_coef = 100,
 	heuristic_mul = 2 * 4, -- 2 bit fixed point
 	heuristic_start_depth = 20000,
 	task_sleep = 0,

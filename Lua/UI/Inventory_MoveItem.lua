@@ -10,6 +10,12 @@ function IsMedicineRefill(meds, medicine)
 end
 
 function FormatGiveActionText(action_name, dest_container)
+	if next(InventoryDragItems) then
+		local res = dest_container:FindEmptyPositions(GetContainerInventorySlotName(dest_container),InventoryDragItems)
+		if not res or res == "no space" then
+			action_name = action_name .."\n".. Untranslated("<style InventoryHintTextRed>")..T(719913116871, "Not enough space")		
+		end
+	end	
 	return action_name
 end
 
@@ -222,6 +228,25 @@ function UnopennedSquadBag:FindItemInSlot(slot_name, func, ...)
 	end
 end
 
+function GetItemsNetIds(items)
+	local item_ids = {}
+	for _, item in ipairs(items) do
+		item_ids[#item_ids +1] = item.id
+	end
+	return item_ids
+end
+
+function GetItemsFromItemsNetId(net_ids)
+	local items = {}
+	for _, id in ipairs(net_ids) do
+		if g_ItemIdToItem[id] then
+			items[#items +1] = g_ItemIdToItem[id]
+		end
+	end
+	return items
+end
+
+
 function GetContainerNetId(container)
 	if not container then return end
 	local net_context = container
@@ -276,7 +301,8 @@ end
 local dbgMoveItem = true
 g_ItemNetEvents = {
 	MoveItems = true,
-	DestroyItem = true
+	DestroyItem = true,
+	MoveMultiItems = true
 }
 
 function MoveItemsNetEvent(data)
@@ -291,14 +317,38 @@ function NetSyncEvents.MoveItems(data)
 	MoveItemsNetEvent(data)
 end
 
-function MoveItem_RecieveNetArgs(data)
-	local item, src_container, src_container_slot_name, dest_container, dest_container_slot_name, dest_x, dest_y, amount, merge_up_to_amount, exec_locally, src_x, src_y, item_at_dest, alternative_swap_pos, sync_unit, player_id  = unpack_params(data)
+function NetSyncEvents.MoveMultiItems(multi_args)
+	local as1 = MoveItem_RecieveNetArgs(multi_args[1], {src_container = true}, {dest_container = true})	
+	local src_container = GetContainerFromContainerNetId(as1.src_container)
+	local dest_container = GetContainerFromContainerNetId(as1.dest_container)
+	local src_container_slot_name = GetContainerSlotFromContainerSlotNetId(src_container, as1.src_container_slot_name)
+	local dest_container_slot_name =GetContainerSlotFromContainerSlotNetId(dest_container, as1.dest_container_slot_name)
+
+	for i, args in ipairs(multi_args) do		
+		local as = MoveItem_RecieveNetArgs(args, {src_container = true}, {dest_container = true})
+		as.src_container = src_container
+		as.dest_container = dest_container
+		as.src_container_slot_name =  src_container_slot_name
+		as.dest_container_slot_name = dest_container_slot_name
+		local r1, r2 = MoveItem(as)
+		if r1 or i==#multi_args then
+			InventoryUIRespawn() 
+		end
+	end
+end
+
+function CustomCombatActions.MoveMultiItems(unit, ap, multi_args)
+	NetSyncEvents.MoveMultiItems(multi_args)
+end
+
+function MoveItem_RecieveNetArgs(data, except)
+	local item, src_container, src_container_slot_name, dest_container, dest_container_slot_name, dest_x, dest_y, amount, merge_up_to_amount, exec_locally, src_x, src_y, item_at_dest, alternative_swap_pos, sync_unit, player_id, no_ui_respawn, multi_items  = unpack_params(data)
 	local args = {}
-	args.item = g_ItemIdToItem[item]
-	args.src_container = GetContainerFromContainerNetId(src_container)
-	args.dest_container = GetContainerFromContainerNetId(dest_container)
-	args.src_container_slot_name = GetContainerSlotFromContainerSlotNetId(args.src_container, src_container_slot_name)
-	args.dest_container_slot_name = GetContainerSlotFromContainerSlotNetId(args.dest_container, dest_container_slot_name)
+	args.item = g_ItemIdToItem[item]	
+	args.src_container = (except and except["src_container"])   and src_container   or GetContainerFromContainerNetId(src_container)
+	args.dest_container = (except and except["dest_container"]) and dest_container or GetContainerFromContainerNetId(dest_container)
+	args.src_container_slot_name = (except and except["src_container"]) and src_container_slot_name or GetContainerSlotFromContainerSlotNetId(args.src_container, src_container_slot_name)
+	args.dest_container_slot_name = (except and except["dest_container"]) and dest_container_slot_name or GetContainerSlotFromContainerSlotNetId(args.dest_container, dest_container_slot_name)
 	args.dest_x = dest_x
 	args.dest_y = dest_y
 	args.amount = amount
@@ -306,19 +356,20 @@ function MoveItem_RecieveNetArgs(data)
 	args.exec_locally = exec_locally
 	args.s_src_x = src_x
 	args.s_src_y = src_y
-	args.s_sync_unit = GetContainerFromContainerNetId(sync_unit)
+	args.s_sync_unit = (except and except["unit"]) and sync_unit or GetContainerFromContainerNetId(sync_unit)
 	assert(not item_at_dest or g_ItemIdToItem[item_at_dest])
 	args.s_item_at_dest = item_at_dest and g_ItemIdToItem[item_at_dest]
 	args.s_player_id = player_id
 	args.sync_call = true
 	args.alternative_swap_pos = alternative_swap_pos
-
+	args.no_ui_respawn = no_ui_respawn
+	args.multi_items = multi_items
 	return args
 end
 
 function MoveItem_SendNetArgs(item, src_container, src_container_slot_name, dest_container, dest_container_slot_name, dest_x, dest_y, amount, merge_up_to_amount, exec_locally, 
-											src_x, src_y, item_at_dest, alternative_swap_pos, sync_unit)
-	return pack_params(item.id,
+											src_x, src_y, item_at_dest, alternative_swap_pos, sync_unit, no_ui_respawn, multi_items)
+	return pack_params(item.id,							
 							GetContainerNetId(src_container),
 							GetContainerSlotNetId(src_container, src_container_slot_name),
 							GetContainerNetId(dest_container),
@@ -333,7 +384,9 @@ function MoveItem_SendNetArgs(item, src_container, src_container_slot_name, dest
 							item_at_dest and item_at_dest.id,
 							alternative_swap_pos,
 							GetContainerNetId(sync_unit),
-							netUniqueId)
+							netUniqueId,
+							no_ui_respawn,
+							multi_items)
 end
 
 function MoveItem_UpdateUnitOutfit(src_container,dest_container, check_only)
@@ -390,29 +443,34 @@ end
 
 MoveItem_CombinesItems = true
 
+local multi_args = {}
+local multi_ap = false
 function MoveItem(args)
 	--prepresetup
 	assert(args)
-	local item = args.item
-	local src_container = args.src_container
-	local src_container_slot_name = args.src_container_slot_name or args.src_slot
-	local dest_container = args.dest_container
+	local item                     = args.item
+	local src_container            = args.src_container
+	local src_container_slot_name  = args.src_container_slot_name or args.src_slot
+	local dest_container           = args.dest_container
 	local dest_container_slot_name = args.dest_container_slot_name or args.dest_slot
-	local dest_x = args.dest_x or args.x
-	local dest_y = args.dest_y or args.y
-	local amount = args.amount
-	local check_only = args.check_only
-	local ap_cost = args.ap_cost
-	local merge_up_to_amount = args.merge_up_to_amount
-	local local_changes = args.local_changes
-	local exec_locally = args.exec_locally
-	local sync_call = args.sync_call
-	local s_src_x = args.s_src_x
-	local s_src_y = args.s_src_y
-	local s_item_at_dest = args.s_item_at_dest
-	local s_sync_unit = args.s_sync_unit
-	local s_player_id = args.s_player_id
-	local alternative_swap_pos = args.alternative_swap_pos
+	local dest_x                   = args.dest_x or args.x
+	local dest_y                   = args.dest_y or args.y
+	local amount                   = args.amount
+	local check_only               = args.check_only
+	local ap_cost                  = args.ap_cost
+	local merge_up_to_amount       = args.merge_up_to_amount
+	local local_changes            = args.local_changes
+	local exec_locally             = args.exec_locally
+	local sync_call                = args.sync_call
+	local s_src_x                  = args.s_src_x
+	local s_src_y                  = args.s_src_y
+	local s_item_at_dest           = args.s_item_at_dest
+	local s_sync_unit              = args.s_sync_unit
+	local s_player_id              = args.s_player_id
+	local alternative_swap_pos     = args.alternative_swap_pos
+	local no_ui_respawn            = args.no_ui_respawn
+	local multi_items              = args.multi_items
+	
 	if sync_call then
 		NetUpdateHash("MoveItem", item and item.class, item and item.id, 
 			dest_container and type(dest_container) == "table" and dest_container.class or dest_container, dest_container_slot_name,
@@ -511,12 +569,20 @@ function MoveItem(args)
 			end
 		end
 	end
-	if not item_at_dest and src_x == dest_x and src_y == dest_y and src_container == dest_container and src_container_slot_name == dest_container_slot_name then
-		--no change required
-		if dbgMoveItem then
-			invprint("no change required")
+	if src_container == dest_container and src_container_slot_name == dest_container_slot_name then
+		if not item_at_dest and src_x == dest_x and src_y == dest_y then
+			--no change required
+			if dbgMoveItem then
+				invprint("no change required")
+			end
+			return false, "no change"
+		end	
+		if multi_items and not dest_x and not dest_y then
+			if dbgMoveItem then
+				invprint("no change required")
+			end
+			return false, "no change"		
 		end
-		return false, "no change"
 	end
 	local is_reload = IsReload(item, item_at_dest)
 	local is_refill = IsMedicineRefill(item, item_at_dest)
@@ -566,13 +632,42 @@ function MoveItem(args)
 		end
 		if not sync_call then
 			local args = MoveItem_SendNetArgs(item, src_container, src_container_slot_name, dest_container, dest_container_slot_name, dest_x, dest_y, amount, merge_up_to_amount, exec_locally, 
-															src_x, src_y, item_at_dest, alternative_swap_pos,sync_unit )
+															src_x, src_y, item_at_dest, alternative_swap_pos,sync_unit , no_ui_respawn, multi_items)
 			
-			if IsKindOf(sync_unit, "UnitData") then
-				NetSyncEvent("MoveItems", args)
+			local is_unit_data = IsKindOf(sync_unit, "UnitData")
+			local is_unit = IsKindOf(sync_unit,"Unit")
+			
+			if is_unit_data then
+				if not no_ui_respawn then
+					if next(multi_args) then
+						multi_args[#multi_args+1] = args
+						multi_ap = (multi_ap or 0) + sync_ap
+						NetSyncEvent("MoveMultiItems", multi_args)
+						multi_args = {}
+						multi_ap = false
+					else
+						NetSyncEvent("MoveItems", args)
+					end	
+				else
+					multi_args[#multi_args+1] = args
+					multi_ap = (multi_ap or 0) + sync_ap
+				end
 			else
-				if not NetStartCombatAction("MoveItems", sync_unit, sync_ap, args) then
-					sync_err = "NetStartCombatAction refused to start"
+				if not no_ui_respawn then
+					if next(multi_args) then
+						multi_args[#multi_args+1] = args
+						multi_ap = (multi_ap or 0) + sync_ap
+						NetStartCombatAction("MoveMultiItems", sync_unit, multi_ap or sync_ap, multi_args)
+						multi_args = {}
+						multi_ap = false
+					else
+						if not NetStartCombatAction("MoveItems", sync_unit, multi_ap or sync_ap, args) then
+							sync_err = "NetStartCombatAction refused to start"
+						end
+					end	
+				else
+					multi_args[#multi_args+1] = args
+					multi_ap = (multi_ap or 0) + sync_ap
 				end
 			end
 			if not exec_locally or is_reload or is_refill then --only swap and move to x, y execs locally for now
@@ -672,7 +767,9 @@ function MoveItem(args)
 		ObjModified(src_container)
 		ObjModified(dest_container)
 		MoveItem_UpdateUnitOutfit(src_container,dest_container, check_only)
-		InventoryUIRespawn() --havn't found any other way to make the ui display the changes
+		if not no_ui_respawn then
+			InventoryUIRespawn() --havn't found any other way to make the ui display the changes
+		end
 		return false, partial_stack_merge, sync_unit
 	end
 	
@@ -704,7 +801,10 @@ function MoveItem(args)
 		ObjModified(src_container)
 		ObjModified(dest_container)
 		MoveItem_UpdateUnitOutfit(src_container,dest_container, check_only)
-		InventoryUIRespawn() --havn't found any other way to make the ui display the changes
+		if not no_ui_respawn then
+			InventoryUIRespawn() --havn't found any other way to make the ui display the changes
+		end
+
 		return false
 	end
 	
@@ -764,7 +864,9 @@ function MoveItem(args)
 			ObjModified(dest_container)
 		end
 		MoveItem_UpdateUnitOutfit(src_container,dest_container, check_only)
-		InventoryUIRespawn() --havn't found any other way to make the ui display the changes
+		if not no_ui_respawn then
+			InventoryUIRespawn() --havn't found any other way to make the ui display the changes
+		end
 		return false
 	end
 		--refill medicine
@@ -800,7 +902,9 @@ function MoveItem(args)
 		if dest_container ~= src_container then
 			ObjModified(dest_container)
 		end
-		InventoryUIRespawn() --havn't found any other way to make the ui display the changes
+		if not no_ui_respawn then
+			InventoryUIRespawn() --havn't found any other way to make the ui display the changes
+		end
 		return false
 	end
 
@@ -889,10 +993,80 @@ function MoveItem(args)
 		src_container:AddItem(src_container_slot_name, item_at_dest_2, swap_src_x + 1, src_y, is_local_changes)
 	end
 	MoveItem_UpdateUnitOutfit(src_container,dest_container, check_only)
-	InventoryUIRespawn() --havn't found any other way to make the ui display the changes
+		if not no_ui_respawn then
+			InventoryUIRespawn() --havn't found any other way to make the ui display the changes
+		end
 
 	return false
 end
+function InventoryDropMoveItemsToSquadHasEmptySpace(dest_squad,items )
+	local dest_containers = {}
+	local squadBag = dest_squad.UniqueId
+	local su = dest_squad.units
+	local spaces = {}
+	local stacks_amount = {}
+	for i, item in ipairs(items) do
+		if IsKindOf(item, "SquadBagItem") then
+			-- placed
+			dest_containers[i] = "squadbag"
+		else
+			local res, space, empty_stacks
+			for _, unitName in ipairs(su) do
+				local dest_container = gv_SatelliteView and gv_UnitData[unitName] or g_Units[unitName]
+				res, space, empty_stacks = dest_container:FindEmptyPositions("Inventory",{item}, spaces[unitName], stacks_amount[unitName])
+				spaces[unitName] = space
+				stacks_amount[unitName] = empty_stacks
+				if res then
+					dest_containers[i] = unitName
+					break
+				end
+			end	
+			if not res then
+				return false
+			end
+		end	
+	end	
+	return true, dest_containers
+end
+
+function InventoryDropMoveItemsToSquad(dest_squad, check_only)
+	local squadBag = dest_squad.UniqueId
+	local items = InventoryDragItems or {InventoryDragItem}
+	local dest_containers
+	
+	local res
+	res,dest_containers = InventoryDropMoveItemsToSquadHasEmptySpace(dest_squad,items)
+	res = not res and "no space"
+	if check_only         then return res end
+	if res ==  "no space" then return     end	
+
+	local itemfail 
+	local su = dest_squad.units
+	local args = {src_container = InventoryStartDragContext, src_slot = InventoryStartDragSlotName,
+						dest_container = squadBag, dest_slot = "Inventory", check_only = check_only, multi_items = true}
+	for i, item in ipairs(items) do
+		args.item = item
+		args.no_ui_respawn = i~=#items	
+		local i_container = dest_containers[i]
+		if i_container=="squadbag" then
+			args.dest_container = squadBag 
+		else
+			local dest_container = gv_SatelliteView and gv_UnitData[i_container] or g_Units[i_container]
+			args.dest_container = dest_container
+		end
+		args.dest_slot = GetContainerInventorySlotName(args.dest_container)
+		local rez,r2 = MoveItem(args)
+		if rez then											
+			itemfail = rez
+			print("failed to transfer to squad", rez)
+		end
+	end	
+	if itemfail then
+		PlayFX("DropItemFail", "start")
+	end	
+	return itemfail
+end
+
 --------------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------------
 function DestroyItemNetEvent(data)

@@ -54,7 +54,6 @@ PlaceObj('WeaponComponentEffect', {
 })
 
 PlaceObj('WeaponComponentEffect', {
-	Comment = "GetBaseAimLevelRange",
 	Description = T(772742771844, --[[WeaponComponentEffect MinAim Description]] "<min_aim> Aim level added automatically to each attack"),
 	Parameters = {
 		PlaceObj('PresetParamNumber', {
@@ -65,6 +64,14 @@ PlaceObj('WeaponComponentEffect', {
 	},
 	group = "Aiming",
 	id = "MinAim",
+	unit_reactions = {
+		PlaceObj('UnitReaction', {
+			Event = "OnCalcMinAimActions",
+			Handler = function (self, target, value, attacker, attack_target, action, weapon)
+				return Max(value, WeaponComponentEffects.MinAim:ResolveValue("min_aim"))
+			end,
+		}),
+	},
 })
 
 PlaceObj('WeaponComponentEffect', {
@@ -307,10 +314,17 @@ PlaceObj('WeaponComponentEffect', {
 	},
 	group = "Other",
 	id = "ExtraOverwatchShots",
+	unit_reactions = {
+		PlaceObj('UnitReaction', {
+			Event = "OnCalcOverwatchAttacks",
+			Handler = function (self, target, value, action, args)
+				return value + WeaponComponentEffects.ExtraOverwatchShots:ResolveValue("extra_attacks")
+			end,
+		}),
+	},
 })
 
 PlaceObj('WeaponComponentEffect', {
-	Comment = "In GetBaseAimLevelRange",
 	Description = T(253317074008, --[[WeaponComponentEffect FirstShotIncreasedAim Description]] "If your first action is a non-Overwatch attack, it counts as being Aimed 3 times"),
 	Parameters = {
 		PlaceObj('PresetParamNumber', {
@@ -321,6 +335,16 @@ PlaceObj('WeaponComponentEffect', {
 	},
 	group = "Other",
 	id = "FirstShotIncreasedAim",
+	unit_reactions = {
+		PlaceObj('UnitReaction', {
+			Event = "OnCalcMinAimActions",
+			Handler = function (self, target, value, attacker, attack_target, action, weapon)
+				if self == weapon and not target.performed_action_this_turn and not IsOverwatchAction(action.id) then
+					return Max(value, WeaponComponentEffects.FirstShotIncreasedAim:ResolveValue("min_aim"))
+				end
+			end,
+		}),
+	},
 })
 
 PlaceObj('WeaponComponentEffect', {

@@ -318,7 +318,7 @@ PlaceObj('MsgDef', {
 
 PlaceObj('MsgDef', {
 	Description = "A team's combat turn has ended.",
-	Params = "teamEnded",
+	Params = "teamEnded, combatEnd",
 	group = "Zulu - Combat",
 	id = "TurnEnded",
 })
@@ -507,14 +507,14 @@ PlaceObj('MsgDef', {
 
 PlaceObj('MsgDef', {
 	Description = "After applying a weapon modification. This message is received by the player doing the modification only.",
-	Params = "weapon, owner, modAdded, mechanic",
+	Params = "weapon, owner, modAdded, mechanic, modSlot, oldComponent",
 	group = "Zulu - Inventory",
 	id = "WeaponModifiedSuccess",
 })
 
 PlaceObj('MsgDef', {
 	Description = "After applying a weapon modification. This message will be received by all players synchroniously.",
-	Params = "weapon, owner, modAdded, mechanic",
+	Params = "weapon, owner, modAdded, mechanic, modSlot, oldComponent",
 	group = "Zulu - Inventory",
 	id = "WeaponModifiedSuccessSync",
 })
@@ -1250,6 +1250,13 @@ PlaceObj('MsgDef', {
 })
 
 PlaceObj('MsgDef', {
+	Params = "current_ap, action, weapon, aim",
+	Target = "UnitBase",
+	group = "Zulu - Unit Reaction",
+	id = "OnCalcAPCost",
+})
+
+PlaceObj('MsgDef', {
 	Description = "When the base damage of a given weapon is calculated for the unit.",
 	Params = "weapon, attack_target, data",
 	Target = "UnitBase",
@@ -1290,6 +1297,22 @@ PlaceObj('MsgDef', {
 })
 
 PlaceObj('MsgDef', {
+	Description = "When money are gained from successfull hacking.",
+	Params = "value",
+	Target = "UnitBase",
+	group = "Zulu - Unit Reaction",
+	id = "OnCalcHackMoneyGained",
+})
+
+PlaceObj('MsgDef', {
+	Description = "When the effects of healing are calculated.",
+	Params = "patient, medic, medkit, data",
+	Target = "UnitBase",
+	group = "Zulu - Unit Reaction",
+	id = "OnCalcHealAmount",
+})
+
+PlaceObj('MsgDef', {
 	Description = "When the maximum amount of aim actions available is calculated.",
 	Params = "value, attacker, attack_target, action, weapon",
 	Target = "UnitBase",
@@ -1322,11 +1345,35 @@ PlaceObj('MsgDef', {
 })
 
 PlaceObj('MsgDef', {
+	Description = "When the number of Overwatch attacks is calculated.",
+	Params = "value, action, args",
+	Target = "UnitBase",
+	group = "Zulu - Unit Reaction",
+	id = "OnCalcOverwatchAttacks",
+})
+
+PlaceObj('MsgDef', {
 	Description = "When the personal morale is calculated for a unit (does not include team morale)",
 	Params = "value",
 	Target = "UnitBase",
 	group = "Zulu - Unit Reaction",
 	id = "OnCalcPersonalMorale",
+})
+
+PlaceObj('MsgDef', {
+	Description = "When the chance to hit for an indivudual shot from the same attack is calculated.",
+	Params = "value, attacker, attack_target, shot_index, num_shots",
+	Target = "UnitBase",
+	group = "Zulu - Unit Reaction",
+	id = "OnCalcShotChanceToHit",
+})
+
+PlaceObj('MsgDef', {
+	Description = "When the chance to convert a miss to a grazing shit for an indivudual shot from the same attack is calculated.",
+	Params = "value, attacker, attack_target, shot_index, num_shots",
+	Target = "UnitBase",
+	group = "Zulu - Unit Reaction",
+	id = "OnCalcShotGrazeThreshold",
 })
 
 PlaceObj('MsgDef', {
@@ -1375,6 +1422,21 @@ PlaceObj('MsgDef', {
 	Target = "UnitBase",
 	group = "Zulu - Unit Reaction",
 	id = "OnCheckForceMinSight",
+})
+
+PlaceObj('MsgDef', {
+	Description = "Check if enemy units are visible due to discovered intel",
+	Target = "UnitBase",
+	group = "Zulu - Unit Reaction",
+	id = "OnCheckIntelVisible",
+})
+
+PlaceObj('MsgDef', {
+	Description = "Check if interrupt attack is available.",
+	Params = "target_unit, action",
+	Target = "UnitBase",
+	group = "Zulu - Unit Reaction",
+	id = "OnCheckInterruptAttackAvailable",
 })
 
 PlaceObj('MsgDef', {
@@ -1450,6 +1512,13 @@ PlaceObj('MsgDef', {
 	Target = "UnitBase",
 	group = "Zulu - Unit Reaction",
 	id = "OnFirearmAttackStart",
+})
+
+PlaceObj('MsgDef', {
+	Description = "When intel is gained from successfull hacking.",
+	Target = "UnitBase",
+	group = "Zulu - Unit Reaction",
+	id = "OnHackIntelDsicovered",
 })
 
 PlaceObj('MsgDef', {

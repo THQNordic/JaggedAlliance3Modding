@@ -341,3 +341,30 @@ function OnMsg.TacCamFloorChanged()
 	end
 	hr.ShadowCSMActiveCascades = cascades
 end
+
+-- as of Nov 2023, the game runs almost perfectly under Apple's Game Porting Toolkit,
+-- with the exception of the heat haze effect, for which we keep getting bug reports
+-- e.g. http://mantis.haemimontgames.com/view.php?id=239277
+-- detect these machines by CPU name and disable heat haze effect
+
+if FirstLoad then
+	engineSetPostProcPredicate = SetPostProcPredicate
+	function IsAppleGamePortingToolkit()
+		local hw_info = GetHardwareInfo("", 0)
+		return hw_info and hw_info.cpuName and hw_info.cpuName:find("VirtualApple")
+	end
+	function appleSetPostProcPredicate(predicate, value)
+		if predicate == "heat_haze" then
+			value = false
+		end
+		return engineSetPostProcPredicate(predicate, value)
+	end
+	SetPostProcPredicate = function(predicate, value)
+		if IsAppleGamePortingToolkit() then
+			SetPostProcPredicate = appleSetPostProcPredicate
+		else
+			SetPostProcPredicate = engineSetPostProcPredicate
+		end
+		return SetPostProcPredicate(predicate, value)
+	end
+end

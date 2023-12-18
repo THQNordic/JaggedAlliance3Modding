@@ -22,5 +22,6 @@ PlaceObj('InventoryItemCompositeDef', {
 	'AppliedEffects', {
 		"Exposed",
 	},
+	'ammo_type_icon', "UI/Icons/Items/ta_tracer.png",
 })
 

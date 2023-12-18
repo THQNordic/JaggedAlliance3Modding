@@ -153,7 +153,10 @@ PlaceObj('XTemplate', {
 				end
 				if prof=="Student" then
 					local teachers = GetOperationProfessionals(sector.Id, "TrainMercs", "Teacher")
-					if next(teachers) and	teachers[1] and teachers[1][stat]<=merc[stat] or merc[stat]>90 then
+					local max_stat = operation:ResolveValue("max_learned_stat")
+					local solo_stat = operation:ResolveValue("SoloTrainingStat")
+					local t_stat = next(teachers) and	teachers[1] and teachers[1][stat] or solo_stat
+					if t_stat<=merc[stat] or merc[stat]>max_stat then
 						--text = T(602903443457, "Too Skilled")
 						local icon = "UI/Icons/too_skilled"
 						node.idAddIcon:SetVisible(true)

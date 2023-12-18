@@ -8,6 +8,8 @@ PlaceObj('XTemplate', {
 		'__class', "SatelliteConflictClass",
 		'ZOrder', 5,
 		'Dock', "box",
+		'MinWidth', 1040,
+		'MaxWidth', 1040,
 		'Background', RGBA(30, 30, 35, 115),
 		'FadeInTime', 200,
 		'FadeOutTime', 200,
@@ -93,6 +95,7 @@ PlaceObj('XTemplate', {
 					'MinHeight', 16,
 					'MaxWidth', 16,
 					'MaxHeight', 16,
+					'Visible', false,
 					'OnPressEffect', "action",
 					'OnPressParam', "actionClosePanel",
 					'Text', "x",
@@ -100,99 +103,107 @@ PlaceObj('XTemplate', {
 				}),
 				}),
 			PlaceObj('XTemplateWindow', {
-				'__class', "XFrame",
-				'IdNode', false,
-				'Margins', box(8, 8, 8, 8),
 				'LayoutMethod', "VList",
-				'Image', "UI/PDA/os_background",
-				'FrameBox', box(8, 8, 8, 8),
 			}, {
 				PlaceObj('XTemplateWindow', {
 					'comment', "conflict descr",
 					'__class', "XContextWindow",
-					'Margins', box(8, 8, 8, 0),
-					'Padding', box(16, 0, 16, 16),
+					'IdNode', true,
+					'Margins', box(8, 0, 8, 0),
+					'Padding', box(16, 0, 16, 0),
+					'MinHeight', 44,
+					'MaxHeight', 44,
 					'ContextUpdateOnOpen', true,
 					'OnContextUpdate', function (self, context, ...)
+						--title
 						local conflictTitle
-						local styleOfT
+						local styleOfT, center, autoresolve
 						if context.autoResolve then
 							conflictTitle = TFormat.AutoResolveOutcomeText(context, context.player_outcome)
-							styleOfT = (context.player_outcome == "decisive_win" or context.player_outcome == "win") and "ConflictVictory" or "ConflictDefeat"
+							--styleOfT = (context.player_outcome == "decisive_win" or context.player_outcome == "win") and "ConflictVictory" or "ConflictDefeat"
+							--	center = true
+							autoresolve = true
 						else
 							conflictTitle = GetConflictCustomTitle(context)
 						end
-						self:ResolveId("idConflictTitle"):SetText(conflictTitle)
-						if styleOfT then self:ResolveId("idConflictTitle"):SetTextStyle(styleOfT) end
+						self.idConflictTitle:SetText(conflictTitle)
+						if center then
+							self.idConflictTitle:SetHAlign("center")
+							self.idConflictTitle:SetVAlign("center")
+						end
+						if styleOfT then 
+							self.idConflictTitle:SetTextStyle(styleOfT) 
+						end
+						
+						--weather
+						if autoresolve then 
+							self.idimgWeather:SetVisible(false)
+							self.idWeather:SetVisible(false)
+							self.idTime:SetVisible(false)
+							--self:SetMinHeight(64)
+						else	
+							local weather = GetCurrentSectorWeather(context.Id)
+							local tod = Game.CampaignTime
+							if context.GroundSector then
+								weather = false
+							end
+							if weather then
+								local weatherPreset = GameStateDefs[weather]
+								self.idimgWeather:SetImage(weatherPreset.Icon)
+								self.idWeather:SetText(weatherPreset:GetDisplayName())
+							end
+						end
 					end,
 				}, {
 					PlaceObj('XTemplateWindow', {
-						'comment', "conf title",
-						'__class', "XText",
-						'Id', "idConflictTitle",
 						'Dock', "top",
-						'HandleKeyboard', false,
-						'HandleMouse', false,
-						'TextStyle', "ConflictName",
-						'Translate', true,
-						'Text', T(956375235737, --[[XTemplate SatelliteConflict Text]] "Conflict Title"),
-					}),
-					PlaceObj('XTemplateWindow', {
-						'__condition', function (parent, context) return not context.autoResolve end,
-						'__class', "XContextWindow",
-						'LayoutMethod', "HList",
 					}, {
 						PlaceObj('XTemplateWindow', {
-							'comment', "notes image",
-							'__class', "XImage",
-							'VAlign', "top",
-							'Image', "UI/PDA/Event/T_Event_TextIcon",
+							'comment', "conf title",
+							'__class', "XText",
+							'Id', "idConflictTitle",
+							'HandleKeyboard', false,
+							'HandleMouse', false,
+							'TextStyle', "ConflictName",
+							'Translate', true,
+							'Text', T(956375235737, --[[XTemplate SatelliteConflict Text]] "Conflict Title"),
 						}),
 						PlaceObj('XTemplateWindow', {
-							'LayoutMethod', "VList",
+							'HAlign', "right",
+							'LayoutMethod', "HList",
+							'FoldWhenHidden', true,
 						}, {
 							PlaceObj('XTemplateWindow', {
-								'comment', "descr",
+								'__class', "XImage",
+								'Id', "idimgWeather",
+								'FoldWhenHidden', true,
+								'ImageScale', point(700, 700),
+							}),
+							PlaceObj('XTemplateWindow', {
 								'__class', "XText",
-								'Margins', box(8, 0, 0, 8),
-								'Padding', box(0, -4, 0, 0),
-								'HAlign', "left",
-								'VAlign', "top",
-								'MaxWidth', 660,
-								'HandleKeyboard', false,
-								'HandleMouse', false,
-								'TextStyle', "ConflictDescription",
+								'Id', "idWeather",
+								'HAlign', "center",
+								'VAlign', "center",
+								'Clip', false,
+								'FoldWhenHidden', true,
+								'TextStyle', "ConflictWeather",
 								'Translate', true,
-								'Text', T(450572883293, --[[XTemplate SatelliteConflict Text]] "<SectorConflictCustomDescr()>"),
+								'HideOnEmpty', true,
+								'TextHAlign', "center",
 								'TextVAlign', "center",
 							}),
 							PlaceObj('XTemplateWindow', {
-								'comment', "warning",
 								'__class', "XText",
-								'Margins', box(8, 0, 0, 8),
-								'Padding', box(0, -4, 0, 0),
-								'HAlign', "left",
-								'VAlign', "top",
-								'MaxWidth', 660,
-								'Visible', false,
+								'Id', "idTime",
+								'HAlign', "center",
+								'VAlign', "center",
+								'Clip', false,
 								'FoldWhenHidden', true,
-								'HandleKeyboard', false,
-								'HandleMouse', false,
-								'TextStyle', "ConflictWarning",
-								'ContextUpdateOnOpen', true,
-								'OnContextUpdate', function (self, context, ...)
-									local woundedCount, tiredCount = GetSatelliteConflictWarnings(context.ally_squads)
-									if woundedCount > 0 then
-										local text = T{139417786956, "Warning! Severely wounded merc(s): <number>", number = woundedCount}
-										self:SetText(text)
-										self:SetVisible(true)
-									elseif tiredCount > 0 then
-										local text = T{355864070748, "Warning! Tired merc(s): <number>", number = tiredCount}
-										self:SetText(text)
-										self:SetVisible(true)
-									end
-								end,
+								'TextStyle', "ConflictTime",
 								'Translate', true,
+								'Text', T(393108795692, --[[XTemplate SatelliteConflict Text]] "<time()>"),
+								'HideOnEmpty', true,
+								'TextHAlign', "center",
 								'TextVAlign', "center",
 							}),
 							}),
@@ -200,15 +211,106 @@ PlaceObj('XTemplate', {
 					}),
 				PlaceObj('XTemplateWindow', {
 					'__class', "XFrame",
-					'Margins', box(18, 0, 18, 0),
+					'Margins', box(18, 0, 18, 8),
 					'Image', "UI/PDA/separate_line_vertical",
 					'FrameBox', box(3, 3, 3, 3),
 					'SqueezeY', false,
 				}),
 				PlaceObj('XTemplateWindow', {
+					'__condition', function (parent, context) return not context.autoResolve end,
+					'__class', "XContextWindow",
+					'Margins', box(18, 10, 0, 8),
+					'MaxHeight', 144,
+					'LayoutMethod', "VList",
+				}, {
+					PlaceObj('XTemplateWindow', {
+						'comment', "descr",
+						'__class', "XText",
+						'Margins', box(8, 0, 0, 8),
+						'Padding', box(0, -4, 0, 0),
+						'HAlign', "left",
+						'VAlign', "top",
+						'MaxWidth', 1020,
+						'HandleKeyboard', false,
+						'HandleMouse', false,
+						'TextStyle', "ConflictDescription",
+						'Translate', true,
+						'Text', T(450572883293, --[[XTemplate SatelliteConflict Text]] "<image UI/PDA/Event/T_Event_TextIcon 1400> <SectorConflictCustomDescr()>"),
+						'Shorten', true,
+						'TextVAlign', "center",
+					}),
+					PlaceObj('XTemplateWindow', {
+						'comment', "warning",
+						'__class', "XText",
+						'Margins', box(8, 0, 0, 8),
+						'Padding', box(0, -4, 0, 0),
+						'HAlign', "left",
+						'VAlign', "top",
+						'MaxWidth', 1020,
+						'Visible', false,
+						'FoldWhenHidden', true,
+						'HandleKeyboard', false,
+						'HandleMouse', false,
+						'TextStyle', "ConflictWarning",
+						'ContextUpdateOnOpen', true,
+						'OnContextUpdate', function (self, context, ...)
+							local woundedCount, tiredCount = GetSatelliteConflictWarnings(context.ally_squads)
+							if woundedCount > 0 then
+								local text = T{139417786956, "Warning! Severely wounded merc(s): <number>", number = woundedCount}
+								self:SetText(text)
+								self:SetVisible(true)
+							elseif tiredCount > 0 then
+								local text = T{355864070748, "Warning! Tired merc(s): <number>", number = tiredCount}
+								self:SetText(text)
+								self:SetVisible(true)
+							end
+						end,
+						'Translate', true,
+						'TextVAlign', "center",
+					}),
+					}),
+				PlaceObj('XTemplateWindow', {
+					'__condition', function (parent, context) return context.autoResolve end,
+					'__class', "XContextWindow",
+					'Margins', box(18, 10, 0, 8),
+					'MaxHeight', 144,
+					'LayoutMethod', "VList",
+					'ContextUpdateOnOpen', true,
+					'OnContextUpdate', function (self, context, ...)
+						local text
+						if context.player_outcome == "decisive_win" or context.player_outcome == "win" then
+							text = ConflictDescriptionDefs.AutoresolveVictory.description
+						else
+							text = ConflictDescriptionDefs.AutoresolveDefeat.description
+						end
+							
+						self[1]:SetText(Untranslated("<image UI/PDA/Event/T_Event_TextIcon 1400> ")..text)
+					end,
+				}, {
+					PlaceObj('XTemplateWindow', {
+						'comment', "descr",
+						'__class', "XText",
+						'Margins', box(8, 0, 0, 8),
+						'Padding', box(0, -4, 0, 0),
+						'HAlign', "left",
+						'VAlign', "top",
+						'MaxWidth', 1020,
+						'HandleKeyboard', false,
+						'HandleMouse', false,
+						'TextStyle', "ConflictDescription",
+						'Translate', true,
+						'Text', T(646696166172, --[[XTemplate SatelliteConflict Text]] "<image UI/PDA/Event/T_Event_TextIcon 1400> <SectorConflictCustomDescr()>"),
+						'Shorten', true,
+						'TextVAlign', "center",
+					}),
+					}),
+				PlaceObj('XTemplateWindow', {
 					'comment', "mid",
-					'Margins', box(8, 8, 8, 8),
-					'Padding', box(8, 4, 8, 8),
+					'__class', "XFrame",
+					'IdNode', false,
+					'Margins', box(10, 0, 10, 0),
+					'Image', "UI/PDA/os_background",
+					'FrameBox', box(8, 8, 8, 8),
 				}, {
 					PlaceObj('XTemplateWindow', {
 						'comment', "teams",
@@ -270,9 +372,17 @@ PlaceObj('XTemplate', {
 									'ContextUpdateOnOpen', true,
 									'OnContextUpdate', function (self, context, ...)
 										local dlg = GetDialog(self)
+										local autoresolve = dlg.context.autoResolve
+										local squads = autoresolve  and dlg.context.allySquads or dlg.context.ally_squads or dlg.context.ally_and_militia_squads
+										local nSquads  = squads and #squads or 0
+										local text = nSquads==1 and T(792634263677, "1 squad") or T{811215070300, "<count> squads", count = nSquads}										
 										if not dlg.context.autoResolve and IsAutoResolveEnabled(dlg.context) and not SatelliteConflictAppliedOnSector(dlg.context) then 
-											self:SetText(T{981974661159, "Predicted outcome: <outcome>", outcome = TFormat.AutoResolveOutcomeText(context, dlg.context.predicted_outcome)})
+											text = T{981974661159, "Predicted outcome: <outcome>", outcome = TFormat.AutoResolveOutcomeText(context, dlg.context.predicted_outcome)}
 										end
+										if autoresolve then
+										 text = SatelliteConflict_SurviveDefeatedText(squads)
+										end
+										self:SetText(text)
 									end,
 									'Translate', true,
 									'HideOnEmpty', true,
@@ -281,8 +391,9 @@ PlaceObj('XTemplate', {
 							PlaceObj('XTemplateWindow', {
 								'comment', "count",
 								'__class', "XText",
-								'Margins', box(0, -10, 20, 0),
+								'Margins', box(0, 0, 20, 0),
 								'Dock', "right",
+								'VAlign', "center",
 								'TextStyle', "ConflictMercsCount",
 								'Translate', true,
 								'Text', T(172135194761, --[[XTemplate SatelliteConflict Text]] "<UnitsCountOnly()>"),
@@ -327,19 +438,31 @@ PlaceObj('XTemplate', {
 									'Id', "idEnemyPower",
 									'Padding', box(0, 0, 0, 0),
 									'HAlign', "right",
-									'Visible', false,
 									'FoldWhenHidden', true,
 									'TextStyle', "ConflictPower",
 									'ContextUpdateOnOpen', true,
 									'OnContextUpdate', function (self, context, ...)
 										local dlg = GetDialog(self)
-										local factionPower = dlg.enemyPower
-										if factionPower == 0 then
-											self:SetText(T{""})
-										else
-											self:SetText(T{934537768478, "Estimated Power: <factionPower>", factionPower = factionPower})
+										local autoresolve = dlg.context.autoResolve
+										local squads  = autoresolve and dlg.context.enemySquads or dlg.context.enemy_squads
+										local nSquads  = squads and #squads or 1
+										local res, add_squads 
+										if not autoresolve then
+											res, add_squads = EnemyWantsToWait(context.Id, "get_squads")
+										end	
+										nSquads = nSquads + (res and #add_squads or 0)			
+										local text = nSquads==1 and T(792634263677, "1 squad") or T{811215070300, "<count> squads", count = nSquads}
+										if gv_Cheats.ShowSquadsPower then
+											local factionPower = dlg.enemyPower
+											if factionPower ~= 0 then												
+												text = text.."\n"..T{934537768478, "Estimated Power: <factionPower>", factionPower = factionPower}
+											end
 										end
-										self:SetVisible(gv_Cheats.ShowSquadsPower)
+										if autoresolve then
+										 text = SatelliteConflict_SurviveDefeatedText(squads, T(587406634660, "Exterminated"))
+										end
+										
+										self:SetText(text)
 									end,
 									'Translate', true,
 									'HideOnEmpty', true,
@@ -348,8 +471,9 @@ PlaceObj('XTemplate', {
 							PlaceObj('XTemplateWindow', {
 								'comment', "count",
 								'__class', "XText",
-								'Margins', box(20, -10, 0, 0),
+								'Margins', box(20, 0, 0, 0),
 								'Dock', "left",
+								'VAlign', "center",
 								'TextStyle', "ConflictEnemyCount",
 								'ContextUpdateOnOpen', true,
 								'OnContextUpdate', function (self, context, ...)
@@ -365,32 +489,102 @@ PlaceObj('XTemplate', {
 						'comment', "squads",
 						'__class', "XFrame",
 						'IdNode', false,
+						'Margins', box(12, 0, 12, 12),
 						'Dock', "bottom",
-						'LayoutMethod', "Grid",
-						'UniformColumnWidth', true,
-						'UniformRowHeight', true,
 						'Image', "UI/PDA/os_background_2",
 						'FrameBox', box(8, 8, 8, 8),
 					}, {
 						PlaceObj('XTemplateTemplate', {
-							'__context', function (parent, context) return context.autoResolve and context.allySquads or GetSquadsInSector(context.Id, "excludeTravelling", "includeMilitia", "excludeArriving", "excludeRetreating") end,
-							'__template', "SatelliteConflictSquadsAndMercs",
-							'Margins', box(0, 0, 8, 0),
+							'__template', "InventoryScrollArea",
+							'Id', "idScrollArea",
+							'IdNode', false,
+							'MaxHeight', 316,
+							'GridStretchX', false,
+							'LayoutMethod', "HList",
+							'UniformRowHeight', true,
+							'VScroll', "idScroll",
+						}, {
+							PlaceObj('XTemplateTemplate', {
+								'__context', function (parent, context)
+									local squads =  context.autoResolve and context.allySquads or GetSquadsInSector(context.Id, "excludeTravelling", "includeMilitia", "excludeArriving", "excludeRetreating") 
+									table.stable_sort(squads, function(a,b) 
+										return (not a.militia and b.militia)
+									end)
+									return squads
+								end,
+								'__template', "SatelliteConflictSquadsAndMercs",
+							}),
+							PlaceObj('XTemplateWindow', {
+								'comment', "line separator",
+								'__class', "XFrame",
+								'Margins', box(0, 30, 0, 30),
+								'DrawOnTop', true,
+								'Image', "UI/PDA/separate_line",
+								'FrameBox', box(3, 3, 3, 3),
+								'SqueezeX', false,
+							}),
+							PlaceObj('XTemplateWindow', {
+								'MinWidth', 498,
+								'MaxWidth', 498,
+								'LayoutMethod', "VList",
+							}, {
+								PlaceObj('XTemplateTemplate', {
+									'comment', "insector",
+									'__context', function (parent, context) return context.autoResolve and context.enemySquads or GetEnemiesInSector(context.Id, "excludeTravelling") end,
+									'__template', "SatelliteConflictSquadsAndEnemies",
+									'GridX', 2,
+								}),
+								PlaceObj('XTemplateTemplate', {
+									'comment', "arriving",
+									'__context', function (parent, context)
+										if context.conflict and context.conflict.waiting then	
+											local dlg = GetDialog(parent)
+											local res, add_squads = EnemyWantsToWait(context.Id, "get_squads")
+											if res then
+												return add_squads
+											end
+										end
+										return false
+									end,
+									'__condition', function (parent, context) return context end,
+									'__template', "SatelliteConflictSquadsAndEnemies",
+									'Padding', box(0, 0, 0, 30),
+									'GridX', 2,
+									'FoldWhenHidden', true,
+									'OnContextUpdate', function (self, context, ...)
+										self.currentSquadIndex = table.find(self.context, self.selected_squad)
+										self[1].idTitle:SetContext(self.selected_squad, true)
+										SquadsAndMercsClass.OnContextUpdate(self, ...)
+										GetDialog(self).idArrivingWarning:SetVisible(true)
+									end,
+								}),
+								}),
+							}),
+						PlaceObj('XTemplateWindow', {
+							'__class', "MessengerScrollbar",
+							'Id', "idScroll",
+							'Margins', box(16, 0, 0, 0),
+							'Dock', "right",
+							'HAlign', "right",
+							'ScaleModifier', point(750, 750),
+							'Target', "idScrollArea",
+							'SnapToItems', true,
+							'AutoHide', true,
 						}),
 						PlaceObj('XTemplateWindow', {
-							'comment', "line separator",
-							'__class', "XFrame",
-							'Margins', box(0, 2, 0, 2),
-							'DrawOnTop', true,
-							'Image', "UI/PDA/separate_line",
-							'FrameBox', box(3, 3, 3, 3),
-							'SqueezeX', false,
-						}),
-						PlaceObj('XTemplateTemplate', {
-							'__context', function (parent, context) return context.autoResolve and context.enemySquads or GetEnemiesInSector(context.Id, "excludeTravelling") end,
-							'__template', "SatelliteConflictSquadsAndEnemies",
-							'Margins', box(8, 0, 0, 0),
-							'GridX', 2,
+							'comment', "arrival warning",
+							'__condition', function (parent, context) local dlg = GetDialog(parent) return context.conflict and context.conflict.waiting and not  context.conflict.player_attacking end,
+							'__class', "XText",
+							'Id', "idArrivingWarning",
+							'Dock', "box",
+							'HAlign', "center",
+							'VAlign', "bottom",
+							'Visible', false,
+							'FoldWhenHidden', true,
+							'TextStyle', "ConflictArrivingSquadWarning",
+							'Translate', true,
+							'Text', T(651222527122, --[[XTemplate SatelliteConflict Text]] "More squads are en route, the conflict will start when they arrive"),
+							'HideOnEmpty', true,
 						}),
 						}),
 					}),
@@ -399,21 +593,13 @@ PlaceObj('XTemplate', {
 				'__context', function (parent, context) return context.autoResolve and IsOutcomeWin(context.player_outcome) and context.loot end,
 				'__condition', function (parent, context) return context end,
 				'__class', "XContentTemplate",
-				'Margins', box(8, 0, 8, 8),
 			}, {
-				PlaceObj('XTemplateWindow', {
-					'__class', "XFrame",
-					'IdNode', false,
-					'Dock', "box",
-					'Image', "UI/PDA/os_background",
-					'FrameBox', box(8, 8, 8, 8),
-				}),
 				PlaceObj('XTemplateWindow', {
 					'comment', "loot",
 					'__class', "XInventoryItemEmbed",
-					'Padding', box(10, 10, 10, 10),
+					'Margins', box(10, 20, 10, 0),
 					'HAlign', "center",
-					'MaxWidth', 1000,
+					'MaxWidth', 1040,
 					'LayoutMethod', "HWrap",
 					'LayoutHSpacing', 10,
 					'LayoutVSpacing', 10,
@@ -432,7 +618,9 @@ PlaceObj('XTemplate', {
 					}),
 				}),
 			PlaceObj('XTemplateWindow', {
-				'Margins', box(8, 0, 8, 8),
+				'Margins', box(22, 0, 22, 0),
+				'VAlign', "center",
+				'MinHeight', 62,
 				'LayoutMethod', "HList",
 			}, {
 				PlaceObj('XTemplateWindow', {
@@ -440,6 +628,7 @@ PlaceObj('XTemplate', {
 					'__class', "XToolBarList",
 					'Id', "idToolbar",
 					'Dock', "left",
+					'VAlign', "center",
 					'LayoutHSpacing', 16,
 					'Background', RGBA(255, 255, 255, 0),
 					'Toolbar', "ActionBarLeft",
@@ -521,6 +710,7 @@ PlaceObj('XTemplate', {
 					'__class', "XToolBarList",
 					'Id', "idToolbar2",
 					'Dock', "right",
+					'VAlign', "center",
 					'LayoutHSpacing', 16,
 					'Background', RGBA(255, 255, 255, 0),
 					'Toolbar', "ActionBar",
@@ -680,6 +870,7 @@ PlaceObj('XTemplate', {
 					'__class', "XContextWindow",
 					'Margins', box(48, 0, 10, 0),
 					'Dock', "right",
+					'VAlign', "center",
 					'LayoutMethod', "HList",
 					'ContextUpdateOnOpen', true,
 					'OnContextUpdate', function (self, context, ...)

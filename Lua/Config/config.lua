@@ -60,6 +60,9 @@ config.ClipCursor = 2
 config.XInput = 1
 config.XInputRefreshTime = 30
 
+hr.PreciseSelectionWidth = 9
+hr.EnablePreciseSelection = 1
+
 config.LightModelUnusedFeatures = {
 	["water foam"] = true,
 	["water waves"] = true,
@@ -75,7 +78,9 @@ else
 	config.BonesMemory      = 6   * 1024 * 1024 -- in Bytes
 end
 config.MemorySavegameSize = 96*1024*1024
-config.MemoryScreenshotSize = 16*1024*1024
+if Platform.ps4 then
+	config.MemoryScreenshotSize = 16*1024*1024
+end
 
 config.GedLanguageEnglish = Platform.desktop -- don't mount/load English translation table on non-desktop platforms
 
@@ -159,7 +164,6 @@ config.SmoothBrushInfluenceMax = 100
 const.SelectionEnumRadius = 2000
 
 hr.ShowSurfacesRange = 1000
-hr.PreciseSelectionWidth = 9
 
 config.EnableVoiceChat = true
 
@@ -374,8 +378,6 @@ config.PhotoMode_DisablePhotoFilter = true
 config.PhotoMode_DisableBloomStrength = true
 config.PhotoMode_SlidersDpadOnly = false
 config.PhotoMode_FreeCameraPositionChange = false
-
-hr.EnablePreciseSelection = 1
 
 if Platform.ps4 then
 	config.AutorunLoadingScreenProgressDuration = 70 * 1000

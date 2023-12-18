@@ -17,6 +17,7 @@ PlaceObj('UnitDataCompositeDef', {
 	'Portrait', "UI/EnemiesPortraits/AdonisStormer",
 	'Name', T(694706196890, --[[UnitDataCompositeDef AdonisStormer_Elite Name]] "Shock Assault Elite"),
 	'Randomization', true,
+	'elite', true,
 	'eliteCategory', "Foreigners",
 	'Affiliation', "Adonis",
 	'StartingLevel', 7,

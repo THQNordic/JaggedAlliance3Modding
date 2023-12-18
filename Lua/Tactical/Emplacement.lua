@@ -1,5 +1,8 @@
 DefineClass.MachineGunEmplacement = {
-	__parents = { "Interactable", "Object", "GameDynamicDataObject", "EditorObject", "VoxelSnappingObj", "StripComponentAttachProperties", },	
+	__parents = { "Interactable", "Object", "GameDynamicDataObject", "EditorObject", "VoxelSnappingObj", "StripComponentAttachProperties", "EntityChangeKeepsFlags" },	
+	entity = "WayPoint",
+	variable_entity	= true,
+	flags = { efCollision = true, efApplyToGrids = false, efWalkable = false },
 	properties = {
 		{ category = "Emplacement", id = "weapon_template", name = "Weapon Template", editor = "preset_id", default = "BrowningM2HMG", 
 			preset_class = "InventoryItemCompositeDef", preset_filter = function (preset, obj) return preset.object_class == "MachineGun" end, },
@@ -20,8 +23,6 @@ DefineClass.MachineGunEmplacement = {
 		{ category = "Usage", id = "personnel_search_dist", name = "Personnel Search Distance", editor = "number", scale = "m", default = 10*guim, min = 0, no_edit = function(self) return not self.exploration_manned end, help = "Units closer than this distance can be assigned to this Emplacement." },
 		{ category = "Usage", id = "start_combat_appeal", name = "Start Combat Appeal", editor = "number", default = 1000, no_edit = function(self) return not self.exploration_manned end, help = "Initial Appeal score in combat if the Emplacement is already manned." },
 	},
-	entity = "WayPoint",
-	
 	area_visual = false,
 	interaction_visuals = false,
 	manned_by = false,
@@ -32,19 +33,24 @@ DefineClass.MachineGunEmplacement = {
 	exploration_update_thread = false,
 }
 
+function MachineGunEmplacement:Init()
+	-- efCollision is cleared by __PlaceObject(), because the entity has no surfaces
+	self:SetEnumFlags(const.efCollision)
+end
+
 function MachineGunEmplacement:GameInit()
 	if IsEditorActive() then
 		self:EditorEnter()
 	else
 		self:EditorExit()
 	end
-	self.exploration_update_thread = CreateGameTimeThread(function()
+	self.exploration_update_thread = CreateGameTimeThread(function(self)
 		while IsValid(self) do
 			self:ExplorationUpdateTick()
 			Sleep(1000)
 		end
 		self.exploration_update_thread = nil
-	end)
+	end, self)
 end
 
 function MachineGunEmplacement:Done()
@@ -404,19 +410,26 @@ function OnMsg.CombatStarting()
 end
 
 function MachineGunEmplacement:ExplorationUpdateTick()
-	if IsValid(self.exploration_personnel_chosen) then
-		if self.exploration_personnel_chosen.command == "InteractWith" then return end
+	if self.exploration_personnel_chosen then
+		if self.exploration_personnel_chosen.command == "InteractWith" then
+			return
+		end
 		self.exploration_personnel_chosen = false
 	end
-	if not self.exploration_manned or IsValid(self.manned_by) then return end
-	
+	if g_Combat or not self.exploration_manned or IsValid(self.manned_by) then
+		return
+	end
 	-- look for eligible (enemy) units in the given radius
-	local gunner, mindist
-	for _, unit in ipairs(g_Units) do
-		if unit.team and unit.team.player_enemy then
-			local dist = self:GetDist(unit)
-			if dist <= self.personnel_search_dist and (not gunner or dist < mindist) then
-				gunner, mindist = unit, dist
+	local gunner 
+	local mindist = self.personnel_search_dist + 1
+	for _, team in ipairs(g_Teams) do
+		if team.player_enemy then
+			for _, unit in ipairs(team.units) do
+				if IsCloser(self, unit, gunner or mindist) then
+					if not unit:IsIncapacitated() and not unit:HasStatusEffect("Unconscious") then
+						gunner = unit
+					end
+				end
 			end
 		end
 	end

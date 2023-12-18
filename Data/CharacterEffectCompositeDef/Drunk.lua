@@ -26,6 +26,16 @@ PlaceObj('CharacterEffectCompositeDef', {
 				end
 			end,
 		}),
+		PlaceObj('UnitReaction', {
+			Event = "OnCalcDamageAndEffects",
+			Handler = function (self, target, attacker, attack_target, action, weapon, attack_args, hit, data)
+				if target == attacker and action and action.ActionType == "Melee Attack" then
+					local bonus = self:ResolveValue("melee_damage_mod")
+					data.base_damage = MulDivRound(data.base_damage, 100 + bonus, 100)
+					data.breakdown[#data.breakdown + 1] = { name = self.DisplayName, value = bonus }
+				end
+			end,
+		}),
 	},
 	'DisplayName', T(356009705485, --[[CharacterEffectCompositeDef Drunk DisplayName]] "Inebriated"),
 	'Description', T(948415774949, --[[CharacterEffectCompositeDef Drunk Description]] "Increased <em>Damage</em> with <em>Melee Attacks</em>\n\nLower <em>Accuracy</em> with <em>Ranged Attacks</em>\n"),

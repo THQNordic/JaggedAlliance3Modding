@@ -585,7 +585,7 @@ PlaceObj('Achievement', {
 					local kills = {}
 					for _, shot in ipairs(results.shots) do
 						for _, hit in ipairs(shot.hits) do
-							if hit.obj and attacker:IsOnEnemySide(hit.obj) and hit.spot_group == "Head" and table.find(results.killed_units or {}, hit.obj) then
+							if hit.obj and attacker:IsOnEnemySide(hit.obj) and hit.spot_group == "Head" and table.find(results.killed_units, hit.obj) then
 								table.insert_unique(kills, hit.obj.session_id)
 							end
 						end
@@ -1126,7 +1126,7 @@ PlaceObj('Achievement', {
 		PlaceObj('MsgReaction', {
 			Event = "SectorSideChanged",
 			Handler = function (self, sectorId, oldSide, newSide)
-				if GetAchievementFlags(self.id) then return end
+				if GetAchievementFlags(self.id) or not gv_Quests["PantagruelRebels"] then return end
 				
 				-- "Take over Maquis mine by force"
 				if sectorId == "C7_Underground" and IsPlayerSide(newSide) then

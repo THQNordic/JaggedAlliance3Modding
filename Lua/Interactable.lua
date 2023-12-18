@@ -52,6 +52,8 @@ DefineClass.Interactable = {
 
 	interact_positions = false,
 	being_interacted_with = false,
+	
+	default_enabled_param = false
 }
 
 function Interactable:Init()
@@ -95,6 +97,8 @@ function Interactable:GameInit()
 			end
 		end, self)
 	end
+	
+	self.default_enabled_param = self.enabled
 end
 
 if FirstLoad then
@@ -799,7 +803,7 @@ function OnMsg.EnterSector(_, __, lua_revision_loaded)
 	local count = 0
 	local interactables = MapGet("map", "Interactable")
 	for i, int in ipairs(interactables) do
-		if not int.enabled and not int:HasDisableEffect() then
+		if int.default_enabled_param and not int.enabled and not int:HasDisableEffect() then
 			int.enabled = true
 			count = count + 1
 		end

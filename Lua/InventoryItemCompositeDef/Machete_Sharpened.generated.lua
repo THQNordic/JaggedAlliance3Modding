@@ -2,11 +2,11 @@
 
 UndefineClass('Machete_Sharpened')
 DefineClass.Machete_Sharpened = {
-	__parents = { "TransmutedMachete" },
+	__parents = { "MacheteWeapon" },
 	__generated_by_class = "InventoryItemCompositeDef",
 
 
-	object_class = "TransmutedMachete",
+	object_class = "MacheteWeapon",
 	ScrapParts = 2,
 	Reliability = 50,
 	Icon = "UI/Icons/Weapons/Machete",

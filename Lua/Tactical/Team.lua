@@ -178,6 +178,12 @@ function EnsureCurrentSquad()
 end
 
 function UpdateSquad()
+	-- Check if the current squad is valid for tactical view
+	local squads, team = GetSquadsOnMap()
+	if squads and g_CurrentSquad and table.find(squads, g_CurrentSquad) then
+		return
+	end
+
 	-- Set g_CurrentSquad to be the squad with the most units selected.
 	local unitsPerSquad = {}
 	for i, u in ipairs(Selection) do

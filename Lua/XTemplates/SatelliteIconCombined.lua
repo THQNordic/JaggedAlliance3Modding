@@ -17,7 +17,9 @@ PlaceObj('XTemplate', {
 			self.idUpperIcon:SetImage(up)
 			
 			if context.squad and context.side == "player1" or context.side == "player2" then
-				self.idUpperIcon:SetMargins(box(0,  4, 0, 0))
+				if context.map then
+					self.idUpperIcon:SetMargins(box(0,  4, 0, 0))
+				end
 				self.idUpperIcon:SetScaleModifier(point(800, 800))
 				self.idUpperIcon:SetHAlign("center")
 				self.idUpperIcon:SetVAlign("top")

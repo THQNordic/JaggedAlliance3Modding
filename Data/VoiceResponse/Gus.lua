@@ -296,7 +296,7 @@ PlaceObj('VoiceResponse', {
 		T(447367562231, --[[VoiceResponse Gus SelectionStealth VoiceResponse SelectionStealth - when selected or autoselected voice:Gus]] "This sneakin' around is for the birds.")
 	}),
 	SeriouslyWounded = TConcat({
-		T(713987495728, --[[VoiceResponse Gus SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds) voice:Gus]] "Much more of this and I'm down for the count, Woody.")
+		T(713987495728, --[[VoiceResponse Gus SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining. voice:Gus]] "Much more of this and I'm down for the count, Woody.")
 	}),
 	SpecialThrowGrenade = TConcat({
 		T(771794271680, --[[VoiceResponse Gus SpecialThrowGrenade VoiceResponse SpecialThrowGrenade - When throwing grenade voice:Gus]] "Going to make something special happen, Woodstock.")
@@ -364,9 +364,9 @@ PlaceObj('VoiceResponse', {
 		T(438909647727, --[[VoiceResponse Gus WeaponJammed VoiceResponse WeaponJammed - When weapon has jammed voice:Gus]] "My dang gun's jammed! Gimme a minute.")
 	}),
 	Wounded = TConcat({
-		T(568784953773, --[[VoiceResponse Gus Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Gus]] "Dang! Took a hit."),
-		T(222049554703, --[[VoiceResponse Gus Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Gus]] "Taking fire, Woody."),
-		T(643939399531, --[[VoiceResponse Gus Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Gus]] "*grunt* That's gonna leave a mark.")
+		T(568784953773, --[[VoiceResponse Gus Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Gus]] "Dang! Took a hit."),
+		T(222049554703, --[[VoiceResponse Gus Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Gus]] "Taking fire, Woody."),
+		T(643939399531, --[[VoiceResponse Gus Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Gus]] "*grunt* That's gonna leave a mark.")
 	}),
 	group = "MercenariesOld",
 	id = "Gus",

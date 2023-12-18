@@ -37,6 +37,13 @@ PlaceObj('SectorTerrain', {
 })
 
 PlaceObj('SectorTerrain', {
+	Comment = "Display name used only",
+	DisplayName = T(219568426251, --[[SectorTerrain Shortcut_UBahn DisplayName]] "U-Bahn <em>(Shortcut)</em>"),
+	group = "Default",
+	id = "Shortcut_UBahn",
+})
+
+PlaceObj('SectorTerrain', {
 	DisplayName = T(208092682257, --[[SectorTerrain Swamp DisplayName]] "Swamp"),
 	TravelMod = 150,
 	id = "Swamp",

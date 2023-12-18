@@ -2220,13 +2220,13 @@ end
 function OpenIMPPage()
 	local pda = GetDialog("PDADialog")
 	if not pda then
-		pda = OpenDialog("PDADialog", GetInGameInterface(), { Mode = "browser"})
+		pda = OpenDialog("PDADialog", GetInGameInterface(), { Mode = "browser", mode_param = { browser_page = "imp" }})
 	end
 
 	if pda.Mode ~= "browser" then
-		pda:SetMode("browser")
+		pda:SetMode("browser", { browser_page = "imp" })
 	end
-	local dlg =  pda.idContent
+	local dlg = pda.idContent
 	if dlg and dlg.Mode ~= "imp" then
 		dlg:SetMode("imp")
 	end
@@ -2235,22 +2235,20 @@ end
 function IsBobbyRayOpen(mode)
 	local pda = GetDialog("PDADialog")
 	if not pda or pda.Mode ~= "browser" or not pda.idContent or not pda.idContent.Mode == "bobby_ray_shop" then return false end
-	
 	if not mode then return true end
-	
 	return pda.idContent.mode_param == mode
 end
 
 function OpenBobbyRayPage()
 	local pda = GetDialog("PDADialog")
 	if not pda then
-		pda = OpenDialog("PDADialog", GetInGameInterface(), { Mode = "browser"})
+		pda = OpenDialog("PDADialog", GetInGameInterface(), { Mode = "browser", mode_param = { browser_page = "bobby_ray_shop" }})
 	end
 
 	if pda.Mode ~= "browser" then
-		pda:SetMode("browser")
+		pda:SetMode("browser", { browser_page = "bobby_ray_shop" })
 	end
-	local dlg =  pda.idContent
+	local dlg = pda.idContent
 	if dlg then dlg:SetMode("bobby_ray_shop", "front") end
 end
 

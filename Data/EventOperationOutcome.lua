@@ -14,7 +14,8 @@ PlaceObj('EventOperationOutcome', {
 	Desending = true,
 	Effect = function (self,operation_id,sector, mercs)
 		for _, unit in ipairs(mercs) do
-			unit:AddWounds(self:ResolveValue("Wounds"))
+			unit.Experience = unit.Experience +self:ResolveValue("XP")
+			unit:AddWounds(self:ResolveValue("Wounds"))	
 			unit.HitPoints = Max(1, MulDivRound(unit.HitPoints, (100-self:ResolveValue("health_decrease")), 100 ))
 		end
 	end,
@@ -28,6 +29,11 @@ PlaceObj('EventOperationOutcome', {
 			'Name', "wounds",
 			'Value', 1,
 			'Tag', "<wounds>",
+		}),
+		PlaceObj('PresetParamNumber', {
+			'Name', "XP",
+			'Value', 100,
+			'Tag', "<XP>",
 		}),
 	},
 	PopupId = "EnemyScuffle",
@@ -89,6 +95,7 @@ PlaceObj('EventOperationOutcome', {
 		local unit = table.interaction_rand(mercs, "EventOutcome")
 		if not unit then return end
 		
+		unit.Experience = unit.Experience +self:ResolveValue("XP")
 		unit:AddWounds(self:ResolveValue("wounds"))
 		unit.HitPoints = Max(1, MulDivRound(unit.HitPoints, (100-self:ResolveValue("health_decrease")), 100 ))
 	end,
@@ -102,6 +109,11 @@ PlaceObj('EventOperationOutcome', {
 			'Name', "wounds",
 			'Value', 2,
 			'Tag', "<wounds>",
+		}),
+		PlaceObj('PresetParamNumber', {
+			'Name', "XP",
+			'Value', 150,
+			'Tag', "<XP>",
 		}),
 	},
 	PopupId = "WildAnimals",

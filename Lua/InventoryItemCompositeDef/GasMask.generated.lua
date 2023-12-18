@@ -2,11 +2,11 @@
 
 UndefineClass('GasMask')
 DefineClass.GasMask = {
-	__parents = { "Armor" },
+	__parents = { "GasMaskBase" },
 	__generated_by_class = "InventoryItemCompositeDef",
 
 
-	object_class = "Armor",
+	object_class = "GasMaskBase",
 	ScrapParts = 2,
 	Degradation = 12,
 	Icon = "UI/Icons/Items/gas_mask",

@@ -350,7 +350,6 @@ end
 
 function AmbientLifeMarker:GetVisitable()
 	local visitable, idx = table.find_value(g_Visitables, 1, self)
-	assert(visitable, string.format("Marker[%d] is missing its visitable!", self.handle))
 
 	return visitable, idx
 end
@@ -361,11 +360,13 @@ end
 
 function AmbientLifeMarker:EditorCallbackDelete()
 	local visitable, idx = self:GetVisitable()
-	table.remove(g_Visitables, idx)
-	if visitable.reserved then
-		local unit = HandleToObject[visitable.reserved]
-		if IsValid(unit) and not unit:IsDead() then
-			unit:SetCommand(false)
+	if visitable then
+		table.remove(g_Visitables, idx)
+		if visitable.reserved then
+			local unit = HandleToObject[visitable.reserved]
+			if IsValid(unit) and not unit:IsDead() then
+				unit:SetCommand(false)
+			end
 		end
 	end
 end
@@ -537,8 +538,9 @@ function AmbientLifeMarker:GotoEnterSpot(unit, dest)
 	end
 	if unit.teleport_allowed_once then
 		unit.teleport_allowed_once = false
-		unit:SetPos(RotateRadius(distance, self:GetAngle(), dest))
-		unit:SetAngle(self:GetAngle())
+		local angle = self:GetAngle()
+		unit:SetPos(RotateRadius(distance, angle, dest, true))
+		unit:SetAngle(angle)
 		self:SpawnTool(unit)
 	else
 		local remove_pfflags = unit:GetPathFlags(const.pfmVoxelAligned | const.pfmDestlock | const.pfmDestlockSmart)
@@ -1524,13 +1526,12 @@ function AmbientZoneMarker:GetUnitForMarker(marker)
 	local units = {}
 	for _, def_units in ipairs(self.units) do
 		for _, unit in ipairs(def_units) do
-			local not_defeated = not unit:IsDead() and (IsKindOf(unit, "AmbientLifeAnimal") or not unit:IsDefeatedVillain())
+			local not_defeated = IsValid(unit) and not unit:IsDead() and (IsKindOf(unit, "AmbientLifeAnimal") or not unit:IsDefeatedVillain())
 			if not_defeated and not unit.perpetual_marker and marker:CanVisit(unit, "for perpetual") then
 				table.insert(units, unit)
 			end
 		end
 	end
-	
 	return (#units > 0) and units[1 + self:Random(#units)]
 end
 

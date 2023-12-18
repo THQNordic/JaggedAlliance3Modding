@@ -205,7 +205,6 @@ PlaceObj('CombatTask', {
 PlaceObj('CombatTask', {
 	description = T(927408184696, --[[CombatTask GroinKiller description]] "The team must kill <requiredProgress> enemies with attacks in the groin."),
 	group = "Default",
-	holdUntilEnd = true,
 	id = "GroinKiller",
 	msg_reactions = {
 		PlaceObj('MsgReaction', {
@@ -484,8 +483,8 @@ PlaceObj('CombatTask', {
 		}),
 		PlaceObj('MsgReaction', {
 			Event = "TurnEnded",
-			Handler = function (self, teamEnded)
-				if g_Teams[teamEnded].player_team then
+			Handler = function (self, teamEnded, combatEnd)
+				if g_Teams[teamEnded].player_team and not combatEnd then
 					local task = FindActiveCombatTask(self.id)
 					if task then task:Update(-task.currentProgress) end
 				end

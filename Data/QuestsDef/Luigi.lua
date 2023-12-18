@@ -65,34 +65,22 @@ PlaceObj('QuestsDef', {
 				PlaceObj('QuestIsVariableBool', {
 					Condition = "or",
 					QuestId = "Luigi",
-					Vars = set( "LuigiSaved", "MentionFavor" ),
+					Vars = set( "Completed", "LuigiSaved", "MentionFavor" ),
 					__eval = function ()
 						local quest = gv_Quests['Luigi'] or QuestGetState('Luigi')
-						return quest.LuigiSaved or quest.MentionFavor
+						return quest.Completed or quest.LuigiSaved or quest.MentionFavor
 					end,
 				}),
 			},
 			HideConditions = {
-				PlaceObj('CheckOR', {
-					Conditions = {
-						PlaceObj('QuestIsVariableBool', {
-							QuestId = "Luigi",
-							Vars = set( "LuigiSaved" ),
-							__eval = function ()
-								local quest = gv_Quests['Luigi'] or QuestGetState('Luigi')
-								return quest.LuigiSaved
-							end,
-						}),
-						PlaceObj('QuestIsVariableBool', {
-							Condition = "or",
-							QuestId = "Smiley",
-							Vars = set( "BossDead", "LaBouePartDone" ),
-							__eval = function ()
-								local quest = gv_Quests['Smiley'] or QuestGetState('Smiley')
-								return quest.BossDead or quest.LaBouePartDone
-							end,
-						}),
-					},
+				PlaceObj('QuestIsVariableBool', {
+					Condition = "or",
+					QuestId = "Smiley",
+					Vars = set( "BossDead", "LaBouePartDone" ),
+					__eval = function ()
+						local quest = gv_Quests['Smiley'] or QuestGetState('Smiley')
+						return quest.BossDead or quest.LaBouePartDone
+					end,
 				}),
 			},
 			Idx = 30,
@@ -242,10 +230,10 @@ PlaceObj('QuestsDef', {
 				PlaceObj('QuestIsVariableBool', {
 					Condition = "or",
 					QuestId = "Luigi",
-					Vars = set( "LuigiDead" ),
+					Vars = set( "Failed", "LuigiDead" ),
 					__eval = function ()
 						local quest = gv_Quests['Luigi'] or QuestGetState('Luigi')
-						return quest.LuigiDead
+						return quest.Failed or quest.LuigiDead
 					end,
 				}),
 			},
@@ -337,8 +325,14 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('CheckIsPersistentUnitDead', {
-					per_ses_id = "NPC_FleatownBoss",
+				PlaceObj('QuestIsVariableBool', {
+					Condition = "or",
+					QuestId = "Luigi",
+					Vars = set( "Failed" ),
+					__eval = function ()
+						local quest = gv_Quests['Luigi'] or QuestGetState('Luigi')
+						return quest.Failed
+					end,
 				}),
 			},
 			Idx = 32,
@@ -541,22 +535,23 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			HideConditions = {
-				PlaceObj('CheckOR', {
+				PlaceObj('OR', {
 					Conditions = {
 						PlaceObj('QuestIsVariableBool', {
-							QuestId = "Smiley",
-							Vars = set( "BossDead" ),
+							Condition = "or",
+							QuestId = "Luigi",
+							Vars = set( "BlaubertRewardGiven", "Failed" ),
 							__eval = function ()
-								local quest = gv_Quests['Smiley'] or QuestGetState('Smiley')
-								return quest.BossDead
+								local quest = gv_Quests['Luigi'] or QuestGetState('Luigi')
+								return quest.BlaubertRewardGiven or quest.Failed
 							end,
 						}),
 						PlaceObj('QuestIsVariableBool', {
-							QuestId = "Luigi",
-							Vars = set( "BlaubertRewardGiven" ),
+							QuestId = "_GroupsAttacked",
+							Vars = set( "Mollie_Killed" ),
 							__eval = function ()
-								local quest = gv_Quests['Luigi'] or QuestGetState('Luigi')
-								return quest.BlaubertRewardGiven
+								local quest = gv_Quests['_GroupsAttacked'] or QuestGetState('_GroupsAttacked')
+								return quest.Mollie_Killed
 							end,
 						}),
 					},
@@ -1207,7 +1202,7 @@ PlaceObj('QuestsDef', {
 							TargetUnit = "FleatownBoss",
 						}),
 						PlaceObj('GroupSetSide', {
-							Side = "enemy1",
+							Side = "enemy2",
 							TargetUnit = "LuigiAndJailbirds",
 						}),
 						PlaceObj('GroupAlert', {
@@ -1377,11 +1372,12 @@ PlaceObj('QuestsDef', {
 						PlaceObj('CheckAND', {
 							Conditions = {
 								PlaceObj('QuestIsVariableBool', {
+									Condition = "or",
 									QuestId = "Luigi",
-									Vars = set( "SupportBlaubert" ),
+									Vars = set( "SupportBlaubert", "SupportNoOne" ),
 									__eval = function ()
 										local quest = gv_Quests['Luigi'] or QuestGetState('Luigi')
-										return quest.SupportBlaubert
+										return quest.SupportBlaubert or quest.SupportNoOne
 									end,
 								}),
 								PlaceObj('QuestIsVariableBool', {
@@ -1395,24 +1391,21 @@ PlaceObj('QuestsDef', {
 							},
 						}),
 						PlaceObj('QuestIsVariableBool', {
-							QuestId = "Luigi",
-							Vars = set( "SupportNoOne" ),
+							QuestId = "_GroupsAttacked",
+							Vars = set( "Mollie_Killed" ),
 							__eval = function ()
-								local quest = gv_Quests['Luigi'] or QuestGetState('Luigi')
-								return quest.SupportNoOne
+								local quest = gv_Quests['_GroupsAttacked'] or QuestGetState('_GroupsAttacked')
+								return quest.Mollie_Killed
 							end,
 						}),
 						PlaceObj('CheckAND', {
 							Conditions = {
 								PlaceObj('QuestIsVariableBool', {
 									QuestId = "Luigi",
-									Vars = set({
-	Completed = false,
-	LuigiDead = true,
-}),
+									Vars = set( "LuigiDead" ),
 									__eval = function ()
 										local quest = gv_Quests['Luigi'] or QuestGetState('Luigi')
-										return not quest.Completed and quest.LuigiDead
+										return quest.LuigiDead
 									end,
 								}),
 								PlaceObj('QuestIsVariableBool', {
@@ -1441,9 +1434,25 @@ PlaceObj('QuestsDef', {
 					disable_sticky = true,
 					sector_id = "I9",
 				}),
-				PlaceObj('QuestSetVariableBool', {
-					Prop = "Failed",
-					QuestId = "Luigi",
+				PlaceObj('ConditionalEffect', {
+					'Conditions', {
+						PlaceObj('QuestIsVariableBool', {
+							QuestId = "Luigi",
+							Vars = set({
+	Completed = false,
+}),
+							__eval = function ()
+								local quest = gv_Quests['Luigi'] or QuestGetState('Luigi')
+								return not quest.Completed
+							end,
+						}),
+					},
+					'Effects', {
+						PlaceObj('QuestSetVariableBool', {
+							Prop = "Failed",
+							QuestId = "Luigi",
+						}),
+					},
 				}),
 				PlaceObj('QuestSetVariableBool', {
 					Prop = "BattlePositions",

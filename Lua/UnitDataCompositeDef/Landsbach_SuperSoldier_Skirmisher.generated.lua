@@ -20,9 +20,7 @@ DefineClass.Landsbach_SuperSoldier_Skirmisher = {
 	Portrait = "UI/EnemiesPortraits/ArmyRecon",
 	Name = T(864753506665, --[[UnitDataCompositeDef Landsbach_SuperSoldier_Skirmisher Name]] "Siegfried's Guard"),
 	Randomization = true,
-	elite = true,
-	eliteCategory = "Foreigners",
-	Affiliation = "Other",
+	Affiliation = "SuperSoldiers",
 	StartingLevel = 5,
 	neutral_retaliate = true,
 	AIKeywords = {
@@ -55,6 +53,6 @@ DefineClass.Landsbach_SuperSoldier_Skirmisher = {
 	Tier = "Veteran",
 	pollyvoice = "Joey",
 	gender = "Male",
-	VoiceResponseId = "AdonisAssault",
+	VoiceResponseId = "SuperSoldier_Assault",
 }
 

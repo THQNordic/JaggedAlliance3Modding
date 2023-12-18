@@ -148,12 +148,36 @@ PlaceObj('XTemplate', {
 						}),
 					PlaceObj('XTemplateWindow', {
 						'comment', "savegame",
+						'LayoutMethod', "VList",
 						'FoldWhenHidden', true,
 					}, {
 						PlaceObj('XTemplateWindow', {
 							'__class', "XCheckButton",
 							'Id', "idSaveGame",
-							'Dock', "left",
+							'FoldWhenHidden', true,
+							'Icon', "UI/Hud/checkmark_vertical",
+							'IconScale', point(1000, 1000),
+							'IconColor', RGBA(255, 255, 255, 255),
+							'TextStyle', "BugReporterAttachSave",
+							'Translate', true,
+						}),
+						PlaceObj('XTemplateWindow', {
+							'__class', "XCheckButton",
+							'Id', "idModRelated",
+							'Margins', box(0, 10, 0, 0),
+							'Visible', false,
+							'FoldWhenHidden', true,
+							'Icon', "UI/Hud/checkmark_vertical",
+							'IconScale', point(1000, 1000),
+							'IconColor', RGBA(255, 255, 255, 255),
+							'TextStyle', "BugReporterAttachSave",
+							'Translate', true,
+						}),
+						PlaceObj('XTemplateWindow', {
+							'__class', "XCheckButton",
+							'Id', "idAttachMod",
+							'Margins', box(0, 10, 0, 0),
+							'Visible', false,
 							'FoldWhenHidden', true,
 							'Icon', "UI/Hud/checkmark_vertical",
 							'IconScale', point(1000, 1000),
@@ -316,7 +340,7 @@ PlaceObj('XTemplate', {
 					local bugReportShortcut = GetShortcuts("idBugReport")
 					local titleT = T(552289777086, "BUG REPORT")
 					if bugReportShortcut then
-						titleT = titleT .. " - " .. Untranslated(bugReportShortcut[1])
+						titleT = titleT .. " - [" .. Untranslated(bugReportShortcut[1]) .. "]"
 					end
 					local titleField = self:ResolveId("idTitle")
 					if titleField then
@@ -325,6 +349,12 @@ PlaceObj('XTemplate', {
 				end,
 			}),
 			}),
+		PlaceObj('XTemplateLayer', {
+			'layer', "XPauseLayer",
+		}),
+		PlaceObj('XTemplateLayer', {
+			'layer', "XCameraLockLayer",
+		}),
 		}),
 })
 

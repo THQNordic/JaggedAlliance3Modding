@@ -363,16 +363,12 @@ function HackMarker:Grant(unit)
 	if self.grantedItem == "Money" then
 		local moneyRandomModifier = 1 + unit:Random(4)
 		local amount = self.MoneyAmount * (moneyRandomModifier + self:GetItemGainModifier())
+		amount = unit:CallReactions_Modify("OnCalcHackMoneyGained", amount)
 		AddMoney(amount, "deposit")
 		self.grantedAmount = amount
 	else
 		DiscoverIntelForRandomSector(2)
-		if HasPerk(unit, "InnerInfo") then -- related to Livewire's item (CustomPDA)
-			local discoveredFor = DiscoverIntelForRandomSector(2, "no notification")
-			if discoveredFor then
-				CombatLog("important", T{312197955233, "Livewire used her custom PDA to discover additional Intel for <em><SectorName(sectorId)></em>", sectorId = discoveredFor})
-			end
-		end
+		unit:CallReactions("OnHackIntelDsicovered")
 	end
 	self.granted = true
 end

@@ -4,21 +4,22 @@ PlaceObj('VoiceResponseType', {
 	Comment = "when selected or autoselected",
 	Mandatory = true,
 	MinLines = 3,
-	PerLineCooldown = 30000,
+	PerLineCooldown = 60000,
 	SortKey = -10,
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Selection",
 	id = "Selection",
 })
 
 PlaceObj('VoiceResponseType', {
 	Comment = "when selected or autoselected",
-	Cooldown = 200,
 	Mandatory = true,
 	MinLines = 3,
-	PerLineCooldown = 10000,
+	PerLineCooldown = 60000,
 	SortKey = -10,
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Selection",
 	id = "SelectionStealth",
 })
@@ -32,6 +33,7 @@ PlaceObj('VoiceResponseType', {
 	PerLineCooldown = 600000,
 	SortKey = -9,
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Selection",
 	id = "OverwatchSelection",
 })
@@ -45,6 +47,7 @@ PlaceObj('VoiceResponseType', {
 	PerLineCooldown = 600000,
 	SortKey = -9,
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Selection",
 	id = "ThreatSelection",
 })
@@ -57,6 +60,7 @@ PlaceObj('VoiceResponseType', {
 	OncePerCombat = true,
 	PerLineCooldown = 600000,
 	SortKey = -8,
+	campaign = "<all>",
 	group = "Selection",
 	id = "HeavilyWoundedSelection",
 })
@@ -70,6 +74,7 @@ PlaceObj('VoiceResponseType', {
 	PerLineCooldown = 600000,
 	SortKey = -7,
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Selection",
 	id = "MineNearbySelection",
 })
@@ -84,6 +89,7 @@ PlaceObj('VoiceResponseType', {
 	SortKey = -6,
 	SoundType = "VoiceoverPositional",
 	Subtitled = true,
+	campaign = "<all>",
 	group = "Selection",
 	id = "GasAreaSelection",
 })
@@ -96,6 +102,7 @@ PlaceObj('VoiceResponseType', {
 	OncePerTurn = true,
 	PerLineCooldown = 600000,
 	SortKey = -6,
+	campaign = "<all>",
 	group = "Selection",
 	id = "ManyEnemiesSelection",
 })
@@ -106,6 +113,7 @@ PlaceObj('VoiceResponseType', {
 	PerLineCooldown = 30000,
 	SoundType = "VoiceoverPositional",
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "AdditionalEmotes",
 	id = "Climbing",
 })
@@ -116,6 +124,7 @@ PlaceObj('VoiceResponseType', {
 	PerLineCooldown = 30000,
 	SoundType = "VoiceoverPositional",
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "AdditionalEmotes",
 	id = "HeavyBreathing",
 })
@@ -126,6 +135,7 @@ PlaceObj('VoiceResponseType', {
 	PerLineCooldown = 30000,
 	SoundType = "VoiceoverPositional",
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "AdditionalEmotes",
 	id = "Jumping",
 })
@@ -137,6 +147,7 @@ PlaceObj('VoiceResponseType', {
 	PerLineCooldown = 300000,
 	SoundType = "VoiceoverPositional",
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "AdditionalEmotes",
 	id = "Startled",
 })
@@ -146,9 +157,10 @@ PlaceObj('VoiceResponseType', {
 	Cooldown = 3000,
 	Mandatory = true,
 	MinLines = 3,
-	PerLineCooldown = 60000,
+	PerLineCooldown = 90000,
 	SortKey = 1,
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Movement & Confirmation",
 	id = "CombatMovement",
 })
@@ -158,9 +170,10 @@ PlaceObj('VoiceResponseType', {
 	Cooldown = 3000,
 	Mandatory = true,
 	MinLines = 3,
-	PerLineCooldown = 60000,
+	PerLineCooldown = 90000,
 	SortKey = 1,
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Movement & Confirmation",
 	id = "CombatMovementStealth",
 })
@@ -170,9 +183,10 @@ PlaceObj('VoiceResponseType', {
 	Cooldown = 2000,
 	Mandatory = true,
 	MinLines = 3,
-	PerLineCooldown = 120000,
+	PerLineCooldown = 180000,
 	SortKey = 2,
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Movement & Confirmation",
 	id = "GroupOrder",
 })
@@ -185,6 +199,7 @@ PlaceObj('VoiceResponseType', {
 	PerLineCooldown = 120000,
 	SortKey = 2,
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Movement & Confirmation",
 	id = "Order",
 })
@@ -194,9 +209,10 @@ PlaceObj('VoiceResponseType', {
 	Cooldown = 10000,
 	Mandatory = true,
 	MinLines = 3,
-	PerLineCooldown = 600000,
+	PerLineCooldown = 900000,
 	SortKey = 10,
 	Subtitled = true,
+	campaign = "<all>",
 	group = "Aiming",
 	id = "AimAttack",
 })
@@ -205,9 +221,10 @@ PlaceObj('VoiceResponseType', {
 	Comment = "When aiming and the CtH is less than 20%",
 	Cooldown = 30000,
 	Mandatory = true,
-	PerLineCooldown = 600000,
+	PerLineCooldown = 900000,
 	SortKey = 11,
 	Subtitled = true,
+	campaign = "<all>",
 	group = "Aiming",
 	id = "AimAttack_Low",
 })
@@ -220,6 +237,7 @@ PlaceObj('VoiceResponseType', {
 	PerLineCooldown = 600000,
 	SortKey = 12,
 	Subtitled = true,
+	campaign = "<all>",
 	group = "Aiming",
 	id = "AimAttackStealth",
 })
@@ -231,6 +249,7 @@ PlaceObj('VoiceResponseType', {
 	PerLineCooldown = 600000,
 	SortKey = 13,
 	Subtitled = true,
+	campaign = "<all>",
 	group = "Aiming",
 	id = "AimAttack_LowStealth",
 })
@@ -245,6 +264,7 @@ PlaceObj('VoiceResponseType', {
 	SortKey = 20,
 	Subtitled = true,
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Combat Start & End",
 	id = "CombatStartPlayer",
 })
@@ -265,6 +285,7 @@ PlaceObj('VoiceResponseType', {
 		"OpponentKilledMelee",
 		"MultiOpponentKilled",
 	},
+	campaign = "<all>",
 	group = "Combat Start & End",
 	id = "CombatStartDetected",
 })
@@ -285,6 +306,7 @@ PlaceObj('VoiceResponseType', {
 		"MultiOpponentKilled",
 	},
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Combat Start & End",
 	id = "CombatEndNoEnemies",
 })
@@ -305,6 +327,7 @@ PlaceObj('VoiceResponseType', {
 		"MultiOpponentKilled",
 	},
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Combat Start & End",
 	id = "CombatEndEnemiesRemain",
 })
@@ -326,6 +349,7 @@ PlaceObj('VoiceResponseType', {
 		"CombatEndNoEnemies",
 	},
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Combat Start & End",
 	id = "CombatEndEnemiesRetreated",
 })
@@ -336,9 +360,11 @@ PlaceObj('VoiceResponseType', {
 	Cooldown = 200,
 	Mandatory = true,
 	MinLines = 3,
+	PerLineCooldown = 200,
 	SortKey = 30,
 	SoundType = "VoiceoverPositional",
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Combat - Important",
 	id = "Pain",
 })
@@ -347,7 +373,9 @@ PlaceObj('VoiceResponseType', {
 	Comment = "hit by an attack when surrounded. Situation should be very dire",
 	Mandatory = true,
 	OncePerTurn = true,
+	PerLineCooldown = 1000,
 	SortKey = 30,
+	campaign = "<all>",
 	group = "Combat - Important",
 	id = "SurroundedPain",
 })
@@ -355,7 +383,7 @@ PlaceObj('VoiceResponseType', {
 PlaceObj('VoiceResponseType', {
 	BelongsTo = "All",
 	ChanceToPlay = 50,
-	Comment = "Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.)",
+	Comment = "Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining",
 	Cooldown = 60000,
 	EventGroup = "EndOfCombatAction",
 	Mandatory = true,
@@ -368,12 +396,13 @@ PlaceObj('VoiceResponseType', {
 		"Pain",
 		"Wounded",
 	},
+	campaign = "<all>",
 	group = "Combat - Important",
 	id = "Wounded",
 })
 
 PlaceObj('VoiceResponseType', {
-	Comment = "Unit is seriously wounded (3 or more wounds)",
+	Comment = "Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining.",
 	Cooldown = 60000,
 	EventGroup = "EndOfCombatAction",
 	Mandatory = true,
@@ -386,6 +415,7 @@ PlaceObj('VoiceResponseType', {
 		"Pain",
 		"Wounded",
 	},
+	campaign = "<all>",
 	group = "Combat - Important",
 	id = "SeriouslyWounded",
 })
@@ -400,6 +430,7 @@ PlaceObj('VoiceResponseType', {
 		"Wounded",
 		"SeriouslyWounded",
 	},
+	campaign = "<all>",
 	group = "Combat - Important",
 	id = "Downed",
 })
@@ -422,6 +453,7 @@ PlaceObj('VoiceResponseType', {
 		"AnimalFound",
 	},
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Combat - Important",
 	id = "OpponentFound",
 })
@@ -442,6 +474,7 @@ PlaceObj('VoiceResponseType', {
 		"OpponentFound",
 	},
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Combat - Important",
 	id = "AnimalFound",
 })
@@ -460,6 +493,7 @@ PlaceObj('VoiceResponseType', {
 		"ItemDeteriorates",
 	},
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Combat - Important",
 	id = "OpponentKilled",
 })
@@ -476,6 +510,7 @@ PlaceObj('VoiceResponseType', {
 		"ItemDeteriorates",
 	},
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Combat - Important",
 	id = "OpponentKilledAnimal",
 })
@@ -495,6 +530,7 @@ PlaceObj('VoiceResponseType', {
 		"ItemDeteriorates",
 	},
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Combat - Important",
 	id = "OpponentKilledStealth",
 })
@@ -512,6 +548,7 @@ PlaceObj('VoiceResponseType', {
 		"ItemDeteriorates",
 	},
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Combat - Important",
 	id = "OpponentKilledHeadshot",
 })
@@ -530,6 +567,7 @@ PlaceObj('VoiceResponseType', {
 		"ItemDeteriorates",
 	},
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Combat - Important",
 	id = "MultiOpponentKilled",
 })
@@ -547,6 +585,7 @@ PlaceObj('VoiceResponseType', {
 		"ItemDeteriorates",
 	},
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Combat - Important",
 	id = "OpponentKilledMelee",
 })
@@ -560,6 +599,7 @@ PlaceObj('VoiceResponseType', {
 	SortKey = 39,
 	Subtitled = true,
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Combat - Important",
 	id = "HealReceived",
 })
@@ -570,6 +610,7 @@ PlaceObj('VoiceResponseType', {
 	PerLineCooldown = 300000,
 	SortKey = 39,
 	Subtitled = true,
+	campaign = "<all>",
 	group = "Combat - Important",
 	id = "MissedByKillShot",
 })
@@ -580,6 +621,7 @@ PlaceObj('VoiceResponseType', {
 	SortKey = 34,
 	Subtitled = true,
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "DeathGeneral",
 })
@@ -589,6 +631,7 @@ PlaceObj('VoiceResponseType', {
 	Liked = true,
 	SortKey = 35,
 	Subtitled = true,
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "DeathBuddy1",
 })
@@ -598,6 +641,7 @@ PlaceObj('VoiceResponseType', {
 	Liked = true,
 	SortKey = 35,
 	Subtitled = true,
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "DeathBuddy2",
 })
@@ -607,6 +651,7 @@ PlaceObj('VoiceResponseType', {
 	Liked = true,
 	SortKey = 35,
 	Subtitled = true,
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "DeathBuddy3",
 })
@@ -616,6 +661,7 @@ PlaceObj('VoiceResponseType', {
 	Disliked = true,
 	SortKey = 35,
 	Subtitled = true,
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "DeathDislike1",
 })
@@ -625,6 +671,7 @@ PlaceObj('VoiceResponseType', {
 	Disliked = true,
 	SortKey = 35,
 	Subtitled = true,
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "DeathDislike2",
 })
@@ -634,6 +681,7 @@ PlaceObj('VoiceResponseType', {
 	Disliked = true,
 	SortKey = 35,
 	Subtitled = true,
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "DeathDislike3",
 })
@@ -643,6 +691,7 @@ PlaceObj('VoiceResponseType', {
 	LearnToLike = true,
 	SortKey = 35,
 	Subtitled = true,
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "DeathLearnToLike1",
 })
@@ -652,6 +701,7 @@ PlaceObj('VoiceResponseType', {
 	LearnToLike = true,
 	SortKey = 35,
 	Subtitled = true,
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "DeathLearnToLike2",
 })
@@ -661,6 +711,7 @@ PlaceObj('VoiceResponseType', {
 	LearnToLike = true,
 	SortKey = 35,
 	Subtitled = true,
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "DeathLearnToLike3",
 })
@@ -670,6 +721,7 @@ PlaceObj('VoiceResponseType', {
 	LearnToDislike = true,
 	SortKey = 36,
 	Subtitled = true,
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "DeathLearnToDislike1",
 })
@@ -679,6 +731,7 @@ PlaceObj('VoiceResponseType', {
 	LearnToDislike = true,
 	SortKey = 36,
 	Subtitled = true,
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "DeathLearnToDislike2",
 })
@@ -688,6 +741,7 @@ PlaceObj('VoiceResponseType', {
 	LearnToDislike = true,
 	SortKey = 36,
 	Subtitled = true,
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "DeathLearnToDislike3",
 })
@@ -706,6 +760,7 @@ PlaceObj('VoiceResponseType', {
 		"OpponentKilledMelee",
 		"MultiOpponentKilled",
 	},
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "LearnToLike1",
 })
@@ -724,6 +779,7 @@ PlaceObj('VoiceResponseType', {
 		"OpponentKilledMelee",
 		"MultiOpponentKilled",
 	},
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "LearnToLike2",
 })
@@ -742,6 +798,7 @@ PlaceObj('VoiceResponseType', {
 		"OpponentKilledMelee",
 		"MultiOpponentKilled",
 	},
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "LearnToLike3",
 })
@@ -760,6 +817,7 @@ PlaceObj('VoiceResponseType', {
 		"OpponentKilledMelee",
 		"MultiOpponentKilled",
 	},
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "LearnToDislike1",
 })
@@ -778,6 +836,7 @@ PlaceObj('VoiceResponseType', {
 		"OpponentKilledMelee",
 		"MultiOpponentKilled",
 	},
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "LearnToDislike2",
 })
@@ -796,6 +855,7 @@ PlaceObj('VoiceResponseType', {
 		"OpponentKilledMelee",
 		"MultiOpponentKilled",
 	},
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "LearnToDislike3",
 })
@@ -814,6 +874,7 @@ PlaceObj('VoiceResponseType', {
 		"OpponentKilledMelee",
 		"MultiOpponentKilled",
 	},
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "PraisesFemale",
 })
@@ -832,6 +893,7 @@ PlaceObj('VoiceResponseType', {
 		"OpponentKilledMelee",
 		"MultiOpponentKilled",
 	},
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "PraisesMale",
 })
@@ -851,6 +913,7 @@ PlaceObj('VoiceResponseType', {
 		"OpponentKilledMelee",
 		"MultiOpponentKilled",
 	},
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "PraisesBuddy1",
 })
@@ -870,6 +933,7 @@ PlaceObj('VoiceResponseType', {
 		"OpponentKilledMelee",
 		"MultiOpponentKilled",
 	},
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "PraisesBuddy2",
 })
@@ -889,6 +953,7 @@ PlaceObj('VoiceResponseType', {
 		"OpponentKilledMelee",
 		"MultiOpponentKilled",
 	},
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "PraisesBuddy3",
 })
@@ -908,6 +973,7 @@ PlaceObj('VoiceResponseType', {
 		"OpponentKilledMelee",
 		"MultiOpponentKilled",
 	},
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "PraisesDislike1",
 })
@@ -927,6 +993,7 @@ PlaceObj('VoiceResponseType', {
 		"OpponentKilledMelee",
 		"MultiOpponentKilled",
 	},
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "PraisesDislike2",
 })
@@ -947,6 +1014,7 @@ PlaceObj('VoiceResponseType', {
 		"OpponentKilledMelee",
 		"MultiOpponentKilled",
 	},
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "PraisesDislike3",
 })
@@ -966,6 +1034,7 @@ PlaceObj('VoiceResponseType', {
 		"OpponentKilledMelee",
 		"MultiOpponentKilled",
 	},
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "PraisesLearnToLike1",
 })
@@ -985,6 +1054,7 @@ PlaceObj('VoiceResponseType', {
 		"OpponentKilledMelee",
 		"MultiOpponentKilled",
 	},
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "PraisesLearnToLike2",
 })
@@ -1004,6 +1074,7 @@ PlaceObj('VoiceResponseType', {
 		"OpponentKilledMelee",
 		"MultiOpponentKilled",
 	},
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "PraisesLearnToLike3",
 })
@@ -1023,6 +1094,7 @@ PlaceObj('VoiceResponseType', {
 		"OpponentKilledMelee",
 		"MultiOpponentKilled",
 	},
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "PraisesLearnToDislike1",
 })
@@ -1042,6 +1114,7 @@ PlaceObj('VoiceResponseType', {
 		"OpponentKilledMelee",
 		"MultiOpponentKilled",
 	},
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "PraisesLearnToDislike2",
 })
@@ -1061,6 +1134,7 @@ PlaceObj('VoiceResponseType', {
 		"OpponentKilledMelee",
 		"MultiOpponentKilled",
 	},
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "PraisesLearnToDislike3",
 })
@@ -1077,6 +1151,7 @@ PlaceObj('VoiceResponseType', {
 		"MissHighChance",
 	},
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "MockGeneral",
 })
@@ -1094,6 +1169,7 @@ PlaceObj('VoiceResponseType', {
 		"MissHighChance",
 	},
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "MockLike1",
 })
@@ -1111,6 +1187,7 @@ PlaceObj('VoiceResponseType', {
 		"MissHighChance",
 	},
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "MockLike2",
 })
@@ -1128,6 +1205,7 @@ PlaceObj('VoiceResponseType', {
 		"MissHighChance",
 	},
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "MockLike3",
 })
@@ -1145,6 +1223,7 @@ PlaceObj('VoiceResponseType', {
 		"MissHighChance",
 	},
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "MockDislike1",
 })
@@ -1162,6 +1241,7 @@ PlaceObj('VoiceResponseType', {
 		"MissHighChance",
 	},
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "MockDislike2",
 })
@@ -1179,6 +1259,7 @@ PlaceObj('VoiceResponseType', {
 		"MissHighChance",
 	},
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "MockDislike3",
 })
@@ -1196,6 +1277,7 @@ PlaceObj('VoiceResponseType', {
 		"MissHighChance",
 	},
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "MockLearnToLike1",
 })
@@ -1213,6 +1295,7 @@ PlaceObj('VoiceResponseType', {
 		"MissHighChance",
 	},
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "MockLearnToLike2",
 })
@@ -1230,6 +1313,7 @@ PlaceObj('VoiceResponseType', {
 		"MissHighChance",
 	},
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "MockLearnToLike3",
 })
@@ -1247,6 +1331,7 @@ PlaceObj('VoiceResponseType', {
 		"MissHighChance",
 	},
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "MockLearnToDislike1",
 })
@@ -1264,6 +1349,7 @@ PlaceObj('VoiceResponseType', {
 		"MissHighChance",
 	},
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "MockLearnToDislike2",
 })
@@ -1281,6 +1367,7 @@ PlaceObj('VoiceResponseType', {
 		"MissHighChance",
 	},
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "MockLearnToDislike3",
 })
@@ -1296,6 +1383,7 @@ PlaceObj('VoiceResponseType', {
 		"Pain",
 		"SurroundedPain",
 	},
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "FriendlyFireGeneral",
 })
@@ -1313,6 +1401,7 @@ PlaceObj('VoiceResponseType', {
 		"SurroundedPain",
 	},
 	UsesOtherLines = "FriendlyFireGeneral",
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "FriendlyFireBuddy1",
 })
@@ -1330,6 +1419,7 @@ PlaceObj('VoiceResponseType', {
 		"SurroundedPain",
 	},
 	UsesOtherLines = "FriendlyFireGeneral",
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "FriendlyFireBuddy2",
 })
@@ -1347,6 +1437,7 @@ PlaceObj('VoiceResponseType', {
 		"SurroundedPain",
 	},
 	UsesOtherLines = "FriendlyFireGeneral",
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "FriendlyFireBuddy3",
 })
@@ -1364,6 +1455,7 @@ PlaceObj('VoiceResponseType', {
 		"SurroundedPain",
 	},
 	UsesOtherLines = "FriendlyFireGeneral",
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "FriendlyFireDislike1",
 })
@@ -1381,6 +1473,7 @@ PlaceObj('VoiceResponseType', {
 		"SurroundedPain",
 	},
 	UsesOtherLines = "FriendlyFireGeneral",
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "FriendlyFireDislike2",
 })
@@ -1398,6 +1491,7 @@ PlaceObj('VoiceResponseType', {
 		"SurroundedPain",
 	},
 	UsesOtherLines = "FriendlyFireGeneral",
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "FriendlyFireDislike3",
 })
@@ -1415,6 +1509,7 @@ PlaceObj('VoiceResponseType', {
 		"SurroundedPain",
 	},
 	UsesOtherLines = "FriendlyFireGeneral",
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "FriendlyFireLearnToLike1",
 })
@@ -1432,6 +1527,7 @@ PlaceObj('VoiceResponseType', {
 		"SurroundedPain",
 	},
 	UsesOtherLines = "FriendlyFireGeneral",
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "FriendlyFireLearnToLike2",
 })
@@ -1449,6 +1545,7 @@ PlaceObj('VoiceResponseType', {
 		"SurroundedPain",
 	},
 	UsesOtherLines = "FriendlyFireGeneral",
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "FriendlyFireLearnToLike3",
 })
@@ -1466,6 +1563,7 @@ PlaceObj('VoiceResponseType', {
 		"SurroundedPain",
 	},
 	UsesOtherLines = "FriendlyFireGeneral",
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "FriendlyFireLearnToDislike1",
 })
@@ -1483,6 +1581,7 @@ PlaceObj('VoiceResponseType', {
 		"SurroundedPain",
 	},
 	UsesOtherLines = "FriendlyFireGeneral",
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "FriendlyFireLearnToDislike2",
 })
@@ -1500,6 +1599,7 @@ PlaceObj('VoiceResponseType', {
 		"SurroundedPain",
 	},
 	UsesOtherLines = "FriendlyFireGeneral",
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "FriendlyFireLearnToDislike3",
 })
@@ -1520,6 +1620,7 @@ PlaceObj('VoiceResponseType', {
 		"MultiOpponentKilled",
 		"DeathGeneral",
 	},
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "KillFriendlyFireGeneral",
 })
@@ -1542,6 +1643,7 @@ PlaceObj('VoiceResponseType', {
 		"DeathBuddy1",
 	},
 	UsesOtherLines = "KillFriendlyFireGeneral",
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "KillFriendlyFireBuddy1",
 })
@@ -1564,6 +1666,7 @@ PlaceObj('VoiceResponseType', {
 		"DeathBuddy2",
 	},
 	UsesOtherLines = "KillFriendlyFireGeneral",
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "KillFriendlyFireBuddy2",
 })
@@ -1586,6 +1689,7 @@ PlaceObj('VoiceResponseType', {
 		"DeathBuddy3",
 	},
 	UsesOtherLines = "KillFriendlyFireGeneral",
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "KillFriendlyFireBuddy3",
 })
@@ -1608,6 +1712,7 @@ PlaceObj('VoiceResponseType', {
 		"DeathDislike1",
 	},
 	UsesOtherLines = "KillFriendlyFireGeneral",
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "KillFriendlyFireDislike1",
 })
@@ -1630,6 +1735,7 @@ PlaceObj('VoiceResponseType', {
 		"DeathDislike2",
 	},
 	UsesOtherLines = "KillFriendlyFireGeneral",
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "KillFriendlyFireDislike2",
 })
@@ -1652,6 +1758,7 @@ PlaceObj('VoiceResponseType', {
 		"DeathDislike3",
 	},
 	UsesOtherLines = "KillFriendlyFireGeneral",
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "KillFriendlyFireDislike3",
 })
@@ -1674,6 +1781,7 @@ PlaceObj('VoiceResponseType', {
 		"DeathLearnToLike1",
 	},
 	UsesOtherLines = "KillFriendlyFireGeneral",
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "KillFriendlyFireLearnToLike1",
 })
@@ -1696,6 +1804,7 @@ PlaceObj('VoiceResponseType', {
 		"DeathLearnToLike2",
 	},
 	UsesOtherLines = "KillFriendlyFireGeneral",
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "KillFriendlyFireLearnToLike2",
 })
@@ -1718,6 +1827,7 @@ PlaceObj('VoiceResponseType', {
 		"DeathLearnToLike3",
 	},
 	UsesOtherLines = "KillFriendlyFireGeneral",
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "KillFriendlyFireLearnToLike3",
 })
@@ -1740,6 +1850,7 @@ PlaceObj('VoiceResponseType', {
 		"DeathLearnToDislike1",
 	},
 	UsesOtherLines = "KillFriendlyFireGeneral",
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "KillFriendlyFireLearnToDislike1",
 })
@@ -1762,6 +1873,7 @@ PlaceObj('VoiceResponseType', {
 		"DeathLearnToLike2",
 	},
 	UsesOtherLines = "KillFriendlyFireGeneral",
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "KillFriendlyFireLearnToDislike2",
 })
@@ -1784,6 +1896,7 @@ PlaceObj('VoiceResponseType', {
 		"DeathLearnToDislike3",
 	},
 	UsesOtherLines = "KillFriendlyFireGeneral",
+	campaign = "<all>",
 	group = "Merc Relations",
 	id = "KillFriendlyFireLearnToDislike3",
 })
@@ -1794,6 +1907,7 @@ PlaceObj('VoiceResponseType', {
 	OncePerCombat = true,
 	PerLineCooldown = 300000,
 	SortKey = 40,
+	campaign = "<all>",
 	group = "Ammo & Equipment",
 	id = "AmmoLow",
 })
@@ -1805,6 +1919,7 @@ PlaceObj('VoiceResponseType', {
 	SortKey = 40,
 	Subtitled = true,
 	SuppressAll = true,
+	campaign = "<all>",
 	group = "Ammo & Equipment",
 	id = "NoAmmo",
 })
@@ -1815,6 +1930,7 @@ PlaceObj('VoiceResponseType', {
 	SortKey = 41,
 	Subtitled = true,
 	SuppressAll = true,
+	campaign = "<all>",
 	group = "Ammo & Equipment",
 	id = "WeaponJammed",
 })
@@ -1825,6 +1941,7 @@ PlaceObj('VoiceResponseType', {
 	SortKey = 43,
 	Subtitled = true,
 	SuppressAll = true,
+	campaign = "<all>",
 	group = "Ammo & Equipment",
 	id = "WeaponBroken",
 })
@@ -1837,6 +1954,7 @@ PlaceObj('VoiceResponseType', {
 	OncePerCombat = true,
 	SortKey = 44,
 	Subtitled = true,
+	campaign = "<all>",
 	group = "Ammo & Equipment",
 	id = "ItemDeteriorates",
 })
@@ -1847,6 +1965,7 @@ PlaceObj('VoiceResponseType', {
 	PerLineCooldown = 600000,
 	SortKey = 45,
 	Subtitled = true,
+	campaign = "<all>",
 	group = "Ammo & Equipment",
 	id = "ItemInPoorConditionEquipped",
 })
@@ -1857,6 +1976,7 @@ PlaceObj('VoiceResponseType', {
 	PerLineCooldown = 300000,
 	SortKey = 46,
 	Subtitled = true,
+	campaign = "<all>",
 	group = "Ammo & Equipment",
 	id = "LockedItemMove",
 })
@@ -1872,6 +1992,7 @@ PlaceObj('VoiceResponseType', {
 	SortKey = 40,
 	Subtitled = true,
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Combat - Tactical Situation",
 	id = "TacticalCareful",
 })
@@ -1886,6 +2007,7 @@ PlaceObj('VoiceResponseType', {
 	SortKey = 40,
 	Subtitled = true,
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Combat - Tactical Situation",
 	id = "TacticalFocus",
 })
@@ -1900,6 +2022,7 @@ PlaceObj('VoiceResponseType', {
 	SortKey = 40,
 	Subtitled = true,
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Combat - Tactical Situation",
 	id = "TacticalKilling",
 })
@@ -1913,6 +2036,7 @@ PlaceObj('VoiceResponseType', {
 	SortKey = 40,
 	Subtitled = true,
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Combat - Tactical Situation",
 	id = "TacticalLastEnemy",
 })
@@ -1927,6 +2051,7 @@ PlaceObj('VoiceResponseType', {
 	SortKey = 40,
 	Subtitled = true,
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Combat - Tactical Situation",
 	id = "TacticalLoss",
 })
@@ -1942,6 +2067,7 @@ PlaceObj('VoiceResponseType', {
 	SortKey = 40,
 	Subtitled = true,
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Combat - Tactical Situation",
 	id = "TacticalPressing",
 })
@@ -1956,6 +2082,7 @@ PlaceObj('VoiceResponseType', {
 	SortKey = 40,
 	Subtitled = true,
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Combat - Tactical Situation",
 	id = "TacticalReposition",
 })
@@ -1971,6 +2098,7 @@ PlaceObj('VoiceResponseType', {
 	SortKey = 40,
 	Subtitled = true,
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Combat - Tactical Situation",
 	id = "TacticalRevenge",
 })
@@ -1985,6 +2113,7 @@ PlaceObj('VoiceResponseType', {
 	SortKey = 40,
 	Subtitled = true,
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Combat - Tactical Situation",
 	id = "TacticalTaunt",
 })
@@ -1996,6 +2125,7 @@ PlaceObj('VoiceResponseType', {
 	MinLines = 2,
 	OncePerCombat = true,
 	SortKey = 50,
+	campaign = "<all>",
 	group = "Combat - action",
 	id = "BecomeHidden",
 })
@@ -2010,6 +2140,7 @@ PlaceObj('VoiceResponseType', {
 	SortKey = 50,
 	Subtitled = true,
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Combat - action",
 	id = "Overwatch",
 })
@@ -2032,6 +2163,7 @@ PlaceObj('VoiceResponseType', {
 		"PraisesDislike2",
 		"PraisesDislike3",
 	},
+	campaign = "<all>",
 	group = "Combat - action",
 	id = "SpecialThrowGrenade",
 })
@@ -2045,6 +2177,7 @@ PlaceObj('VoiceResponseType', {
 	SortKey = 50,
 	Subtitled = true,
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Combat - action",
 	id = "TakeCover",
 })
@@ -2067,6 +2200,7 @@ PlaceObj('VoiceResponseType', {
 		"PraisesDislike2",
 		"PraisesDislike3",
 	},
+	campaign = "<all>",
 	group = "Combat - action",
 	id = "ThrowGrenade",
 })
@@ -2077,6 +2211,7 @@ PlaceObj('VoiceResponseType', {
 	OncePerTurn = true,
 	PerLineCooldown = 600000,
 	SortKey = 51,
+	campaign = "<all>",
 	group = "Combat - action",
 	id = "PinDown",
 })
@@ -2086,6 +2221,7 @@ PlaceObj('VoiceResponseType', {
 	PerLineCooldown = 300000,
 	SortKey = 51,
 	Subtitled = true,
+	campaign = "<all>",
 	group = "Combat - action",
 	id = "PinnedDown",
 })
@@ -2097,6 +2233,7 @@ PlaceObj('VoiceResponseType', {
 	PerLineCooldown = 600000,
 	SortKey = 52,
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Combat - action",
 	id = "MineFound",
 })
@@ -2109,6 +2246,7 @@ PlaceObj('VoiceResponseType', {
 	SortKey = 53,
 	Subtitled = true,
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Combat - action",
 	id = "BandageDownedUnit",
 })
@@ -2119,6 +2257,7 @@ PlaceObj('VoiceResponseType', {
 	Cooldown = 10000,
 	PerLineCooldown = 600000,
 	SortKey = 53,
+	campaign = "<all>",
 	group = "Combat - action",
 	id = "MineDisarmed",
 })
@@ -2131,6 +2270,7 @@ PlaceObj('VoiceResponseType', {
 	PerLineCooldown = 600000,
 	SortKey = 54,
 	Subtitled = true,
+	campaign = "<all>",
 	group = "Combat - action",
 	id = "Autofire",
 })
@@ -2143,16 +2283,19 @@ PlaceObj('VoiceResponseType', {
 	SortKey = 60,
 	Subtitled = true,
 	SuppressAll = true,
+	campaign = "<all>",
 	group = "Combat - Other",
 	id = "NotNow",
 })
 
 PlaceObj('VoiceResponseType', {
 	Comment = "Unit sees more enemies than allies",
+	Cooldown = 10000,
 	OncePerCombat = true,
-	PerLineCooldown = 300000,
+	PerLineCooldown = 600000,
 	SortKey = 61,
 	Subtitled = true,
+	campaign = "<all>",
 	group = "Combat - Other",
 	id = "Outnumbered",
 })
@@ -2165,6 +2308,7 @@ PlaceObj('VoiceResponseType', {
 	SortKey = 62,
 	Subtitled = true,
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Combat - Other",
 	id = "LowChanceShot",
 })
@@ -2176,6 +2320,7 @@ PlaceObj('VoiceResponseType', {
 	PerLineCooldown = 600000,
 	SortKey = 62,
 	Subtitled = true,
+	campaign = "<all>",
 	group = "Combat - Other",
 	id = "MissHighChance",
 })
@@ -2185,6 +2330,7 @@ PlaceObj('VoiceResponseType', {
 	OncePerTurn = true,
 	PerLineCooldown = 300000,
 	SortKey = 63,
+	campaign = "<all>",
 	group = "Combat - Other",
 	id = "MeleeEnemiesClosing",
 })
@@ -2195,6 +2341,7 @@ PlaceObj('VoiceResponseType', {
 	OncePerTurn = true,
 	PerLineCooldown = 300000,
 	SortKey = 64,
+	campaign = "<all>",
 	group = "Combat - Other",
 	id = "PersonalPerk",
 })
@@ -2209,6 +2356,7 @@ PlaceObj('VoiceResponseType', {
 	Subtitled = true,
 	SynchGroup = true,
 	UsesOtherLines = "PersonalPerk",
+	campaign = "<all>",
 	group = "Combat - Other",
 	id = "PersonalPerkSubtitled",
 })
@@ -2222,6 +2370,7 @@ PlaceObj('VoiceResponseType', {
 	Subtitled = true,
 	SuppressAll = true,
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Combat Tasks",
 	id = "CombatTaskGiven",
 })
@@ -2234,6 +2383,7 @@ PlaceObj('VoiceResponseType', {
 	SortKey = 66,
 	Subtitled = true,
 	SuppressAll = true,
+	campaign = "<all>",
 	group = "Combat Tasks",
 	id = "CombatTaskCompleted",
 })
@@ -2246,6 +2396,7 @@ PlaceObj('VoiceResponseType', {
 	SortKey = 67,
 	Subtitled = true,
 	SuppressAll = true,
+	campaign = "<all>",
 	group = "Combat Tasks",
 	id = "CombatTaskFailed",
 })
@@ -2257,6 +2408,7 @@ PlaceObj('VoiceResponseType', {
 	PerLineCooldown = 600000,
 	SortKey = 70,
 	Subtitled = true,
+	campaign = "<all>",
 	group = "Exploration & Loot",
 	id = "LevelUp",
 })
@@ -2270,6 +2422,7 @@ PlaceObj('VoiceResponseType', {
 	PerLineCooldown = 600000,
 	SortKey = 71,
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Exploration & Loot",
 	id = "LootFound",
 })
@@ -2282,6 +2435,7 @@ PlaceObj('VoiceResponseType', {
 	PerLineCooldown = 600000,
 	SortKey = 72,
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Exploration & Loot",
 	id = "InteractableFound",
 })
@@ -2294,6 +2448,7 @@ PlaceObj('VoiceResponseType', {
 	PerLineCooldown = 1200000,
 	SortKey = 73,
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Exploration & Loot",
 	id = "LootOpened",
 })
@@ -2310,6 +2465,7 @@ PlaceObj('VoiceResponseType', {
 		"LootOpened",
 	},
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Exploration & Loot",
 	id = "ValuableItemFound",
 })
@@ -2318,6 +2474,7 @@ PlaceObj('VoiceResponseType', {
 	Comment = "When a attempting to open locked door",
 	PerLineCooldown = 300000,
 	SortKey = 75,
+	campaign = "<all>",
 	group = "Exploration & Loot",
 	id = "DoorLocked",
 })
@@ -2328,6 +2485,7 @@ PlaceObj('VoiceResponseType', {
 	PerLineCooldown = 600000,
 	SortKey = 80,
 	Subtitled = true,
+	campaign = "<all>",
 	group = "SatView, Contract, Exhaustion",
 	id = "Tired",
 })
@@ -2338,6 +2496,7 @@ PlaceObj('VoiceResponseType', {
 	PerLineCooldown = 600000,
 	SortKey = 81,
 	Subtitled = true,
+	campaign = "<all>",
 	group = "SatView, Contract, Exhaustion",
 	id = "Exhausted",
 })
@@ -2353,6 +2512,7 @@ PlaceObj('VoiceResponseType', {
 		"Idle",
 	},
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "SatView, Contract, Exhaustion",
 	id = "ActivityStarted",
 })
@@ -2367,6 +2527,7 @@ PlaceObj('VoiceResponseType', {
 	Suppresses = {
 		"Idle",
 	},
+	campaign = "<all>",
 	group = "SatView, Contract, Exhaustion",
 	id = "ActivityFinished",
 })
@@ -2383,6 +2544,7 @@ PlaceObj('VoiceResponseType', {
 	},
 	SynchGroup = true,
 	UsesOtherLines = "HealReceived",
+	campaign = "<all>",
 	group = "SatView, Contract, Exhaustion",
 	id = "HealReceivedSatView",
 })
@@ -2399,6 +2561,7 @@ PlaceObj('VoiceResponseType', {
 	},
 	SynchGroup = true,
 	UsesOtherLines = "LevelUp",
+	campaign = "<all>",
 	group = "SatView, Contract, Exhaustion",
 	id = "TrainingReceived",
 })
@@ -2414,6 +2577,7 @@ PlaceObj('VoiceResponseType', {
 	Suppresses = {
 		"Idle",
 	},
+	campaign = "<all>",
 	group = "SatView, Contract, Exhaustion",
 	id = "SectorArrived",
 })
@@ -2430,6 +2594,7 @@ PlaceObj('VoiceResponseType', {
 		"Idle",
 	},
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "SatView, Contract, Exhaustion",
 	id = "Travelling",
 })
@@ -2446,6 +2611,7 @@ PlaceObj('VoiceResponseType', {
 		"Idle",
 	},
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "SatView, Contract, Exhaustion",
 	id = "InterestingSector",
 })
@@ -2460,6 +2626,7 @@ PlaceObj('VoiceResponseType', {
 	SortKey = 89,
 	Subtitled = true,
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "SatView, Contract, Exhaustion",
 	id = "Idle",
 })
@@ -2476,6 +2643,7 @@ PlaceObj('VoiceResponseType', {
 		"Idle",
 	},
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "SatView, Contract, Exhaustion",
 	id = "BusySatView",
 })
@@ -2487,6 +2655,7 @@ PlaceObj('VoiceResponseType', {
 	Subtitled = true,
 	SuppressAll = true,
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "SatView, Contract, Exhaustion",
 	id = "ContractExpired",
 })
@@ -2500,6 +2669,7 @@ PlaceObj('VoiceResponseType', {
 	SortKey = 90,
 	Subtitled = true,
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "Quirks",
 	id = "Claustrophobic",
 })
@@ -2512,6 +2682,7 @@ PlaceObj('VoiceResponseType', {
 	PerLineCooldown = 300000,
 	SortKey = 90,
 	Subtitled = true,
+	campaign = "<all>",
 	group = "Quirks",
 	id = "Hemophobic",
 })
@@ -2524,6 +2695,7 @@ PlaceObj('VoiceResponseType', {
 	PerLineCooldown = 1800000,
 	SortKey = 90,
 	Subtitled = true,
+	campaign = "<all>",
 	group = "Quirks",
 	id = "Loner",
 })
@@ -2534,6 +2706,7 @@ PlaceObj('VoiceResponseType', {
 	PerLineCooldown = 300000,
 	SortKey = 90,
 	Subtitled = true,
+	campaign = "<all>",
 	group = "Quirks",
 	id = "Negotiator",
 })
@@ -2542,6 +2715,7 @@ PlaceObj('VoiceResponseType', {
 	Comment = "When a loss of morale is prevented because of the Optimist quirk",
 	SortKey = 90,
 	Subtitled = true,
+	campaign = "<all>",
 	group = "Quirks",
 	id = "Optimist",
 })
@@ -2550,6 +2724,7 @@ PlaceObj('VoiceResponseType', {
 	Comment = "When an increase of Morale is prevented because of the Pessimist quirk",
 	SortKey = 90,
 	Subtitled = true,
+	campaign = "<all>",
 	group = "Quirks",
 	id = "Pessimist",
 })
@@ -2560,6 +2735,7 @@ PlaceObj('VoiceResponseType', {
 	PerLineCooldown = 300000,
 	SortKey = 90,
 	Subtitled = true,
+	campaign = "<all>",
 	group = "Quirks",
 	id = "Psycho",
 })
@@ -2571,6 +2747,7 @@ PlaceObj('VoiceResponseType', {
 	PerLineCooldown = 300000,
 	SortKey = 90,
 	Subtitled = true,
+	campaign = "<all>",
 	group = "Quirks",
 	id = "Scoundrel",
 })
@@ -2584,6 +2761,7 @@ PlaceObj('VoiceResponseType', {
 	SortKey = 1000,
 	Subtitled = true,
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "AI",
 	id = "AIAttack",
 })
@@ -2601,6 +2779,7 @@ PlaceObj('VoiceResponseType', {
 		"AIStartingTurnAttack",
 	},
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "AI",
 	id = "AIBerserkerPerk",
 })
@@ -2619,6 +2798,7 @@ PlaceObj('VoiceResponseType', {
 		"AIAttack",
 	},
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "AI",
 	id = "AIStartingTurnAttack",
 })
@@ -2637,6 +2817,7 @@ PlaceObj('VoiceResponseType', {
 		"AIAttack",
 	},
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "AI",
 	id = "AIStartingTurnLastEnemy",
 })
@@ -2650,6 +2831,7 @@ PlaceObj('VoiceResponseType', {
 	SortKey = 1000,
 	Subtitled = true,
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "AI",
 	id = "AIStartingTurnMoving",
 })
@@ -2663,6 +2845,7 @@ PlaceObj('VoiceResponseType', {
 	Suppresses = {
 		"AILoseCover",
 	},
+	campaign = "<all>",
 	group = "AI",
 	id = "AIDeath",
 })
@@ -2679,6 +2862,7 @@ PlaceObj('VoiceResponseType', {
 	SortKey = 1002,
 	Subtitled = true,
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "AI",
 	id = "AIDeadAlly",
 })
@@ -2694,6 +2878,7 @@ PlaceObj('VoiceResponseType', {
 	SortKey = 1002,
 	Subtitled = true,
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "AI",
 	id = "AIDeadAnimal",
 })
@@ -2705,6 +2890,7 @@ PlaceObj('VoiceResponseType', {
 	SortKey = 1002,
 	SuppressAll = true,
 	UseSnype = true,
+	campaign = "<all>",
 	group = "AI",
 	id = "DramaticDeath",
 })
@@ -2716,6 +2902,7 @@ PlaceObj('VoiceResponseType', {
 	SortKey = 1002,
 	SuppressAll = true,
 	UseSnype = true,
+	campaign = "<all>",
 	group = "AI",
 	id = "VillainDefeated",
 })
@@ -2728,6 +2915,7 @@ PlaceObj('VoiceResponseType', {
 	OncePerCombat = true,
 	SortKey = 1002,
 	Subtitled = true,
+	campaign = "<all>",
 	group = "AI",
 	id = "VillainHurt",
 })
@@ -2742,6 +2930,7 @@ PlaceObj('VoiceResponseType', {
 	SortKey = 1003,
 	Subtitled = true,
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "AI",
 	id = "BecomeAware",
 })
@@ -2756,6 +2945,7 @@ PlaceObj('VoiceResponseType', {
 	SortKey = 1004,
 	Subtitled = true,
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "AI",
 	id = "AIFlanking",
 })
@@ -2772,6 +2962,7 @@ PlaceObj('VoiceResponseType', {
 		"AIAttack",
 	},
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "AI",
 	id = "AIMeleeOpportunist",
 })
@@ -2785,6 +2976,7 @@ PlaceObj('VoiceResponseType', {
 	SortKey = 1004,
 	Subtitled = true,
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "AI",
 	id = "AISpreadOut",
 })
@@ -2799,6 +2991,7 @@ PlaceObj('VoiceResponseType', {
 	SortKey = 1006,
 	Subtitled = true,
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "AI",
 	id = "AIArchetypeAngry",
 })
@@ -2813,6 +3006,7 @@ PlaceObj('VoiceResponseType', {
 	SortKey = 1006,
 	Subtitled = true,
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "AI",
 	id = "AIArchetypeScared",
 })
@@ -2827,6 +3021,7 @@ PlaceObj('VoiceResponseType', {
 	SortKey = 1006,
 	Subtitled = true,
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "AI",
 	id = "AITaunt",
 })
@@ -2841,6 +3036,7 @@ PlaceObj('VoiceResponseType', {
 	SortKey = 1030,
 	Subtitled = true,
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "AI",
 	id = "AIFlanked",
 })
@@ -2853,6 +3049,7 @@ PlaceObj('VoiceResponseType', {
 	MinLines = 1,
 	SortKey = 1030,
 	SoundType = "VoiceoverPositional",
+	campaign = "<all>",
 	group = "AI",
 	id = "AIGasAreaSelection",
 })
@@ -2868,6 +3065,7 @@ PlaceObj('VoiceResponseType', {
 	SortKey = 1030,
 	Subtitled = true,
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "AI",
 	id = "AILoseCover",
 })
@@ -2881,6 +3079,7 @@ PlaceObj('VoiceResponseType', {
 	SortKey = 1005,
 	Subtitled = true,
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "AI Attacks",
 	id = "AIAutofire",
 })
@@ -2894,6 +3093,7 @@ PlaceObj('VoiceResponseType', {
 	SortKey = 1005,
 	Subtitled = true,
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "AI Attacks",
 	id = "AIDoubleBarrel",
 })
@@ -2908,6 +3108,7 @@ PlaceObj('VoiceResponseType', {
 	SortKey = 1005,
 	Subtitled = true,
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "AI Attacks",
 	id = "AIMobile",
 })
@@ -2921,6 +3122,7 @@ PlaceObj('VoiceResponseType', {
 	SortKey = 1005,
 	Subtitled = true,
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "AI Attacks",
 	id = "AIOverwatch",
 })
@@ -2937,6 +3139,7 @@ PlaceObj('VoiceResponseType', {
 		"AIAttack",
 	},
 	SynchGroup = true,
+	campaign = "<all>",
 	group = "AI Attacks",
 	id = "AIPinDown",
 })
@@ -2949,6 +3152,7 @@ PlaceObj('VoiceResponseType', {
 	PerLineCooldown = 300000,
 	SortKey = 1005,
 	Subtitled = true,
+	campaign = "<all>",
 	group = "AI Attacks",
 	id = "AIThrowGrenade",
 })
@@ -2962,6 +3166,7 @@ PlaceObj('VoiceResponseType', {
 	SortKey = 1005,
 	Subtitled = true,
 	UsesOtherLines = "AIThrowGrenade",
+	campaign = "<all>",
 	group = "AI Attacks",
 	id = "AIThrowGrenadeSpecial",
 })

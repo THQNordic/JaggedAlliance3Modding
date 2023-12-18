@@ -289,7 +289,7 @@ PlaceObj('VoiceResponse', {
 		T(270652903556, --[[VoiceResponse Blood SelectionStealth VoiceResponse SelectionStealth - when selected or autoselected voice:Blood]] "I'll see them before they see me.")
 	}),
 	SeriouslyWounded = TConcat({
-		T(776715581084, --[[VoiceResponse Blood SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds) voice:Blood]] "Got a lot of wounds here, man.")
+		T(776715581084, --[[VoiceResponse Blood SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining. voice:Blood]] "Got a lot of wounds here, man.")
 	}),
 	Startled = TConcat({
 		T(353229391456, --[[VoiceResponse Blood Startled VoiceResponse Startled - Startled by hearing a sudden noise voice:Blood]] "Huh?"),
@@ -332,9 +332,9 @@ PlaceObj('VoiceResponse', {
 		T(252859210121, --[[VoiceResponse Blood WeaponJammed VoiceResponse WeaponJammed - When weapon has jammed voice:Blood]] "This thing is jammed!")
 	}),
 	Wounded = TConcat({
-		T(314407868667, --[[VoiceResponse Blood Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Blood]] "They tryin' to tenderize me!"),
-		T(767929947561, --[[VoiceResponse Blood Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Blood]] "Takin' fire!"),
-		T(223271776903, --[[VoiceResponse Blood Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Blood]] "Catching hell here, man!")
+		T(314407868667, --[[VoiceResponse Blood Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Blood]] "They tryin' to tenderize me!"),
+		T(767929947561, --[[VoiceResponse Blood Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Blood]] "Takin' fire!"),
+		T(223271776903, --[[VoiceResponse Blood Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Blood]] "Catching hell here, man!")
 	}),
 	group = "MercenariesOld",
 	id = "Blood",

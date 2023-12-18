@@ -9,14 +9,26 @@ DefineClass.SquadName = {
 	HasSortKey = true,
 	
 	EditorName = "Squad name",
-	EditorMenubarName = "SquadNames",
+	EditorMenubarName = "Squad Names",
 	EditorMenubar = "Editors.Other",
 	EditorViewPresetPostfix = Untranslated(" <color 75 105 198><Name>"),
 }
 
-DefineModItemPreset("SquadName", { EditorName = "SquadName", EditorSubmenu = "Unit" })
+DefineModItemPreset("SquadName", { EditorName = "Squad name", EditorSubmenu = "Unit" })
 
-Affiliations = {"AIM","Legion","Army","Beast","Adonis","Rebel","Civilian","Secret", "Thugs", "Other"}
+Affiliations = {
+	"AIM",
+	"Legion",
+	"Army",
+	"Beast",
+	"Adonis",
+	"Rebel",
+	"Civilian",
+	"Secret",
+	"Thugs",
+	"SuperSoldiers",
+	"Other"
+}
 GameVar("gv_UsedSquadNameIndexes", {})
 
 -- input is the Name T for the squad name

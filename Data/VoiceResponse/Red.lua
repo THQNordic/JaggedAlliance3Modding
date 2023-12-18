@@ -295,7 +295,7 @@ PlaceObj('VoiceResponse', {
 		T(199760903183, --[[VoiceResponse Red SelectionStealth VoiceResponse SelectionStealth - when selected or autoselected voice:Red]] "Don't know I'm here, do ya?")
 	}),
 	SeriouslyWounded = TConcat({
-		T(542953636791, --[[VoiceResponse Red SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds) voice:Red]] "Well, isn't that grand?! I got more holes in me than a ladies' bathroom!")
+		T(542953636791, --[[VoiceResponse Red SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining. voice:Red]] "Well, isn't that grand?! I got more holes in me than a ladies' bathroom!")
 	}),
 	SpecialThrowGrenade = TConcat({
 		T(397966732066, --[[VoiceResponse Red SpecialThrowGrenade VoiceResponse SpecialThrowGrenade - When throwing grenade voice:Red]] "Red's got something special for ye!"),
@@ -352,9 +352,9 @@ PlaceObj('VoiceResponse', {
 		T(835534029363, --[[VoiceResponse Red WeaponJammed VoiceResponse WeaponJammed - When weapon has jammed voice:Red]] "Now ma gun's jamming. Somebody up there must hate me. That's alright. I HATE YA TOO!")
 	}),
 	Wounded = TConcat({
-		T(468712415459, --[[VoiceResponse Red Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Red]] "Ach. Fuck!"),
-		T(314171058204, --[[VoiceResponse Red Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Red]] "Pick on someone else, ya pillock."),
-		T(437644266658, --[[VoiceResponse Red Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Red]] "Oi! Stop hitting me.")
+		T(468712415459, --[[VoiceResponse Red Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Red]] "Ach. Fuck!"),
+		T(314171058204, --[[VoiceResponse Red Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Red]] "Pick on someone else, ya pillock."),
+		T(437644266658, --[[VoiceResponse Red Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Red]] "Oi! Stop hitting me.")
 	}),
 	group = "MercenariesOld",
 	id = "Red",

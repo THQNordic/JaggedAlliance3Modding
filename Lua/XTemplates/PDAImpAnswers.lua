@@ -131,7 +131,7 @@ PlaceObj('XTemplate', {
 								child.idAnswer:SetText(context.preset.answers[i].answer)
 								child.idx = i
 								local preset_id =  context.preset.id									
-								local item = table.find_value(g_ImpTest and g_ImpTest.answers or {}, "id", preset_id)									
+								local item = table.find_value(g_ImpTest and g_ImpTest.answers, "id", preset_id)									
 								local toggled = false
 								if item and item.idx==i then
 									child:Toggle(true)

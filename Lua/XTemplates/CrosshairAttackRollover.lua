@@ -26,6 +26,16 @@ PlaceObj('XTemplate', {
 				self.idMercStatusMoreInfoContainer:SetVisible(hasAnyEffects)
 				self.idContent.idMoreInfo:SetVisible(hasAnyEffects)
 				
+				-- Dont show rollover while camera is moving
+				self:CreateThread("crosshair-camera", function()
+					if not crosshair:GetThread("actionCameraWait") then return end
+					crosshair:SetVisible(false)
+					while crosshair:GetThread("actionCameraWait") do
+						Sleep(1)
+					end
+					crosshair:SetVisible(true)
+				end)
+				
 				if not crosshair.darkness_tutorial then return end
 				local popup = OpenTutorialPopup(self, false, TutorialHints.EnemyInDarkness)
 				if not popup then return end

@@ -36,7 +36,6 @@ function UpdateMapBurningState(burning)
 		if IsBurnActiveCollection(col) then
 			MapForEach("map", "collection", col.Index, true, function(obj)
 				active_func(obj, toggledEnumFlags)
-				obj:SetCollision(burning)
 				if IsKindOf(obj, "ParSystem") and string.match(obj:GetParticlesName(), "Fire") then
 					local pos = obj:GetPos()
 					local vx, vy, vz = WorldToVoxel(pos)
@@ -50,7 +49,6 @@ function UpdateMapBurningState(burning)
 		elseif IsBurnInactiveCollection(col) then
 			MapForEach("map", "collection", col.Index, true, function(obj)
 				inactive_func(obj, toggledEnumFlags)
-				obj:SetCollision(burning)
 			end)
 		end
 	end

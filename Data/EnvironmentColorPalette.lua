@@ -2652,6 +2652,49 @@ PlaceObj('EnvironmentColorPalette', {
 })
 
 PlaceObj('EnvironmentColorPalette', {
+	group = "Default",
+	id = "Wet_Undergrounds",
+	lightmodels = {
+		"Wet_Underground_Lab_Cold",
+		"Wet_Underground_Lab_Neutral",
+		"Wet_Underground_Lab_Warm",
+	},
+	regions = {
+		"Underground",
+	},
+	PlaceObj('EnvironmentTerrainColorEntry', {
+		'EditableColor1', RGBA(51, 51, 51, 255),
+		'EditableColor2', RGBA(51, 51, 51, 255),
+		'EditableColor3', RGBA(51, 51, 51, 255),
+		'terrain_id', "Dry_stony_01",
+	}),
+	PlaceObj('EnvironmentTerrainColorEntry', {
+		'EditableColor1', RGBA(51, 51, 51, 255),
+		'EditableColor2', RGBA(51, 51, 51, 255),
+		'EditableColor3', RGBA(51, 51, 51, 255),
+		'terrain_id', "Dry_stony_02",
+	}),
+	PlaceObj('EnvironmentTerrainColorEntry', {
+		'EditableColor1', RGBA(51, 51, 51, 255),
+		'EditableColor2', RGBA(51, 51, 51, 255),
+		'EditableColor3', RGBA(51, 51, 51, 255),
+		'terrain_id', "M_Concrete_03",
+	}),
+	PlaceObj('EnvironmentTerrainColorEntry', {
+		'EditableColor1', RGBA(51, 51, 51, 255),
+		'EditableColor2', RGBA(51, 51, 51, 255),
+		'EditableColor3', RGBA(51, 51, 51, 255),
+		'terrain_id', "M_Concrete_02",
+	}),
+	PlaceObj('EnvironmentTerrainColorEntry', {
+		'EditableColor1', RGBA(51, 51, 51, 255),
+		'EditableColor2', RGBA(51, 51, 51, 255),
+		'EditableColor3', RGBA(51, 51, 51, 255),
+		'terrain_id', "M_Concrete_01",
+	}),
+})
+
+PlaceObj('EnvironmentColorPalette', {
 	SortKey = 1000,
 	group = "Default",
 	id = "Default_ColorPalette",

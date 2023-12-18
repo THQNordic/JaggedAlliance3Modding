@@ -123,10 +123,15 @@ function GetAreaAttackResults(aoe_params, damage_bonus, applied_status, damage_o
 	local min_range_2d = 0
 	local weapon = aoe_params.weapon
 	local dont_destroy_covers = aoe_params.dont_destroy_covers
-
+	
+	if not prediction then
+		NetUpdateHash("GetAreaAttackResults", step_pos, stance, range, min_range_2d, cone_angle, target_pos, occupied_pos, dont_destroy_covers)
+	end
 	local targets, los_values = GetAreaAttackTargets(step_pos, stance, prediction, range, min_range_2d, cone_angle, target_pos, occupied_pos, dont_destroy_covers)
 	targets = table.ifilter(targets, function(idx, target) return not IsKindOf(target, "Landmine") end)
-	
+	if not prediction then
+		NetUpdateHash("GetAreaAttackResults_Results", #targets)
+	end
 	if IsValid(attacker) and not aoe_params.can_be_damaged_by_attack then
 		local idx = table.find(targets, attacker)
 		if idx then
@@ -556,10 +561,18 @@ function ComputeUnitsVisibility()
 
 	local visibility = {}
 	local visual_contact_change = {}
+	local sight_conditions_change = {}
 	local uvVisible = const.uvVisible
 	local uvRevealed = const.uvRevealed
+	local usConcealed = const.usConcealed
+	local usObscured = const.usObscured
+	local usConcealedAndObscured = bor(usConcealed, usObscured)
 	local insert = table.insert
-	local innerInfo = gv_CurrentSectorId and g_Units.Livewire and g_Units.Livewire.team == GetPoVTeam() and gv_Sectors[gv_CurrentSectorId].intel_discovered -- Livewire's perk enabled
+	local pov_team = GetPoVTeam()
+	local innerInfo--= gv_CurrentSectorId and g_Units.Livewire and g_Units.Livewire.team == GetPoVTeam() and gv_Sectors[gv_CurrentSectorId].intel_discovered -- Livewire's perk enabled
+	for _, unit in ipairs(pov_team and pov_team.units) do
+		innerInfo = innerInfo or unit:CallReactions_Or("OnCheckIntelVisible")
+	end
 
 	-- init team visibility
 	for _, team in ipairs(g_Teams) do
@@ -636,6 +649,7 @@ function ComputeUnitsVisibility()
 	end
 
 	-- update visual contact & sight conditions
+	local prevSightConditions = g_SightConditions
 	g_SightConditions = {}
 	local FogUnkownFoeDistance = GameState.Fog and const.EnvEffects.FogUnkownFoeDistance
 	local DustStormUnkownFoeDistance = GameState.DustStorm and const.EnvEffects.DustStormUnkownFoeDistance
@@ -644,7 +658,6 @@ function ComputeUnitsVisibility()
 	for _, team in ipairs(g_Teams) do
 		if team.side ~= "neutral" then
 			for _, unit in ipairs(team.units) do
-				local unit_sight_conditions
 				if unit:IsAware("pending") then -- visual contact
 					for _, other in ipairs(visibility[unit]) do
 						if other.team:IsEnemySide(team) then
@@ -664,28 +677,30 @@ function ComputeUnitsVisibility()
 					end
 				end
 				if FogUnkownFoeDistance or DustStormUnkownFoeDistance then
+					local unit_sight_conditions
+					local prev_sight_conditions = prevSightConditions[unit] or empty_table
 					for _, other in ipairs(visibility[team]) do
+						local value
 						if not other.indoors then
-							local value = 0
 							if FogUnkownFoeDistance and not IsCloser(unit, other, FogUnkownFoeDistance) then
-								value = const.usConcealed
+								value = usConcealed
 							end
 							if DustStormUnkownFoeDistance and not IsCloser(unit, other, DustStormUnkownFoeDistance) then
-								value = bor(value, const.usObscured)
+								value = value and usConcealedAndObscured or usObscured
 							end
-							if value ~= 0 then
-								if not unit_sight_conditions then
-									unit_sight_conditions = {}
-									g_SightConditions[unit] = unit_sight_conditions
-								end
-								local oldVal = unit_sight_conditions[other]
+							if value then
+								if not unit_sight_conditions then unit_sight_conditions = {} end
 								unit_sight_conditions[other] = value
-								if oldVal ~= value then
-									ObjModified(other)
-								end
+							end
+						end
+						if value ~= prev_sight_conditions[other] then
+							if not sight_conditions_change[other] then
+								sight_conditions_change[other] = true
+								sight_conditions_change[#sight_conditions_change + 1] = other
 							end
 						end
 					end
+					g_SightConditions[unit] = unit_sight_conditions
 				end
 			end
 		end
@@ -709,6 +724,9 @@ function ComputeUnitsVisibility()
 			unit:UpdateHidden()
 			Msg("UnitStealthChanged", unit)
 		end
+	end
+	for _, unit in ipairs(sight_conditions_change) do
+		ObjModified(unit)
 	end
 
 	g_VisibilityUpdated = true
@@ -847,7 +865,7 @@ end
 function ApplyUnitVisibility(active_units, pov_team, visibility, force)
 	active_units = IsKindOf(active_units, "Unit") and {active_units} or active_units
 	local observers = g_Combat and {SelectedObj or nil} or (Selection or {})
-	local full_visibility = IsFullVisibility()
+	local full_visibility = IsFullVisibility() or (IsSetpiecePlaying() and g_SetpieceFullVisibility)
 	local sector = (gv_DeploymentStarted or gv_Deployment) and gv_Sectors[gv_CurrentSectorId]
 	local pov_team_hidden = sector and sector.enabled_auto_deploy and pov_team.control == "UI"
 	local is_current_team_pov_team = g_Teams[g_CurrentTeam] == pov_team
@@ -1119,17 +1137,16 @@ local function lExplorationVisibilityApply()
 end
 
 function VisibilityUpdate(force)
-	local cleanup = {}
-	for reason, _ in sorted_handled_obj_key_pairs(g_VisibilityUpdateSuspendReasons) do
+	local suspend_reasons_count = 0
+	for reason, _ in pairs(g_VisibilityUpdateSuspendReasons) do
 		if IsKindOf(reason, "Unit") and reason:IsDead() then
-			cleanup[#cleanup + 1] = reason
+			g_VisibilityUpdateSuspendReasons[reason] = nil
+		else
+			suspend_reasons_count = suspend_reasons_count + 1
 		end
 	end
-	for _, reason in ipairs(cleanup) do
-		g_VisibilityUpdateSuspendReasons[reason] = nil
-	end
-	NetUpdateHash("VisibilityUpdate()", GameTime(), #table.keys(g_VisibilityUpdateSuspendReasons), force)
-	if next(g_VisibilityUpdateSuspendReasons) ~= nil and not force then
+	NetUpdateHash("VisibilityUpdate()", GameTime(), suspend_reasons_count, force)
+	if suspend_reasons_count > 0 and not force then
 		return
 	end
 	-- run in a thread to avoid overly aggressive updates 

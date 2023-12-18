@@ -3,7 +3,6 @@
 PlaceObj('CharacterEffectCompositeDef', {
 	'Group', "System",
 	'Id', "SpentAP",
-	'Comment', "todo: is condition necessary?",
 	'object_class', "CharacterEffect",
 	'unit_reactions', {
 		PlaceObj('UnitReaction', {
@@ -14,6 +13,7 @@ PlaceObj('CharacterEffectCompositeDef', {
 					target:RemoveStatusEffect("FreeMove")
 					target:RemoveStatusEffect("Focused")
 					target:ConsumeAP(self.stacks)
+					target.performed_action_this_turn = true
 					target:RemoveStatusEffect(self.class, "all")
 				end
 			end,

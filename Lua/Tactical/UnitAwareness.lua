@@ -733,7 +733,10 @@ end
 OnMsg.TurnStart = DeadUnitsPulse
 OnMsg.UnitDied = DeadUnitsPulse
 OnMsg.Idle = AlertPendingUnits
-OnMsg.CombatActionEnd = AlertPendingUnits
+
+function OnMsg.CombatActionEnd()
+	CreateGameTimeThread(AlertPendingUnits)
+end
 
 function OnMsg.CombatEnd()
 	MapForEach("map", "Unit", function(unit) 
@@ -785,7 +788,7 @@ function Unit:SuspiciousRoutine()
 
 	local body = self.suspicious_body_seen and HandleToObject[self.suspicious_body_seen]
 	if IsValid(body) then
-		self:Face(body, GameState.loading and 0 or 500)
+		self:Face(body, not GameTimeAdvanced and 0 or 500)
 	end
 
 	local anim = self:TryGetActionAnim("Suspicious", "Standing")
@@ -933,7 +936,7 @@ end
 
 function Unit:GetProvokePos(path, visible_only)
 	local goto_dummies = self:GenerateTargetDummiesFromPath(path)
-	local interrupts, provoke_idx = self:CheckProvokeOpportunityAttacks("move", goto_dummies, visible_only)
+	local interrupts, provoke_idx = self:CheckProvokeOpportunityAttacks(CombatActions.Move, "move", goto_dummies, visible_only)
 	local provoke_pos = provoke_idx and goto_dummies[provoke_idx].pos
 	return provoke_pos
 end
@@ -971,13 +974,24 @@ function Unit:Reposition()
 		local o = GetOccupiedBy(x, y, z, self)
 		if o and o ~= self then
 			printf("Unit %d reposition to %s is occupied by another unit %d (%s)", self.handle, tostring(point(point_unpack(path[1]))), o.handle, o.command)
-			printf("Unit pos %s", tostring(self:GetPos()))
-			printf("Unit target dummy pos %s", self.target_dummy and tostring(self.target_dummy:GetPos()) or "")
-			printf("Other pos %s", tostring(o:GetPos()))
-			printf("Other target dummy pos %s", o.target_dummy and tostring(o.target_dummy:GetPos()) or "")
-			printf("Other efResting=%d", o:GetEnumFlags(const.efResting))
+			printf("Unit current pos      %s, efResting = %d", tostring(self:GetPos()), self:GetEnumFlags(const.efResting))
+			if self.target_dummy then
+				printf("Unit target dummy pos %s, efResting = %d, locked = %s", tostring(self.target_dummy:GetPos()), self.target_dummy:GetEnumFlags(const.efResting), tostring(self.target_dummy.locked))
+			end
+			printf("Unit reposition_dest  %s", self.reposition_dest and tostring(point(stance_pos_unpack(self.reposition_dest))) or "")
+			if self.ai_context and self.ai_context.ai_destination then
+				printf("Unit ai_destination   %s", tostring(point(stance_pos_unpack(self.ai_context.ai_destination))))
+			end
+			printf("Other command: %s", o.command)
+			printf("Other current pos      %s, efResting = %d", tostring(o:GetPos()), o:GetEnumFlags(const.efResting))
+			if o.target_dummy then
+				printf("Other target dummy pos %s, efResting = %d, locked = %s", tostring(o.target_dummy:GetPos()), o.target_dummy:GetEnumFlags(const.efResting), tostring(o.target_dummy.locked))
+			end
 			if o.reposition_dest then
-				printf("Other reposition dest=%d,%d", stance_pos_unpack(o.reposition_dest))
+				printf("Other reposition_dest  %s", tostring(point(stance_pos_unpack(o.reposition_dest))))
+			end
+			if o.ai_context and o.ai_context.ai_destination then
+				printf("Other ai_destination   %s", tostring(point(stance_pos_unpack(o.ai_context.ai_destination))))
 			end
 			assert(false, "Unit reposition")
 		end

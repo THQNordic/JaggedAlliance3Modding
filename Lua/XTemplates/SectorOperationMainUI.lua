@@ -216,11 +216,18 @@ PlaceObj('XTemplate', {
 									return "disabled"
 								end
 								
-								for _, prof in ipairs(operation.Professions) do
-									local profession = prof.id	
-									if #GetOperationProfessionals(sector.Id, operation_id,profession)<=0 then 
+								if operation_id=="TrainMercs" then
+									local mercs = GetOperationProfessionals(sector.Id, operation_id, "Student")
+									if not next(mercs) then
 										return "disabled"
 									end	
+								else
+									for _, prof in ipairs(operation.Professions) do
+										local profession = prof.id	
+										if #GetOperationProfessionals(sector.Id, operation_id,profession)<=0 then 
+											return "disabled"
+										end	
+									end
 								end
 								return  "enabled"
 							end,
@@ -375,11 +382,18 @@ PlaceObj('XTemplate', {
 										return "disabled"
 									end
 								end
-								for _, prof in ipairs(operation.Professions) do
-									local profession = prof.id	
-									if #GetOperationProfessionals(sector.Id, operation_id,profession)<=0 then 
+								if operation_id=="TrainMercs" then
+									local mercs = GetOperationProfessionals(sector.Id, operation_id, "Student")
+									if not next(mercs) then
 										return "disabled"
 									end	
+								else		
+									for _, prof in ipairs(operation.Professions) do
+										local profession = prof.id	
+										if #GetOperationProfessionals(sector.Id, operation_id,profession)<=0 then 
+											return "disabled"
+										end	
+									end
 								end
 								return  "enabled"
 							end,

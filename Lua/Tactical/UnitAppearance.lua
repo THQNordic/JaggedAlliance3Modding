@@ -63,7 +63,7 @@ local maxStainsAtDetailLevel = {
 }
 
 function Unit:UpdateGasMaskVisibility()
-	if self:GetItemInSlot("Head", "GasMask") then
+	if self:GetItemInSlot("Head", "GasMaskBase") then
 		AppearanceObject.EquipGasMask(self)
 	else
 		AppearanceObject.UnequipGasMask(self)
@@ -130,6 +130,7 @@ function Unit:UpdateOutfit(appearance)
 	self:UpdateGasMaskVisibility()
 	Msg("OnUpdateItemsVisuals", self)
 
+	self:SetContourOuterOccludeRecursive(true)
 	self:SetHierarchyGameFlags(const.gofUnitLighting)
 	self:StartAnimMomentHook()
 
@@ -199,11 +200,11 @@ function Unit:GetGender()
 end
 
 function Unit:SetState(anim, flags, crossfade, ...)
-	AnimChangeHook.SetState(self, anim, flags or 0, GameState.sync_loading and 0 or crossfade, ...)
+	AnimChangeHook.SetState(self, anim, flags or 0, not GameTimeAdvanced and 0 or crossfade, ...)
 end
 
 function Unit:SetAnim(channel, anim, flags, crossfade, ...)
-	AnimChangeHook.SetAnim(self, channel, anim, flags or 0, GameState.sync_loading and 0 or crossfade, ...)
+	AnimChangeHook.SetAnim(self, channel, anim, flags or 0, not GameTimeAdvanced and 0 or crossfade, ...)
 end
 
 function Unit:RotateAnim(angle, anim)
@@ -316,7 +317,7 @@ function Unit:GetRotateAnim(angle_diff, base_idle)
 	if string.ends_with(base_idle, "_Aim") then
 		prefix = base_idle
 	else
-		prefix = string.match(base_idle, "(.*)_%a+$")
+		prefix = string.match(base_idle, "(.*)_%w+$")
 	end
 	if not prefix then
 		return
@@ -356,7 +357,7 @@ function Unit:GetRotateAnim(angle_diff, base_idle)
 end
 
 function Unit:IdleRotation(angle, time)
-	if GameState.loading then
+	if not GameTimeAdvanced then
 		time = 0
 	else
 		time = time or 300
@@ -377,7 +378,7 @@ function Unit:IdleRotation(angle, time)
 end
 
 function Unit:AnimatedRotation(angle, base_idle)
-	if GameState.sync_loading then
+	if not GameTimeAdvanced then
 		self:SetOrientationAngle(angle)
 		return
 	end
@@ -582,6 +583,8 @@ local function GetItemSpotAttachment(unit, spot, attach)
 					attach_angle = 90*60
 					attach_offset = point(0*guic,-30*guic,0*guic)
 				end
+			elseif	 IsKindOf(item, "MacheteWeapon") then
+				attach_offset = false
 			end
 		end
 	end
@@ -1170,10 +1173,12 @@ function Unit:AimTarget(attack_args, attack_results, prepare_to_attack)
 	local rotate_to_target = prepare_to_attack or IsValid(attack_args.target) and IsKindOf(attack_args.target, "Unit")
 	local aimIK = rotate_to_target and self:CanAimIK(weapon)
 	local stance = rotate_to_target and attack_args.stance or self.stance
-	local quick_play = GameState.sync_loading or self:CanQuickPlayInCombat() 
-	local idle_aiming
+	local quick_play = not GameTimeAdvanced or self:CanQuickPlayInCombat() 
+	local idle_aiming, rotate_cooldown_disable
 
-	if not rotate_to_target and self.stance == "Prone" and attack_args.stance ~= "Prone" then
+	if action_id == "MeleeAttack" then
+		idle_aiming = true
+	elseif not rotate_to_target and self.stance == "Prone" and attack_args.stance ~= "Prone" then
 		idle_aiming = true
 	elseif not rotate_to_target and aimIK and abs(self:AngleToPoint(aim_pos)) > 50*60 then
 		if self.last_idle_aiming_time then
@@ -1189,7 +1194,7 @@ function Unit:AimTarget(attack_args, attack_results, prepare_to_attack)
 
 	local aim_anim
 	if idle_aiming then
-		local base_idle = self:GetIdleBaseAnim()
+		local base_idle = self:GetIdleBaseAnim(stance)
 		if not IsAnimVariant(self:GetStateText(), base_idle) then
 			if self.stance == "Prone" then
 				-- first rotate
@@ -1208,6 +1213,7 @@ function Unit:AimTarget(attack_args, attack_results, prepare_to_attack)
 				PlayTransitionAnims(self, base_idle)
 			end
 			self:SetRandomAnim(base_idle)
+			rotate_cooldown_disable = true
 		end
 		self:SetIK("AimIK", false)
 		aimIK = false
@@ -1350,13 +1356,15 @@ function Unit:AimTarget(attack_args, attack_results, prepare_to_attack)
 				self.aim_rotate_last_angle = false
 				break
 			end
-			if not self.aim_rotate_last_angle or abs(AngleDiff(angle, self.aim_rotate_last_angle)) > max_deviation_angle then
-				self.aim_rotate_last_angle = angle
-				self.aim_rotate_cooldown_time = GameTime() + (aim_rotate_cooldown_times[stance] or 1000)
-				break
-			end
-			if GameTime() - self.aim_rotate_cooldown_time < 0 then
-				break
+			if not rotate_cooldown_disable then
+				if not self.aim_rotate_last_angle or abs(AngleDiff(angle, self.aim_rotate_last_angle)) > max_deviation_angle then
+					self.aim_rotate_last_angle = angle
+					self.aim_rotate_cooldown_time = GameTime() + (aim_rotate_cooldown_times[stance] or 1000)
+					break
+				end
+				if GameTime() - self.aim_rotate_cooldown_time < 0 then
+					break
+				end
 			end
 			self.aim_rotate_last_angle = false
 			self.aim_rotate_cooldown_time = false
@@ -1972,7 +1980,6 @@ function Unit:GetActionRandomAnim(action, stance, action_suffix)
 end
 
 function Unit:SetRandomAnim(base_anim, flags, crossfade, force)
-	NetUpdateHash("Unit_SetRandomAnim sync_loading", GameState.sync_loading)
 	if not force and IsAnimVariant(self:GetStateText(), base_anim) then
 		return
 	end
@@ -2302,7 +2309,9 @@ function Unit:PlayAwarenessAnim(followup_cmd)
 		self:DoChangeStance("Standing")
 	end
 	local anims
-	if setPiece and not isTriggerUnit then
+	if self:HasStatusEffect("ManningEmplacement") or self:GetBandageTarget() then
+		-- do nothing
+	elseif setPiece and not isTriggerUnit then
 		anims = { self:TryGetActionAnim("Idle", self.stance) }
 		idleAnim = true
 	elseif self.species == "Human" then
@@ -2340,12 +2349,16 @@ function Unit:PlayAwarenessAnim(followup_cmd)
 		if self.pending_awareness_role == "alerted" and not IsValid(self.alerted_by_enemy) then
 			Sleep(self:Random(500)) -- randomize phase when multiple units playing
 		end
+		if IsValid(self.alerted_by_enemy) and not self:HasStatusEffect("ManningEmplacement") and not self:GetBandageTarget() then
+			local alerted_angle = CalcOrientation(self, self.alerted_by_enemy)
+			local face_angle = self:GetPosOrientation(nil, alerted_angle, self.stance, false, true)
+			if face_angle then
+				self:AnimatedRotation(face_angle, anims[1])
+			end
+		end
 		local anim = self:GetNearbyUniqueRandomAnimFromList(anims)
 		anim = self:ModifyWeaponAnim(anim)
 		self:SetState(anim, const.eKeepComponentTargets)
-		if IsValid(self.alerted_by_enemy) then
-			self:Face(self.alerted_by_enemy, 200)
-		end
 		local weapon = self:GetActiveWeapons()
 		local fx_target = weapon and weapon:GetVisualObj() or false
 		if fx_target and not idleAnim then

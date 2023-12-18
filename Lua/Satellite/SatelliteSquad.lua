@@ -313,7 +313,7 @@ function SatelliteReachSectorCenter(squad_id, sector_id, prev_sector_id, dontUpd
 			if reached and player_squad then
 				squad.uninterruptable_travel = false
 				squad.Retreat = false
-				CombatLog("important", T{801526980739, "<SquadName> has reached <sector>", SquadName = Untranslated(squad.Name), sector = Untranslated(squad.CurrentSector)})
+				CombatLog("important", T{801526980739, "<SquadName> has reached <SectorId(sector)>", SquadName = Untranslated(squad.Name), sector = squad.CurrentSector})
 				ObjModified("gv_SatelliteView")
 				Msg("PlayerSquadReachedDestination", squad_id)
 				
@@ -447,7 +447,7 @@ function GetTotalRouteTravelTime(start, route, squad)
 	
 	-- Subtract the time the squad has already crossed.
 	-- This can occur when changing routes mid travel (such as cancelling).
-	if true then
+	if not IsTraversingShortcut(squad) then
 		local currentSectorId = squad.CurrentSector
 		local currentSector = currentSectorId and gv_Sectors[currentSectorId]
 		local targetPos = currentSector and currentSector.XMapPosition
@@ -471,6 +471,20 @@ function GetTotalRouteTravelTime(start, route, squad)
 				routeTimeCovered = DivCeil(routeTimeCovered, const.Scale.min) * const.Scale.min
 				time = routeTimeCovered
 			end
+		end
+	else
+		local sectorFrom = squad.CurrentSector
+		local sectorTo = route and route[1] and route[1][1]
+		local shortcut = GetShortcutByStartEnd(sectorFrom, sectorTo)
+		if shortcut then
+			local travelTime = shortcut:GetTravelTime()
+			local arrivalTime = squad.traversing_shortcut_start + travelTime
+			local timeLeft = arrivalTime - Game.CampaignTime
+			local timePassed = travelTime - timeLeft
+
+			local routeTimeCovered = time - timePassed
+			routeTimeCovered = DivCeil(routeTimeCovered, const.Scale.min) * const.Scale.min
+			time = routeTimeCovered
 		end
 	end
 	
@@ -511,6 +525,15 @@ function GetRouteTotalPrice(route, squad)
 			local prevSector = gv_Sectors[prevSectorId]
 			local sector = gv_Sectors[sector_id]
 			
+			local shortcuts = r.shortcuts
+			if shortcuts and shortcuts[j] then
+				local shortcutPreset = GetShortcutByStartEnd(prevSectorId, sector_id)
+				if shortcutPreset and shortcutPreset.water_shortcut then
+					local cost = prevSector:GetTravelPrice(squad)
+					price = price + cost * shortcutPreset.TravelTimeInSectors
+				end
+			end
+			
 			-- Get the cost from the port we just left
 			if prevSector and prevSector.Passability == "Land and Water" and prevSector.Port and not prevSector.PortLocked then
 				if sector.Passability == "Water" then
@@ -536,6 +559,7 @@ end
 
 function IsRouteForbidden(route, squad)
 	if not route then return true end
+	if route.invalid_shim then return true end
 	
 	local routePrice, cannotPayPast = GetRouteTotalPrice(route, squad)
 	local firstErrorSectorId = false
@@ -764,9 +788,12 @@ function SetSatelliteSquadRoute(squad, route, keepJoiningSquad, from, squadPos)
 	
 	local wasTravelling = IsSquadTravelling(squad)
 	
+	local nextSector = route and route[1] and route[1][1]
+	local nextIsUnderground = nextSector and IsSectorUnderground(nextSector)
+	
 	local squadSectorPreset = squad.CurrentSector and gv_Sectors[squad.CurrentSector]
 	local squadSectorGroundSectorId = squadSectorPreset and squadSectorPreset.GroundSector
-	if squadSectorGroundSectorId then
+	if squadSectorGroundSectorId and (nextSector and not nextIsUnderground) then
 		local from_map = from == "from_map" 
 		SetSatelliteSquadCurrentSector(squad, squadSectorGroundSectorId, from_map)
 		SatelliteReachSectorCenter(squad.UniqueId, squad.CurrentSector, squad.PreviousSector)
@@ -1095,19 +1122,25 @@ function GetUnitsFromSquads(squads, getUnitData)
 	return units
 end
 
-function HasRoad(from_sector_id, to_sector_id)
-	return GetDirectionProperty(from_sector_id, to_sector_id, "Roads")
+function HasRoad(from_sector_id, to_sector_id, cache_neighbors)
+	return GetDirectionProperty(from_sector_id, to_sector_id, "Roads", cache_neighbors)
 end
 
-function IsTravelBlocked(from_sector_id, to_sector_id)
-	return GetDirectionProperty(from_sector_id, to_sector_id, "BlockTravel") or gv_Sectors[to_sector_id].Passability == "Blocked"
+function IsTravelBlocked(from_sector_id, to_sector_id, cache_neighbors)
+	return GetDirectionProperty(from_sector_id, to_sector_id, "BlockTravel", cache_neighbors) or gv_Sectors[to_sector_id].Passability == "Blocked"
 end
 
-function GetDirectionProperty(from_sector_id, to_sector_id, prop_id)
+function GetDirectionProperty(from_sector_id, to_sector_id, prop_id, cache_neighbors)
 	local from_sector = gv_Sectors[from_sector_id]
-	for _, dir in ipairs(const.WorldDirections) do
-		if GetNeighborSector(from_sector_id, dir) == to_sector_id then
-			return from_sector[prop_id] and from_sector[prop_id][dir]
+	if cache_neighbors then
+		local dir = cache_neighbors[to_sector_id]
+		local fs = dir and from_sector[prop_id]
+		return fs and fs[dir]
+	else
+		for _, dir in ipairs(const.WorldDirections) do
+			if GetNeighborSector(from_sector_id, dir) == to_sector_id then
+				return from_sector[prop_id] and from_sector[prop_id][dir]
+			end
 		end
 	end
 end
@@ -1120,19 +1153,19 @@ local opposite_directions =
 	West = "East",
 }
 
-function SectorTravelBlocked(from_sector_id, to_sector_id, _, pass_mode, __, dir)
+function SectorTravelBlocked(from_sector_id, to_sector_id, _, pass_mode, __, dir, cache_neighbors)
 	local from_sector = gv_Sectors[from_sector_id]
 	local to_sector = gv_Sectors[to_sector_id]
 	
 	if 
-		IsTravelBlocked(from_sector_id, to_sector_id) or
+		IsTravelBlocked(from_sector_id, to_sector_id, cache_neighbors) or
 		pass_mode == "land_only" and to_sector.Passability == "Water"
 	then
 		return true
 	end
 	
 	if pass_mode ~= "land_water_river" and
-		GetDirectionProperty(from_sector_id, to_sector_id, "BlockTravelRiver") then
+		GetDirectionProperty(from_sector_id, to_sector_id, "BlockTravelRiver", cache_neighbors) then
 		return true
 	end
 	
@@ -1161,13 +1194,24 @@ function AreSectorsSameCity(sector_a, sector_b)
 	return false
 end
 
-function GetSectorTravelTime(from_sector_id, to_sector_id, route, units, pass_mode, _, side, dir)
+function GetSectorTravelTime(from_sector_id, to_sector_id, route, units, pass_mode, _, side, dir, cache_shortcuts, cache_neighbors)
 	local shortcut
 	if to_sector_id and not AreAdjacentSectors(from_sector_id, to_sector_id) then
 		shortcut = GetShortcutByStartEnd(from_sector_id, to_sector_id)
 	end
 	
-	if not shortcut and (to_sector_id and SectorTravelBlocked(from_sector_id, to_sector_id, route, pass_mode, _, dir)) then
+	-- If entering/exiting underground from overground then its always instant
+	-- We need to specially handle this as it is possible for an overground sector to connect to
+	-- another sector's underground sector (i.e. secret tunnel)
+	local from_underground = IsSectorUnderground(from_sector_id)
+	local to_underground = IsSectorUnderground(to_sector_id)
+	if from_underground ~= to_underground then return 0 end
+	
+	if pass_mode == "display_invalid" then
+		return 1
+	end
+	
+	if not shortcut and (to_sector_id and SectorTravelBlocked(from_sector_id, to_sector_id, route, pass_mode, _, dir, cache_neighbors)) then
 		return false
 	end
 
@@ -1178,8 +1222,8 @@ function GetSectorTravelTime(from_sector_id, to_sector_id, route, units, pass_mo
 		return time * 2, time, time, {}
 	end
 	
-	local breakdown = {}
 	local is_player = side and (side == "player1" or side == "player2")
+	local breakdown = is_player and {} or false
 	local max_leadership, max_leadership_merc = 0, false
 
 	if is_player then
@@ -1194,12 +1238,14 @@ function GetSectorTravelTime(from_sector_id, to_sector_id, route, units, pass_mo
 	end
 	
 	local squadModifier = is_player and 100 - (const.Satellite.SectorTravelTimeBase - max_leadership) or 0
-	breakdown[#breakdown + 1] = { Text = T(703764048855, "Squad Speed"), Value = squadModifier, Category = "squad",
-		rollover = T{898857286023, "The squad speed is defined by the merc with the highest Leadership in the squad.<newline><mercName><right><stat>",
-			mercName = max_leadership_merc and UnitDataDefs[max_leadership_merc] and UnitDataDefs[max_leadership_merc].Nick or Untranslated("???"),
-			stat = max_leadership
+	if is_player then
+		breakdown[#breakdown + 1] = { Text = T(703764048855, "Squad Speed"), Value = squadModifier, Category = "squad",
+			rollover = T{898857286023, "The squad speed is defined by the merc with the highest Leadership in the squad.<newline><mercName><right><stat>",
+				mercName = max_leadership_merc and UnitDataDefs[max_leadership_merc] and UnitDataDefs[max_leadership_merc].Nick or Untranslated("???"),
+				stat = max_leadership
+			}
 		}
-	}
+	end
 	
 	local from_sector = gv_Sectors[from_sector_id]
 	local to_sector = to_sector_id and gv_Sectors[to_sector_id]
@@ -1225,35 +1271,42 @@ function GetSectorTravelTime(from_sector_id, to_sector_id, route, units, pass_mo
 	local travel_time_modifier1 = SectorTerrainTypes[terrain_type1] and SectorTerrainTypes[terrain_type1].TravelMod or 100
 	local travel_time_modifier2 = to_sector_id and SectorTerrainTypes[terrain_type2] and SectorTerrainTypes[terrain_type2].TravelMod or travel_time_modifier1
 	local hasRoad = false;
-	if to_sector_id and HasRoad(from_sector_id, to_sector_id) then
+	if to_sector_id and HasRoad(from_sector_id, to_sector_id, cache_neighbors) then
 		travel_time_modifier1 = const.Satellite.RoadTravelTimeMod
 		travel_time_modifier2 = const.Satellite.RoadTravelTimeMod
 		hasRoad = true
 	end
 	
 	-- Special travel that is considered as travelling on the river but isn't through shortcuts.
-	local isRiverSectors = not shortcut and IsRiverSector(from_sector_id) and IsRiverSector(to_sector_id, "two_way")
+	local isRiverSectors
+	if cache_shortcuts ~= nil then
+		isRiverSectors = IsRiverSector(from_sector_id, not not shortcut, cache_shortcuts)
+	else
+		isRiverSectors = not shortcut and IsRiverSector(from_sector_id) and IsRiverSector(to_sector_id, "two_way")
+	end
 	
-	local mod = travel_time_modifier2
-	if isRiverSectors then
-		breakdown[#breakdown + 1] = { Text = T(414143808849, "<em>(River)</em>"), Category = "sector-special", special = "road" }
-	elseif mod ~= 0 and terrain_type1 ~= "Water" and terrain_type2 ~= "Water" and not shortcut then
-		if hasRoad then
-			breakdown[#breakdown + 1] = { Text = T(561135531078, "<em>(Road)</em>"), Value = 100 - mod, Category = "sector-special", special = "river" }
+	if is_player then
+		local mod = travel_time_modifier2
+		if isRiverSectors then
+			breakdown[#breakdown + 1] = { Text = T(414143808849, "<em>(River)</em>"), Category = "sector-special", special = "road" }
+		elseif mod ~= 0 and terrain_type1 ~= "Water" and terrain_type2 ~= "Water" and not shortcut then
+			if hasRoad then
+				breakdown[#breakdown + 1] = { Text = T(561135531078, "<em>(Road)</em>"), Value = 100 - mod, Category = "sector-special", special = "river" }
+			end
+			local difficultyText = false
+			if mod == 100 then
+				difficultyText = T(714191851131, --[[Terrain difficulty]] "Normal")
+			elseif mod <= 25 then
+				difficultyText = T(367857875968, --[[Terrain difficulty]] "Very Easy")
+			elseif mod <= 75 then
+				difficultyText = T(825299951074, --[[Terrain difficulty]] "Easy")
+			elseif mod >= 150 then
+				difficultyText = T(625725601692, --[[Terrain difficulty]] "Very Hard")
+			elseif mod >= 120 then
+				difficultyText = T(835764015096, --[[Terrain difficulty]] "Hard")
+			end
+			breakdown[#breakdown + 1] = { Text = T(379323289276, "Terrain"), Value = difficultyText, ValueType = "text", Category = "sector" }
 		end
-		local difficultyText = false
-		if mod == 100 then
-			difficultyText = T(714191851131, --[[Terrain difficulty]] "Normal")
-		elseif mod <= 25 then
-			difficultyText = T(367857875968, --[[Terrain difficulty]] "Very Easy")
-		elseif mod <= 75 then
-			difficultyText = T(825299951074, --[[Terrain difficulty]] "Easy")
-		elseif mod >= 150 then
-			difficultyText = T(625725601692, --[[Terrain difficulty]] "Very Hard")
-		elseif mod >= 120 then
-			difficultyText = T(835764015096, --[[Terrain difficulty]] "Hard")
-		end
-		breakdown[#breakdown + 1] = { Text = T(379323289276, "Terrain"), Value = difficultyText, ValueType = "text", Category = "sector" }
 	end
 
 	-- travel with the speed of the slowest unit
@@ -1762,6 +1815,10 @@ function CreateNewSatelliteSquad(predef_props, unit_ids, days, seed, enemy_squad
 	local previous_sector = squad.PreviousSector
 	AddUnitsToSquad(squad, unit_ids, days, seed or InteractionRand(nil, "Satellite"))
 	
+	if not gv_SatelliteView and gv_CurrentSectorId == current_sector then
+		
+	end
+	
 	if current_sector and not squad.arrival_squad and not predef_props.XVisualPos then
 		SatelliteReachSectorCenter(id, current_sector, previous_sector, nil, nil, reason)
 	end
@@ -2186,7 +2243,18 @@ function NetSyncEvents.AssignUnitToSquad(squad_id, unit_id, position, create_new
 			end
 		end
 	else
+		local oldSquad = gv_Squads[unit_data.Squad]
+		local newSquad = gv_Squads[squad_id]
+		
 		AddUnitToSquad(squad_id, unit_id, position, swap)
+		
+		-- Non-retreating unit moved into a retreating squad - squad stops retreating.
+		-- If the retreat route was instant (to underground sector for instance),
+		-- then the transfer should be invalid as the new squad would be in a different sector
+		if newSquad.Retreat and not oldSquad.Retreat and not unit_data.retreat_to_sector then
+			newSquad.Retreat = false
+			SetSatelliteSquadRoute(newSquad, false)
+		end
 	end
 	Msg("UnitAssignedToSquad", squad_id, unit_id, create_new_squad)
 	ObjModified("hud_squads")
@@ -2494,19 +2562,24 @@ function CheckIfPathTaken(curr, neigh, route, squad_curr_sector)
 	return false
 end
 
+PathingDirections = {"North", "South", "East", "West", "UpDown"}
 DefineConstInt("Satellite", "AttackSquadPlayerSideWeight", 5)
 function GenerateRouteDijkstra(start_sector, end_sector, fullRoute, units, pass_mode, squad_curr_sector, side, noShortcuts)
-	if gv_Sectors and gv_Sectors[start_sector] and gv_Sectors[start_sector].GroundSector then
-		start_sector = gv_Sectors[start_sector].GroundSector
-	end
-	if gv_Sectors and gv_Sectors[end_sector] and gv_Sectors[end_sector].GroundSector then
-		end_sector = gv_Sectors[end_sector].GroundSector
-	end
-	if start_sector == end_sector then
+	if start_sector == end_sector and pass_mode ~= "display_invalid" then
 		return false
 	end
 	
-	pass_mode = pass_mode or ((side == "enemy1" or side == "diamonds") and "land_water_boatless" or "land_water")
+	local isEnemy = side == "enemy1" or side == "diamonds"
+	pass_mode = pass_mode or (isEnemy and "land_water_boatless" or "land_water")
+	
+	-- Don't allow going into underground from satellite view, unless enemy
+	local startIsUnderground = gv_Sectors and gv_Sectors[start_sector] and gv_Sectors[start_sector].GroundSector
+	local endIsUnderground = gv_Sectors and gv_Sectors[end_sector] and gv_Sectors[end_sector].GroundSector
+	if not startIsUnderground and endIsUnderground then
+		if pass_mode ~= "display_invalid" and not isEnemy then
+			return false
+		end
+	end
 	
 	local preferMySide = false
 	if pass_mode == "enemy_guardpost" then
@@ -2514,7 +2587,14 @@ function GenerateRouteDijkstra(start_sector, end_sector, fullRoute, units, pass_
 		pass_mode = "land_water_boatless"
 	end
 	
-	if GetSectorDistance(start_sector, end_sector) == 1 then
+	if GetSectorDistance(start_sector, end_sector) == 1 and pass_mode ~= "display_invalid" then
+		local startSectorPreset = gv_Sectors[start_sector]
+		local startIsUnderground = not not startSectorPreset.GroundSector
+		local endIsUnderground = IsSectorUnderground(end_sector)
+		if startIsUnderground and not endIsUnderground and not startSectorPreset.CanGoUp then
+			return false
+		end
+	
 		local dir = GetSectorDirection(start_sector, end_sector)
 		local time = GetSectorTravelTime(start_sector, end_sector, fullRoute, units, pass_mode, squad_curr_sector, side, dir)
 		if time then
@@ -2522,21 +2602,48 @@ function GenerateRouteDijkstra(start_sector, end_sector, fullRoute, units, pass_
 		end
 	end
 
+	local underground_sector_map = {}
 	local unvisited_sectors = {}
 	local sector_path_size = {}
 	local prev, prevIsShortcut = {}, false
-	for sector_id, _ in pairs(gv_Sectors) do
+	for sector_id, sectorPreset in pairs(gv_Sectors) do
 		if sector_id == start_sector then
 			sector_path_size[sector_id] = 0
 		else
 			sector_path_size[sector_id] = max_int
 		end
 		unvisited_sectors[sector_id] = true
+		
+		if sectorPreset.GroundSector then
+			underground_sector_map[sectorPreset.GroundSector] = sector_id
+		end
 	end
+	
 	local curr = start_sector
 	while true do
-		for _, dir in ipairs(const.WorldDirections) do
-			local neigh = GetNeighborSector(curr, dir)
+		local currPreset = gv_Sectors[curr]
+		local currentIsUnderground = not not currPreset.GroundSector
+		
+		for _, dir in ipairs(PathingDirections) do
+			local neigh
+			if dir == "UpDown" then
+				if currentIsUnderground and
+					((currPreset.CanGoUp and start_sector == curr) or pass_mode == "display_invalid") then -- Current is underground, has above ground
+					neigh = currPreset.GroundSector
+				elseif underground_sector_map[curr] and
+						(pass_mode == "display_invalid" or (isEnemy and underground_sector_map[curr] == end_sector)) then -- Current is above ground, has underground
+					-- Don't allow pathing into underground from overground, except for enemies (when their destination is underground like C7 mine)
+					neigh = underground_sector_map[curr]
+				end
+			else
+				neigh = GetNeighborSector(curr, dir)
+				
+				-- Underground in cardinal directions can only lead to another underground
+				if currentIsUnderground and not IsSectorUnderground(neigh) then
+					neigh = false
+				end
+			end
+			
 			if unvisited_sectors[neigh] then
 				local time = GetSectorTravelTime(curr, neigh, fullRoute, units, pass_mode, squad_curr_sector, side, dir)
 				if time then
@@ -2579,6 +2686,7 @@ function GenerateRouteDijkstra(start_sector, end_sector, fullRoute, units, pass_
 		
 		unvisited_sectors[curr] = nil
 		curr = GetMinUnvisitedPathSizeSector(unvisited_sectors, sector_path_size)
+
 		if not curr then return false end
 		if curr == end_sector then
 			local s = curr
@@ -2718,21 +2826,39 @@ function OnMsg.ReachSectorCenter(squad_id, sector_id, prev_sector_id)
 	if not player_squad then return end
 
 	local travelling = IsSquadTravelling(squad) and not IsSquadInDestinationSector(squad)
-	local waterTravel = IsSquadWaterTravelling(squad)
+	local nonTireTravel = IsSquadWaterTravelling(squad) or IsTraversingShortcut(squad)
 	for idx, id in ipairs(squad.units) do
 		local unit_data = gv_UnitData[id]
 		if unit_data.TravelTimerStart > 0 then
+			
 			local hp = unit_data.HitPoints
 			local additional = GetHPAdditionalTiredTime(hp)
-			NetUpdateHash("Tiredness", id, unit_data.TravelTimerStart, hp, additional, unit_data.Tiredness, waterTravel)
-			if not waterTravel and unit_data.TravelTime >= const.Satellite.UnitTirednessTravelTime + additional then
-				if unit_data.Tiredness < 2 then
-					unit_data:ChangeTired(1)
-				end
-				DbgTravelTimerPrint("change tired: ", unit_data.session_id, unit_data.Tiredness)
-				unit_data.TravelTime = 0
-				unit_data.TravelTimerStart = Game.CampaignTime					
-			end								
+				
+			NetUpdateHash("Tiredness", id, unit_data.TravelTimerStart, hp, additional, unit_data.Tiredness, nonTireTravel)
+			
+			if not nonTireTravel then	
+				local TirednessThreshold = const.Satellite.UnitTirednessTravelTime + additional
+				if not unit_data.WarnTired and  TirednessThreshold - unit_data.TravelTime <= MulDivRound(TirednessThreshold, 20, 100) and
+					TirednessThreshold - unit_data.TravelTime > 0 then
+					if unit_data.Tiredness == 0 then
+						CombatLog("important", T{596219835266, "<name> is getting tired.", name = unit_data.Nick})
+						unit_data.WarnTired = true
+					elseif unit_data.Tiredness == 1 then
+						CombatLog("important", T{512750148013, "<name> is getting exhausted.", name = unit_data.Nick})
+						unit_data.WarnTired = true
+					end
+				end				
+				
+				if unit_data.TravelTime >= TirednessThreshold then
+					if unit_data.Tiredness < 2 then
+						unit_data:ChangeTired(1)						
+					end
+					DbgTravelTimerPrint("change tired: ", unit_data.session_id, unit_data.Tiredness)
+					unit_data.TravelTime = 0
+					unit_data.TravelTimerStart = Game.CampaignTime					
+					unit_data.WarnTired = false
+				end								
+			end
 		end
 		
 		-- If no longer travelling reset the activity to Idle
@@ -2781,7 +2907,7 @@ end
 
 function SatelliteUnitsTick(squad)
 	local player_squad = IsPlayer1Squad(squad)
-	local waterTravel = IsSquadWaterTravelling(squad)
+	local nonTireTravel = IsSquadWaterTravelling(squad) or IsTraversingShortcut(squad)
 	local squadUnits = table.copy(squad.units) -- Arriving activty will modify squad list
 	local sector = gv_Sectors[squad.CurrentSector]
 	local sector_id = sector.Id
@@ -2823,7 +2949,7 @@ function SatelliteUnitsTick(squad)
 			end	
 		end
 		if unit_data.TravelTimerStart>0 then
-			if not waterTravel then
+			if not nonTireTravel then
 				unit_data.TravelTime = unit_data.TravelTime + (Game.CampaignTime - unit_data.TravelTimerStart)
 			end
 			DbgTravelTimerPrint("update travel: ", unit_data.session_id, (unit_data.TravelTime)/const.Scale.h)
@@ -2976,6 +3102,18 @@ function GetNeighborSector(sector_id, dir, campaign)
 		end
 		neigh_id = sector_pack(row, col - 1)
 	end
+	
+	-- Game only and not editor
+	if gv_Sectors then
+		local underground = IsSectorUnderground(sector_id)
+		if underground then
+			local undergroundId = neigh_id .. "_Underground"
+			if gv_Sectors[undergroundId] then
+				neigh_id = undergroundId
+			end
+		end
+	end
+
 	return neigh_id
 end
 
@@ -2984,16 +3122,16 @@ function GetNeighborSectors(sector_id)
 	local row, col = sector_unpack(sector_id)
 	local campaign = GetCurrentCampaignPreset()
 	if row ~= campaign.sector_rowsstart then
-		table.insert(sectors, sector_pack(row - 1, col))
+		sectors[sector_pack(row - 1, col)] = "North"
 	end
 	if row ~= campaign.sector_rows then
-		table.insert(sectors, sector_pack(row + 1, col))
+		sectors[sector_pack(row + 1, col)] = "South"
 	end
 	if col ~= campaign.sector_columns then
-		table.insert(sectors, sector_pack(row, col + 1))
+		sectors[sector_pack(row, col + 1)] = "East"
 	end
 	if col ~= 1 then
-		table.insert(sectors, sector_pack(row, col - 1))
+		sectors[sector_pack(row, col - 1)] = "West"
 	end
 	return sectors
 end
@@ -3231,5 +3369,49 @@ function SetSquadWaterTravel(squad, val)
 			end
 		end
 		squad.water_travel_rest_timer = 0
+	end
+end
+
+function OnMsg.EnterSector()
+	local sector = gv_Sectors[gv_CurrentSectorId]
+	if not sector then return end
+	sector.discovered = true
+end
+
+function OnMsg.SquadSectorChanged(squad)
+	if squad.Side == "player1" then
+		local sector = gv_Sectors[squad.CurrentSector]
+		sector.discovered = true
+	end
+end
+
+function OnMsg.SquadStartedTravelling(squad)
+	if squad.Side == "player1" then
+		local route = squad.route
+		for i, wp in ipairs(route) do
+			for _, sId in ipairs(wp) do
+				local sector = gv_Sectors[sId]
+				sector.discovered = true
+			end
+		end
+	end
+end
+
+function DbgDiscoverAllSectors()
+	for id, s in pairs(gv_Sectors) do
+		s.discovered = true
+	end
+end
+
+function SavegameSessionDataFixups.SectorDiscoveredFix(session_data, _, lua_ver)
+	if lua_ver and lua_ver > 347132 then return end
+
+	local sectors = table.get(session_data, "gvars", "gv_Sectors")
+	if not sectors then return end
+
+	for i, s in pairs(sectors) do
+		if s.player_visited then
+			s.discovered = true
+		end
 	end
 end

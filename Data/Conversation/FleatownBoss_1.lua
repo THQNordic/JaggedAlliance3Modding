@@ -47,6 +47,16 @@ PlaceObj('Conversation', {
 			Negate = true,
 			per_ses_id = "NPC_FleatownBoss",
 		}),
+		PlaceObj('QuestIsVariableBool', {
+			QuestId = "_GroupsAttacked",
+			Vars = set({
+	Mollie_Killed = false,
+}),
+			__eval = function ()
+				local quest = gv_Quests['_GroupsAttacked'] or QuestGetState('_GroupsAttacked')
+				return not quest.Mollie_Killed
+			end,
+		}),
 	},
 	DefaultActor = "FleatownBoss",
 	Parameters = {

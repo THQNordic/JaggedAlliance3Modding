@@ -275,7 +275,7 @@ PlaceObj('VoiceResponse', {
 		T(427216115917, --[[VoiceResponse Barry SelectionStealth VoiceResponse SelectionStealth - when selected or autoselected voice:Barry]] "Going. Still undetected.")
 	}),
 	SeriouslyWounded = TConcat({
-		T(862906775606, --[[VoiceResponse Barry SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds) voice:Barry]] "I am injured with very many wounds.")
+		T(862906775606, --[[VoiceResponse Barry SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining. voice:Barry]] "I am injured with very many wounds.")
 	}),
 	SpecialThrowGrenade = TConcat({
 		T(369087353914, --[[VoiceResponse Barry SpecialThrowGrenade VoiceResponse SpecialThrowGrenade - When throwing grenade voice:Barry]] "Here is special grenade."),
@@ -326,9 +326,9 @@ PlaceObj('VoiceResponse', {
 		T(643488797362, --[[VoiceResponse Barry WeaponJammed VoiceResponse WeaponJammed - When weapon has jammed voice:Barry]] "My gun refuses to fire!")
 	}),
 	Wounded = TConcat({
-		T(446177323050, --[[VoiceResponse Barry Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Barry]] "It hurts."),
-		T(951723592604, --[[VoiceResponse Barry Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Barry]] "Ow! Unpleasant."),
-		T(628682270225, --[[VoiceResponse Barry Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Barry]] "I was hit.")
+		T(446177323050, --[[VoiceResponse Barry Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Barry]] "It hurts."),
+		T(951723592604, --[[VoiceResponse Barry Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Barry]] "Ow! Unpleasant."),
+		T(628682270225, --[[VoiceResponse Barry Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Barry]] "I was hit.")
 	}),
 	group = "MercenariesOld",
 	id = "Barry",

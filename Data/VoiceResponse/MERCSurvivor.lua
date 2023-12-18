@@ -128,14 +128,14 @@ PlaceObj('VoiceResponse', {
 		T(252706703565, --[[VoiceResponse MERCSurvivor TakeCover VoiceResponse TakeCover - Played when the Take Cover action is used voice:MERCSurvivor]] "Digging in.")
 	}),
 	Wounded = TConcat({
-		T(374802145844, --[[VoiceResponse MERCSurvivor Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:MERCSurvivor]] "I'm wounded!"),
-		T(934470547008, --[[VoiceResponse MERCSurvivor Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:MERCSurvivor]] "Took a bad hit."),
-		T(206263699473, --[[VoiceResponse MERCSurvivor Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:MERCSurvivor]] "I need bandages!"),
-		T(705472338103, --[[VoiceResponse MERCSurvivor Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:MERCSurvivor]] "Damn, that hurts."),
-		T(492440769944, --[[VoiceResponse MERCSurvivor Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:MERCSurvivor]] "I need a medic!"),
-		T(761159819886, --[[VoiceResponse MERCSurvivor Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:MERCSurvivor]] "Not dead yet."),
-		T(244614942323, --[[VoiceResponse MERCSurvivor Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:MERCSurvivor]] "I'm hurt bad!"),
-		T(828591397259, --[[VoiceResponse MERCSurvivor Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:MERCSurvivor]] "Stings like hell.")
+		T(374802145844, --[[VoiceResponse MERCSurvivor Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:MERCSurvivor]] "I'm wounded!"),
+		T(934470547008, --[[VoiceResponse MERCSurvivor Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:MERCSurvivor]] "Took a bad hit."),
+		T(206263699473, --[[VoiceResponse MERCSurvivor Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:MERCSurvivor]] "I need bandages!"),
+		T(705472338103, --[[VoiceResponse MERCSurvivor Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:MERCSurvivor]] "Damn, that hurts."),
+		T(492440769944, --[[VoiceResponse MERCSurvivor Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:MERCSurvivor]] "I need a medic!"),
+		T(761159819886, --[[VoiceResponse MERCSurvivor Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:MERCSurvivor]] "Not dead yet."),
+		T(244614942323, --[[VoiceResponse MERCSurvivor Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:MERCSurvivor]] "I'm hurt bad!"),
+		T(828591397259, --[[VoiceResponse MERCSurvivor Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:MERCSurvivor]] "Stings like hell.")
 	}),
 	group = "Militia",
 	id = "MERCSurvivor",

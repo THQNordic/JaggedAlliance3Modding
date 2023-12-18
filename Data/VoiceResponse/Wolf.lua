@@ -281,9 +281,9 @@ PlaceObj('VoiceResponse', {
 		T(235943355501, --[[VoiceResponse Wolf SelectionStealth VoiceResponse SelectionStealth - when selected or autoselected voice:Wolf]] "Pay attention, this is how it's done commando-style.")
 	}),
 	SeriouslyWounded = TConcat({
-		T(251402676717, --[[VoiceResponse Wolf SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds) voice:Wolf]] "I'm pretty banged up, chief. I could use a breather."),
-		T(986294175383, --[[VoiceResponse Wolf SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds) voice:Wolf]] "I'm way beyond wounded. Don't think I'm gonna make it."),
-		T(821089211108, --[[VoiceResponse Wolf SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds) voice:Wolf]] "Can't keep going like this, chief. I need a medic.")
+		T(251402676717, --[[VoiceResponse Wolf SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining. voice:Wolf]] "I'm pretty banged up, chief. I could use a breather."),
+		T(986294175383, --[[VoiceResponse Wolf SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining. voice:Wolf]] "I'm way beyond wounded. Don't think I'm gonna make it."),
+		T(821089211108, --[[VoiceResponse Wolf SeriouslyWounded VoiceResponse SeriouslyWounded - Unit is seriously wounded (3 or more wounds). Add a pain noise at the begining. voice:Wolf]] "Can't keep going like this, chief. I need a medic.")
 	}),
 	Startled = TConcat({
 		T(983835913291, --[[VoiceResponse Wolf Startled VoiceResponse Startled - Startled by hearing a sudden noise voice:Wolf]] "Huh?"),
@@ -342,9 +342,9 @@ PlaceObj('VoiceResponse', {
 		T(415399657084, --[[VoiceResponse Wolf WeaponJammed VoiceResponse WeaponJammed - When weapon has jammed voice:Wolf]] "Damn misfire!")
 	}),
 	Wounded = TConcat({
-		T(436112397819, --[[VoiceResponse Wolf Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Wolf]] "Taking fire!"),
-		T(449092364257, --[[VoiceResponse Wolf Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Wolf]] "Damn, that stings!"),
-		T(908924725779, --[[VoiceResponse Wolf Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) voice:Wolf]] "Well, I guess they ain't using paint balls!")
+		T(436112397819, --[[VoiceResponse Wolf Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Wolf]] "Taking fire!"),
+		T(449092364257, --[[VoiceResponse Wolf Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Wolf]] "Damn, that stings!"),
+		T(908924725779, --[[VoiceResponse Wolf Wounded VoiceResponse Wounded - Unit is Wounded. (When the Wounded VR is played, the Pain VR should be suppressed.) Add a pain noise at the begining voice:Wolf]] "Well, I guess they ain't using paint balls!")
 	}),
 	group = "MercenariesOld",
 	id = "Wolf",

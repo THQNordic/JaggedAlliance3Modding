@@ -35,5 +35,6 @@ PlaceObj('InventoryItemCompositeDef', {
 	'AppliedEffects', {
 		"Bleeding",
 	},
+	'ammo_type_icon', "UI/Icons/Items/ta_subsonic.png",
 })
 

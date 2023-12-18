@@ -116,11 +116,16 @@ function NetSyncEvents.LogOperationStart(operation_id, sector_id, voicelog)
 		if operation_id == "TrainMercs" then
 			local m_students = GetOperationProfessionals(sector_id, operation_id,"Student") 
 			local m_teachers = GetOperationProfessionals(sector_id, operation_id,"Teacher")
-			if #m_students >=1 and #m_teachers>=1 then
+			local solo = not next(m_teachers)
+			if #m_students >=1 then
 				local trainers = table.map(m_teachers, "Nick")				
 				local students = table.map(m_students, "Nick")
-				if voicelog then PlayVoiceResponse(table.rand(m_teachers),"ActivityStarted") end
-				CombatLog("short",T{559221136920, "<em><trainers></em> started training <em><students></em> in <SectorName(sector)>",trainers = ConcatListWithAnd(trainers), students = ConcatListWithAnd(students), sector = sector})
+				if voicelog then PlayVoiceResponse(table.rand(not solo and m_teachers or m_students),"ActivityStarted") end
+				if solo then
+					CombatLog("short",T{490352745327, "<em><students></em> started training in <SectorName(sector)>", students = ConcatListWithAnd(students), sector = sector})
+				else
+					CombatLog("short",T{559221136920, "<em><trainers></em> started training <em><students></em> in <SectorName(sector)>",trainers = ConcatListWithAnd(trainers), students = ConcatListWithAnd(students), sector = sector})
+				end
 			end	
 		elseif operation_id == "TreatWounds" then
 			local m_patients = GetOperationProfessionals(sector_id, operation_id,"Patient")
@@ -723,8 +728,8 @@ function MercsOperationsFillTempData(sector, operation_id)
 	-- RepairItems, craft
 	sector.operations_temp_data = sector.operations_temp_data or {}
 	local temp_table =  sector.operations_temp_data[operation_id] or {}
-	temp_table.all_items = table.copy(SectorOperationItems_GetAllItems(sector.Id, operation_id) or {})
-	temp_table.queued_items = table.copy(SectorOperationItems_GetItemsQueue(sector.Id, operation_id) or {})
+	temp_table.all_items = table.copy(SectorOperationItems_GetAllItems(sector.Id, operation_id))
+	temp_table.queued_items = table.copy(SectorOperationItems_GetItemsQueue(sector.Id, operation_id))
 	sector.operations_temp_data[operation_id] = temp_table
 end
 
@@ -1023,7 +1028,8 @@ function GetOperationsInSector(sector_id)
 	if not sector then return sector_operations end
 	
 	if sector.Side == "player1" or sector.Side == "player2" then
-		for id, operation in pairs(SectorOperations) do
+		ForEachPresetInCampaign("SectorOperation", function(operation)
+			local id = operation.id
 			if operation:HasOperation(sector) then
 				local enabled, rollover = operation:IsEnabled(sector)
 				if enabled then
@@ -1046,7 +1052,7 @@ function GetOperationsInSector(sector_id)
 				end
 				sector_operations[#sector_operations + 1] = {operation = operation, enabled = enabled , rollover = rollover, sector = sector_id}
 			end
-		end
+		end)
 	end
 	
 	table.sort(sector_operations, function (a, b)
@@ -1620,6 +1626,11 @@ function XActivityItem:OnContextUpdate(item,...)
 		self.idText:SetText(T{641971138327, "<style InventoryItemsCountMax><amount></style>", amount = itm.amount})
 	end	
 	--self.idText:SetVisible(false)
+	local ammo_type =  rawget(self.idItemImg,"idItemAmmoTypeImg") 
+	if ammo_type then
+		--ammo_type:SetImageScale(point(700,700))
+		ammo_type:SetMargins(box(-18,-18, 0 , 0))
+	end	
 end
 
 function XActivityItem:OnDropEnter(drag_win, pt, drag_source_win)
@@ -1830,6 +1841,10 @@ function SectorOperation_StudentStatDiff(sector_id, student, teachers)
  local teachers = teachers or GetOperationProfessionals(sector_id, "TrainMercs", "Teacher")
  local sector = gv_Sectors[sector_id]
  local avg_teachers_stat = table.avg(teachers,sector.training_stat)
+ if not next(teachers) then
+	local operation = SectorOperations["TrainMercs"]
+	avg_teachers_stat = operation:ResolveValue("SoloTrainingStat")
+ end
  local student_stat = student[sector.training_stat]
  local diff = avg_teachers_stat-student_stat
  if diff<20 then

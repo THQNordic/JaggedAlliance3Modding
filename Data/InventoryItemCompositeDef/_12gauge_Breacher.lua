@@ -47,5 +47,6 @@ PlaceObj('InventoryItemCompositeDef', {
 	'AppliedEffects', {
 		"Suppressed",
 	},
+	'ammo_type_icon', "UI/Icons/Items/ta_ap.png",
 })
 

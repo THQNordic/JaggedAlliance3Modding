@@ -637,6 +637,60 @@ PlaceObj('SquadName', {
 })
 
 PlaceObj('SquadName', {
+	Name = T(313666417522, --[[SquadName SuperSoldiers Name01 Name]] "Brünnhilde"),
+	group = "SuperSoldiers",
+	id = "Name01",
+})
+
+PlaceObj('SquadName', {
+	Name = T(853953479033, --[[SquadName SuperSoldiers Name02 Name]] "Waltraute"),
+	group = "SuperSoldiers",
+	id = "Name02",
+})
+
+PlaceObj('SquadName', {
+	Name = T(866643192496, --[[SquadName SuperSoldiers Name03 Name]] "Helmwige"),
+	group = "SuperSoldiers",
+	id = "Name03",
+})
+
+PlaceObj('SquadName', {
+	Name = T(917853997952, --[[SquadName SuperSoldiers Name04 Name]] "Gerhilde"),
+	group = "SuperSoldiers",
+	id = "Name04",
+})
+
+PlaceObj('SquadName', {
+	Name = T(487174273722, --[[SquadName SuperSoldiers Name05 Name]] "Siegrune"),
+	group = "SuperSoldiers",
+	id = "Name05",
+})
+
+PlaceObj('SquadName', {
+	Name = T(220172457904, --[[SquadName SuperSoldiers Name06 Name]] "Schwertleite"),
+	group = "SuperSoldiers",
+	id = "Name06",
+})
+
+PlaceObj('SquadName', {
+	Name = T(458499664807, --[[SquadName SuperSoldiers Name07 Name]] "Ortlinde"),
+	group = "SuperSoldiers",
+	id = "Name07",
+})
+
+PlaceObj('SquadName', {
+	Name = T(659791495298, --[[SquadName SuperSoldiers Name08 Name]] "Grimgerde"),
+	group = "SuperSoldiers",
+	id = "Name08",
+})
+
+PlaceObj('SquadName', {
+	Name = T(535109179958, --[[SquadName SuperSoldiers Name09 Name]] "Rossweisse"),
+	group = "SuperSoldiers",
+	id = "Name09",
+})
+
+PlaceObj('SquadName', {
 	Name = T(209630451490, --[[SquadName Thugs Name01 Name]] "THE FISHERMEN"),
 	group = "Thugs",
 	id = "Name01",

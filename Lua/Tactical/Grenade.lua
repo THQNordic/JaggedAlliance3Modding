@@ -932,7 +932,7 @@ function EnvEffectToxicGasTick(unit, voxels, combat_moment)
 			end
 		end
 		if inside then
-			local mask = unit:GetItemInSlot("Head", "GasMask")
+			local mask = unit:GetItemInSlot("Head", "GasMaskBase")
 			protected = mask and mask.Condition > 0
 			for _, zone in ipairs(smoke.zones) do
 				if zone.owner then
@@ -992,7 +992,7 @@ function EnvEffectTearGasTick(unit, voxels, combat_moment)
 			end
 		end
 		if inside then
-			local mask = unit:GetItemInSlot("Head", "GasMask")
+			local mask = unit:GetItemInSlot("Head", "GasMaskBase")
 			protected = mask and mask.Condition > 0
 			for _, zone in ipairs(smoke.zones) do
 				if zone.owner then

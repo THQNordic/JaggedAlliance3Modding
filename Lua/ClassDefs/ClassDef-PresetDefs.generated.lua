@@ -290,7 +290,7 @@ end, },
 }
 
 DefineClass.BanterDef = {
-	__parents = { "Preset", },
+	__parents = { "Preset", "CampaignSpecific", },
 	__generated_by_class = "PresetDef",
 
 	properties = {
@@ -338,7 +338,7 @@ end, no_edit = true, },
 	EditorMenubarSortKey = "3000",
 }
 
-DefineModItemPreset("BanterDef", { EditorName = "Banter", EditorSubmenu = "Unit" })
+DefineModItemPreset("BanterDef", { EditorName = "Banter", EditorSubmenu = "Campaign & Maps" })
 
 function BanterDef:OnPreSave()
 	for i, l in ipairs(self.Lines) do
@@ -436,6 +436,10 @@ DefineClass.CampaignPreset = {
 			editor = "text", default = false, translate = true, },
 		{ category = "Satellite Settings", id = "map_file", name = "Map image", 
 			editor = "ui_image", default = false, },
+		{ category = "Satellite Settings", id = "underground_file", name = "Underground map image", 
+			editor = "ui_image", default = false, },
+		{ category = "Satellite Settings", id = "decorations", 
+			editor = "nested_list", default = false, base_class = "SatelliteViewDecorationDef", },
 		{ category = "Preset", id = "Description", name = "Description", 
 			editor = "text", default = "", translate = true, },
 		{ category = "Map Size & Sectors", id = "InheritSectorsFrom", name = "Inherit sectors from", 
@@ -476,7 +480,7 @@ end end, },
 		{ id = "Cities", 
 			editor = "nested_list", default = false, base_class = "CampaignCity", inclusive = true, },
 		{ id = "Sectors", 
-			editor = "nested_list", default = false, no_edit = true, base_class = "SatelliteSector", inclusive = true, },
+			editor = "nested_list", default = false, no_edit = true, no_validate = true, base_class = "SatelliteSector", inclusive = true, },
 		{ id = "EffectsOnStart", name = "Effects on campaign start", help = "Effects that are executed when the campaign is started.", 
 			editor = "nested_list", default = false, base_class = "Effect", inclusive = true, },
 		{ id = "Initialize", help = "Called once when the campaign starts for the first time.", 
@@ -1018,7 +1022,7 @@ DefineClass.ContainerNames = {
 }
 
 DefineClass.Conversation = {
-	__parents = { "Preset", },
+	__parents = { "Preset", "CampaignSpecific", },
 	__generated_by_class = "PresetDef",
 
 	properties = {
@@ -1669,7 +1673,7 @@ DefineClass.EliteEnemyName = {
 }
 
 DefineClass.Email = {
-	__parents = { "MsgReactionsPreset", },
+	__parents = { "MsgReactionsPreset", "CampaignSpecific", },
 	__generated_by_class = "PresetDef",
 
 	properties = {
@@ -1951,7 +1955,7 @@ DefineClass.GuardpostObjective = {
 }
 
 DefineClass.HistoryOccurence = {
-	__parents = { "MsgReactionsPreset", },
+	__parents = { "MsgReactionsPreset", "CampaignSpecific", },
 	__generated_by_class = "PresetDef",
 
 	properties = {
@@ -2786,7 +2790,7 @@ DefineClass.PlayerColor = {
 }
 
 DefineClass.PopupNotification = {
-	__parents = { "Preset", },
+	__parents = { "Preset", "CampaignSpecific", },
 	__generated_by_class = "PresetDef",
 
 	properties = {
@@ -2819,7 +2823,7 @@ end, no_edit = true, },
 	EditorMenubarSortKey = "4020",
 }
 
-DefineModItemPreset("PopupNotification", { EditorName = "Popup notification", EditorSubmenu = "Gameplay" })
+DefineModItemPreset("PopupNotification", { EditorName = "Popup notification", EditorSubmenu = "Campaign & Maps" })
 
 DefineClass.QuestBadgePlacement = {
 	__parents = { "PropertyObject", },
@@ -3045,7 +3049,7 @@ function QuestVarText:GetEditorView()
 end
 
 DefineClass.QuestsDef = {
-	__parents = { "Preset", },
+	__parents = { "Preset", "CampaignSpecific", },
 	__generated_by_class = "PresetDef",
 
 	properties = {
@@ -3071,7 +3075,7 @@ DefineClass.QuestsDef = {
 		{ category = "General", id = "Main", name = "Main", help = "Whether this quest is part of the main quest line.", 
 			editor = "bool", default = false, },
 		{ id = "Author", 
-			editor = "preset_id", default = false, preset_class = "HGMember", },
+			editor = "preset_id", default = false, no_edit = function(self) return not Platform.developer end, preset_class = "HGMember", },
 		{ category = "Status", id = "LineVisibleOnGive", name = "Line visible on 'given'", help = 'Showing which log line is automatically set to visible when the quest enters "given"', 
 			editor = "choice", default = 0, items = function (self) return GetQuestNoteLinesCombo(self.id) end, },
 		{ category = "Status", id = "EffectOnChangeVarValue", name = "Effect On rise bool var", 
@@ -3445,6 +3449,10 @@ DefineClass.SatelliteShortcutPreset = {
 			editor = "combo", default = "RiverTravelTime", items = function (self) return ConstCategoryToCombo(const.SatelliteShortcut) end, },
 		{ id = "terrain", name = "Travel Breakdown Terrain Description", 
 			editor = "combo", default = "Shortcut_River", items = function (self) return PresetsCombo("SectorTerrain") end, },
+		{ id = "entry_direction_start", name = "Deployment Entry At Start Sector", 
+			editor = "combo", default = false, items = function (self) return { false, "North", "South", "East", "West" } end, },
+		{ id = "entry_direction_end", name = "Deployment Entry At End Sector", 
+			editor = "combo", default = false, items = function (self) return { false, "North", "South", "East", "West" } end, },
 		{ id = "one_way", name = "One way", 
 			editor = "bool", default = false, },
 		{ id = "disabled", name = "Disabled By Default", 
@@ -3472,11 +3480,23 @@ end, no_edit = true, },
 }
 
 function SatelliteShortcutPreset:GetShortcutEnabled()
+	gv_SatelliteShortcutState = gv_SatelliteShortcutState or {}
+	
+	local runtimeState = gv_SatelliteShortcutState[self.id]
+	if runtimeState and runtimeState.enabled then
+		return runtimeState.enabled
+	end
+	
 	return not self.disabled
 end
 
 function SatelliteShortcutPreset:GetTravelTime()
-	local timeConst = const.SatelliteShortcut[self.speed_const or "RiverTravelTime"]
+	gv_SatelliteShortcutState = gv_SatelliteShortcutState or {}
+	
+	local runtimeState = gv_SatelliteShortcutState[self.id]
+	local constName = runtimeState and runtimeState.speed_const or self.speed_const or "RiverTravelTime"
+	
+	local timeConst = const.SatelliteShortcut[constName]
 	return self.TravelTimeInSectors * timeConst
 end
 
@@ -3986,7 +4006,7 @@ function TriggeredConditionalEvent:OnEditorNew(parent, ged, is_paste)
 end
 
 DefineClass.TutorialHint = {
-	__parents = { "Preset", },
+	__parents = { "Preset", "CampaignSpecific", },
 	__generated_by_class = "PresetDef",
 
 	properties = {

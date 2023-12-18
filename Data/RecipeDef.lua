@@ -4,6 +4,46 @@ PlaceObj('RecipeDef', {
 	Difficulty = 30,
 	Ingredients = {
 		PlaceObj('RecipeIngredient', {
+			'item', "CamoArmor_Light",
+		}),
+		PlaceObj('RecipeIngredient', {
+			'item', "Combination_Kompositum58",
+		}),
+	},
+	MechanicalRoll = true,
+	ResultItems = {
+		PlaceObj('RecipeIngredient', {
+			'item', "CamoArmor_Light_Kompositum",
+		}),
+	},
+	group = "Armor",
+	id = "CamoLight_Kompositum",
+})
+
+PlaceObj('RecipeDef', {
+	Difficulty = 30,
+	Ingredients = {
+		PlaceObj('RecipeIngredient', {
+			'item', "CamoArmor_Medium",
+		}),
+		PlaceObj('RecipeIngredient', {
+			'item', "Combination_Kompositum58",
+		}),
+	},
+	MechanicalRoll = true,
+	ResultItems = {
+		PlaceObj('RecipeIngredient', {
+			'item', "CamoArmor_Medium_Kompositum",
+		}),
+	},
+	group = "Armor",
+	id = "CamoMedium_Kompositum",
+})
+
+PlaceObj('RecipeDef', {
+	Difficulty = 30,
+	Ingredients = {
+		PlaceObj('RecipeIngredient', {
 			'item', "FlakArmor",
 		}),
 		PlaceObj('RecipeIngredient', {
@@ -29,6 +69,26 @@ PlaceObj('RecipeDef', {
 			'item', "FlakArmor",
 		}),
 		PlaceObj('RecipeIngredient', {
+			'item', "Combination_Kompositum58",
+		}),
+	},
+	MechanicalRoll = true,
+	ResultItems = {
+		PlaceObj('RecipeIngredient', {
+			'item', "FlakArmor_Kompositum",
+		}),
+	},
+	group = "Armor",
+	id = "FlakArmor_Kompositum",
+})
+
+PlaceObj('RecipeDef', {
+	Difficulty = 30,
+	Ingredients = {
+		PlaceObj('RecipeIngredient', {
+			'item', "FlakArmor",
+		}),
+		PlaceObj('RecipeIngredient', {
 			'item', "Combination_WeavePadding",
 		}),
 	},
@@ -40,6 +100,26 @@ PlaceObj('RecipeDef', {
 	},
 	group = "Armor",
 	id = "FlakArmor_WeavePadding",
+})
+
+PlaceObj('RecipeDef', {
+	Difficulty = 30,
+	Ingredients = {
+		PlaceObj('RecipeIngredient', {
+			'item', "FlakLeggings",
+		}),
+		PlaceObj('RecipeIngredient', {
+			'item', "Combination_Kompositum58",
+		}),
+	},
+	MechanicalRoll = true,
+	ResultItems = {
+		PlaceObj('RecipeIngredient', {
+			'item', "FlakLeggings_Kompositum",
+		}),
+	},
+	group = "Armor",
+	id = "FlakLeggings_Kompositum",
 })
 
 PlaceObj('RecipeDef', {
@@ -91,6 +171,26 @@ PlaceObj('RecipeDef', {
 			'item', "FlakVest",
 		}),
 		PlaceObj('RecipeIngredient', {
+			'item', "Combination_Kompositum58",
+		}),
+	},
+	MechanicalRoll = true,
+	ResultItems = {
+		PlaceObj('RecipeIngredient', {
+			'item', "FlakVest_Kompositum",
+		}),
+	},
+	group = "Armor",
+	id = "FlakVest_Kompositum",
+})
+
+PlaceObj('RecipeDef', {
+	Difficulty = 30,
+	Ingredients = {
+		PlaceObj('RecipeIngredient', {
+			'item', "FlakVest",
+		}),
+		PlaceObj('RecipeIngredient', {
 			'item', "Combination_WeavePadding",
 		}),
 	},
@@ -124,6 +224,26 @@ PlaceObj('RecipeDef', {
 	RevertConditionValue = 4,
 	group = "Armor",
 	id = "HeavyArmorChestplate_CeramicPlates",
+})
+
+PlaceObj('RecipeDef', {
+	Difficulty = 70,
+	Ingredients = {
+		PlaceObj('RecipeIngredient', {
+			'item', "HeavyArmorChestplate",
+		}),
+		PlaceObj('RecipeIngredient', {
+			'item', "Combination_Kompositum58",
+		}),
+	},
+	MechanicalRoll = true,
+	ResultItems = {
+		PlaceObj('RecipeIngredient', {
+			'item', "HeavyArmorChestplate_Kompositum",
+		}),
+	},
+	group = "Armor",
+	id = "HeavyArmorChestplate_Kompositum",
 })
 
 PlaceObj('RecipeDef', {
@@ -175,6 +295,26 @@ PlaceObj('RecipeDef', {
 			'item', "HeavyArmorTorso",
 		}),
 		PlaceObj('RecipeIngredient', {
+			'item', "Combination_Kompositum58",
+		}),
+	},
+	MechanicalRoll = true,
+	ResultItems = {
+		PlaceObj('RecipeIngredient', {
+			'item', "HeavyArmorTorso_Kompositum",
+		}),
+	},
+	group = "Armor",
+	id = "HeavyArmor_Kompositum",
+})
+
+PlaceObj('RecipeDef', {
+	Difficulty = 70,
+	Ingredients = {
+		PlaceObj('RecipeIngredient', {
+			'item', "HeavyArmorTorso",
+		}),
+		PlaceObj('RecipeIngredient', {
 			'item', "Combination_WeavePadding",
 		}),
 	},
@@ -195,6 +335,26 @@ PlaceObj('RecipeDef', {
 			'item', "HeavyArmorHelmet",
 		}),
 		PlaceObj('RecipeIngredient', {
+			'item', "Combination_Kompositum58",
+		}),
+	},
+	MechanicalRoll = true,
+	ResultItems = {
+		PlaceObj('RecipeIngredient', {
+			'item', "HeavyArmorHelmet_Kompositum",
+		}),
+	},
+	group = "Armor",
+	id = "HeavyHelmet_Kompositum",
+})
+
+PlaceObj('RecipeDef', {
+	Difficulty = 70,
+	Ingredients = {
+		PlaceObj('RecipeIngredient', {
+			'item', "HeavyArmorHelmet",
+		}),
+		PlaceObj('RecipeIngredient', {
 			'item', "Combination_WeavePadding",
 		}),
 	},
@@ -206,6 +366,26 @@ PlaceObj('RecipeDef', {
 	},
 	group = "Armor",
 	id = "HeavyHelmet_WeavePadding",
+})
+
+PlaceObj('RecipeDef', {
+	Difficulty = 70,
+	Ingredients = {
+		PlaceObj('RecipeIngredient', {
+			'item', "HeavyArmorLeggings",
+		}),
+		PlaceObj('RecipeIngredient', {
+			'item', "Combination_Kompositum58",
+		}),
+	},
+	MechanicalRoll = true,
+	ResultItems = {
+		PlaceObj('RecipeIngredient', {
+			'item', "HeavyArmorLeggings_Kompositum",
+		}),
+	},
+	group = "Armor",
+	id = "HeavyLeggings_Kompositum",
 })
 
 PlaceObj('RecipeDef', {
@@ -257,6 +437,26 @@ PlaceObj('RecipeDef', {
 			'item', "KevlarChestplate",
 		}),
 		PlaceObj('RecipeIngredient', {
+			'item', "Combination_Kompositum58",
+		}),
+	},
+	MechanicalRoll = true,
+	ResultItems = {
+		PlaceObj('RecipeIngredient', {
+			'item', "KevlarChestplate_Kompositum",
+		}),
+	},
+	group = "Armor",
+	id = "KevlarChestplate_Kompositum",
+})
+
+PlaceObj('RecipeDef', {
+	Difficulty = 50,
+	Ingredients = {
+		PlaceObj('RecipeIngredient', {
+			'item', "KevlarChestplate",
+		}),
+		PlaceObj('RecipeIngredient', {
 			'item', "Combination_WeavePadding",
 		}),
 	},
@@ -277,6 +477,26 @@ PlaceObj('RecipeDef', {
 			'item', "KevlarHelmet",
 		}),
 		PlaceObj('RecipeIngredient', {
+			'item', "Combination_Kompositum58",
+		}),
+	},
+	MechanicalRoll = true,
+	ResultItems = {
+		PlaceObj('RecipeIngredient', {
+			'item', "KevlarHelmet_Kompositum",
+		}),
+	},
+	group = "Armor",
+	id = "KevlarHelmet_Kompositum",
+})
+
+PlaceObj('RecipeDef', {
+	Difficulty = 50,
+	Ingredients = {
+		PlaceObj('RecipeIngredient', {
+			'item', "KevlarHelmet",
+		}),
+		PlaceObj('RecipeIngredient', {
 			'item', "Combination_WeavePadding",
 		}),
 	},
@@ -288,6 +508,26 @@ PlaceObj('RecipeDef', {
 	},
 	group = "Armor",
 	id = "KevlarHelmet_WeavePadding",
+})
+
+PlaceObj('RecipeDef', {
+	Difficulty = 50,
+	Ingredients = {
+		PlaceObj('RecipeIngredient', {
+			'item', "KevlarLeggings",
+		}),
+		PlaceObj('RecipeIngredient', {
+			'item', "Combination_Kompositum58",
+		}),
+	},
+	MechanicalRoll = true,
+	ResultItems = {
+		PlaceObj('RecipeIngredient', {
+			'item', "KevlarLeggings_Kompositum",
+		}),
+	},
+	group = "Armor",
+	id = "KevlarLeggings_Kompositum",
 })
 
 PlaceObj('RecipeDef', {
@@ -339,6 +579,26 @@ PlaceObj('RecipeDef', {
 			'item', "KevlarVest",
 		}),
 		PlaceObj('RecipeIngredient', {
+			'item', "Combination_Kompositum58",
+		}),
+	},
+	MechanicalRoll = true,
+	ResultItems = {
+		PlaceObj('RecipeIngredient', {
+			'item', "KevlarVest_Kompositum",
+		}),
+	},
+	group = "Armor",
+	id = "KevlarVest_Kompositum",
+})
+
+PlaceObj('RecipeDef', {
+	Difficulty = 50,
+	Ingredients = {
+		PlaceObj('RecipeIngredient', {
+			'item', "KevlarVest",
+		}),
+		PlaceObj('RecipeIngredient', {
 			'item', "Combination_WeavePadding",
 		}),
 	},
@@ -350,6 +610,26 @@ PlaceObj('RecipeDef', {
 	},
 	group = "Armor",
 	id = "KevlarVest_WeavePadding",
+})
+
+PlaceObj('RecipeDef', {
+	Difficulty = 30,
+	Ingredients = {
+		PlaceObj('RecipeIngredient', {
+			'item', "LightHelmet",
+		}),
+		PlaceObj('RecipeIngredient', {
+			'item', "Combination_Kompositum58",
+		}),
+	},
+	MechanicalRoll = true,
+	ResultItems = {
+		PlaceObj('RecipeIngredient', {
+			'item', "LightHelmet_Kompositum",
+		}),
+	},
+	group = "Armor",
+	id = "LightHelmet_Kompositum",
 })
 
 PlaceObj('RecipeDef', {

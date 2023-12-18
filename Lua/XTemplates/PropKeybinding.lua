@@ -8,7 +8,7 @@ PlaceObj('XTemplate', {
 		'__class', "XPropControl",
 		'LayoutMethod', "HList",
 		'Background', RGBA(255, 255, 255, 0),
-		'MouseCursor', "CommonAssets/UI/HandCursor.tga",
+		'MouseCursor', "UI/Cursors/Hand.tga",
 		'FocusedBackground', RGBA(170, 170, 170, 0),
 	}, {
 		PlaceObj('XTemplateWindow', {
