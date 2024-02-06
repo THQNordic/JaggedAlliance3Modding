@@ -1,0 +1,291 @@
+Overview
+========
+
+Destruction is how objects enter their destroyed state in response to gameplay. There are many possible states that count as destroyed and many code paths that lead to them. The main determinant of what will happen is the object class. In this document I'll try to cover all paths/states.
+
+
+Paths of Destruction
+========
+
+Destruction happens due to attacks or due to destruction propagation:
+- Attacks:
+ - Single target - these attacks can hit anything with a collision that the shot vector passes through. Hit objects respond depending on their class.
+ - AOE - these attacks query objects in the area of effect and look for specific classes - Destroyalbe or CombatObject. There are a lot of other reasons an object may be ignored. Following is the filtering code of aoe attacks. The "ignore_objects" container has objects that are forcefully ignored this pass, such as covers.
+~~~~~~~~~~ C++
+if (obj->GetParent()) //can't think of a reason to process attaches
+	return eContinueEnumerate;
+if (!obj->IsKindOf(idCombatObject) && !obj->IsKindOf(idDestroyable))
+	return eContinueEnumerate;
+if ((obj->GetEnumFlags() & efVisible) == 0 && (prediction || !obj->IsKindOf(idUnit)))
+	return eContinueEnumerate;
+if (IsDead(L, obj))
+	return eContinueEnumerate;
+if (!obj->IsKindOf(idUnit) && IsInvulnerable(L, obj))
+	return eContinueEnumerate;
+if (std::find(ignore_objects.begin(), ignore_objects.end(), obj) != ignore_objects.end())
+	return eContinueEnumerate;
+~~~~~~~~~~
+- Propagation - Some objects' destruction causes other objects to get destroyed. We call this damage propagation. In such cases there are multiple complicated logics that determine whether an objects should destroy another one. We'll cover this in it's own section.
+
+Classes and Class Combinations
+========
+
+The specific class combination of an object determines its behavior when hit or touched by destruction logic. In case of attacks, the three major pathways an object can take are best seen in the ApplyHitResults function below. Units and CombatObjects get damaged, Destroyables get destroyed directly. In case of propagation KillObj(o) is called.
+~~~~~~~~~~ Lua
+function Firearm:ApplyHitResults(target, attacker, hit)
+	if IsKindOf(target, "Unit") then
+		if not target:IsDead() and (hit.damage or hit.setpiece) then
+			target:ApplyDamageAndEffects(attacker, hit.damage, hit, hit.armor_decay)
+		end
+	elseif IsKindOf(target, "CombatObject") then
+		if not target:IsDead() then
+			if hit.damage then
+				target:TakeDamage(hit.damage, attacker, hit)
+			end
+			local member_id = target:IsDead() and "noise_on_break" or "noise_on_hit"
+			if target:HasMember(member_id) then
+				local noise = target[member_id]
+				PushUnitAlert("noise", target, noise, Presets.ListItem.NoiseTypes.Gunshot.display_name)
+			end
+		end
+	elseif IsKindOf(target, "Destroyable") then
+		local member_id = hit.damage and "noise_on_break" or "noise_on_hit"
+		if target:HasMember(member_id) then
+			PushUnitAlert("noise", target, target[member_id], Presets.ListItem.NoiseTypes.Gunshot.display_name)
+		end
+		if not target.is_destroyed then
+			target:Destroy()
+		end
+	end
+end
+~~~~~~~~~~
+
+~~~~~~~~~~ Lua
+local function KillObj(o)
+	if IsKindOf(o, "ExplosiveObject") then
+		o:OnDie()
+	elseif IsKindOf(o, "CombatObject") then 
+		DoneCombatObject(o) --this will skip fx but wont provoke another suspendpassedits
+	else
+		o:Destroy()
+	end
+end
+~~~~~~~~~~
+
+Summary
+---------
+
+- Destroyable - will get notified about its own destruction in combat if touched, but it's not implemented to do anything on its own. Hides CObject implementation.
+- CObject - will not get notified about anything by combat. Can be killed by propagation. Implemented to do things.
+- CombatObject - has hit points and will get hit. Once those are depleted it behaves as one of the above (to an extent).
+- DestroyableSlab - a CombatObject + Destroyable with its own unique implementation of Destroy.
+- DestroyableWallDecoration - this class is interesting because it combines Destroyable with CObject's implementation of Destroy. Hence AOEs see these objs, and their Destroy method does stuff.
+
+Destroyable
+---------
+
+<p>This is <b>not</b> a complete class. Objects that are Destroyable and nothing else will not do anything visible.</p>
+<p>Objects of this class are seen by AoE attacks. Such objects will have their Destroy method called directly when affected by any damage since they don't have hit points. As shown below, Destroyable:Destroy will only tweak is_destroyed, a persistable member, and, apparently, call an FX hook. This is for convenience of child classes who can call their super's Destroy to get some mandatory maintenance done. It is worth noting that overloading this method hides it, so it must be called directly by children if it is needed.
+~~~~~~~~~~ Lua
+function Destroyable:Destroy()
+	self.is_destroyed = true
+	if not IsEditorActive() then
+		self:PlayDestructionFX()
+	end
+end
+~~~~~~~~~~
+
+CombatObject
+---------
+
+These are the main combat participants. Everything that has hit points needs to be a CombatObject (CO hereafter). They are seen by AoEs and can take direct damage from bullets when they have detectable collisions. The general idea is that a CO that gets hit will have damage applied to it. That process itself is complicated, so we'll skip it. Applied damage is subtracted from its hit points, and once they reach zero the object dies. If it is also Destroyable, it will call Destroy. All this is done in a roundabout manner and there is more than one way it could happen. The two main paths are as follows:
+- CO takes damage in any way, AoE or direct hit. Then it would enter its Die command (did I mention it is a CommandObject?). This is somewhat unpleasant, since commands are not executed immediately, so some destruction code needs to wait until this happens. The command will then finalize by calling DoneCombatObject(obj), seen below. Units and objects that have no implementation of Destroy are marked for direct disposal with DoneObject. DestroyedCOThisTick will call DoneObject on all in the list a little bit later. All other objs get Destroy called.
+~~~~~~~~~~ Lua
+function DoneCombatObject(obj)
+	if IsKindOf(obj, "Unit") or not IsKindOf(obj, "CObject") then
+		table.insert(DestroyedCOThisTick, obj)
+		WakeUpDestructionPP()
+	else
+		obj:Destroy() --treat non unit co as generic destroyables
+	end
+end
+~~~~~~~~~~
+- CO is caught in damage propagation by other object. If this happens, KillObj(o) is called and the CO may or may not enter DoneCombatObject. As seen below, DoneCombatObject is called directly without a command in order to skip waiting for the command to execute, in the meantime of which passability will get rebuilt and cause a stutter if done again later.
+~~~~~~~~~~ Lua
+local function KillObj(o)
+	if IsKindOf(o, "ExplosiveObject") then
+		o:OnDie()
+	elseif IsKindOf(o, "CombatObject") then 
+		DoneCombatObject(o) --this will skip fx but wont provoke another suspendpassedits
+	else
+		o:Destroy()
+	end
+end
+~~~~~~~~~~
+
+CObject
+--------
+
+CObject is the most primitive class and almost all objects have at least this one. At some point in the development, we figured out that everything needs to be able to get destroyed. That's why objects that are neither Destroyable nor CombatObject also implement the Destroy method and have a dedicated system maintaining them. That system is sometimes called Generic Obj Destruction, for lack of a better name.
+
+CObject vs Destroyable
+--------
+
+The main differences for these classes are:
+- Only Generic Obj Destruction will call CObject's Destroy. They will not directly be affected by other systems such as AoE and firearms. As seen above in ApplyHitResults, even if such an object is hit, it will not be manipulated unless specifically marked as Destroyable.
+- The way these objects are persisted - Destroyable objects persist their is_destroyed member, CObjects' state is persisted manually based on their handle/visual hash.
+
+That being said, CObjects and Destroyable functionality can be combined, as is the case of DestroyableWallDecoration. In that way an object is both seen by combat and AoE and has a working implementation once it needs to be destroyed.
+
+DestroyableSlab
+--------
+
+This class is the base for all Destroyable slabs. It implements slab destruction. It is both CO and Destroyable, hence it has hit points, participates in combat, and will get Destroy called when it dies. It implements its own version of Destroy, as seen below. As previously noted, it makes a call to Destroyable.Destroy(self) manually. It then marks itself for the next destruction pass, where its new state will be computed. Slab destruction should have its own section somewhere down below.
+~~~~~~~~~~ Lua
+function DestroyableSlab:Destroy(origin_of_destruction)
+	if self.is_destroyed or self:IsInvulnerable() then
+		return
+	end
+	
+	self:UnlockSubvariantReversible() --clear user selected subvar on death
+	self.origin_of_destruction = origin_of_destruction
+	Destroyable.Destroy(self)
+	
+	self.use_replace_ent_destruction = self:ShouldUseReplaceEntDestruction()
+	
+	AppendDestroyedSlab(self)
+	self:ManageSelectionMarker(true and not self.use_replace_ent_destruction)
+end
+~~~~~~~~~~
+
+DestroyableWallDecoration
+--------
+
+These are somewhat interesting in that they have their own unique destruction system. The original idea was for these objects to mirror slab object placement and have slabs manage WallDecorations in a way that mirrors their own destroyed states. In practice, this turned out to be unenforceable LD requirement and WallDecorations are placed somewhat randomly. That's why we have the old system working where applicable and the generic object destruction working where the other doesn't. This is done through the .managed_by_slab member of this class. When saving a map, all WallDecorations visible by slabs have this member set to true and the generic object destruction system ignores those, but nukes objects who have the member set to false.
+
+SlabWallObject
+--------
+
+All doors and windows have this class. It's confusing, because they are both this. There is a IsDoor method. I'm mentioning them here because they sometimes have unique mechanics and may be noted as doors/windows. This is so because of the implementation of such mechanics being in SlabWallObject. A few notes about their specifics:
+
+- They would only change to a broken state if they are on the ground or have living slab neighbors below them or on two sides (top and left or left and right, etc.). 
+- They have a unique way of handling wall decorations.
+- They have different behaviors based on their slab material type. For example, objects with the Colonial material cannot enter broken state.
+
+States
+========
+
+Once an object is destroyed, it enters a destroyed state. In general, an object would become invisible when destroyed. It would also disable its collision and passability flags. We do this instead of deleting them in order to preserve map integrity. Some objects may enter a broken state instead. This basically means they change state to "broken" or "brokenN", where N is a digit from 2 to 9.
+
+- CObjects - May enter broken state if deemed on ground, otherwise they are treated as the general case.
+- Slabs - Each slab subclass has a unique implementation. It would follow the general case if no other slabs around. If there are other slabs around, it will try to arrange special entities to look cool. Windows/Doors may enter broken state if on ground or if they have a certain number of adjacent non broken slab neighbors. Slabs also manage DestroyableWallDecoration around them by mirroring their own destruction logic onto them.
+
+Invulnerability and Vulnerability
+========
+
+This is a complex feature. A vulnerable object may be invulnerable and not be affected by destruction systems. On the other hand, an invulnerable object may be vulnerable and become affected. As of the time of writing, it is very convoluted and hard to determine which is which. **Combat** uses the IsInvulnerable method to determine this. Note that some classes, such as slabs, have a different version of this method. Analyzing the basic case will shed some light on what is involved:
+~~~~~~~~~~ Lua
+function CObject:IsInvulnerable()
+	if TemporarilyInvulnerableObjs[self] then
+		return true
+	end
+	if IsObjVulnerableDueToLDMark(self) then
+		return false
+	end
+	local p = self:GetMaterialPreset()
+	if p and p.invulnerable then
+		return true
+	end
+	return IsObjInvulnerableDueToLDMark(self)
+end
+~~~~~~~~~~
+As we see in the code above, generic objects are invulnerable if marked as interactable (TemporarilyInvulnerableObjs), may be invulnerable due to artspec/combat/object material, or may be forced invulnerable by level design.
+
+It is worth noting that Slabs override this method and have different logic. For example, slabs cannot be forced to a vulnerable/invulnerable state through the "LDMark" system. They cannot be set as props either. **Important to note is that Slabs' GetMaterialPreset method returns slab material, whereas other objects' GetMaterialPreset returns artspec material!** They do have their own convoluted .invulnerable member set. This is because slabs who are not part of a room are by default invulnerable, whereas slabs who are part of a room are by default vulnerable. This vulnerability state may be tweaked by LD through the property .forceInvulnerableBecauseOfGameRules, with display name "Invulnerable", however a slab marked as vulnerable through this prop may still be invulnerable due to combat material. In fact, both combat material logic and .forceInvulnerableBecauseOfGameRules tweak the same internal member - .invulnerable. Another unique slab invulnerability logic is that FloorSlab objects that are on the first floor are automatically made invulnerable.
+
+On the other hand, **damage propagation** uses its own helper method, ShouldDestroyObject(obj, clsTable) which does things in addition to IsInvulnerable. Basically, ShouldDestroyObject is damage propagation's check and IsInvulnerable is combat's check whether an obj should go. The two methods may yield different results when an obj needs to be treated differently by the different destruction systems. So basically, there are different vulnerable/invulnerable state sets for different destruction systems.
+
+Interactable objects held in TemporarilyInvulnerableObjs that need to be destroyed may have their behavior overridden by adding their class in the InteractableClassesThatAreDestroyable table. The Door class is a recent example of this.
+
+Classes that need to be ignored by damage propagation may be added to nonDestroyableClasses or inherit CascadeDestroyForbidden.
+
+![Deduction work on why a door is invulnerable](Images/IsInvulnerable.png)
+
+### GetMaterialPreset Method Disambiguation
+
+This method is problematic, because it has a name collision with a previously existing method in the Slab class. **Therefore GetMaterialPreset would return a different material type for different classes!** As we saw above, this method may determine the vulnerability/invulnerability state of an object, so I think the differences are worth knowing. Firstly, lets define the material types:
+
+- Combat material - a.k.a., artspec material, art material, object material. This material determines object properties in relation to the combat simulation. For example, it determines max hit points, armor hardiness and some meta information about destruction propagation.
+- Slab material - this material is specific for slab classes. It provides meta information about each slab material type. It contains possible slab subvariants (possible entities for the same material/type of slab), game logic parameters (health, repair costs, etc. - these are mostly related to Stranded: Alien Dawn), entity sets to be used when the slab is destroyed, etc.
+
+Here are the current versions of the material methods:
+
+- CObject:GetMaterialPreset() - This returns the combat material of an object.
+- CSlab:GetMaterialPreset() - This returns the slab material of an object.
+- CombatObject:GetCombatMaterial() - This returns the combat material of an object. Slabs are combat objects, but not all objects are combat objects.
+- CObject:GetMaterialType() and CSlab:GetMaterialType() - Both of these return the combat material of objects. This is what CombatObject class uses to find its material and init its members from the combat material.
+
+### LDMark System
+
+This system affects only non-slab objects. Each object that can be affected has three ticks in the destruction section of its Ged property pane:
+
+- Is Prop - special state. All props are also forced vulnerable. Used by damage propagation logic. In brief, props are easier to kill.
+- Forced Vulnerable - will override **almost** all invulnerability reasons and make an object vulnerable. It does not override Interactable invulnerability. The IsObjVulnerableDueToLDMark method corresponds to this property.
+- Forced Invulnerable - same as above, but in reverse. It may be used to mark special instances of an otherwise vulnerable object as invulnerable. The IsObjInvulnerableDueToLDMark method corresponds to this property.
+
+Special Systems
+========
+
+In this section I'll try to explain the workings of the major destruction subsystems.
+
+Slab Destruction
+--------
+
+This is the first destruction implementation we made. It affects only slab objects - walls, doors, roofs, etc. Slabs have their own propagation system slab to slab. Slabs are not affected by the general propagation system. Slabs get destroyed as CombatObject and implement their own Destroy method or by slab propagation. Slab destruction provokes regular destruction propagation in special ways.
+
+The general idea of this system is to create visually pleasing destruction of slab constructions and leave no slabs hanging in the air. This is done by slabs adjusting special destroyed attaches toward non destroyed neighbors, using special broken entities and doing spacial analysis of their position and neighbors in order to figure out if they are hanging in the air. The slab system also manages wall decorations when they are placed as expected by the code.
+
+The general flow of the system is as follows:
+
+- Slab gets hit and dies.
+- Destroy() gets called and appends slab for destruction computation.
+- ProcessDestroyedObjectsThisTick gets called from the DestructionPP thread.
+- ProcessDestroyedSlabsThisTick gets called from ProcessDestroyedObjectsThisTick.
+- ProcessDestroyedSlabsThisTick goes through all destroyed slabs and checks if they should destroy other slabs. It also checks for slabs that have been left hanging by the latest destruction and destroys them as well. Once all destruction is finished, it calls UpdateEntity for all slabs touched by the destruction pass or destroyed. All slabs destroyed during the current pass are returned by the method, but are not immediately handled.
+- UpdateEntity will refresh the entity/attaches of a slab depending on its current state and the current state of its neighbors.
+- ProcessDestroyedSlabsThisTick is looped until it produces no further destroyed slabs.
+
+Some specifics of this system:
+
+- Each slab subclass has special rules about how it should die and whether it should kill/notify other slabs nearby. For example, walls kill floors and ceilings that are directly adjacent to them when they die, roofs kill connecting walls, corners that have both their neighbors killed die, etc.
+- It has a repair function. Destroyed slabs can be repaired and they will try to revert everything they did when they died step by step.
+- It has a subsystem for managing wall decoration objects adjacent to slabs.
+- When some slabs get killed, a check is made for slabs that are left hanging in the air. Such slabs are killed. A slab that is hanging is generally considered a slab that is not connected to a structural slab. A structural slab is a slab that is on the ground or invulnerable, or set as structural by LD. (Except doors/windows which are no longer structural when invulnerable.)
+- Slab subclasses have unique rules that determine whether they are considered "connected" when checking for hanging slabs.
+- Different slab subclasses propagate destruction to other objects in different ways. Floors try to kill things vertically that are no longer supported by a floor, whereas walls try to kill things horizontally.
+
+Destruction Propagation
+--------
+
+The destruction of some objects provokes a propagation pass. It will try to destroy other nearby objects according a set of complex rules. Slabs and other objects have separate rules of how that works. The goal is to leave no objects hanging in the air after objects below them have been nuked.
+
+The rules are very complex, so here are provided only general directions of where they can be found. The GetCascadeDestroyObjects() function and FindDebrisObjectsToDestroy(...) subfunction are where generic obj propagation happens. In brief, they examine the spatial relationships between objects and decide whether further objects should be destroyed. For example, if a table gets destroyed, this code tries to destroy everything sitting directly on the table, but nothing else. The ProcessObjectsAroundSlabs() function does the same thing, but for slabs. This function determines whether a painting on the wall should get destroyed when the wall falls, or a carpet on the floor should disappear when the floor is gone. The process in both functions can be further tweaked with the following globals:
+
+~~~~~~~~~~ Lua
+if FirstLoad then
+	DbgPropagateSlabDestructionInEditor = false
+	
+	DbgDestruction_DisableWallAndObjPropagation = false --disable propagation from walls and generic objs
+	DbgDestruction_OnlyVerticalPropagation = false --disable horizontal propagation from walls and generic objs
+	DbgDestruction_OnlyVerticalPropagationObjsOnly = true --disable horizontal propagation from generic objs
+	DbgDestruction_HorizontalObjPropagationOnlyAffectsProps = false --horizontal generic obj propagation only affects prop objs even in first pass, already true for walls
+	DbgDestruction_WallAndObjPropatationOnlyAffectsProps = false --obj and wall propagation only propagates towards props
+end
+~~~~~~~~~~
+
+Debris
+--------
+
+Most destruction is hooked to the debris system. Once an object is destroyed, it will spawn non-persistable FX objects that fly around the explosion and drop to the nearest surface where they will eventually disappear. These objects don't affect gameplay.
+
+<!-- Markdeep: --><style class="fallback">body{visibility:hidden;white-space:pre;font-family:monospace}</style><script src="markdeep.min.js" charset="utf-8"></script><script>window.alreadyProcessedMarkdeep||(document.body.style.visibility="visible")</script>

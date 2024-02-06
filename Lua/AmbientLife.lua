@@ -909,7 +909,7 @@ function AmbientLifeMarker:StealSpawnedUnit()
 	self.perpetual_unit:ReserveVisitable(visitable)
 	if g_Combat then
 		-- only set the behavior, the unit is currently busy being afraid from the ongoing combat
-		self.perpetual_unit:SetBehavior("Visit", visitable)
+		self.perpetual_unit:SetBehavior("Visit", {visitable})
 	else
 		self.perpetual_unit:SetCommand("Visit", visitable)
 	end
@@ -2219,11 +2219,11 @@ function IsVisitingUnit(unit, AL_class)
 end
 
 function IsSittingUnit(unit)
-	return IsVisitingUnit(unit, "AL_SitChair")
+	return IsVisitingUnit(unit, "AL_SitChair") and unit.visit_reached
 end
 
 function IsWallLeaningUnit(unit)
-	return IsVisitingUnit(unit, "AL_WallLean")
+	return IsVisitingUnit(unit, "AL_WallLean") and unit.visit_reached
 end
 
 function GetALMarkerGroups()

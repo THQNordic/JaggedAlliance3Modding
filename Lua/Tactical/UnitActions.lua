@@ -359,6 +359,9 @@ function Unit:ExecFirearmAttacks(action, cost_ap, attack_args, results)
 		end
 		Sleep(self:TimeToAnimEnd())
 		self:PopAndCallDestructor()
+		if interrupt then
+			self:PopAndCallDestructor()
+		end
 		NetUpdateHash("ExecFirearmAttacks_early_out")
 		return
 	end
@@ -461,7 +464,12 @@ function Unit:ExecFirearmAttacks(action, cost_ap, attack_args, results)
 			end
 		end
 	end
-
+	
+	self.interruptable = false
+	self:PushDestructor(function()
+		self.interruptable = was_interruptable
+	end)
+	
 	if attack_args.external_wait_shots then
 		table.iappend(attack_args.external_wait_shots, shot_threads)
 	else
@@ -519,6 +527,7 @@ function Unit:ExecFirearmAttacks(action, cost_ap, attack_args, results)
 	if not was_interruptable then
 		self:BeginInterruptableMovement()
 	end
+	self:PopAndCallDestructor()
 	self:PopAndCallDestructor()
 	if interrupt then
 		self:PopAndCallDestructor()
@@ -1086,10 +1095,10 @@ function Unit:ThrowGrenade(action_id, cost_ap, args)
 		if #attacks > 1 then
 			args.explosion_pos = {}
 			for i, res in ipairs(attacks) do
-				args.explosion_pos[i] = res.explosion_pos
+				args.explosion_pos[i] = res.explosion_pos or visual_objs[i]:GetVisualPos()
 			end
 		else
-			args.explosion_pos = results.explosion_pos
+			args.explosion_pos = results.explosion_pos or visual_objs[1]:GetVisualPos()
 		end
 		results, attack_args = action:GetActionResults(self, args) 
 		local attacks = results.attacks or {results}
@@ -1269,6 +1278,9 @@ function Unit:MeleeAttack(action_id, cost_ap, args)
 			end
 		end
 	end
+	
+	fx_actor = self:CallReactions_Modify("OnUnitChooseMeleeAttackFxActor", fx_actor, action, weapon, target)
+	
 	face_thread = CreateGameTimeThread(function(self, anim, face_angle)
 		self:PlayTransitionAnims(anim)
 		if face_angle then
@@ -2253,7 +2265,8 @@ end
 function Unit:HasSignatures()
 	local perks = self:GetPerks()
 	for _, perk in ipairs(perks) do
-		if perk.Tier == "Personal" then
+		if perk.Tier == "Personal" and
+			self.ui_actions[perk.class] and self.ui_actions[perk.class] ~= "hidden" then
 			return true
 		end
 	end

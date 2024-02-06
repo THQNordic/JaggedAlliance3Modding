@@ -137,8 +137,11 @@ function SmoothBar:SetEnabled(enabled)
 		self:UpdateVisual(propVal, true)
 		
 		self:CreateThread("UpdateBar", function()
+			local propVal = self:GetBoundPropValue()
+			self:UpdateVisual(propVal)
+
 			while self.window_state ~= "destroying" do
-				local propVal = self:GetBoundPropValue()
+				local propVal = self:GetBoundPropValue() or 0
 				if propVal ~= self.progress then
 					self:UpdateVisual(propVal)
 				end

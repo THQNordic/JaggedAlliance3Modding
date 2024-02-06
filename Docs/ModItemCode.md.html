@@ -8,17 +8,40 @@ This mod item allows you to load a single file of Lua code in the Lua environmen
 - Check the [Lua Startup](LuaStartup.md.html) page for more information on when and how your code gets loaded.
 - Check the [Scripting in Lua](index.md.html#scriptinginlua) section for more information on systems and objects you can utilize.
 
+Debugging
+=========
+
+The game has a built-in Lua debugger, which can be used to debug the game code, as well as your code.
+The debugger uses the Debug Adapter Protocol and can be used with any software that supports it.
+
+To access it using Visual Studio Code you need to:
+1. Install and start Visual Studio Code
+2. Open the "Extensions" tab from the sidebar (Ctrl+Shift+X)
+3. In the upper right corner of the sidebar click the three dots and select `Install from VSIX...`
+4. Navigate to and choose `path-to-game\ModTools\Src\SolEngineLua.vsix`
+5. Open the provided Visual Studio Code Workspace file
+6. Start the game
+7. Run the configuration `Attach to SolEngine`
+
 Lua values
 ==========
 
 **CurrentModPath**
 : Path to the root folder of your mod. Useful for addressing mod imported resources (like UI images).
 
+**CurrentModId**
+: Id of your mod.
+
+**CurrentModDef**
+: The `ModDef` object responsible for your mod.
+
+**CurrentModStorageTable**
+: A global table, useful for easily reading and writing persistent data.
+
 **CurrentModOptions**
 : Table containing the options of your mod.
 : The table will always be present, even if your mod doesn't have any options.
 : Example usage: `CurrentModOptions.MyOptionId`.
-
 
 **SharedModEnv**
 : A Lua table intended for sharing information between mods.

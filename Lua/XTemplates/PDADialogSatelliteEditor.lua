@@ -13,6 +13,9 @@ PlaceObj('XTemplate', {
 				rawset(self, "oldSatView", oldSatView)
 				Pause("pda-editor", "keepSounds")
 				XDialog.Open(self)
+				self.idContent.idSatelliteEditorText:SetVisible(true)
+				self.idContent.idNormalMode.idPausedText:SetVisible(true)
+				self.idContent.idNormalMode.idPausedText:SetText(Untranslated("SATELLITE SECTOR EDITOR ACTIVE"))
 				
 				if oldSatView then
 					self:CreateThread("sat-ready", function()

@@ -7,10 +7,11 @@ PlaceObj('Conversation', {
 			QuestId = "Landsbach",
 			Vars = set({
 	DieselSigfried = false,
+	SiegfriedRetreat = false,
 }),
 			__eval = function ()
 				local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
-				return not quest.DieselSigfried
+				return not quest.DieselSigfried and not quest.SiegfriedRetreat
 			end,
 		}),
 	},
@@ -1124,20 +1125,6 @@ PlaceObj('Conversation', {
 			PlaceObj('ConversationPhrase', {
 				Align = "right",
 				Effects = {
-					PlaceObj('GroupSetSide', {
-						Side = "enemy2",
-						TargetUnit = "Gunther",
-					}),
-					PlaceObj('GroupSetSide', {
-						Side = "enemy2",
-						TargetUnit = "OldMan_Guard",
-					}),
-					PlaceObj('GroupAlert', {
-						TargetUnit = "Gunther",
-					}),
-					PlaceObj('GroupAlert', {
-						TargetUnit = "OldMan_Guard",
-					}),
 					PlaceObj('ConditionalEffect', {
 						'Conditions', {
 							PlaceObj('QuestIsVariableBool', {
@@ -1152,12 +1139,34 @@ PlaceObj('Conversation', {
 							}),
 						},
 						'Effects', {
+							PlaceObj('GroupSetSide', {
+								Side = "enemy2",
+								TargetUnit = "OldMan_Guard",
+							}),
+							PlaceObj('GroupAlert', {
+								TargetUnit = "OldMan_Guard",
+							}),
 							PlaceObj('PlaySetpiece', {
 								setpiece = "Landsbach_BounceSiegfriedAttack",
 							}),
 							PlaceObj('QuestSetVariableBool', {
 								Prop = "BounceSigfriedBattle",
 								QuestId = "Landsbach",
+							}),
+							PlaceObj('QuestSetVariableBool', {
+								Prop = "SiegfriedRetreat",
+								QuestId = "Landsbach",
+							}),
+							PlaceObj('SectorSetForceConflict', {
+								force = true,
+								sector_id = "B12",
+							}),
+						},
+						'EffectsElse', {
+							PlaceObj('GroupSetBehaviorExit', {
+								Running = true,
+								TargetUnit = "Gunther",
+								closest = true,
 							}),
 						},
 					}),
@@ -1203,13 +1212,25 @@ PlaceObj('Conversation', {
 						Text = T(556699772572, --[[Conversation Siegfried_1 Text voice:Gunther section:Siegfried_1 keyword:We are putting an end to this]] "You think it is because you are righteous? You are mercenaries! You have no cause beyond feeding your own bank account. Your kind solves problems with solutions that are only temporary, while I... I am trying to provide a final solution."),
 					}),
 				},
-				PhraseRolloverText = T(342457648960, --[[Conversation Siegfried_1 PhraseRolloverText]] "Attack <em>Siegfried</em> and destroy his operation."),
+				PhraseRolloverText = T(342457648960, --[[Conversation Siegfried_1 PhraseRolloverText]] "Attack <em>Siegfried</em> and destroy his operation"),
 				PlayGoToPhrase = true,
 				id = "NoWerenotgivingitaway",
 			}),
 		}),
 		PlaceObj('ConversationPhrase', {
 			Align = "right",
+			Conditions = {
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "Landsbach",
+					Vars = set({
+	SecretPlan = false,
+}),
+					__eval = function ()
+						local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
+						return not quest.SecretPlan
+					end,
+				}),
+			},
 			Effects = {
 				PlaceObj('GroupSetBehaviorExit', {
 					Running = true,

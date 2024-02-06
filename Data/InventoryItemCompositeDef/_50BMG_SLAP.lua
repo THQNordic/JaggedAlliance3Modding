@@ -29,6 +29,6 @@ PlaceObj('InventoryItemCompositeDef', {
 			target_prop = "CritChance",
 		}),
 	},
-	'ammo_type_icon', "UI/Icons/Items/ta_hp.png",
+	'ammo_type_icon', "UI/Icons/Items/ta_ap.png",
 })
 

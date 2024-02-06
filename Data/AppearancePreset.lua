@@ -21031,6 +21031,74 @@ PlaceObj('AppearancePreset', {
 		'EditableColor2', RGBA(0, 0, 0, 255),
 		'EditableColor3', RGBA(0, 0, 0, 255),
 	}),
+	Body = "EquipmentMale_Suit_Top_02",
+	BodyColor = PlaceObj('ColorizationPropSet', {
+		'EditableColor1', RGBA(190, 95, 93, 255),
+		'EditableColor2', RGBA(12, 6, 0, 255),
+		'EditableColor3', RGBA(7, 35, 108, 255),
+	}),
+	ChestColor = PlaceObj('ColorizationPropSet', {
+		'EditableColor1', RGBA(0, 0, 0, 255),
+		'EditableColor2', RGBA(0, 0, 0, 255),
+		'EditableColor3', RGBA(0, 0, 0, 255),
+	}),
+	Hair = "EquipmentWolf_Hair",
+	HairColor = PlaceObj('ColorizationPropSet', {
+		'EditableColor1', RGBA(75, 49, 15, 255),
+		'EditableRoughness1', -48,
+		'EditableMetallic1', -117,
+		'EditableColor2', RGBA(68, 48, 23, 255),
+		'EditableRoughness2', -48,
+		'EditableMetallic2', -128,
+		'EditableColor3', RGBA(40, 29, 16, 255),
+		'EditableRoughness3', -42,
+		'EditableMetallic3', -50,
+	}),
+	HairParam3 = 119,
+	Hat = "EquipmentIvan_Glasses",
+	Hat2Color = PlaceObj('ColorizationPropSet', {
+		'EditableColor1', RGBA(0, 0, 0, 255),
+		'EditableColor2', RGBA(0, 0, 0, 255),
+		'EditableColor3', RGBA(0, 0, 0, 255),
+	}),
+	HatColor = PlaceObj('ColorizationPropSet', {
+		'EditableColor1', RGBA(0, 0, 0, 255),
+		'EditableColor2', RGBA(0, 0, 0, 255),
+		'EditableColor3', RGBA(0, 0, 0, 255),
+	}),
+	Head = "Head_M_As_NPC_04",
+	HeadColor = PlaceObj('ColorizationPropSet', {
+		'EditableColor1', RGBA(0, 0, 0, 255),
+		'EditableColor2', RGBA(0, 0, 0, 255),
+		'EditableColor3', RGBA(0, 0, 0, 255),
+	}),
+	HipColor = PlaceObj('ColorizationPropSet', {
+		'EditableColor1', RGBA(0, 0, 0, 255),
+		'EditableColor2', RGBA(0, 0, 0, 255),
+		'EditableColor3', RGBA(0, 0, 0, 255),
+	}),
+	Pants = "NPCCostumeMale_Pants_04",
+	PantsColor = PlaceObj('ColorizationPropSet', {
+		'EditableColor1', RGBA(42, 13, 16, 255),
+		'EditableColor2', RGBA(6, 3, 0, 255),
+		'EditableColor3', RGBA(50, 28, 28, 255),
+		'EditableRoughness3', -1,
+	}),
+	ShirtColor = PlaceObj('ColorizationPropSet', {
+		'EditableColor1', RGBA(0, 0, 0, 255),
+		'EditableColor2', RGBA(0, 0, 0, 255),
+		'EditableColor3', RGBA(0, 0, 0, 255),
+	}),
+	group = "NPC",
+	id = "Sample_Horatio",
+})
+
+PlaceObj('AppearancePreset', {
+	ArmorColor = PlaceObj('ColorizationPropSet', {
+		'EditableColor1', RGBA(0, 0, 0, 255),
+		'EditableColor2', RGBA(0, 0, 0, 255),
+		'EditableColor3', RGBA(0, 0, 0, 255),
+	}),
 	Body = "NPCShamanSangoma_Top_01",
 	BodyColor = PlaceObj('ColorizationPropSet', {
 		'EditableColor1', RGBA(15, 8, 6, 255),

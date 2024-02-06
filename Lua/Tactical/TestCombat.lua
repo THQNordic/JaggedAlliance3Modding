@@ -469,8 +469,8 @@ function TierUpSquad(squad, tier)
 		-- stats
 		local levelsToGain = 2 * (tier-1)
 		local statsToGain = 3 * levelsToGain
-		
-		unit.Experience = XPTable[Min(unit:GetLevel() + levelsToGain, #XPTable)]
+		local nXPTable = #XPTable
+		unit.Experience = GetXPTable(Min(unit:GetLevel() + levelsToGain, nXPTable))
 					
 		local statProps = UnitPropertiesStats:GetProperties()
 		for i = 1, statsToGain do

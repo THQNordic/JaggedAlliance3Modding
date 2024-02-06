@@ -21,7 +21,7 @@ DefineClass.Inspired = {
 	Description = T(853696490891, --[[CharacterEffectCompositeDef Inspired Description]] "Gain <em><bonus> AP</em>."),
 	AddEffectText = T(811015193839, --[[CharacterEffectCompositeDef Inspired AddEffectText]] "<em><DisplayName></em> is inspired"),
 	OnAdded = function (self, obj)
-		if g_Combat and g_Teams[g_Combat.team_playing] == obj.team then
+		if g_Combat and g_Teams[g_CurrentTeam] == obj.team then
 			obj:GainAP(self:ResolveValue("bonus") * const.Scale.AP)
 			self:SetParameter("applied", true)
 		end

@@ -431,6 +431,7 @@ PlaceObj('XTemplate', {
 					
 					local err 
 					local unit = context.context
+					local unit = IsKindOf(context.context, "SquadBag") and context.unit or context.context
 					if IsKindOf(unit, "UnitData") then
 						local squad = unit.Squad and gv_Squads[unit.Squad]
 						local sectorId = squad.CurrentSector

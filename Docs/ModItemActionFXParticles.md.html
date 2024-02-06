@@ -8,19 +8,19 @@ Properties
 ----------
 
 Particles (`self.Particles`) - Particles4 (`self.Particles4`)
-:  The id of the particle system, which will be spawned. One of the entities is picked at random when the FX is triggered.
+:  The id of the particle system which will be spawned. One of the entities is picked at random when the FX is triggered.
 
 Flags (`self.Flags`)
-:  Allowed values are: , OnGround, LockedOrientation, Mirrored, OnGroundTiltByGround.
+:  Allowed values are: OnGround, LockedOrientation, Mirrored, OnGroundTiltByGround.
 
 AlwaysVisible (`self.AlwaysVisible`)
-:  Toggle on/off. When enabled will bypass the engine optimization for or drawing off-screen and far away objects at a performance cost. 
+:  Toggle on/off. When enabled it will bypass the engine optimization for drawing off-screen and far away objects at a performance cost. 
 
 Scale (`self.Scale`)
 :  Scale in %. 
 
 ScaleMember (`self.ScaleMember`)
-:  Object member, which will be used for the scale. This can also be a method, wich will be called and the result will override the Scale property. 
+:  Object member which will be used for the scale. This can also be a method which will be called and the result will override the Scale property. 
 
 FollowTick (`self.FollowTick`)
 :  The time interval (in ms) for setting the particles' position when following an object.
@@ -51,7 +51,7 @@ Offset (`self.Offset`)
 : Offset against source object.
 
 OffsetDir (`self.OffsetDir`)
-: Offset direction. Allowed values are "", "SourceAxisX", "SourceAxisX2D", "SourceAxisY", "SourceAxisZ", "ActionDir", "ActionDir2D", "FaceTarget", "FaceTarget2D", "FaceActor", "FaceActor2D", "FaceActionPos", "FaceActionPos2D", "Random2D", "SpotX", "SpotY", "SpotZ", "RotateByPresetAngle" 
+: Offset direction. Allowed values are "", "SourceAxisX", "SourceAxisX2D", "SourceAxisY", "SourceAxisZ", "ActionDir", "ActionDir2D", "FaceTarget", "FaceTarget2D", "FaceActor", "FaceActor2D", "FaceActionPos", "FaceActionPos2D", "Random2D", "SpotX", "SpotY", "SpotZ", "RotateByPresetAngle".
 
 Orientation (`self.Orientation`)
 :  Particles orientation. Has the same allowed values as OffsetDir.

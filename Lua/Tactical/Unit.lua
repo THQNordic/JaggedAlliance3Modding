@@ -403,6 +403,7 @@ DefineClass.Unit = {
 	visit_command = false,
 	visit_marker = false,
 	visit_reached = false,
+	cower_forbidden = false,
 	cower_from = false,
 	cower_angle = false,
 	cower_cooldown = false,
@@ -440,7 +441,7 @@ DefineClass.Unit = {
 	PostPlay = empty_func,
 	
 	throw_died_message = false,
-	is_despawned = false -- Set briefly in Unit:Despawn before it is destroyed but after the sync with unitdata.
+	is_despawned = false, -- Set briefly in Unit:Despawn before it is destroyed but after the sync with unitdata.
 }
 
 local function StoreBehaviorParamTbl(tbl)
@@ -606,6 +607,7 @@ function Unit:GetDynamicData(data)
 	if self.visit_marker then
 		data.visit_marker = self.visit_marker.handle
 	end
+	data.cower_forbidden = self.cower_forbidden or nil
 	if self.cower_from then
 		data.cower_from = self.cower_from
 		data.cower_angle = self.cower_angle or nil
@@ -639,11 +641,9 @@ end
 function Unit:SetDynamicData(data)
 	self.session_id = data.session_id
 	self.unitdatadef_id = data.unitdatadef_id or data.template_name
+	self:UpdateFXClass()		-- IsMerc() depends on .unitdatadef_id, e.g. ImportantUnit
 
 	self.spawner = HandleToObject[data.spawner]
---[[	if self.spawner then
-		self.spawner.object = self
-	end]]
 	self.target_dummy = HandleToObject[data.target_dummy]
 
 	-- these are needed to be restored before calling EnterMap command of AL
@@ -774,6 +774,7 @@ function Unit:SetDynamicData(data)
 	self.conflict_ignore = data.conflict_ignore or false
 	self.visit_command = data.visit_command or false
 	self.visit_marker = HandleToObject[data.visit_marker] or false
+	self.cower_forbidden = data.cower_forbidden or false
 	self.cower_from = data.cower_from or false
 	self.cower_angle = data.cower_angle or false
 	self.cower_cooldown = data.cower_cooldown or false
@@ -804,7 +805,7 @@ function Unit:SetDynamicData(data)
 		if not x or not CanDestlock(self, x, y, z) then
 			local has_path, pos = pf.HasPosPath(self, self)
 			if pos then
-				self:SetPos(pos)
+				self:SetPos(GetPassSlab(pos))
 			end
 		end
 	end
@@ -907,6 +908,7 @@ function Unit:InitFromMaterialPreset(preset)
 end
 
 function Unit:Done()
+	self:TunnelsUnblock()
 	self:RemoveALDeadMarkers()
 	if self.team then
 		table.remove_value(self.team.units, self)
@@ -1091,6 +1093,9 @@ function Unit:FillMerc()
 				self:SetCommand("Visit", new_visitable, self.perpetual_marker)
 			elseif IsKindOf(marker, "AL_Carry") then
 				self:SetCommand("Visit", new_visitable, marker, "already in perpetual")
+			else
+				self:SetBehavior()
+				self:SetCommand("Idle")
 			end
 		else
 			-- persisted marker is deleted from the map
@@ -1284,7 +1289,7 @@ function Unit:ReviveOnHealth(hp)
 end
 
 function Unit:DropLoot(container)
-	local is_npc = self:IsNPC()
+	local is_npc = self:IsNPC() -- not a merc
 	
 	local debugText =  _InternalTranslate(self.Name) .. " dropping loot: (roll must be lower)"
 	
@@ -1303,6 +1308,11 @@ function Unit:DropLoot(container)
 		debugText = debugText .. "\n " ..  _InternalTranslate(item.DisplayName) .. ": roll " .. roll .. "/" .. item.drop_chance .. "% chance" 
 
 		if not item.locked and (not is_npc or roll < item.drop_chance) then
+			if IsGameRuleActive("AmmoScarcity") and is_npc and IsKindOf(item, "InventoryStack") and IsKindOfClasses(item,{"Ammo", "Ordnance", "Grenade", "ThrowableTrapItem", "Flare"}) then
+				local percent = GameRuleDefs.AmmoScarcity:ResolveValue("LootDecrease")
+				item.Amount =  Max(1,item.Amount - MulDivRound(item.Amount, percent, 100))
+			end	
+			
 			local addTo = container or self
 			
 			local pos, err = addTo:CanAddItem(slot, item)
@@ -1310,7 +1320,7 @@ function Unit:DropLoot(container)
 			if pos then
 				dropped, err = addTo:AddItem(slot, item, point_unpack(pos))
 				assert(dropped, "Couldn't PLACE dropped item in Inventory. Err: '" .. err .. "'")
-			end
+			end			
 		end
 		
 		if not dropped then
@@ -1670,7 +1680,7 @@ function Unit:Die(skip_anim)
 		return
 	end
 	
-	self.throw_died_message = true
+	self.throw_died_message = "all"
 	self.HitPoints = 0 -- needs to be before RemoveAllStatusEffects so that Wounded can detect the death and leave any blood stains on
 	self:RemoveAllStatusEffects("death")
 	if self.villain then
@@ -1696,6 +1706,8 @@ function Unit:Die(skip_anim)
 
 	Msg("UnitDieStart", self, attacker)
 	Msg("UnitDiedOnSector", self, gv_CurrentSectorId)
+	self.throw_died_message = "pre-sync"
+	
 	self:InterruptPreparedAttack()
 	self:EndInterruptableMovement()
 	CombatActionInterruped(self)
@@ -1752,6 +1764,7 @@ function Unit:Die(skip_anim)
 		end
 	end
 	self:SyncWithSession("map")
+	self.throw_died_message = "after-start"
 
 	if self.villain and self.DefeatBehavior == "Dead" then
 		MoraleModifierEvent("LieutenantDefeated", self)
@@ -2015,24 +2028,51 @@ function Unit:Dead(anim, angle)
 		return
 	end
 	
+	-- Savegame fixup for 241898
+	-- Errored/save-load during death before loot is dropped
+	if self:CountItemsInSlot("Inventory") ~= 0 and self:CountItemsInSlot("InventoryDead") == 0 then
+		self.throw_died_message = "pre-sync"
+	end
+	
 	-- Savegame fixup for 238866
 	-- Errored in RemoveStatusEffect BandageInCombat prior to moving throw_died_message above that call.
 	if not self.time_of_death then
-		self.throw_died_message = true
+		self.throw_died_message = "all"
 	end
 	
 	-- This can happen when a save is made while the unit was running the "Die" command.
 	-- Upon load the unit will be dead (go straight here) without having thrown the message,
 	-- which could mean that the conflict isn't resolved.
 	if self.throw_died_message then
+		if self.throw_died_message == true then -- legacy
+			self.throw_died_message = "all"
+		end
+	
 		local killer = self.on_die_attacker
-		if self.villain then
-			Msg("VillainDefeated", self, killer)
+		if self.throw_died_message == "all" then
+			if self.villain then
+				Msg("VillainDefeated", self, killer)
+			end
+			
+			self.time_of_death = Game.CampaignTime
+			Msg("UnitDieStart", self, killer)
+			Msg("UnitDiedOnSector", self, gv_CurrentSectorId)
+			self.throw_died_message = "pre-sync"
 		end
 		
-		self.time_of_death = Game.CampaignTime
-		Msg("UnitDieStart", self, killer)
-		Msg("UnitDiedOnSector", self, gv_CurrentSectorId)
+		if self.throw_died_message == "pre-sync" then
+			local container = GetDropContainer(self)
+			if not self.immortal then
+				self:DropLoot(container)
+			end
+			if container and not container:HasItem() then
+				DoneObject(container)
+				container = false
+			end
+			self:SyncWithSession("map")
+			self.throw_died_message = "after-start"
+		end
+
 		Msg("UnitDied", self, killer, empty_table)
 		self.throw_died_message = false
 	end
@@ -2188,7 +2228,10 @@ function Unit:Despawn()
 	if SelectedObj == self then
 		SelectObj()
 	end
-
+	local cameraFollowTarget = cameraTac.GetFollowTarget()
+	if cameraFollowTarget == self then
+		cameraTac.SetFollowTarget(false)
+	end
 	if self.Squad then
 		local squad = gv_Squads[self.Squad]
 		if squad and (squad.Side == "enemy1" or squad.Side == "enemy2") then
@@ -2295,21 +2338,25 @@ end
 
 function Unit:ConsumeAP(ap, action_id, args)
 	ap = ap or 0
-	if action_id and ap > 0 then
-		local action = CombatActions[action_id]
-		if action then
-			self.performed_action_this_turn = true
-			if action.ActionType ~= "Ranged Attack" and action.ActionType ~= "Melee Attack" then
-				self:RemoveStatusEffect("Focused")
-			end
-			if action.ActionType == "Ranged Attack" or action.ActionType ==  "Melee Attack" then
-				self:RemoveStatusEffect("Mobile")
-				self:RemoveStatusEffect("FreeMove")
-			end
+	
+	local action = action_id and CombatActions[action_id]
+	if action and ap > 0 then
+		if action.ActionType ~= "Ranged Attack" and action.ActionType ~= "Melee Attack" then
+			self:RemoveStatusEffect("Focused")
+		end
+		if action.ActionType == "Ranged Attack" or action.ActionType ==  "Melee Attack" then
+			self:RemoveStatusEffect("Mobile")
+			self:RemoveStatusEffect("FreeMove")
 		end
 	end
+	
+	if action then
+		if action_id ~= "ChangeWeapon" then
+			self.performed_action_this_turn = action_id
+		end
+	end
+	
 	local move_ap = 0
-	local action = CombatActions[action_id]
 	if action and action.UseFreeMove then
 		move_ap = ap
 	else
@@ -2411,7 +2458,7 @@ function Unit:TakeDirectDamage(dmg, floating, log_type, log_msg, attacker, hit_d
 	dmg = data.dmg
 	dmg = self:CallReactions_Modify("PreUnitTakeDamage", dmg, attacker, self, hit_descr)
 	if IsKindOf(attacker, "Unit") then
-		dmg = self:CallReactions_Modify("PreUnitTakeDamage", dmg, attacker, self, hit_descr)
+		dmg = attacker:CallReactions_Modify("PreUnitTakeDamage", dmg, attacker, self, hit_descr)
 	end
 	if dmg <= 0 then return end
 	
@@ -2929,7 +2976,7 @@ function Unit:OnCommandStart()
 	end
 end
 
-function Unit:SetActionCommand(command, ...)
+function Unit:SetActionCommand(command, combatActionId, ...)
 	-- the interface should clear the visualisations
 	DbgClearVectors()
 	DbgClearTexts()
@@ -2945,7 +2992,7 @@ function Unit:SetActionCommand(command, ...)
 	self.action_command = command
 	SetCombatActionState(self, "wait")
 
-	self:InterruptCommand(command, ...)
+	self:InterruptCommand(command, combatActionId, ...)
 end
 
 function Unit:IsLocalPlayerControlled(player_control_mask)
@@ -3027,14 +3074,14 @@ function Unit:TunnelBlock(tunnel_entrance, tunnel_exit)
 	end
 	table.insert(self.tunnel_blockers, o)
 	if not (g_Combat and self:IsAware()) then
-		MapForEach(tunnel_exit, 0, "Unit", function(o)
+		MapForEach(tunnel_exit, 0, "Unit", function(o, self)
 			if o:GetEnumFlags(const.efResting) == 0 or o:IsDead() then
 				return
 			end
-			if o.command == "Idle" then
+			if o.command == "Idle" and o ~= self then
 				o:SetCommand("GotoSlab", tunnel_exit)
 			end
-		end)
+		end, self)
 	end
 end
 
@@ -3363,7 +3410,9 @@ function Unit:CombatGoto(action_id, cost_ap, pos, interrupt_path, forced_run, st
 	UpdateProvokePos(true)
 	if provoke_pos then
 		self:SetTargetDummy(false)
-		WaitOtherCombatActionsEnd(self)
+		if self.command ~= "Reposition" then
+			WaitOtherCombatActionsEnd(self)
+		end
 	end
 
 	-- If was visible at the start of movement, should be visible throughout
@@ -4355,6 +4404,20 @@ function Unit:GotoAction()
 	end	
 end
 
+function Unit:WaitResumeOnCommandStart()
+	if not GameTimeAdvanced then return end
+	if IsValid(self.queued_action_visual) then
+		DoneObject(self.queued_action_visual)
+		self.queued_action_visual = false
+	end
+	if not g_Combat and IsActivePaused() and self:HasPreparedAttack() then
+		self:InterruptPreparedAttack()
+	end
+	while not g_Combat and IsActivePaused() do
+		WaitMsg("Resume", 500)
+	end	
+end
+
 local pfFinished = const.pfFinished
 local pfFailed = const.pfFailed
 local pfDestLocked = const.pfDestLocked
@@ -4362,6 +4425,7 @@ local pfTunnel = const.pfTunnel
 local gofRealTimeAnimMask = const.gofRealTimeAnim | const.gofEditorSelection
 
 function Unit:GotoSlab(pos, distance, min_distance, move_anim_type, follow_target, use_stop_anim, interrupted)
+	self:WaitResumeOnCommandStart()
 	assert(self:GetGameFlags(gofRealTimeAnimMask) == 0)
 	Msg("UnitAnyMovementStart", self)
 	if use_stop_anim == nil then
@@ -4645,6 +4709,7 @@ function Unit:GotoSlab(pos, distance, min_distance, move_anim_type, follow_targe
 end
 
 function Unit:UninterruptableGoto(pos, straight_line)
+	self:WaitResumeOnCommandStart()
 	local wasInterruptable = self.interruptable
 	if wasInterruptable then
 		self:EndInterruptableMovement()
@@ -4937,7 +5002,8 @@ function Unit:ExitCombat()
 	end
 	
 	self.ActionPoints = self:GetMaxActionPoints() -- reset AP so the units has all their actions available to initiate combat
-
+	self.performed_action_this_turn = false
+	
 	if self:IsDowned() then
 		self:SetCommand("DownedRally")
 	elseif not self:IsDead() then
@@ -5094,6 +5160,7 @@ function Unit:IsIdleOrRunningBehavior()
 end
 
 function Unit:Idle()
+	self:WaitResumeOnCommandStart()
 	assert(self:IsValidPos())
 	SetCombatActionState(self, nil)
 	self.being_interacted_with = false
@@ -5735,15 +5802,15 @@ function Unit:SetTargetDummy(pos, orientation_angle, anim, phase, stance, ground
 	if pos ~= false then
 		pos = pos or GetPassSlab(self) or self:GetPos()
 		--assert(CanOccupy(self, pos)) -- hit when loading savegames with units on impassable
-		if not orientation_angle then
-			orientation_angle = self:GetOrientationAngle()
-			if self.stance == "Prone" then
-				orientation_angle = FindProneAngle(self, nil, orientation_angle, 60*60)
-			end
-		end
 		anim = anim or self:GetStateText()
 		phase = phase or self:GetAnimPhase()
 		stance = stance or self.stance
+		if not orientation_angle then
+			orientation_angle = self:GetOrientationAngle()
+			if stance == "Prone" then
+				orientation_angle = FindProneAngle(self, nil, orientation_angle, 60*60)
+			end
+		end
 		if ground_orient == nil then
 			ground_orient = select(2, self:GetFootPlantPosProps(stance))
 		end
@@ -6091,6 +6158,7 @@ function Unit:GetVisualVoxels(pos, stance, voxels)
 end
 
 function Unit:ChangeStance(action_id, cost_ap, stance, args)
+	self:WaitResumeOnCommandStart()
 	if self.stance == stance or self.species ~= "Human" then
 		self:GainAP(cost_ap)
 		CombatActionInterruped(self)
@@ -6290,15 +6358,33 @@ function Unit:UpdateFXClass()
 			self.fx_actor_class = "AmbientUnit"
 		end
 	else
-		self.fx_actor_class = nil
+		if self.gender == "Male" then
+			self.fx_actor_class = "Male"
+		elseif self.gender == "Female" then
+			self.fx_actor_class = "Female"
+		else
+			self.fx_actor_class = "Unit"
+		end
 	end
 end
 
 function OnMsg.GetCustomFXInheritActorRules(rules)
+	-- unit
+	rules[#rules + 1] = "Male"
+	rules[#rules + 1] = "Unit"
+	rules[#rules + 1] = "Female"
+	rules[#rules + 1] = "Unit"
 	rules[#rules + 1] = "ImportantUnit"
 	rules[#rules + 1] = "Unit"
+	rules[#rules + 1] = "AmbientUnit"
+	rules[#rules + 1] = "Unit"
+	-- gender
+	rules[#rules + 1] = "AmbientMale"
+	rules[#rules + 1] = "Male"
 	rules[#rules + 1] = "AmbientMale"
 	rules[#rules + 1] = "AmbientUnit"
+	rules[#rules + 1] = "AmbientFemale"
+	rules[#rules + 1] = "Female"
 	rules[#rules + 1] = "AmbientFemale"
 	rules[#rules + 1] = "AmbientUnit"
 end
@@ -6357,7 +6443,7 @@ function Unit:DoChangeStance(stance)
 		local base_idle = self:GetIdleBaseAnim()
 		local angle = (self.target_dummy or self):GetOrientationAngle()
 		PlayTransitionAnims(self, base_idle, angle)
-		if not g_Combat and self.command ~= "ExitCombat" and self.command ~= "TakeCover" then
+		if not g_Combat and self.command ~= "ExitCombat" and self.command ~= "TakeCover" and self.command ~= "FallDown" then
 			self:GotoSlab(self:GetPos())
 		end
 	end
@@ -7236,7 +7322,8 @@ function Unit:GetAttackAPCost(action, weapon, action_ap_cost, aim, delta)
 	aim = Clamp(aim or 0, min, max) - min -- only charge for aiming above min level
 	delta = delta or 0
 	local aimCost = const.Scale.AP
-	if GameState.RainHeavy then
+	local rain_penalty = GameState.RainHeavy and not self.indoors
+	if rain_penalty then
 		aimCost = MulDivRound(aimCost, 100 + const.EnvEffects.RainAimingMultiplier, 100)
 	end
 	
@@ -7253,7 +7340,7 @@ function Unit:GetAttackAPCost(action, weapon, action_ap_cost, aim, delta)
 	
 	-- legal cheat: during heavy rain last possible aim costs 1 AP regardless of the penalty
 	local remainingAP = (self:GetUIActionPoints() / 1000) * 1000
-	if GameState.RainHeavy and ap > remainingAP and aim > 0 then 
+	if rain_penalty and ap > remainingAP and aim > 0 then 
 		local diff = abs(remainingAP - ap)
 		if diff < aimCost and diff >= const.Scale.AP then
 			ap = remainingAP
@@ -7394,7 +7481,7 @@ function Unit:PrepareToAttack(attack_args, attack_results)
 			CombatCam_ShowAttackNew(self, attack_args.target, interrupts, attack_results)
 		else
 			local cameraIsNear = DoPointsFitScreen({targetPos}, nil, const.Camera.BufferSizeNoCameraMov)
-			if g_Combat and attack_results.explosion and (not attack_args.action_id or attack_args.action_id ~= "Bombard") and not cameraIsNear then
+			if attack_results.explosion and (not attack_args.action_id or attack_args.action_id ~= "Bombard") and not cameraIsNear then
 				SnapCameraToObj(targetPos, nil, GetStepFloor(targetPos), 500)
 				Sleep(500)
 			end
@@ -7824,15 +7911,6 @@ function Unit:OnGearChanged(isLoad)
 		end
 		item:ApplyModifiersList(item.applied_modifiers)
 	end)
-	if self.using_cumbersome and not HasPerk(self, "KillingWind") then
-		if self:CanUseIroncladPerk() then
-			if not isLoad then
-				self:ConsumeAP(DivRound(self.free_move_ap, 2), "Move")
-			end
-		else
-			self:RemoveStatusEffect("FreeMove")
-		end
-	end
 	Msg("UnitAPChanged", self)
 	ObjModified(self)
 	ObjModified(self.Inventory)
@@ -8381,7 +8459,7 @@ function GetUnitGroups()
 end
 
 function GetTargetUnitCombo()
-	if not gv_TargetUnitGroups then
+	if not gv_TargetUnitGroups and not IsChangingMap() then
 		RecalcGroups()
 	end
 	return gv_TargetUnitGroups
@@ -9208,6 +9286,12 @@ function OnMsg.ValidateMap()
 	end
 end
 
+function OnMsg.ChangeMapDone(map)
+	if IsModEditorMap(map) and not g_IdleAnimActionStances then
+		FillIdleAnimActionsAndStances()
+	end
+end
+
 if FirstLoad then
 	g_IdleAnimActionStances = false
 end
@@ -9455,10 +9539,10 @@ function Unit:UpdateHighlightMarking()
 					marking = 2
 				end
 			end
-		elseif reasons["darkness"] then
-			marking = 8
 		elseif reasons["deploy_predict"] then
 			marking = 5
+		elseif reasons["darkness"] then
+			marking = 8
 		elseif reasons["can_be_interacted"] then
 			marking = 11
 		end
@@ -9794,7 +9878,7 @@ function SavegameSessionDataFixups.ExpFixup(data, metadata, lua_ver)
 	local ud = data.gvars.gv_UnitData
 	for _, data in pairs(ud) do
 		if not data.Experience then
-			local minXP = XPTable[data.StartingLevel]
+			local minXP = GetXPTable(data.StartingLevel)
 			data.Experience = minXP
 		end
 		data:RemoveModifier("ExperienceBonus", "Experience")

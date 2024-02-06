@@ -248,6 +248,14 @@ PlaceObj('QuestsDef', {
 								return quest.WorldFlipDone
 							end,
 						}),
+						PlaceObj('QuestIsVariableBool', {
+							QuestId = "PierreDefeated",
+							Vars = set( "PierreJoined" ),
+							__eval = function ()
+								local quest = gv_Quests['PierreDefeated'] or QuestGetState('PierreDefeated')
+								return quest.PierreJoined
+							end,
+						}),
 					},
 				}),
 			},
@@ -298,49 +306,21 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('QuestNote', {
 			CompletionConditions = {
-				PlaceObj('CheckOR', {
-					Conditions = {
-						PlaceObj('QuestIsVariableBool', {
-							QuestId = "RescueHerMan",
-							Vars = set( "HangLuc" ),
-							__eval = function ()
-								local quest = gv_Quests['RescueHerMan'] or QuestGetState('RescueHerMan')
-								return quest.HangLuc
-							end,
-						}),
-						PlaceObj('CheckAND', {
-							Conditions = {
-								PlaceObj('QuestIsVariableBool', {
-									QuestId = "RescueHerMan",
-									Vars = set( "RewardGiven" ),
-									__eval = function ()
-										local quest = gv_Quests['RescueHerMan'] or QuestGetState('RescueHerMan')
-										return quest.RewardGiven
-									end,
-								}),
-								PlaceObj('CheckOR', {
-									Conditions = {
-										PlaceObj('QuestIsVariableBool', {
-											QuestId = "04_Betrayal",
-											Vars = set( "WorldFlipDone" ),
-											__eval = function ()
-												local quest = gv_Quests['04_Betrayal'] or QuestGetState('04_Betrayal')
-												return quest.WorldFlipDone
-											end,
-										}),
-										PlaceObj('QuestIsVariableBool', {
-											QuestId = "PierreDefeated",
-											Vars = set( "PierreJoined" ),
-											__eval = function ()
-												local quest = gv_Quests['PierreDefeated'] or QuestGetState('PierreDefeated')
-												return quest.PierreJoined
-											end,
-										}),
-									},
-								}),
-							},
-						}),
-					},
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "RescueHerMan",
+					Vars = set( "HangLuc" ),
+					__eval = function ()
+						local quest = gv_Quests['RescueHerMan'] or QuestGetState('RescueHerMan')
+						return quest.HangLuc
+					end,
+				}),
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "RescueHerMan",
+					Vars = set( "RewardGiven" ),
+					__eval = function ()
+						local quest = gv_Quests['RescueHerMan'] or QuestGetState('RescueHerMan')
+						return quest.RewardGiven
+					end,
 				}),
 			},
 			Idx = 20,
@@ -355,37 +335,13 @@ PlaceObj('QuestsDef', {
 								return quest.HangLuc
 							end,
 						}),
-						PlaceObj('CheckAND', {
-							Conditions = {
-								PlaceObj('QuestIsVariableBool', {
-									QuestId = "RescueHerMan",
-									Vars = set( "RewardGiven" ),
-									__eval = function ()
-										local quest = gv_Quests['RescueHerMan'] or QuestGetState('RescueHerMan')
-										return quest.RewardGiven
-									end,
-								}),
-								PlaceObj('CheckOR', {
-									Conditions = {
-										PlaceObj('QuestIsVariableBool', {
-											QuestId = "04_Betrayal",
-											Vars = set( "WorldFlipDone" ),
-											__eval = function ()
-												local quest = gv_Quests['04_Betrayal'] or QuestGetState('04_Betrayal')
-												return quest.WorldFlipDone
-											end,
-										}),
-										PlaceObj('QuestIsVariableBool', {
-											QuestId = "PierreDefeated",
-											Vars = set( "PierreJoined" ),
-											__eval = function ()
-												local quest = gv_Quests['PierreDefeated'] or QuestGetState('PierreDefeated')
-												return quest.PierreJoined
-											end,
-										}),
-									},
-								}),
-							},
+						PlaceObj('QuestIsVariableBool', {
+							QuestId = "RescueHerMan",
+							Vars = set( "RewardGiven" ),
+							__eval = function ()
+								local quest = gv_Quests['RescueHerMan'] or QuestGetState('RescueHerMan')
+								return quest.RewardGiven
+							end,
 						}),
 					},
 				}),

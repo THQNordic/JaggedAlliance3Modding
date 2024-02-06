@@ -625,7 +625,7 @@ PlaceObj('SectorOperation', {
 		return  {[1] = {value = self:ResolveValue("MoneyCost") , resource = "Money"}}
 	end,
 	GetSectorSlots = function (self, prof, sector)
-		return 2
+		return 1
 	end,
 	Parameters = {
 		PlaceObj('PresetParamNumber', {
@@ -1370,11 +1370,17 @@ PlaceObj('SectorOperation', {
 	OnRemoveOperation = function (self, merc)
 		local sector = merc:GetSector()
 		local workers = GetOperationProfessionals(sector.Id, self.id, false, merc.session_id) or {}
-		sector.militia_training = #workers>0
+		local last = #workers<=0
+		if last then
+			sector.militia_training_payed_cost = false
+			sector.militia_training = false
+		end
 	end,
-	OnSetOperation = function (self, merc)
+	OnSetOperation = function (self, merc, arg)
 		local sector = merc:GetSector()
-		sector.militia_training = true
+		if not sector.militia_training then
+			sector.militia_training = true
+		end
 	end,
 	Parameters = {
 		PlaceObj('PresetParamNumber', {
@@ -1511,7 +1517,7 @@ PlaceObj('SectorOperation', {
 		else-- teacher
 			local students = GetOperationProfessionals(sector.Id, self.id, "Student")
 			for i_, st in ipairs(students) do
-				if st[stat]>=merc[stat] then
+				if stat and st[stat] and merc[stat] and st[stat]>=merc[stat] then
 					return false
 				end	
 			end
@@ -1749,6 +1755,9 @@ PlaceObj('SectorOperation', {
 					if solo_student then
 						progressPerTick = MulDivRound(progressPerTick ,100, self:ResolveValue("SoloTrainingSpeedModifier"))--  training speed for solo practice should be 300% slower (3 times slower) 
 					end
+					if IsGameRuleActive("HardLessons") then
+						progressPerTick = progressPerTick - MulDivRound(progressPerTick,GameRuleDefs.HardLessons:ResolveValue("TrainMercModifier"), 100)--  slow the attribute increase from training operation by 40%. 
+					end
 					student.stat_learning[stat] = student.stat_learning[stat] or {progress = 0, up_levels = 0}
 					local learning_progress = student.stat_learning[stat].progress
 					learning_progress = learning_progress + progressPerTick
@@ -1847,6 +1856,7 @@ PlaceObj('SectorOperation', {
 		if eventcontext.mercs then
 			mercs = table.map(eventcontext.mercs, function(id) return gv_UnitData[id].Nick end)
 		else
+			local professionId = self.Professions and self.Professions[1] and self.Professions[1].id
 			mercs = GetOperationProfessionals(sector_id, self.id)
 			mercs = table.map(professionId and mercs[professionId] or mercs, "Nick")
 		end
@@ -2120,10 +2130,12 @@ PlaceObj('SectorOperation', {
 		local max = 0
 		for _, data in ipairs(queue) do
 			local item =  SectorOperationRepairItems_GetItemFromData(data)
-			local prev_cond = item.Condition
-			max = max + prev_cond*item.RepairCost + item.repair_progress
-			if not prediction then
-				NetUpdateHash("RepairItem_ProgressCurrent", item.id, item.class, item.Condition, item.repair_progress)
+			if item then
+				local prev_cond = item.Condition
+				max = max + prev_cond*item.RepairCost + item.repair_progress
+				if not prediction then
+					NetUpdateHash("RepairItem_ProgressCurrent", item.id, item.class, item.Condition, item.repair_progress)
+				end
 			end
 		end
 		return max

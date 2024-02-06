@@ -334,7 +334,7 @@ function WaitControllerDisconnectedMessage()
 		Platform.playstation and T(306576723489, --[[PS controller message]] "Please connect a controller to resume playing.") or T(925406686039, "Please connect a controller to resume playing.")
 	)
 	dialog:SetZOrder(BaseLoadingScreen.ZOrder + 1)
-	dialog:SetModal(true)
+	dialog:SetModal(true) -- needs to be a modal to battle loading screen
 	dialog:SetDrawOnTop(true)
 	local _, _, controller_id = dialog:Wait()
 	return controller_id
@@ -386,21 +386,35 @@ function XDesktop:MouseEvent(event, pt, button, meta, ...)
 	return oldMouseEvent(self, event, pt, button, meta, ...)
 end
 
+function IsCursorInWindow()
+	local p = HardwareGetMousePos()
+	local x, y = p:xy()
+	--p is relative to top left window corner
+	if x < 0 or y < 0 then return false end
+	local r = UIL.GetScreenSize()
+	local rx, ry = r:xy()
+	if x - rx > 0 or y - ry > 0 then return false end
+	
+	return true
+end
+
 local function lMouseSwitchControlSwitchProc()
 	local currentTime = RealTime()
 	
-	local previous_hardwareMouse_pos = HardwareGetMousePos()
+	local previousHardwareMousePos = IsCursorInWindow() and HardwareGetMousePos()
 	while true do
-		local hardwareMousePos = HardwareGetMousePos()
-
-		local scaledThreshold = MulDivRound(200, GetUIScale(), 1000)
-		if hardwareMousePos:Dist(previous_hardwareMouse_pos) > scaledThreshold then
-			DelayedCall(0, SwitchControls, false)
-			break
+		local hardwareMousePos = IsCursorInWindow() and HardwareGetMousePos()
+		
+		if hardwareMousePos and previousHardwareMousePos then
+			local scaledThreshold = MulDivRound(200, GetUIScale(), 1000)
+			if hardwareMousePos:Dist(previousHardwareMousePos) > scaledThreshold then
+				DelayedCall(0, SwitchControls, false)
+				break
+			end
 		end
 		
 		if RealTime() - currentTime > 1000 then
-			previous_hardwareMouse_pos = hardwareMousePos
+			previousHardwareMousePos = hardwareMousePos
 		end
 		
 		Sleep(15)
@@ -474,4 +488,11 @@ function OnMsg.OnXInputControllerConnected(controller)
 		XInput.ControllerEnable("all", false)
 		XInput.ControllerEnable(id, true)
 	end
+end
+
+local original_func = GatherNonBindableKeys
+function GatherNonBindableKeys()
+	local ret = original_func()
+	table.remove_entry(ret, "ActionId", "gamepadActionFreeAimToggle") --some sort of system action that uses ActionBindable to hide from key rebind ui and blocks rebinding of F
+	return ret
 end

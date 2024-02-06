@@ -26,11 +26,8 @@ function CreateXBugReportDlg(summary, descr, files, params)
 		table.set(params, "no_api_token",true)
 	end
 	
-	local mod = LocalStorage and LocalStorage.lastEditedMod
-	local modRelated = AreModdingToolsActive()
-
-	table.set(params, "mod", mod)
-	table.set(params, "mod_related", modRelated)
+	table.set(params, "mod", LastEditedMod)
+	table.set(params, "mod_related", AreModdingToolsActive())
 	
 	return oldCreateXBugReportDlg(summary, descr, files, params)
 end

@@ -22,7 +22,7 @@ PlaceObj('XTemplate', {
 				XContextWindow.Open(self)
 				local ctx = self:GetContext()
 				local sectorMultiplier = gv_Sectors[BobbyRayCartGetDeliverySector()].BobbyRayDeliveryCostMultiplier
-				local totalPrice = MulDivRound(sectorMultiplier, ctx.Price, 100)
+				local totalPrice = MulDivRound(sectorMultiplier, BobbyRayStoreDeliveryPrice(ctx.id), 100)
 				self:ResolveId("idTime"):SetText(ctx.TimeDescription)
 				self:ResolveId("idDescription"):SetText(ctx.Name)
 				self:ResolveId("idPrice"):SetText(T{770368132801, "<money(Cost)>", Cost = totalPrice})
@@ -145,7 +145,7 @@ PlaceObj('XTemplate', {
 					'OnContextUpdate', function (self, context, ...)
 						local ctx = self:ResolveId("node"):GetContext()
 						local sectorMultiplier = gv_Sectors[BobbyRayCartGetDeliverySector()].BobbyRayDeliveryCostMultiplier
-						local totalPrice = MulDivRound(sectorMultiplier, ctx.Price, 100)
+						local totalPrice = MulDivRound(sectorMultiplier, BobbyRayStoreDeliveryPrice(ctx.id), 100)
 						
 						self.parent:SetText(T{770368132801, "<money(Cost)>", Cost = totalPrice})
 					end,

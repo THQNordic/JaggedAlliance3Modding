@@ -5,11 +5,11 @@ PlaceObj('XTemplate', {
 	group = "Zulu ContextMenu",
 	id = "DeployMenu",
 	PlaceObj('XTemplateWindow', {
+		'__context', function (parent, context) return false end,
 		'Id', "idDeployMenu",
 		'IdNode', true,
 		'Visible', false,
-		'FoldWhenHidden', true,--
-		'__context', function (parent, context) return false end,
+		'FoldWhenHidden', true,
 	}, {
 		PlaceObj('XTemplateWindow', {
 			'__class', "XContextWindow",
@@ -293,6 +293,7 @@ PlaceObj('XTemplate', {
 				}),
 			PlaceObj('XTemplateWindow', {
 				'comment', "title",
+				'__context', function (parent, context) return false end,
 				'__class', "XContentTemplate",
 				'Dock', "top",
 				'MinHeight', 40,
@@ -300,7 +301,6 @@ PlaceObj('XTemplate', {
 				'UseClipBox', false,
 				'DrawOnTop', true,
 				'Background', RGBA(52, 55, 61, 255),
-				'__context', function (parent, context) return false end,
 			}, {
 				PlaceObj('XTemplateWindow', {
 					'__class', "XText",

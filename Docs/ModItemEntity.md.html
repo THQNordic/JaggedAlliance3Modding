@@ -1,9 +1,9 @@
 Entity
 ======
 
-An **entity** in the game's engine holds together everything necessary to visualize a single object in the game - meshes, animations or their inheritance from already existing ingame, materials and their corresponding textures, as well as some metadata like attach points, collision geometry etc. Virtually everything visible in the game world - with the notable exception of sky, terrain, and particle system effects - is an entity.
+An **entity** in the game engine holds together everything necessary to visualize a single object in the game - meshes, animations or their inheritance from already existing in-game materials and their corresponding textures, as well as some metadata like attach points, collision geometry etc. Virtually everything visible in the game world - with the notable exception of sky, terrain, and particle system effects - is an entity.
 
-Entities are authored in an application such as Blender and exported into a game-friendly format by tools provided with the game. A mod can contain multiple entities. They usually need to be referenced by another ModItem item to be usable - e.g. a building entity won't automatically be recognized as a building and integrated into the build menu; you need another type of ModItem for that, named "Building" (accessible via RMB menu: New->Gameplay->Building).
+Entities are authored in an application such as Blender and exported into a game-friendly format by tools provided with the game. A mod can contain multiple entities. They usually need to be referenced by another ModItem item to be usable - e.g. a building entity won't automatically be recognized as a building and integrated into the build menu, hence you need another type of ModItem for that named "Building" (accessible via RMB menu: New->Gameplay->Building).
 
 Exporting an Entity from Blender into the game
 ----------------------------------------------
@@ -18,7 +18,7 @@ If it is properly installed, a tab called *HGE Tools* will appear in the Blender
 Load a Blender scene (e.g. one of the sample mod assets in *`ModTools/Samples/Assets`*) and from the *Export* panel in the *HGE Tools* tab, click *Export All*. When the export process completes successfully, the entity file with an *.ent* extension will appear at the root of *`%AppData%/Jagged Alliance 3/ExportedEntities`*, and its associated items - meshes, animations, textures etc. - in the appropriate subfolders.
  
 !!! WARNING
-    Keep in mind that the export process in incremental and previously exported parts of an entity will never be deleted automatically, but will be overwritten or built upon.
+    Keep in mind that the export process is incremental and previously exported parts of an entity will never be deleted automatically, but will be overwritten or built upon.
     To circumvent issues arising from this (like change of State) you might need to delete the files in your *`ExportedEntities`* folder.
 
 Now that the Blender scene is properly exported to the Haemimont Games engine format, you need to create a new mod that will use the exported entity.
@@ -30,25 +30,25 @@ From the Mod Editor toolbar, click the New icon and enter a name. Double-click t
 
 Then you need to import the entity. In the rightmost column, look for the *Import* field and click on the "..." button. Navigate to *`%AppData%/Jagged Alliance 3/ExportedEntities`* and choose the *.ent* file exported from Blender in the previous step. Press the *Import* button to the right of the filename. Save by pressing the top most left icon in ModEditor toolbar.
 
-This will copy the entity file and the necessary files around it to the mod folder, *`%AppData%/Jagged Alliance 3/Mods/.../Entities`*. You can press the *Test* button in the Mod editor toolbar (the icon looks like an eye) and the game will place the newly imported entity on the terrain near the centre of the screen.
+This will copy the entity file and the necessary files around it to the mod folder, *`%AppData%/Jagged Alliance 3/Mods/.../Entities`*. You can press the *Test* button in the Mod editor toolbar (the icon looks like an eye) and the game will place the newly imported entity on the terrain near the center of the screen.
  
 !!! NOTE
-    Please note, that once entities are imported in the Mod Editor, they will not be reloaded after re-exporting. To re-load a re-exported entity, you need to restart the game (or choose a new unique entity name and import again). 
+    Please note that once entities are imported in the Mod Editor, they will not be reloaded after re-exporting. To reload a re-exported entity, you need to restart the game (or choose a new unique entity name and import again). 
 
 
 Blender Add-on
 ---------------------
 
-The add-on adds a new *HGE Tools* tab to the Blender Sidebar (shortcut: N). In it there are several panels:
+The add-on adds a new *HGE Tools* tab to the Blender Sidebar (shortcut: N). It consists of several panels:
 
 1. HGE Tools
- - Contains information about the add-on version (and game name) + some useful buttons.
+ - Contains information about the add-on version (and game name), as well as some useful buttons.
 
 2. Object
  - Shows contextual information about the currently selected object.
- - Also allows editing of properties like Entity, Mesh, Animation inheritance (male / female) and State witch by default is idle.
+ - Allows editing of properties like Entity, Mesh, Animation inheritance (male / female) and State which by default is Idle.
  - Spot names (contextual, depending on Blender Outliner selection).
- - Lastly, it shows potential problems (errors/warnings) that may arise when exporting.
+ - Shows potential problems (errors/warnings) that may arise when exporting.
 
 3. Animations
  - Shows a list of animations in the scene (the filed shows the Entity, Mesh, and corresponding animation State).
@@ -65,20 +65,20 @@ Scene structure
 ---------------
 
 1. Origin
- - An empty object or an armature. (Top most parent)
+ - An empty object or an armature (top most parent).
  - Everything will be positioned relative to this object.
- - This way you can organize the scene better.
+ - In this way you can organize the scene better.
 
 2. Entity Mesh
- - Meshes are what's visible inside the game.
+ - Meshes are what is visible inside the game.
  - It's a mesh object parented to an *Origin*.
- - Multiple mesh objects can be part of the same *entity mesh*. (Note that this is different to Blender mesh object structure; it allows Jagged Alliance 3 to use sub-meshes.)
+ - Multiple mesh objects can be part of the same *entity mesh*. (Note that this is different to Blender mesh object structure. It allows Jagged Alliance 3 to use sub-meshes.)
  - Mesh objects are associated with Entities.
- - Mesh objects must be a part of at least one state (enforced by the UI).
+ - Mesh objects must be part of at least one state (enforced by the UI).
 
 3. Spot
  - Spots are logical points attached to a mesh.
- - Represented as an empty object parented to an *entity mesh*.
+ - Represented by an empty object parented to an *entity mesh*.
  - When a mesh is animated, the spots must be parented to the specific bone they should move along with (Ctrl+P -> Bone).
  - Note that an origin spot is added automatically.
 
@@ -93,13 +93,13 @@ States & animations
 
 Entities are created and defined using the *Entity name* field in the *Object* panel of an *Entity Mesh*. An entity can have multiple states.
 
-States are defined variations a given Entity. For example, the Entity 'ElectricHeater' has two states - 'idle' and 'working'
+States are defined variations of a given Entity. For example, the Entity 'ElectricHeater' has two states - 'idle' and 'working'.
 States are defined in two places:
  - *State name* field in the *Object* panel of the *HGE Tools* sidebar. 
  - *Animations* panel in the *HGE Tools* sidebar.
 The `idle` state is always required (animated or not).
 
-An *Entity mesh* can be used either for a static state or an animated state, but not for both at the same time. This is determined from the skinning of the mesh - if skinned, the mesh can only be used for animated states.
+An *Entity mesh* can be used either for a static state or an animated state, but not for both at the same time. This is determined by the skinning of the mesh - if skinned, the mesh can only be used for animated states.
 
 An animation can be added to an existing state (which is already defined in the *State name* field from the *Object* panel of an *Entity mesh*) via the +/- buttons in the Animation panel. The state name of the added animation must match the state name set in the Object panel.
 
@@ -111,26 +111,26 @@ To add an animation:
 3. Choose the animated state's name.
 4. Choose start and end frame.
 5. Click OK.
-6. Optionally tweak the settings of the animation below the list.
+6. Optionally, tweak the settings of the animation below the list.
 Multiple animations can be created in one Blender scene by occupying different ranges on the timeline (thus the frame start/end fields).
 Animations can have compensation for moving objects - use CME for linear motion, and VDA for nonlinear motion.
 
 Armature Weight Transfers
 -------------------
 When you are setting up the new mesh for export, you need to make sure it is linked to the same armature and uses the same vertex group as the body. Follow these steps:
-1. Make sure both meshes's Scale is applied to its data. (Scale X Y Z = 1). 
+1. Make sure both meshes' Scale is applied to its data. (Scale X Y Z = 1). 
     - In [Object Mode] Select meshes and go to: Object/Apply/Scale. Or Object/Apply/All Transforms from the menu.
-2. Select the mesh with the Armature modifier (Source Object), and with Shift Key select second mesh to transfer the Weight data (Target Object). The mesh which will inherit data should be selected last (Target Object).
-3. Go to [Weight Paint] mode. If the Selection order is correct. The (Target Object) is colored Blue (no weight data color, all vertices have 0 weight) 
-4. Go to Weights/Transfer Weights. Bottom Left appears the parameters of the operation "Transfer Mesh Data", there in the "Source Layer Selection" menu chose "By Name" (be sure that the "Transfer Mesh Data/Vertex Mapping = Nearest Vertex"). The (Target Object) has inherited the data from (Source Object) - The Armature modifier and the Weight Groups. Based on Approximation in position space (see "Transfer Mesh Data/Vertex Mapping/Nearest Vertex").
+2. Select the mesh with the Armature modifier (Source Object), and using Shift key select second mesh to transfer the Weight data (Target Object). The mesh which will inherit data should be selected last (Target Object).
+3. Go to [Weight Paint] mode. If the Selection order is correct, the (Target Object) is colored Blue (no weight data color, all vertices have 0 weight).
+4. Go to Weights/Transfer Weights. Bottom Left lists the parameters of the operation "Transfer Mesh Data". In the "Source Layer Selection" menu choose "By Name" (be sure that the "Transfer Mesh Data/Vertex Mapping = Nearest Vertex"). The (Target Object) has inherited the data from (Source Object) - the Armature modifier and the Weight Groups, based on Approximation in position space (see "Transfer Mesh Data/Vertex Mapping/Nearest Vertex").
 
 A Note on Materials
 -------------------
 
-*Jagged Alliance 3* uses PBR-based materials using the *Metalness* workflow. Textures should be supplied in 24-bit or 32-bit uncompressed TGA format. Material settings can be edited **only** inside the *Haemimont Material* panel in the Material properties (other changes will be ignored/overridden). All textures should use the first (and only) UV map. The following textures can be associated with an object:
+*Jagged Alliance 3* uses PBR-based materials with the *Metalness* workflow. Textures should be supplied in 24-bit or 32-bit uncompressed TGA format. Material settings can be edited **only** inside the *Haemimont Material* panel in the Material properties (other changes will be ignored/overridden). All textures should use the first (and only) UV map. The following textures can be associated with an object:
 
-Base colour
-: The albedo for diffuse surfaces, or the specular colour for glossy surfaces. If the *BaseColor* texture contains alpha channel, the option *Use Alpha Test*  under *Haemimont Material* in *Material* tab, should be checked.
+Base color
+: The albedo for diffuse surfaces, or the specular color for glossy surfaces. If the *BaseColor* texture contains alpha channel, the option *Use Alpha Test*  under *Haemimont Material* in *Material* tab should be checked.
 
 Normal
 : Normal map.
@@ -160,8 +160,8 @@ The maximum number of parts is 4. The texture will act as four masks combined in
 * Red color (#ff0000ff) will mark the "first" part.
 * Green color (#00ff00ff) will mark the "second" part.
 * Blue color (#0000ffff) will mark the "third" part.
-* The alpha channgel (#00000000) will mark the "fourth" part.
-There cannot be any mixing at the edges between two different parts and all colors must match those hex codes exactly. The Base Color texture should also be prepared. Parts that will be colorized should be grayscale. Recomended values range from 190 to 220.
+* The alpha channel (#00000000) will mark the "fourth" part.
+There cannot be any mixing at the edges between two different parts and all colors must match those hex codes exactly. The Base Color texture should also be prepared. Parts that will be colorized should be grayscale. Recommended values range from 190 to 220.
 
 
 Sample Assets
@@ -170,28 +170,27 @@ Sample Assets
 Sample Blender scenes for a weapon and for unit clothing are provided as examples in *Jagged Alliance 3* Steam installation folder along with the sample mods (\Steam\steamapps\common\Project Zulu\ModTools\Samples\Assets). Here are some useful tips and important notes that will help you structure your scenes and prepare your assets for export.
 
 1. M1A1 Thompson 
- - The Blender scene includes hand reference and overall reference for the weapon. Those are not exported, they are used only for scale. The weapon is in a seperate collection. It has 2 components - the weapon itself and the magazine. Note that only the meshes that are parented by an empty object (Origin) will appear as options for export. Since the weapon and the magazine have seperate origins, they will appear in the list for export alongside their LODs. The LODs will be included in the same entity file as the original asset since they have the same entity name.
+ - The Blender scene includes hand reference and overall reference for the weapon. Those are not exported, they are used only for scale. The weapon is in a separate collection. It has 2 components - the weapon itself and the magazine. Note that only the meshes that are parented by an empty object (Origin) will appear as options for export. Since the weapon and the magazine have separate origins, they will appear in the list for export alongside their LODs. The LODs will be included in the same entity file as the original asset since they have the same entity name.
  - The Weapon group includes the mesh, the LOD and empty objects - *spots* - for the left hand grip, the muzzle and the magazine. The spot names should be filled in according to the game requirements in the HGE exporter tool, since the name of the object itself in Blender is not used by the game. 
- - Note that the magazine mesh has its origin at the same plase as the magazine spot in the weapon. This is how the spots of the weapon correspond to the parts that can be attached to them. 
+ - Note that the magazine mesh has its origin at the same place as the magazine spot in the weapon. This is how the spots of the weapon correspond to the parts that can be attached to them. 
 
 2. Smart Suit
- -  The Blender scene demonstrates how to create pieces of clothing that will inherit the animations based on the skeleton that is also used in the game, along with a Male body reference. To see how the skeleton is connected with the meshes in the exporter, open the object properties panel and check under custom properties for the field "hgskeleton". In this field, you need to type in the entity name followed by "_" followed by the mesh name. When listing more than one item, different items are separated by | . This step is used for the game to recognize the animation and if skipped will result in static entity.
+ -  The Blender scene demonstrates how to create pieces of clothing that will inherit the animations based on the skeleton that is also used in the game, along with a Male body reference. To see how the skeleton is connected with the meshes in the exporter, open the object properties panel and check under custom properties for the field "hgskeleton". In this field, you need to type in the entity name followed by "_", followed by the mesh name. When listing more than one item, different items are separated by | . This step is used for the game to recognize the animation, and if skipped, it will result in a static entity.
 
 3. Simple clothes 
- -  The Blender scene demonstrates how to create pieces of clothing for female units, along with a Female body reference and Head refence. This scene uses colorization masks for the clothing and demonstrates how they are recognized and used in the game. 
+ -  The Blender scene demonstrates how to create pieces of clothing for female units, along with a Female body reference and Head reference. This scene uses colorization masks for the clothing and demonstrates how they are recognized and used in the game. 
 
 Properties
 ----------
 
 Can be inherited (`self.can_be_inherited`)
-: 
 
 Inherit entity (`self.inherit_entity`)
 : Entity to inherit meshes/animations from; only entities with 'Can be inherited' checked are listed.
-: Allowed values are: AnimatedTextureObject, AutoAttachObject, Deposition, Decal, FloorAlignedObj, Mirrorable, Animal, ForestDebris, HumanHead, ResourceEntityClass, ResourcePileEntityClass, Bush, Plant, Tree
+: Allowed values are: AnimatedTextureObject, AutoAttachObject, Deposition, Decal, FloorAlignedObj, Mirrorable, Animal, ForestDebris, HumanHead, ResourceEntityClass, ResourcePileEntityClass, Bush, Plant, Tree.
 
 Class (`self.class_parent`)
-: Classes which this entity class should inherit (comma separated). Check [Appearance Preset](ModItemAppearancePreset.md.html) for more information on the required class for appearance entities. 
+: Classes which this entity class should inherit (comma separated). Check [Appearance Preset](ModItemAppearancePreset.md.html) for more information on the required class for appearance entities.
 
 Material type (`self.material_type`)
 : Physical material of this entity.

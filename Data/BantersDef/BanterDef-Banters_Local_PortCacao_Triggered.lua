@@ -293,13 +293,6 @@ PlaceObj('BanterDef', {
 		}),
 	},
 	Once = true,
-	conditions = {
-		PlaceObj('QuestIsVariableNum', {
-			Amount = 3,
-			Prop = "BombsDisarmed",
-			QuestId = "Docks",
-		}),
-	},
 	group = "Banters_Local_PortCacao_Triggered",
 	id = "CacaoGang_Gran04_BombsDefused",
 })
@@ -988,6 +981,63 @@ PlaceObj('BanterDef', {
 	},
 	group = "Banters_Local_PortCacao_Triggered",
 	id = "PortCacaoDocks_ShotgunShowcase_LurchDead",
+})
+
+PlaceObj('BanterDef', {
+	Comment = "bombs armed",
+	Lines = {
+		PlaceObj('BanterLine', {
+			'Character', "ThugFemale_2",
+			'Text', T(392779982414, --[[BanterDef PortCacaoGang15 Text section:Banters_Local_PortCacao_Triggered/PortCacaoGang15 bombs armed voice:ThugFemale_2]] "They set fucking bombs on us! Fucking do something!"),
+		}),
+		PlaceObj('BanterLine', {
+			'MultipleTexts', true,
+			'AnyOfThese', {
+				PlaceObj('BanterLineThin', {
+					'Character', "Red",
+					'Text', T(639818287603, --[[BanterDef PortCacaoGang15 Text section:Banters_Local_PortCacao_Triggered/PortCacaoGang15 voice:Red]] "Great. I expect I'll no hear the end of it until I disarm yer little bombs for ye."),
+				}),
+				PlaceObj('BanterLineThin', {
+					'Character', "Fidel",
+					'Text', T(608531149697, --[[BanterDef PortCacaoGang15 Text section:Banters_Local_PortCacao_Triggered/PortCacaoGang15 voice:Fidel]] "Of course! Fidel will set them off right away."),
+				}),
+				PlaceObj('BanterLineThin', {
+					'Character', "Barry",
+					'Text', T(473421006105, --[[BanterDef PortCacaoGang15 Text section:Banters_Local_PortCacao_Triggered/PortCacaoGang15 voice:Barry]] "I will disarm these bombs with utmost of the expedience."),
+				}),
+			},
+			'playOnce', true,
+		}),
+	},
+	Once = true,
+	group = "Banters_Local_PortCacao_Triggered",
+	id = "PortCacaoGang15",
+})
+
+PlaceObj('BanterDef', {
+	Comment = "bombs armed",
+	Lines = {
+		PlaceObj('BanterLine', {
+			'Character', "ThugFemale_2",
+			'Text', T(378388768344, --[[BanterDef PortCacaoGang16 Text section:Banters_Local_PortCacao_Triggered/PortCacaoGang16 bombs armed voice:ThugFemale_2]] "Dying as a hostage is for losers."),
+		}),
+	},
+	Once = true,
+	group = "Banters_Local_PortCacao_Triggered",
+	id = "PortCacaoGang16",
+})
+
+PlaceObj('BanterDef', {
+	Comment = "bombs armed",
+	Lines = {
+		PlaceObj('BanterLine', {
+			'Character', "ThugFemale_2",
+			'Text', T(767311998306, --[[BanterDef PortCacaoGang17 Text section:Banters_Local_PortCacao_Triggered/PortCacaoGang17 bombs armed voice:ThugFemale_2]] "They caught us while we were napping... Literally, I'm sad to say."),
+		}),
+	},
+	Once = true,
+	group = "Banters_Local_PortCacao_Triggered",
+	id = "PortCacaoGang17",
 })
 
 PlaceObj('BanterDef', {

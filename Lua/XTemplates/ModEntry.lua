@@ -12,9 +12,10 @@ PlaceObj('XTemplate', {
 		'FoldWhenHidden', true,
 		'BorderColor', RGBA(0, 0, 0, 0),
 		'Background', RGBA(255, 255, 255, 0),
+		'RolloverOnFocus', false,
 		'ChildrenHandleMouse', true,
 		'OnContextUpdate', function (self, context, ...)
-			if g_SelectedMod == self.context then
+			if g_SelectedMod and self.context and g_SelectedMod.ModID == self.context.ModID then
 				self:SetSelected(true)
 			end
 		end,
@@ -71,18 +72,6 @@ PlaceObj('XTemplate', {
 			'SqueezeY', false,
 		}),
 		PlaceObj('XTemplateWindow', {
-			'__class', "XImage",
-			'UIEffectModifierId', "MainMenuMainBar",
-			'Id', "idImgAbove",
-			'Margins', box(8, 8, 8, 8),
-			'Dock', "box",
-			'Visible', false,
-			'Transparency', 64,
-			'HandleKeyboard', false,
-			'Image', "UI/Common/mm_option_entry_highlight",
-			'ImageColor', RGBA(130, 128, 120, 191),
-		}),
-		PlaceObj('XTemplateWindow', {
 			'__class', "XFrame",
 			'UIEffectModifierId', "MainMenuHighlight",
 			'Id', "idImgBcgr",
@@ -94,6 +83,7 @@ PlaceObj('XTemplate', {
 			'SqueezeY', false,
 		}),
 		PlaceObj('XTemplateWindow', {
+			'Margins', box(20, 0, 0, 0),
 			'LayoutMethod', "VList",
 		}, {
 			PlaceObj('XTemplateWindow', {
@@ -103,10 +93,9 @@ PlaceObj('XTemplate', {
 				PlaceObj('XTemplateWindow', {
 					'__class', "XText",
 					'Id', "idName",
-					'Margins', box(20, 0, 0, 0),
 					'HAlign', "left",
 					'VAlign', "center",
-					'MaxWidth', 290,
+					'MaxWidth', 280,
 					'HandleKeyboard', false,
 					'HandleMouse', false,
 					'TextStyle', "MMOptionEntry",
@@ -120,7 +109,7 @@ PlaceObj('XTemplate', {
 					'Margins', box(5, 2, 0, 0),
 					'HAlign', "left",
 					'VAlign', "center",
-					'MaxWidth', 140,
+					'MaxWidth', 100,
 					'HandleKeyboard', false,
 					'HandleMouse', false,
 					'TextStyle', "PDASM_NewSquadLabel",
@@ -131,21 +120,24 @@ PlaceObj('XTemplate', {
 				}),
 				}),
 			PlaceObj('XTemplateWindow', {
-				'__class', "XText",
-				'Id', "idAuthor",
-				'Margins', box(20, -9, 0, 0),
-				'Padding', box(2, 0, 2, 0),
-				'HAlign', "left",
-				'VAlign', "center",
-				'MaxWidth', 290,
-				'HandleKeyboard', false,
-				'HandleMouse', false,
-				'TextStyle', "PDABrowserLevel",
-				'Text', "Author",
-				'WordWrap', false,
-				'Shorten', true,
-				'TextVAlign', "center",
-			}),
+				'Margins', box(0, -9, 0, 0),
+				'LayoutMethod', "HList",
+			}, {
+				PlaceObj('XTemplateWindow', {
+					'__class', "XText",
+					'Id', "idAuthor",
+					'HAlign', "left",
+					'VAlign', "center",
+					'MaxWidth', 400,
+					'HandleKeyboard', false,
+					'HandleMouse', false,
+					'TextStyle', "PDASectorInfo_ValueDark",
+					'Text', "Author",
+					'WordWrap', false,
+					'Shorten', true,
+					'TextVAlign', "center",
+				}),
+				}),
 			}),
 		PlaceObj('XTemplateWindow', {
 			'__class', "XImage",
@@ -165,39 +157,29 @@ PlaceObj('XTemplate', {
 				'func', function (self, pos, button)
 					local context = self.parent.context
 					local dlg = GetPreGameMainMenu()
-					ModsUIToggleEnabled(context, self, nil, nil, "dont modify")
+					ModsUIToggleEnabled(context, self)
 					UpdateModsCount(dlg)
 					PopulateModEntry(self.parent, context, "rollover")
 					GetDialog(self):ResolveId("idSubSubContent"):SetMode("mod", context)
 					if g_SelectedMod ~= context then
 						self.parent:OnMouseButtonDown(pos, button)
 					end
-					if not GetUIStyleGamepad() then
-						CreateRealTimeThread(function(dlg)
-							if IsValidThread(g_EnableModThread) then
-								WaitMsg("EnableModThreadEnd")
-							end
-							self.parent:OnSetRollover(false)
-						end)
-					end
 					return "break"
 				end,
 			}),
 			}),
 		PlaceObj('XTemplateWindow', {
-			'__class', "XText",
+			'__class', "AutoFitText",
 			'Id', "idEnabledText",
-			'Margins', box(0, 0, 20, 0),
+			'Margins', box(0, 0, 10, 0),
 			'Dock', "right",
 			'HAlign', "center",
 			'VAlign', "center",
-			'MaxWidth', 140,
+			'MaxWidth', 150,
 			'HandleKeyboard', false,
 			'HandleMouse', false,
 			'TextStyle', "SaveMapEntryTitle",
 			'Translate', true,
-			'WordWrap', false,
-			'Shorten', true,
 			'TextVAlign', "center",
 		}),
 		PlaceObj('XTemplateFunc', {
@@ -234,7 +216,13 @@ PlaceObj('XTemplate', {
 					end
 					local list =  self.parent
 						for _, entry in ipairs(list) do
-							if entry.context ~= g_SelectedMod then
+							if entry.context.ModID ~= g_SelectedMod.ModID then
+								if entry.context == "tags" or entry.context == "presets" then
+									entry:SetisExpanded(false)
+									ObjModified("tags")
+									ObjModified("presets")
+									list:SetMouseScroll(true)
+								end
 								entry:SetSelected(false)
 							end
 						end
@@ -260,9 +248,12 @@ PlaceObj('XTemplate', {
 						self:OnMouseButtonDown()
 					end
 				else
-					self:SetFocus(selected)
 					self.idImgBcgrSelected:SetVisible(selected)
 					self.idImg:SetVisible(not selected)
+					local myIdx = self.parent and table.find(self.parent, self)
+					if myIdx then
+						self.parent:SetSelection(false)
+					end
 				end
 			end,
 		}),

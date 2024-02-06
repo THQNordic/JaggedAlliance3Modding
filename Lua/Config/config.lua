@@ -15,6 +15,7 @@ config.SaveGameScreenshot = true
 config.GamepadTestOnly = false
 config.ScreenshotsWithUI = true
 config.AutosaveAllowed = true
+config.SaveEntityList = not Platform.goldmaster
 
 if Platform.developer then
 	config.RegisterSavFileHandler = true
@@ -113,6 +114,12 @@ config.DefaultTerrainTileSize = 8000
 config.MinimapScreenshotSize = 2048
 
 config.LuaDebugInfo = true
+if Platform.pc and Platform.debug then
+	Libs.DebugAdapter = true
+	if not Platform.developer then
+		config.DisableHaerald = true
+	end
+end
 
 config.SSRThresholdParentDistance = 0.05
 
@@ -378,6 +385,8 @@ config.PhotoMode_DisablePhotoFilter = true
 config.PhotoMode_DisableBloomStrength = true
 config.PhotoMode_SlidersDpadOnly = false
 config.PhotoMode_FreeCameraPositionChange = false
+
+config.SoundCacheMemorySize = 32 * 1024 * 1024
 
 if Platform.ps4 then
 	config.AutorunLoadingScreenProgressDuration = 70 * 1000

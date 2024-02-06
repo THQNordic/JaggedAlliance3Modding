@@ -1058,6 +1058,41 @@ PlaceObj('XTemplate', {
 				},
 			}, {
 				PlaceObj('XTemplateConditionList', {
+					'comment', "Dr. Gruselheim",
+					'conditions', {
+						PlaceObj('QuestIsVariableBool', {
+							QuestId = "U-Bahn",
+							Vars = set( "OutcomeSanatorium" ),
+							__eval = function ()
+								local quest = gv_Quests['U-Bahn'] or QuestGetState('U-Bahn')
+								return quest.OutcomeSanatorium
+							end,
+						}),
+					},
+				}, {
+					PlaceObj('XTemplateSlide', {
+						'transition', "Fade-to-black",
+						'transition_time', 1000,
+					}, {
+						PlaceObj('XTemplateWindow', {
+							'__class', "XImage",
+							'Image', "UI/Comics/Outro/Art_12",
+							'ImageFit', "smallest",
+						}),
+						}),
+					PlaceObj('XTemplateVoice', {
+						'TimeBefore', 300,
+						'TimeAfter', 1000,
+						'Actor', "narrator",
+						'Text', T(832096991270, --[[XTemplate Outro Text voice:narrator]] "Grand Chien has suffered not just from the fighting but also from the <em>Red Rabies</em> epidemic."),
+					}),
+					PlaceObj('XTemplateVoice', {
+						'TimeAfter', 1000,
+						'Actor', "narrator",
+						'Text', T(609000529960, --[[XTemplate Outro Text voice:narrator]] "Thanks to your efforts, it has been contained and the production of a <em>vaccine</em> has begun."),
+					}),
+					}),
+				PlaceObj('XTemplateConditionList', {
 					'comment', "Peace",
 					'conditions', {
 						PlaceObj('QuestIsVariableBool', {
@@ -1066,6 +1101,16 @@ PlaceObj('XTemplate', {
 							__eval = function ()
 								local quest = gv_Quests['06_Endgame'] or QuestGetState('06_Endgame')
 								return quest.Outro_PeaceRestored
+							end,
+						}),
+						PlaceObj('QuestIsVariableBool', {
+							QuestId = "U-Bahn",
+							Vars = set({
+	OutcomeSanatorium = false,
+}),
+							__eval = function ()
+								local quest = gv_Quests['U-Bahn'] or QuestGetState('U-Bahn')
+								return not quest.OutcomeSanatorium
 							end,
 						}),
 					},
@@ -1109,6 +1154,16 @@ PlaceObj('XTemplate', {
 								return quest.TCE_CivilWar or quest.TCE_Coup
 							end,
 						}),
+						PlaceObj('QuestIsVariableBool', {
+							QuestId = "U-Bahn",
+							Vars = set({
+	OutcomeSanatorium = false,
+}),
+							__eval = function ()
+								local quest = gv_Quests['U-Bahn'] or QuestGetState('U-Bahn')
+								return not quest.OutcomeSanatorium
+							end,
+						}),
 					},
 				}, {
 					PlaceObj('XTemplateSlide', {
@@ -1150,6 +1205,16 @@ PlaceObj('XTemplate', {
 						__eval = function ()
 							local quest = gv_Quests['06_Endgame'] or QuestGetState('06_Endgame')
 							return not quest.Outro_RedRabiesDone
+						end,
+					}),
+					PlaceObj('QuestIsVariableBool', {
+						QuestId = "U-Bahn",
+						Vars = set({
+	OutcomeSanatorium = false,
+}),
+						__eval = function ()
+							local quest = gv_Quests['U-Bahn'] or QuestGetState('U-Bahn')
+							return not quest.OutcomeSanatorium
 						end,
 					}),
 				},

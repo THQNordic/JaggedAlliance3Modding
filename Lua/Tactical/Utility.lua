@@ -136,6 +136,10 @@ function TFormat.Multiply(context_obj, m1, m2)
 	return T{263297552624, "<result>", result = result}
 end
 
+function TFormat.IsGameRuleActive(ctx, rule_id)
+	return IsGameRuleActive(rule_id)
+end
+
 function GetDamageRangeText(min, max)
 	if min == max then
 		return T{263148752783, "<min>", min = min}
@@ -641,6 +645,7 @@ end
 
 table.insert(BlacklistedDialogClasses, "TacticalNotification")
 table.insert(BlacklistedDialogClasses, "Intro")
+table.insert(BlacklistedDialogClasses, "MPPauseHint")
 
 local function lGetTacticalNotificationState()
 	local dlg = GetDialog("TacticalNotification")
@@ -1920,6 +1925,12 @@ if FirstLoad then
 	}
 end
 
+AppendClass.GameRuleDef = {	
+	properties = {
+		{ id = "advanced", name = "Advanced", category = "General",help = "Advanced game rule", editor = "bool", default = false}
+	}
+}
+
 function OnMsg.DataLoaded()
 	ForEachPreset("GameRuleDef", function(rule)
 		if rule.init_as_active then
@@ -2894,11 +2905,16 @@ local superstitious = { "Spiritual", "GloryHog", "Pessimist", "Nazdarovya" }
 local neverProud = { "OldDog", "TheGrim" } 
 local prideful = { "Spiritual", "GloryHog", "BunsPerk", "BuildingConfidence" } 
 function ApplyGuiltyOrRighteousEffect(applyEffect)
-	assert(not gv_SatelliteView)
 	assert(gv_CurrentSectorId)
 	assert(applyEffect)
 	
-	local mercs = GetAllPlayerUnitsOnMap()
+	local mercs = GetPlayerMercsInSector(gv_CurrentSectorId)
+	if gv_SatelliteView then
+		mercs = table.map(mercs, function(oId) return gv_UnitData[oId] end)
+	else
+		mercs = table.map(mercs, function(oId) return g_Units[oId] end)
+	end
+	
 	for i, merc in ipairs(mercs) do
 		local effectType = applyEffect == "positive" and "Conscience_Proud" or "Conscience_Guilty"
 		
@@ -3293,7 +3309,11 @@ function DbgStartExploration(map, units)
 	if not HasGameSession() then
 		NewGameSession(nil, {KeepUnitData = true})
 	end
-	local dbg_sector = "A1"
+	local dbg_sector = next(gv_Sectors)
+	if not dbg_sector then
+		print("No available sector in gv_Sectors to use as a test.")
+		return
+	end
 	gv_Sectors[dbg_sector].Map = map or GetMapName()
 	gv_CurrentSectorId = dbg_sector
 	g_TestExploration = true

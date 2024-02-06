@@ -29,8 +29,7 @@ PlaceObj('XTemplate', {
 				return
 			end
 			
-			-- !TODO: added GetDialog("PDADialog") because the message doesn't block input, so the player is able to open the PDA on top of the message anyway (or close and reopen in case th message opened on top of the PDA)
-			paused = paused and not isBobbyRayOnlyReason and not GetDialog("PDADialog")
+			paused = paused and not isBobbyRayOnlyReason
 			
 			if paused then
 				local insidePDA = GetParentOfKind(self, "PDAClass")

@@ -1,7 +1,7 @@
 **Jagged Alliance 3 Modding**
 
 !!! WARNING
-    Mods are player created software packages that modify your game experience. USE THEM AT YOUR OWN RISK! We do not examine, monitor, support or guarantee this user created content. Downloading and playing with Mods via the Steam Workshop is subject to the Steam Subscriber Agreement.
+    Mods are player created software packages that modify your game experience. USE THEM AT YOUR OWN RISK! We do not examine, monitor, support or guarantee the functioning of user created content. Downloading and playing with Mods via the Steam Workshop is subject to the Steam Subscriber Agreement.
 
 
 # Overview
@@ -26,9 +26,9 @@ The *Mod Editor* is a companion application launched by the *Jagged Alliance 3* 
 !!! WARNING
    All mod loading, saving, uploading to Steam Workshop and testing of the mod content is done by the main game itself - if you close the main game without saving, the *Mod Editor* will also close and you will lose all unsaved changes.
 
-The *Mod Editor* has two windows. One lists all mods in the left column, and displays any diagnostic messages produced by the tools in the wider right column. 
+The *Mod Editor* has two sections. The one in the left column lists all mods, and the other in the wider right column displays any diagnostic messages produced by the tools. 
 
-Please check the information in the **"Messages"** section to make sure the mods are working as expected. This window will also inform you if some mods are ignored due to newer versions and if there are any errors with the loading of the mods initially or during runtime:
+Please make sure to check the information in the **"Messages"** section to make sure the mods are working as expected. This section will also inform you if some mods are ignored due to newer versions, and if there are any errors with the loading of the mods initially or during runtime:
 
 
 ![Mod Editor Main View](mod_editor.png)
@@ -41,7 +41,7 @@ Double-click on a specific mod to modify it or click on "New Mod" button from th
 
 ![Mod Editor - Editing a single mod](mod_editor_item.png)
 
-The Mod Editor window lists all mod items in a tree view in the left column, and their properties in the right column. From the menu you can add new ModItem items, test the mod, or upload it to Steam Workshop.
+The Mod Editor window lists all mod items in a tree view in the left section, and their properties in the right section. From the menu you can add new ModItem items, test the mod, or upload it to Steam Workshop.
 
 !!! Tip
     You can copy a mod item from one mod and paste it into another.
@@ -50,9 +50,11 @@ When entering the *Mod Editor* from the main menu, the game will load a special 
 
 The *Mod editor* will also give you access to specific developer functionalities such as cheats that give you any item or increase your damage to help you test the mods. 
 
-!!! Tip
-    The "Test" button is relative to the selected mod item. 
-    For example - When Entity mod item is selected, it will place the imported entity for you to check if the import worked properly. In other cases - it will apply the changes you've made to the mod map. For example, when creating a new inventory item, you can place it the inventory of the selected unit with the test button.
+# Map Editor
+
+The built-in map editor used to create all *Jagged Alliance 3* maps is included in the modding tools, and is available via the *Map Patch* and *Satellite Sector* mod items.
+
+[*Map Editor Documentation*](MapEditor.md.html)
 
 # Where to start?
 
@@ -61,32 +63,38 @@ The *Mod editor* will also give you access to specific developer functionalities
 
 The game uses a lot of structured data called *Presets*. Each *Preset* of a given type is part of a *Group* and has a unique *Id*.
 
-There are many *ModItems* that allow adding *Presets* that will be used automatically by the game.
+There are many *ModItems* that allow adding *Presets* used automatically by the game.
 
-For example, adding a new Unit preset, it will appear in the hiring screen depending on the defined hiring rank.
+For example, adding a new Unit preset with a defined hiring Tier will have it appear in the hiring screen.
 
 !!! Tip
     If a *ModItem* adds a *Preset* with the same **Id** as an existing *Preset* of that type it will **replace** the existing *Preset*. For example, creating a new *Unit* with **Id** *Ivan* will replace the definition of *Ivan* that the game already has.
 
 Some *ModItems* will not have an effect until referenced by another *Preset*. 
 
-For example, a *ModItem* *Inventory Item* that adds a new item needs to be referenced by a custom code that spawns it or a loot table that includes it.
+For example, a *ModItem* *Inventory Item* that adds a new item needs to be referenced by a custom code that spawns the item or a loot table that includes it.
+
+!!! Tip
+    Each mod item that also has an original editor will have a button docked to the bottom-right that will open said editor. This is a great way to inspect the original presets created by the developers.
 
 
 ## Learning more
 
 There are many different *ModItems* and they have many properties that can be helpful in one situation or another. How to find out which one to use?
 
-It's a good idea to see how existing *Presets* are setup. When a *Mod Item* has a **Copy from group** and **Copy from** properties, you can select a **Group** and then an **Id** of an existing *Preset* and your *ModItem* will get a copy of all the properties of that *Preset*.
+It's a good idea to see how existing *Presets* are set up. When a *Mod Item* has a **Copy from group** and **Copy from** properties, you can select a **Group** and then an **Id** of an existing *Preset* and your *ModItem* will get a copy of all properties of that *Preset*.
 
 !!! WARNING
-   When you select anything in the **Copy from** field the properties of your *ModItem* will be overwritten! Make sure you do not lose any information that way.
+   When you select anything in the **Copy from** field the properties of your *ModItem* will be overwritten. Make sure you do not lose any information that way.
 
 Another option is to see the example mods included in the *\Steam\steamapps\common\Jagged Alliance 3\ModTools\Samples\Mods\* folder or how other mods on *Steam Workshop* function by *subscribing* to them and then opening them in the *Mod Editor*.
 
+!!! Tip
+    Another very useful tool for learning more, but also finding problems with your mod is the [Lua Debugger](ModItemCode.md.html#debugging). Once configured, you will be able to place breakpoints and step through each line of your code.
+
 # Mod Items
 
-Here are the supported *ModItem* types:
+Here are listed the supported *ModItem* types:
 
 
 ## ActionFX
@@ -118,57 +126,135 @@ ActionFXRemove
 ## Assets 
 
 [Code](ModItemCode.md.html)
-: Does almost anything - but make sure you read the Scripting in Lua section first!
+: Can be used for almost anything. Please make sure to read the Scripting in Lua section first!
 
 [Entity](ModItemEntity.md.html)
-: Import art assets from Blender.
+: Imports art assets from Blender.
 
 [Localization Table](ModItemLocTable.md.html)
-: Add translation tables to localize the game in other languages.
+: Adds translation tables to localize the game in other languages.
 
 Decal
-: Define decal, which can be placed via the ActionFXDecal mod item. 
+: Defines decal which can be placed via the ActionFXDecal mod item. 
 
 [Font](ModItemFont.md.html)
-: Import new font files and define which in-game fonts should be replaced by them.
+: Imports new font files and defines which in-game fonts should be replaced by them.
 
-[Convert & Import Assets](ConvertAndImportAssets.md.html) 
-: As the name suggests, it allows for a number of asset types to be converted so that the engine could use them and import them in the mod folder.
+Convert & Import Assets
+: Allows importing UI images, particle textures and sound assets into the mod folder. This copies them inside the mod folder and converts them to the specific format that the engine uses.
+
+!!! NOTE
+    You need only one of these per asset type. The import will always first delete the destination folder before processing all files in the Source Folder.
 
 
 ## Buildings 
 
 Floor material
-: Creates a custom flooring material and defines it's properties - color, required resources, integrity, etc.
+: Creates a custom floor material and defines its properties - color, required resources, integrity, etc.
 
 Roof/Slab/Stairs material
-: Creates a custom  material and defines it's properties - color, required resources, integrity, etc.
+: Creates a custom material and defines its properties - color, required resources, integrity, etc.
 
+## Campaign & Maps
+
+Banter
+: Creates a new banter preset that is played between a defined set of actors. See the New Quest sample mod in the Sample Mods section for an example on how to build a banter.
+
+Campaign
+: Creates a new campaign which you can associate with new sectors, quests, conversations, banters and many more features.
+
+The campaign is the main container for creating a brand new experience in Jagged Alliance 3. It holds all the satellite sectors or in other words,the map. However, creating a new campaign requires setting up more that just this mod item itself. Besides the properties of the campaign, other important mod items need to be added, such as satellite sectors and quests.
+
+Each campaign requires at least one satellite sector with a map for it, defined in the mod item Satellite sector. Quests are the other important thing to set up, as they contain any variables, events (TCE) and quest notes that are necessary for running the new campaign. Using the mod item Quest, you can set up narrative content to provide your newly created sectors with stories and goals.
+
+When a new campaign is defined, it will automatically appear in the new game menu. Users will be able to select which campaign to start on a new game.
+
+!!! Note
+    A campaign needs to be related to multiple other mod items in order to work properly. You will notice that most of the mod items in the category **Campaign & Maps** have the property **Campaign** which will make sure that they would only be applied to the specified campaign.
+
+Conversation
+: Allows adding a new conversation triggered by an actor or a group of actors. See the New Quest sample mod in the Sample Mods section for an example on how to build a conversation.
+
+Email
+: Allows creating new emails received in the Email tab.
+
+Environment Palette 
+: Changes the color of various aspects of the environment like vegetation, terrains or rocks.
+
+History occurrence
+: Setting up conditions for new history occurrences in the History tab.
+
+Lightmodel Selection Rule
+: Contains information on use of Light models and tweaking of properties like World Region, Weather Condition and Time Of Day.
+
+Popup Notification
+: Allows adding of new presets with tile, text and image that are used mainly in tutorials and starting help.
+
+Quest
+: Allows adding of new quests, as well as setting up variables in them. Each quest can be set up with its conditions as Given, Completed or Failed. See the New Quest sample mod in the Sample Mods section for an example on how to build a quest.
+
+Satellite sector
+: Allows for the creation of new satellite sectors and maps for them, as well as modification of existing ones.
+
+!!! Tip
+    Save your changes in the map editor using Ctrl-S.
+
+When you select the campaign where you want to add or modify a sector, you will be pointed to the next step - assign the sector ID.
+
+!!! Tip
+    If unfamiliar with sectors and their part in a campaign, have a look at the **Campaign** mod item documentation.
+
+The sector ID is designated as map coordinates in a special format: Letter followed by a number. Both can be negative (for the letter, this is achieved by supplying an additional letter - AZ, AY, AX, ...).
+
+If you choose to assign a sector ID that is not present in the currently selected campaign, it will be added as a new sector. However, if there already is a sector with that ID in the campaign, you will completely override it. At this point, you may choose to edit the created map via the **Edit map** button which will open the [Map editor](MapEditor.md.html), or define the Satellite sector properties. Most of the properties have helper text on mouse hover that explains their purpose.
+
+Sector Operation
+: Creates a new sector operation that could be accessed through the sector operation menu. Allows adding new quests along with setting up variables that are related to them. 
+
+Setpiece
+: Creates a new setpiece which allows setting up a sequence of commands controlling various things such as actors behavior, camera behavior, animation, etc. Cut-scenes are usually created via setpieces.
+
+Tutorial hint
+: Allows adding new tutorial hint pop-up in the HUD or setting up a pop-up window preset created in the Popup Notification mod item.
+
+Map patch
+: Allows editing and tweaking of an already existing map.
+
+!!! Note
+    Could be used to patch a map originating from other mods by adding them as a required dependency in your mod. In this way, the required mod will be loaded first and then your mod item map patch will be applied on the specific map from that mod.
 
 ## Gameplay 
 
-Gameplay mod items define additional gameplay elements - some of them (Game difficulty, Game rule) are directly visible in the game, others (Loot definition, Loot definition change, Popup notification) need to have defined triggers, or spawn definitions, or other triggers, to be visible in the game.  
+Gameplay mod items define additional gameplay elements. Some of them (Game difficulty, Game rule) are directly visible in the game, others (Loot definition, Loot definition change, Popup notification) need to have defined triggers or spawn definitions in order to be visible in the game.
 
 Change Property
-: Allows to change a specific property of an existing preset. It has 3 ways of changing the given property: Replace, Append to Table and Code.
+: Allows to change a specific property of an existing preset. There are 3 methods of changing the given property: Replace, Append to Table and Code.
 
 Constant
 : Allows modifying the global constants used by the game.
 
 Game difficulty
-: Creates a custom game difficulty and set custom effects on the loaded map.
+: Creates a custom game difficulty and sets custom effects on the loaded map.
 
 Game rule
-: Defines a new game rule that can be activated by players when starting a new game.
+: Defines a new game rule that can be activated by players when starting a new game. 
 
-Popup Notification
-: Allows adding new presets with tile, text and image that are used mainly in tutorials and starting help.
-
-Quest
-: Allows adding new quests along with setting up variables connected to them. Each quest can be set up with conditions for giving, failing or completing it.
+!!! NOTE
+    Some game rule effects may need to be implemented via modification of the game code. Add an entry in this editor to define the ID, description etc., and add checks in the code using IsGameRuleActive().
 
 Loot Definition
-: Creates a new loot definition that contains possible items to drop. Note: The unit preset has a reference to a loot definition which will be used as starting items. 
+: Creates a new loot definition that contains possible items to drop. 
+
+!!! Note
+    The unit preset has a reference to a loot definition which will be used as starting items. 
+
+Loot Definition Change
+: Allows editing to existing loot tables. ModItem contains description. 
+
+## General
+
+Folder
+: Creates a folder that is used purely for reducing visual clutter by allowing to group multiple mod items based on a specific logic.
 
 ## Mod Options
 
@@ -177,17 +263,17 @@ Allows adding easily modifiable options to your mod. The options of the mod coul
 When an option is added to a mod, the user will be able to change it from the Main Menu -> Options -> Mod Options.
 
 Choice
-: Creates a ui entry with a dropdown that contains all listed options.
+: Creates a UI entry with a dropdown that contains all listed options.
 
 Number
-: Creates a ui entry with a slider.
+: Creates a UI entry with a slider.
 
 Toggle
-: Creates a ui entry which when pressed toggles between the 2 defined values.
+: Creates a UI entry which toggles between the 2 defined values when pressed.
 
 ## Item
 
-Calliber
+Caliber
 : Defines a new caliber type that an inventory item of type Ammo could use.
 
 Combine Recipe
@@ -197,26 +283,23 @@ Inventory Item
 : Creates a new inventory item preset.
 
 Weapon Slot
-: Creates a new possible weapon slot that could defined for a weapon preset and referenced in a *Weapon Component* preset.
+: Creates a new possible weapon slot that could be defined for a weapon preset and referenced in a *Weapon Component* preset.
 
 Weapon Component
-: Creates a new weapon component that could be used in a weapon as a base component or through the *Modify* ui screen of a weapon.
+: Creates a new weapon component that could be used in a weapon as a base component or through the *Modify* UI screen of a weapon. The Z_Blockings group is used to make certain components incompatible with others at the same time. 
 
 ## Satellite
 
 Crafting Operation Recipe
 : Creates a new Crafting Operation Recipe that is accessed through the sector operations menu.
 
-Sector Operation
-: Creates a new sector operation that could be accessed through the sector operation menu. Allows adding new quests along with setting up variables connected to them. Each quest can be set up with conditions for giving, failing or completing it.
+Shipment squad
+: Defines a squad preset that can be spawned from the diamond briefcase logic in SpawnDynamicDBSquad(). The properties mainly define how the spawned shipment squad will look like in the satellite UI, the condition for spawning the squad and the items and units it consists of.
 
 ## Unit
 
 [Appearance Preset](ModItemAppearancePreset.md.html)
 : Creates an appearance preset that is used by a unit preset.
-
-Banter
-: Creates a new banter preset that is played between a defined set of actors.
 
 Character Effect
 : Creates a new character effect preset that could be added/removed from a unit.
@@ -225,13 +308,17 @@ Squad Name
 : Defines a new squad name.
 
 Translated Voices
-: Allows for adding new voices for a given language or replaces existing ones. For more info check the explanation in the mod item itself.
+: The Translated Voices mod item allows to supply to the game voices which will be used when the game is running in a specific language. You can use this to add new language voices of the existing voice lines, to override the existing voice lines, or to add entirely new voice content to the game.
+
+ - Voice filenames need to match the localization IDs of the texts they correspond to. You can look up the localization IDs of existing lines in the game localization table (Game.csv) supplied with the mod tools.
+ - Voice files should be in Opus format. It is recommended to combine this mod item with an Convert & Import Assets mod item targeting a folder inside your mod folder structure.
+ - To supply voices in multiple languages, use one Translated Voices mod item per language.
 
 Unit
 : Creates a new unit preset.
 
 Unit Voice Responses
-: Creates a new voice responses preset that contains all texts related to an id of *Unit* preset.
+: Creates a new voice responses preset that contains all texts related to an ID of *Unit* preset.
 
 Voice Response Type
 : Creates a new voice response type that could be defined for a *Unit Voice Responses* preset.
@@ -243,20 +330,25 @@ Lightmodel
 : Define a set of lighting parameters controlling the look of the day/night cycle.
 
 Message Definition
-: Reffer to [Messages](LuaMessages.md.html) and [Reactions](LuaReactions.md.html) for more info.
+: Refer to [Messages](LuaMessages.md.html) and [Reactions](LuaReactions.md.html) for more info.
 
 Particle system
 : Creates a new particle system and defines its parameters. 
 
+Photo Mode - frame
+: Allows adding new frames for the photo mode.
+
 Radio station
 : Adds a custom radio station, allowing to select folders with tracks to be implemented in the game instead of the soundtrack. 
 
-XTemplate
-: Adds a new user interface panel that can contain certain information. 
-Note: Adding new shortcuts will require creating a new template with properties: Group = 'Shortcuts' and SortKey >= 400. This will ensure the shortcuts are loaded after all non-mods shortcuts.
+[XTemplate](LuaUI.md.html)
+: Adds a new user interface panel. 
+
+!!! NOTE
+    Adding new shortcuts will require creating a new template with properties: Group = 'Shortcuts' and SortKey >= 400. This will ensure the shortcuts are loaded after all non-mod shortcuts.
 
 [Sound](ModItemSound.md.html)
-: Define sound presets, which can be played via the ActionFXSound mod item.
+: Defines sound presets which can be played via the ActionFXSound mod item.
 
 TextStyle
 : Adds a new text style that can be used by XFontControl and other classes in XTemplate presets.
@@ -265,22 +357,28 @@ Mod Metadata
 ============
 
 Mod metadata is the information used for displaying and loading the Mod.
-It contains the mod id, title, description, preview image, version and more.
+It contains the mod ID, title, description, preview image, version and more.
 Mods can depend on each other and this is also listed in the metadata.
 Adding dependencies between mods ensures proper loading order - every dependency mod will be loaded before the dependent one.
 It will also inform the user if there are issues like missing mods or incompatibilities.
 
 Since mods change over time, their versions also change. Each mod has three fields to describe their version: `Major version`, `Minor version` and `Revision`.
-When displaying those, they are formatted in the following fashion: `major.minor-revision`.
-For example `1.3-12` means: major version 1, minor version 3 and revision 12.
+When displayed, they are formatted as follows: `major.minor-revision`.
+For example, `1.3-12` means: major version 1, minor version 3 and revision 12.
 The major and minor version is managed by the modder, while the revision will be automatically updated every time the mod metadata is saved.
 These versions can be used by mod dependencies.
 
 To add a mod dependency, locate the "Dependencies" property in the Mod Editor and click the "Create Item" button on the right.
-A new dependency item will be added and four fields will be available:
- - Mod - a drop down with all installed mods listed in the format `Title - ID - version`. It is allowed to manually write the ID of a dependency that you do not have installed, but strongly discouraged. Note: selecting a mod from the drop down will overwrite the version fields automatically.
+A new dependency item will be added and four fields will become available:
+ - Mod - a drop down with all installed mods listed in the format `Title - ID - version`. It is allowed to manually write the ID of a dependency that you do not have installed, but this is strongly discouraged. 
+!!! NOTE
+    Selecting a mod from the drop down will overwrite the version fields automatically.
+	
  - Major version - the minimum compatible major version of the dependency.
- - Minor version - the minimum compatible minor version of the dependency. Note: dependencies cannot depend on revision.
+ - Minor version - the minimum compatible minor version of the dependency. 
+!!! NOTE
+    Dependencies cannot depend on revision.
+ 
  - Required - a dependency could be marked optional if it is not vital to the functioning of your mod. By default all dependencies are required.
 
 
@@ -293,16 +391,16 @@ Scripting in Lua
 : This section documents some of the basic concepts and the systems built on top of Lua.
 
 [Game/map variables](LuaVars.md.html)
-: Declare global game/map variables
+: Declare global game/map variables.
 
 [Classes](LuaClasses.md.html)
-: Lua doesn't come with a built-in class system, only with tools for creating one. Here is how our works.
+: Lua doesn't come with a built-in class system, only with tools for creating one.
 
 [Threads](LuaThreads.md.html)
 : Cooperative threads are built on top of Lua coroutines and allow for natural expression of game logic.
 
 [Repeats](LuaRepeats.md.html)
-: Periodically repeating functions
+: Periodically repeating functions.
 
 [Messages](LuaMessages.md.html)
 : Messages are a mechanism for hooking functionality to specific events in the game code, and for synchronizing Lua threads.
@@ -311,7 +409,7 @@ Scripting in Lua
 : Reactions are a data driven way of hooking functionality to specific events in the game code.
 
 [CObjects](LuaCObject.md.html)
-: This is what the C++ rendering engine knows about the world of the game: objects' position, appearence, animations, etc.
+: This is what the C++ rendering engine knows about the world of the game: objects' position, appearance, animations, etc.
 
 [Map Enumeration](LuaMapEnumeration.md.html)
 : This is how Lua code can efficiently query the C++ side about what's where in the world.
@@ -332,7 +430,7 @@ Scripting in Lua
 Lua Reference
 -------------
 
-The following documents describe some of the functions available in Lua, organized by area:
+The following documents describe some of the functions available in Lua, organized by area.
 
 [Terrain](LuaDoc_terrain.md.html)
 : The functions available in Lua concerning the terrain in the game.
@@ -341,7 +439,7 @@ The following documents describe some of the functions available in Lua, organiz
 : Functions for manipulating [CObjects](LuaCObject.md.html).
 
 [*point* and *box* functions](LuaDoc_point.md.html)
-: The *point* and *box* are custom userdata types hold 2D/3D coordinates and 2D/3D ranges and are used for positions, areas, etc. Besides the expected overridden operators, these functions can be used to manipulate them.
+: The *point* and *box* are custom user data types that hold 2D/3D coordinates and 2D/3D ranges. They are used for positions, areas, etc. Besides the expected overridden operators, these functions can be used to manipulate them.
 
 [Global Lua functions](LuaDoc__G.md.html)
 : These are functions that don't fall in any of the other categories.
@@ -353,113 +451,137 @@ The following documents describe some of the functions available in Lua, organiz
 : Functions for working with the camera. The [fly camera](LuaDoc_cameraFly.md.html), [max camera](LuaDoc_cameraMax.md.html) and [RTS camera](LuaDoc_cameraRTS.md.html) could also be separately modified.
 
 [Messages](LuaDoc_Msg.md.html)
-: Functions for working with messages. They are used to affect the game at certain important points, such as the beginning of a new day, death of a colonist, etc. 
+: Functions for working with messages. They are used to affect the game at certain important points, such as the beginning of a new day, death of a unit, etc. 
+
+
+Jagged Alliance 3 Features
+-------------
+
+The following documents provide insight into software systems that were developed specifically for Jagged Alliance 3.
+
+[AI](JA3_AI.md.html)
+: The AI system in JA3 handles unit actions that are not player-controlled.
+
+[Environment Destruction](Destruction.md.html)
+: The destruction system determines how objects enter their destroyed state in response to gameplay.
 
 
 # Sample Mods
 
-Four sample mods are provided for demonstration and starting point. You can find the sample mods in ModTools folder and some of them in the Steam workshop. Additional modding tools and a sample Blender scene are provided in the Steam folder ...\Steam\steamapps\common\Jagged Alliance 3.
+Five sample mods are provided for demonstration and starting point. You can find the sample mods in ModTools folder and some of them in the Steam workshop. Additional modding tools and a sample Blender scene are provided in the Steam folder ...\Steam\steamapps\common\Jagged Alliance 3.
 
-: Convert&Import assets
-Before you start working on your mods, we suggest organizing dedicated source folder which can include subfolders for sounds, images, textures and so on. With the Convert&Import assets mod item, you can easily import the source files in the most convenient file formats for the game and place them automatically in the mod folder and import them.
+Convert&Import assets
+: Before you start working on your mods, we suggest dedicating a source folder which can include subfolders for sounds, images, textures and so on. With the Convert&Import assets mod item, you can easily import the source files in the most convenient file formats for the game, place them automatically in the mod folder and import them.
 
 ## New Merc - Sabrina Drake 
-This sample mod illustrate how to create a custom merc that can be hired from A.I.M., using already existing assests from the game. In the mod is displayed how to import sound files and images for the merc and add voice overs and translations of the custom merc lines in 2 languages.  
+This sample mod illustrates how to create a custom merc that can be hired from A.I.M., using already existing assets from the game. The mod demonstrates how to import sound files and images for the merc, as well as voice overs and translations of the custom merc lines in two languages.
 
-The mod was created with the following mod items:
+The mod was created with the following mod items.
 
 Unit
-: This mod item can be used for creating all types on units in game - enemies, NPCs, mercs and others. It is used for binding other mod items to the custom unit - such as appearance, voices, equipment and so on.
+: This mod item can be used for creating all types on units in game - enemies, NPCs, mercs and others. It is used for binding other mod items to the custom unit - such as appearance, voices, equipment etc.
 
 	- When creating a merc, use Class UnitData and Group MercenariesOld/MercenariesNew. Placing it in the Mercenaries group will allow you to add Hiring conditions, lines, etc. 
-	- In the Unit mod item you can place name, details, bio and perks for your merc and add the portrait (300x300px) and full size image (2000x2000px). 
+	- In the Unit mod item you can place name, details, bio and perks for your merc, and add the portrait (300x300px) and full size image (2000x2000px). 
 
 Appearance preset
-: With this mod item you can change or create new appearances for units based on selecting assets for the different parts of the body. The sample mod uses the top of Fox character - it's placed in the Body section. Some assets in the game support colorization, and some don't. Merc costume parts cannot be colorized and will not be changed even if you add colorization. Selecting different parts from the dropdown section will not immediately change the appearance of the unit in-game. To see the applied changes, you need to link the appearance to the Unit you've just created. Save the preset and give it an ID. Go back to the Unit mod item, open the appearance section and select the Preset with the given ID. Press the "Test" button from the main menu to see all changes you apply to the appearance. 
+: With this mod item you can change or create new appearances for units by selecting assets for the different parts of the body. This sample mod uses the top of the Fox character - it's placed in the Body section. Some assets in the game support colorization, and others don't. Merc costume parts cannot be colorized and will not be changed even if you add colorization. Selecting different parts from the dropdown section will not immediately change the appearance of the unit in-game. To see the applied changes, you need to link the appearance to the Unit you've just created.
+
+    - Save the preset and give it an ID. 
+    - Go back to the Unit mod item, open the appearance section and select the Preset with the given ID. 
+    - Press the "Test mod item" button from the main menu to see all changes you apply to the appearance. 
 
 Unit Voice responses
 : This mod item allows you to add custom lines to the character for all events, states, combat actions in the game. Filling in the texts here is the first step for creating voiced lines for you merc. 
-	- This section, along with the lines that appear in the Hiring settings in the Unit mod item, can be translated. If you plan to translate your merc, fill in as much displayed texts as possible before start of translation. 
+
+	- This section, along with the lines that appear in the Hiring settings in the Unit mod item, can be translated. If you plan to translate your merc, fill in as much displayed texts as possible before starting the translation. 
 
 Export Translation Table
-: Translation tables are used in the game for 2 cases -  translations, and linking texts and voiced lines via the same ID. In the Sample mod, we are going to use them for both.
-	- In order to add translated voices to your mod, you will need to generate IDs for the texts in your mod. Open the file section and select Export Translation Table option. Open the mod folder and check the generated ModTexts.csv file - it should contain all displayed texts and lines of your character. 
+: Translation tables are used in the game for two cases - translations and linking texts and voiced lines via the same ID. In the Sample mod, we are going to use them for both.
+
+	- In order to add translated voices to your mod, you will need to generate IDs for the texts it uses. Open the file section and select Export Translation Table option. Open the mod folder and check the generated ModTexts.csv file - it should contain all displayed texts and lines of your character. 
 
 Localization
-: The mod item will allow you to select the language for the translation for the desired language, and import a csv file with the translated strings. A copy of the file ModTexts.csv is used for the translation to a single language, in this case - German. When the file is includes the translations, it is ready for import. 
-	- Using this mod item you can also add translations for the entire game - in the installation folder of the game/ModTools  you'll find game.csv file with the entire list of strings in the game.
+: The mod item will allow you to select the language for the translation to the desired language, and to import a csv file with the translated strings. A copy of the file ModTexts.csv is used for the translation to a single language, in this case - German. When the file includes the translations, it is ready for import. 
+
+	- Using this mod item, you can also supply translations to the entire game - in the installation folder of the game/ModTools you'll find game.csv file with the entire list of strings in the game.
 
 Prepare sound files for import
-: As mentioned above, the voice overs and texts are connected via the String ID - this means we need the voiced lines to have the same file names as the strings of the texts in the game. 
-	- The sounds that can be imported as voices should be with the following specs: Sample rate: 48 000, Bits/sample 24, format .wav, Mono
-	- Two folders are prepared for the mod - German and English - Folders include voice over sounds, with all files renamed to match the ID of the texts.
-	- The Convert&Import assets is used to the source .wav files for converting them to .opus. The same file structure is kept in the source folder and the mod folder.
+: As mentioned above, the voice overs and texts are connected via the String ID - this means we need the voiced lines to have the same file names as the strings of the texts in the game.
+
+	- The sounds that can be imported as voices should have the following specifications: Sample rate: 48 000, Bits/sample 24, format .wav, Mono.
+	- Two folders are prepared for the mod - German and English. Folders include voice over sounds, with all files renamed to match the ID of the texts.
+	- The Convert&Import assets item is used with the source .wav files for converting them to .opus. The same file structure is kept in the source folder and the mod folder.
  
 
 Translated voices 
-: This mod item tells the mod in which folder to look for the voice over files. We need 2 mod items - for English and for German. Mount the folders. 
+: This mod item tells the mod in which folder to look for the voice over files. We need two mod items - for English and for German. Mount the folders. 
 
 
 ## New Weapon - Thompson 
-This sample mod creates a new weapon with imported asset for the gun and the magazine, along with custom ammo. The mod modifies existing loot definition and creates a new one, adds sound and particle effects to the gun. 
+This sample mod creates a new weapon with imported asset for the gun and the magazine, along with custom ammo. The mod modifies existing loot definition and creates a new one, and adds sound and particle effects to the gun. 
 
-You can review the blender scene that is used for the gun in Steam folder \steamapps\common\Jagged Alliance 3\ModTools\Samples\Assets\M1A1_Thompson. It is important to match the scene to the assets in the game as close as possible and more precisely - the spots - in this case - for the hands and for modifications. After you have finished setting up your scene, you can export it. The exported files are in the \AppData\Roaming\Jagged Alliance 3\ExportedEntities folder.
+You can review the blender scene that is used for the gun in Steam folder \steamapps\common\Jagged Alliance 3\ModTools\Samples\Assets\M1A1_Thompson. It is important to match the scene to the assets in the game as close as possible, and specifically the spots, in this case, for the hands and for modifications. After you have finished setting up your scene, you can export it. The exported files are in the \AppData\Roaming\Jagged Alliance 3\ExportedEntities folder.
 
-For more details on the scene structure and exporting - check the Entity section. 
+For more details on the scene structure and exporting check the Entity section. 
 
 Entity
-: This mod item allows you to import and load custom geometry and textures into the game. Locate the .ent files from you ExportedEntities folder, import them and save. When a new asset is added or changed, you can apply the changes in the game bu pressing the "Reload entities" button.  
-Once the asset is imported, you can press the "Test" button to see if the entity is placed properly on the map. White cube will be placed if the scene is not structured properly.
-	- In this case, we need two Entity mod items for 2 entities - one for the gun, and one for the magazine. 
+: This mod item allows you to import and load custom geometry and textures into the game. Locate the .ent files from you ExportedEntities folder, import them and save. When a new asset is added or changed, you can apply the changes in the game by pressing the "Reload entities" button. Once the asset is imported, you can press the "Test mod item" button to see if the entity is placed properly on the map. If the scene is not structured properly, a white cube will be placed on the map.
+
+	- In this case, we need two Entity mod items for both entities - one for the gun and one for the magazine. 
 
 
-Inventory Item
-: Inventory item mod item is used to create the definition of the new gun in the game and link it to the asset. The Id of this mod item is important and will be used when defining the FXs and modifications. The class should match the weapon type. 
-	- In this mod item you'll be able to set the display name, available attacks, the used caliber, damage, available modifications, action points when used in combat and other weapon properties. 
+Inventory Item (weapon)
+: Inventory item mod item is used to create the definition of the new gun in the game and link it to the asset. The ID of this mod item is important and will be used when defining the FXs and modifications. The class should match the weapon type.
+
+	- In this mod item you'll be able to set the display name, available attacks, caliber, damage, available modifications, action points when used in combat and other weapon properties. 
 
 Weapon Component
-: This mod item defines the entity used for a weapon modification, the spot it needs to be attached to, the weapons it's applicable to and other gameplay properties such as repair costs. The imported entity for the magazine is placed in the visuals property under Enitity. 
+: This mod item defines the entity used for a weapon modification, the spot it needs to be attached to, the weapons it's applicable to and other gameplay properties such as repair costs. The imported entity for the magazine is placed in the visuals property under Entity. 
 
 Caliber
-: This mod item creates a definition for a custom caliber for the weapon and sets it's ID which is referenced in the weapon. 
+: This mod item creates a definition for a custom caliber for the weapon and sets its ID which is referenced in the weapon. 
 
-Inventory Item
-: Inventory item mod is needed for the ammo and the custom caliber, so it can be referenced in loot tables. Then the group is set to Ammo, you'll be able to add modifications, applied effects and also link the caliber that is created. 
+Inventory Item (ammo)
+: Inventory item mod is needed for the ammo and the custom caliber so it can be referenced in loot tables. When the Mod item group is set to Ammo, you'll be able to add modifications, applied effects and also link the caliber that is created. 
 
 Crafting operation recipe 
 : The Crafting operation recipe mod item is used to define a new recipe for crafting the ammo and the required ingredients.
 
+Shipment squad preset
+: Allows the creation of new shipment types.
+
 Loot definition
-: The Loot definition mod item is used to modify the existing in-game loot tables to include the new weapon. You can replace an existing definition in the game by using the same ID. A new loot definition including the new gun can be used for a starting loot of unit.
+: The Loot definition mod item is used to modify the existing in-game loot tables to include the new weapon. You can replace an existing definition in the game by using the same ID. A new loot definition including the new gun can be used as starting loot of a unit.
 
 Sound
-: The Sound mod item allows you to add sound files in the .opus file format. You can use the Convert & Import Assets mod item to add the sounds to a dedicated sound folder for the mod. The sound type property in the mod item will also specify the sound file specs that are needed for the group. For example - most sounds in the game are mono. But ambient sounds and Music sound types will allow you to add stereo sound files.  
+: The Sound mod item allows you to add sound files in the .opus file format. You can use the Convert & Import Assets mod item to add the sounds to a dedicated sound folder for the mod. The sound type property in the mod item will also specify the sound file specs that are needed for the group. For example - most sounds in the game are mono. But ambient sounds and Music sound types will allow you to add stereo sound files.
 
 Action FX Sound
-: The Action FX Sound mod item will link the sounds via the ID of the sound item to a specific moment, action, actor or target.  
+: The Action FX Sound mod item will link the sounds via the ID of the sound item to a specific moment, action, actor or target.
 
 Particle system
-: Particle system mod item adds a custom particle and sets it's properties in the game.
+: Particle system mod item adds a custom particle and sets its properties in the game.
 
 Action Fx Particles
 : Similar to the mentioned above sounds, the Action FX Particles links the Particle system to a specific moment, action, actor or target. 
 
 ## New Imp Merc
-This sample mod illustrates how to add imported blender scenes as Male costume parts that can be mixed and matched with the parts that already exist in the game. The essential part of this mod is the blender scene itself since it has a reference - skinned body mesh that is structured in a way that will allow the game to recognize the bones and inherit the right animations. Note that different skeleton are used for male and female animations and the entities for female and male clothes inherit them, so mixing female and male parts will result in broken units.
+This sample mod illustrates how to add imported blender scenes as Male costume parts that can be mixed and matched with the parts that already exist in the game. The essential part of this mod is the blender scene itself since it has a reference - skinned body mesh that is structured in a way that will allow the game to recognize the bones and inherit the right animations. Note that different skeletons are used for male and female animations and the entities for female and male clothes inherit them, so mixing female and male parts will result in broken units.
 
 	You can review the blender scene that is used for the mod in Steam folder \steamapps\common\Jagged Alliance 3\ModTools\Samples\Assets\Smart_suit.
 
 Unit
-: This mod item is used to create the I.M.P. merc. The Group should be set to IMP and this way the game will place your merc in the selection screen with the other IMP characters. 
+: This mod item is used to create the I.M.P. merc. The Group should be set to IMP, and in this way the game will place your merc in the selection screen with the other IMP characters. 
 
 Appearance preset
-: The Appearance preset is used to bind the entities that are added as clothes to the appearance of the IMP merc. The important thing to note is that each part of the clothing has a specific class. When your entity is imported in the game, you should set it to the correct class so it's recognized by the editor. 
+: The Appearance preset is used to bind the entities that are added as clothes to the appearance of the IMP merc. The important thing to note is that each part of the clothing has a specific class. When your entity is imported in the game, you should set it to the correct class so that it's recognized by the editor. 
 
 Entity 
 : The Entity mod item is created to import the bottom part of the costume - the pants. After the entity is imported, the class should be set to CharacterPantsMale. This way the entity will appear in the Appearance preset dropdown for pants and bottoms. 
 
 Entity
-: The Entity mod item is created to import the top part of the costume - the suit. After the entity is improted, the class should be set to CharacterBodyMale. This way the entity will appear in the Appearance preset dropdown for body parts - where the tops are.
+: The Entity mod item is created to import the top part of the costume - the suit. After the entity is imported, the class should be set to CharacterBodyMale. In this way, the entity will appear in the Appearance preset dropdown for body parts where the tops are.
 
 Code
 : The Code mod item is created to add a new CosmeticArmor class. This class is used to define items that will change the appearance of the merc when equipped. The backbone of the code is the "OnUpdateItemsVisuals" message that is sent when the items of a unit are updated.
@@ -475,14 +597,85 @@ Inventory items
 This sample mod illustrates the creation of a new sector operation. The operation will be active in all sectors. Its duration time depends of the assigned mercs' Wisdom.
 
 Operation definition
-: The metod 'ProgressPerTick' is called once on each Satellite View tick that is once on each 15 'game minutes'. The 'Complete' method is called when the operation progress reaches the operation threshold. In each sector there is a member 'custom_operations', a table that can be used to save the progress. It is saved in the savegame and can be used to store other useful data during the operation. In original variant it is used for creation of a simple, similar operations with progress, required stat and fixed time (progress and threshold to complete), in which cases the Custom flag is set. But here it is used just to save the progress in sector/savegame, so some metods such as ModifyProgress are changed and the check for 'Custom' flag is removed. If you want to change/ overwrite some other methods make sure the messages are called -  Msg("OperationCompleted", SectorOperations[operation_id], mercs, sector). They are used to complete the operation, free/sync mercs, update the timeline and mercs UI, etc.
+: The method 'ProgressPerTick' is called once on each Satellite View tick that triggers once on each 15 'game minutes'. The 'Complete' method is called when the operation progress reaches the operation threshold. In each sector there is a member 'custom_operations', a table that can be used to save the progress. It is saved in the savegame and can be used to store other useful data during the operation. It is originally used to create simple, similar operations with progress, required stat and fixed time (progress and threshold to complete), in which cases the Custom flag is set. In this case however it is used just to save the progress in sector/savegame, so that some methods such as ModifyProgress are changed and the check for 'Custom' flag is removed. If you want to change or overwrite any other methods, make sure the messages are called - Msg("OperationCompleted", SectorOperations[operation_id], mercs, sector). They are used to complete the operation, free/sync mercs, update the timeline and mercs UI, etc.
 
 Loot table
-: On complition of that sample operation the user gets items generated from two loot tables.'ScourgeOperationUrbanLoot' - if the sector is with city, mine, guard post, hospital or repair shop or 'ScroungeOperationWildernessLoot' in other case. 
+: On completion of that sample operation, the user gets items generated from two loot tables -'ScourgeOperationUrbanLoot', if the sector is with city, mine, guard post, hospital or repair shop, or 'ScroungeOperationWildernessLoot' in any other case. 
 
 UI dialog
-: 'SectorOperation_ScroungeLootUI" is a dialog with a list with generated items shown to the player. Generated items, assigned mercs the sector are passed to the dialog through its context.
+: 'SectorOperation_ScroungeLootUI" is a dialog with a list of generated items shown to the player. Generated items, assigned mercs and the sector are passed to the dialog through its context.
 
+
+## New Quest
+
+This sample mod illustrates the basics of setting up a new quest. For the purpose of convenience and simplicity, the quest in this mod is made as part of the original Hot Diamonds campaign and will only cover the most essential mod items used in quests creation. 
+
+Map Patch 
+: This mod item allows making changes to an existing map. Use the 'Edit Map' button to open the editor and edit a map of your choice. You can see that in this mod we have added a change in the map 'I-1 - Flag Hill'. There is a desk attached to an 'Examine Marker' near the place your mercs are spawned for the first time. Interacting with the desk will result in playing a banter associated with the Examine Marker.
+
+
+Satellite Sector
+: This mod item allows you to create new 'Satellite Sectors' in your campaign. They can be a copy of an already existing map or a brand new one. You can tweak many of the sector options here such as side, weather zone, associated city, mine presence, music playlists etc. For the sake of this mod we've created the Satellite Sector A1 where we put the content of a brand new quest. You can examine the map by pressing the 'Edit Map' button. You would see that most of this content is set up via the so called 'Grid Markers'. You can learn more about Grid Markers here.
+ 
+	
+Quest
+: This mod item allows the creation of new quests for your campaign. To showcase the specifics of this process, we have created the 'SampleMod_Quest'. The most important properties in setting up a new quests are the following:
+
+	- **Variables** - used for tracking the progress of your quest. The most commonly used variables are the 'QuestVarBools' such as the 'Completed', 'Given' and 'Failed'. They have only a 'false' or a 'true' state. A quest usually starts with all the existing variables set to 'false' until a trigger flips their state to 'true'. Another commonly used variable type is the "QuestVarNum" used for tracking numerical values. In 'SampleMod_Quest' we've created several important variables. For example: we've used the variable 'GoldenWatch' to track when a merc has acquired a certain item, and we've used the variable 'Flowers' to keep track of the number of flowers we've planted in this quest.
+	- **NoteDefs** - they are used for triggering 'Notes' which appear in the top-right corner of the screen when something important in the quest happens. Every note has a 'Condition' for showing, hiding and completing the note. For example, in the 'SampleMod_Quest' we've created a note that says 'Give the golden watch to Walter' which is showing when the variable 'GoldenWatch' is set to 'true', and is completed when the variable 'GoldenWatchGiven' is set to 'true'. Have in mind that the 'hidden' state of notes works retroactively and overrides the 'completed' state.
+	- **Triggered Conditional Events** - these are used to drive quest logic such as changing variables, granting items, spawning enemies and so forth.
+	
+	Every TCE requires the creation of a QuestVarTCEState in the 'Variables' section to store its state in. For example, in the 'SampleMod_Quest' there is a 'TCE_GoldenWatch' variable associated with the 'TCE_GoldenWatch' Triggered Conditional Event via the 'Param id' property.
+	
+	Each TCE is composed of 'conditions' and 'effects'. Conditions are checked periodically (every second in tactical view and every satellite view tick) and via some messages. By default when all conditions in a TCE evaluate to true the TCE is triggered and its effects are executed one after another. In the 'SampleMod_Quest' a 'TCE_GoldenWatch' TCE is used to change the variable "GoldenWatch' to 'true' via the effect 'QuestSetVariableBool'. This needs to happen when one of the player's mercs has a Golden Watch in their possession, thus a 'ItemIsInMerc' condition is used which checks if any merc in the current sector has a 'SampleMod_Item' item intentionally created for the purpose of this quest.
+
+	By default TCE's trigger when all of their conditions evaluate to true after being false (activation), but can be specified to trigger when all conditions are false (deactivation), or when the conditions change between true and false (change) - via the "Trigger" property. They can also be specified to trigger only "once" regardless of the trigger type. The "AND" and "OR" conditions can be used to compose more complicated conditions.
+
+	By default TCE effects are executed "sequentially" (controlled via the Execute Effects Sequentially checkbox). This means that the effects are executed in another thread and can wait for one another. For instance a "PlayBanterEffect" can be specified to cause all effects following it to wait for the banter to finish playing. In some cases this behavior is not desired such as when a TCE is intended to trigger a following TCE in the same quest.
+	
+!!! NOTE
+    If "once" isn't specified, if the merc holding the 'SampleMod_Item' item drops it - the TCE will no longer evaluate to true. This isn't a problem since the "GoldenWatch" variable is already set to true. But if a merc picks it up again, the TCE conditions will be true once more after being false, which will cause the TCE effects to run again. In this case it isn't an issue as it will simply set the "GoldenWatch" variable again - but if a TCE is supposed to grant an award or do something once this would be a problem.
+
+	Quests can also specify "Kill TCEs Conditions". When these conditions evaluate to true, all TCEs part of this quest will no longer trigger.
+
+Unit
+: This mod item allows the creation of new units. You can edit properties such as the unit's name, affiliation, stats, XP, perks, portrait textures etc. You can associate those units with an 'Appearance Preset' and spawn the units on the map via 'Unit Markers'. For the purpose of this quest we've created the units 'SampleMod_Horatio' and 'SampleMod_Walter'.
+
+Appearance Preset
+: This mod item is used for creating and editing the general appearance of units. You can change things like faces, body color, clothing, hair etc. and examine the results in the Anim Metadata Editor.
+
+Inventory Item
+: This mod item is used for creating new items for your quest. You can edit things such as the item's name, icon, cost, condition etc. For the purpose of this quest we've created the 'SampleMod_Item' which will serve as our Golden Watch. 
+
+Conversation
+: This mod item is used for setting up new conversations. Each conversation has an associated actor in order for it to be executed. In the case of our quest we've created 'SampleMod_Conversation', associated with it the actor 'SampleMod_Horatio' and set conditions that the conversation should play only if 'SampleMod_Quest' is not Completed and not Failed. As a result, each time you interact with Horatio, the conversation will trigger as long as you don't complete nor fail the quest. Each conversation is executed through the use of 'Phrases'. You can add a new 'Phrase' by clicking the '+' button next to the 'Conversation' mod item. Each phrase has "Lines' played by the associated actor, followed by a possible 'InterjectionList' of lines played by your mercs. Some common features used in conversations: 
+
+	- **Enabled** - use this property to show a phrase as a viable option, or keep it hidden and explicitly redirect the conversation to it using 'Go To'.
+	- **Autoremove** - use this property to automatically remove a phrase after it has played so you won't see it again in the next interaction. We usually use this for initial 'Greetings' phrases, such as a line played when a character introduces themselves.
+	- **Nesting** - you can nest phrases inside other phrases and thus create a 'dialog tree'. In the case of our 'SampleMod_Conversation', when you reach the 'Options', the next three phrases which are nested inside will appear as player choices to respond to that line. You can move phrases 'Up' and 'Down', as well as 'In' and 'Out' of a phrase via the arrow buttons of the top toolbar.
+	- **No Back option** - by default, nested phrases create an automatic 'Back' response which will lead back to the previous section of the dialog tree. You may use it when you want the player to be forced of making a decision without the option to go back.
+	- **Effects** - you can trigger certain effects after a line has played in the same way you would trigger them with a TCE.
+	- **Go to** - after all the lines of a phrase have played, you can redirect the conversation to a specific phrase using the 'Go to' dropdown menu. From there you can either choose another phrase's ID, select 'end conversation' to stop conversing with this unit, or leave it empty which will automatically redirect the conversation to its 'root' and play the next enabled phrase. If the option 'Play Go To Phrase' is checked, the line(s) in that phrase will also be triggered when the player is redirected to it.
+
+Banter
+: This mod item is used for creating new banters. They are short in-view texts displayed without interrupting the game with a dialog screen. Every banter consists of a line of text played by a corresponding actor during the game. Banters are usually triggered by interacting with an Unit on the map or by the 'Play Banter' effect. Some of the more important line properties are as follows:
+
+	- **Character** - this property associates the banter with a certain actor. Some banters can be played by more than one unit. In this case a Group can be granted to all characters that need to share a banter, and it should be respectively assigned as a Character property. In certain cases such as the 'Float Up' banter, the character should be set to 'any', as it is not played by a unit.
+	- **Use Snype** - tick this property if you want the banter to appear in the Snype window.
+	- **Optional** - optional lines are used when there are several lines in a banter and you want to play only those of them that have a valid actor found on the map. Any line which is not denoted as Optional that has no valid actor on the map will render the whole banter unable to play at all, regardless if it contains other lines with valid actors.
+	- **Float Up** - in cases where the banter is just a text describing something and not a line spoken by a character, we use the 'Float Up' option and set the 'Character' to any.
+	
+Grid Markers
+: Some of the content for SampleMod_Quest is set up in the map editor. In the 'Satellite Sector' mod item we've created the sector A1 which you can edit by pressing the 'Edit Map' button in the mod item. Most of the interactable content there is set up using 'Grid Markers':
+
+	- **UnitMarker** - The Unit Marker is a spawner of an unit we've created with the Unit mod item. In this map we've placed unit markers for the units Horatio and Walter we created with the Unit Mod Items. We associate those units in the 'UnitData Spawn Template'. We can add spawn and despawn conditions and grant these units' their respective banters we've created with the other mod items. The conversations do not need to be assigned to a unit, since they are automatically played if the unit's Group is set up in the conversation properties.
+	- **ShowHideCollectionMarker** - We use this marker if we want to show or hide a collection of objects. In the case of our quest, we've created three flowers and put them in a collection with a 'ShowHideCollectionMarker'. It checks for a 'Spawn Condition' and a 'Despawn Condition'. We've created three different variables for each plant, and whenever one of those variable changes to 'true' a flower will be spawned.
+	- **CustomInteractable** - We use this marker when we want to attach some more complex logic to a certain collection of objects. For the sake of this quest we want a flower to appear when we interact with an empty pot. We've already set up the variables which spawn the flowers, but we need a custom interactable to trigger these variables to 'true'. In the 'interactable' section of the marker we can set up enable conditions and effects triggered on interaction. In this case we used the 'QuestSetVariableBool' which changes the needed variable to 'true', as well as the 'QuestSetVariableNum' to indicate that the planted flowers will amount to the current number + 1. Finally, we used the 'DisableInteractionMarkerEffect' so that the pot will no longer be clickable again after it's interacted with.
+	- **ContainerMarker** - In the final part of this quest we want to spawn a Golden Watch inside a container, using the 'ContainerMarker'. Each container has an 'ItemSpawner' where we can spawn an object created with the 'Inventory Item' mod item. In this case, we spawn a SampleMod_Item which happens to be our Golden Watch, and set a spawning condition that the planted flours should be at least 3.
+	
+A full description of the available Grid Marker types is available in a separate page.
+
+[*Grid Markers Documentation*](GridMarkers.md.html)
 
 # Sample Mod Assets 
 

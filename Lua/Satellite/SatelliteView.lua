@@ -30,8 +30,8 @@ function CreateSatelliteSectors()
 	return sectors
 end
 
-function GetSatelliteSectors(bCreate)
-	local campaign = GetCurrentCampaignPreset()
+function GetSatelliteSectors(bCreate, campaign_preset)
+	local campaign = campaign_preset or GetCurrentCampaignPreset()
 	if not campaign then
 		assert(false, "Current map does not correspond to any campaign")
 		return
@@ -146,6 +146,9 @@ function _OpenSatelliteView(campaign, context, loading_screen)
 			end
 		end
 	end
+
+	-- Cancel any aiming mode etc.
+	CreateRealTimeThread(RestoreDefaultModeSimple)
 	
 	if not CanYield() or IsRealTimeThread() then
 		CreateGameTimeThread(SkipNonBlockingSetpieces)
@@ -393,7 +396,7 @@ function NetSyncEvents.SatelliteCampaignTimeAdvance(time, old_time, step)
 		while Game.CampaignTime < time and not IsCampaignPaused() do
 			local ot = Game.CampaignTime
 			Game.CampaignTime = Game.CampaignTime + const.Scale.min
-			hr.UIL_CustomTime = Game.CampaignTime
+			SetUILCustomTime(Game.CampaignTime)
 			Game.DailyIncome = GetDailyIncome()
 			lFireCampaignTimeSyncMessages(Game.CampaignTime, ot)
 			ObjModified(Game)
@@ -412,7 +415,7 @@ function NetSyncEvents.SatelliteCampaignTimeAdvance(time, old_time, step)
 end
 
 function OnMsg.OpenSatelliteView()
-	hr.UIL_CustomTime = Game.CampaignTime
+	SetUILCustomTime(Game.CampaignTime)
 end
 
 function GetAmountPerTick(amount, tick, ticks)
@@ -1206,7 +1209,9 @@ function SpawnSquadUnits(session_ids, positions, marker_angle, defender_marker, 
 		local angle = type(marker_angle) == "table" and marker_angle[i] or marker_angle
 		local groups, routine, routine_area, name
 		local marker = IsValid(defender_marker) and defender_marker or type(defender_marker) == "table" and defender_marker[i]
+		local isEnemy = false
 		if IsEnemySquad(unit_data.Squad) then -- add enemy squad units to EnemySquad group and to their defender marker groups
+			isEnemy = true
 			groups = {"EnemySquad"}
 			if marker and marker.Groups then
 				table.iappend(groups, marker.Groups)
@@ -1222,7 +1227,7 @@ function SpawnSquadUnits(session_ids, positions, marker_angle, defender_marker, 
 			local unit = SpawnUnit(class, session_id, positions[i], angle, groups, nil, entrance_marker)
 			if routine ~= nil then unit.routine = routine end
 			if routine_area~= nil then unit.routine_area = routine_area end
-			if name and name~="" then unit.Name = name end
+			if isEnemy and name and name ~= "" then unit.Name = name end
 			unit.routine_spawner = marker
 		end
 	end
@@ -1847,7 +1852,11 @@ function EnterSector(sector_id, spawn_mode, spawn_markers, save_sector, force_te
 	end
 	
 	ChangeGameState{loading_savegame = true}
-	ChangeMap(force_test_map or sector.Map or "__CombatTest")
+	ChangeMap(
+		force_test_map or 
+		sector.Map or 
+		(Platform.goldmaster and "EmptyMap" or "__CombatTest")
+	)
 	ChangeGameState{loading_savegame = false, entered_sector = true}
 
 	-- Load saved data
@@ -2283,5 +2292,5 @@ function SavegameSessionDataFixups.FixMinesTaggedAsDepleted(sector_data, lua_rev
 end
 
 function OnMsg.BobbyRayShopShipmentArrived(shipment)
-	CombatLog("important", T{389474969879, "<em>Bobby Ray's</em> shipment arrived in <em><SectorName(sector_id)></em>.", order_id = Untranslated(shipment.order_id), sector_id = shipment.sector_id})
+	CombatLog("important", T{389474969879, "<em>Bobby Ray's</em> shipment arrived in the sector stash of <em><SectorName(sector_id)></em>, accessible through the Sat View.", order_id = Untranslated(shipment.order_id), sector_id = shipment.sector_id})
 end

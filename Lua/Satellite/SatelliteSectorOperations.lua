@@ -249,6 +249,9 @@ function NetSyncEvents.MercSetOperation(unit_id, operation_id, prof_id, cost, sl
 	if merc then
 		local sector = merc:GetSector()
 		PayOperation(cost, merc:GetSector())
+		if operation_id=="MilitiaTraining" and next(cost) and not sector.militia_training_payed_cost then
+			sector.militia_training_payed_cost = cost[1].value
+		end
 		local prev = SectorOperations[merc.Operation]
 		merc:SetCurrentOperation(operation_id, slot, prof_id, partial_wounds)
 		if check then
@@ -309,20 +312,26 @@ function NetSyncEvents.InterruptSectorOperation(sector_id, operation, reason)
 	ObjModified(sector)
 end
 
-function NetSyncEvents.ChangeSectorOperation(sector_id, operation)
+function NetSyncEvents.ChangeSectorOperation(sector_id, operation_id)
 	OperationsSync_SuspendObjModified()
-	local mercs = GetOperationProfessionals(sector_id, operation)
+	local mercs = GetOperationProfessionals(sector_id, operation_id)
 	for _, merc in ipairs(mercs) do
-		local event_id =  GetOperationEventId(merc, operation)
+		local event_id =  GetOperationEventId(merc, operation_id)
 		RemoveTimelineEvent(event_id)
 	end
 	local sector = gv_Sectors[sector_id]
 	if sector.started_operations then
-		sector.started_operations[operation] = false
+		sector.started_operations[operation_id] = false
 	end
 
 	ObjModified(sector)
+	
+	local mercs = GetOperationProfessionals(sector_id, operation_id)
+	local eta = next(mercs) and GetOperationTimeLeft(mercs[1], operation_id) or 0
+	local timeLeft = eta and Game.CampaignTime + eta
+	AddTimelineEvent("activity-temp", timeLeft, "operation", { operationId = operation_id, sectorId = sector_id})
 end
+
 -- reset operation and cancel prev operation
 function SectorOperation_CancelByGame(units,operation_id, already_synced)
 	local to_cancel_units = {}
@@ -592,6 +601,10 @@ function GetOperationCostsProcessed(mercs,operation_id, prof_id, both, refund)
 		end
 	end	
 	if min then
+		if refund and operation.id=="MilitiaTraining"  then
+			local sector = merc:GetSector()			
+			mcost[1].value = sector.militia_training_payed_cost or mcost[1].value
+		end
 		costs[#costs + 1] = mcost		
 	end
 	return costs	, merc
@@ -661,7 +674,8 @@ function MercsOperationsFillTempDataMercs(mercs, operation_id, prof_id, cost , s
 		local tt_merc = temp_table[m.session_id] or {}
 		local prev_operation = m.Operation		
 		if sector.operations_prev_data[m.session_id] then
-			prev_operation = sector.operations_prev_data[m.session_id].prev_Operation
+			local data = sector.operations_prev_data[m.session_id]
+			prev_operation = data and data[1] and data[1].prev_Operation
 		end
 		local insert_data = {operation_id, prof_id or false, i == 1 and cost, slot or false, false, treated_wounds or false, 
 								  RestTimer = m.RestTimer, TravelTime = m.TravelTime, TravelTimerStart = m.TravelTimerStart, Tiredness = m.Tiredness, prev_Operation = prev_operation}
@@ -783,7 +797,6 @@ function TryMercsSetPartialTreatWounds(parent, mercs, operation_id, prof_id, slo
 				meds = cost[1].value, number = count },
 			T(689884995409, "Yes"),
 			T(782927325160, "No"))
-		dlg:SetModal()
 		if dlg:Wait()== "ok" then
 			MercsOperationsFillTempDataMercs(mercs, operation_id, prof_id, cost, slot, other_free_slots, t_wounds_being_treated)
 			MercsNetStartOperation          (mercs, operation_id, prof_id, cost, slot, other_free_slots, t_wounds_being_treated)
@@ -822,6 +835,9 @@ function SectorOperation_UpdateOnStop(operation, mercs, sector)
 		sector.started_operations[operation.id] = false
 		local event_id =  GetOperationEventId(mercs[1],  operation.id)
 		RemoveTimelineEvent(event_id)
+		if sector.operations_temp_data and sector.operations_temp_data [operation.id] then
+			sector.operations_temp_data [operation.id] = false
+		end
 	end	
 end
 
@@ -1340,10 +1356,10 @@ function GetHealingBonus(sector, operation_id)
 	if #doctors>0 then
 		bonus = 100
 		local forgiving_mode = IsGameRuleActive("ForgivingMode")
+		local min_stat_boost = GameRuleDefs.ForgivingMode:ResolveValue("MinStatBoost") or 0
 		for _, unit in ipairs(doctors) do
 			local stat = unit.Medical
-			local min_stat_boost = GameRuleDefs.ForgivingMode:ResolveValue("MinStatBoost") or 0
-			if forgiving_mode and stat<min_stat_boost then
+			if forgiving_mode and stat < min_stat_boost then
 				stat = stat + (min_stat_boost-stat)/2
 			end
 			bonus = bonus + stat * 2
@@ -1355,12 +1371,12 @@ end
 function GetSumOperationStats(mercs, stat, stat_multiplier)
 	-- add progress
 	local forgiving_mode = IsGameRuleActive("ForgivingMode")
-	local sum_stat = 0
 	local min_stat_boost = GameRuleDefs.ForgivingMode:ResolveValue("MinStatBoost") or 0
+	local sum_stat = 0
 	local has_perk = false
 	for _, m in ipairs( mercs) do
 		local stat_val = m[stat] or 0
-		if forgiving_mode and stat_val<min_stat_boost then	
+		if forgiving_mode and stat_val < min_stat_boost then	
 			stat_val = stat_val + (min_stat_boost-stat_val)/2
 		end
 		stat_val = MulDivRound(stat_val, stat_multiplier, 100) 
@@ -1867,8 +1883,8 @@ function SectorOperation_ItemsCalcRes(sector_id, operation_id)
 		local parts_per_step = operation:ResolveValue("parts_per_step")
 		for _, item_data in ipairs(queued_items) do
 			local item = SectorOperationRepairItems_GetItemFromData(item_data)
-			local cur_cond = item.Condition
-			local max_condition = item:GetMaxCondition()
+			local cur_cond = item and item.Condition or 0
+			local max_condition = item and item:GetMaxCondition() or 0
 			local to_repair = max_condition - cur_cond
 
 			--use parts
@@ -1882,6 +1898,9 @@ function SectorOperation_ItemsCalcRes(sector_id, operation_id)
 						if cur_cond<border and cur_cond+diff>=border then
 							parts = parts + parts_per_step
 							cur_cond  = cur_cond + diff
+							if max_condition - cur_cond<=free_repair then
+								break
+							end	
 						end
 					end
 				end
@@ -1907,7 +1926,7 @@ function SectorOperation_SquadOnMove(sector_id, newsquads)
 	local queued = SectorOperationItems_GetItemsQueue(sector_id, "RepairItems")
 	for i = #queued, 1, -1 do
 		local item = SectorOperationRepairItems_GetItemFromData(queued[i])
-		if item.owner then
+		if item and item.owner then
 			local unit =  gv_UnitData[item.owner]
 			local sqId = unit and unit.Squad 
 			if sqId and table.find(newsquads, sqId) then
@@ -1919,7 +1938,7 @@ function SectorOperation_SquadOnMove(sector_id, newsquads)
 	local all = SectorOperationItems_GetAllItems(sector_id, "RepairItems")
 	for i = #all, 1, -1 do
 		local item = SectorOperationRepairItems_GetItemFromData(all[i])
-		if item.owner then
+		if item and item.owner then
 			local unit =  gv_UnitData[item.owner]
 			local sqId = unit and unit.Squad 
 			if sqId and table.find(newsquads, sqId) then

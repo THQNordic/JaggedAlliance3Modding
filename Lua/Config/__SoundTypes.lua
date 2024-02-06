@@ -163,6 +163,17 @@ PlaceObj('SoundTypePreset', {
 })
 
 PlaceObj('SoundTypePreset', {
+	channels = 4,
+	dbg_color = 4292466504,
+	ducking_preset = "Ambience",
+	group = "Ambience",
+	id = "EnvironmentWindTower",
+	loud_distance = 0,
+	options_group = "Ambience",
+	pause = false,
+})
+
+PlaceObj('SoundTypePreset', {
 	channels = 5,
 	dbg_color = 4292466504,
 	ducking_preset = "Ambience",

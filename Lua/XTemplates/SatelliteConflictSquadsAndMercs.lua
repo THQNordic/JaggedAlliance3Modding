@@ -144,6 +144,9 @@ PlaceObj('XTemplate', {
 									'ScaleModifier', point(750, 750),
 									'HandleMouse', false,
 									'ChildrenHandleMouse', false,
+									'OnContextUpdate', function (self, context, ...)
+										self.idLevelUp:SetVisible(false)
+									end,
 								}),
 								}),
 							}),

@@ -167,7 +167,9 @@ function NetSyncEvents.CheatLevelUp(unit, maxLevel)
 	if not unit then unit = SelectedObj end
 	if not unit then return end
 	local cur_level = unit:GetLevel()
-	local next_level_exp = maxLevel and XPTable[#XPTable] or XPTable[Min(cur_level + 1, #XPTable)]
+	local nXPTable = #XPTable
+	local level = maxLevel and nXPTable or Min(cur_level + 1, nXPTable)
+	local next_level_exp = GetXPTable(level)
 	local xpDiff = next_level_exp - unit.Experience
 	ReceiveStatGainingPoints(unit, xpDiff)
 	unit.Experience = next_level_exp
@@ -209,6 +211,7 @@ function NetSyncEvents.CheatAddAmmo(unit)
 end
 
 function CheatAddAmmo(in_unit)
+	if not in_unit then in_unit = SelectedObj end
 	if not in_unit or not IsKindOf(in_unit, "UnitInventory") then return end
 	
 	local squadId = in_unit.Squad

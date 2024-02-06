@@ -45,6 +45,7 @@ DefineClass.Gunther = {
 	pollyvoice = "Joey",
 	gender = "Male",
 	PersistentSessionId = "NPC_Siegfried",
+	HealPersistentOnSpawn = true,
 	VoiceResponseId = "Gunther",
 }
 

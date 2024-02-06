@@ -219,6 +219,7 @@ function Exploration:UpdateSusVisualization(data)
 		if d.amount > 0 or unit:HasStatusEffect("Suspicious") then
 			if unit.command ~= "OverheardConversationHeadTo" then
 				EnsureUnitHasAwareBadge(unit)
+				PlayUnitStartleAnim(unit)
 				raisingSus[hash] = true
 			end
 		end
@@ -327,6 +328,7 @@ function NetSyncEvents.ExplorationStartCombat(team_idx, unit_id)
 	end
 	local unit = unit_id and g_Units[unit_id]
 	
+	SetActivePause() -- make sure active pause is off
 	g_StartingCombat = true
 	g_Exploration:Done()
 	g_Exploration = false

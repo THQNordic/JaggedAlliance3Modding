@@ -32,7 +32,7 @@ local Defaults = {
 }
 
 AppendClass.MapDataPreset = { properties = {
-	{ category = "Camera", id = "ExtendBuildingTouchRange", name = "Extend Building Touch Range", editor = "bool", default = false, help = "Buildings will hide from further away on this map." },
+	{ category = "Camera", id = "ExtendBuildingTouchRange", name = "Extend building touch range", editor = "bool", default = false, help = "Buildings will hide from further away on this map." },
 }}
 
 local function SetBuildingTouchRange(t)

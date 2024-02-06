@@ -1092,7 +1092,7 @@ function WeaponComponentWindowClass:OnContextUpdate(context)
 end
 
 function OnMsg.ChangeMap()
-	CloseDialog("ModifyWeaponDlg")
+	CloseDialog("ModifyWeaponDlg", true)
 end
 
 DefineClass.WeaponComponentCost = {
@@ -1540,6 +1540,19 @@ function GetIsolatedObjectScreenshotSelection()
 		return objectsToShow
 	end
 	return oldIsolatedFunc()
+end
+
+function OnMsg.PostIsolatedObjectScreenshot()
+	StopAllHiding("screenshot")
+	ReloadTriggerTargetPairs()
+	ResumeAllHiding("screenshot")
+	HideCombatUI(false)
+	HideInWorldCombatUI(false, "screenshot")
+end
+
+function OnMsg.PreIsolatedObjectScreenshot()
+	HideCombatUI(true)
+	HideInWorldCombatUI(true, "screenshot")
 end
 
 MapVar("g_WeaponModificationOpenOnPlayer", {})

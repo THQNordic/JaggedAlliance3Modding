@@ -28,6 +28,7 @@ PlaceObj('XTemplate', {
 				self.isWorldUIHidden = false
 				self.areValuesDefault = self.context:AreValuesDefault() -- for reset button
 				self.prevGamepadOn = GetUIStyleGamepad()
+				self.prevChoiceProp = false
 				
 				table.change(hr, "PhotoMode", { EnablePostProcDOF = 1 })
 				LockCamera("PhotoModeFlyCamera")
@@ -75,9 +76,9 @@ PlaceObj('XTemplate', {
 			end,
 		}),
 		PlaceObj('XTemplateFunc', {
-			'name', "ToggleUI",
-			'func', function (self, ...)
-				local value = not self.idSubMenu:GetVisible()
+			'name', "ToggleUI(self, bSet)",
+			'func', function (self, bSet)
+				local value = bSet == nil and not self.idSubMenu:GetVisible() or bSet
 				self.idSubMenu:SetVisible(value)
 				if Platform.console or Platform.steamdeck then
 					self.idActionBar:SetVisible(value)
@@ -86,11 +87,11 @@ PlaceObj('XTemplate', {
 				if value and GetUIStyleGamepad() then
 					self.idScrollArea:SetSelection(self.idScrollArea.focused_item or 1)
 				end
-				self:CloseFrameMenu(not value)
+				self:CloseChoiceMenu(not value)
 			end,
 		}),
 		PlaceObj('XTemplateFunc', {
-			'name', "CloseFrameMenu(self, value)",
+			'name', "CloseChoiceMenu(self, value)",
 			'func', function (self, value)
 				if (value or self.idSubMenu:GetVisible()) and self.idSubSubContent.idItemsContent then
 					self.idSubSubContent.idItemsContent:Close()
@@ -169,8 +170,8 @@ PlaceObj('XTemplate', {
 			PlaceObj('XTemplateWindow', {
 				'Id', "idSubMenu",
 				'HAlign', "left",
-				'MinWidth', 512,
-				'MaxWidth', 512,
+				'MinWidth', 552,
+				'MaxWidth', 552,
 				'LayoutMethod', "VList",
 				'HandleMouse', true,
 			}, {
@@ -405,11 +406,11 @@ PlaceObj('XTemplate', {
 					'OnAction', function (self, host, source, ...)
 						local meta = host.context:GetPropertyMetadata("frameDuration")
 						host.context:DeactivateFreeCamera()
-						host:CloseFrameMenu()
+						host:CloseChoiceMenu()
 						host.idScrollArea:RespawnContent()
 						PhotoModeTake(host.context.frameDuration, meta.max)
 					end,
-					'__condition', function (parent, context) return not (Platform.console or Platform.steamdeck) end,
+					'__condition', function (parent, context) return not (Platform.steamdeck or Platform.ps4) end,
 				}),
 				PlaceObj('XTemplateAction', {
 					'ActionId', "idReset",
@@ -423,7 +424,7 @@ PlaceObj('XTemplate', {
 					'OnAction', function (self, host, source, ...)
 						host.context:ResetProperties()
 						host.context:DeactivateFreeCamera()
-						host:CloseFrameMenu()
+						host:CloseChoiceMenu()
 						host.areValuesDefault = true
 						host.idActionBar:RespawnContent()
 						host.idScrollArea:RespawnContent()
@@ -448,7 +449,7 @@ PlaceObj('XTemplate', {
 					'ActionGamepad', "RightShoulder",
 					'OnAction', function (self, host, source, ...)
 						host.isWorldUIHidden = not host.isWorldUIHidden
-						host:CloseFrameMenu()
+						host:CloseChoiceMenu()
 						HideInWorldCombatUI(host.isWorldUIHidden, "photomode")
 					end,
 				}),
@@ -461,7 +462,7 @@ PlaceObj('XTemplate', {
 					'OnAction', function (self, host, source, ...)
 						CreateRealTimeThread(function(host)
 							host.context:DeactivateFreeCamera()
-							host:CloseFrameMenu()
+							host:CloseChoiceMenu()
 							host.idScrollArea:RespawnContent()
 							host.idActionBar:RespawnContent()
 							if WaitQuestion(terminal.desktop, T(463488345232, "Exit Photo Mode"), T(528652976882, "Are you sure you want to exit?"), T(1138, "Yes"), T(1139, "No")) == "ok" then
@@ -507,7 +508,8 @@ PlaceObj('XTemplate', {
 				'comment', "for choice properties",
 				'__class', "XDialog",
 				'Id', "idSubSubContent",
-				'Margins', box(10, 65, 0, 0),
+				'Margins', box(10, 0, 0, -5),
+				'VAlign', "bottom",
 				'UseClipBox', false,
 				'InternalModes', "items, empty",
 			}, {
@@ -625,7 +627,16 @@ PlaceObj('XTemplate', {
 									'func', function (self, ...)
 										XWindow.Open(self, ...)
 										self:SetAnchor(GetDialogModeParam(self).box)
-										GetDialogModeParam(self).isExpanded = true
+										
+										local subSubContentDialog = GetDialog(self)
+										local photoModeDialog = GetDialog(subSubContentDialog.parent)
+										-- prevent multiple choice props being highlighted at the same time
+										if photoModeDialog.prevChoiceProp and photoModeDialog.prevChoiceProp.idImgBcgrSelected then  
+											photoModeDialog.prevChoiceProp.idImgBcgrSelected:SetVisible(false)
+											photoModeDialog.prevChoiceProp.isExpanded = false
+										end
+										photoModeDialog.prevChoiceProp = GetDialogModeParam(self)
+										photoModeDialog.prevChoiceProp.isExpanded = true
 									end,
 								}),
 								PlaceObj('XTemplateFunc', {

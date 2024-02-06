@@ -148,6 +148,7 @@ function Trap:AttemptDisarm(unit, stat)
 		
 		self.disarmed = true
 		self.done = true
+		ObjModified("combat_bar_traps")
 		PlayFX("TrapDisarmed", "start", self)
 	else
 		CreateFloatingText(self:GetVisualPos(), T{338382091310, "<em><stat></em> failure!", TrapName = trapName, stat = statT}, "BanterFloatingText")
@@ -165,6 +166,7 @@ end
 function Trap:Explode(victim, fx_actor, state, attacker)
 	self.victim = victim
 	self.done = true
+	ObjModified("combat_bar_traps")
 	
 	-- Track who exploded the trap and handle chain explosions
 	self.attacker = IsKindOf(attacker, "Trap") and attacker.attacker or attacker
@@ -798,6 +800,7 @@ end
 function Landmine:ExplodeAsGrenade(victim, fx_actor, state, attacker)
 	self.victim = victim
 	self.done = true
+	ObjModified("combat_bar_traps")
 	
 	-- Track who exploded the trap and handle chain explosions
 	self.attacker = IsKindOf(attacker, "Trap") and attacker.attacker or attacker
@@ -1014,6 +1017,7 @@ function ElectricalTrap(self, victim)
 	victim = IsKindOf(victim, "CombatObject") and victim or victim[1]
 	self.done = true
 	self.victim = victim
+	ObjModified("combat_bar_traps")
 	
 	local trapName = self:GetTrapDisplayName()
 
@@ -1035,6 +1039,7 @@ end
 function AlarmTrap(self, victim)
 	self.done = true
 	self.victim = victim
+	ObjModified("combat_bar_traps")
 	
 	local trapName = self:GetTrapDisplayName()
 	
@@ -1250,7 +1255,9 @@ end
 
 function BoobyTrappable:AttemptDisarm(unit)
 	local disarmStat = self:GetTrapStat()
-	return Trap.AttemptDisarm(self, unit, disarmStat)
+	local success = Trap.AttemptDisarm(self, unit, disarmStat)
+	self:UpdateHighlight()
+	return success
 end
 
 function BoobyTrappable:GetInteractionCombatAction(unit)
@@ -1283,6 +1290,15 @@ function BoobyTrappable:HighlightIntensely(visible, reason)
 	if not visible and self:GetHighlightColor() == lDiscoveredTrapHighlight then
 		SetInteractionHighlightRecursive(self, true, true, self.highlight_collection, lDiscoveredTrapHighlight)
 	end
+end
+
+function BoobyTrappable:UnitNearbyHighlight(time, cooldown, force)
+	if self.discovered_trap then
+		self:UpdateHighlight()
+		return
+	end
+	
+	return Interactable.UnitNearbyHighlight(self, time, cooldown, force)
 end
 
 function BoobyTrappable:UpdateHighlight()
@@ -1324,6 +1340,7 @@ function BoobyTrappable:TriggerTrap(victim)
 	if self.done or IsSetpiecePlaying() then return false end
 	local trapType = self.boobyTrapType
 	if trapType == lBoobyTrapNone then return false end
+	if victim:IsNPC() then return end
 	CreateGameTimeThread(function(self, victim, trapType)
 		lBoobyTrapTypes[trapType].func(self, victim)
 		self:UpdateHighlight()

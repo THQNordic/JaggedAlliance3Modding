@@ -502,7 +502,7 @@ function OnMsg.OpenSatelliteView()
 		ShowSatViewFinances()
 	end)
 	
-	if not TutorialHintsState.TravelPlaced then
+	if not TutorialHintsState.TravelPlaced and Game and Game.Campaign == "HotDiamonds" then
 		local canShow = gv_InitialHiringDone and gv_Sectors and not gv_Sectors.I1.conflict and gv_Sectors.I1.Side == "player1"
 		if not canShow then return end
 		
@@ -845,6 +845,9 @@ function ShowTrainMilitiaTutorial()
 end
 
 function CheckAttackSquadCondition(squad)
+	if GetDialog("SectorOperations") or GetDialog("PopupNotification") then 
+		return 
+	end
 	if not TutorialHintsState.AttackSquad and squad and (squad.Side == "enemy1" or squad.Side == "enemy2") and g_SatelliteUI and squad.guardpost then
 		local endDest = squad.route and squad.route[1][#squad.route[1]]
 		if endDest then
@@ -1054,7 +1057,7 @@ end
 
 function OutpostShieldsTutorial()
 	if TutorialHintsState.OutpostShields or not g_SatelliteUI then return end
-	
+	if Game and Game.Campaign ~= "HotDiamonds" then return end
 	local fortWindow = g_SatelliteUI.sector_to_wnd["H4"]
 	if not fortWindow then return end
 	

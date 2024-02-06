@@ -1245,6 +1245,10 @@ PlaceObj('QuestsDef', {
 						}),
 					},
 				}),
+				PlaceObj('SectorEnterConflict', {
+					disable_travel = true,
+					sector_id = "I9",
+				}),
 			},
 			Once = true,
 			ParamId = "TCE_ChoiceMade",
@@ -1324,10 +1328,10 @@ PlaceObj('QuestsDef', {
 				PlaceObj('QuestIsVariableBool', {
 					Condition = "or",
 					QuestId = "Luigi",
-					Vars = set( "BossPartnership", "BossReward", "LuigiRewardGiven" ),
+					Vars = set( "BossPartnership", "BossReward", "LuigiRewardGiven", "SupportNoOne" ),
 					__eval = function ()
 						local quest = gv_Quests['Luigi'] or QuestGetState('Luigi')
-						return quest.BossPartnership or quest.BossReward or quest.LuigiRewardGiven
+						return quest.BossPartnership or quest.BossReward or quest.LuigiRewardGiven or quest.SupportNoOne
 					end,
 				}),
 				PlaceObj('SectorIsInConflict', {
@@ -1374,10 +1378,10 @@ PlaceObj('QuestsDef', {
 								PlaceObj('QuestIsVariableBool', {
 									Condition = "or",
 									QuestId = "Luigi",
-									Vars = set( "SupportBlaubert", "SupportNoOne" ),
+									Vars = set( "SupportBlaubert" ),
 									__eval = function ()
 										local quest = gv_Quests['Luigi'] or QuestGetState('Luigi')
-										return quest.SupportBlaubert or quest.SupportNoOne
+										return quest.SupportBlaubert
 									end,
 								}),
 								PlaceObj('QuestIsVariableBool', {

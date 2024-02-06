@@ -243,6 +243,33 @@ PlaceObj('XTemplate', {
 											end
 										end
 										
+										if action.ActionId == "idSave" then
+											local loadingImg = XTemplateSpawn("XImage", child)	
+											loadingImg:SetImage("UI/Hud/radar")
+											loadingImg:SetColumns(24)
+											loadingImg:SetImageScale(point(425, 425))
+											loadingImg:SetAnimate(true)
+											loadingImg:SetHAlign("right")
+											loadingImg:SetMargins(box(0, 0, 15, 0))
+											loadingImg:SetId("idLoadingAnim")
+											loadingImg:SetVisible(false)
+										
+											loadingImg:CreateThread("watchdog", function()
+												local enabled, query = CanSaveGame()
+												while not enabled and query.storing do
+													loadingImg:SetVisible(true)
+													Sleep(5)
+													enabled, query = CanSaveGame()
+												end
+												loadingImg:SetVisible(false)
+												
+												if not child.enabled and CanSaveGame() then
+													child:SetEnabled(true)
+													child:InvalidateLayout()
+												end
+											end)
+										end
+										
 										child.idBtnText:SetText(action.ActionName)
 										child:SetOnPressParam(action.ActionId)
 									end,
@@ -366,9 +393,7 @@ PlaceObj('XTemplate', {
 										
 										self:CreateThread(function()
 											self:ResolveId("idSubContent"):SetMode("empty")
-											local qDlg = OpenDialog("ZuluJoinGamePopup")
-											qDlg:SetModal()
-											qDlg:SetDrawOnTop(true)
+											local qDlg = OpenDialog("ZuluJoinGamePopup", terminal.desktop)
 											local res = qDlg:Wait()									
 											self.idBtnText:SetTextStyle("MMButtonText")
 											self.focused = false
@@ -576,12 +601,12 @@ PlaceObj('XTemplate', {
 			end,
 			'HostInParent', true,
 			'InitialMode', "empty",
-			'InternalModes', "empty, options, newgame, loadgame, savegame, multiplayer, multiplayer_host,multiplayer_guest, replays, installedmods",
+			'InternalModes', "empty, options, newgame02, loadgame, savegame, multiplayer, multiplayer_host,multiplayer_guest, replays, installedmods, newgame01",
 		}, {
 			PlaceObj('XTemplateFunc', {
 				'name', "OnDialogModeChange(self, mode, dialog)",
 				'func', function (self, mode, dialog)
-					if mode=="newgame" then
+					if mode=="newgame02" then
 						ShowForgivingModePopup()
 					end
 					self:ResolveId("idSubMenu"):RespawnContent()
@@ -1456,8 +1481,11 @@ PlaceObj('XTemplate', {
 							'__condition', function (parent, context) return context and next(context.available_games) end,
 							'__template', "NewGameCategory",
 							'Id', "idFilterName",
-							'Margins', box(3, 0, 0, 0),
+							'Margins', box(3, 0, 20, 0),
 							'Dock', "top",
+							'HAlign', "left",
+							'MinWidth', 600,
+							'MaxWidth', 600,
 						}),
 						PlaceObj('XTemplateWindow', {
 							'comment', "list of games",
@@ -1468,6 +1496,8 @@ PlaceObj('XTemplate', {
 							PlaceObj('XTemplateWindow', {
 								'__class', "SnappingScrollArea",
 								'Id', "idScrollArea",
+								'MinWidth', 600,
+								'MaxWidth', 600,
 								'VScroll', "idScroll",
 								'GamepadInitialSelection', true,
 								'KeepSelectionOnRespawn', true,
@@ -1480,7 +1510,12 @@ PlaceObj('XTemplate', {
 										child.idGameName:SetText(item[2])
 										local game_info = item[6]
 										local preset = CampaignPresets[game_info.campaign]
-										child.idCampaignName:SetText(preset and preset.DisplayName or "")
+										if not preset then
+											--campaign not found
+											child.idCampaignName:SetText(Untranslated(game_info.campaign))
+										else
+											child.idCampaignName:SetText(preset and preset.DisplayName or "")
+										end
 										if child.idMods then
 											child.idMods:SetText(#game_info.mods)
 										end
@@ -1507,8 +1542,9 @@ PlaceObj('XTemplate', {
 							PlaceObj('XTemplateWindow', {
 								'__class', "XZuluScroll",
 								'Id', "idScroll",
-								'Margins', box(0, 10, 8, 10),
-								'HAlign', "right",
+								'Margins', box(0, 10, 0, 10),
+								'MinWidth', 7,
+								'MaxWidth', 7,
 								'MouseCursor', "UI/Cursors/Hand.tga",
 								'Target', "idScrollArea",
 								'SnapToItems', true,
@@ -1631,6 +1667,8 @@ PlaceObj('XTemplate', {
 							PlaceObj('XTemplateWindow', {
 								'__class', "SnappingScrollArea",
 								'Id', "idScrollArea",
+								'MinWidth', 600,
+								'MaxWidth', 600,
 								'OnLayoutComplete', function (self)
 									SnappingScrollArea.OnLayoutComplete(self)
 									if GetUIStyleGamepad() then
@@ -1667,7 +1705,7 @@ PlaceObj('XTemplate', {
 											if Game then
 												name:SetText(Game.playthrough_name or "Hot Diamonds")
 											else
-												if not NewGameObj.campaign_name or NewGameObj.campaign_name == "" then
+												if not NewGameObj or not NewGameObj.campaign_name or NewGameObj.campaign_name == "" then
 													name:SetText(GetCampaignNameTranslated())
 												else
 													name:SetText(NewGameObj.campaign_name)
@@ -1947,7 +1985,8 @@ PlaceObj('XTemplate', {
 								'__class', "XZuluScroll",
 								'Id', "idScroll",
 								'Margins', box(0, 10, 8, 10),
-								'HAlign', "right",
+								'MinWidth', 7,
+								'MaxWidth', 7,
 								'MouseCursor', "UI/Cursors/Hand.tga",
 								'Target', "idScrollArea",
 								'SnapToItems', true,
@@ -1988,7 +2027,7 @@ PlaceObj('XTemplate', {
 								return UICanStartGame() and "enabled" or "disabled"
 							end,
 							'OnAction', function (self, host, source, ...)
-								if not NewGameObj.campaign_name or NewGameObj.campaign_name == "" then
+								if not NewGameObj or not NewGameObj.campaign_name or NewGameObj.campaign_name == "" then
 									NewGameObj.campaign_name = GetCampaignNameTranslated()
 								end
 								UIStartGame()
@@ -2076,6 +2115,8 @@ PlaceObj('XTemplate', {
 							PlaceObj('XTemplateWindow', {
 								'__class', "SnappingScrollArea",
 								'Id', "idScrollArea",
+								'MinWidth', 600,
+								'MaxWidth', 600,
 								'OnLayoutComplete', function (self)
 									SnappingScrollArea.OnLayoutComplete(self)
 									if GetUIStyleGamepad() then
@@ -2228,7 +2269,7 @@ PlaceObj('XTemplate', {
 								'__class', "XZuluScroll",
 								'Id', "idScroll",
 								'Margins', box(0, 10, 8, 10),
-								'HAlign', "right",
+								'MinWidth', 7,
 								'MouseCursor', "UI/Cursors/Hand.tga",
 								'Target', "idScrollArea",
 								'SnapToItems', true,
@@ -2272,6 +2313,8 @@ PlaceObj('XTemplate', {
 								end,
 								'__class', "SnappingScrollArea",
 								'Id', "idScrollArea",
+								'MinWidth', 600,
+								'MaxWidth', 600,
 								'VScroll', "idScroll",
 								'KeepSelectionOnRespawn', true,
 								'RightThumbScroll', true,
@@ -2391,8 +2434,9 @@ PlaceObj('XTemplate', {
 							PlaceObj('XTemplateWindow', {
 								'__class', "XZuluScroll",
 								'Id', "idScroll",
-								'Margins', box(0, 10, 8, 10),
-								'HAlign', "right",
+								'Margins', box(0, 10, 0, 10),
+								'MinWidth', 7,
+								'MaxWidth', 7,
 								'MouseCursor', "UI/Cursors/Hand.tga",
 								'Target', "idScrollArea",
 								'SnapToItems', true,
@@ -2453,7 +2497,15 @@ PlaceObj('XTemplate', {
 							end,
 							'OnAction', function (self, host, source, ...)
 								local obj = ResolvePropObj(self.host:ResolveId("idScrollArea").context)
-								obj:ResetOptionsByCategory(GetDialogModeParam(self.host)["optObj"].id, nil, IsInMultiplayerGame() and not NetIsHost() and {Difficulty = true, ForgivingModeToggle = true, ActivePauseMode = true}) -- pass these to that should not be reset if not host.
+								local gamerules = {}
+								for idx, rule in ipairs(Presets.GameRuleDef.Default) do
+									if rule.option then
+										gamerules[rule.id] = true
+									end
+								end
+								gamerules.Difficulty = true
+								
+								obj:ResetOptionsByCategory(GetDialogModeParam(self.host)["optObj"].id, nil, IsInMultiplayerGame() and not NetIsHost() and gamerules) -- pass these to that should not be reset if not host.
 								ObjModified(obj)
 								self.host.idToolBar:ResolveId("idresetToDefaults"):SetEnabled(false)
 								self.enabled = false
@@ -2593,7 +2645,161 @@ PlaceObj('XTemplate', {
 					}),
 					}),
 				PlaceObj('XTemplateMode', {
-					'mode', "newgame",
+					'comment', "step 1 pick campaign",
+					'mode', "newgame01",
+				}, {
+					PlaceObj('XTemplateWindow', {
+						'Id', "idNewGameCont",
+						'VAlign', "top",
+						'MinWidth', 615,
+						'MaxWidth', 615,
+					}, {
+						PlaceObj('XTemplateWindow', {
+							'comment', "list of options",
+							'Id', "idNewGameListCont",
+							'Dock', "top",
+							'LayoutMethod', "HList",
+						}, {
+							PlaceObj('XTemplateWindow', {
+								'__context', function (parent, context)
+									NewGameObj = table.copy(NewGameObjOriginal,"deep")
+									return NewGameObj
+								end,
+								'__class', "SnappingScrollArea",
+								'Id', "idScrollArea",
+								'IdNode', false,
+								'MinWidth', 600,
+								'MaxWidth', 600,
+								'HandleKeyboard', false,
+								'VScroll', "idScroll",
+								'GamepadInitialSelection', true,
+								'RightThumbScroll', true,
+							}, {
+								PlaceObj('XTemplateTemplate', {
+									'comment', "campaign",
+									'__template', "NewGameCategory",
+									'IdNode', false,
+									'Name', T(922962368265, --[[XTemplate MainMenu Name]] "Choose Campaign"),
+								}),
+								PlaceObj('XTemplateForEach', {
+									'comment', "campaign",
+									'array', function (parent, context) return table.keys(CampaignPresets) end,
+									'item_in_context', "prop_meta",
+									'run_after', function (child, context, item, i, n, last)
+										local campaignPreset = CampaignPresets[item]
+										child:SetContext(campaignPreset)
+										local name = campaignPreset.DisplayName and campaignPreset.DisplayName ~= "" and campaignPreset.DisplayName or campaignPreset.id
+										child:SetName(Untranslated(name))
+									end,
+								}, {
+									PlaceObj('XTemplateTemplate', {
+										'__context', function (parent, context)
+											return context
+										end,
+										'__template', "NewGameCampaignEntry",
+										'IdNode', false,
+									}),
+									}),
+								}),
+							PlaceObj('XTemplateWindow', {
+								'__class', "XZuluScroll",
+								'Id', "idScroll",
+								'Margins', box(0, 10, 0, 10),
+								'MinWidth', 7,
+								'UniformRowHeight', true,
+								'MouseCursor', "UI/Cursors/Hand.tga",
+								'Target', "idScrollArea",
+								'SnapToItems', true,
+								'AutoHide', true,
+							}),
+							}),
+						PlaceObj('XTemplateFunc', {
+							'name', "Open(self, ...)",
+							'func', function (self, ...)
+								XWindow.Open(self, ...)
+								GetDialog(self)[1]:ResolveId("idNewGameActionsCont"):SetFocus(true)
+							end,
+						}),
+						}),
+					PlaceObj('XTemplateWindow', {
+						'comment', "buttons",
+						'Id', "idNewGameActionsCont",
+						'Margins', box(0, 0, 0, 20),
+						'Dock', "bottom",
+					}, {
+						PlaceObj('XTemplateAction', {
+							'ActionId', "newGameNext",
+							'ActionName', T(182889454321, --[[XTemplate MainMenu ActionName]] "Next"),
+							'ActionToolbar', "ActionBar",
+							'ActionShortcut', "Enter",
+							'ActionGamepad', "ButtonX",
+							'OnAction', function (self, host, source, ...)
+								local dlg = GetDialog(self.host)
+								local param = dlg and GetDialogModeParam(dlg)
+								if dlg and param and param.mp then
+									MultiplayerLobbySetUI("multiplayer_host", param.visibility, NewGameObj.campaignId)
+								elseif dlg then
+									dlg:SetMode("newgame02")
+								end
+							end,
+							'FXPress', "MainMenuButtonClick",
+							'FXPressDisabled', "activityAssignSelectDisabled",
+						}),
+						PlaceObj('XTemplateWindow', {
+							'__class', "XZuluToolBarList",
+							'Id', "idToolBar",
+							'ZOrder', 0,
+							'HAlign', "center",
+							'VAlign', "center",
+							'MinWidth', 500,
+							'OnLayoutComplete', function (self)
+								for _, button in ipairs(self.list) do
+									local textButton = button[4]
+									local ogText = rawget(textButton, "ogText")
+									if not ogText then
+										rawset(textButton, "ogText", button.Text)
+										ogText = textButton.Text
+									end
+									local newShortcut = GetShortcutButtonT(button[4].action)
+									if GetUIStyleGamepad() then 
+										textButton:SetText(T{893255535468, "<style PDAIMPCounter><shortcut></style> <text>", text = ogText, shortcut = newShortcut or ""})
+									else
+										textButton:SetText(T{828903919196, "<style PDAIMPCounter>[<shortcut>]</style> <text>", text = ogText, shortcut = newShortcut or ""})
+									end
+								end
+							end,
+							'Background', RGBA(255, 255, 255, 0),
+							'Toolbar', "ActionBar",
+							'Show', "text",
+							'ButtonTemplate', "OptionsActionsButton",
+						}, {
+							PlaceObj('XTemplateFunc', {
+								'comment', "position buttons on both corners",
+								'name', "RebuildActions(self, ...)",
+								'func', function (self, ...)
+									XZuluToolBarList.RebuildActions(self, ...)
+									
+									local parent = self:GetButtonParent()
+									if #parent == 1 then
+										parent[1]:SetDock("right")
+									end
+									parent:SetMinWidth(self.MinWidth)
+								end,
+							}),
+							PlaceObj('XTemplateWindow', {
+								'comment', "gamepad observer",
+								'__context', function (parent, context) return "GamepadUIStyleChanged" end,
+								'__class', "XContextWindow",
+								'OnContextUpdate', function (self, context, ...)
+									ObjModified("action-button-mm")
+								end,
+							}),
+							}),
+						}),
+					}),
+				PlaceObj('XTemplateMode', {
+					'comment', "step 2 pick options",
+					'mode', "newgame02",
 				}, {
 					PlaceObj('XTemplateWindow', {
 						'Id', "idNewGameCont",
@@ -2615,6 +2821,8 @@ PlaceObj('XTemplate', {
 								'__class', "SnappingScrollArea",
 								'Id', "idScrollArea",
 								'IdNode', false,
+								'MinWidth', 600,
+								'MaxWidth', 600,
 								'HandleKeyboard', false,
 								'VScroll', "idScroll",
 								'GamepadInitialSelection', true,
@@ -2799,40 +3007,13 @@ PlaceObj('XTemplate', {
 									'IdNode', false,
 								}),
 								PlaceObj('XTemplateTemplate', {
-									'comment', "game rules",
-									'__template', "NewGameCategory",
-									'IdNode', false,
-									'Name', T(191935465467, --[[XTemplate MainMenu Name]] "Game Rules"),
-								}),
-								PlaceObj('XTemplateTemplate', {
-									'__context', function (parent, context) return GameRuleDefs["ForgivingMode"] end,
-									'__template', "NewGameBoolEntry",
-									'Id', "idForgivingMode",
-									'IdNode', false,
-								}),
-								PlaceObj('XTemplateTemplate', {
-									'__context', function (parent, context) return GameRuleDefs["ActivePause"] end,
-									'__template', "NewGameBoolEntry",
-									'IdNode', false,
-								}),
-								PlaceObj('XTemplateTemplate', {
-									'__context', function (parent, context) return GameRuleDefs["DeadIsDead"] end,
-									'__template', "NewGameBoolEntry",
-									'IdNode', false,
-								}),
-								PlaceObj('XTemplateTemplate', {
-									'__context', function (parent, context) return GameRuleDefs["Ironman"] end,
-									'__template', "NewGameBoolEntry",
-									'IdNode', false,
-								}),
-								PlaceObj('XTemplateTemplate', {
-									'__context', function (parent, context) return GameRuleDefs["LethalWeapons"] end,
-									'__template', "NewGameBoolEntry",
-									'IdNode', false,
-								}),
-								PlaceObj('XTemplateTemplate', {
 									'comment', "settings",
 									'__template', "NewGameMenuSettings",
+								}),
+								PlaceObj('XTemplateTemplate', {
+									'comment', "game rules",
+									'__template', "NewGameMenuGameRules",
+									'Name', T(191935465467, --[[XTemplate MainMenu Name]] "Game Rules"),
 								}),
 								PlaceObj('XTemplateFunc', {
 									'name', "OnSelection(self, focused_item, selection)",
@@ -2848,7 +3029,7 @@ PlaceObj('XTemplate', {
 								'__class', "XZuluScroll",
 								'Id', "idScroll",
 								'Margins', box(0, 10, 0, 10),
-								'HAlign', "right",
+								'MinWidth', 7,
 								'UniformRowHeight', true,
 								'MouseCursor', "UI/Cursors/Hand.tga",
 								'Target', "idScrollArea",
@@ -2856,12 +3037,6 @@ PlaceObj('XTemplate', {
 								'AutoHide', true,
 							}),
 							}),
-						PlaceObj('XTemplateFunc', {
-							'name', "OnDelete()",
-							'func', function ()
-								NewGameObj = false
-							end,
-						}),
 						PlaceObj('XTemplateFunc', {
 							'name', "Open(self, ...)",
 							'func', function (self, ...)
@@ -2905,10 +3080,10 @@ PlaceObj('XTemplate', {
 							'OnAction', function (self, host, source, ...)
 								EditorDeactivate()
 								CreateRealTimeThread(function()
-									if not NewGameObj.campaign_name or NewGameObj.campaign_name == "" then
+									if not NewGameObj or not NewGameObj.campaign_name or NewGameObj.campaign_name == "" then
 										NewGameObj.campaign_name = GetCampaignNameTranslated()
 									end
-									local abort = StartCampaign("HotDiamonds", NewGameObj)
+									local abort = StartCampaign(NewGameObj and NewGameObj.campaignId, NewGameObj)
 									if abort then return end
 									CloseMenuDialogs()
 								end)
@@ -2982,6 +3157,7 @@ PlaceObj('XTemplate', {
 							'comment', "list of options",
 							'Id', "idLoadGameListCont",
 							'Dock', "top",
+							'LayoutMethod', "HList",
 						}, {
 							PlaceObj('XTemplateWindow', {
 								'__condition', function (parent, context) return Platform.developer and config.saveSearchFilter end,
@@ -3050,23 +3226,12 @@ PlaceObj('XTemplate', {
 								}),
 								}),
 							PlaceObj('XTemplateWindow', {
-								'__class', "XZuluScroll",
-								'Id', "idScroll",
-								'Margins', box(0, 10, 0, 10),
-								'Dock', "right",
-								'HAlign', "right",
-								'UniformRowHeight', true,
-								'MouseCursor', "UI/Cursors/Hand.tga",
-								'Target', "idScrollArea",
-								'SnapToItems', true,
-								'AutoHide', true,
-							}),
-							PlaceObj('XTemplateWindow', {
 								'__context', function (parent, context) return "searchsaves" end,
 								'__class', "SnappingScrollArea",
 								'Id', "idScrollArea",
 								'IdNode', false,
-								'Dock', "left",
+								'MinWidth', 600,
+								'MaxWidth', 600,
 								'HandleKeyboard', false,
 								'VScroll', "idScroll",
 								'RightThumbScroll', true,
@@ -3102,7 +3267,7 @@ PlaceObj('XTemplate', {
 											if context.metadata.autosave then
 												child.idAutosave:SetVisible(true)
 											end
-											child.idName:SetText(SavenameToName(context.metadata.displayname))
+											child.idName:SetText(context.metadata.displayname)
 											local saveState = context.metadata.save_game_state
 											local saveStateTurnNumber = context.metadata.turn_phase
 											child.idSaveState:SetText(GetSaveState(saveState, saveStateTurnNumber, saveStateTurnNumber))
@@ -3145,6 +3310,19 @@ PlaceObj('XTemplate', {
 										}),
 									}),
 								}),
+							PlaceObj('XTemplateWindow', {
+								'__class', "XZuluScroll",
+								'Id', "idScroll",
+								'Margins', box(0, 10, 0, 10),
+								'HAlign', "right",
+								'MinWidth', 7,
+								'MaxWidth', 7,
+								'UniformRowHeight', true,
+								'MouseCursor', "UI/Cursors/Hand.tga",
+								'Target', "idScrollArea",
+								'SnapToItems', true,
+								'AutoHide', true,
+							}),
 							}),
 						PlaceObj('XTemplateFunc', {
 							'name', "OnDelete",
@@ -3302,40 +3480,8 @@ PlaceObj('XTemplate', {
 						'MaxWidth', 615,
 					}, {
 						PlaceObj('XTemplateWindow', {
-							'Id', "idInstalledModsActionsCont",
-							'Margins', box(-10, 0, 0, 24),
-							'Dock', "bottom",
-							'MinWidth', 600,
-							'MaxWidth', 600,
-						}, {
-							PlaceObj('XTemplateAction', {
-								'ActionId', "actionScrollText",
-								'ActionGamepad', "RightThumbDown",
-								'ActionButtonTemplate', "PDACommonButton",
-								'OnAction', function (self, host, source, ...)
-									local subSubMenu = host:ResolveId("idSubSubContent")
-									local modDescr = subSubMenu.Mode and subSubMenu.Mode == "mod" and subSubMenu:ResolveId("idDescr")
-									if not modDescr then return end
-									modDescr:ScrollDown()
-								end,
-								'FXPress', "none",
-							}),
-							PlaceObj('XTemplateAction', {
-								'ActionId', "actionScrollText",
-								'ActionGamepad', "RightThumbUp",
-								'ActionButtonTemplate', "PDACommonButton",
-								'OnAction', function (self, host, source, ...)
-									local subSubMenu = host:ResolveId("idSubSubContent")
-									local modDescr = subSubMenu.Mode and subSubMenu.Mode == "mod" and subSubMenu:ResolveId("idDescr")
-									if not modDescr then return end
-									modDescr:ScrollUp()
-								end,
-								'FXPress', "none",
-							}),
-							}),
-						PlaceObj('XTemplateWindow', {
 							'comment', "list of installed mods",
-							'Id', "idLoadGameListCont",
+							'Id', "idInstalledModsList",
 							'Dock', "top",
 							'LayoutMethod', "HList",
 						}, {
@@ -3347,11 +3493,43 @@ PlaceObj('XTemplate', {
 								'__class', "SnappingScrollArea",
 								'Id', "idScrollArea",
 								'IdNode', false,
+								'MinWidth', 600,
+								'MaxWidth', 600,
+								'OnLayoutComplete', function (self)
+									local scroll = self:ResolveId(self.VScroll)
+									if not IsKindOf(scroll, "SnappingScrollBar") then
+										scroll.GetThumbSize = SnappingScrollBar.GetThumbSize
+										scroll.GetThumbRange = SnappingScrollBar.GetThumbRange
+										scroll.SetScroll = SnappingScrollBar.SetScroll
+										scroll.SnapToItems = true
+										scroll.FullPageAtEnd = false
+									end
+									
+									if #self == 0 then return end
+									
+									local oldStep = self.MouseWheelStep
+									local _, scaledSpacing = ScaleXY(self.scale, 0, self.LayoutVSpacing)
+									local newStep = self[1].box:sizey() + scaledSpacing
+									if newStep == 0 then return end
+									self:SetMouseWheelStep(newStep)
+									self:UpdateCalculations()
+								end,
 								'HandleKeyboard', false,
 								'VScroll', "idScroll",
-								'GamepadInitialSelection', true,
 								'KeepSelectionOnRespawn', true,
 							}, {
+								PlaceObj('XTemplateTemplate', {
+									'comment', "presets",
+									'__context', function (parent, context) return "presets" end,
+									'__template', "MainMenuModPreset",
+									'IdNode', false,
+								}),
+								PlaceObj('XTemplateTemplate', {
+									'comment', "tags",
+									'__context', function (parent, context) return "tags" end,
+									'__template', "MainMenuTagsUIEntry",
+									'IdNode', false,
+								}),
 								PlaceObj('XTemplateForEach', {
 									'comment', "mod",
 									'array', function (parent, context) return table.map(context.installed_mods, context.mod_ui_entries) end,
@@ -3365,12 +3543,22 @@ PlaceObj('XTemplate', {
 										'IdNode', false,
 									}),
 									}),
+								PlaceObj('XTemplateFunc', {
+									'name', "Open(self, ...)",
+									'func', function (self, ...)
+										SnappingScrollArea.Open(self, ...)
+										if GetUIStyleGamepad() then
+										self:SelectFirstValidItem()
+										end
+									end,
+								}),
 								}),
 							PlaceObj('XTemplateWindow', {
 								'__class', "XZuluScroll",
 								'Id', "idScroll",
 								'Margins', box(0, 10, 0, 30),
-								'HAlign', "right",
+								'MinWidth', 70,
+								'MaxWidth', 7,
 								'UniformRowHeight', true,
 								'MouseCursor', "UI/Cursors/Hand.tga",
 								'Target', "idScrollArea",
@@ -3382,9 +3570,192 @@ PlaceObj('XTemplate', {
 							'name', "OnDelete",
 							'func', function (self, ...)
 								g_SelectedMod = false
+								ObjModified("NewSelectedMod")
 								XWindow.OnDelete(self)
 							end,
 						}),
+						}),
+					PlaceObj('XTemplateWindow', {
+						'comment', "buttons",
+						'__context', function (parent, context) return "NewSelectedMod" end,
+						'__class', "XContextWindow",
+						'Id', "idLoadGameActionsCont",
+						'Margins', box(0, 0, 0, 24),
+						'Dock', "bottom",
+						'ContextUpdateOnOpen', true,
+						'OnContextUpdate', function (self, context, ...)
+							self:ResolveId("idToolBar"):RebuildActions(GetDialog(self))
+						end,
+					}, {
+						PlaceObj('XTemplateAction', {
+							'ActionId', "actionScrollText",
+							'ActionGamepad', "RightThumbDown",
+							'ActionButtonTemplate', "PDACommonButton",
+							'OnAction', function (self, host, source, ...)
+								local subSubMenu = host:ResolveId("idSubSubContent")
+								local modDescr = subSubMenu.Mode and subSubMenu.Mode == "mod" and subSubMenu:ResolveId("idTextBelowStrip")
+								if not modDescr then return end
+								modDescr:ScrollDown()
+							end,
+							'FXPress', "none",
+						}),
+						PlaceObj('XTemplateAction', {
+							'ActionId', "actionScrollText",
+							'ActionGamepad', "RightThumbUp",
+							'ActionButtonTemplate', "PDACommonButton",
+							'OnAction', function (self, host, source, ...)
+								local subSubMenu = host:ResolveId("idSubSubContent")
+								local modDescr = subSubMenu.Mode and subSubMenu.Mode == "mod" and subSubMenu:ResolveId("idTextBelowStrip")
+								if not modDescr then return end
+								modDescr:ScrollUp()
+							end,
+							'FXPress', "none",
+						}),
+						PlaceObj('XTemplateAction', {
+							'ActionId', "toggleEnable",
+							'ActionName', T(715841356018, --[[XTemplate MainMenu ActionName]] "Enable"),
+							'ActionToolbar', "ActionBar",
+							'ActionShortcut', "Enter",
+							'ActionGamepad', "ButtonA",
+							'ActionState', function (self, host)
+								if g_SelectedMod then
+										local isEnabled = not not table.find(AccountStorage.LoadMods, g_SelectedMod.ModID)
+										if not isEnabled then
+											return "enabled"
+										end
+								end
+								return "hidden"
+							end,
+							'OnAction', function (self, host, source, ...)
+								ModsUIToggleEnabled(g_SelectedMod)
+								UpdateModsCount(host)
+								host:ResolveId("idSubSubContent"):SetMode("mod", g_SelectedMod)
+							end,
+							'FXPress', "MainMenuButtonClick",
+							'__condition', function (parent, context)
+								return true
+							end,
+						}),
+						PlaceObj('XTemplateAction', {
+							'ActionId', "toggleDisableMod",
+							'ActionName', T(639043935100, --[[XTemplate MainMenu ActionName]] "Disable"),
+							'ActionToolbar', "ActionBar",
+							'ActionShortcut', "Enter",
+							'ActionGamepad', "ButtonA",
+							'ActionState', function (self, host)
+								if g_SelectedMod then
+										local isEnabled = not not table.find(AccountStorage.LoadMods, g_SelectedMod.ModID)
+										if isEnabled then
+											return "enabled"
+										end
+								end
+								return "hidden"
+							end,
+							'OnAction', function (self, host, source, ...)
+								ModsUIToggleEnabled(g_SelectedMod)
+								UpdateModsCount(host)
+								host:ResolveId("idSubSubContent"):SetMode("mod", g_SelectedMod)
+							end,
+							'FXPress', "MainMenuButtonClick",
+							'__condition', function (parent, context)
+								return true
+							end,
+						}),
+						PlaceObj('XTemplateAction', {
+							'ActionId', "showWarning",
+							'ActionName', T(783814273548, --[[XTemplate MainMenu ActionName]] "Show Warning"),
+							'ActionToolbar', "ActionBar",
+							'ActionShortcut', "E",
+							'ActionGamepad', "ButtonY",
+							'ActionState', function (self, host)
+								if g_SelectedMod and not not g_SelectedMod.Warning_id then
+									return "enabled"
+								end
+								return "hidden"
+							end,
+							'OnAction', function (self, host, source, ...)
+								local _, _, _, moreInfo = ModsUIGetModCorruptedStatus(Mods[g_SelectedMod.ModID])
+								CreateRealTimeThread(function()
+								WaitMessage(terminal.dekstop, T(137802317861, "Warning"), moreInfo, T(413525748743, "Ok"))
+								end)
+							end,
+							'FXPress', "MainMenuButtonClick",
+							'__condition', function (parent, context) return false end,
+						}),
+						PlaceObj('XTemplateAction', {
+							'ActionId', "deletePreset",
+							'ActionName', T(542708188649, --[[XTemplate MainMenu ActionName]] "Delete Preset"),
+							'ActionToolbar', "ActionBar",
+							'ActionShortcut', "D",
+							'ActionGamepad', "ButtonY",
+							'ActionState', function (self, host)
+								local context = g_FocusedModPreset and g_FocusedModPreset.context
+								local canDelete = context and not context.input_field and context.id ~= "default"
+								return canDelete and "enabled" or "hidden"
+							end,
+							'OnAction', function (self, host, source, ...)
+								local effect = self.OnActionEffect
+								local param = self.OnActionParam
+								if effect == "close" and host and host.window_state ~= "destroying" then
+									host:Close(param ~= "" and param or nil, source, ...)
+								elseif effect == "mode" and host then
+									assert(IsKindOf(host, "XDialog"))
+									host:SetMode(param)
+								elseif effect == "back" and host then
+									assert(IsKindOf(host, "XDialog"))
+									SetBackDialogMode(host)
+								elseif effect == "popup" then
+									local actions_view = GetParentOfKind(source, "XActionsView")
+									if actions_view then
+										actions_view:PopupAction(self.ActionId, host, source)
+									else
+										XShortcutsTarget:OpenPopupMenu(self.ActionId, terminal.GetMousePos())
+									end
+								else
+									--print(self.ActionId, "activated")
+								end
+							end,
+							'FXPress', "MainMenuButtonClick",
+							'__condition', function (parent, context)
+								return true
+							end,
+						}),
+						PlaceObj('XTemplateWindow', {
+							'__class', "XZuluToolBarList",
+							'Id', "idToolBar",
+							'ZOrder', 0,
+							'HAlign', "center",
+							'VAlign', "center",
+							'MinWidth', 500,
+							'MinHeight', 50,
+							'Background', RGBA(255, 255, 255, 0),
+							'Toolbar', "ActionBar",
+							'Show', "text",
+							'ButtonTemplate', "OptionsActionsButton",
+						}, {
+							PlaceObj('XTemplateFunc', {
+								'comment', "position buttons on both corners",
+								'name', "RebuildActions(self, ...)",
+								'func', function (self, ...)
+									XZuluToolBarList.RebuildActions(self, ...)
+									
+									local parent = self:GetButtonParent()
+									if #parent == 2 then
+										parent[1]:SetDock("left")
+										parent[2]:SetDock("right")
+									end
+									parent:SetMinWidth(self.MinWidth)
+								end,
+							}),
+							PlaceObj('XTemplateWindow', {
+								'comment', "gamepad observer",
+								'__context', function (parent, context) return "GamepadUIStyleChanged" end,
+								'__class', "XContextWindow",
+								'OnContextUpdate', function (self, context, ...)
+									ObjModified("action-button-mm")
+								end,
+							}),
+							}),
 						}),
 					}),
 				PlaceObj('XTemplateMode', {
@@ -3466,24 +3837,14 @@ PlaceObj('XTemplate', {
 							'comment', "list of options",
 							'Id', "idLoadGameListCont",
 							'Dock', "top",
+							'LayoutMethod', "HList",
 						}, {
-							PlaceObj('XTemplateWindow', {
-								'__class', "XZuluScroll",
-								'Id', "idScroll",
-								'Margins', box(0, 10, 0, 10),
-								'Dock', "right",
-								'HAlign', "right",
-								'UniformRowHeight', true,
-								'MouseCursor', "UI/Cursors/Hand.tga",
-								'Target', "idScrollArea",
-								'SnapToItems', true,
-								'AutoHide', true,
-							}),
 							PlaceObj('XTemplateWindow', {
 								'__class', "SnappingScrollArea",
 								'Id', "idScrollArea",
 								'IdNode', false,
-								'Dock', "left",
+								'MinWidth', 600,
+								'MaxWidth', 600,
 								'HandleKeyboard', false,
 								'VScroll', "idScroll",
 								'RightThumbScroll', true,
@@ -3541,7 +3902,7 @@ PlaceObj('XTemplate', {
 											if context.metadata.autosave then
 												child.idSaveEntry.idAutosave:SetVisible(true)
 											end
-											child.idSaveEntry.idName:SetText(SavenameToName(context.metadata.displayname or context.metadata.savename))
+											child.idSaveEntry.idName:SetText(context.metadata.displayname)
 											local saveState = context.metadata.save_game_state
 											local saveStateTurnNumber = context.metadata.turn_phase
 											child.idSaveEntry.idSaveState:SetText(GetSaveState(saveState, saveStateTurnNumber, saveStateTurnNumber))
@@ -3553,19 +3914,18 @@ PlaceObj('XTemplate', {
 											end
 											
 											local editField = child.idNewSave
-											editField.context = table.copy(context, "deep")
+											editField.context = context
 											if editField.context.newSave or (IsGameRuleActive("DeadIsDead") and not Game.isDev and editField.context.metadata.gameid == Game.id) then
 												child.idSaveEntry:ResolveId("idImgAbove"):SetVisible(true)
 												child.idSaveEntry:ResolveId("idName"):SetTextStyle("MMOptionEntryValue")
-												local saveNameText = T(914064246115, "NEW SAVE")
-												child.idSaveEntry.idName:SetText(_InternalTranslate(saveNameText))
+												child.idSaveEntry.idName:SetText(editField.context.text)
 												child.idSaveEntry.idSaveState:SetText("")
 												if GetUIStyleGamepad() then
 													child:SetSelected(true)
 													child.parent:SetSelection(2)
 												end
 												--g_SelectedSave = child.idSaveEntry.context
-												--editField:SetText(SavenameToName(editField.context.savename))
+												--editField:SetText(editField.context.text)
 												--editField:SetVisible(true)
 												--editField:SetFocus(true)
 												--editField:SelectAll()
@@ -3607,6 +3967,18 @@ PlaceObj('XTemplate', {
 										}),
 									}),
 								}),
+							PlaceObj('XTemplateWindow', {
+								'__class', "XZuluScroll",
+								'Id', "idScroll",
+								'Margins', box(0, 10, 0, 10),
+								'MinWidth', 7,
+								'MaxWidth', 7,
+								'UniformRowHeight', true,
+								'MouseCursor', "UI/Cursors/Hand.tga",
+								'Target', "idScrollArea",
+								'SnapToItems', true,
+								'AutoHide', true,
+							}),
 							}),
 						PlaceObj('XTemplateFunc', {
 							'name', "OnDelete",
@@ -3733,9 +4105,11 @@ PlaceObj('XTemplate', {
 						local lastScrollPos = scroll and scroll:GetScroll()
 						local lastSelected = list and list.selection and #list.selection >= 1 and list.selection
 						XContentTemplate.RespawnContent(self)
+						CreateRealTimeThread(function()
 						RunWhenXWindowIsReady(self, function()
-							if self.idScroll and lastScrollPos then self.idScroll:SetScroll(lastScrollPos) end
+							if self.idScroll and lastScrollPos then self.idScroll:ScrollTo(lastScrollPos) end
 							if self.idScrollArea and lastSelected then self.idScrollArea:SetSelection(lastSelected[1]) end
+						end)
 						end)
 					end,
 				}),
@@ -3771,6 +4145,7 @@ PlaceObj('XTemplate', {
 						if scrollArea then scrollArea:SetHandleKeyboard(false) end
 						mm.isMMFocused = true
 					end
+					ObjModified("NewSelectedMod")
 				end,
 			}),
 			}),
@@ -3779,7 +4154,7 @@ PlaceObj('XTemplate', {
 			'Id', "idSubSubContent",
 			'Margins', box(10, 0, 0, 0),
 			'UseClipBox', false,
-			'InternalModes', "items, empty, save, mod",
+			'InternalModes', "items, empty, save, mod, tags, presets",
 		}, {
 			PlaceObj('XTemplateWindow', {
 				'comment', "sub sub menu",
@@ -3894,6 +4269,7 @@ PlaceObj('XTemplate', {
 							PlaceObj('XTemplateWindow', {
 								'__class', "XZuluScroll",
 								'Id', "idItemsScroll",
+								'Margins', box(0, 0, 0, 15),
 								'Dock', "right",
 								'HAlign', "right",
 								'MouseCursor', "UI/Cursors/Hand.tga",
@@ -3916,6 +4292,212 @@ PlaceObj('XTemplate', {
 								end,
 							}),
 							}),
+						}),
+					}),
+				PlaceObj('XTemplateMode', {
+					'mode', "tags",
+				}, {
+					PlaceObj('XTemplateWindow', {
+						'Margins', box(-20, 0, 0, 0),
+						'Padding', box(0, 3, 0, 0),
+						'VAlign', "top",
+						'MinHeight', 587,
+						'MaxHeight', 587,
+					}, {
+						PlaceObj('XTemplateWindow', {
+							'__context', function (parent, context) return PredefinedModTags end,
+							'__class', "SnappingScrollArea",
+							'Id', "idItemsScrollArea",
+							'Margins', box(0, -5, 0, 0),
+							'Dock', "left",
+							'MinWidth', 300,
+							'MaxWidth', 300,
+							'VScroll', "idItemsScroll",
+							'GamepadInitialSelection', true,
+							'KeepSelectionOnRespawn', true,
+							'RightThumbScroll', true,
+						}, {
+							PlaceObj('XTemplateTemplate', {
+								'comment', "all tag",
+								'__context', function (parent, context) return {id = "All", display_name = "All", all_tag = true} end,
+								'__template', "SubSubMenuTagBtn",
+								'RolloverTemplate', "RolloverGeneric",
+								'IdNode', false,
+								'OnPress', function (self, gamepad)
+									local effect = self.OnPressEffect
+									if effect == "close" then
+										local win = self.parent
+										while win and not win:IsKindOf("XDialog") do
+											win = win.parent
+										end
+										if win then
+											win:Close(self.OnPressParam ~= "" and self.OnPressParam or nil)
+										end
+									elseif self.action then
+										local host = GetActionsHost(self, true)
+										if host then
+											host:OnAction(self.action, self, gamepad)
+										end
+									end
+								end,
+								'RolloverBackground', RGBA(255, 255, 255, 0),
+								'Name', "ALL",
+							}),
+							PlaceObj('XTemplateForEach', {
+								'comment', "tag",
+								'condition', function (parent, context, item, i)
+									return true
+								end,
+								'__context', function (parent, context, item, i, n) return context[i] end,
+								'run_after', function (child, context, item, i, n, last)
+									child:SetName(item.display_name)
+								end,
+							}, {
+								PlaceObj('XTemplateTemplate', {
+									'__template', "SubSubMenuTagBtn",
+									'RolloverTemplate', "RolloverGeneric",
+									'IdNode', false,
+									'OnPress', function (self, gamepad)
+										local effect = self.OnPressEffect
+										if effect == "close" then
+											local win = self.parent
+											while win and not win:IsKindOf("XDialog") do
+												win = win.parent
+											end
+											if win then
+												win:Close(self.OnPressParam ~= "" and self.OnPressParam or nil)
+											end
+										elseif self.action then
+											local host = GetActionsHost(self, true)
+											if host then
+												host:OnAction(self.action, self, gamepad)
+											end
+										end
+									end,
+									'RolloverBackground', RGBA(255, 255, 255, 0),
+								}),
+								}),
+							}),
+						PlaceObj('XTemplateAction', {
+							'ActionId', "idBack",
+							'ActionGamepad', "ButtonB",
+							'OnAction', function (self, host, source, ...)
+								if GetUIStyleGamepad() then
+									CloseOptionsChoiceSubmenu(host)
+									host:ResolveId("idSubMenu"):ResolveId("idScrollArea"):SelectFirstValidItem()
+								end
+							end,
+							'FXPress', "MainMenuButtonClick",
+						}),
+						PlaceObj('XTemplateWindow', {
+							'__class', "XZuluScroll",
+							'Id', "idItemsScroll",
+							'Margins', box(0, 0, 0, 15),
+							'Dock', "right",
+							'HAlign', "right",
+							'MouseCursor', "UI/Cursors/Hand.tga",
+							'Target', "idItemsScrollArea",
+							'SnapToItems', true,
+							'AutoHide', true,
+						}),
+						PlaceObj('XTemplateFunc', {
+							'name', "Open(self, ...)",
+							'func', function (self, ...)
+								XWindow.Open(self, ...)
+								GetDialogModeParam(self):SetisExpanded(true)
+							end,
+						}),
+						}),
+					}),
+				PlaceObj('XTemplateMode', {
+					'mode', "presets",
+				}, {
+					PlaceObj('XTemplateWindow', {
+						'Margins', box(-20, 0, 0, 0),
+						'Padding', box(0, 3, 0, 0),
+						'VAlign', "top",
+						'MinHeight', 587,
+						'MaxHeight', 587,
+					}, {
+						PlaceObj('XTemplateWindow', {
+							'__context', function (parent, context) return LocalStorage.ModPresets end,
+							'__class', "SnappingScrollArea",
+							'Id', "idItemsScrollArea",
+							'Margins', box(0, -5, 0, 0),
+							'Dock', "left",
+							'MinWidth', 300,
+							'MaxWidth', 300,
+							'VScroll', "idItemsScroll",
+							'GamepadInitialSelection', true,
+							'WorkUnfocused', true,
+							'KeepSelectionOnRespawn', true,
+							'RightThumbScroll', true,
+						}, {
+							PlaceObj('XTemplateForEach', {
+								'comment', "presets",
+								'condition', function (parent, context, item, i)
+									return true
+								end,
+								'__context', function (parent, context, item, i, n) return context[i] end,
+								'run_after', function (child, context, item, i, n, last)
+									child:SetContext(item)
+									child:SetName(GetModPresetName(item.id))
+								end,
+							}, {
+								PlaceObj('XTemplateTemplate', {
+									'__template', "SubSubMenuPresetBtn",
+									'RolloverTemplate', "RolloverGeneric",
+									'IdNode', false,
+									'OnPress', function (self, gamepad)
+										local effect = self.OnPressEffect
+										if effect == "close" then
+											local win = self.parent
+											while win and not win:IsKindOf("XDialog") do
+												win = win.parent
+											end
+											if win then
+												win:Close(self.OnPressParam ~= "" and self.OnPressParam or nil)
+											end
+										elseif self.action then
+											local host = GetActionsHost(self, true)
+											if host then
+												host:OnAction(self.action, self, gamepad)
+											end
+										end
+									end,
+									'RolloverBackground', RGBA(255, 255, 255, 0),
+								}),
+								}),
+							}),
+						PlaceObj('XTemplateAction', {
+							'ActionId', "idBack",
+							'ActionGamepad', "ButtonB",
+							'OnAction', function (self, host, source, ...)
+								if GetUIStyleGamepad() then
+									CloseOptionsChoiceSubmenu(host)
+									host:ResolveId("idSubMenu"):ResolveId("idScrollArea"):SelectFirstValidItem()
+								end
+							end,
+							'FXPress', "MainMenuButtonClick",
+						}),
+						PlaceObj('XTemplateWindow', {
+							'__class', "XZuluScroll",
+							'Id', "idItemsScroll",
+							'Margins', box(0, 0, 0, 8),
+							'Dock', "right",
+							'HAlign', "right",
+							'MouseCursor', "UI/Cursors/Hand.tga",
+							'Target', "idItemsScrollArea",
+							'SnapToItems', true,
+							'AutoHide', true,
+						}),
+						PlaceObj('XTemplateFunc', {
+							'name', "Open(self, ...)",
+							'func', function (self, ...)
+								XWindow.Open(self, ...)
+								GetDialogModeParam(self):SetisExpanded(true)
+							end,
+						}),
 						}),
 					}),
 				PlaceObj('XTemplateMode', {
@@ -4183,7 +4765,7 @@ PlaceObj('XTemplate', {
 												'HandleMouse', false,
 												'TextStyle', "LoadSaveMods",
 												'Translate', true,
-												'Text', T(824384517944, --[[XTemplate MainMenu Text]] "<style SaveMapEntryTitle>Installed mods: </style>   Unknown"),
+												'Text', T(824384517944, --[[XTemplate MainMenu Text]] "<style SaveMapEntryTitle>Installed mods: </style>   None"),
 												'WordWrap', false,
 												'Shorten', true,
 											}),
@@ -4343,21 +4925,9 @@ PlaceObj('XTemplate', {
 								'Dock', "bottom",
 							}, {
 								PlaceObj('XTemplateWindow', {
-									'__class', "XZuluScroll",
-									'Id', "idInfoScroll",
-									'Dock', "right",
-									'MouseCursor', "UI/Cursors/Hand.tga",
-									'Target', "idInfoTextArea",
-									'SnapToItems', true,
-									'AutoHide', true,
-								}),
-								PlaceObj('XTemplateWindow', {
 									'comment', "info of mod",
-									'__class', "XScrollArea",
 									'Id', "idInfoTextArea",
-									'IdNode', false,
 									'LayoutMethod', "VList",
-									'VScroll', "idInfoScroll",
 								}, {
 									PlaceObj('XTemplateWindow', {
 										'comment', "title",
@@ -4411,6 +4981,34 @@ PlaceObj('XTemplate', {
 												}),
 											}),
 										PlaceObj('XTemplateWindow', {
+											'__condition', function (parent, context) return false end,
+											'__class', "XImage",
+											'Id', "idWarningImg",
+											'Margins', box(0, 0, 10, 0),
+											'Dock', "right",
+											'VAlign', "center",
+											'MinHeight', 30,
+											'MaxHeight', 30,
+											'Visible', false,
+											'FoldWhenHidden', true,
+											'HandleMouse', true,
+											'MouseCursor', "UI/Cursors/Hand.tga",
+											'Image', "UI/Hud/attack_of_opportunity.png",
+											'ImageFit', "height",
+										}, {
+											PlaceObj('XTemplateFunc', {
+												'name', "OnMouseButtonDown(self, pos, button)",
+												'func', function (self, pos, button)
+													PlayFX("MainMenuButtonClick", "start")
+													local _, _, _, moreInfo = ModsUIGetModCorruptedStatus(Mods[g_SelectedMod.ModID])
+													CreateRealTimeThread(function()
+														WaitMessage(terminal.dekstop, T(137802317861, "Warning"), moreInfo, T(413525748743, "Ok"))
+													end)
+													return "break"
+												end,
+											}),
+											}),
+										PlaceObj('XTemplateWindow', {
 											'__class', "XText",
 											'Id', "idModTitle",
 											'Margins', box(10, 0, 0, 0),
@@ -4424,9 +5022,14 @@ PlaceObj('XTemplate', {
 										}),
 										}),
 									PlaceObj('XTemplateWindow', {
-										'comment', "mod info below title strip",
+										'__class', "XScrollArea",
+										'Id', "idTextBelowStrip",
+										'IdNode', false,
 										'Padding', box(10, 10, 10, 5),
+										'MinHeight', 290,
+										'MaxHeight', 290,
 										'LayoutMethod', "VList",
+										'VScroll', "idInfoScroll",
 									}, {
 										PlaceObj('XTemplateWindow', {
 											'Id', "idAthorAndVersion",
@@ -4446,9 +5049,11 @@ PlaceObj('XTemplate', {
 												'__class', "XText",
 												'Id', "idAuthorName",
 												'Margins', box(0, 0, 5, 0),
+												'MaxWidth', 300,
 												'HandleMouse', false,
 												'TextStyle', "SaveMapEntry",
 												'WordWrap', false,
+												'Shorten', true,
 											}),
 											PlaceObj('XTemplateWindow', {
 												'__class', "XText",
@@ -4471,18 +5076,44 @@ PlaceObj('XTemplate', {
 											}),
 											}),
 										PlaceObj('XTemplateWindow', {
-											'__class', "XScrollArea",
-											'Id', "idDescr",
-											'IdNode', false,
-											'MaxHeight', 150,
-											'LayoutMethod', "VList",
-											'VScroll', "idDescrScroll",
+											'Id', "idRequiredMods",
+											'Margins', box(0, 10, 0, 0),
+											'LayoutMethod', "HList",
+											'Visible', false,
+											'FoldWhenHidden', true,
 										}, {
 											PlaceObj('XTemplateWindow', {
 												'__class', "XText",
-												'Id', "idDescrText",
-												'OnLayoutComplete', function (self)  end,
-												'TextStyle', "ModDescription",
+												'Id', "idListMods",
+												'HandleMouse', false,
+												'TextStyle', "SaveMapEntry",
+											}),
+											}),
+										PlaceObj('XTemplateWindow', {
+											'Id', "idExternalLinks",
+											'Margins', box(0, 10, 0, 0),
+											'MaxWidth', 400,
+											'LayoutMethod', "HList",
+											'Visible', false,
+											'FoldWhenHidden', true,
+										}, {
+											PlaceObj('XTemplateWindow', {
+												'__class', "XText",
+												'Id', "idExternalLinksTitle",
+												'Margins', box(0, 0, 5, 0),
+												'FoldWhenHidden', true,
+												'HandleMouse', false,
+												'TextStyle', "SaveMapEntryTitle",
+												'Translate', true,
+												'Text', T(221775475191, --[[XTemplate MainMenu Text]] "Links:"),
+											}),
+											PlaceObj('XTemplateWindow', {
+												'__class', "XText",
+												'Id', "idListLinks",
+												'FoldWhenHidden', true,
+												'MouseCursor', "UI/Cursors/Hand.tga",
+												'TextStyle', "ModExternalLink",
+												'WordWrap', false,
 												'Shorten', true,
 											}, {
 												PlaceObj('XTemplateFunc', {
@@ -4492,40 +5123,32 @@ PlaceObj('XTemplate', {
 													end,
 												}),
 												}),
-											PlaceObj('XTemplateWindow', {
-												'__class', "XZuluScroll",
-												'Id', "idDescrScroll",
-												'Dock', "right",
-												'MouseCursor', "UI/Cursors/Hand.tga",
-												'Target', "idDescr",
-												'AutoHide', true,
+											}),
+										PlaceObj('XTemplateWindow', {
+											'__class', "XText",
+											'Id', "idDescrText",
+											'Margins', box(0, 10, 0, 10),
+											'OnLayoutComplete', function (self)  end,
+											'TextStyle', "ModDescription",
+											'Shorten', true,
+										}, {
+											PlaceObj('XTemplateFunc', {
+												'name', "OnHyperLink(self, hyperlink, argument, hyperlink_box, pos, button)",
+												'func', function (self, hyperlink, argument, hyperlink_box, pos, button)
+													OpenUrl(hyperlink, "force external browser")
+												end,
 											}),
 											}),
 										PlaceObj('XTemplateWindow', {
-											'Id', "idRequiredMods",
-											'Margins', box(0, 10, 0, 0),
-											'LayoutMethod', "HList",
-											'Visible', false,
-											'FoldWhenHidden', true,
-										}, {
-											PlaceObj('XTemplateWindow', {
-												'__class', "XText",
-												'Id', "idRequiredModsTitle",
-												'Margins', box(0, 0, 5, 0),
-												'HandleMouse', false,
-												'TextStyle', "SaveMapEntryTitle",
-												'Translate', true,
-												'Text', T(895340304808, --[[XTemplate MainMenu Text]] "Required Mods:"),
-											}),
-											PlaceObj('XTemplateWindow', {
-												'__class', "XText",
-												'Id', "idListMods",
-												'HandleMouse', false,
-												'TextStyle', "SaveMapEntry",
-												'WordWrap', false,
-												'Shorten', true,
-											}),
-											}),
+											'__class', "XZuluScroll",
+											'Id', "idInfoScroll",
+											'Margins', box(10, 0, 0, 0),
+											'Dock', "right",
+											'MouseCursor', "UI/Cursors/Hand.tga",
+											'Target', "idTextBelowStrip",
+											'SnapToItems', true,
+											'AutoHide', true,
+										}),
 										}),
 									}),
 								}),

@@ -61,13 +61,8 @@ PlaceObj('Conversation', {
 				},
 			}),
 			PlaceObj('CityGrantLoyalty', {
-				Amount = 5,
+				Amount = 10,
 				City = "Fleatown",
-				SpecialConversationMessage = T(170448034987, --[[Conversation Hermit_1 SpecialConversationMessage]] "reunited the <em>Ghost Butler</em> and the <em>Hermit</em>"),
-			}),
-			PlaceObj('CityGrantLoyalty', {
-				Amount = 5,
-				City = "PortDiancie",
 				SpecialConversationMessage = T(170448034987, --[[Conversation Hermit_1 SpecialConversationMessage]] "reunited the <em>Ghost Butler</em> and the <em>Hermit</em>"),
 			}),
 			PlaceObj('GrantExperienceSector', {
@@ -146,13 +141,8 @@ PlaceObj('Conversation', {
 				Amount = "XPQuestReward_Medium",
 			}),
 			PlaceObj('CityGrantLoyalty', {
-				Amount = 5,
+				Amount = 10,
 				City = "Fleatown",
-				SpecialConversationMessage = T(170448034987, --[[Conversation Hermit_1 SpecialConversationMessage]] "reunited the <em>Ghost Butler</em> and the <em>Hermit</em>"),
-			}),
-			PlaceObj('CityGrantLoyalty', {
-				Amount = 5,
-				City = "PortDiancie",
 				SpecialConversationMessage = T(170448034987, --[[Conversation Hermit_1 SpecialConversationMessage]] "reunited the <em>Ghost Butler</em> and the <em>Hermit</em>"),
 			}),
 			PlaceObj('ApplyGuiltyOrRighteous', {

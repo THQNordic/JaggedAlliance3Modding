@@ -1251,7 +1251,12 @@ local function __AIExecutionControllerExecute(self, units, reposition, played_un
 			else
 				unit = PickClosestUnit(playing)
 			end
-			table.remove_value(playing, unit)
+			if unit then
+				table.remove_value(playing, unit)
+			else
+				-- no valid unit was found
+				table.iclear(playing)
+			end
 			
 			if IsValid(unit) and not unit:IsDead() then
 				unit.pending_aware_state = nil

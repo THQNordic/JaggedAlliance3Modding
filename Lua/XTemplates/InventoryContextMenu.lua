@@ -1061,7 +1061,7 @@ PlaceObj('XTemplate', {
 					end
 					
 					if not err then
-						local unit = context.context
+						local unit = IsKindOf(context.context, "SquadBag") and context.unit or context.context
 						if IsKindOf(unit, "UnitData") then
 							local squad = unit.Squad and gv_Squads[unit.Squad]
 							local sectorId = squad.CurrentSector
@@ -1277,7 +1277,7 @@ PlaceObj('XTemplate', {
 					elseif not IsKindOfClasses(container, "Unit", "UnitData") then
 						err = T(926573774956, "Not in Inventory")
 					else
-						local unit = container
+						local unit = IsKindOf(container, "SquadBag") and context.unit or container
 						if IsKindOf(unit, "UnitData") then
 							local squad = unit.Squad and gv_Squads[unit.Squad]
 							local sectorId = squad.CurrentSector

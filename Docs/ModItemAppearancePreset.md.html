@@ -3,39 +3,41 @@
 Appearance Preset
 ====
 
-This mod item allows to change the appearance of the exisiting units in the game and create new appearances for custom units. You can choose different parts of clothing for the unit from the dropdowns and change the colorization for some of the exisiting assets. Please note that the assets that are part of the mercenaries' appearance cannot be colorized.  
+This mod item allows to change the appearance of existing units in the game and create new appearances for custom units. You can choose different parts of clothing for the unit from the dropdown menus and change the colorization for some of the existing assets. However, assets that are part of the mercenaries' appearance cannot be colorized.  
 
-Please note that you will be resticted from attaching assets using both female and male animations in the same appearance preset. This will result in errors. 
+Please note that you will be restricted from attaching assets using both female and male animations in the same appearance preset. Doing so will result in errors. 
 
 You can import custom clothing assets following the instructions in the [Entity](ModItemEntity.md.html) mod item and the New Imp Merc sample mod.
-The most important aspest is to set up the appropriate class of the entity so that it can be recognized by the game and appear in the dropdown for the dedicated part. 
+The most important aspect is to set up the appropriate class of the entity so that it can be recognized by the game and appear in the dropdown for the dedicated part. 
 
 Classes
 ==========
 
-**For Male Clothing and Equipment**
-Make sure that when you export the entitity from Blender, it is set to inherit Male animations. The class is set in the Entity mod item, where you can import the asset. After the import, set the class to one of the following depending on the equipment type:
-* Body - assets in the dropdown have class CharacterBodyMale - used for Tops
-* Head - assets in the dropdown have class CharacterHeadMale - this is the Head, whithout the hair
-* Shirst - the assets in the dropdown have class CharacterShirtMale - they are not used in the game, use Body for the tops instead
-* Pants -  assets in the dropdown have class CharacterPantsMale - used for bottoms and bottom parts
-* Armor - assets in the dropdown have class CharacterArmorMale - applied over the tops, for example Vests 
-* Chest - assets in the dropdown have class CharacterChestMale - used for accessories that are placed on the chest - for example Binoculars
-* Hip - assets in the dropdown have class CharacterHipMale - used for accessories that are placed on the hip - Medical bags
-* Hat - assets in the dropdown have class CharacterHatMale - Hats are usually replacing the hair of the unit 
-* Hair - assets in the dropdown have class CharacterHairMale - Hair 
+**Male Clothing and Equipment**
 
-**For Female Clothing and Equipment**
-Make sure that when you export the entitity from Blender, it is set to inherit Female animations. The class is set in the Entity mod item, where you can import the asset. After the import, set the class to one of the following depending on the equipment type:
-* Body - assets in the dropdown have class CharacterBodyFemale - used for Tops
-* Head - assets in the dropdown have class CharacterHeadFemale - this is the Head, whithout the hair
-* Shirst - the assets in the dropdown have class CharacterShirtFemale - they are not used in the game, use Body for the tops instead
-* Pants -  assets in the dropdown have class CharacterPantsFemale - used for bottoms and bottom parts
-* Armor - assets in the dropdown have class CharacterArmorFemale - applied over the tops, for example Vests 
-* Chest - assets in the dropdown have class CharacterChestFemale - used for accessories that are placed on the chest - for example Binoculars
-* Hip - assets in the dropdown have class CharacterHipFemale - used for accessories that are placed on the hip - Medical bags
-* Hat - assets in the dropdown have class CharacterHatFemale - Hats are usually replacing the hair of the unit 
-* Hair - assets in the dropdown have class CharacterHairFemale - Hair 
+Make sure that when you export the entity from Blender, it is set to inherit Male animations. The class is set in the Entity mod item where you can import the asset. After the import, set the class to one of the following depending on the equipment type:
+* Body - assets in the dropdown menu have class CharacterBodyMale. Used for Tops.
+* Head - assets in the dropdown menu have class CharacterHeadMale. This is the Head without the hair.
+* Shirt - the assets in the dropdown menu have class CharacterShirtMale. Not used in the game, use Body for the tops instead.
+* Pants -  assets in the dropdown menu have class CharacterPantsMale. Used for bottoms and bottom parts.
+* Armor - assets in the dropdown menu have class CharacterArmorMale. Applied over the tops, for example Vests.
+* Chest - assets in the dropdown menu have class CharacterChestMale. Used for accessories that are placed on the chest, for example Binoculars.
+* Hip - assets in the dropdown menu have class CharacterHipMale. Used for accessories that are placed on the hip, such as Medical bags.
+* Hat - assets in the dropdown menu have class CharacterHatMale. Hats usually replace the hair of the unit.
+* Hair - assets in the dropdown menu have class CharacterHairMale.
+
+**Female Clothing and Equipment**
+
+Make sure that when you export the entity from Blender, it is set to inherit Female animations. The class is set in the Entity mod item where you can import the asset. After the import, set the class to one of the following depending on the equipment type:
+* Body - assets in the dropdown menu have class CharacterBodyFemale. Used for Tops.
+* Head - assets in the dropdown menu have class CharacterHeadFemale. This is the Head without the hair.
+* Shirt - the assets in the dropdown menu have class CharacterShirtFemale. Not used in the game, use Body for the tops instead.
+* Pants -  assets in the dropdown menu have class CharacterPantsFemale. Used for bottoms and bottom parts.
+* Armor - assets in the dropdown menu have class CharacterArmorFemale. Applied over the tops, for example Vests.
+* Chest - assets in the dropdown menu have class CharacterChestFemale. Used for accessories that are placed on the chest, for example Binoculars.
+* Hip - assets in the dropdown menu have class CharacterHipFemale. Used for accessories that are placed on the hip, such as Medical bags.
+* Hat - assets in the dropdown menu have class CharacterHatFemale. Hats usually replace the hair of the unit.
+* Hair - assets in the dropdown menu have class CharacterHairFemale. 
 
 
 

@@ -1541,14 +1541,26 @@ function SavegameSessionDataFixups.ReturnToErnie(session_data)
 end
 
 function SavegameSessionDataFixups.BunkerReveal(session_data)
+	if session_data.game.Campaign ~= "HotDiamonds" then return end
+
 	local bunkerSector = table.get(session_data, "gvars", "gv_Sectors", "H3_Underground")
 	if not bunkerSector then return end
 
 	bunkerSector.reveal_allowed = true
 end
 
-
-
+function SavegameSessionDataFixups.NewUndergroundSectorsRevealCheck(session_data)
+	if session_data.game.Campaign ~= "HotDiamonds" then return end
+	
+	-- Random sector from the mainland
+	local randomMainland = table.get(session_data, "gvars", "gv_Sectors", "C11")
+	local sectors = table.get(session_data, "gvars", "gv_Sectors")
+	if randomMainland.reveal_allowed then
+		for id, sector in pairs(sectors) do
+			sector.reveal_allowed = true
+		end
+	end
+end
 
 
 local LabStrings = {

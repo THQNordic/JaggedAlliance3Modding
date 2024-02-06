@@ -26,6 +26,16 @@ function Debris:SetDynamicData(data)
 	end
 end
 
+--[[
+--return in case of floating debris
 function Debris:ShouldBeVisibileWhileFading()
 	return not not GetPassSlab(self)
+end
+]]
+
+local prev_func = Debris.enum_obj
+function Debris.enum_obj(obj, ...)
+	if prev_func(obj, ...) and not IsKindOf(obj, "TreeTop") then
+		return true
+	end
 end

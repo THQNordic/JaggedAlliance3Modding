@@ -12,6 +12,7 @@ DefineClass.SquadName = {
 	EditorMenubarName = "Squad Names",
 	EditorMenubar = "Editors.Other",
 	EditorViewPresetPostfix = Untranslated(" <color 75 105 198><Name>"),
+	Documentation = "Defines a new squad name.",
 }
 
 DefineModItemPreset("SquadName", { EditorName = "Squad name", EditorSubmenu = "Unit" })

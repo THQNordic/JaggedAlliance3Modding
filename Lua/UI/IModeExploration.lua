@@ -930,6 +930,7 @@ function IsActivePauseAvailable()
 end
 
 function SetActivePause(enable, player_id)
+	if enable and not IsActivePauseAvailable() then return end
 	gv_ActivePause = not not enable
 	local paused = not not (IsPaused() and PauseReasons.ActivePause)
 	if paused ~= gv_ActivePause then
@@ -958,22 +959,17 @@ function SetActivePause(enable, player_id)
 	end
 end
 
-function ToggleActivePause(player_id)
-	SetActivePause(not gv_ActivePause, player_id)
-end
-
 function IsActivePaused()
 	return gv_ActivePause
 end
 
 OnMsg.CombatActionEnd = ExplorationClearExclusiveAction
 
-function OnMsg.SetpieceStarted()
-	SetActivePause()
-end
+OnMsg.SetpieceStarted = SetActivePause
+OnMsg.CombatStarting = SetActivePause
 
-function NetSyncEvents.ActivePause(player_id)
-	CreateGameTimeThread(ToggleActivePause, player_id)
+function NetSyncEvents.ActivePause(enable, player_id)
+	CreateGameTimeThread(SetActivePause, enable, player_id)
 end
 
 function SavegameSessionDataFixups.ActivePauseOption(data)

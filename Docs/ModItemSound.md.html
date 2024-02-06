@@ -3,7 +3,7 @@
 Sound
 ===============
 
-This mod item allows you to create sound presets, which are used to play sound effects via ActionFXSound. You can read more about the ActionFXSound mod item [here](ModItemActionFXSound.md.html). Each sound preset consists of a list of samples. These samples contain the path to the sound file (in the opus file format) and a frequency. When the sound is played, a sample is picked at random based on the given sample frequencies. Samples with higher frequency values will be played more often than the ones with lower values.
+This mod item allows you to create sound presets which are used to play sound effects via ActionFXSound. You can read more about the ActionFXSound mod item [here](ModItemActionFXSound.md.html). Each sound preset consists of a list of samples. These samples contain the path to the sound file (in the opus file format) and a frequency. When the sound is played, a sample is picked at random based on the given sample frequencies. Samples with higher frequency values will be played more often than the ones with lower values.
 
 Properties
 ---------------
@@ -12,7 +12,7 @@ Sound Type (self.type)
 : This is the type of the sound preset. See the Sound Types section for more information.
 
 looping (self.looping)
-: Whether the chosen sample should be played once or looped until explicitly stopped. Note that the sample to be played is picked at the beginning and will not change during the loop.
+: Defines whether the chosen sample should be played once, or looped until explicitly stopped. Note that the sample to be played is picked at the beginning and will not change during the loop.
 
 periodic (self.periodic)
 : When periodic is set to true, different samples with random delay between them will be chosen.
@@ -36,22 +36,22 @@ random_periodic_delay (self.random_periodic_delay)
 : Maximum amount of random delay added to periodic_delay (in ms). Enabled only when periodic is set to true.
 
 loop_start (self.loop_start)
-: The time (in ms) from the beginning of the sample, at which the loop should start.
+: The time (in ms) from the beginning of the sample at which the loop should start.
 
 loop_end (self.loop_end)
-: The time (in ms) from the beginning of the sample, at which the loop should end.
+: The time (in ms) from the beginning of the sample at which the loop should end.
 
 Sound Types
 ===============
-Each sound preset has a sound type. The sound type defines common properties for all the sounds, associated with it. It also imposes a limit on the maximum number of sounds from a type, which can be playing at the same time. 
+Each sound preset has a sound type. The sound type defines common properties for all the sounds associated with it. It also imposes a limit on the maximum number of sounds from a type which can be playing at the same time. 
 
 Properties
 ---------------
 menu_group
-: The menu group, to which this sound type belongs. These groups are in turn associated with SoundOptionGroups, the volumes of which can be controlled through the options menu.
+: The menu group to which this sound type belongs. These groups are in turn associated with SoundOptionGroups the volumes of which can be controlled through the options menu.
 
 channels
-: The maximum number of sounds from this sound type, which can be played at once.
+: The maximum number of sounds from this sound type which can be played at once.
 
 volume
 : Volume of the sound type.
@@ -72,7 +72,7 @@ pause
 : Can be paused.
 
 restricted
-: Whether the sound can be broadcast when streaming. Used for sounds or music, which are not licensed for streaming.
+: Whether the sound can be broadcast when streaming. Used for sounds or music which are not licensed for streaming.
 
 mindistance
 : No attenuation below that distance (in meters). In case of zero the sound group mindistance is used.

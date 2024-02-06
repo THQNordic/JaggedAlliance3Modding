@@ -209,6 +209,9 @@ PlaceObj('QuestsDef', {
 						PlaceObj('SectorCheckOwner', {
 							sector_id = "C16",
 						}),
+						PlaceObj('SectorCheckOwner', {
+							sector_id = "C20",
+						}),
 					},
 				}),
 			},

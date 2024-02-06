@@ -29,7 +29,7 @@ DefineClass.Wounded = {
 		}),
 	},
 	DisplayName = T(646181611891, --[[CharacterEffectCompositeDef Wounded DisplayName]] "Wounded"),
-	Description = T(625596846196, --[[CharacterEffectCompositeDef Wounded Description]] "Maximum <em>HP reduced by <MaxHpReductionPerStack></em> per wound. Cured by the <em>Treat Wounds</em> Operation in the Sat View"),
+	Description = T(625596846196, --[[CharacterEffectCompositeDef Wounded Description]] "Maximum <em>HP reduced by <MaxHpReductionPerStack></em> per wound. Cured by the <em>Treat Wounds</em> Operation in the Sat View.\n\n<if(IsGameRuleActive('HeavyWounds'))>Wounds also progressively impair <em>Accuracy</em> and <em>Free Move</em> due to the Heavy Wounds game rule.</if>"),
 	OnAdded = function (self, obj)
 		RecalcMaxHitPoints(obj)
 		

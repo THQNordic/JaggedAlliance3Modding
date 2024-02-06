@@ -336,7 +336,6 @@ DefineClass.HackMarker = {
 		{ category = "Grant", id = "MoneyWeight", name = "Money Weight", editor = "number", default = 7000, min = 0},
 		{ category = "Grant", id = "IntelWeight", name = "Intel Weight", editor = "number", default = 3000, min = 0},
 		{ category = "Grant", id = "MoneyAmount", name = "Money to Grant", editor = "number", default = 250},
-		{ category = "Grant", id = "IntelSectorId", name = "Intel SectorId", help = "Sector to gain Intel for. Leave empty for random.", editor = "text", default = ""},
 		{ category = "Interactable", id = "Visuals", name = "Visuals", editor = "choice", default = "UI/Hud/iw_hack", items = AllInteractableIcons },
 		{ category = "Grid Marker", id = "Groups",  name = "Groups", editor = "string_list", items = function() return GridMarkerGroupsCombo() end, default = {"Hack"}, arbitrary_value = true, },
 	},

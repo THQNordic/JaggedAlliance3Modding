@@ -264,10 +264,16 @@ function FreeAttack(unit, target, action, isFreeAim, target_as_pos, meta_action_
 	end
 
 	RequestPixelWorldPos(cursor_pos)
-	WaitNextFrame(6)
-	local preciseAttackPt = ReturnPixelWorldPos()
+	local preciseAttackPt
 	if action.AimType == "cone" and target_as_pos then
 		preciseAttackPt = target_as_pos
+	else
+		local time = now()
+		while not preciseAttackPt and now() < time + 150 do
+			WaitNextFrame()
+			preciseAttackPt = ReturnPixelWorldPos()
+		end
+		preciseAttackPt = preciseAttackPt or GetCursorPos()
 	end
 	
 	local camera_pos = camera.GetEye()

@@ -50,17 +50,19 @@ PlaceObj('XTemplate', {
 						local mercs = GetOperationProfessionals(sector.Id, "TrainMercs")
 						if next(mercs) then
 							CreateRealTimeThread(function(self, parent)
+								local popupHost = GetDialog("PDADialogSatellite")
+								popupHost = popupHost and popupHost:ResolveId("idDisplayPopupHost")
+							
 								local prop_meta_old = table.find_value(UnitPropertiesStats:GetProperties(), "id", prev_val)
 								local prop_meta_new = table.find_value(UnitPropertiesStats:GetProperties(), "id", value)
 								local dlg = CreateQuestionBox(
-									GetDialog("PDADialog"),
+									popupHost,
 									T(1000599, "Warning"),
 									T{464840818810, "Do you want to end current <stat_name> training and start training <new_stat_name>",
 										stat_name = prop_meta_old.name, new_stat_name = prop_meta_new.name},
 									T(689884995409, "Yes"),
 									T(782927325160, "No"))
-								dlg:SetModal()	
-								local res = dlg:Wait()	
+								local res = dlg:Wait()								
 								if res == "ok" then
 									sector.training_stat = value
 									mercs_list:OnContextUpdate()

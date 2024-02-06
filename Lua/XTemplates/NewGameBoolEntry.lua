@@ -27,8 +27,21 @@ PlaceObj('XTemplate', {
 					self.idOnOff:SetText(T(451208390592, "NO"))
 				end
 			elseif IsKindOf(self.context, "GameRuleDef") then
-				NewGameObj["game_rules"][self.context.id] = not not NewGameObj["game_rules"][self.context.id]
-				self.idOnOff:SetText(gameObj["game_rules"][self.context.id] and T(990123013349, "YES") or T(451208390592, "NO"))
+				local rule = self.context
+				local rule_id = rule.id
+				NewGameObj["game_rules"][rule_id] = not not NewGameObj["game_rules"][rule_id]
+				self.idOnOff:SetText(gameObj["game_rules"][rule_id] and T(990123013349, "YES") or T(451208390592, "NO"))
+				local text = rule.description				
+				if rule.flavor_text~="" then
+					text = T{334322641039, "<description><newline><newline><flavor><flavor_text></flavor>", rule}
+				end
+				if rule.advanced then
+					text = text.."\n\n"..T(292693735449, "<flavor>The advanced game rules are not recommended for your first playthrough!</flavor>")
+				end
+				if rule.option and rule_id~="ForgivingMode" and rule_id~="ActivePause" then
+					text = text.."\n\n"..T(373450409022, "<flavor>You can change this option at any time during gameplay.</flavor>")
+				end
+				self:SetRolloverText(text)
 			else
 				NewGameObj["settings"][ self.context.id] = not not NewGameObj["settings"][self.context.id]
 				self.idOnOff:SetText(NewGameObj["settings"][self.context.id] and T(990123013349, "YES") or T(451208390592, "NO"))
@@ -63,9 +76,7 @@ PlaceObj('XTemplate', {
 				local value = not NewGameObj["game_rules"][self.context.id]
 				NewGameObj["game_rules"][self.context.id] = value
 				--NetChangeGameInfo({start_info = NewGameObj})
-				if self.context.id=="ForgivingMode" then
-				--	SetAccountStorageOptionValue("ForgivingModeToggle", value)
-				end
+			
 				if netInGame and NetIsHost() then
 					local context = GetDialog(self):ResolveId("node").idSubMenu.context
 					CreateRealTimeThread(function(invited_player_id)

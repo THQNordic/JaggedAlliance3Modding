@@ -54,7 +54,7 @@ function RefreshMercSelection()
 end
 
 function OnMsg.Resume()
-	if SelectedObj then
+	if SelectedObj and IsKindOf(SelectedObj, "Unit") then
 		--while game is paused ui actions are disabled (this was due to players being able to shoot during pause in coop)
 		--if last ui action recalc was during pause all actions for the selected unit would be greyed out
 		SelectedObj:RecalcUIActions()
@@ -328,6 +328,7 @@ function ShowMPLobbyError(context, err)
 		if not netInGame then return false end
 		context_string = T(789332217909, "Lost connection to multiplayer server.")
 	elseif context == "disconnect-after-leave-game" then
+		if not netInGame then return false end
 		context_string = T(789332217909, "Lost connection to multiplayer server.")
 	elseif context == "busy" then
 		context_string = T(493609285611, "Player is busy.")
@@ -457,9 +458,9 @@ function LeaveMultiplayer(reason)
 	end
 end
 
-function MultiplayerLobbySetUI(mode, param) -- todo: check if param actually does anything
+function MultiplayerLobbySetUI(mode, param, campaignId) -- todo: check if param actually does anything
 	if not CanYield() then
-		CreateRealTimeThread(MultiplayerLobbySetUI, mode, param)
+		CreateRealTimeThread(MultiplayerLobbySetUI, mode, param, campaignId)
 		return
 	end
 	
@@ -468,10 +469,7 @@ function MultiplayerLobbySetUI(mode, param) -- todo: check if param actually doe
 	
 	if mode ~= "empty" and not netInGame then
 		local err = PlatformCheckMultiplayerRequirements()
-		if err then 
-			ShowMPLobbyError("connect", err) 
-			return
-		end
+		if err then return ShowMPLobbyError("connect", err) end
 	end
 	
 	-- Try to connect to the server first
@@ -483,14 +481,32 @@ function MultiplayerLobbySetUI(mode, param) -- todo: check if param actually doe
 		end
 	end
 	
+	if mode == "multiplayer_host" and campaignId then
+		local err = HostMultiplayerGame(param, campaignId)
+		if err then
+			ShowMPLobbyError(false, err)
+			mode = "empty"
+		end
+	end
+	
+	local mpCampaignChoice
+	if mode == "multiplayer_host_campaign_choice" then
+		ui:ResolveId("idSubContent"):SetMode("newgame01", {mp = true, visibility = param})
+		mpCampaignChoice = true
+	end
+	
 	if ui.Mode == "" and mode ~= "empty" then 
 		ui:SetMode("Multiplayer")
 		ShowMultiplayerModsPopup("no_wait")
 	elseif mode == "empty" then
 		ui:SetMode("") 
 	end
-	if ui:ResolveId("idSubContent").Mode ~= mode then
+	if ui:ResolveId("idSubContent").Mode ~= mode and not mpCampaignChoice then
 		ui:ResolveId("idSubContent"):SetMode(mode, param)
+	end
+	
+	if mpCampaignChoice then
+		mode = "multiplayer_host"
 	end
 	
 	-- Todo: actions from mode should populate buttons
@@ -534,9 +550,7 @@ function UIHostGame()
 		return
 	end
 
-	local dlg = OpenDialog("MultiplayerHostQuestion")
-	dlg:SetModal()
-	dlg:SetDrawOnTop(true)
+	local dlg = OpenDialog("MultiplayerHostQuestion", terminal.desktop)
 	local visible_to = dlg:Wait()
 	if not visible_to then
 		local ui = GetMultiplayerLobbyDialog()
@@ -553,13 +567,16 @@ function UIHostGame()
 	end
 	
 	NewGameObj = false
-	local err = HostMultiplayerGame(visible_to)
-	if err then
-		ShowMPLobbyError(false, err)
-		return
+	if MultipleCampaignPresetsPresent() then
+		MultiplayerLobbySetUI("multiplayer_host_campaign_choice", visible_to)
+	else
+		local err = HostMultiplayerGame(visible_to, "HotDiamonds")
+		if err then
+			ShowMPLobbyError(false, err)
+			return
+		end
+		MultiplayerLobbySetUI("multiplayer_host", visible_to)
 	end
-	
-	MultiplayerLobbySetUI("multiplayer_host", visible_to)
 end
 
 function UIJoinGame(game, direct)
@@ -711,6 +728,7 @@ function NotifyPlayerLeft(player, reason)
 			g_ForceLeaveGameDialog:Wait()
 			g_ForceLeaveGameDialog = false
 			
+			CloseBlockingDialogs() --this attempts to close weapon mod instantly, the next call closes it with a transition
 			OpenPreGameMainMenu()
 			Msg("ForceLeaveGameEnd")
 			return
@@ -1327,8 +1345,15 @@ function OnMsg.NetPlayerMessage(someTableIdk, player_name, player_id, msg, gameI
 		if err then
 			ShowMPLobbyError(step, err)
 			NetCall("rfnPlayerMessage", player_id, "cancel_invite")
+			NetCall("rfnPlayerMessage", player_id, "invite_failed", step or err)
 		end
 	end)
+end
+
+function OnMsg.NetPlayerMessage(someTableIdk, player_name, player_id, msg, err)
+	if msg == "invite_failed" then
+		ShowMPLobbyError("invite", err)
+	end
 end
 
 -- Player has joined a game in progress (through an approved request), send the data over.
@@ -1669,4 +1694,14 @@ function ShowMultiplayerModsPopup(no_wait)
 	if no_wait then return "ok" end
 	
 	return msg:Wait()
+end
+
+function UpdateWeaponModificationPartsCounter()
+	local dlg = GetDialog("ModifyWeaponDlg")
+	if dlg then
+		local uiObj = table.get(dlg, "idModifyDialog", "idModificationResults", 1, 1)
+		if uiObj then
+			uiObj:OnContextUpdate(uiObj:GetContext())
+		end
+	end
 end

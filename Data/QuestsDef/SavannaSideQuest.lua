@@ -144,9 +144,10 @@ PlaceObj('QuestsDef', {
 			Conditions = {
 				PlaceObj('UnitHasInteraction', {
 					'TargetUnit', "any merc",
+					'DisableContextModification', true,
 					'CombatAction', "Interact_Disarm",
 					'Result', "fail",
-					'Group', "SandmanExamine",
+					'Group', "SandmanLoot",
 				}),
 			},
 			Effects = {
@@ -172,11 +173,8 @@ PlaceObj('QuestsDef', {
 				PlaceObj('UnitHasInteraction', {
 					'TargetUnit', "any merc",
 					'CombatAction', "Interact_LootContainer",
+					'Result', "looted",
 					'Group', "SandmanLoot",
-				}),
-				PlaceObj('CheckIsPersistentUnitDead', {
-					Negate = true,
-					per_ses_id = "NPC_CaptainPierrot",
 				}),
 			},
 			Effects = {

@@ -90,7 +90,7 @@ PlaceObj('XTemplate', {
 					'LayoutMethod', "HList",
 				}, {
 					PlaceObj('XTemplateWindow', {
-						'__condition', function (parent, context) return Platform.developer end,
+						'__condition', function (parent, context) return Platform.developer or AreModdingToolsActive() end,
 						'__class', "XTextButton",
 						'Id', "idDebug",
 						'BorderColor', RGBA(0, 0, 0, 0),

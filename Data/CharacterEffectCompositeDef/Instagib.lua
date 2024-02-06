@@ -46,7 +46,7 @@ PlaceObj('CharacterEffectCompositeDef', {
 		PlaceObj('UnitReaction', {
 			Event = "OnCalcMaxAimActions",
 			Handler = function (self, target, value, attacker, attack_target, action, weapon)
-				if target == attacker then
+				if target == attacker and self:ResolveValue("available") then
 					return value + self:ResolveValue("bonusAims")
 				end
 			end,

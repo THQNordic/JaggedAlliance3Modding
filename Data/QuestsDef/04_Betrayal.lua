@@ -121,11 +121,12 @@ PlaceObj('QuestsDef', {
 			},
 			HideConditions = {
 				PlaceObj('QuestIsVariableBool', {
+					Condition = "or",
 					QuestId = "04_Betrayal",
-					Vars = set( "FaucheuxExposed" ),
+					Vars = set( "BetryalFightSkipped", "FaucheuxExposed" ),
 					__eval = function ()
 						local quest = gv_Quests['04_Betrayal'] or QuestGetState('04_Betrayal')
-						return quest.FaucheuxExposed
+						return quest.BetryalFightSkipped or quest.FaucheuxExposed
 					end,
 				}),
 			},
@@ -143,6 +144,16 @@ PlaceObj('QuestsDef', {
 					Sectors = {
 						"E9",
 					},
+				}),
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "04_Betrayal",
+					Vars = set({
+	BetryalFightSkipped = false,
+}),
+					__eval = function ()
+						local quest = gv_Quests['04_Betrayal'] or QuestGetState('04_Betrayal')
+						return not quest.BetryalFightSkipped
+					end,
 				}),
 			},
 			Text = T(723402551180, --[[QuestsDef 04_Betrayal Text]] "Something terrible has happened at the <em><SectorName('E9')></em>"),

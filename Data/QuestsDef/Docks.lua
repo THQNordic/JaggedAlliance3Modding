@@ -2,6 +2,9 @@
 
 PlaceObj('QuestsDef', {
 	DisplayName = T(285839514162, --[[QuestsDef Docks DisplayName]] "The Docks"),
+	EffectOnChangeVarValue = {
+		PlaceObj('QuestEffectOnStatus', {}),
+	},
 	KillTCEsConditions = {
 		PlaceObj('QuestIsVariableBool', {
 			Condition = "or",
@@ -269,10 +272,10 @@ PlaceObj('QuestsDef', {
 				PlaceObj('QuestIsVariableBool', {
 					Condition = "or",
 					QuestId = "Docks",
-					Vars = set( "Completed", "N-NightCombat" ),
+					Vars = set( "N-NightCombat" ),
 					__eval = function ()
 						local quest = gv_Quests['Docks'] or QuestGetState('Docks')
-						return quest.Completed or quest['N-NightCombat']
+						return quest['N-NightCombat']
 					end,
 				}),
 			},
@@ -280,10 +283,10 @@ PlaceObj('QuestsDef', {
 				PlaceObj('QuestIsVariableBool', {
 					Condition = "or",
 					QuestId = "Docks",
-					Vars = set( "DocksLost", "Failed" ),
+					Vars = set( "Completed", "DocksLost", "Failed" ),
 					__eval = function ()
 						local quest = gv_Quests['Docks'] or QuestGetState('Docks')
-						return quest.DocksLost or quest.Failed
+						return quest.Completed or quest.DocksLost or quest.Failed
 					end,
 				}),
 			},
@@ -313,10 +316,10 @@ PlaceObj('QuestsDef', {
 				PlaceObj('QuestIsVariableBool', {
 					Condition = "or",
 					QuestId = "Docks",
-					Vars = set( "Completed", "N-NightCombat" ),
+					Vars = set( "N-NightCombat" ),
 					__eval = function ()
 						local quest = gv_Quests['Docks'] or QuestGetState('Docks')
-						return quest.Completed or quest['N-NightCombat']
+						return quest['N-NightCombat']
 					end,
 				}),
 			},
@@ -324,10 +327,10 @@ PlaceObj('QuestsDef', {
 				PlaceObj('QuestIsVariableBool', {
 					Condition = "or",
 					QuestId = "Docks",
-					Vars = set( "DocksLost", "Failed" ),
+					Vars = set( "Completed", "DocksLost", "Failed" ),
 					__eval = function ()
 						local quest = gv_Quests['Docks'] or QuestGetState('Docks')
-						return quest.DocksLost or quest.Failed
+						return quest.Completed or quest.DocksLost or quest.Failed
 					end,
 				}),
 			},
@@ -393,10 +396,10 @@ PlaceObj('QuestsDef', {
 				PlaceObj('QuestIsVariableBool', {
 					Condition = "or",
 					QuestId = "Docks",
-					Vars = set( "Completed", "Failed" ),
+					Vars = set( "BombsArmed", "Completed", "DocksLost", "Failed" ),
 					__eval = function ()
 						local quest = gv_Quests['Docks'] or QuestGetState('Docks')
-						return quest.Completed or quest.Failed
+						return quest.BombsArmed or quest.Completed or quest.DocksLost or quest.Failed
 					end,
 				}),
 			},
@@ -419,18 +422,13 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('QuestNote', {
 			AddInHistory = true,
-			Badges = {
-				PlaceObj('QuestBadgePlacement', {
-					Sector = "K9",
-				}),
-			},
 			CompletionConditions = {
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "Docks",
-					Vars = set( "N-NightDone" ),
+					Vars = set( "DocksLost" ),
 					__eval = function ()
 						local quest = gv_Quests['Docks'] or QuestGetState('Docks')
-						return quest['N-NightDone']
+						return quest.DocksLost
 					end,
 				}),
 			},
@@ -492,7 +490,15 @@ PlaceObj('QuestsDef', {
 		PlaceObj('QuestNote', {
 			Badges = {
 				PlaceObj('QuestBadgePlacement', {
-					BadgeUnit = "CacaoGang",
+					BadgeUnit = "Bomb1",
+					Sector = "K9",
+				}),
+				PlaceObj('QuestBadgePlacement', {
+					BadgeUnit = "Bomb2",
+					Sector = "K9",
+				}),
+				PlaceObj('QuestBadgePlacement', {
+					BadgeUnit = "Bomb3",
 					Sector = "K9",
 				}),
 			},
@@ -753,6 +759,18 @@ PlaceObj('QuestsDef', {
 					__eval = function ()
 						local quest = gv_Quests['Docks'] or QuestGetState('Docks')
 						return not quest.DocksLost and quest.Given
+					end,
+				}),
+				PlaceObj('QuestIsVariableBool', {
+					Condition = "or",
+					QuestId = "Docks",
+					Vars = set({
+	BombsArmed = false,
+	Completed = true,
+}),
+					__eval = function ()
+						local quest = gv_Quests['Docks'] or QuestGetState('Docks')
+						return not quest.BombsArmed or quest.Completed
 					end,
 				}),
 				PlaceObj('QuestIsVariableNum', {
@@ -1156,6 +1174,9 @@ PlaceObj('QuestsDef', {
 						}),
 					},
 				}),
+				PlaceObj('CustomCodeEffect', {
+					custom_code = 'for _, unit in ipairs(Groups["CacaoGang"]) do  unit.cower_forbidden = true end',
+				}),
 				PlaceObj('NeutralNPCDontMove', {
 					TargetUnit = "CacaoGang",
 				}),
@@ -1163,8 +1184,17 @@ PlaceObj('QuestsDef', {
 					Prop = "BombsArmed",
 					QuestId = "Docks",
 				}),
+				PlaceObj('SectorEnterConflict', {
+					disable_travel = true,
+					lock_conflict = true,
+					sector_id = "K9",
+				}),
 				PlaceObj('PlaySetpiece', {
 					setpiece = "DocksLost",
+				}),
+				PlaceObj('GroupAddStatusEffect', {
+					Status = "ForcedVisibleNPC",
+					TargetUnit = "CacaoGang",
 				}),
 				PlaceObj('SetTimer', {
 					Label = T(737285480864, --[[QuestsDef Docks Label]] "Disarm The Bombs"),
@@ -1185,10 +1215,16 @@ PlaceObj('QuestsDef', {
 							AreaOfEffect = 20,
 							Damage = 200,
 							ExplosionType = "C4",
+							LocationGroup = "GangHostagePosition",
+						}),
+						PlaceObj('Explosion', {
+							AreaOfEffect = 20,
+							Damage = 200,
+							ExplosionType = "C4",
 							LocationGroup = "Bomb1",
 						}),
 						PlaceObj('Explosion', {
-							AreaOfEffect = 10,
+							AreaOfEffect = 20,
 							Damage = 200,
 							ExplosionType = "C4",
 							LocationGroup = "Bomb2",
@@ -1205,6 +1241,13 @@ PlaceObj('QuestsDef', {
 					Prop = "BombsExploded",
 					QuestId = "Docks",
 				}),
+				PlaceObj('SectorEnterConflict', {
+					conflict_mode = false,
+					sector_id = "K9",
+				}),
+				PlaceObj('CustomCodeEffect', {
+					custom_code = 'for _, unit in ipairs(Groups["CacaoGang"]) do  unit.cower_forbidden = false end',
+				}),
 			},
 			Once = true,
 			ParamId = "TCE_BombLogic",
@@ -1215,6 +1258,11 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"K9",
+					},
+				}),
 				PlaceObj('QuestIsVariableNum', {
 					Amount = 3,
 					Prop = "BombsDisarmed",
@@ -1222,14 +1270,13 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			Effects = {
+				PlaceObj('SectorEnterConflict', {
+					conflict_mode = false,
+					sector_id = "K9",
+				}),
 				PlaceObj('KillTimer', {
 					Name = "DisarmTheBombs",
 					StopTCE = true,
-				}),
-				PlaceObj('GroupSetRoutine', {
-					RestoreDefault = true,
-					Running = true,
-					TargetUnit = "CacaoGang",
 				}),
 				PlaceObj('ConditionalEffect', {
 					'Conditions', {
@@ -1250,6 +1297,23 @@ PlaceObj('QuestsDef', {
 						}),
 					},
 				}),
+				PlaceObj('ConditionalEffect', {
+					'Conditions', {
+						PlaceObj('CheckIsPersistentUnitDead', {
+							Negate = true,
+							per_ses_id = "NPC_Granny",
+						}),
+					},
+					'Effects', {
+						PlaceObj('PlayBanterEffect', {
+							Banters = {
+								"CacaoGang_Gran04_BombsDefused",
+							},
+							searchInMap = true,
+							searchInMarker = false,
+						}),
+					},
+				}),
 				PlaceObj('CityGrantLoyalty', {
 					Amount = 5,
 					City = "PortDiancie",
@@ -1259,6 +1323,9 @@ PlaceObj('QuestsDef', {
 			Once = true,
 			ParamId = "TCE_BombDisarmLogic",
 			QuestId = "Docks",
+			requiredSectors = {
+				"K9",
+			},
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
@@ -1284,6 +1351,30 @@ PlaceObj('QuestsDef', {
 			},
 			Once = true,
 			ParamId = "TCE_Failed",
+			QuestId = "Docks",
+		}),
+		PlaceObj('TriggeredConditionalEvent', {
+			Conditions = {
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "Docks",
+					Vars = set({
+	BombsExploded = true,
+	Failed = false,
+}),
+					__eval = function ()
+						local quest = gv_Quests['Docks'] or QuestGetState('Docks')
+						return quest.BombsExploded and not quest.Failed
+					end,
+				}),
+			},
+			Effects = {
+				PlaceObj('UnitDie', {
+					TargetGroup = "CacaoGang",
+					skipAnim = true,
+				}),
+			},
+			Once = true,
+			ParamId = "TCE_GranniesDeadFailsafe",
 			QuestId = "Docks",
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
@@ -1611,6 +1702,253 @@ PlaceObj('QuestsDef', {
 			ParamId = "TCE_MoveHannah",
 			QuestId = "Docks",
 		}),
+		PlaceObj('TriggeredConditionalEvent', {
+			Conditions = {
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"K9",
+					},
+				}),
+				PlaceObj('UnitIsAroundOtherUnit', {
+					Distance = 16,
+					SecondTargetUnit = "GangTrudy",
+					TargetUnit = "any merc",
+				}),
+				PlaceObj('QuestIsVariableNum', {
+					Amount = 1,
+					Condition = "<",
+					Prop = "BombsDisarmed",
+					QuestId = "Docks",
+				}),
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "Docks",
+					Vars = set({
+	BombsArmed = true,
+	BombsExploded = false,
+}),
+					__eval = function ()
+						local quest = gv_Quests['Docks'] or QuestGetState('Docks')
+						return quest.BombsArmed and not quest.BombsExploded
+					end,
+				}),
+			},
+			Effects = {
+				PlaceObj('PlayBanterEffect', {
+					Banters = {
+						"PortCacaoGang15",
+					},
+					searchInMap = true,
+					searchInMarker = false,
+				}),
+			},
+			Once = true,
+			ParamId = "TCE_BombsArmedBanterTrudy",
+			QuestId = "Docks",
+			requiredSectors = {
+				"K9",
+			},
+		}),
+		PlaceObj('TriggeredConditionalEvent', {
+			Conditions = {
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"K9",
+					},
+				}),
+				PlaceObj('UnitIsAroundOtherUnit', {
+					Distance = 16,
+					SecondTargetUnit = "Granny",
+					TargetUnit = "any merc",
+				}),
+				PlaceObj('QuestIsVariableNum', {
+					Amount = 1,
+					Condition = "<",
+					Prop = "BombsDisarmed",
+					QuestId = "Docks",
+				}),
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "Docks",
+					Vars = set({
+	BombsArmed = true,
+	BombsExploded = false,
+}),
+					__eval = function ()
+						local quest = gv_Quests['Docks'] or QuestGetState('Docks')
+						return quest.BombsArmed and not quest.BombsExploded
+					end,
+				}),
+				PlaceObj('OR', {
+					Conditions = {
+						PlaceObj('BanterHasPlayed', {
+							Banters = {
+								"PortCacaoGang15",
+							},
+							WaitOver = true,
+						}),
+						PlaceObj('CheckIsPersistentUnitDead', {
+							per_ses_id = "NPC_Trudy",
+						}),
+					},
+				}),
+			},
+			Effects = {
+				PlaceObj('PlayBanterEffect', {
+					Banters = {
+						"CacaoGang_Gran03_BombsArmed",
+					},
+					searchInMap = true,
+					searchInMarker = false,
+				}),
+			},
+			Once = true,
+			ParamId = "TCE_BombsArmedBanterGran",
+			QuestId = "Docks",
+			requiredSectors = {
+				"K9",
+			},
+		}),
+		PlaceObj('TriggeredConditionalEvent', {
+			Conditions = {
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"K9",
+					},
+				}),
+				PlaceObj('UnitIsAroundOtherUnit', {
+					Distance = 16,
+					SecondTargetUnit = "GangVinnie",
+					TargetUnit = "any merc",
+				}),
+				PlaceObj('QuestIsVariableNum', {
+					Amount = 1,
+					Condition = "==",
+					Prop = "BombsDisarmed",
+					QuestId = "Docks",
+				}),
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "Docks",
+					Vars = set({
+	BombsArmed = true,
+	BombsExploded = false,
+}),
+					__eval = function ()
+						local quest = gv_Quests['Docks'] or QuestGetState('Docks')
+						return quest.BombsArmed and not quest.BombsExploded
+					end,
+				}),
+			},
+			Effects = {
+				PlaceObj('PlayBanterEffect', {
+					Banters = {
+						"PortCacaoGang17",
+					},
+					searchInMap = true,
+					searchInMarker = false,
+				}),
+			},
+			Once = true,
+			ParamId = "TCE_BombsArmedBanterVinnie",
+			QuestId = "Docks",
+			requiredSectors = {
+				"K9",
+			},
+		}),
+		PlaceObj('TriggeredConditionalEvent', {
+			Conditions = {
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"K9",
+					},
+				}),
+				PlaceObj('UnitIsAroundOtherUnit', {
+					Distance = 16,
+					SecondTargetUnit = "GangWilma",
+					TargetUnit = "any merc",
+				}),
+				PlaceObj('QuestIsVariableNum', {
+					Amount = 2,
+					Condition = "==",
+					Prop = "BombsDisarmed",
+					QuestId = "Docks",
+				}),
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "Docks",
+					Vars = set({
+	BombsArmed = true,
+	BombsExploded = false,
+}),
+					__eval = function ()
+						local quest = gv_Quests['Docks'] or QuestGetState('Docks')
+						return quest.BombsArmed and not quest.BombsExploded
+					end,
+				}),
+			},
+			Effects = {
+				PlaceObj('PlayBanterEffect', {
+					Banters = {
+						"PortCacaoGang16",
+					},
+					searchInMap = true,
+					searchInMarker = false,
+				}),
+			},
+			Once = true,
+			ParamId = "TCE_BombsArmedBanterWilma",
+			QuestId = "Docks",
+			requiredSectors = {
+				"K9",
+			},
+		}),
+		PlaceObj('TriggeredConditionalEvent', {
+			Conditions = {
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"K9",
+					},
+				}),
+				PlaceObj('QuestIsVariableNum', {
+					Amount = 3,
+					Prop = "BombsDisarmed",
+					QuestId = "Docks",
+				}),
+				PlaceObj('OR', {
+					Conditions = {
+						PlaceObj('UnitCanGoToPos', {
+							PositionMarker = "North",
+							TargetUnit = "CacaoGang",
+						}),
+						PlaceObj('SectorIsInConflict', {
+							Negate = true,
+						}),
+					},
+				}),
+			},
+			Effects = {
+				PlaceObj('GroupSetRoutine', {
+					RestoreDefault = true,
+					Running = true,
+					TargetUnit = "CacaoGang",
+					UseWeapons = true,
+				}),
+				PlaceObj('LockpickableSetState', {
+					Group = "HostageDoors",
+					State = "unlocked",
+				}),
+				PlaceObj('GroupSetSide', {
+					Side = "ally",
+					TargetUnit = "CacaoGang",
+				}),
+				PlaceObj('GroupAlert', {
+					TargetUnit = "CacaoGang",
+				}),
+			},
+			Once = true,
+			ParamId = "TCE_GangBehaviorAfterBombsDisarmed",
+			QuestId = "Docks",
+			requiredSectors = {
+				"K9",
+			},
+		}),
 	},
 	Variables = {
 		PlaceObj('QuestVarBool', {
@@ -1736,6 +2074,24 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('QuestVarTCEState', {
 			Name = "TCE_MoveHannah",
+		}),
+		PlaceObj('QuestVarTCEState', {
+			Name = "TCE_BombsArmedBanterGran",
+		}),
+		PlaceObj('QuestVarTCEState', {
+			Name = "TCE_BombsArmedBanterTrudy",
+		}),
+		PlaceObj('QuestVarTCEState', {
+			Name = "TCE_BombsArmedBanterVinnie",
+		}),
+		PlaceObj('QuestVarTCEState', {
+			Name = "TCE_BombsArmedBanterWilma",
+		}),
+		PlaceObj('QuestVarTCEState', {
+			Name = "TCE_GangBehaviorAfterBombsDisarmed",
+		}),
+		PlaceObj('QuestVarTCEState', {
+			Name = "TCE_GranniesDeadFailsafe",
 		}),
 	},
 	group = "PortCacao",

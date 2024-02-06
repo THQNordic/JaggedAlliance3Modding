@@ -5,10 +5,9 @@ PlaceObj('XTemplate', {
 	group = "Zulu",
 	id = "SplitStackItem",
 	PlaceObj('XTemplateWindow', {
-		'__class', "XDialog",
+		'__class', "ZuluModalDialog",
 		'ZOrder', 10,
-		'HAlign', "center",
-		'VAlign', "center",
+		'Background', RGBA(30, 30, 35, 115),
 	}, {
 		PlaceObj('XTemplateAction', {
 			'ActionId', "Ok",
@@ -45,15 +44,14 @@ PlaceObj('XTemplate', {
 		PlaceObj('XTemplateFunc', {
 			'name', "Open",
 			'func', function (self, ...)
-				XDialog.Open(self,...)
-				self:SetModal()
+				ZuluModalDialog.Open(self,...)
 				SetDisableMouseViaGamepad(true, "split")
 			end,
 		}),
 		PlaceObj('XTemplateFunc', {
 			'name', "Close",
 			'func', function (self, ...)
-				XDialog.Close(self,...)
+				ZuluModalDialog.Close(self,...)
 				SetDisableMouseViaGamepad(false, "split")
 			end,
 		}),
@@ -81,13 +79,15 @@ PlaceObj('XTemplate', {
 				if  XScrollThumb.OnShortcut(self.idContext.idSlider, shortcut, source, ...)=="break" then
 					return "break"
 				end
-				 return XDialog.OnShortcut(self, shortcut, source, ...)
+				 return ZuluModalDialog.OnShortcut(self, shortcut, source, ...)
 			end,
 		}),
 		PlaceObj('XTemplateWindow', {
 			'__class', "XContextControl",
 			'Id', "idContext",
 			'Padding', box(16, 4, 16, 4),
+			'HAlign', "center",
+			'VAlign', "center",
 			'LayoutMethod', "VList",
 			'LayoutVSpacing', 5,
 			'Background', RGBA(52, 55, 61, 255),

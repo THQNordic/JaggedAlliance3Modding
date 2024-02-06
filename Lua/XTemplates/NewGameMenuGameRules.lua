@@ -10,30 +10,37 @@ PlaceObj('XTemplate', {
 		'IdNode', false,
 		'Name', T(468039426572, --[[XTemplate NewGameMenuGameRules Name]] "Game Rules"),
 	}),
+	PlaceObj('XTemplateForEach', {
+		'array', function (parent, context) return Presets.GameRuleDef.Default end,
+		'condition', function (parent, context, item, i) return not item.advanced end,
+		'__context', function (parent, context, item, i, n) return item end,
+		'run_after', function (child, context, item, i, n, last)
+			child:SetId("id"..item.id)
+		end,
+	}, {
+		PlaceObj('XTemplateTemplate', {
+			'__template', "NewGameBoolEntry",
+			'IdNode', false,
+		}),
+		}),
 	PlaceObj('XTemplateTemplate', {
-		'__context', function (parent, context) return GameRuleDefs["ActivePause"] end,
-		'__template', "NewGameBoolEntry",
+		'comment', "game rules",
+		'__template', "NewGameCategory",
 		'IdNode', false,
+		'Name', T(868336799079, --[[XTemplate NewGameMenuGameRules Name]] "Advanced Rules"),
 	}),
-	PlaceObj('XTemplateTemplate', {
-		'__context', function (parent, context) return GameRuleDefs["ForgivingMode"] end,
-		'__template', "NewGameBoolEntry",
-		'IdNode', false,
-	}),
-	PlaceObj('XTemplateTemplate', {
-		'__context', function (parent, context) return GameRuleDefs["DeadIsDead"] end,
-		'__template', "NewGameBoolEntry",
-		'IdNode', false,
-	}),
-	PlaceObj('XTemplateTemplate', {
-		'__context', function (parent, context) return GameRuleDefs["Ironman"] end,
-		'__template', "NewGameBoolEntry",
-		'IdNode', false,
-	}),
-	PlaceObj('XTemplateTemplate', {
-		'__context', function (parent, context) return GameRuleDefs["LethalWeapons"] end,
-		'__template', "NewGameBoolEntry",
-		'IdNode', false,
-	}),
+	PlaceObj('XTemplateForEach', {
+		'array', function (parent, context) return Presets.GameRuleDef.Default end,
+		'condition', function (parent, context, item, i) return item.advanced end,
+		'__context', function (parent, context, item, i, n) return item end,
+		'run_after', function (child, context, item, i, n, last)
+			child:SetId("id"..item.id)
+		end,
+	}, {
+		PlaceObj('XTemplateTemplate', {
+			'__template', "NewGameBoolEntry",
+			'IdNode', false,
+		}),
+		}),
 })
 

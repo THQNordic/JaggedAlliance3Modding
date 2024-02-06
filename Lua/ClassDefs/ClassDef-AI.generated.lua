@@ -711,7 +711,10 @@ function AIRetreatPolicy:EvalDest(context, dest, grid_voxel)
 		local marker_dir = context.entrance_marker_dir[marker]
 		if not marker_dir then
 			marker_dir = marker:GetVisualPos() - context.unit:GetVisualPos()
-			marker_dir = SetLen(marker_dir:SetZ(0), guim)
+			marker_dir = marker_dir:SetZ(0)
+			if marker_dir:Len() > 0 then
+				marker_dir = SetLen(marker_dir, guim)
+			end
 			context.entrance_marker_dir[marker] = marker_dir
 		end 
 		if marker:IsVoxelInsideArea(vx, vy) then

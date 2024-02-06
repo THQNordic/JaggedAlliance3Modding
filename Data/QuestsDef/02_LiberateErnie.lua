@@ -215,7 +215,7 @@ PlaceObj('QuestsDef', {
 					custom_code = "RevealAllSectors()",
 				}),
 				PlaceObj('CustomCodeEffect', {
-					custom_code = 'AIMPremium = "offer"',
+					custom_code = 'ChangeAIMPremiumState("offer")',
 				}),
 				PlaceObj('QuestSetVariableBool', {
 					Prop = "Given",

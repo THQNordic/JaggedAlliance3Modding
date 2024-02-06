@@ -305,7 +305,7 @@ PlaceObj('ClassDef', {
 PlaceObj('ClassDef', {
 	group = "Zulu",
 	id = "CampaignSpecific",
-	PlaceObj('PropertyDefCombo', {
+	PlaceObj('PropertyDefChoice', {
 		'id', "campaign",
 		'name', "Campaign",
 		'help', "The relevant campaign for this preset.",
@@ -560,6 +560,15 @@ PlaceObj('ClassDef', {
 						SetQuestVar(quest, container.QuestSeedVariable, seed)
 					end
 					loot_tbl:GenerateLoot(self, {}, seed, self.objects)
+					if IsGameRuleActive("AmmoScarcity") then
+						local percent = GameRuleDefs.AmmoScarcity:ResolveValue("LootDecrease")
+						local classes = {"Ammo", "Ordnance", "Grenade", "ThrowableTrapItem", "Flare"}
+						for _, item in ipairs( self.objects) do
+							if IsKindOf(item, "InventoryStack") and IsKindOfClasses(item, classes) then
+								item.Amount =  Max(1, item.Amount - MulDivRound(item.Amount, percent, 100))
+							end
+						end
+					end
 				end
 			end
 			
@@ -1999,7 +2008,7 @@ PlaceObj('ClassDef', {
 				local path_wav = string.format("%s.wav", self.Track)
 				local path_opus = string.format("%s.opus", self.Track)
 				if not io.exists(path_wav) and not io.exists(path_opus) then
-					return string.format("Missing '%s'", path)
+					return string.format("Missing '%s' (supported extensions are .opus and .wav)", self.Track)
 				end
 			end
 		end,
@@ -2413,6 +2422,13 @@ PlaceObj('ClassDef', {
 				
 				if unit_data and unit_data.HealPersistentOnSpawn and not unit_data:IsDead() then
 					unit_data:RemoveAllStatusEffects()
+					--Wounded and unconscious are not removed by Remove all status effect as they are character effects
+					if unit_data.StatusEffects["Wounded"] then
+						unit_data:RemoveStatusEffect("Wounded", "all")
+					end
+					if unit_data.StatusEffects["Unconscious"] then
+						unit_data:RemoveStatusEffect("Unconscious", "all")
+					end
 					unit_data.HitPoints = unit_data.MaxHitPoints
 				end
 			
@@ -2474,7 +2490,7 @@ PlaceObj('ClassDef', {
 				local obj = self.objects[i]
 				if IsValid(obj) and IsKindOf(obj, "Unit") and obj:IsNPC() and (not obj:IsDead() or obj.PersistentSessionId) then
 					obj.spawner = false
-					DoneObject(obj)
+					obj:Despawn()
 					table.remove(self.objects, i)
 				end	
 			end
@@ -3130,7 +3146,7 @@ PlaceObj('ClassDef', {
 	PlaceObj('PropertyDefNumber', {
 		'category', "Hiring - Parameters",
 		'id', "SalaryIncrease",
-		'help', "The percentange of salary increase per level.",
+		'help', "Salary increase factor per level. Doesn't reflect changes by Game Rules.",
 		'template', true,
 		'extra_code', "no_edit = function(self) return not IsMerc(self) end",
 		'default', 250,
@@ -3164,6 +3180,7 @@ PlaceObj('ClassDef', {
 		'category', "Hiring - Parameters",
 		'id', "SalaryPreview",
 		'name', "Salary Level 10",
+		'help', "Expected salary at Level 10. All active game rules are applied.",
 		'dont_save', true,
 		'read_only', true,
 		'template', true,
@@ -3179,6 +3196,29 @@ PlaceObj('ClassDef', {
 		'extra_code', "no_edit = function(self) return not IsMerc(self) end",
 		'translate', false,
 		'lines', 4,
+	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "GetMercStartingSalary",
+		'code', function (self)
+			local stSalary = self:GetProperty("StartingSalary")
+			local tier = self:GetProperty("Tier")
+			if IsGameRuleActive("CheaperPros") and (tier=="Elite" or tier=="Legendary") then
+				local percent = GameRuleDefs.CheaperPros:ResolveValue("StartingSalaryModifier")
+				stSalary = MulDivRound(stSalary, percent, 100)
+			end
+			return stSalary
+		end,
+	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "GetSalaryIncreaseProp",
+		'code', function (self)
+			local salaryIncrease = self:GetProperty("SalaryIncrease")
+			if IsGameRuleActive("Unionization") then
+					local additional_salary_increase = GameRuleDefs.Unionization:ResolveValue("AdditionalSalaryIncrease")
+					salaryIncrease = salaryIncrease + additional_salary_increase
+				end
+			return salaryIncrease
+		end,
 	}),
 	PlaceObj('PropertyDefNumber', {
 		'category', "XP",
@@ -4122,12 +4162,7 @@ PlaceObj('ClassDef', {
 				addLevel = GameDifficulties[Game.game_difficulty]:ResolveValue("unitBonusLevel") or 0
 			end
 			if not curXp then return self:GetProperty("StartingLevel") + addLevel end
-			for i, xp in ipairs(XPTable) do
-				if curXp < xp then
-					return i - 1 + addLevel
-				end
-			end
-			return #XPTable + addLevel
+			return CalcLevel(curXp) + addLevel
 		end,
 	}),
 	PlaceObj('PropertyDefPresetIdList', {
@@ -4186,6 +4221,8 @@ PlaceObj('ClassDef', {
 		'category', "Voice",
 		'id', "pollyvoice",
 		'name', "Polly Voice",
+		'no_edit', "expression",
+		'no_edit_expression', function (self, prop_meta) return config.ModdingToolsInUserMode end,
 		'template', true,
 		'default', "Brian",
 		'items', function (self) return g_LocPollyActors end,

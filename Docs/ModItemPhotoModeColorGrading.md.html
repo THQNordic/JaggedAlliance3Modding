@@ -1,0 +1,75 @@
+[*Back to Index*](index.md.html)
+
+Photo mode - Color grading
+==========================
+This mod item adds a new color grading item to the Photo mode's color grading property.
+
+## Input properties
+
+**Path ('self.src_path')**
+
+ - Points to the <i>*.cube</i> file.
+
+**Display Name ('self.display_name')**
+
+ - The name which will be shown in the menu.
+
+## Output properties
+
+**Size (Read only) ('self.size')**
+
+ - Supported texture size
+
+**Color Space (Read only) ('self.color_space')**
+
+ - Supported color space
+
+**Color Gamma (Read only) ('self.color_gamma')**
+
+ - Supported color gamma
+
+**Path (Read only) ('self.size')**
+
+ - Path for the generated <i>*.dds</i> file
+
+
+Project setup
+=============
+
+## Install DaVinci Resolve
+Recommended version >=15.1
+
+## Go to the *ModTools/ColorGrading/* directory 
+ - Run the *Setup.bat* script which will add *JA3 LUTs" with the *ToneMapping.cube* to DaVinci Resolve's LUTs folder.
+
+## Project setup
+
+ - Open *File -> Project Manager* or press *Shift + 1*.
+ - Click on *Import* and select "ColorGrade.drp"
+ - Open the "ColorGrade" scene you just imported.
+ - In the *Media Pool* tab there should be screenshots which have errors.
+ - Select all of the screenshots, right-click them and press *Relink Selected Clips*.
+ - Navigate to "ModTools/ColorGrading/Screenshots/" and press *Select Folder*  
+
+ If there are problems finding *ToneMapping.cube* complete the following steps:
+
+  - Open *File -> Project Settings*.
+  - Go to the *Color Management* tab.
+  - In the *Lookup Tables* subcategory press the *Update Lists* button.
+  - Press *Save*.
+
+Exporting and adding it to your mod
+================================
+
+ - You can take RAW screenshots in EXR format from the LightModel editor.
+ - Use *ToneMapping.cube* as a final node in your grade. Its purpose is to match DaVinci Resolve's results to in-game ones.
+ - After you have your desired grading, in the *Nodes* tab disable the tone-mapping node by selecting it and pressing *Ctrl + D* or unlink it by directly connecting the previous node to the end one (marked with a green dot). 
+ - Right-click on the clip containing your grade and select *Generate LUT -> 65 Point Cube*. 
+ - Save it in your mod's directory. 
+ - Go to the mod editor and add *New -> Other... -> Photo mode - Grading LUT*
+ - Fill out the path to your *.cube* file, id, and display name and save the mod.
+ - Test it by going to the photo mode and pressing on *Color grading*. You should be seeing your newly added grading LUT's name.
+
+(insert footer.md.html here)
+<link rel="stylesheet" type="text/css" href="Style.css" />
+<!-- Markdeep: --><style class="fallback">body{visibility:hidden;white-space:pre;font-family:monospace}</style><script src="markdeep.min.js" charset="utf-8"></script><script>window.alreadyProcessedMarkdeep||(document.body.style.visibility="visible")</script>

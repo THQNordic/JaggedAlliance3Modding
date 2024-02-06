@@ -194,7 +194,6 @@ function _SetActionCameraDirect(attacker, target, new_pos, new_lookat, preset, d
 		DeleteThread(ActionCameraTurnOffThread)
 		ActionCameraTurnOffThread = false
 	end
-	DeleteThread(ActionCameraInterpolationThread)
 	ActionCameraInterpolationThread = CreateRealTimeThread(function()
 		Sleep(interpolation_time)
 		WaitActionCameraInterpolation(new_pos)
@@ -291,8 +290,7 @@ function _removeActionCamera(force, interp_time)
 		return
 	end
 
-	hr.CameraTacClampToTerrain = true
-	hr.CameraTacUseVoxelBorder = true
+	table.restore(hr, "ActionCamera", "ignore error")
 	CurrentActionCamera = false
 	ActionCameraUpdateUIVisibility()
 	UnlockCamera("ActionCamera")

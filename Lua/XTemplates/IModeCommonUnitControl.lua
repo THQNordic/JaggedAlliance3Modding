@@ -728,6 +728,7 @@ PlaceObj('XTemplate', {
 								'IdNode', true,
 								'VAlign', "bottom",
 								'LayoutMethod', "VList",
+								'FoldWhenHidden', true,
 								'ContextUpdateOnOpen', true,
 								'OnContextUpdate', function (self, context, ...)
 									local order = g_unitOrder[SelectedObj]
@@ -790,6 +791,16 @@ PlaceObj('XTemplate', {
 								}),
 								}),
 							}),
+						PlaceObj('XTemplateFunc', {
+							'name', "SortChildren(self)",
+							'func', function (self)
+								XWindow.SortChildren(self)
+								
+								for i, s in ipairs(self) do
+									s:SetVisible(i <= 25)
+								end
+							end,
+						}),
 						}),
 					PlaceObj('XTemplateWindow', {
 						'__context', function (parent, context) return "combat_bar_traps" end,

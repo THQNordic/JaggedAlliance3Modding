@@ -344,9 +344,9 @@ PlaceObj('XTemplate', {
 				PlaceObj('XTemplateWindow', {
 					'comment', "Ranking text",
 					'__class', "XText",
-					'Margins', box(270, 535, 0, 0),
+					'Margins', box(270, 0, 0, 65),
 					'HAlign', "left",
-					'VAlign', "top",
+					'VAlign', "bottom",
 					'MinWidth', 200,
 					'MinHeight', 50,
 					'MaxWidth', 165,
@@ -357,6 +357,7 @@ PlaceObj('XTemplate', {
 					'TextStyle', "PDABrowserThievesRanking",
 					'Translate', true,
 					'Text', T(425163038375, --[[XTemplate PDABrowserAskThieves Text]] "Featuring ranking \nby popularity"),
+					'TextVAlign', "bottom",
 				}),
 				PlaceObj('XTemplateWindow', {
 					'comment', "ActiveTab",

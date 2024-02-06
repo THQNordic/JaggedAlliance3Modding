@@ -49,6 +49,7 @@ DefineClass.GridMarker = {
 		{ category = "Grid Marker", id = "Group",   name = "Group-for-load-compat", editor = "text", default = "", no_edit = true },
 		{ category = "Grid Marker", id = "ID",      name = "ID", editor = "text", help = "Unique ID of the marker - leave alone, unless necessary", default = "" },
 		{ category = "Grid Marker", id = "Comment", name = "Comment", editor = "text", help = "Anything that would help you organize the markers", default = "" },
+		{ category = "Grid Marker", id = "Documentation", editor = "documentation", dont_save = true, }, -- display collapsible Documentation at this position
 
 		{ category = "Marker", id = "AreaWidth",  name = "Area Width", editor = "number", default = 1, help = "Defining a voxel-aligned rectangle with North-South and East-West axis" },
 		{ category = "Marker", id = "AreaHeight", name = "Area Height", editor = "number", default = 1, help = "Defining a voxel-aligned rectangle with North-South and East-West axis" },
@@ -112,6 +113,10 @@ DefineClass.GridMarker = {
 	ground_visuals = false,
 	recalc_area_on_pass_rebuild = true,
 	hide_reason = false,
+	
+	GetDocumentation = function(self)
+		return GameMarkerDocs["GridMarker-"..self.class] or GameMarkerDocs["GridMarker-"..self.Type]
+	end,
 }
 
 function GridMarker:Init()
@@ -137,8 +142,13 @@ function GridMarker:Done()
 end
 
 function GridMarker:SetPos(...)
+	local lastPosX, lastPosY = WorldToVoxel(self:GetPos())
 	EditorMarker.SetPos(self, ...)
 	self:RecalcAreaPositions()
+	local posX, posY = WorldToVoxel(self:GetPos())
+	if self.Type == "BorderArea" and (lastPosX ~= posX or lastPosY ~= posY) then
+		self:RecalcImpassableOutsideBorderArea(nil, { x = lastPosX, y = lastPosY})
+	end
 end
 
 function GridMarker:SetAreaWidth(val)
@@ -877,6 +887,9 @@ function GridMarker:OnEditorSetProperty(prop_id, old_value)
 	  or prop_id == "GroundVisuals" 
 	then
 		self:RecalcAreaPositions()
+		if prop_id == "AreaWidth" or prop_id == "AreaHeight" then
+			self:RecalcImpassableOutsideBorderArea(prop_id, old_value)
+		end
 	end
 end
 
@@ -1118,10 +1131,11 @@ function GedGridMarkerEditorRebuildRootOnDeletedMarker()
 end
 
 if FirstLoad then
-	XEditorShowGridMarkersAreas = false
+	XEditorShowGridMarkersAreas = config.ModdingToolsInUserMode or false
 end
 
 function XEditorUpdateGridMarkersAreas()
+	if not IsEditorActive() then return end
 	MapForEachMarker(nil, nil, function(marker)
 		if XEditorShowGridMarkersAreas then
 			marker:ShowArea()
@@ -1132,6 +1146,9 @@ function XEditorUpdateGridMarkersAreas()
 		end
 	end)
 end
+
+OnMsg.GameEnterEditor = XEditorUpdateGridMarkersAreas
+OnMsg.ChangeMapDone = XEditorUpdateGridMarkersAreas
 
 MapVar("gv_AllMarkersGroups", false)
 
@@ -1538,20 +1555,100 @@ end
 
 function OnMsg.NewMapLoaded()
 	MapForEachMarker("Entrance", nil, function(marker) table.insert(g_InteractableAreaMarkers, marker) end)
+	SetImpassableOutsideBorderMarker()
+end
+
+local function GetMinMaxBorder(x, y, width, height, noOffset)
+	local voxel_left = x - width / 2
+	local voxel_top = y - height / 2
+	local left, top = VoxelToWorld(voxel_left - 1, voxel_top - 1)
+	local right, bottom = VoxelToWorld(voxel_left + width, voxel_top + height)
+	local offset = noOffset and 0 or slab_x / 2
+	return left + offset, top + offset, right - offset, bottom - offset
+end
+
+function SetImpassableOutsideBorderMarker(clear)
 	local bam = GetBorderAreaMarker()
 	if IsValid(bam) then
 		local x, y = WorldToVoxel(bam)
-		local voxel_left = x - bam.AreaWidth / 2
-		local voxel_top = y - bam.AreaHeight / 2
-		local left, top = VoxelToWorld(voxel_left - 1, voxel_top - 1)
-		local right, bottom = VoxelToWorld(voxel_left + bam.AreaWidth, voxel_top + bam.AreaHeight)
+		local left, top, right, bottom = GetMinMaxBorder(x, y, bam.AreaWidth, bam.AreaHeight, true)
 		local width, height = terrain.GetMapSize()
 		-- the boxes are extened by const.PassTileSize
+		if clear then
+			terrain.SetForcedImpassableBox(0, 0, width, height, false)
+		end
 		terrain.SetForcedImpassableBox(0, 0, width, top, true)
 		terrain.SetForcedImpassableBox(0, bottom, width, height, true)
 		terrain.SetForcedImpassableBox(0, top, left, bottom, true)
 		terrain.SetForcedImpassableBox(right, top, width, bottom, true)
 	end
+end
+
+function GridMarker:RecalcImpassableOutsideBorderArea(prop_id, old_value)
+	if not self.Type == "BorderArea" then return end
+	
+	local offset = slab_x / 2
+	local newX, newY = WorldToVoxel(self)
+	local newAreaW = self.AreaWidth
+	local newAreaH = self.AreaHeight
+	local oldX, oldY, oldAreaW, oldAreaH
+	
+	if prop_id and old_value then -- coming from changeprop
+		oldX = newX
+		oldY = newY
+		oldAreaW = prop_id == "AreaWidth" and old_value or self.AreaWidth
+		oldAreaH = prop_id == "AreaHeight" and old_value or self.AreaHeight
+	elseif not prop_id and old_value then -- coming from EditorCallbackMove
+		oldX = old_value.x
+		oldY = old_value.y
+		oldAreaW = self.AreaWidth
+		oldAreaH = self.AreaHeight
+	end
+	
+	local newL, newT, newR, newB = GetMinMaxBorder(newX, newY, newAreaW, newAreaH)
+	local oldL, oldT, oldR, oldB = GetMinMaxBorder(oldX, oldY, oldAreaW, oldAreaH)
+	local intersect = BoxIntersectsBox(box(newL, newT, newR, newB), box(oldL, oldT, oldR, oldB))
+	if not intersect then 
+		SetImpassableOutsideBorderMarker("clear")
+		terrain.RebuildPassability(box(newL, newT, newR, newB))
+		return
+	end
+	
+	local function UpdateBorders()
+			if newL < oldL then
+			terrain.SetForcedImpassableBox(newL, newT, oldL, newB, false)
+			terrain.RebuildPassability(box(newL, newT, oldL, newB))
+		elseif newL > oldL then
+			terrain.SetForcedImpassableBox(oldL, oldT, newL - offset, oldB, true)
+			terrain.RebuildPassability(box(oldL, oldT, newL, oldB))
+		end
+		
+		if newT < oldT then
+			terrain.SetForcedImpassableBox(newL, newT, newR, oldT, false)
+			terrain.RebuildPassability(box(newL, newT, newR, oldT))
+		elseif newT > oldT then
+			terrain.SetForcedImpassableBox(oldL, oldT, oldR, newT - offset, true)
+			terrain.RebuildPassability(box(oldL, oldT, oldR, newT))
+		end
+		
+		if newR < oldR then
+			terrain.SetForcedImpassableBox(newR + offset, oldT, oldR, oldB, true)
+			terrain.RebuildPassability(box(newR, oldT, oldR, oldB))
+		elseif newR > oldR then
+			terrain.SetForcedImpassableBox(oldR, newT, newR, newB, false)
+			terrain.RebuildPassability(box(oldR, newT, newR, newB))
+		end
+		
+		if newB < oldB then
+			terrain.SetForcedImpassableBox(oldL, newB + offset, oldR, oldB, true)
+			terrain.RebuildPassability(box(oldL, newB, oldR, oldB))
+		elseif newB > oldB then
+			terrain.SetForcedImpassableBox(newL, oldB, newR, newB, false)
+			terrain.RebuildPassability(box(newL, oldB, newR, newB))
+		end
+	end
+	
+	UpdateBorders(newL, newT, newR, newB, oldL, oldT, oldR, oldB)
 end
 
 function OnMsg.PostNewMapLoaded()
@@ -1919,16 +2016,21 @@ function GatherMarkerScriptingData()
 	return markers_data
 end
 
-function ForEachDebugMarkerData(info_type, ref_id, call_fn)
+function ForEachDebugMarkerData(info_type, preset, call_fn)
 	-- filter for current quest_id
 	for map, markers_data in sorted_pairs(g_DebugMarkersInfo or empty_table) do
+		local currCampaignPreset = GetCurrentCampaignPreset()
+		local currSectors = currCampaignPreset and currCampaignPreset.Sectors
+		--local presetCampaign = preset and preset.campaign
 		for _, marker in ipairs(markers_data) do
-			local items = marker.items 
-			for _, item in ipairs(items) do
-				if item.filter_type == info_type and item.reference_id==ref_id then
-					call_fn(marker, item)
+			if currSectors and table.find(currSectors, "Map", marker.map) then
+				local items = marker.items 
+				for _, item in ipairs(items) do
+					if item.filter_type == info_type and item.reference_id == preset.id then
+						call_fn(marker, item)
+					end
 				end
-			end	
+			end
 		end	
 	end
 end	
@@ -1953,8 +2055,7 @@ end
 -- in editor mode
 function OnMsg.SaveMap()
 	CheckMarkersPos()
-
-	if not Platform.developer then return end
+	
 	local markers_data = GatherMarkerScriptingData()
 	local folder = GetMap()
 	if markers_data and next(markers_data) then
@@ -1965,6 +2066,9 @@ end
 
 local function LoadDebugMarkersInfo(map)
 	local file = GetMapFolder(map) .. "markers.debug.lua"
+	if not IsFSUnpacked() and MapData[map] and not MapData[map].ModMapPath then
+		MountMap(map)
+	end
 	if io.exists(file) then
 		local err, str = AsyncFileToString(GetMapFolder(map) .. "markers.debug.lua")
 		if str then
@@ -1976,6 +2080,39 @@ local function LoadDebugMarkersInfo(map)
 			end
 		end
 	end
+end
+
+local function LoadMapPatchMarkersInfo(mapPatchPath)
+	local path, name, ext = SplitPath(mapPatchPath)
+	local mapName = string.gsub(name, ".debug", "")
+
+	local err, str = AsyncFileToString(mapPatchPath)
+	if err then return err end
+	
+	local _, markers_data = LuaCodeToTuple(str)
+	if mapName then
+		g_DebugMarkersInfo = g_DebugMarkersInfo or {}
+		g_DebugMarkersInfo[mapName] = markers_data
+	end
+end
+
+local function LoadModMapPatchDebugMarkers(modData)
+	--debug markers data from ModItemMapPatch
+	local err, mapPatchesMarkerData = AsyncListFiles(modData.mod_path .. "MapPatches", "*.debug.lua")
+	if err then return err end
+	
+	for _, mapPatchMarkersPath in ipairs(mapPatchesMarkerData) do
+		LoadMapPatchMarkersInfo(mapPatchMarkersPath)
+	end
+end
+
+function OnMsg.LastEditedModChanged(mod)
+	g_DebugMarkersInfo = {}
+	for map, data in sorted_pairs(MapData) do --in the map data are both original and new or modified maps from ModItemSector
+		LoadDebugMarkersInfo(map)
+	end
+	
+	LoadModMapPatchDebugMarkers(mod)
 end
 
 function OnMsg.ChangeMapDone(map)
@@ -1994,6 +2131,10 @@ function OnMsg.ChangeMapDone(map)
 		else
 			LoadDebugMarkersInfo(map)
 		end
+	end
+	
+	if AreModdingToolsActive() and LastEditedMod then
+		LoadModMapPatchDebugMarkers(LastEditedMod)
 	end
 end
 

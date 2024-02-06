@@ -241,7 +241,7 @@ function BeachMarker:Init()
 	self:SetScale(Min(self.scale, self:GetMaxScale()))
 end
 
-if Platform.developer then
+if Platform.developer or Platform.debug then
 
 DefineClass.EnvLocHelper = {
 	__parents = {"LabelElement", "InitDone"},

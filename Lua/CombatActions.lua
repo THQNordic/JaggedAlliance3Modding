@@ -31,7 +31,7 @@ function CombatActionCannotBeStarted(action_id, unit)
 		end
 	else
 		local state = unit and CombatActions_RunningState[unit]
-		if state and state ~= "PostAction" and action_id ~= "MoveItems" then
+		if state and state ~= "PostAction" and action_id ~= "MoveItems" and action_id ~= "MoveMultiItems" and action_id ~= "DestroyItem" then
 			local actionPreset = CombatActions[action_id]
 			local unitCanBeInterrupted = actionPreset and actionPreset.InterruptInExploration
 			if not unitCanBeInterrupted then
@@ -57,7 +57,7 @@ end
 function NetStartCombatAction(action_id, unit, ap, args, ...)
 	local net_cmd = NetStartCombatActions[action_id]
 	-- action_id ~= "MoveItems": temporary fix for not being able to execute many MoveItems actions one after another
-	if action_id ~= "MoveItems" and action_id ~= "MoveMultiItems" and net_cmd and net_cmd.unit == unit and net_cmd.ap == ap then
+	if action_id ~= "MoveItems" and action_id ~= "MoveMultiItems" and action_id ~= "DestroyItem" and net_cmd and net_cmd.unit == unit and net_cmd.ap == ap then
 		NetStartActionCanceled(action_id, unit)
 		return		-- already registered to travel the network, skip it
 	end
@@ -192,6 +192,16 @@ function SetCombatActionState(unit, state)
 end
 
 function RunCombatAction(action_id, unit, ap, ...)
+	CombatActions_LastStartedAction.action_id = action_id
+	CombatActions_LastStartedAction.unit = unit
+	CombatActions_LastStartedAction.start_time = GameTime()
+	CombatActions_UnitAction[unit] = action_id
+	if action_id == "Move" and unit:IsMerc() then 
+		g_SelectedObjLastActionIsMovement = true
+	else
+		g_SelectedObjLastActionIsMovement = false
+	end
+
 	local func = CustomCombatActions[action_id]
 	if func then
 		func(unit, ap, ...)
@@ -206,7 +216,7 @@ function RunCombatAction(action_id, unit, ap, ...)
 			end
 		elseif action.ActivePauseBehavior == "unpause" then
 			if IsActivePaused() then
-				ToggleActivePause()
+				SetActivePause(false)
 			end
 			if not g_Combat then
 				ExplorationStartExclusiveAction(unit)
@@ -260,15 +270,6 @@ function RunCombatActions()
 					table.remove(CombatActions_Waiting, idx)
 					if not combat_action or not combat_action.SimultaneousPlay or not g_Combat:GetActiveUnit(unit) then
 						g_Combat:SetActiveUnit(unit)
-					end
-					CombatActions_LastStartedAction.action_id = action_id
-					CombatActions_LastStartedAction.unit = unit
-					CombatActions_LastStartedAction.start_time = GameTime()
-					CombatActions_UnitAction[unit] = action_id
-					if action_id == "Move" and unit:IsMerc() then 
-						g_SelectedObjLastActionIsMovement = true
-					else
-						g_SelectedObjLastActionIsMovement = false
 					end
 					RunCombatAction(unpack_params(adata))
 				else
@@ -527,6 +528,9 @@ function CombatActionAttackStart(self, units, args, mode, noChangeAction)
 		DeleteThread(CombatActionStartThread)
 	end
 	CombatActionStartThread = CreateRealTimeThread(function()
+		if HasCombatActionInProgress(unit) then
+			return
+		end
 		if g_Combat then
 			WaitCombatActionsEnd(unit)
 		end
@@ -605,6 +609,14 @@ function CombatActionAttackStart(self, units, args, mode, noChangeAction)
 
 		-- Clicking a single target skill twice will cause the attack to proceed
 		if not changeNeeded then
+			local abilityWhichAttacksWhenClickedAgain = true
+			if self.AimType == "cone" or self.AimType == "parabola aoe" then
+				abilityWhichAttacksWhenClickedAgain = false
+			end
+			if not abilityWhichAttacksWhenClickedAgain then
+				return
+			end
+			
 			if dlg.crosshair then
 				dlg.crosshair:Attack()
 			else
@@ -640,13 +652,20 @@ function CombatActionAttackStart(self, units, args, mode, noChangeAction)
 			end
 			
 			NetSyncEvent("Aim", unit, action.id, target)
-			WaitMsg("AimIdleLoop", 800)
+			if not IsActivePaused() then
+				WaitMsg("AimIdleLoop", 800)
+			end
 		end
 		
 		-- Patch selection outside of combat to remove multiselection
 		-- We're not doing this through SelectObj as the selection changed msg
 		-- will cancel the action.
 		if not g_Combat then
+			for i, u in ipairs(Selection) do
+				if u ~= unit then
+					HandleMovementTileContour({u})
+				end
+			end
 			Selection = { unit }
 		end
 

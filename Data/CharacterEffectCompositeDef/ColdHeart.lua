@@ -16,7 +16,9 @@ PlaceObj('CharacterEffectCompositeDef', {
 		PlaceObj('UnitReaction', {
 			Event = "OnCalcDamageAndEffects",
 			Handler = function (self, target, attacker, attack_target, action, weapon, attack_args, hit, data)
-				data.critical_damage = data.critical_damage + self:ResolveValue("crit_bonus")
+				if target == attacker then
+					data.critical_damage = data.critical_damage + self:ResolveValue("crit_bonus")
+				end
 			end,
 		}),
 	},

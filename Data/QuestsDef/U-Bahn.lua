@@ -8,7 +8,7 @@ PlaceObj('QuestsDef', {
 		PlaceObj('QuestKillTCEsOnCompleted', {}),
 	},
 	NoteDefs = {
-		LastNoteIdx = 41,
+		LastNoteIdx = 43,
 		PlaceObj('QuestNote', {
 			HideConditions = {
 				PlaceObj('QuestIsVariableBool', {
@@ -540,6 +540,79 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			Text = T(622829512594, --[[QuestsDef U-Bahn Text]] "The Legion used explosives to capture the <em><SectorName('F11')></em> and collapsed the U-Bahn tunnel"),
+		}),
+		PlaceObj('QuestNote', {
+			Badges = {
+				PlaceObj('QuestBadgePlacement', {
+					Sector = "F12_Underground",
+				}),
+			},
+			CompletionConditions = {
+				PlaceObj('QuestIsVariableBool', {
+					Condition = "or",
+					QuestId = "U-Bahn",
+					Vars = set( "LeadCollapse", "MentionCollapse" ),
+					__eval = function ()
+						local quest = gv_Quests['U-Bahn'] or QuestGetState('U-Bahn')
+						return quest.LeadCollapse or quest.MentionCollapse
+					end,
+				}),
+			},
+			HideConditions = {
+				PlaceObj('QuestIsVariableBool', {
+					Condition = "or",
+					QuestId = "U-Bahn",
+					Vars = set( "ClearCollapse" ),
+					__eval = function ()
+						local quest = gv_Quests['U-Bahn'] or QuestGetState('U-Bahn')
+						return quest.ClearCollapse
+					end,
+				}),
+			},
+			Idx = 42,
+			ShowConditions = {
+				PlaceObj('QuestIsVariableBool', {
+					Condition = "or",
+					QuestId = "U-Bahn",
+					Vars = set( "LeadCollapseLandsbach" ),
+					__eval = function ()
+						local quest = gv_Quests['U-Bahn'] or QuestGetState('U-Bahn')
+						return quest.LeadCollapseLandsbach
+					end,
+				}),
+			},
+			Text = T(447155449154, --[[QuestsDef U-Bahn Text]] "The U-Bahn tunnel to <em>Landsbach</em> cannot be repaired without establishing control over <em><SectorName('F12_Underground')></em>"),
+		}),
+		PlaceObj('QuestNote', {
+			Badges = {
+				PlaceObj('QuestBadgePlacement', {
+					Sector = "F12_Underground",
+				}),
+			},
+			HideConditions = {
+				PlaceObj('QuestIsVariableBool', {
+					Condition = "or",
+					QuestId = "U-Bahn",
+					Vars = set( "ClearCollapse" ),
+					__eval = function ()
+						local quest = gv_Quests['U-Bahn'] or QuestGetState('U-Bahn')
+						return quest.ClearCollapse
+					end,
+				}),
+			},
+			Idx = 43,
+			ShowConditions = {
+				PlaceObj('QuestIsVariableBool', {
+					Condition = "or",
+					QuestId = "U-Bahn",
+					Vars = set( "LeadCollapse" ),
+					__eval = function ()
+						local quest = gv_Quests['U-Bahn'] or QuestGetState('U-Bahn')
+						return quest.LeadCollapse
+					end,
+				}),
+			},
+			Text = T(718929068014, --[[QuestsDef U-Bahn Text]] "<em>Operation</em>: <em>Clear the Tracks</em> is available at <em><SectorName('F12_Underground')></em>"),
 		}),
 		PlaceObj('QuestNote', {
 			CompletionConditions = {
@@ -1793,6 +1866,10 @@ PlaceObj('QuestsDef', {
 				PlaceObj('GroupSetImmortal', {
 					TargetUnit = "Gunther",
 				}),
+				PlaceObj('QuestSetVariableBool', {
+					Prop = "StopSiegfriedSpawning",
+					QuestId = "U-Bahn_Helpers",
+				}),
 			},
 			Once = true,
 			ParamId = "TCE_SiegfriedAttack",
@@ -1811,6 +1888,10 @@ PlaceObj('QuestsDef', {
 				PlaceObj('QuestSetVariableBool', {
 					Prop = "SiegfriedDefeated",
 					QuestId = "U-Bahn",
+				}),
+				PlaceObj('QuestSetVariableBool', {
+					Prop = "StopSiegfriedSpawning",
+					QuestId = "U-Bahn_Helpers",
 				}),
 			},
 			Once = true,
@@ -1888,6 +1969,9 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('QuestVarBool', {
 			Name = "LeadCollapse",
+		}),
+		PlaceObj('QuestVarBool', {
+			Name = "LeadCollapseLandsbach",
 		}),
 		PlaceObj('QuestVarBool', {
 			Name = "MentionCollapse",

@@ -18,7 +18,8 @@ DefineClass.ShipmentSquadPreset = {
 		{ category = "Timeline", id = "TimelineEventText", editor = "text", default = "", translate = true },
 		{ category = "Timeline", id = "TimelineEventHint", editor = "text", default = "", translate = true },
 	},
-	GlobalMap = "ShipmentPresets"
+	GlobalMap = "ShipmentPresets",
+	Documentation = "Defines a squad preset that can be spawned from the diamond briefcase logic in SpawnDynamicDBSquad(). The properties mainly define how the spawned shipment squad will look like in the satellite UI, the condition for spawning the squad and the items and units it consists of.",
 }
 
 DefineModItemPreset("ShipmentSquadPreset", {
@@ -375,8 +376,17 @@ function SpawnDynamicDBSquad(overrideSourceDest, srcOrDstSectorFilter)
 	SetSatelliteSquadRoute(squad, randomRoute)
 end
 
-function GenerateDynamicDBPathCache(save)
-	if config.Mods and ModsLoaded and #ModsLoaded > 0 and DBRoutesCacheDynamic then
+function GenerateDynamicDBPathCache(save, ged)
+	local activeMods = config.Mods and ModsLoaded and #ModsLoaded > 0
+	
+	if save and activeMods then 
+		if ged then
+			ged:ShowMessage("Warning", "Stop mods before saving the DB cache as they might cause incorrect generation of routes.")
+		end
+		return
+	end
+	
+	if activeMods and DBRoutesCacheDynamic then
 		return
 	end
 
@@ -416,7 +426,10 @@ function GenerateDynamicDBPathCache(save)
 		::continue::
 	end
 	
-	if #sources == 0 or #destinations == 0 then return end
+	if #sources == 0 or #destinations == 0 then 
+		DBRoutesCacheDynamic = {}
+		return
+	end
 
 	local dedupe = {}
 	for i, source in ipairs(sources) do
@@ -484,7 +497,7 @@ function GenerateDynamicDBPathCache(save)
 	else
 		DBRoutesCacheDynamic = routeCache
 	end
-	DebugPrint(string.format("GenerateDynamicDBPathCache finished after: %d ms/n", GetPreciseTicks() - st))
+	--DebugPrint(string.format("GenerateDynamicDBPathCache finished after: %d ms/n", GetPreciseTicks() - st))
 	ResumeInfiniteLoopDetection("DBPathfinding")
 end
 

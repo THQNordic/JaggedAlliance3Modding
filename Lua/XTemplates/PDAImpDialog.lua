@@ -280,7 +280,7 @@ PlaceObj('XTemplate', {
 		PlaceObj('XTemplateFunc', {
 			'name', "CanFinishMercCreation",
 			'func', function (self, ...)
-				return self:CheckMercName() and self:CheckMercNick() and self:CheckMercStats() and self:CheckMercPerksPersonal() and self:CheckMercPerksTactical()
+				return self:CanAdvanceToMercPerks() and self:CheckMercPerksPersonal() and self:CheckMercPerksTactical()
 			end,
 		}),
 		PlaceObj('XTemplateFunc', {
@@ -292,13 +292,13 @@ PlaceObj('XTemplate', {
 		PlaceObj('XTemplateFunc', {
 			'name', "CheckMercName",
 			'func', function (self, ...)
-				return g_ImpTest and g_ImpTest.final and g_ImpTest.final.name ~= "" and TDevModeGetEnglishText(g_ImpTest.final.name) ~= ""
+				return g_ImpTest and g_ImpTest.final and g_ImpTest.final.name ~= "" and TDevModeGetEnglishText(g_ImpTest.final.name, false, "no assert") ~= ""
 			end,
 		}),
 		PlaceObj('XTemplateFunc', {
 			'name', "CheckMercNick",
 			'func', function (self, ...)
-				return g_ImpTest and g_ImpTest.final and g_ImpTest.final.nick ~= "" and TDevModeGetEnglishText(g_ImpTest.final.nick) ~= ""
+				return g_ImpTest and g_ImpTest.final and g_ImpTest.final.nick ~= "" and TDevModeGetEnglishText(g_ImpTest.final.nick, false, "no assert") ~= ""
 			end,
 		}),
 		PlaceObj('XTemplateFunc', {

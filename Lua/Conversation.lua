@@ -1645,7 +1645,7 @@ function ConversationDebugInfo:GetProperties()
 		GatherMarkerScriptingData()
 	end
 -- filter for current conversation
-	ForEachDebugMarkerData("conversation", self.id, function(marker_info, res_item_info) 
+	ForEachDebugMarkerData("conversation", self.preset, function(marker_info, res_item_info) 
 		local element = {
 			id = "h_" .. marker_info.handle .. "_" .. #props,
 			name = marker_info.name,

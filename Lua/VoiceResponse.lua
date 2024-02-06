@@ -40,6 +40,7 @@ DefineClass.VoiceResponseType = {
 	EditorView = Untranslated("<Color><id><ColorClose> <color 75 105 198><BelongsTo></color><color 0 128 0><opt(u(Comment),' ','')><color 128 128 128><opt(u(save_in),' - ','')>"),
 	HasSortKey = true,
 	GlobalMap = "VoiceResponseTypes",
+	Documentation = "Creates a new voice response type that could be defined for a Unit Voice Responses preset.",
 }
 
 if config.Mods then 
@@ -138,6 +139,7 @@ DefineClass.VoiceResponse = {
 	EditorShortcut = "Ctrl-Alt-V",
 	EditorView = Untranslated("<id> <color 75 105 198><Stats><color 0 128 0><opt(u(Comment),' ','')><color 128 128 128><opt(u(save_in),' - ','')>"),
 	GlobalMap = "VoiceResponses",
+	Documentation = "Creates a new voice responses preset that contains all texts related to an ID of Unit preset.",
 	
 	SingleFile = false,
 	

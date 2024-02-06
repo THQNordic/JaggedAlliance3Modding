@@ -540,6 +540,49 @@ PlaceObj('QuestsDef', {
 				"I9",
 			},
 		}),
+		PlaceObj('TriggeredConditionalEvent', {
+			Conditions = {
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"H9",
+					},
+				}),
+				PlaceObj('OR', {
+					Conditions = {
+						PlaceObj('CheckIsPersistentUnitDead', {
+							per_ses_id = "NPC_FleatownBoss",
+						}),
+						PlaceObj('QuestIsVariableBool', {
+							QuestId = "_GroupsAttacked",
+							Vars = set( "TCE_Blaubert_Defeated" ),
+							__eval = function ()
+								local quest = gv_Quests['_GroupsAttacked'] or QuestGetState('_GroupsAttacked')
+								return quest.TCE_Blaubert_Defeated
+							end,
+						}),
+					},
+				}),
+				PlaceObj('GroupIsDead', {
+					Group = "BossThugs",
+					Negate = true,
+				}),
+			},
+			Effects = {
+				PlaceObj('GroupSetSide', {
+					Side = "enemy1",
+					TargetUnit = "BossThugs",
+				}),
+				PlaceObj('GroupAlert', {
+					TargetUnit = "BossThugs",
+				}),
+			},
+			Once = true,
+			ParamId = "TCE_BlaubertRemainingGoons",
+			QuestId = "RimvilleGuardsLogic",
+			requiredSectors = {
+				"H9",
+			},
+		}),
 	},
 	Variables = {
 		PlaceObj('QuestVarTCEState', {
@@ -587,6 +630,9 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('QuestVarTCEState', {
 			Name = "TCE_BossConvTresspassers",
+		}),
+		PlaceObj('QuestVarTCEState', {
+			Name = "TCE_BlaubertRemainingGoons",
 		}),
 	},
 	group = "Fleatown",

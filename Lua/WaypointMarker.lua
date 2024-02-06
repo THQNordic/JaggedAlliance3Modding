@@ -40,7 +40,6 @@ end
 
 function WaypointMarker:OnEditorDelete()
 	self:OnDelete()
-	GridMarker.OnEditorDelete(self)
 end
 
 function WaypointMarker:OnEditorSetProperty(prop, old_value, ged, multi)

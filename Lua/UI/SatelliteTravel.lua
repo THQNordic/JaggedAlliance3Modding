@@ -97,6 +97,10 @@ function CanCancelSatelliteSquadTravel(squad)
 	if not squad or not squad.route or not squad.route[1] then
 		return "hidden"
 	end
+	
+	if #squad.route == 1 and #squad.route[1] == 1 and squad.route[1].shortcuts then
+		return "disabled"
+	end
 
 	if squad.Retreat then
 		return "disabled"
@@ -238,8 +242,9 @@ function SquadRouteDecoration:EnsureSquadIcon(squadMode)
 			squadIcon:SetZOrder(-1)
 			squadIcon:SetHAlign("center")
 			squadIcon:SetVAlign("center")
+			squadIcon:SetScaleModifier(self.map.scale)
 			self.ScaleWithMap = false
-			self.UpdateZoom = XMapWindow.UpdateZoom
+			self.UpdateZoom = SquadWindow.UpdateZoom
 
 			squadIcon.idBase:SetImageColor(RGBA(255, 255, 255, 190))
 			squadIcon.idUpperIcon:SetImageColor(RGBA(255, 255, 255, 190))
@@ -593,8 +598,8 @@ function SquadRouteSegment:DrawBackground()
 	if not self.pointOne then return end
 	if self.direction == "none" then return end
 	
-	local scaledWidth = ScaleXY(self.scale, 12)
-	local scaledWidthSmaller = ScaleXY(self.scale, 10)
+	local scaledWidth = ScaleXY(self.map.scale, 12)
+	local scaledWidthSmaller = ScaleXY(self.map.scale, 10)
 	
 	UIL.DrawLineAntialised(scaledWidth, self.pointOne, self.pointTwo, GameColors.D)
 	UIL.DrawLineAntialised(scaledWidthSmaller, self.pointOne, self.pointTwo, self.Background)
@@ -605,7 +610,8 @@ DefineClass.SquadRouteShortcutSegment = {
 	shortcut = false,
 	progress = 0,
 	reversed = false,
-	squadWnd = false
+	squadWnd = false,
+	drawPoints = false,
 }
 
 function SquadRouteShortcutSegment:SetDisplayShortcut(shortcut, squadWnd, reversed, isCurrent)
@@ -627,6 +633,7 @@ function SquadRouteShortcutSegment:SetDisplayShortcut(shortcut, squadWnd, revers
 	self.progress = progress
 	self.reversed = reversed
 	self.squadWnd = squadWnd
+	self.drawPoints = self:GetCurvePointsForDraw(shortcut)
 end
 
 function SquadRouteShortcutSegment:SetShortcutProgress(progress, reversed)
@@ -636,12 +643,8 @@ end
 
 function SquadRouteShortcutSegment:DrawBackground()
 	if not self.shortcut then return end
+	if not self.drawPoints then return end
 
-	local shortcutPreset = self.shortcut
-	local path = shortcutPreset:GetPath()
-	local resolution = 100
-	local increment = 1000 / resolution
-	
 	local startVal = self.progress
 	local endVal = 1000
 	
@@ -650,17 +653,90 @@ function SquadRouteShortcutSegment:DrawBackground()
 		endVal = self.progress
 	end
 	
-	for i = startVal, endVal, increment do
-		local pt1 = GetShortcutCurvePointAt(path, i)
-		local pt2 = GetShortcutCurvePointAt(path, i + increment)
-		UIL.DrawLineAntialised(12, pt1, pt2, GameColors.D)
+	local startingIndex = false
+	local endingIndex = false
+	for i = 1, #self.drawPoints do
+		local place = self.drawPoints[i]
+		local placePercent = place:z()
+		if not startingIndex and placePercent >= startVal then
+			startingIndex = Max(i - 1, 1)
+		end
+		
+		if not endingIndex and placePercent >= endVal then
+			endingIndex = Min(i + 1, #self.drawPoints)
+		end
 	end
 	
-	for i = startVal, endVal, increment do
-		local pt1 = GetShortcutCurvePointAt(path, i)
-		local pt2 = GetShortcutCurvePointAt(path, i + increment)
+	if not startingIndex or not endingIndex then return end
+	
+	for i = startingIndex, endingIndex - 1 do
+		local pt1 = self.drawPoints[i]
+		local pt2 = self.drawPoints[i + 1]
+		UIL.DrawLineAntialised(12, pt1, pt2, GameColors.D)
+	end
+
+	for i = startingIndex, endingIndex - 1 do
+		local pt1 = self.drawPoints[i]
+		local pt2 = self.drawPoints[i + 1]
 		UIL.DrawLineAntialised(10, pt1, pt2, self.Background)
 	end
+end
+
+function SquadRouteShortcutSegment:GetCurvePointsForDraw(shortcut)
+	local path = shortcut:GetPath()
+	local precision = 1000
+	local resolution = 50
+	if Platform.console then
+		resolution = 50
+	end
+
+	local pathLength = #path - 1
+
+	local firstPoint = path[1]
+	local lastPoint = path[#path]
+	
+	local entranceSector = shortcut.shortcut_direction_entrance_sector
+	entranceSector = entranceSector and gv_Sectors[entranceSector]
+	local entranceSectorPos = entranceSector and entranceSector.XMapPosition
+	if entranceSectorPos then
+		local diff = entranceSectorPos - firstPoint
+		firstPoint = firstPoint - diff
+	end
+
+	local exitSector = shortcut.shortcut_direction_exit_sector
+	exitSector = exitSector and gv_Sectors[exitSector]
+	local exitSectorPos = exitSector and exitSector.XMapPosition
+	if exitSectorPos then
+		local diff = exitSectorPos - lastPoint
+		lastPoint = lastPoint - diff
+	end
+	
+	local drawPoints = {}
+	for i = 0, 1000, resolution do
+		local percentOfPath = i
+
+		local indexBetweenPoints = 1 + ((percentOfPath * pathLength) / 1000)
+		indexBetweenPoints = Min(indexBetweenPoints, pathLength)
+		indexBetweenPoints = Max(indexBetweenPoints, 1)
+
+		local percentPerPoint = 1000 / pathLength
+		local leftOverPercent = percentOfPath - ((indexBetweenPoints - 1) * percentPerPoint)
+		local placeBetweenPoints = MulDivRound(leftOverPercent, precision, percentPerPoint)
+		placeBetweenPoints = Min(placeBetweenPoints, precision)
+
+		local p1 = path[indexBetweenPoints]
+		local p2 = path[indexBetweenPoints + 1]
+		local prevPoint = path[indexBetweenPoints - 1] or firstPoint
+		local nextPoint = path[indexBetweenPoints + 2] or lastPoint
+
+		local dist = p1:Dist(p2) / 3
+		local spline = { p1, p1 + SetLen(p2 - prevPoint, dist), p2 + SetLen(p1 - nextPoint, dist), p2 }
+		local x, y, z = BS3_GetSplinePos(spline, placeBetweenPoints, precision)
+		
+		drawPoints[#drawPoints + 1] = point(x, y, percentOfPath)
+	end
+
+	return drawPoints
 end
 
 function OnMsg.SquadStartedTravelling(squad)
@@ -1189,7 +1265,6 @@ function SquadUIMovementThread(squadWnd)
 				end
 				
 				local arrivalTime = squad.traversing_shortcut_start + travelTime				
-				local path = shortcut:GetPath()
 				
 				while Game.CampaignTime < arrivalTime do
 					local timeLeft = arrivalTime - Game.CampaignTime
@@ -1201,11 +1276,11 @@ function SquadUIMovementThread(squadWnd)
 					
 					local percent = MulDivRound(timeLeft, 1000, travelTime)
 					if not reversedShortcut then percent = 1000 - percent end
-					local pt1 = GetShortcutCurvePointAt(path, percent)
+					local pt1 = GetShortcutCurvePointAt(shortcut, percent)
 					
 					local percentNext = MulDivRound(timeLeft - interpolateTime, 1000, travelTime)
 					if not reversedShortcut then percentNext = 1000 - percentNext end
-					local pt2 = GetShortcutCurvePointAt(path, percentNext)
+					local pt2 = GetShortcutCurvePointAt(shortcut, percentNext)
 					
 					squadWnd:SetPos(pt1:x(), pt1:y(), false)
 					squad.XVisualPos = pt1
@@ -1569,29 +1644,81 @@ function GetHalfwaySectorPoint(idOne, idTwo)
 	return s1 + SetLen(dir, dist / 2)
 end
 
+function GetShortcutRenderPoints(shortcut)
+	local path = shortcut:GetPath()
+
+	local startPoint = path[1]
+	local lastPoint = path[#path]
+
+	local entranceSector = shortcut.shortcut_direction_entrance_sector
+	entranceSector = entranceSector and gv_Sectors[entranceSector]
+	local entranceSectorPos = entranceSector and entranceSector.XMapPosition
+	if entranceSectorPos then
+		local diff = entranceSectorPos - path[1]
+		startPoint = startPoint - diff
+	end
+
+	local exitSector = shortcut.shortcut_direction_exit_sector
+	exitSector = exitSector and gv_Sectors[exitSector]
+	local exitSectorPos = exitSector and exitSector.XMapPosition
+	if exitSectorPos then
+		local diff = exitSectorPos - lastPoint
+		lastPoint = lastPoint - diff
+	end
+
+	return startPoint, path, lastPoint
+end
+
 -- Percent is 0-1000
-function GetShortcutCurvePointAt(path, percentOfPath)
+function GetShortcutCurvePointAt(shortcut, percentOfPath)
+	local path = shortcut:GetPath()
 	local precision = 1000
 
 	local pathLength = #path - 1
-	local indexBetweenPoints = 1 + ((percentOfPath * pathLength) / precision)
+	local indexBetweenPoints = 1 + ((percentOfPath * pathLength) / 1000)
 	indexBetweenPoints = Min(indexBetweenPoints, pathLength)
 	indexBetweenPoints = Max(indexBetweenPoints, 1)
 
 	local p1 = path[indexBetweenPoints]
 	local p2 = path[indexBetweenPoints + 1]
 	
-	local placeBetweenPoints
-	if percentOfPath >= precision then
-		placeBetweenPoints = precision
-	else
-		local percentBetween = (percentOfPath * pathLength)
-		placeBetweenPoints = percentBetween % precision
+	local percentPerPoint = 1000 / pathLength
+	local leftOverPercent = percentOfPath - ((indexBetweenPoints - 1) * percentPerPoint)
+	local placeBetweenPoints = MulDivRound(leftOverPercent, precision, percentPerPoint)
+	placeBetweenPoints = Min(placeBetweenPoints, precision)
+
+	local prevPoint = path[indexBetweenPoints - 1]
+	if not prevPoint then
+		local entranceSector = shortcut.shortcut_direction_entrance_sector
+		entranceSector = entranceSector and gv_Sectors[entranceSector]
+
+		local entranceSectorPos = entranceSector and entranceSector.XMapPosition
+		if entranceSectorPos then
+			local diff = entranceSectorPos - p1
+			prevPoint = p1 - diff
+		else
+			prevPoint = path[indexBetweenPoints]
+		end
 	end
 
-	local prevPoint = path[indexBetweenPoints - 1] or path[indexBetweenPoints]
-	local nextPoint = path[indexBetweenPoints + 2] or path[indexBetweenPoints + 1]
-	return CatmullRomSpline(prevPoint, p1, p2, nextPoint, placeBetweenPoints, precision), indexBetweenPoints
+	local nextPoint = path[indexBetweenPoints + 2]
+	if not nextPoint then
+		local exitSector = shortcut.shortcut_direction_exit_sector
+		exitSector = exitSector and gv_Sectors[exitSector]
+
+		local exitSectorPos = exitSector and exitSector.XMapPosition
+		if exitSectorPos then
+			local diff = exitSectorPos - p2
+			nextPoint = p2 - diff
+		else
+			nextPoint = path[indexBetweenPoints + 1]
+		end
+	end
+	
+	local dist = p1:Dist(p2) / 3
+	local spline = { p1, p1 + SetLen(p2 - prevPoint, dist), p2 + SetLen(p1 - nextPoint, dist), p2 }
+	local x, y, z = BS3_GetSplinePos(spline, placeBetweenPoints, precision)
+	return point(x, y, z), indexBetweenPoints
 end
 
 function GetShortcutByStartEnd(startSectorId, endSectorId)

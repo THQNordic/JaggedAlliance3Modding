@@ -21,11 +21,15 @@ PlaceObj('XTemplate', {
 							source:SetFocus(true)
 						end
 						OnModManagerClose(GetPreGameMainMenu())
-						host:ResolveId("idSubMenuTittle"):SetText(T(""))
-						host:ResolveId("idSubMenuTittleDescr"):SetText(T(""))
-						host:ResolveId("idSubContent"):SetMode("empty")
-						host:ResolveId("idSubSubContent"):SetMode("empty")
-						XAction.OnAction(self, host, source)
+						if not host or host.window_state == "destroying" then
+							OpenPreGameMainMenu("")
+						else
+							host:ResolveId("idSubMenuTittle"):SetText(T(""))
+							host:ResolveId("idSubMenuTittleDescr"):SetText(T(""))
+							host:ResolveId("idSubContent"):SetMode("empty")
+							host:ResolveId("idSubSubContent"):SetMode("empty")
+							XAction.OnAction(self, host, source)
+						end
 					end, self, host, source)
 					host.isMMFocused = false
 				else

@@ -36,13 +36,11 @@ PlaceObj('XTemplate', {
 				ObjModified("mercs_imgs")
 				ShowSavegameDescription(self.context, GetDialog(self):ResolveId("idSubSubContent"))
 			end
-			local newText = self:GetText() ~= "" and self:GetText() or SavenameToName(g_SelectedSave.savename)
-			newText = newText:lower()
-			g_SelectedSave.newSaveName = newText
-			self.parent:ResolveId("idNewSave").context.savename = newText
+			local new_text = self:GetText() ~= "" and self:GetText() or g_SelectedSave.text
+			self.parent:ResolveId("idNewSave").context.text = new_text
 			local saveTitleText = GetDialog(self):ResolveId("idSubSubContent"):ResolveId("idSavegameTitle")
 			if saveTitleText and self.context.id == GetDialogModeParam(saveTitleText).id then
-				saveTitleText:SetText(newText)
+				saveTitleText:SetText(new_text)
 			end
 			if GetUIStyleGamepad() then
 				self:OnKillFocus()
@@ -72,14 +70,11 @@ PlaceObj('XTemplate', {
 					
 					local saveEntry = self.parent and self.parent:ResolveId("idSaveEntry")
 					if not saveEntry then return "break" end
+					saveEntry.idName:SetText(self.context.text)
 					saveEntry:SetVisible(true)
 					if not g_SelectedSave or g_SelectedSave.metadata.timestamp ~= self.context.metadata.timestamp then
-						local oldSaveName = SavenameToName(saveEntry.context.savename)
-						saveEntry.idName:SetText(oldSaveName)
-						self.context.savename = oldSaveName
 						saveEntry:SetSelected(false)
 					else
-						saveEntry.idName:SetText(self:GetText())
 						saveEntry:SetSelected(true)
 					end
 					GetDialog(self).parent:SetHandleMouse(false)

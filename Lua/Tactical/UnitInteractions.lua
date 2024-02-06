@@ -72,10 +72,6 @@ function Unit:GetInteractionInfo()
 		return Presets.CombatAction.Interactions.Interact_UnitCustomInteraction, self.spawner.InteractionVisuals
 	end
 
-	if Platform.developer and config.FindInvalidInteractionBanters then
-		DeveloperCheckUnitInteractionBanters(self)
-	end
-
 	if not self:GetAllBanters("findFirst", skip_conflict_banter_filter) then return end
 
 	if GetSectorConflict() then

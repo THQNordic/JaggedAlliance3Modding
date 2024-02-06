@@ -8,12 +8,12 @@ PlaceObj('CharacterEffectCompositeDef', {
 	'object_class', "Perk",
 	'unit_reactions', {
 		PlaceObj('UnitReaction', {
-			Event = "OnUnitAttack",
-			Handler = function (self, target, attacker, action, attack_target, results, attack_args)
+			Event = "OnUnitAttackResolved",
+			Handler = function (self, target, attacker, attack_target, action, attack_args, results, can_retaliate, combat_starting)
 				if target == attacker and IsKindOfClasses(results.weapon, "Grenade", "Shotgun") then
 					if g_Combat then
 						attacker:AddStatusEffect("FreeMove")
-					elseif g_StartingCombat then
+					elseif g_StartingCombat or combat_starting then
 						attacker:AddStatusEffect("FreeMoveOnCombatStart")
 					end
 				end

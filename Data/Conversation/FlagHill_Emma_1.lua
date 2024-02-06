@@ -548,7 +548,7 @@ PlaceObj('Conversation', {
 			}),
 			PlaceObj('ConversationLine', {
 				Character = "Emma",
-				Text = T(151685000826, --[[Conversation FlagHill_Emma_1 Text voice:Emma section:FlagHill_Emma_1 keyword:Redirect]] "But first things first. The <em>Legion</em> has overrun the island, capturing the town and the old fortress. Liberating the town is essential to securing transport to the mainland, but securing the whole island will insure you have a good base of operations. Additionally, the locals may be appreciative and give useful intel."),
+				Text = T(151685000826, --[[Conversation FlagHill_Emma_1 Text voice:Emma section:FlagHill_Emma_1 keyword:Redirect]] "But first things first. The <em>Legion</em> has overrun the island, capturing the town and the old fortress. Liberating the town is essential to securing transport to the mainland, but securing the whole island will ensure you have a good base of operations. Additionally, the locals may be appreciative and give useful intel."),
 			}),
 			PlaceObj('ConversationInterjectionList', {
 				Interjections = {

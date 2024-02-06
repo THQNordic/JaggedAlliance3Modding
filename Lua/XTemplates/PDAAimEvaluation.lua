@@ -626,16 +626,16 @@ PlaceObj('XTemplate', {
 										
 										local text
 										if sector.conflict then
-											text = T{903359955315, "Engaged in conflict in sector <sectorId>.", sectorId = Untranslated(sectorId)}
+											text = T{903359955315, "Engaged in conflict in sector <SectorId(sectorId)>.", sectorId = sectorId}
 										else
 											local operation = SectorOperations[context.Operation]
 											if operation.id == "Arriving" or operation.id == "Traveling" then
 												text = T{889510996961, "<activity>.", activity = operation.display_name}
 											elseif operation.id == "Idle" then
-												text = T{812039502354, "<activity> in sector <sectorId>.", activity = operation.display_name, sectorId = Untranslated(sectorId)}
+												text = T{812039502354, "<activity> in sector <SectorId(sectorId)>.", activity = operation.display_name, sectorId = sectorId}
 											else
 												local profession = table.find_value(operation.Professions, "id", context.OperationProfession )
-												text = T{748263789018, "<profession> in sector <sectorId>.", profession = profession.display_name, sectorId = Untranslated(sectorId)}
+												text = T{748263789018, "<profession> in sector <SectorId(sectorId)>.", profession = profession.display_name, sectorId = sectorId}
 											end
 										end
 										

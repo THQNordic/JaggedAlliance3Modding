@@ -307,6 +307,9 @@ g_ItemNetEvents = {
 
 function MoveItemsNetEvent(data)
 	NetUpdateHash("MoveItemResults", MoveItem(MoveItem_RecieveNetArgs(data)))
+	if Platform.developer and gv_SatelliteView then --instant desync on inventory result mismatch on sat view
+		NetEchoEvent("SyncHashesOnSatMap", netUniqueId, Game.CampaignTime, NetGetHashValue())
+	end
 end
 
 function CustomCombatActions.MoveItems(unit, ap, data)
@@ -474,7 +477,8 @@ function MoveItem(args)
 	if sync_call then
 		NetUpdateHash("MoveItem", item and item.class, item and item.id, 
 			dest_container and type(dest_container) == "table" and dest_container.class or dest_container, dest_container_slot_name,
-			src_container and src_container.class, src_container_slot_name)
+			src_container and src_container.class, src_container_slot_name,
+			dest_x, dest_y, s_src_x, s_src_y)
 	end
 	--presetup
 	assert((dest_x and dest_y) or (not dest_x and not dest_y))
@@ -496,7 +500,7 @@ function MoveItem(args)
 	local src_x, src_y
 	if src_container then
 		src_x, src_y = src_container:GetItemPosInSlot(src_container_slot_name, item)
-		if not src_x then
+		if not src_x and not IsKindOf(src_container, "SectorStash") then --sector stash may now not contain the item due to tabbing.
 			return "item not found in src container!"
 		elseif not s_src_x then
 			--lcl sync_call == true with omitted src locations
@@ -512,7 +516,8 @@ function MoveItem(args)
 	--this can only be a second weapon when trying to equip large weap on 2 small ones;
 	--piggy back on item_at_dest and item checks and assume swap for scnd item is always possible;
 	local item_at_dest_2 = false 
-	if dest_x and item:IsLargeItem() then
+	if dest_x and item:IsLargeItem()
+		and ( not sync_call or not IsKindOf(dest_container, "SectorStash") ) then
 		--check for other items underneath
 		local other_item_at_dest = dest_container:GetItemInSlot(dest_container_slot_name, nil, dest_x + 1, dest_y)
 		if other_item_at_dest == item then
@@ -570,7 +575,8 @@ function MoveItem(args)
 		end
 	end
 	if src_container == dest_container and src_container_slot_name == dest_container_slot_name then
-		if not item_at_dest and src_x == dest_x and src_y == dest_y then
+		if not item_at_dest and src_x == dest_x and src_y == dest_y 
+			and not IsKindOf(src_container, "SectorStash") then --they could be in different tabs, so dont early out this op
 			--no change required
 			if dbgMoveItem then
 				invprint("no change required")
@@ -700,6 +706,9 @@ function MoveItem(args)
 			end
 		else
 			p_pos, reason = dest_container:CanAddItem(dest_container_slot_name, item, dest_x, dest_y, local_items_moved)
+			if not p_pos and dest_x and IsKindOf(dest_container, "SectorStash") then
+				p_pos, reason = dest_container:CanAddItem(dest_container_slot_name, item, nil, nil, local_items_moved)
+			end
 			if not p_pos then
 				return "move failed, dest inventory refused item, reason", reason, sync_unit
 			end
@@ -722,10 +731,10 @@ function MoveItem(args)
 			assert(x and y)
 			if src_container then
 				local pos, reason = src_container:RemoveItem(src_container_slot_name, item, "no_update")
-				assert(pos)
+				assert(pos or IsKindOf(src_container, "SectorStash"))
 			end
 			local pos, reason = dest_container:AddItem(dest_container_slot_name, item, x, y, is_local_changes)
-			assert(pos)
+			assert(pos or IsKindOf(dest_container, "SectorStash"))
 		end
 		
 		if amount and item_is_stack and item.Amount > amount then
@@ -922,7 +931,7 @@ function MoveItem(args)
 	--in order to figure out whther items fit or are accepted in each other's places we would need to remove them first.
 	--this is tricky to do with current methods without changing the state..
 	local swap_src_x = src_x
-	if item:IsLargeItem() and dest_container == src_container and dest_container_slot_name == src_container_slot_name and dest_x + 1 == src_x then
+	if item:IsLargeItem() and dest_container == src_container and dest_container_slot_name == src_container_slot_name and dest_x and dest_x + 1 == src_x then
 		--this handles special case large with small swap where the small item is offset after swap because it feels more natural
 		swap_src_x = src_x + 1
 		assert(not item_at_dest_2)
@@ -946,7 +955,11 @@ function MoveItem(args)
 		return "Could not swap items, dest container does not accept source item"
 	end
 	local alternative_pos,reason
-	if not src_container:IsEmptyPosition(src_container_slot_name, item_at_dest, swap_src_x, src_y, item) then 
+	--swap_src_x and dest_x are nil when swapping in sec stash but diff tabs are open
+	assert(swap_src_x or IsKindOf(src_container, "SectorStash"))
+	assert(dest_x or IsKindOf(dest_container, "SectorStash"))
+	
+	if swap_src_x and not src_container:IsEmptyPosition(src_container_slot_name, item_at_dest, swap_src_x, src_y, item) then
 		if alternative_swap_pos and IsEquipSlot(dest_container_slot_name) and not IsEquipSlot(src_container_slot_name) and item_at_dest then
 			-- search for empty place on destination	
 			alternative_pos, reason = src_container:CanAddItem(src_container_slot_name, item_at_dest, nil, nil,
@@ -959,11 +972,11 @@ function MoveItem(args)
 		end	
 	end
 	
-	if not item_at_dest_2 and not dest_container:IsEmptyPosition(dest_container_slot_name, item, dest_x, dest_y, item_at_dest) then
+	if not item_at_dest_2 and (dest_x and not dest_container:IsEmptyPosition(dest_container_slot_name, item, dest_x, dest_y, item_at_dest)) then
 		--presumably, if item_at_dest_2 exists, then there is space for sure;
 		return "Could not swap items, item does not fit in dest container at the specified position"
 	end
-	if (item:IsLargeItem() or item_at_dest:IsLargeItem()) and src_container == dest_container and src_container_slot_name == dest_container_slot_name and dest_y == src_y then
+	if (item:IsLargeItem() or item_at_dest:IsLargeItem()) and dest_x and swap_src_x and src_container == dest_container and src_container_slot_name == dest_container_slot_name and dest_y == src_y then
 		--check if item_at_dest will fit after item has been placed
 		local occupied1, occupied2 = dest_x, item:IsLargeItem() and (dest_x + 1) or dest_x
 		local needed1, needed2 = swap_src_x, item_at_dest:IsLargeItem() and (swap_src_x + 1) or swap_src_x
@@ -993,9 +1006,9 @@ function MoveItem(args)
 		src_container:AddItem(src_container_slot_name, item_at_dest_2, swap_src_x + 1, src_y, is_local_changes)
 	end
 	MoveItem_UpdateUnitOutfit(src_container,dest_container, check_only)
-		if not no_ui_respawn then
-			InventoryUIRespawn() --havn't found any other way to make the ui display the changes
-		end
+	if not no_ui_respawn then
+		InventoryUIRespawn() --havn't found any other way to make the ui display the changes
+	end
 
 	return false
 end
@@ -1157,15 +1170,36 @@ end
 function CombineItemsFromDragAndDrop(recipe_id, unit, item1, container1, item2, container2)
 	local options = InventoryGetTargetsRecipe(item1, unit, item2, container2)
 	local option = false
+	local item, context
 	for i, opt in ipairs(options) do
 		if 	 opt.recipe and opt.recipe.id == recipe_id 
 			and opt.container_data
 			and opt.container_data.item
 			and opt.container_data.item.id == item2.id then
 			option = opt
+--			item =  item1
+--			context=  context1
 			break
 		end
 	end
+	if not option then
+		item1, item2 =  item2, item1
+		container1, container2 = container2, container1
+		options = InventoryGetTargetsRecipe(item1, unit, item2, container2)
+		option = false
+		for i, opt in ipairs(options) do
+			if 	 opt.recipe and opt.recipe.id == recipe_id 
+				and opt.container_data
+				and opt.container_data.item
+				and opt.container_data.item.id == item2.id then
+				option = opt
+				break
+			end
+		end
+	end
+	
+	if not option then return end
+	
 	local combinePopup = XTemplateSpawn("CombineItemPopup", terminal.desktop, { unit = unit, item = item1, context = container1 })
 	combinePopup:Open()
 	combinePopup:SetChosenCombination(option)

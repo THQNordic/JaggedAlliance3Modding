@@ -450,6 +450,12 @@ PlaceObj('QuestsDef', {
 			Text = T(143363894691, --[[QuestsDef GhostStories Text]] 'The <em>"ghost"</em> has hidden in the <em>cellar</em> of the <em><SectorName(\'G8\')></em>'),
 		}),
 		PlaceObj('QuestNote', {
+			Badges = {
+				PlaceObj('QuestBadgePlacement', {
+					BadgeUnit = "Butler",
+					Sector = "G8_Underground",
+				}),
+			},
 			HideConditions = {
 				PlaceObj('QuestIsVariableBool', {
 					Condition = "or",
@@ -478,6 +484,12 @@ PlaceObj('QuestsDef', {
 			Text = T(629502206236, --[[QuestsDef GhostStories Text]] "The <em>Ghost Butler</em> won't come out while there are Legion soldiers in the mansion"),
 		}),
 		PlaceObj('QuestNote', {
+			Badges = {
+				PlaceObj('QuestBadgePlacement', {
+					BadgeUnit = "Butler",
+					Sector = "G8_Underground",
+				}),
+			},
 			HideConditions = {
 				PlaceObj('QuestIsVariableBool', {
 					Condition = "or",

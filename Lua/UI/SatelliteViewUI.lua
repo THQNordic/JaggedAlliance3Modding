@@ -57,7 +57,9 @@ GameVar("AllSectorsRevealed", false)
 
 function AllowRevealSectors(array)
 	for i, s in ipairs(array) do
-		gv_Sectors[s].reveal_allowed = true
+		if gv_Sectors[s] then
+			gv_Sectors[s].reveal_allowed = true
+		end
 	end
 	RecalcRevealedSectors()
 end
@@ -96,9 +98,10 @@ function RecalcRevealedSectors()
 		if squad.traversing_shortcut_start_sId then
 			local nextSectorId = squad.route[1][1]
 			local shortcut = GetShortcutByStartEnd(squad.traversing_shortcut_start_sId, nextSectorId)
-			local visibleSectors = shortcut:GetShortcutVisibilitySectors()
-			for i, s in ipairs(visibleSectors) do
-				RevealSectorsAround(s, 0)
+			if shortcut then
+				for _, s in ipairs(shortcut:GetShortcutVisibilitySectors()) do
+					RevealSectorsAround(s, 0)
+				end
 			end
 			RevealSectorsAround(sector_id, 0)
 		elseif sector_id then

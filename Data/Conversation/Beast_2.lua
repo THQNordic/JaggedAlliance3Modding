@@ -1031,11 +1031,11 @@ PlaceObj('Conversation', {
 					Prop = "PlayerAttackedBeast",
 					QuestId = "CursedForestSideQuests",
 				}),
-				PlaceObj('GroupAlert', {
+				PlaceObj('GroupSetSide', {
+					Side = "enemy2",
 					TargetUnit = "TheBeast",
 				}),
-				PlaceObj('GroupSetSide', {
-					Side = "enemy1",
+				PlaceObj('GroupAlert', {
 					TargetUnit = "TheBeast",
 				}),
 			},
@@ -1054,11 +1054,15 @@ PlaceObj('Conversation', {
 		PlaceObj('ConversationPhrase', {
 			Align = "right",
 			Effects = {
-				PlaceObj('GroupAlert', {
-					TargetUnit = "TheBeast",
+				PlaceObj('QuestSetVariableBool', {
+					Prop = "PlayerAttackedBeast",
+					QuestId = "CursedForestSideQuests",
 				}),
 				PlaceObj('GroupSetSide', {
-					Side = "enemy1",
+					Side = "enemy2",
+					TargetUnit = "TheBeast",
+				}),
+				PlaceObj('GroupAlert', {
 					TargetUnit = "TheBeast",
 				}),
 			},

@@ -257,6 +257,13 @@ PlaceObj('XTemplate', {
 					}),
 				}),
 			}),
+		PlaceObj('XTemplateFunc', {
+			'name', "OnSetFocus(self)",
+			'func', function (self)
+				ZuluModalDialog.OnSetFocus(self)
+				self.idList:SetFocus()
+			end,
+		}),
 		}),
 })
 

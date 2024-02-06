@@ -77,6 +77,7 @@ PlaceObj('XTemplate', {
 					'FocusedBackground', RGBA(0, 0, 0, 0),
 					'DisabledBorderColor', RGBA(0, 0, 0, 0),
 					'OnPress', function (self, gamepad)
+						if camera.IsLocked() then return end
 						local newFloor = cameraTac.GetFloor() + 1
 						cameraTac.SetFloor(
 							newFloor, 
@@ -117,6 +118,7 @@ PlaceObj('XTemplate', {
 					'FocusedBackground', RGBA(0, 0, 0, 0),
 					'DisabledBorderColor', RGBA(0, 0, 0, 0),
 					'OnPress', function (self, gamepad)
+						if camera.IsLocked() then return end
 						local newFloor = cameraTac.GetFloor() - 1
 						cameraTac.SetFloor(
 							newFloor, 

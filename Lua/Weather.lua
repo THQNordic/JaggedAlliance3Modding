@@ -44,6 +44,33 @@ WeatherCycle = {
 	},
 }
 
+WeatherCycle_UnderTheWeather = {
+	Wet = {
+		{ "RainLight", 100, 24, 72 },
+		{ "RainHeavy",  75, 12, 72 },
+		{ "Fog",        75, 12, 72 },
+		{ "ClearSky",   50, 12, 36 },
+	},
+	Dry = {
+		{ "FireStorm",  50, 24, 72 },
+		{ "DustStorm", 100, 24, 72 },
+		{ "Heat",      100, 24, 48 },
+		{ "ClearSky",   50, 12, 36 },
+	},
+	CursedForest = {		
+		{ "RainLight", 100, 12, 36 },
+		{ "Fog",        50, 12, 24 },
+	},
+}
+
+function GetCurrentWeatherCycle()
+	if IsGameRuleActive("UnderTheWeather") then
+		return WeatherCycle_UnderTheWeather
+	else
+		return WeatherCycle
+	end
+end
+
 GameVar("g_vGameStateDefSounds", false)
 
 AppendClass.GameStateDef = {
@@ -144,7 +171,7 @@ end
 
 function CalculateWeatherForSector(weather_cycle, weather_zone, time)
 	local hours = time / const.Scale.h -- since campaign start
-	local cycle = WeatherCycle[weather_cycle]
+	local cycle = GetCurrentWeatherCycle()[weather_cycle]
 	local wrand = BraidRandomCreate(Game.id, weather_zone)
 	local h = 0
 	while true do
@@ -155,6 +182,26 @@ function CalculateWeatherForSector(weather_cycle, weather_zone, time)
 			end
 		end
 	end
+end
+
+if FirstLoad then
+	g_WeatherZones = false
+end
+
+function WeatherZoneCombo(campaign)
+	if g_WeatherZones and g_WeatherZones[campaign.id] then return g_WeatherZones[campaign.id] end
+	
+	g_WeatherZones = {}
+	ForEachPreset("CampaignPreset", function(campaignPreset)
+		if not g_WeatherZones[campaignPreset.id] then
+			g_WeatherZones[campaignPreset.id] = {}
+		end
+		table.insert_unique(g_WeatherZones[campaignPreset.id], "Default")
+		for _, sector in ipairs(campaignPreset.Sectors) do
+			table.insert_unique(g_WeatherZones[campaignPreset.id], sector.WeatherZone)
+		end
+	end)
+	return g_WeatherZones[campaign.id]
 end
 
 function GetCurrentSectorWeather(sector_id)
@@ -327,7 +374,7 @@ end
 
 function GetCheatsWeatherTOD()
 	local weather_cycle = GameStateDefs[mapdata.Region] and GameStateDefs[mapdata.Region].WeatherCycle or "Dry"
-	local weathers = WeatherCycle[weather_cycle]
+	local weathers = GetCurrentWeatherCycle()[weather_cycle]
 	local tods = Presets.GameStateDef["time of day"]
 	local weather_tods = {}
 	for _, weather in ipairs(weathers) do

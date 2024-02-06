@@ -76,12 +76,14 @@ PlaceObj('XTemplate', {
 					end
 					local res
 					if has_prev_data and diff then
+						local popupHost = GetDialog("PDADialogSatellite")
+						popupHost = popupHost and popupHost:ResolveId("idDisplayPopupHost")
+						
 						local qdlg = CreateQuestionBox(
-								GetDialog("PDADialog"),
+								popupHost,
 								T(824112417429, "Warning"),
 								T(176326810773, "Do you want to start the operation? If confirmed, the operation will restart with the new parameters. Resources and end time may change based on this"),
 								T(1138, "Yes"), T(1139, "No"))
-							qdlg:SetModal()
 						res = qdlg:Wait()== "ok"
 						if not res and has_prev_data then
 						-- restore prev operation
@@ -189,8 +191,7 @@ PlaceObj('XTemplate', {
 								ctxMenu:SetMaxWidth(button.MaxWidth)
 								ctxMenu:SetMinWidth(button.MinWidth)
 								
-								ctxMenu:Open()
-								ctxMenu:SetModal()								
+								ctxMenu:Open()							
 								ctxMenu:SetFocus()
 							end,
 							'FXMouseIn', "activityAssignStartHover",
@@ -541,13 +542,16 @@ PlaceObj('XTemplate', {
 									if restore_txt ~= "" then
 										restore_txt = T{548330460792, "You will be refunded <cost>.", cost = restore_txt}
 									end
+									
+									local popupHost = GetDialog("PDADialogSatellite")
+									popupHost = popupHost and popupHost:ResolveId("idDisplayPopupHost")
+									
 									local dlg = CreateQuestionBox(
-										GetDialog("PDADialog"),
+										popupHost,
 										T(824112417429, "Warning"),
 										restore_txt ~= "" and T{653728009504, "<warning>\n<restore>", warning = warning_txt, restore = restore_txt} or warning_txt,
 										T(689884995409, "Yes"),
 										T(782927325160, "No"))
-									dlg:SetModal()
 									res = dlg:Wait()== "ok"
 								end
 								if res then

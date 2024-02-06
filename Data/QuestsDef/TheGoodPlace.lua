@@ -72,7 +72,6 @@ PlaceObj('QuestsDef', {
 		PlaceObj('QuestNote', {
 			Badges = {
 				PlaceObj('QuestBadgePlacement', {
-					BadgeUnit = "",
 					Sector = "L6_Underground",
 				}),
 			},
@@ -326,10 +325,10 @@ PlaceObj('QuestsDef', {
 				PlaceObj('QuestIsVariableBool', {
 					Condition = "or",
 					QuestId = "Luigi",
-					Vars = set( "Completed", "JackhammerDead" ),
+					Vars = set( "JackhammerDead" ),
 					__eval = function ()
 						local quest = gv_Quests['Luigi'] or QuestGetState('Luigi')
-						return quest.Completed or quest.JackhammerDead
+						return quest.JackhammerDead
 					end,
 				}),
 			},
@@ -338,13 +337,22 @@ PlaceObj('QuestsDef', {
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "Luigi",
 					Vars = set({
-	Completed = false,
 	JackhammerDead = false,
 	JackhammerRelease = true,
 }),
 					__eval = function ()
 						local quest = gv_Quests['Luigi'] or QuestGetState('Luigi')
-						return not quest.Completed and not quest.JackhammerDead and quest.JackhammerRelease
+						return not quest.JackhammerDead and quest.JackhammerRelease
+					end,
+				}),
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "TheGoodPlace",
+					Vars = set({
+	Completed = false,
+}),
+					__eval = function ()
+						local quest = gv_Quests['TheGoodPlace'] or QuestGetState('TheGoodPlace')
+						return not quest.Completed
 					end,
 				}),
 				PlaceObj('QuestIsTCEState', {

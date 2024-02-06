@@ -944,7 +944,7 @@ if Platform.developer then --they play release version..
 		if netDesync then return end
 		hashes = hashes or {}
 		hashes[player_id] = hashes[player_id] or {}
-		assert(not hashes[player_id][time])
+		--assert(not hashes[player_id][time]) --rechecking during pause is ok
 		hashes[player_id][time] = hash
 		
 		--assumes 2 players

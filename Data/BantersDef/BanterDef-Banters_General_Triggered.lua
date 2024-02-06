@@ -526,7 +526,6 @@ PlaceObj('BanterDef', {
 			'FloatUp', true,
 		}),
 	},
-	disabledInConflict = true,
 	group = "Banters_General_Triggered",
 	id = "Beach_Sandman01_intro",
 })
@@ -564,7 +563,6 @@ PlaceObj('BanterDef', {
 			per_ses_id = "NPC_CaptainPierrot",
 		}),
 	},
-	disabledInConflict = true,
 	group = "Banters_General_Triggered",
 	id = "Beach_Sandman01_replies",
 })
@@ -573,17 +571,11 @@ PlaceObj('BanterDef', {
 	FX = "CheckSuccess",
 	Lines = {
 		PlaceObj('BanterLine', {
-			'Text', T(957055125738, --[[BanterDef Beach_Sandman02_success Text]] "<explosives-s>\nThere was a grenade inside that was rigged to explode."),
-			'Voiced', false,
-			'FloatUp', true,
-		}),
-		PlaceObj('BanterLine', {
 			'Character', "Captain_Pierrot",
 			'Text', T(646155465364, --[[BanterDef Beach_Sandman02_success Text section:Banters_General_Triggered/Beach_Sandman02_success voice:Captain_Pierrot]] "Ah, now my sandman is disarmed and defenseless. Please don't kick him."),
 			'Optional', true,
 		}),
 	},
-	disabledInConflict = true,
 	group = "Banters_General_Triggered",
 	id = "Beach_Sandman02_success",
 })
@@ -603,7 +595,6 @@ PlaceObj('BanterDef', {
 			per_ses_id = "NPC_CaptainPierrot",
 		}),
 	},
-	disabledInConflict = true,
 	group = "Banters_General_Triggered",
 	id = "Beach_Sandman04_kick",
 })

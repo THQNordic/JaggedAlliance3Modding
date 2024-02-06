@@ -132,7 +132,7 @@ PlaceObj('Conversation', {
 		Lines = {
 			PlaceObj('ConversationLine', {
 				Character = "DrGruselheim",
-				Text = T(395296447184, --[[Conversation DrGruselheim_1 Text voice:DrGruselheim section:DrGruselheim_1 keyword:Who are you?]] "My name is Dr. Rudolph <em>Gruselheim</em>. I have personally designed this complex, and sadly, I am both its director and, um, prisoner."),
+				Text = T(395296447184, --[[Conversation DrGruselheim_1 Text voice:DrGruselheim section:DrGruselheim_1 keyword:Who are you?]] "My name is Dr. Rudolph <em>Gruselheim</em>. I have personally designed this complex, and sadly, I am both its director and prisoner."),
 			}),
 		},
 		id = "Whoareyou",
@@ -220,7 +220,7 @@ PlaceObj('Conversation', {
 		Lines = {
 			PlaceObj('ConversationLine', {
 				Character = "DrGruselheim",
-				Text = T(402478247015, --[[Conversation DrGruselheim_1 Text voice:DrGruselheim section:DrGruselheim_1 keyword:There are some inconsistencies in your story]] "So... I was in the <em>Cryo camera</em> multiple times already and, hm, I keep losing track of the time. The <em>vitrification</em> technology was not meant to be used repeatedly on the same person, you see."),
+				Text = T(402478247015, --[[Conversation DrGruselheim_1 Text voice:DrGruselheim section:DrGruselheim_1 keyword:There are some inconsistencies in your story]] "Ach, so... I was in the <em>Cryo camera</em> multiple times already and I keep losing track of the time. The <em>vitrification</em> technology was not meant to be used repeatedly on the same person, you see."),
 			}),
 		},
 		ShowPhraseRollover = false,
@@ -291,7 +291,7 @@ PlaceObj('Conversation', {
 			}),
 			PlaceObj('ConversationLine', {
 				Character = "DrGruselheim",
-				Text = T(198358744192, --[[Conversation DrGruselheim_1 Text voice:DrGruselheim section:DrGruselheim_1 keyword:We are at the Weapons Lab]] "Of course, nothing is indestructible, but one must admit that <em>Kompositum 58</em> comes very close when applied to various polymers."),
+				Text = T(198358744192, --[[Conversation DrGruselheim_1 Text voice:DrGruselheim section:DrGruselheim_1 keyword:We are at the Weapons Lab]] "Of course, nothing is indestructible, but one must admit, <em>Kompositum 58</em> comes very close when applied to various polymers."),
 			}),
 		},
 		StoryBranchIcon = "conversation_action",
@@ -339,7 +339,7 @@ PlaceObj('Conversation', {
 			}),
 			PlaceObj('ConversationLine', {
 				Character = "DrGruselheim",
-				Text = T(606369648592, --[[Conversation DrGruselheim_1 Text voice:DrGruselheim section:DrGruselheim_1 keyword:We are at the Bio Lab]] "I started with the common Rabies genome and developed its much more aggressive <em>Red Rabies</em> variant... And I only agreed because he promised he won't use the virus unless the very existence of my fatherland was threatened."),
+				Text = T(606369648592, --[[Conversation DrGruselheim_1 Text voice:DrGruselheim section:DrGruselheim_1 keyword:We are at the Bio Lab]] "I started with the common Rabies genome and developed the much more aggressive <em>Red Rabies</em> variant... And of course, I only agreed because he promised he won't use the virus unless the very existence of my fatherland was threatened."),
 			}),
 			PlaceObj('ConversationLine', {
 				Character = "DrGruselheim",

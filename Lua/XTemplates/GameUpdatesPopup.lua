@@ -72,11 +72,14 @@ PlaceObj('XTemplate', {
 				return ModsLoaded and #ModsLoaded>0 and idx==1 and "enabled" or "disabled"
 			end,
 			'OnAction', function (self, host, source, ...)
+				local restartNeeded
 				for _, mod in ipairs(ModsLoaded) do
 					TurnModOff(mod.id, "updatePreset")
+					restartNeeded = true
 				end
+				if not restartNeeded then return end
 				CreateRealTimeThread( function()
-					ModsReloadItems(nil, "force_reload")
+					ForceRestartGame()
 				end)
 				host:Close()
 			end,

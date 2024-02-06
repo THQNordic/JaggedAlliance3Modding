@@ -1004,7 +1004,10 @@ function GroupSetBehaviorExit:__exec(obj, context)
 	else
 		local params = self:GetAnimParams()
 		for _, unit in ipairs(units) do
-			if not unit:IsDead() then
+			if unit.command == "ExplosionFly" then
+				unit:SetCommandParams("ExitMap", params)
+				unit:SetBehavior("ExitMap", { marker, start_time })
+			elseif not unit:IsDead() then
 				unit:SetCommandParams("ExitMap", params)
 				unit:SetCommand("ExitMap", marker, start_time)
 			end
@@ -2086,7 +2089,7 @@ function PhraseSetEnabled:__exec(obj, context)
 end
 
 function PhraseSetEnabled:OnAfterEditorNew(parent, ged, is_paste)
-	local preset = ged:ResolveObj("SelectedPreset")
+	local preset = GetParentTableOfKind(self, "Conversation")
 	if preset:IsKindOf("Conversation") then
 		self.Conversation = preset.id
 	end
@@ -2118,7 +2121,7 @@ function PhraseSetSeen:__exec(obj, context)
 end
 
 function PhraseSetSeen:OnAfterEditorNew(parent, ged, is_paste)
-	local preset = ged:ResolveObj("SelectedPreset")
+	local preset = GetParentTableOfKind(self, "Conversation")
 	if preset:IsKindOf("Conversation") then
 		self.Conversation = preset.id
 	end
@@ -4289,6 +4292,39 @@ function SetSectorAutoResolveDefenderBonus:__exec(obj, context)
 	sector.AutoResolveDefenderBonus = self.autoResolveDefenderBonus
 end
 
+DefineClass.SetSectorDiscovered = {
+	__parents = { "Effect", },
+	__generated_by_class = "EffectDef",
+
+	properties = {
+		{ id = "sector_id", name = "Sector Id", help = "Sector id.", 
+			editor = "combo", default = false, items = function (self) return GetCampaignSectorsCombo() end, },
+	},
+	Documentation = "Sets a sector to discovered",
+	EditorNestedObjCategory = "Sector effects",
+}
+
+function SetSectorDiscovered:__exec(obj, context)
+	local sectorPreset = gv_Sectors[self.sector_id]
+	if sectorPreset then
+		sectorPreset.discovered = true
+		
+		if g_SatelliteUI then
+			g_SatelliteUI:UpdateSectorVisuals(self.sector_id)
+		end
+	end
+end
+
+function SetSectorDiscovered:GetEditorView()
+	return Untranslated("Set <u(sector_id)> to discovered", self)
+end
+
+function SetSectorDiscovered:GetError()
+	if not self.sector_id then
+		return "Specify sector!"
+	end
+end
+
 DefineClass.SetTimer = {
 	__parents = { "Effect", },
 	__generated_by_class = "EffectDef",
@@ -4758,7 +4794,7 @@ DefineClass.UnitDie = {
 function UnitDie:__exec(obj, context)
 	local group = Groups[self.TargetGroup] or empty_table
 	for i, v in ipairs(group) do
-		if IsKindOf(v, "Unit") then
+		if IsKindOf(v, "Unit") and not v:IsDead() then
 			v.villain = false
 			if self.killImmortal then
 				v.immortal = false

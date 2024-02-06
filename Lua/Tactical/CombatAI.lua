@@ -15,6 +15,7 @@ const.AIFriendlyFire_LOFWidth = 100*guic 					-- max distance from an ally to th
 const.AIFriendlyFire_LOFConeNear = 100*guic 				-- same as above for cone attacks (near side of the cone, positioned at attacker)
 const.AIFriendlyFire_LOFConeFar = 300*guic 				-- same as above for cone attacks (far side of the cone, positioned at AIFriendlyFire_MaxRange)
 const.AIFriendlyFire_ScoreMod = 50							-- % of damage score evaluation remanining when an ally is in danger
+const.AIShootAboveCTH = 0
 
 local function CanReload(unit, weapon)
 	if not IsKindOf(weapon, "Firearm") then
@@ -1049,15 +1050,18 @@ function AIBuildArchetypePaths(unit, pos, context)
 	end
 
 	local important_dests = context.important_dests or {}
+	local min_melee_dist = 2 * const.SlabSizeX
+	local move_paths_ap = move_path.paths_ap
+	local pref_paths_ap = pref_path.paths_ap
 
 	for _, voxel in ipairs(dest_voxels) do
 		local x, y, z = point_unpack(voxel)
-		local move_ap = move_path.paths_ap[voxel]
-		local pref_ap = pref_path.paths_ap[voxel]
-		local stance_idx, ap, dest
+		local move_ap = move_paths_ap[voxel]
+		local pref_ap = pref_paths_ap[voxel]
 		local mn_ap = move_ap and (ms_ap - move_ap) or -1
 		local pn_ap = pref_ap and (ps_ap - pref_ap) or -1
 
+		local dest
 		if pn_ap > mn_ap then
 			assert(pref_ap)
 
@@ -1082,7 +1086,7 @@ function AIBuildArchetypePaths(unit, pos, context)
 			if context.EffectiveRange <= 1 then
 				-- make sure all potential melee positions are included in the end and not cut off by CollapsePoints
 				for enemy, enemy_ppos in pairs(context.enemy_pack_pos_stance) do
-					if stance_pos_dist(enemy_ppos, dest) < 2 * const.SlabSizeX then
+					if stance_pos_dist(enemy_ppos, dest) < min_melee_dist then
 						table.insert_unique(important_dests, dest)
 						break
 					end
@@ -1092,7 +1096,7 @@ function AIBuildArchetypePaths(unit, pos, context)
 			if context.can_heal then
 				for _, ally in ipairs(context.allies) do
 					local ppos = GetPackedPosAndStance(ally)
-					if stance_pos_dist(ppos, dest) < 2 * const.SlabSizeX then
+					if stance_pos_dist(ppos, dest) < min_melee_dist then
 						table.insert_unique(important_dests, dest)
 						break
 					end
@@ -1104,20 +1108,21 @@ function AIBuildArchetypePaths(unit, pos, context)
 	destinations = CollapsePoints(destinations, 1)
 	context.important_dests = important_dests
 	for _, dest in ipairs(important_dests) do
-		local x, y, z = stance_pos_unpack(dest)
-		if dest_ap[dest] and CanOccupy(unit, x, y, z) then
+		if dest_ap[dest] and CanOccupy(unit, stance_pos_unpack(dest)) then
 			table.insert_unique(destinations, dest)
 		end
 	end
-	
+
 	-- filter out destinations someone already called dibs for
-	local occupied = {}
 	for _, u in ipairs(context.allies) do
 		if u ~= unit and u.ai_context then
-			occupied[u.ai_context.ai_destination or false] = true
+			local idx = table.find(destinations, u.ai_context.ai_destination)
+			if idx then
+				destinations[idx] = destinations[#destinations]
+				destinations[#destinations] = nil
+			end
 		end
-	end	
-	destinations = table.ifilter(destinations, function(_, dest) return not occupied[dest] end)
+	end
 
 	paths[goto_stance] = move_path
 	paths[move_stance_idx] = move_path
@@ -1424,9 +1429,9 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
 		return
 	end
 
-	local targets = table.icopy(action:GetTargets({unit}))	
-	targets = table.ifilter(targets or empty_table, function(idx, target) return unit:IsOnEnemySide(target) end)
-	if not targets or #targets == 0 then
+	local action_targets = action:GetTargets({unit})
+	local targets = table.ifilter(action_targets, function(idx, target) return unit:IsOnEnemySide(target) end)
+	if #targets == 0 then
 		return
 	end
 	context.damage_score_precalced = true
@@ -1573,8 +1578,9 @@ function AIPrecalcDamageScore(context, destinations, preferred_target, debug_dat
 					if not is_heavy and unit:IsPointBlankRange(target) then
 						mod = MulDivRound(mod, 100 + const.AIPointBlankTargetMod, 100)
 					end
+					mod = Max(0, mod)
 					
-					if mod > 0 then
+					if mod > const.AIShootAboveCTH then
 						-- calc base score based on cth/attacks/aiming
 						local base_mod = mod
 						local attacks, aims = AICalcAttacksAndAim(context, ap)
@@ -1706,7 +1712,6 @@ function AIScoreReachableVoxels(context, policies, opt_loc_weight, dest_score_de
 	local total_dist = context.total_dist
 	local dest_dist = context.dest_dist or empty_table
 
-	local ux, uy, uz = point_unpack(context.unit_grid_voxel)
 	local curr_dest = context.voxel_to_dest[context.unit_world_voxel] or context.voxel_to_dest[context.closest_free_pos] or context.unit_stance_pos
 	local dist = dest_dist[curr_dest] or total_dist
 	local score = -opt_loc_weight
@@ -2496,8 +2501,7 @@ MapVar("g_MGPriorityAssignment", {})
 function AIAssignToEmplacements(team)
 	local emplacements = MapGet("map", "MachineGunEmplacement")
 
-	local units = table.copy(team.units)
-	units = table.ifilter(units, function(idx, unit) return unit.CanManEmplacements end)
+	local units = table.ifilter(team.units, function(idx, unit) return unit.CanManEmplacements end)
 
 	-- update emplacements' appeal for the team
 	for _, emplacement in ipairs(emplacements) do

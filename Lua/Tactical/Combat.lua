@@ -1283,17 +1283,14 @@ function Combat:ChangeSelectedUnit(direction, team, force)
 	local newUnit = nextUnitIdx and fTeam.units[nextUnitIdx]
 	
 	-- If havent found a new unit in the filtered team, try to find one in the non filtered team.
-	local squadChanged = false
 	if not newUnit then
 		nextUnitIdx = direction=="next" and self:GetNextUnitIdx(team, unit) or self:GetPrevUnitIdx(team, unit)
 		newUnit = nextUnitIdx and team.units[nextUnitIdx]
-		squadChanged = true
 	end
 	
 	if newUnit then
 		SelectObj(newUnit)
 		SnapCameraToObj(newUnit)
-		if squadChanged then ResetCurrentSquad(team) end
 		return
 	end
 end
@@ -1944,7 +1941,9 @@ function ApplyDamagePrediction(attacker, action, args, actionResult)
 			if hit.aoe or IsOverwatchAction(action.id) then
 				if not table.find(aoeObjs, obj) then
 					if IsKindOf(obj, "Unit") then
-						obj:SetHighlightReason("area target", true)
+						if (hit.aoe_type or "none") == "none" then
+							obj:SetHighlightReason("area target", true)
+						end
 					elseif not IsKindOf(obj, "DamagePredictable") then
 						if ShouldDestroyObject(obj) then
 							SetInteractionHighlightRecursive(obj, true, true)

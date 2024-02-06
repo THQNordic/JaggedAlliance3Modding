@@ -45181,6 +45181,35 @@ PlaceObj('AnimMetadata', {
 
 PlaceObj('AnimMetadata', {
 	group = "Shanty_WindTower",
+	id = "idle",
+})
+
+PlaceObj('AnimMetadata', {
+	Moments = {
+		PlaceObj('AnimMoment', {
+			'Type', "hit",
+			'Time', 51,
+			'AnimRevision', 60126,
+		}),
+	},
+	group = "Shanty_WindTower",
+	id = "idle_No_Wall",
+})
+
+PlaceObj('AnimMetadata', {
+	Moments = {
+		PlaceObj('AnimMoment', {
+			'Type', "hit",
+			'Time', 51,
+			'AnimRevision', 60126,
+		}),
+		PlaceObj('AnimMoment', {
+			'Type', "hit",
+			'Time', 2497,
+			'AnimRevision', 60126,
+		}),
+	},
+	group = "Shanty_WindTower",
 	id = "idle_Wind_No_Wall",
 })
 

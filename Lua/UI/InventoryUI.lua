@@ -1296,7 +1296,9 @@ end
 
 function InventoryDeselectMultiItems(dlg)
 	local dlg = dlg or GetMercInventoryDlg()
-	dlg:DeselectMultiItems()
+	if dlg then 
+		dlg:DeselectMultiItems()
+	end	
 end		
 
 function XInventorySlot:ClearDragState(drag_win)
@@ -1835,6 +1837,9 @@ function XInventorySlot:_IsDropTarget(drag_win, pt, drag_source_win)
 	local context = self:GetContext()
 	if InventoryIsNotControlled(context) then 
 		HighlightDropSlot(false, false, false, drag_win)
+		local valid, mouse_text = InventoryIsValidTargetForUnit(context)
+
+		InventoryShowMouseText(true,mouse_text)
 		return false
 	end	
 
@@ -3058,6 +3063,7 @@ function InventoryIsValidTargetForUnit(ctrl_context)
 		end	
 	end
 	if IsKindOfClasses(ctrl_context, "Unit", "UnitData") and not ctrl_context:IsDead() then	
+		local ctrl_context_unit = ctrl_context.session_id and g_Units[ctrl_context.session_id]
 		if ctrl_context:HasStatusEffect("BandageInCombat") then
 			return false, T(107419565286, "Character is busy bandaging")
 		elseif ctrl_context:IsDowned() then
@@ -3065,6 +3071,8 @@ function InventoryIsValidTargetForUnit(ctrl_context)
 		elseif ctrl_context:HasStatusEffect("Unconscious") then
 			return false, T(894812059755, "Character is Unconscious")
 		elseif g_Overwatch[ctrl_context] or g_Pindown[ctrl_context] then
+			return false, T(462153644901, "Character is busy")
+		elseif ctrl_context_unit and g_Overwatch[ctrl_context_unit] or g_Pindown[ctrl_context_unit] then
 			return false, T(462153644901, "Character is busy")
 		elseif ctrl_context.retreat_to_sector then	
 			return false, T(462153644901, "Character is busy")
@@ -4098,11 +4106,13 @@ function _PopupMenuGiveItemToSquad(node, context,check_only)
 	local src_container = context.context
 	local item = context.item
 	local squadBag = dest_squad.UniqueId
-	local items = context.items or {[item] = true}
+	local multi = not not context.items
 		
-	for item, wnd in pairs(items) do
+	local tbl = multi and table.keys(context.items) or {item}
+	for i, item in ipairs(tbl) do				
 		local args = {item = item, src_container = src_container, src_slot = ui_slot.slot_name,
 						dest_container = squadBag, dest_slot = "Inventory" , check_only =check_only}
+						args.no_ui_respawn = multi and i~=#tbl or nil
 		local rez = MoveItem(args)
 		if rez then
 			local su = dest_squad.units

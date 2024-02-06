@@ -1,10 +1,15 @@
 ----- ZuluMessageDialog
 DefineClass.ZuluMessageDialog = {
-	__parents = { "ZuluModalDialog" },
+	__parents = { "ZuluModalDialog", "XDarkModeAwareDialog" },
+	
 	HandleKeyboard = true,
 	--DrawOnTop = true,
 	template = "ZuluMessageDialogTemplate",
-	ZOrder = 1000
+	ZOrder = 1000,
+	
+	-- prevent dark mode, e.g. when popped from Map Editor
+	UpdateControlDarkMode = empty_func,
+	UpdateChildrenDarkMode = empty_func,
 }
 
 function ZuluMessageDialog:Init()
@@ -56,7 +61,7 @@ function ZuluMessageDialog:OnMouseWheelBack()
 	return "break"
 end
 
-function CreateMessageBox(parent, caption, text, ok_text, obj)
+function CreateMessageBox(parent, caption, text, ok_text, obj, extra_action)
 	parent = parent or terminal.desktop
 	
 	-- This happens rarely when an account storage error pops up.
@@ -82,6 +87,7 @@ function CreateMessageBox(parent, caption, text, ok_text, obj)
 		OnActionEffect = "close",
 		OnActionParam = "ok",
 	})
+	actions[#actions + 1] = extra_action
 	
 	local msg = ZuluMessageDialog:new({actions = actions}, parent, context)
 	msg.OnShortcut = function(self, shortcut, source, ...)

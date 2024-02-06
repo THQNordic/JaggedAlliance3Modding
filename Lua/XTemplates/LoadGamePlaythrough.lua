@@ -111,8 +111,6 @@ PlaceObj('XTemplate', {
 						ObjModified("NewSelectedSave")
 						if editField then
 							list[i].idSaveEntry:SetSelected(false)
-							local oldSavename = SavenameToName(list[i].idSaveEntry.context.savename)
-							list[i].idSaveEntry.idName:SetText(oldSavename)
 						else
 							list[i]:SetSelected(false)
 						end

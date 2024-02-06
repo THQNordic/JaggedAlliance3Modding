@@ -255,7 +255,7 @@ function ExitZoneInteractable:BadgeTextUpdate()
 		badgeInstance.ui.idText:SetContext(unit)
 		
 		local text = action:GetActionDisplayName({unit, self})
-		if gv_CurrentSectorId == "A1" then
+		if g_TestExploration then
 			text = Untranslated("Cant Travel in Exploration Test")
 		elseif underground then
 			if IsSectorUnderground(gv_CurrentSectorId) then

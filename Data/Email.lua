@@ -66,6 +66,10 @@ PlaceObj('Email', {
 			Condition = ">=",
 			POIs = "Mine",
 		}),
+		PlaceObj('CheckGameRule', {
+			Negate = true,
+			Rule = "AllStars",
+		}),
 	},
 	sender = T(897371963510, --[[Email AIMGoldOffer sender]] "marketing@aimmercs.net"),
 	title = T(787329345141, --[[Email AIMGoldOffer title]] "Gold Level Offer Just For You!"),
@@ -121,7 +125,7 @@ PlaceObj('Email', {
 })
 
 PlaceObj('Email', {
-	body = T(203339960799, --[[Email BobbyRayShopShipmentArrived body]] "Howdy partner,\n\nYour order with the ID <em><order_id></em> has successfully landed and is now securely stashed in <em><SectorName(delivery_sector)></em>.\n\nLocked, loaded, and at your service,\n<h OpenBobbyRayPage><underline><em>Bobby Ray's Guns and Things</em></underline></h>"),
+	body = T(203339960799, --[[Email BobbyRayShopShipmentArrived body]] "Howdy partner,\n\nYour order with the ID <em><order_id></em> has successfully landed and is now stored in the sector stash of <em><SectorName(delivery_sector)></em>, accessible through the Sat View.\n\nLocked, loaded, and at your service,\n<h OpenBobbyRayPage><underline><em>Bobby Ray's Guns and Things</em></underline></h>"),
 	group = "BobbyRay",
 	id = "BobbyRayShopShipmentArrived",
 	msg_reactions = {
@@ -131,7 +135,7 @@ PlaceObj('Email', {
 				local context = {
 					order_id = Untranslated(shipment_details.order_id),
 					items = shipment_details.items,
-					delivery_cost = FindPreset("BobbyRayShopDeliveryDef", shipment_details.delivery_option).Price,
+					delivery_cost = BobbyRayStoreDeliveryPrice(shipment_details.delivery_option),
 					delivery_sector = shipment_details.sector_id,
 					delivery_time = FindPreset("BobbyRayShopDeliveryDef", shipment_details.delivery_option).TimeDescription,
 					total_cost = shipment_details.total_cost,
@@ -156,7 +160,7 @@ PlaceObj('Email', {
 				local context = {
 					order_id = Untranslated(shipment_details.order_id),
 					items = shipment_details.items,
-					delivery_cost = FindPreset("BobbyRayShopDeliveryDef", shipment_details.delivery_option).Price,
+					delivery_cost = BobbyRayStoreDeliveryPrice(shipment_details.delivery_option),
 					delivery_sector = shipment_details.sector_id,
 					delivery_time = FindPreset("BobbyRayShopDeliveryDef", shipment_details.delivery_option).TimeDescription,
 					total_cost = shipment_details.total_cost,
@@ -1181,6 +1185,11 @@ PlaceObj('Email', {
 		PlaceObj('EmailIsRead', {
 			emailId = "Spam_11",
 		}),
+		PlaceObj('QuestIsVariableNum', {
+			Condition = ">",
+			Prop = "spam_chance",
+			QuestId = "Emails",
+		}),
 	},
 	sender = T(634926360966, --[[Email Spam_11_2 sender]] "Officially The REAL Major"),
 	title = T(831074110000, --[[Email Spam_11_2 title]] "(RE:) Distribution help"),
@@ -1200,6 +1209,11 @@ PlaceObj('Email', {
 		}),
 		PlaceObj('EmailIsRead', {
 			emailId = "Spam_11_2",
+		}),
+		PlaceObj('QuestIsVariableNum', {
+			Condition = ">",
+			Prop = "spam_chance",
+			QuestId = "Emails",
 		}),
 	},
 	sender = T(376875803527, --[[Email Spam_11_3 sender]] "Officially The REAL Major"),
@@ -1221,6 +1235,11 @@ PlaceObj('Email', {
 		PlaceObj('EmailIsRead', {
 			emailId = "Spam_11_3",
 		}),
+		PlaceObj('QuestIsVariableNum', {
+			Condition = ">",
+			Prop = "spam_chance",
+			QuestId = "Emails",
+		}),
 	},
 	sender = T(276339559849, --[[Email Spam_11_4 sender]] "Officially The REAL Major"),
 	title = T(222165359765, --[[Email Spam_11_4 title]] "(RE: (RE: (RE:))) Distribution help"),
@@ -1240,6 +1259,11 @@ PlaceObj('Email', {
 		}),
 		PlaceObj('EmailIsRead', {
 			emailId = "Spam_11_4",
+		}),
+		PlaceObj('QuestIsVariableNum', {
+			Condition = ">",
+			Prop = "spam_chance",
+			QuestId = "Emails",
 		}),
 	},
 	sender = T(465478364157, --[[Email Spam_11_5 sender]] "Officially The REAL Major"),
@@ -1278,6 +1302,11 @@ PlaceObj('Email', {
 		PlaceObj('EmailIsRead', {
 			emailId = "Spam_12",
 		}),
+		PlaceObj('QuestIsVariableNum', {
+			Condition = ">",
+			Prop = "spam_chance",
+			QuestId = "Emails",
+		}),
 	},
 	sender = T(822694019356, --[[Email Spam_12_2 sender]] "THE SECRET SOCIETY"),
 	title = T(385666838166, --[[Email Spam_12_2 title]] "RED RABIES VIRUS!!!"),
@@ -1314,6 +1343,11 @@ PlaceObj('Email', {
 		}),
 		PlaceObj('EmailIsRead', {
 			emailId = "Spam_13",
+		}),
+		PlaceObj('QuestIsVariableNum', {
+			Condition = ">",
+			Prop = "spam_chance",
+			QuestId = "Emails",
 		}),
 	},
 	sender = T(498695995914, --[[Email Spam_13_2 sender]] "Gabriel Mercier"),
@@ -1352,6 +1386,11 @@ PlaceObj('Email', {
 		PlaceObj('EmailIsRead', {
 			emailId = "Spam_14",
 		}),
+		PlaceObj('QuestIsVariableNum', {
+			Condition = ">",
+			Prop = "spam_chance",
+			QuestId = "Emails",
+		}),
 	},
 	sender = T(866491061339, --[[Email Spam_14_2 sender]] "Isabelle Lefebvre"),
 	title = T(938741235402, --[[Email Spam_14_2 title]] "A great new recipe!"),
@@ -1371,6 +1410,11 @@ PlaceObj('Email', {
 		}),
 		PlaceObj('EmailIsRead', {
 			emailId = "Spam_1",
+		}),
+		PlaceObj('QuestIsVariableNum', {
+			Condition = ">",
+			Prop = "spam_chance",
+			QuestId = "Emails",
 		}),
 	},
 	sender = T(226713093552, --[[Email Spam_1_2 sender]] "t0302@quickmail.com"),

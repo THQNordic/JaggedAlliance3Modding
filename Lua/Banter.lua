@@ -1,10 +1,10 @@
-local function lResolveBanterActor(name, unit_list, playOnce, banterPreset, optionalLineId)
+local function lResolveBanterActor(name, unit_list, playOnce, lineId)
 	for i, u in ipairs(unit_list) do
 		if IsKindOf(u, "UnitMarker") then
 			u = u.objects and u.objects[1] or u
 		end
 		local is_unit = IsKindOf(u, "Unit")
-		if playOnce and is_unit and u.banters_played_lines and table.find(u.banters_played_lines, optionalLineId) then
+		if playOnce and is_unit and u.banters_played_lines and table.find(u.banters_played_lines, lineId) then
 		elseif name == "<default>" or name == "any" or name == "current unit" then
 			return u
 		elseif is_unit and u:IsDead() then
@@ -31,14 +31,21 @@ local function lGetActorsUsedInBanter(banterPreset, unit_list, findFirst)
 			-- MultipleTexts lines are considered optional, but we want to be able to return a banter with only
 			-- such lines as valid therefore we consider them as non-optional in this check
 			used_units = used_units or {}
+			for i, m in ipairs(l.AnyOfThese) do
+				local actor = lResolveBanterActor(m.Character, unit_list)
+				if actor then
+					used_units[#used_units + 1] = actor
+				end
+			end
+			
 			if all_lines_satisfied == nil then
 				all_lines_satisfied = true
 			end
 			goto continue
 		end
 	
-		local optionalLineId = banterPreset.id .. tostring(i)
-		local actor = lResolveBanterActor(l.Character, unit_list, l.playOnce, banterPreset, optionalLineId)
+		local lineId = banterPreset.id .. tostring(i)
+		local actor = lResolveBanterActor(l.Character, unit_list, l.playOnce, lineId)
 		if actor then
 			if not findFirst then -- optimize since findFirst users probably dont care about specific units used
 				used_units = used_units or {}
@@ -1277,10 +1284,10 @@ function OnMsg.Attack(action, results, attack_args)
 		local targetIsAlly = IsKindOf(target, "Unit") and target:IsPlayerAlly()
 		local skipKillMsg = not IsKindOf(target, "Unit") or not attackerIsUnit
 		local stealth_kill = results.stealth_attack and next(results.killed_units) and table.find(results.killed_units, target)
-		local targatDmg = next(results.unit_damage) and results.unit_damage[target] or 0
+		local targetDmg = next(results.unit_damage) and results.unit_damage[target] or 0
 		local targetIsCivilian = IsKindOf(target, "Unit") and target:IsCivilian()
 		
-		if target:IsDead() and (targatDmg > 0 or next(results.killed_units)) then
+		if target:IsDead() and (targetDmg > 0 or next(results.killed_units)) then
 			local vrContext = {}
 			if killedCount > 1 then
 				table.insert(vrContext, "MultiOpponentKilled")
@@ -1290,7 +1297,7 @@ function OnMsg.Attack(action, results, attack_args)
 				table.insert(vrContext, "OpponentKilledMelee")
 			end
 			
-			if not targetIsCivilian then
+			if not targetIsCivilian and not targetIsAlly then
 				target.team.tactical_situations_vr.deadUnits = target.team.tactical_situations_vr.deadUnits and target.team.tactical_situations_vr.deadUnits + 1 or 1
 				if attackerIsUnit then 
 					attacker.team.tactical_situations_vr.killedUnits = attacker.team.tactical_situations_vr.killedUnits and attacker.team.tactical_situations_vr.killedUnits + 1 or 1 
@@ -1323,7 +1330,7 @@ function OnMsg.Attack(action, results, attack_args)
 					vrContext.CheckForPraise = true
 					PlayVoiceResponseAIDead(target, targetPos)
 				end
-				if not targetIsCivilian then
+				if not targetIsCivilian and not targetIsAlly then
 					PlayVoiceResponseOpponentKilled(attacker, vrContext)
 				end
 				
@@ -1331,12 +1338,12 @@ function OnMsg.Attack(action, results, attack_args)
 			if not IsMerc(target) and spot_group == "Head" then
 				EndBanter(target)
 			end
-		elseif targatDmg > 0 then
+		elseif targetDmg > 0 then
 			if targetIsAlly and attackerIsUnit and attacker:IsPlayerAlly() then
 				PlayVoiceResponseFriendlyFire(attacker, target)
 				target:AddStatusEffect("FriendlyFire")
 			else
-				if target.wounded_this_turn then 
+				if target.wounded_this_turn and not targetIsAlly then 
 					if attackerIsUnit then 
 						attacker.team.tactical_situations_vr.woundsInflicted = attacker.team.tactical_situations_vr.woundsInflicted and attacker.team.tactical_situations_vr.woundsInflicted + 1 or 1 
 						PlayVoiceResponseTacticalSituation(table.find(g_Teams, attacker.team), "now")
@@ -1505,6 +1512,8 @@ function OnMsg.EnemySightedExploration(enemy)
 end
 
 function OnMsg.UnitAwarenessChanged(unit)
+	if not IsKindOf(unit, "Unit") then return end -- can be unit data
+
 	local isEnemy
 	if unit.team then
 		isEnemy = unit.team.side == "enemy1" or unit.team.side == "enemy2" or unit.team.side == "enemyNeutral"
@@ -2268,60 +2277,6 @@ function StopVoiceResponses()
 	end
 end
 
-local function lBanterGroupsCombo()
-	return table.keys2(Presets.BanterDef, "sorted", "<default>")
-end
-
-function SetDefaultBanterMarkerTriggerConditions(self)
-	if not IsKindOf(self, "GridMarker") then self = self[1] end -- GED buttons
-	self.TriggerConditions = { UnitIsNearbyArea:new({ TargetUnit = "any merc" }) }
-	ObjModified(self)
-	ObjModified(self.TriggerConditions)
-end
-
-DefineClass.BanterMarker = {
-	__parents = { "GridMarker" },
-	properties = {
-		{ category = "Grid Marker", id = "Type", name = "Type", editor = "dropdownlist", items = PresetGroupCombo("GridMarkerType", "Default"), default = "Banter", no_edit = true },
-		{ category = "BanterMarker", id = "TriggerChance", name = "Chance To Trigger", editor = "number", default = 50 },
-		{ category = "BanterMarker", id = "BanterGroups", name = "Banter Groups", editor = "string_list", arbitrary_value = true, items = PresetGroupsCombo("BanterDef"), default = false },
-		{ category = "BanterMarker", id = "SpecificBanters", name = "SpecificBanters", help = "Specific Banters to play when interacted with.", 
-			editor = "preset_id_list", default = {}, preset_class = "BanterDef", item_default = "", },
-		{ category = "Trigger Logic", id = "setDefaultConf", editor = "buttons", default = false,
-			buttons = { {name = "Set Default BanterM Trg Cond", func = "SetDefaultBanterMarkerTriggerConditions"}, } }
-	},
-	AreaWidth = 5,
-	AreaHeight = 5,
-	Trigger = "activation",
-	done = false
-}
-
-function BanterMarker:GameInit()
-	if not self.TriggerConditions then
-		SetDefaultBanterMarkerTriggerConditions(self)
-	end
-end
-
-function BanterMarker:ExecuteTriggerEffects(context)
-	if self.done then return end
-	self.done = true
-
-	local roll = InteractionRand(100, "BanterMarker")
-	if roll > self.TriggerChance then
-		CombatLog("debug", "BanterMarker triggered, but you were unlucky. " .. tostring(roll).."/"..tostring(self.TriggerChance))
-		return
-	end
-
-	local contextUnits = context.target_units or empty_table
-	local triggerer = contextUnits[1] or Selection[1]
-	local unitsAround = MapGet(triggerer, const.SlabSizeX * 15, "Unit")
-
-	local banter = GetRandomBanterFromGroups(self.BanterGroups, unitsAround, context, self.SpecificBanters)
-	if banter then
-		PlayBanter(banter, unitsAround or {}, triggerer)
-	end
-end
-
 function GetRandomBanterFromGroups(groups, units, context, specificBanters)
 	local banters = {}
 	local allBanterGroups = {}
@@ -2368,13 +2323,6 @@ function GetRandomBanterFromGroups(groups, units, context, specificBanters)
 	return banters[idx], randomBanterGroup.actors[idx]
 end
 
-function CheatResetBanterMarkers()
-	MapForEach("map", "BanterMarker", function(bant)
-		bant.done = false
-	end)
-end
-
-
 --------------- editor debug info--------------
 if FirstLoad then
 	g_BanterEditorDebugInfo = false
@@ -2391,7 +2339,7 @@ DefineClass.BanterDebugInfo = {
 function BanterDebugInfo:GetProperties()	
 	local props = table.copy(PropertyObject.GetProperties(self))
 	-- from conversations
-	ForEachPreset("Conversation", function(preset)
+	ForEachPresetInCampaign("Conversation", function(preset)
 		preset:ForEachSubObject("BanterFunctionObjectBase", function(obj, parents)
 			if table.find(obj.Banters, self.id) then
 				local element = {
@@ -2418,7 +2366,7 @@ function BanterDebugInfo:GetProperties()
 		end)
 	end)	
 	-- from quests
-	ForEachPreset("QuestsDef",function(preset, group, filter)
+	ForEachPresetInCampaign("QuestsDef",function(preset, group, filter)
 		preset:ForEachSubObject("BanterFunctionObjectBase", function(obj, parents)
 			if table.find(obj.Banters,self.id) then
 				local element = {
@@ -2449,7 +2397,7 @@ function BanterDebugInfo:GetProperties()
 		GatherMarkerScriptingData()
 	end
 	-- filter for current banter
-	ForEachDebugMarkerData("banter", self.id, function(marker_info, res_item_info) 
+	ForEachDebugMarkerData("banter", self.preset, function(marker_info, res_item_info) 
 		local element = {
 			id = "h_" .. marker_info.handle .. "_" .. #props,
 			name = marker_info.name,
@@ -2460,14 +2408,14 @@ function BanterDebugInfo:GetProperties()
 		}
 		local name = marker_info.map==map_name and "View" or "View on other map"
 		element.buttons = {
-				{
-					name = name, 
-					func = "GridMarkerEditorSelectDiffMap",
-					param = {
-				 		map = marker_info.map
-				 	},
-				}
+			{
+				name = name, 
+				func = "GridMarkerEditorSelectDiffMap",
+				param = {
+					map = marker_info.map
+				},
 			}
+		}
 		table.insert(props, element)
 	end)
 
@@ -3522,80 +3470,6 @@ function OnMsg.CombatStarting()
 		
 		::continue::
 	end
-end
-
-----------------------------------
--- Temp to find invalid banters
--- todo: delete
-----------------------------------
-config.FindInvalidInteractionBanters = config.FindInvalidInteractionBanters or
-												(LocalStorage and LocalStorage.dlgBugReport and LocalStorage.dlgBugReport.reporter == "Radomir")
-
-if Platform.developer then
-
-local bantersReported = {}
-
-function DeveloperCheckUnitInteractionBanters(unit)
-	if unit.banters_checked then return end
-	unit.banters_checked = true
-	
-	local units = { unit }
-	
-	local marker = unit.zone or unit.spawner
-	if marker then
-		--GET ALL BANTER GROUPS FROM THE UNIT'S MARKER
-		for i, group in ipairs(marker.BanterGroups) do
-			local bantersInGroup = Presets.BanterDef[group]
-			for i, b in ipairs(bantersInGroup) do
-				if CheckInteractionBanterWouldntPlay(b, units) and not bantersReported[b.id] then
-					StoreErrorSource(unit, "Interaction banter " .. b.id .. " requires actors that aren't the unit being interacted with.")
-					bantersReported[b.id] = true
-				end
-			end
-		end
-
-		--GET ALL SPECIFIC BANTERS FROM THE UNIT'S MARKER INTO ONE GROUP
-		for i, b in ipairs(marker.SpecificBanters) do
-			if CheckInteractionBanterWouldntPlay(b, units) and not bantersReported[b.id] then
-				StoreErrorSource(unit, "Interaction banter " .. b.id .. " requires actors that aren't the unit being interacted with.")
-				bantersReported[b.id] = true
-			end
-		end
-	end
-
-	--GET ALL BANTERS FROM unit.banters (might come from squads entering sector or other places)
-	for i, b in ipairs(unit.banters) do
-		if CheckInteractionBanterWouldntPlay(b, units) and not bantersReported[b.id] then
-			StoreErrorSource(unit, "Interaction banter " .. b.id .. " requires actors that aren't the unit being interacted with.")
-			bantersReported[b.id] = true
-		end
-	end
-end
-
-function CheckInteractionBanterWouldntPlay(banterPreset, units)
-	local id = banterPreset.id
-	if string.find(id, "approach") then
-		return false
-	end
-
-	local matchesOne = false
-	for i, l in ipairs(banterPreset.Lines) do
-		if not l.Optional and not l.AnyOfThese then
-			local found = not not lResolveBanterActor(l.Character, units)
-			if not found then
-				if g_Classes[l.Character] then
-					found = true
-				end
-			end
-			
-			matchesOne = matchesOne or found
-			if not found and matchesOne then
-				return true
-			end
-		end
-	end
-end
-
 end
 
 local s_DemoBanters = {

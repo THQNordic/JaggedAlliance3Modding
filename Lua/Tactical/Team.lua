@@ -139,8 +139,9 @@ function OnMsg.ChangeMapDone(map)
 end
 
 function OnMsg.CloseSatelliteView()
-	ObjModified("hud_squads")
 	EnsureCurrentSquad()
+	ObjModified("hud_squads")
+	
 	local team = GetCurrentTeam()
 	if team then
 		for i, u in ipairs(team.units or empty_table) do
@@ -149,12 +150,14 @@ function OnMsg.CloseSatelliteView()
 	end
 end
 
+-- 1. Ensures that there is a currently selected unit
+-- 2. Ensures that the currently selected squad is correct (squad of selected units)
+
+-- Cases in which there might not be a selected unit:
+-- 1. Selected units left the sector
+-- 2. Squad was destroyed
 function EnsureCurrentSquad()
-	-- If no unit is selected or the current squad is missing.
-	-- Either the selected units left the sector
-	-- or the squad was destroyed. In this case reset the current squad to whatever
-	-- units are left on the map (if any).
-	if #(Selection or "") == 0 then 
+	if #(Selection or "") == 0 then
 		local squadsOnMap, team = GetSquadsOnMap()
 		local selectedSquadIdx = table.find(squadsOnMap, g_CurrentSquad)
 		
@@ -166,44 +169,45 @@ function EnsureCurrentSquad()
 		if selectedSquadIdx then -- first try to select a unit from the current squad
 			for _, unit in ipairs(g_Units) do
 				if unit.Squad == g_CurrentSquad and not unit:IsDead() and not unit:IsDowned() and unit:IsLocalPlayerControlled() then
-					SelectObj(unit)
-					break
+					SuppressNextSelectionChangeVR = true
+					DelayedCall(0, SelectObj, unit) -- this will trigger selection logic which will bring us back here
+					return
 				end
 			end
 		end
-		return
-	end
-	
-	UpdateSquad()
-end
-
-function UpdateSquad()
-	-- Check if the current squad is valid for tactical view
-	local squads, team = GetSquadsOnMap()
-	if squads and g_CurrentSquad and table.find(squads, g_CurrentSquad) then
-		return
-	end
-
-	-- Set g_CurrentSquad to be the squad with the most units selected.
-	local unitsPerSquad = {}
-	for i, u in ipairs(Selection) do
-		local squad = u:GetSatelliteSquad()
-		if squad then
-			unitsPerSquad[squad.UniqueId] = (unitsPerSquad[squad.UniqueId] or 0) + 1
+	else	
+		-- check if current selection is fine first (only unit selection changed or w/e)
+		local allFromSelectedSquad = true
+		for i, u in ipairs(Selection) do
+			if u.Squad ~= g_CurrentSquad then
+				allFromSelectedSquad = false
+				break
+			end
 		end
-	end
-	
-	local maxCount, maxCountId = 0, 0
-	for sqId, unitCount in pairs(unitsPerSquad) do
-		if unitCount > maxCount then
-			maxCount = unitCount
-			maxCountId = sqId
+		if allFromSelectedSquad then return end
+		
+		-- Set g_CurrentSquad to be the squad with the most units selected.
+		local unitsPerSquad = {}
+		for i, u in ipairs(Selection) do
+			local squad = u:GetSatelliteSquad()
+			if squad then
+				unitsPerSquad[squad.UniqueId] = (unitsPerSquad[squad.UniqueId] or 0) + 1
+			end
 		end
-	end
-	if next(unitsPerSquad) and unitsPerSquad[g_CurrentSquad] ~= maxCount then
+	
+		local maxCount, maxCountId = 0, 0
+		for sqId, unitCount in pairs(unitsPerSquad) do
+			if unitCount > maxCount then
+				maxCount = unitCount
+				maxCountId = sqId
+			end
+		end
+		
+		if g_CurrentSquad == maxCountId then return end
+		
 		g_CurrentSquad = maxCountId
+		Msg("CurrentSquadChanged")
 	end
-	Msg("CurrentSquadChanged")
 end
 
 function ResetCurrentSquad(currentTeam)

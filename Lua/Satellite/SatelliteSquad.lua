@@ -799,14 +799,32 @@ function SetSatelliteSquadRoute(squad, route, keepJoiningSquad, from, squadPos)
 		SatelliteReachSectorCenter(squad.UniqueId, squad.CurrentSector, squad.PreviousSector)
 		
 		-- Manually remove the overground sector from the route.
-		-- It is possible for there to be nothing else in the route as well.
-		if route and route[1] and route[1][1] == squadSectorGroundSectorId then
-			table.remove(route[1], 1)
-			if route[1] and #route[1] == 0 then
+		local firstWp = route and route[1]
+		if firstWp and firstWp[1] == squadSectorGroundSectorId then
+			table.remove(firstWp, 1)
+			if #firstWp == 0 then
 				table.remove(route, 1)
+			else
+				-- Correct shortcut indices if any
+				if firstWp.shortcuts then
+					local shortcutsCorrected = {}
+					for i, _ in pairs(firstWp.shortcuts) do
+						local newIndex = i - 1
+						if newIndex >= 1 then
+							shortcutsCorrected[i - 1] = true
+						end
+					end
+					firstWp.shortcuts = shortcutsCorrected
+				end
 			end
+			
+			-- It is possible for there to be nothing else in the route as well.
 			if #route == 0 then
 				route = false
+				
+				local curSector = gv_Sectors[squad.CurrentSector]
+				ObjModified(curSector)
+				Msg("SquadStartedTravelling", squad)
 			end
 		end
 	end
@@ -1402,6 +1420,21 @@ function LocalSetArrivingMercSector(merc_id, sector_id, days)
 		end
 	end
 	
+	local bestArrivalDir = false
+	local sector = gv_Sectors[newMercSector]
+	ForEachSectorAround(newMercSector, 1, function(otherSector)
+		if IsTravelBlocked(otherSector, newMercSector) then return end
+		
+		local otherSectorPreset = gv_Sectors[otherSector]
+		if otherSectorPreset.Passability ~= "Water" and otherSectorPreset.Passability ~= "Land and Water" then return end
+		
+		local dir = GetSectorDirection(newMercSector, otherSector)
+		bestArrivalDir = dir
+	end)
+	if bestArrivalDir then
+		merc.arrival_dir = bestArrivalDir
+	end
+	
 	local squad_id = squadToAddIn and squadToAddIn.UniqueId
 	if prevArrivingSquad and squadToAddIn and squadToAddIn.UniqueId == prevArrivingSquad then
 		return
@@ -1436,7 +1469,7 @@ end
 
 LoadingUnitName = T{977270273792, --[[ Merc Nick awaiting filtering; Limit to 8 characters ]] "Loading" }
 
-function LocalHireMerc(merc_id, price, days)
+function LocalHireMerc(merc_id, price, medical, days)
 	local alreadyHired = gv_UnitData[merc_id] and gv_UnitData[merc_id].Squad
 	local unitData = gv_UnitData[merc_id]
 	
@@ -1475,7 +1508,7 @@ function LocalHireMerc(merc_id, price, days)
 	AddMoney(-price, "salary", "noCombatLog")
 	SetMercStateFlag(merc_id, "LastHirePayment", price)
 	
-	local currentDailySalary = (price and days) and DivRound(price, days) or 0
+	local currentDailySalary = (price and days) and DivRound(price - medical, days) or 0
 	SetMercStateFlag(merc_id, "CurrentDailySalary", currentDailySalary)
 	
 	if alreadyHired then
@@ -1616,10 +1649,10 @@ function HiredMercArrived(merc, days)
 	ObjModified(arrivalSquad)
 end
 
-function NetSyncEvents.HireMerc(merc_id, price, days, player_id)
+function NetSyncEvents.HireMerc(merc_id, price, medical, days, player_id)
 	local alreadyHired = gv_UnitData[merc_id] and gv_UnitData[merc_id].Squad
 
-	LocalHireMerc(merc_id, price, days)
+	LocalHireMerc(merc_id, price, medical, days)
 	
 	-- Give control to the player that hired the merc, unless the merc was already hired
 	-- which means their contract was extended
@@ -1687,7 +1720,7 @@ end
 function NetSyncEvents.HireIMPMerc(impTest, merc_id, price, days)
 	local unitData = CreateImpMercData(impTest, "sync")
 	CombatLog("debug", "Imp Test final - " .. DbgImpPrintResult(impTest.final, "flat"))
-	LocalHireMerc(merc_id, price, days)
+	LocalHireMerc(merc_id, price, 0, days)
 end
 
 function NetSyncEvents.ReleaseMerc(merc_id)
@@ -1731,7 +1764,6 @@ function NetSyncEvents.ReleaseMerc(merc_id)
 	DelayedCall(0, ObjModified, gv_Squads)
 	
 	if not gv_SatelliteView and unit then
-		ObjModified("hud_squads")
 		EnsureCurrentSquad()
 	end
 end
@@ -1814,10 +1846,6 @@ function CreateNewSatelliteSquad(predef_props, unit_ids, days, seed, enemy_squad
 	local current_sector = squad.CurrentSector
 	local previous_sector = squad.PreviousSector
 	AddUnitsToSquad(squad, unit_ids, days, seed or InteractionRand(nil, "Satellite"))
-	
-	if not gv_SatelliteView and gv_CurrentSectorId == current_sector then
-		
-	end
 	
 	if current_sector and not squad.arrival_squad and not predef_props.XVisualPos then
 		SatelliteReachSectorCenter(id, current_sector, previous_sector, nil, nil, reason)
@@ -3026,6 +3054,7 @@ function DiscoverIntelForSectors(sector_ids, suppressNotification)
 	end
 	
 	if #discoveredFor == 0 then return end
+	Msg("SectorsIntelDiscovered", discoveredFor)
 	
 	if #discoveredFor == 1 then
 		local sector = gv_Sectors[discoveredFor[1]]
@@ -3058,6 +3087,15 @@ function DiscoverIntelForRandomSector(radius, suppressNotification)
 	NetUpdateHash("DiscoverIntelForRandomSector", gv_CurrentSectorId, sectorId, table.unpack(sectorIds))
 	DiscoverIntelForSector(sectorId, suppressNotification)
 	return sectorId
+end
+
+function OnMsg.SectorsIntelDiscovered(discoveredFor)
+	if #discoveredFor > 0 then
+		GetInGameInterface():SetMode(GetInGameInterfaceMode())
+		if g_Overview then
+			VisualizeIntelMarkers(true)
+		end
+	end
 end
 
 function GetSectorDistance(sectorId1, sectorId2)

@@ -43,22 +43,46 @@ local function combat_path_to_charge_path(path)
 	return charge
 end
 
-function GetChargeAttackPosition(attacker, target, ap, action_id)
-	local apos = attacker:GetPos()
-	local tpos = GetPassSlab(target)
-	local combatPath = CombatPath:new()
+MapVar("g_ChargeAttackCombatPath", false)
+
+local function GetChargeAttackCombatPath(attacker, action_id, ap)
+	local attack_pos = attacker:GetPos()
+	local move_modifier = attacker:GetMoveModifier()
 	if not ap then
 		local action = CombatActions[action_id]
 		ap = action:ResolveValue("move_ap") * const.Scale.AP
 	end
-	combatPath:RebuildPaths(attacker, ap)
+	if not g_ChargeAttackCombatPath or
+		g_ChargeAttackCombatPath.attacker ~= attacker or
+		g_ChargeAttackCombatPath.ap ~= ap or
+		g_ChargeAttackCombatPath.action_id ~= action_id or
+		g_ChargeAttackCombatPath.attack_pos ~= attack_pos or
+		g_ChargeAttackCombatPath.move_modifier ~= move_modifier
+	then
+		g_ChargeAttackCombatPath = {
+			attacker = attacker,
+			ap = ap,
+			action_id = action_id,
+			attack_pos = attack_pos,
+			move_modifier = move_modifier,
+			combat_path = CombatPath:new()
+		}
+		g_ChargeAttackCombatPath.combat_path:RebuildPaths(attacker, ap)
+	end
+	return g_ChargeAttackCombatPath.combat_path
+end
+
+function GetChargeAttackPosition(attacker, target, ap, action_id)
+	local apos = attacker:GetPos()
+	local tpos = GetPassSlab(target)
+	local combatPath = GetChargeAttackCombatPath(attacker, action_id)
 	local atk_pos, atk_dot, atk_path, min_dist_error, not_straight_error, frontal_error
 	local tiles = combatPath:GetReachableMeleeRangePositions(target, true)
 	if tiles then
 		local min_angle = CombatActions[action_id]:ResolveValue("minAngle") * const.Scale.deg
 		local ref_dot = MulDivRound(cos(min_angle), 1000, 4096)
+		local minDistance = CombatActions.Charge:ResolveValue("minDistance") * const.Scale.AP
 		for i, tile in ipairs(tiles) do
-			local minDistance = CombatActions.Charge:ResolveValue("minDistance") * const.Scale.AP
 			local path = combatPath:GetCombatPathFromPos(tile)
 			local tooClose = attacker:GetDist(point_unpack(tile)) < minDistance
 			if path then

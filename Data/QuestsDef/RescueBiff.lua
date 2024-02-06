@@ -678,10 +678,10 @@ PlaceObj('QuestsDef', {
 				PlaceObj('QuestIsVariableBool', {
 					Condition = "or",
 					QuestId = "RescueBiff",
-					Vars = set( "BiffDeadOnArrival" ),
+					Vars = set( "BiffDeadInCombat", "BiffDeadOnArrival" ),
 					__eval = function ()
 						local quest = gv_Quests['RescueBiff'] or QuestGetState('RescueBiff')
-						return quest.BiffDeadOnArrival
+						return quest.BiffDeadInCombat or quest.BiffDeadOnArrival
 					end,
 				}),
 			},

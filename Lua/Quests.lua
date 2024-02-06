@@ -232,6 +232,7 @@ function QuestTCEEvaluation(specificQuests)
 
 			if show ~= currentlyShown then
 				quest.note_lines[note.Idx] = show and GetQuestNoteCampaignTimestamp(quest.note_lines) or false
+				currentlyShown = show
 				if show then 
 					QuestRolloverPopout(questId, note) 
 				end
@@ -244,7 +245,7 @@ function QuestTCEEvaluation(specificQuests)
 			if complCond and next(complCond) and noteState[note.Idx] ~= "completed" then
 				-- "All" evaluation
 				if EvalConditionList(complCond, quest) then
-					if note.AddInHistory then
+					if note.AddInHistory and currentlyShown then
 						LogHistoryOccurence("QuestNote", { questId = quest.id, noteIdx = note.Idx, sector = note.Badges and note.Badges[1].Sector })
 					end
 					
@@ -751,7 +752,7 @@ function QuestGatherRefsFromMaps(depending, quest_id, check_var)
 	local out = depending.markers or {}
 	-- filter for current quest_id
 	local res
-	ForEachDebugMarkerData("quest", quest_id, function(marker_info, res_item_info) 
+	ForEachDebugMarkerData("quest", Quests[quest_id], function(marker_info, res_item_info) 
 		if check_var then
 			if not FilterQuestVar(check_var, res_item_info.var) or not FilterQuestVar(check_var, res_item_info.var2) then
 				res = true
@@ -1201,6 +1202,12 @@ function SetActiveQuest(questId)
 	Msg("ActiveQuestChanged")
 end
 
+function OnMsg.QuestParamChanged(questId, varId, prevVal, newVal)
+	if varId == "Failed" and newVal then
+		gv_Quests[questId].ActiveQuest = false
+	end
+end
+
 function SetActiveQuestOrderBased(direction)
 	local currentActive = GetActiveQuest()
 	local _, questLogData = GetQuestLogData()
@@ -1523,7 +1530,7 @@ function UpdateQuestBadges(quest)
 	local questId = type(quest) == "string" and quest or quest.id
 	local questPreset = Quests[questId]
 	local questState = gv_Quests[questId]
-	if not questState or QuestIsBoolVar(questState, "Given", false) then return end
+	if not questState then return end
 	local completedQuest = QuestIsBoolVar(questState, "Completed", true)
 
 	local hiddenNotes = GetQuestHiddenBadges(questId)

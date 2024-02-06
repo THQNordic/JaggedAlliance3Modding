@@ -235,15 +235,11 @@ function CombatObject:TakeDirectDamage(dmg, floating, log_type, log_msg, attacke
 end
 
 function CombatObject:TakeDamage(dmg, attacker, hit_descr)
-	if self:IsDead() then
+	if not IsValid(self) or self:IsDead() or self:IsInvulnerable() then
 		return
 	end
 	
 	hit_descr = hit_descr or {}
-	
-	if self:IsInvulnerable() then
-		return
-	end
 	
 	self:LogDamage(dmg, attacker, hit_descr)
 

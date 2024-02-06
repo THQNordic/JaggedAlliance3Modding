@@ -82,9 +82,13 @@ PlaceObj('XTemplate', {
 			local hasPauseThread = not not self:GetThread("pause-blink")
 			if shouldHavePauseThread ~= hasPauseThread then
 				local node = self:ResolveId("node")
+				local diod = node.idDiode
 				
 				if shouldHavePauseThread then
 					local blinkOn = false
+					
+					diod:SetAnimate(true)
+					diod:SetFPS(3)
 					self:CreateThread("pause-blink", function()
 						while self.window_state ~= "destroying" do
 							self.idNormalMode.idPausedText:SetTextStyle(blinkOn and "SatelliteMode_BlinkOn" or "SatelliteMode")
@@ -93,9 +97,7 @@ PlaceObj('XTemplate', {
 								or
 								T(442467444132, "<dayNightIcon()> <time()> <day_name()>, <DateFormatted()>")
 							)
-							
-							node.idPDAScreen:SetImage(PDADiodeImages[blinkOn])
-							
+			
 							Sleep(450)
 							blinkOn = not blinkOn
 						end
@@ -104,7 +106,7 @@ PlaceObj('XTemplate', {
 					self:DeleteThread("pause-blink")
 					self.idNormalMode.idPausedText:SetTextStyle("SatelliteMode")
 					self.idTime:SetText(T(442467444132, "<dayNightIcon()> <time()> <day_name()>, <DateFormatted()>"))
-					node.idPDAScreen:SetImage(PDADiodeImages[false])
+					diod:SetAnimate(false)
 				end
 			end
 		end,
@@ -184,8 +186,12 @@ PlaceObj('XTemplate', {
 			}),
 			}),
 		PlaceObj('XTemplateWindow', {
-			'__class', "XSatelliteViewMap",
-		}),
+			'__class', "XDrawCache",
+		}, {
+			PlaceObj('XTemplateWindow', {
+				'__class', "XSatelliteViewMap",
+			}),
+			}),
 		PlaceObj('XTemplateWindow', {
 			'comment', "map scale flavor",
 			'Margins', box(0, 25, 50, 0),
@@ -563,6 +569,21 @@ PlaceObj('XTemplate', {
 			'Text', T(315834681880, --[[XTemplate PDASatellite Text]] "Cannot unpause the game because another player has opened a game menu."),
 		}),
 		PlaceObj('XTemplateWindow', {
+			'__class', "XText",
+			'Id', "idSatelliteEditorText",
+			'Margins', box(0, 0, 30, 100),
+			'HAlign', "center",
+			'VAlign', "bottom",
+			'Clip', false,
+			'UseClipBox', false,
+			'Visible', false,
+			'HandleMouse', false,
+			'ChildrenHandleMouse', false,
+			'TextStyle', "SatelliteRed",
+			'Text', "The Satellite Sector Editor is currently open. Click on a sector to select it for editing.",
+		}),
+		PlaceObj('XTemplateWindow', {
+			'__class', "XDrawCache",
 			'Id', "idTimelineContainer",
 			'Margins', box(0, 0, 0, 20),
 			'HAlign', "center",

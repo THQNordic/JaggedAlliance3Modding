@@ -116,7 +116,7 @@ if FirstLoad then
 	hr.CameraTacYawEasing = "Circle out"
 	hr.CameraTacClampToTerrain = true
 	hr.CameraTacUseVoxelBorder = true
-	hr.CameraClampToTerrainOnSetPos = false --changing value requires game restart to take effect
+	hr.CameraTacClampToTerrainOnSetPos = false --changing value requires game restart to take effect
 end
 
 function OnMsg.ShortcutsReloaded()

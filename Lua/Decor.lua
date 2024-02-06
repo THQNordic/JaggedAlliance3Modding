@@ -481,9 +481,16 @@ DefineClass("WW2_FlagHill_France", "WW2_Flag")
 DefineClass("WW2_FlagHill_Legion", "WW2_Flag")
 
 DefineClass.Shanty_WindTower = {
-	__parents = {"GroundAlignedObj", "Canvas", "DecorStateFXObject"},
+	__parents = {"GroundAlignedObj", "Canvas", "DecorStateFXObject", "AnimMomentHook"},
 	fx_actor_class = "Shanty_WindTower",
+	anim_moments_hook = true,
+	anim_moments_single_thread = true,
 }
+
+function Shanty_WindTower:SetState(...)
+	DecorStateFXObject.SetState(self, ...)
+	AnimMomentHook.SetState(self, ...)
+end
 
 local function SetMaterialTypeToClassDef(cls)
 	local def = g_Classes[cls]

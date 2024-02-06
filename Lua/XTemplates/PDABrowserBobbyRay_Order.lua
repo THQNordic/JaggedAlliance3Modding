@@ -662,7 +662,7 @@ PlaceObj('XTemplate', {
 												'TextStyle', "PDABobbyStore_SCP18C",
 												'ContextUpdateOnOpen', true,
 												'OnContextUpdate', function (self, context, ...)
-													local totalCost = MulDivRound(BobbyRayCartGetDeliveryOption().Price, gv_Sectors[BobbyRayCartGetDeliverySector()].BobbyRayDeliveryCostMultiplier, 100)
+													local totalCost = MulDivRound(BobbyRayStoreDeliveryPrice(), gv_Sectors[BobbyRayCartGetDeliverySector()].BobbyRayDeliveryCostMultiplier, 100)
 													self:SetText(T{770368132801, "<money(Cost)>", Cost = totalCost})
 												end,
 												'Translate', true,

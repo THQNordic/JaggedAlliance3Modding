@@ -132,7 +132,6 @@ PlaceObj('ParticleSystemPreset', {
 		'normalmap', "Textures/Particles/mist.norm.tga",
 		'frames', point(2, 2),
 		'light_softness', 1000,
-		'mat_roughness', 0,
 		'softness', 20,
 		'alpha', range(155, 255),
 		'outlines', {
@@ -457,7 +456,6 @@ PlaceObj('ParticleSystemPreset', {
 		'normalmap', "Textures/Particles/mist.norm.tga",
 		'frames', point(2, 2),
 		'light_softness', 1000,
-		'mat_roughness', 0,
 		'softness', 20,
 		'alpha', range(155, 255),
 		'outlines', {

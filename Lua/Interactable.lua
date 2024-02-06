@@ -244,7 +244,7 @@ function Interactable:GetInteractionPos(unit)
 	end
 	-- return a table with not occupied positions (return interact_positions if possible and skip creating a new table)
 	if not unit or #interact_positions == 0 then
-		return
+		return interact_positions
 	end
 
 	-- return the closest position when there is a interaction spot

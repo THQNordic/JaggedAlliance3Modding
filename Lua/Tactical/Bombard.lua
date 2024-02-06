@@ -445,7 +445,8 @@ DefineClass.IsBombardQueued = {
 	properties = {
 		{ id = "BombardId", editor = "text", default = "", },
 		{ id = "Negate", editor = "bool" },
-	}
+	},
+	EditorNestedObjCategory = "Combat",
 }
 
 function IsBombardQueued:__eval()

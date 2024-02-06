@@ -63,7 +63,11 @@ function GetRandomSpreadSpawnMarkerPositions(markers, spawn_count, around_center
 end
 
 function GetRandomSpawnMarkerPositions(markers, spawn_count, around_center, req_pos)
-	assert(next(markers))
+	if AreModdingToolsActive() then
+		ModLogF("No spawn marker positions found on map '%s'. Trying to spawn units in the map center.", CurrentMap)
+	else
+		assert(next(markers))
+	end
 
 	local result, pos_to_marker = {}, {}
 	for _, marker in ipairs(markers) do

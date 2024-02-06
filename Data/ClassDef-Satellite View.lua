@@ -257,6 +257,21 @@ PlaceObj('ClassDef', {
 			CampaignObject.SetId(self, id)
 		end,
 	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "OnEditorNew",
+		'params', "parent, ged, is_paste",
+		'code', function (self, parent, ged, is_paste)
+			if parent.mod and IsKindOf(parent, "ModItemSector") then
+				self.Id = parent.sectorId
+				self.Map = parent:GetMapName()
+				self.modId = parent.mod.id
+				self.bidirectionalRoadApply = true
+				self.bidirectionalBlockApply = true
+				parent.SatelliteSectorObj = self
+				parent:PostLoad()
+			end
+		end,
+	}),
 	PlaceObj('PropertyDefFunc', {
 		'id', "Setdisplay_name",
 		'no_edit', true,
@@ -282,6 +297,9 @@ PlaceObj('ClassDef', {
 			if g_SatelliteUI then
 				g_SatelliteUI:UpdateSectorVisuals(self.Id)
 			end
+			if prop_id == "WeatherZone" then
+				g_WeatherZones = false
+			end
 		end,
 	}),
 	PlaceObj('PropertyDefHelp', {
@@ -306,7 +324,7 @@ PlaceObj('ClassDef', {
 				'Name', "Edit sector",
 				'FuncName', "EditGeneratedSector",
 				'IsHidden', function (self)
-					if self.modId or config.PresetEditorsModdingMode then return true end
+					if self.modId or config.ModdingToolsInUserMode then return true end
 					
 					return IsKindOf(self, "GedMultiSelectAdapter") or not self.inherited and not self.generated
 				end,
@@ -343,13 +361,14 @@ PlaceObj('ClassDef', {
 	PlaceObj('PropertyDefBool', {
 		'category', "Underground",
 		'id', "HideUnderground",
+		'name', "Hide underground",
 		'no_edit', "expression",
 		'no_edit_expression', function (self, prop_meta) return self.GroundSector end,
 	}),
 	PlaceObj('PropertyDefBool', {
 		'category', "Underground",
 		'id', "CanGoUp",
-		'name', "Can Go Overground",
+		'name', "Can go overground",
 		'help', "Whether this underground sector has a travel connection to its overground sector.",
 		'no_edit', "expression",
 		'no_edit_expression', function (self, prop_meta) return not self.GroundSector end,
@@ -365,7 +384,7 @@ PlaceObj('ClassDef', {
 				'IsHidden', function (self)
 					if IsKindOf(self, "GedMultiSelectAdapter") then return true end
 					
-					if self.modId or config.PresetEditorsModdingMode then return true end
+					if self.modId or config.ModdingToolsInUserMode then return true end
 					
 					local campaign = GetParentTableOfKind(self, "CampaignPreset")
 					return not self.Id or
@@ -379,7 +398,7 @@ PlaceObj('ClassDef', {
 				'IsHidden', function (self)
 					if IsKindOf(self, "GedMultiSelectAdapter") then return true end
 					
-					if self.modId or config.PresetEditorsModdingMode then return true end
+					if self.modId or config.ModdingToolsInUserMode then return true end
 					
 					local campaign = GetParentTableOfKind(self, "CampaignPreset")
 					return not self.Id or
@@ -391,7 +410,7 @@ PlaceObj('ClassDef', {
 				'Name', "Remove sector",
 				'FuncName', "RemoveSector",
 				'IsHidden', function (self)
-					if self.modId or config.PresetEditorsModdingMode then return true end
+					if self.modId or config.ModdingToolsInUserMode then return true end
 					
 					return IsKindOf(self, "GedMultiSelectAdapter") or not self.Id or self.inherited or not self.Id:ends_with("_Underground")
 				end,
@@ -463,7 +482,7 @@ PlaceObj('ClassDef', {
 		'name', "GenerateDBCacheStatic",
 		'params', "root, prop_id, ged",
 		'code', function (self, root, prop_id, ged)
-			GenerateDynamicDBPathCache("save")
+			GenerateDynamicDBPathCache("save", ged)
 		end,
 	}),
 	PlaceObj('PropertyDefPoint', {
@@ -489,6 +508,7 @@ PlaceObj('ClassDef', {
 	PlaceObj('PropertyDefNumber', {
 		'id', "MapTier",
 		'name', "Tier",
+		'help', "Used in the 'PlayerIsInSectorsOfTier' conditional effect to, for example, spawn loot on the map.",
 		'default', 0,
 		'scale', 10,
 		'step', 5,
@@ -498,6 +518,8 @@ PlaceObj('ClassDef', {
 	PlaceObj('PropertyDefText', {
 		'id', "Label1",
 		'name', "Label 1",
+		'no_edit', "expression",
+		'no_edit_expression', function (self, prop_meta) return config.ModdingToolsInUserMode end,
 		'translate', false,
 	}),
 	PlaceObj('PropertyDefText', {
@@ -508,10 +530,13 @@ PlaceObj('ClassDef', {
 	PlaceObj('PropertyDefText', {
 		'id', "Label2",
 		'name', "Label 2",
+		'no_edit', "expression",
+		'no_edit_expression', function (self, prop_meta) return config.ModdingToolsInUserMode end,
 		'translate', false,
 	}),
 	PlaceObj('PropertyDefBool', {
 		'id', "RunLoyaltyLogic",
+		'name', "Run loyalty logic",
 		'help', "Whether this sector will grant/remove loyalty on conflict resolution",
 		'default', true,
 	}),
@@ -541,6 +566,7 @@ PlaceObj('ClassDef', {
 	PlaceObj('PropertyDefBool', {
 		'id', "StickySide",
 		'name', "Sticky side",
+		'help', "Prevents changing the side of the sector unless it is forced from a conditinal effect or 'SatelliteSectorSetSide' with 'force' param.",
 	}),
 	PlaceObj('PropertyDefPresetId', {
 		'category', "Travel",
@@ -551,11 +577,21 @@ PlaceObj('ClassDef', {
 		'preset_class', "SectorTerrain",
 		'default', "Savanna",
 	}),
-	PlaceObj('PropertyDefText', {
+	PlaceObj('PropertyDefCombo', {
 		'id', "WeatherZone",
 		'name', "Weather zone",
-		'help', "Weather Zone the sector belongs to. Sectors within the same Weather Zone have the same weather conditions.",
-		'translate', false,
+		'help', "Weather Zone the sector belongs to. Sectors within the same Weather Zone have the same weather cycle.",
+		'default', "Default",
+		'items', function (self)
+			local campaignPreset
+			if self.modId then
+				local modItem = GetParentTableOfKind(self, "ModItemSector")
+				campaignPreset = modItem and CampaignPresets[modItem.campaignId]
+			else
+				campaignPreset = GetCurrentCampaignPreset()
+			end
+			return campaignPreset and WeatherZoneCombo(campaignPreset) or {}
+		end,
 	}),
 	PlaceObj('PropertyDefCombo', {
 		'category', "Travel",
@@ -584,16 +620,19 @@ PlaceObj('ClassDef', {
 	}),
 	PlaceObj('PropertyDefBool', {
 		'id', "never_autoresolve",
+		'name', "Never autoresolve",
 		'help', "Conflicts on this sector can never be autoresolved",
 	}),
 	PlaceObj('PropertyDefBool', {
 		'id', "discovered",
+		'name', "Discovered",
 		'help', "The player has been to this sector, or has started travelling to it via some method. In use only for underground sectors.",
 		'default', true,
 	}),
 	PlaceObj('PropertyDefNumber', {
 		'category', "Conflict",
 		'id', "AutoResolveDefenderBonus",
+		'name', "AutoResolve defender bonus",
 		'help', "Percent by which defender power is increased in this sector",
 		'default', 0,
 		'min', 0,
@@ -664,6 +703,7 @@ PlaceObj('ClassDef', {
 	PlaceObj('PropertyDefBool', {
 		'category', "Hospital",
 		'id', "HospitalLocked",
+		'name', "Hospital locked",
 		'extra_code', "no_edit = function(self) return self.GroundSector end",
 	}),
 	PlaceObj('PropertyDefBool', {
@@ -743,6 +783,7 @@ PlaceObj('ClassDef', {
 	PlaceObj('PropertyDefBool', {
 		'category', "Conflict",
 		'id', "ForceConflict",
+		'name', "Force conflict",
 	}),
 	PlaceObj('PropertyDefStringList', {
 		'category', "Conflict",
@@ -771,6 +812,11 @@ PlaceObj('ClassDef', {
 	PlaceObj('PropertyDefNumber', {
 		'category', "Militia",
 		'id', "militia_squad_id",
+		'no_edit', true,
+	}),
+	PlaceObj('PropertyDefNumber', {
+		'category', "Militia",
+		'id', "militia_training_payed_cost",
 		'no_edit', true,
 	}),
 	PlaceObj('PropertyDefText', {
@@ -817,10 +863,11 @@ PlaceObj('ClassDef', {
 	PlaceObj('PropertyDefBool', {
 		'id', "InterestingSector",
 		'name', "Interesting sector",
-		'help', "Marks whether a sector has something interesting in it",
+		'help', "Will be listed as one after GatherIntel operation completes and will start voice responses if passed by.",
 	}),
 	PlaceObj('PropertyDefNumber', {
 		'id', "MinFlareCarriers",
+		'name', "Min flare carriers",
 		'help', "Minimum number of Roaming NPCs to carry a light during Night or Underground",
 		'default', 1,
 		'slider', true,
@@ -829,6 +876,7 @@ PlaceObj('ClassDef', {
 	}),
 	PlaceObj('PropertyDefNumber', {
 		'id', "MaxFlareCarriers",
+		'name', "Max flare carriers",
 		'help', "Minimum number of Roaming NPCs to carry a light during Night or Underground",
 		'default', 3,
 		'slider', true,
@@ -976,10 +1024,12 @@ PlaceObj('ClassDef', {
 	PlaceObj('PropertyDefBool', {
 		'category', "Port",
 		'id', "CanBeUsedForArrival",
+		'name', "Can be used for arrival",
 	}),
 	PlaceObj('PropertyDefNumber', {
 		'category', "Port",
 		'id', "BobbyRayDeliveryCostMultiplier",
+		'name', "Bobby Ray delivery cost multiplier",
 		'no_edit', "expression",
 		'no_edit_expression', function (self, prop_meta) return not self.CanBeUsedForArrival end,
 		'default', 100,
@@ -988,6 +1038,7 @@ PlaceObj('ClassDef', {
 	PlaceObj('PropertyDefUIImage', {
 		'category', "Port",
 		'id', "SectorImagePreview",
+		'name', "Sector image preview",
 		'no_edit', "BobbyRayDeliveryCostMultiplier.no_edit",
 		'default', "UI/PDA/ss_i1.png",
 	}),
@@ -1011,9 +1062,7 @@ PlaceObj('ClassDef', {
 			PlaceObj('PropertyDefPropButton', {
 				'Name', "Recalculate Diamond Routes",
 				'FuncName', "GenerateDBCacheStatic",
-				'IsHidden', function (self)
-					if not Platform.developer then return true end
-				end,
+				'IsHidden', function (self) return config.ModdingToolsInUserMode end,
 			}),
 		},
 	}),
@@ -1084,7 +1133,7 @@ PlaceObj('ClassDef', {
 	PlaceObj('PropertyDefCombo', {
 		'category', "Music",
 		'id', "MusicCombat",
-		'name', "Music Combat",
+		'name', "Music combat",
 		'help', "Music in turn based mode",
 		'default', "Battle_Easy",
 		'items', function (self) return PresetsCombo("RadioStationPreset") end,
@@ -1227,7 +1276,7 @@ PlaceObj('ClassDef', {
 		'name', "IsReadOnly",
 		'comment', "for GED",
 		'code', function (self)
-			return self.generated or self.inherited or (config.PresetEditorsModdingMode and not self.modId)
+			return self.generated or self.inherited or (config.ModdingToolsInUserMode and not self.modId)
 		end,
 	}),
 })
@@ -1705,6 +1754,11 @@ PlaceObj('PresetDef', {
 			end
 			Msg("OperationCompleted", self, mercs, sector)
 		end,
+	}),
+	PlaceObj('ClassConstDef', {
+		'name', "Documentation",
+		'type', "text",
+		'value', "Creates a new sector operation that could be accessed through the sector operation menu. Allows adding new quests along with setting up variables that are related to them.",
 	}),
 	PlaceObj('PropertyDefFunc', {
 		'id', "OnComplete",

@@ -452,3 +452,47 @@ function IsOccupiedExploration(unit, x, y, z)
 	end
 	return not CanDestlock(x, y, z or const.InvalidZ, Unit.radius)
 end
+
+function CheckForDetailObjsAffectingPassability()
+	local dummy_collections = {}
+	local offending_objs = {}
+	
+	local function process(o)
+		--acknowledge dummies
+		if IsKindOf(o, "FloatingDummy") then
+			dummy_collections[o:GetCollectionIndex()] = o
+		end
+		
+		--any parent that is non essential can hide/show this obj
+		local parent = o:GetParent()
+		local dc = o:GetDetailClass()
+		while dc == "Essential" and parent do
+			dc = parent:GetDetailClass()
+			parent = parent:GetParent()
+		end
+		
+		if dc ~= "Essential" then
+			if not o:ObjEssentialCheck() then
+				table.insert(offending_objs, o)
+			end
+		end
+	end
+	MapForEach("map", "CObject", process)
+	
+	for i = #offending_objs, 1, -1 do
+		local o = offending_objs[i]
+		local topParent = GetTopmostParent(o)
+		if dummy_collections[topParent:GetCollectionIndex() or 0] then
+			table.remove(offending_objs, i) --managed by floating dummy presumably
+		end
+	end
+	
+	for i, o in ipairs(offending_objs) do
+		StoreErrorSource(o, "Object will provoke pass grid rebuild on object details change!")
+	end
+end
+
+function OnMsg.PreSaveMap()
+	CheckForDetailObjsAffectingPassability()
+end
+

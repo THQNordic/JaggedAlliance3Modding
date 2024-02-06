@@ -187,7 +187,7 @@ DefineClass.CampaignSpecific = {
 
 	properties = {
 		{ id = "campaign", name = "Campaign", help = "The relevant campaign for this preset.", 
-			editor = "combo", default = "HotDiamonds", items = function (self)
+			editor = "choice", default = "HotDiamonds", items = function (self)
 local items = {}
 if not IsKindOf(self, "ModItem") then
 	table.insert(items, "<all>")
@@ -316,6 +316,15 @@ function ConditionalLoot:SpawnObjects(container)
 				SetQuestVar(quest, container.QuestSeedVariable, seed)
 			end
 			loot_tbl:GenerateLoot(self, {}, seed, self.objects)
+			if IsGameRuleActive("AmmoScarcity") then
+				local percent = GameRuleDefs.AmmoScarcity:ResolveValue("LootDecrease")
+				local classes = {"Ammo", "Ordnance", "Grenade", "ThrowableTrapItem", "Flare"}
+				for _, item in ipairs( self.objects) do
+					if IsKindOf(item, "InventoryStack") and IsKindOfClasses(item, classes) then
+						item.Amount =  Max(1, item.Amount - MulDivRound(item.Amount, percent, 100))
+					end
+				end
+			end
 		end
 	end
 	
@@ -1045,7 +1054,7 @@ function RadioPlaylistTrack:GetError()
 		local path_wav = string.format("%s.wav", self.Track)
 		local path_opus = string.format("%s.opus", self.Track)
 		if not io.exists(path_wav) and not io.exists(path_opus) then
-			return string.format("Missing '%s'", path)
+			return string.format("Missing '%s' (supported extensions are .opus and .wav)", self.Track)
 		end
 	end
 end
@@ -1386,6 +1395,13 @@ function UnitMarker:SpawnObjects()
 		
 		if unit_data and unit_data.HealPersistentOnSpawn and not unit_data:IsDead() then
 			unit_data:RemoveAllStatusEffects()
+			--Wounded and unconscious are not removed by Remove all status effect as they are character effects
+			if unit_data.StatusEffects["Wounded"] then
+				unit_data:RemoveStatusEffect("Wounded", "all")
+			end
+			if unit_data.StatusEffects["Unconscious"] then
+				unit_data:RemoveStatusEffect("Unconscious", "all")
+			end
 			unit_data.HitPoints = unit_data.MaxHitPoints
 		end
 	
@@ -1445,7 +1461,7 @@ function UnitMarker:DespawnObjects()
 		local obj = self.objects[i]
 		if IsValid(obj) and IsKindOf(obj, "Unit") and obj:IsNPC() and (not obj:IsDead() or obj.PersistentSessionId) then
 			obj.spawner = false
-			DoneObject(obj)
+			obj:Despawn()
 			table.remove(self.objects, i)
 		end	
 	end
@@ -1697,7 +1713,7 @@ DefineClass.UnitProperties = {
 		{ category = "Hiring - Parameters", id = "StartingSalary", help = "The salary at the starting level (whichever it is).", 
 			editor = "number", default = 1000, template = true, 
 			no_edit = function(self) return not IsMerc(self) end, min = 0, max = 20000, },
-		{ category = "Hiring - Parameters", id = "SalaryIncrease", help = "The percentange of salary increase per level.", 
+		{ category = "Hiring - Parameters", id = "SalaryIncrease", help = "Salary increase factor per level. Doesn't reflect changes by Game Rules.", 
 			editor = "number", default = 250, template = true, 
 			no_edit = function(self) return not IsMerc(self) end, scale = 1000, min = 0, max = 10000, },
 		{ category = "Hiring - Parameters", id = "SalaryLv1", name = "(To Be Deleted) Salary Lv 1", help = "The amount of money it costs to hire this merc for 1 day at level 1", 
@@ -1706,7 +1722,7 @@ DefineClass.UnitProperties = {
 		{ category = "Hiring - Parameters", id = "SalaryMaxLv", name = "(To Be Deleted) Max Lv Daily Salary", help = "The amount of money it costs to hire this merc for 1 day at max level", 
 			editor = "number", default = 10000, template = true, 
 			no_edit = function(self) return not IsMerc(self) end, min = 0, max = 20000, },
-		{ category = "Hiring - Parameters", id = "SalaryPreview", name = "Salary Level 10", 
+		{ category = "Hiring - Parameters", id = "SalaryPreview", name = "Salary Level 10", help = "Expected salary at Level 10. All active game rules are applied.", 
 			editor = "number", default = 0, dont_save = true, read_only = true, template = true, 
 			no_edit = function(self) return not IsMerc(self) end, },
 		{ category = "Hiring", id = "LegacyNotes", name = "Legacy Notes", help = "Any info about the merc from previous titles.", 
@@ -1939,12 +1955,7 @@ if not IsMerc(self) and Game and not baseLevel then
 	addLevel = GameDifficulties[Game.game_difficulty]:ResolveValue("unitBonusLevel") or 0
 end
 if not curXp then return self:GetProperty("StartingLevel") + addLevel end
-for i, xp in ipairs(XPTable) do
-	if curXp < xp then
-		return i - 1 + addLevel
-	end
-end
-return #XPTable + addLevel
+return CalcLevel(curXp) + addLevel
 end, read_only = true, no_edit = true, params = "self, baseLevel", },
 		{ category = "Equipment", id = "Equipment", 
 			editor = "preset_id_list", default = {}, template = true, 
@@ -1964,7 +1975,7 @@ end, read_only = true, no_edit = true, params = "self, baseLevel", },
 			editor = "combo", default = "None", template = true, 
 			no_edit = function(self) return not IsMerc(self) end, items = function (self) return PresetGroupCombo("MercSpecializations", "Default") end, },
 		{ category = "Voice", id = "pollyvoice", name = "Polly Voice", 
-			editor = "choice", default = "Brian", template = true, items = function (self) return g_LocPollyActors end, },
+			editor = "choice", default = "Brian", no_edit = function(self) return config.ModdingToolsInUserMode end, template = true, items = function (self) return g_LocPollyActors end, },
 		{ category = "Appearance", id = "species", name = "Species", 
 			editor = "choice", default = "Human", template = true, items = function (self) return { "Human", "Crocodile", "Hyena", "Lion", "Hen" } end, },
 		{ category = "Appearance", id = "body_type", name = "Body Type", 
@@ -2015,6 +2026,25 @@ end, read_only = true, no_edit = true, params = "self, amount", },
 			editor = "number", default = 0, },
 	},
 }
+
+function UnitProperties:GetMercStartingSalary()
+	local stSalary = self:GetProperty("StartingSalary")
+	local tier = self:GetProperty("Tier")
+	if IsGameRuleActive("CheaperPros") and (tier=="Elite" or tier=="Legendary") then
+		local percent = GameRuleDefs.CheaperPros:ResolveValue("StartingSalaryModifier")
+		stSalary = MulDivRound(stSalary, percent, 100)
+	end
+	return stSalary
+end
+
+function UnitProperties:GetSalaryIncreaseProp()
+	local salaryIncrease = self:GetProperty("SalaryIncrease")
+	if IsGameRuleActive("Unionization") then
+			local additional_salary_increase = GameRuleDefs.Unionization:ResolveValue("AdditionalSalaryIncrease")
+			salaryIncrease = salaryIncrease + additional_salary_increase
+		end
+	return salaryIncrease
+end
 
 function UnitProperties:SelectArchetype(proto_context)
 	local archetype

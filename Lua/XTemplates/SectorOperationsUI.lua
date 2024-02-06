@@ -43,6 +43,11 @@ PlaceObj('XTemplate', {
 					self.hidden_UI [speeds_ctrl] = true
 					speeds_ctrl:SetVisible(false)
 				end
+				local tutorial_popup =  CurrentTutorialPopup
+				if tutorial_popup then
+					self.hidden_UI [tutorial_popup] = true
+					tutorial_popup:SetVisible(false)
+				end
 				
 				SetCampaignSpeed(0, GetUICampaignPauseReason("SectorOperations"))
 				PlayFX("OperationsOpen", "start")
@@ -179,13 +184,17 @@ PlaceObj('XTemplate', {
 											if restore_txt ~= "" then
 												restore_txt = T{548330460792, "You will be refunded <cost>.", cost = restore_txt}
 											end
+											
+											local popupHost = GetDialog("PDADialogSatellite")
+											popupHost = popupHost and popupHost:ResolveId("idDisplayPopupHost")
+											
 											local dlg = CreateQuestionBox(
-												GetDialog("PDADialog"),
+												popupHost,
 												T(824112417429, "Warning"),
 												restore_txt ~= "" and T{653728009504, "<warning>\n<restore>", warning = warning_txt, restore = restore_txt} or warning_txt,
 												T(689884995409, "Yes"),
 												T(782927325160, "No")) 
-											dlg:SetModal()	
+										
 											if dlg:Wait()== "ok" then
 												for i, merc in ipairs(mercs) do
 													NetSyncEvent("RestoreOperationCost", merc.session_id, costs[i])											
@@ -278,15 +287,20 @@ PlaceObj('XTemplate', {
 												if not sector.operations_temp_data or not sector.operations_temp_data[operation_id] then
 													SetBackDialogMode(host)
 													return
-												end	
+												end
+												
+												local popupHost = GetDialog("PDADialogSatellite")
+												popupHost = popupHost and popupHost:ResolveId("idDisplayPopupHost")
+												
 												--local question_text = T(382184936324, "Are you sure you want to leave? Mercs will be unassigned from this Operation.")
 												local question_text = T(616270408863, "Are you sure you want to cancel? All changes will be reverted and returned to the previous state of the operation")
 												local qdlg = CreateQuestionBox(
-												GetDialog("PDADialog"),
-												T(824112417429, "Warning"),
-												question_text,
-												T(1138, "Yes"), T(1139, "No"))
-												qdlg:SetModal()
+													popupHost,
+													T(824112417429, "Warning"),
+													question_text,
+													T(1138, "Yes"),
+													T(1139, "No")
+												)
 											
 												local res = qdlg:Wait()== "ok"
 												if res then

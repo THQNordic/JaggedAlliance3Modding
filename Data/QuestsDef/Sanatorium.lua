@@ -4,7 +4,7 @@ PlaceObj('QuestsDef', {
 	Chapter = "Act1",
 	DisplayName = T(277384033457, --[[QuestsDef Sanatorium DisplayName]] "The Outbreak"),
 	NoteDefs = {
-		LastNoteIdx = 46,
+		LastNoteIdx = 49,
 		PlaceObj('QuestNote', {
 			Badges = {
 				PlaceObj('QuestBadgePlacement', {
@@ -1451,17 +1451,23 @@ PlaceObj('QuestsDef', {
 			Text = T(708381306429, --[[QuestsDef Sanatorium Text]] "<em>Outcome:</em> Put a violent end to the inhumane experiments of <em>Dr. Kronenberg</em>"),
 		}),
 		PlaceObj('QuestNote', {
-			CompletionConditions = {
+			Badges = {
+				PlaceObj('QuestBadgePlacement', {
+					BadgeUnit = "DrGruselheim",
+					Sector = "H12",
+				}),
+			},
+			HideConditions = {
 				PlaceObj('QuestIsVariableBool', {
-					QuestId = "U-Bahn",
-					Vars = set( "OutcomeSanatorium" ),
+					QuestId = "U-Bahn_Helpers",
+					Vars = set( "VisitedGruselheim_Sanatorium" ),
 					__eval = function ()
-						local quest = gv_Quests['U-Bahn'] or QuestGetState('U-Bahn')
-						return quest.OutcomeSanatorium
+						local quest = gv_Quests['U-Bahn_Helpers'] or QuestGetState('U-Bahn_Helpers')
+						return quest.VisitedGruselheim_Sanatorium
 					end,
 				}),
 			},
-			Idx = 46,
+			Idx = 49,
 			ShowConditions = {
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "U-Bahn",
@@ -1471,11 +1477,61 @@ PlaceObj('QuestsDef', {
 						return quest.OutcomeSanatorium
 					end,
 				}),
-				PlaceObj('PlayerIsInSectors', {
-					Sectors = {
-						"H12",
-						"H12_Underground",
-					},
+			},
+			Text = T(816314560179, --[[QuestsDef Sanatorium Text]] "Dr. Gruselheim was sent to the <em>Sanatorium</em> to cure <em>Red Rabies</em>"),
+		}),
+		PlaceObj('QuestNote', {
+			CompletionConditions = {
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "U-Bahn_Helpers",
+					Vars = set( "VisitedGruselheim_Sanatorium" ),
+					__eval = function ()
+						local quest = gv_Quests['U-Bahn_Helpers'] or QuestGetState('U-Bahn_Helpers')
+						return quest.VisitedGruselheim_Sanatorium
+					end,
+				}),
+			},
+			Idx = 46,
+			ShowConditions = {
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "U-Bahn_Helpers",
+					Vars = set( "VisitedGruselheim_Sanatorium" ),
+					__eval = function ()
+						local quest = gv_Quests['U-Bahn_Helpers'] or QuestGetState('U-Bahn_Helpers')
+						return quest.VisitedGruselheim_Sanatorium
+					end,
+				}),
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "Sanatorium",
+					Vars = set( "MangelKilled" ),
+					__eval = function ()
+						local quest = gv_Quests['Sanatorium'] or QuestGetState('Sanatorium')
+						return quest.MangelKilled
+					end,
+				}),
+			},
+			Text = T(585287057531, --[[QuestsDef Sanatorium Text]] "<em>Outcome:</em> Dr. Gruselheim developed a <em>vaccine</em> for <em>Red Rabies</em>"),
+		}),
+		PlaceObj('QuestNote', {
+			CompletionConditions = {
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "U-Bahn_Helpers",
+					Vars = set( "VisitedGruselheim_Sanatorium" ),
+					__eval = function ()
+						local quest = gv_Quests['U-Bahn_Helpers'] or QuestGetState('U-Bahn_Helpers')
+						return quest.VisitedGruselheim_Sanatorium
+					end,
+				}),
+			},
+			Idx = 47,
+			ShowConditions = {
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "U-Bahn_Helpers",
+					Vars = set( "VisitedGruselheim_Sanatorium" ),
+					__eval = function ()
+						local quest = gv_Quests['U-Bahn_Helpers'] or QuestGetState('U-Bahn_Helpers')
+						return quest.VisitedGruselheim_Sanatorium
+					end,
 				}),
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "Sanatorium",
@@ -1488,7 +1544,7 @@ PlaceObj('QuestsDef', {
 					end,
 				}),
 			},
-			Text = T(585287057531, --[[QuestsDef Sanatorium Text]] "<em>Outcome:</em> <em>Dr. Gruselheim</em> developed a vaccine for Red Rabies and cured <em>Dr. Kronenberg</em>"),
+			Text = T(488974742736, --[[QuestsDef Sanatorium Text]] "<em>Outcome:</em> Dr. Gruselheim developed a <em>vaccine</em> for <em>Red Rabies</em> and cured <em>Dr. Kronenberg</em>"),
 		}),
 	},
 	QuestGroup = "Jungle",
@@ -1555,6 +1611,9 @@ PlaceObj('QuestsDef', {
 				}),
 				PlaceObj('GroupSetSide', {
 					Side = "ally",
+					TargetUnit = "SanatoriumGuard",
+				}),
+				PlaceObj('GroupAlert', {
 					TargetUnit = "SanatoriumGuard",
 				}),
 				PlaceObj('GroupSetSide', {

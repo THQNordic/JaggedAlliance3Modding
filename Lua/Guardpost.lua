@@ -376,6 +376,58 @@ function GenerateRandEnemySquadUnits(enemy_squad_id)
 	return unit_template_ids, new_names, unit_gen_sources, override_visual
 end
 
+function GameRuleBodyCountModifier(generated_unit_ids, generated_unit_names, generated_sources, generated_appearances)	
+	local percent = GameRuleDefs.BodyCount:ResolveValue("CountMultiplier") or 0
+	local new_units_count = MulDivTrunc(percent, #generated_unit_ids, 100)
+	if new_units_count<=0 then 
+		return generated_unit_ids, generated_unit_names, generated_sources, generated_appearances
+	end
+	
+	local count = {}
+	local total = 0
+	for _, id in ipairs(generated_unit_ids) do
+		local ud = UnitDataDefs[id]
+		if not ud.ImportantNPC
+			and not ud.villain 
+			and not ud.militia
+			and not ud.elite
+			and ud.role ~= "Commander"
+		then
+			local idx = table.find(count, "id", id)
+			if idx then
+				count[idx].count = count[idx].count + 1			
+			else
+				count[#count+1] = {id = id, count = 1}
+			end
+			total = total + 1
+		end
+	end
+	table.sortby_field_descending(count,"count")
+	local ntotal = new_units_count
+	for _, data in ipairs(count) do
+		local cpercent = MulDivRound(data.count,100, total)
+		local to_add = Min(MulDivRound(percent,ntotal,100),new_units_count)
+		for i=1, to_add do
+			generated_unit_ids[#generated_unit_ids + 1] = data.id
+		end	
+		new_units_count = new_units_count - to_add
+		if new_units_count<=0 then
+			break
+		end
+	end
+	if new_units_count>0 then
+		local idx = 1
+		while new_units_count>0 do
+			local data = count[idx]
+			generated_unit_ids[#generated_unit_ids + 1] = data.id
+			new_units_count = new_units_count - 1			
+			idx = idx +1
+			if idx>#count then idx = 1 end
+		end	
+	end
+	return generated_unit_ids, generated_unit_names, generated_sources, generated_appearances	
+end
+
 function GenerateEnemySquad(enemy_squad_id, sector_id, base_session_id, unit_template_ids, side, militiaTest)
 	local enemy_squad_def = enemy_squad_id and EnemySquadDefs[enemy_squad_id]
 	if not enemy_squad_def then
@@ -387,6 +439,10 @@ function GenerateEnemySquad(enemy_squad_id, sector_id, base_session_id, unit_tem
 		generated_unit_ids, generated_unit_names, generated_sources, generated_appearances = GenerateRandEnemySquadUnits(enemy_squad_id)
 	else
 		generated_unit_ids = unit_template_ids
+	end
+
+	if IsGameRuleActive("BodyCount") then
+		generated_unit_ids, generated_unit_names, generated_sources, generated_appearances = GameRuleBodyCountModifier(generated_unit_ids, generated_unit_names, generated_sources, generated_appearances)
 	end
 	
 	local units = GenerateUnitsFromTemplates(sector_id, generated_unit_ids, base_session_id, generated_unit_names, generated_appearances)

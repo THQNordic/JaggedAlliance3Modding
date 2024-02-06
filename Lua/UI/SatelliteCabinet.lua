@@ -163,7 +163,7 @@ function GetSquadEnterSectorState(squadId, sectorId)
 	local enabled = not squad_travelling or IsConflictMode(squad.CurrentSector)
 	if not enabled then return false, T(635144125310, "Can't go to Tactical View because the squad is traveling. Wait until it arrives at the destination.") end
 	
-	local canEnterMapWise = sector and (sector.Map or sector.conflict)
+	local canEnterMapWise = sector and (sector.Map or sector.conflict or gv_CurrentSectorId == squad.CurrentSector)
 	enabled = enabled and canEnterMapWise
 
 	return enabled, T(910553896811, "Cannot enter the sector")
@@ -212,6 +212,9 @@ end
 
 function SatelliteToggleActionState()
 	if CurrentActionCamera then
+		return "hidden"
+	end
+	if not g_Combat and (next(gv_UnitsBlockingPause) ~= nil) then
 		return "hidden"
 	end
 	

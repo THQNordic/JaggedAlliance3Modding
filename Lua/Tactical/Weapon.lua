@@ -919,9 +919,9 @@ function FirearmBase:UpdateVisualObj(vis)
 	self:UpdateColorMod(vis)
 end
 
-function FirearmBase:GetJamChance(condition)
+function FirearmBase:GetJamChance(attacker, condition)
 	local jam_chance = (100 - condition) / 4
-	if GameState.RainHeavy or GameState.RainLight then
+	if (GameState.RainHeavy or GameState.RainLight) and not attacker.indoors then
 		jam_chance = MulDivRound(jam_chance, 100 + const.EnvEffects.RainJamChanceMod, 100)
 	end
 	return jam_chance
@@ -934,7 +934,7 @@ end
 function FirearmBase:ReliabilityCheck(attacker, num_shots)
 	local item = self.parent_weapon or self
 	local loss = item:GetBaseDegradePerShot()
-	if GameState.RainHeavy or GameState.RainLight then
+	if (GameState.RainHeavy or GameState.RainLight) and not attacker.indoors then
 		loss = MulDivRound(loss, 100 + const.EnvEffects.RainConditionLossMod, 100)
 	end
 	local condition = item.Condition
@@ -943,7 +943,7 @@ function FirearmBase:ReliabilityCheck(attacker, num_shots)
 	local jammed
 	if not attacker.infinite_condition and attacker.team and attacker.team.control ~= "AI" and not attacker:HasStatusEffect("ManningEmplacement") then
 		-- jam check once per attack		
-		local jam_chance = item:GetJamChance(condition)
+		local jam_chance = item:GetJamChance(attacker, condition)
 		local jam_roll = 1 + attacker:Random(100)
 		if item.num_safe_attacks <= 0 and condition < const.Weapons.ItemConditionUsed and jam_roll < jam_chance then
 			jammed = true
@@ -1407,7 +1407,13 @@ function Firearm:ProjectileFly(attacker, start_pt, end_pt, dir, speed, hits, tar
 	NetUpdateHash("ProjectileFly", attacker, start_pt, end_pt, dir, speed, hits)
 	dir = SetLen(dir or end_pt - start_pt, 4096)
 
+	local fx_actor = false
+	if IsKindOf(attacker, "Unit") then
+		fx_actor = attacker:CallReactions_Modify("OnUnitChooseProjectileFxActor", fx_actor)
+	end
+
 	local projectile = PlaceObject("FXBullet")
+	projectile.fx_actor_class = fx_actor
 	projectile:SetGameFlags(const.gofAlwaysRenderable)
 	projectile:SetPos(start_pt)
 	local axis, angle = OrientAxisToVector(1, dir) -- 1 = +X
@@ -2099,7 +2105,7 @@ function Firearm:GetAttackResults(action, attack_args)
 	end
 	shot_attack_args.range = max_range
 
-	local kill
+	local stealth_kill
 	local roll = attack_results.attack_roll
 	local miss, crit
 	if shot_attack_args.multishot then
@@ -2116,7 +2122,7 @@ function Firearm:GetAttackResults(action, attack_args)
 	local unit_damage = {}
 
 	if not miss and shot_attack_args.stealth_kill_chance > 0 then
-		kill = shot_attack_args.stealth_kill_roll <= shot_attack_args.stealth_kill_chance
+		stealth_kill = shot_attack_args.stealth_kill_roll <= shot_attack_args.stealth_kill_chance
 	end
 
 	local shot_lof_data = shot_attack_args.lof and shot_attack_args.lof[1]
@@ -2125,7 +2131,7 @@ function Firearm:GetAttackResults(action, attack_args)
 	attack_results.attack_pos = shot_lof_data and shot_lof_data.attack_pos or attack_results.step_pos -- weapon shot pos
 	attack_results.shots = {}
 	attack_results.hit_objs = hit_objs
-	attack_results.stealth_kill = kill
+	attack_results.stealth_kill = stealth_kill
 	attack_results.clear_attacks = 0
 
 	-- count num hits and misses and precalc shot vectors for them
@@ -2155,7 +2161,7 @@ function Firearm:GetAttackResults(action, attack_args)
 			miss = miss and shot_miss
 			crit = crit or shot_crit
 		else
-			shot_miss = (not kill or i > 1) and roll > shot_cth
+			shot_miss = (not stealth_kill or i > 1) and roll > shot_cth
 			shot_crit = crit and (i == 1)
 		end
 		local data = band(shot_cth, sfCthMask)
@@ -2392,7 +2398,13 @@ function Firearm:GetAttackResults(action, attack_args)
 					hit_objs[#hit_objs + 1] = hit_obj
 					hit_objs[hit_obj] = true
 				end
-				if kill and hit_obj == dmg_target then
+				
+				if hit_obj == dmg_target and hit.grazing then
+					stealth_kill = false
+					shot_attack_args.stealth_kill_roll = -100
+				end	
+				
+				if stealth_kill and hit_obj == dmg_target then
 					hit.damage = MulDivRound(target:GetTotalHitPoints(), 125, 100)
 					hit.stealth_kill = true
 				end
@@ -2780,17 +2792,22 @@ function QuestTrackAttackedGroups(attack_args, results)
 	
 	if not IsKindOf(attacker, "Unit") then return end
 
-	local hit_units, direct_hit = {}, {}
+	-- mark attack target as "attacked" regardless of whether they were hit
+	local mark_units_as_attacked = IsKindOf(target, "Unit") and { target } or {}
+	local direct_hit = {}
 	local hits = #results > 0 and results or results.area_hits
 	for _, hit in ipairs(hits) do
-		if not results.no_damage and IsKindOf(hit.obj, "Unit") then
-			table.insert_unique(hit_units, hit.obj)
-			direct_hit[hit.obj] = direct_hit[hit.obj] or not hit.obj.stray or hit.obj.aoe
+		local obj = hit.obj
+		if not results.no_damage and IsKindOf(obj, "Unit") then
+			local directHit = not obj.stray or obj.aoe
+			if directHit then 
+				table.insert_unique(mark_units_as_attacked, obj)
+			end
 		end
 	end
 
-	for _, obj in ipairs(hit_units) do
-		if attacker.team.player_team and direct_hit[obj] then
+	for _, obj in ipairs(mark_units_as_attacked) do
+		if attacker.team.player_team then
 			QuestAddAttackedGroups(obj.Groups, obj:IsDead())
 			NetUpdateHash("QuestAddAttackedGroups", obj)
 		end
@@ -2865,7 +2882,7 @@ function AttackReaction(action, attack_args, results, can_retaliate)
 			local shatterhandTreshold = shatterhand:ResolveValue("hp_loss_percent")
 			local maxHp = unit:GetInitialMaxHitPoints()
 			
-			if results.unit_damage[unit] and results.unit_damage[unit] >= MulDivRound(maxHp, shatterhandTreshold, 100) then
+			if results.unit_damage and results.unit_damage[unit] and results.unit_damage[unit] >= MulDivRound(maxHp, shatterhandTreshold, 100) then
 				local retaliationCounter = unit:GetStatusEffect("RetaliationCounter")
 				retaliationCounter = retaliationCounter and retaliationCounter.stacks or 0
 				
@@ -2967,14 +2984,35 @@ function AttackReaction(action, attack_args, results, can_retaliate)
 	if combat_starting and not g_Combat then
 		g_LastAttackStealth = not not (results and results.attack_from_stealth)
 		g_LastAttackKill = IsKindOf(target, "Unit") and target:IsDead() or false
-		if g_CurrentAttackActions[1] and g_CurrentAttackActions[1].attack_args.obj == attacker then
-			-- combat might start because of this action, add the status effect to make the unit start their turn with the ap for the action spent
-			g_AttackSpentAPQueue[#g_AttackSpentAPQueue + 1] = attacker
-			g_AttackSpentAPQueue[#g_AttackSpentAPQueue + 1] = GameTime()
-			g_AttackSpentAPQueue[#g_AttackSpentAPQueue + 1] = g_CurrentAttackActions[1].cost_ap
+		
+		-- combat might start because of this action,
+		-- add the status effect to make the unit start their turn with the ap for the action spent
+		local currentAction = g_CurrentAttackActions[1]
+		if currentAction and currentAction.attack_args.obj == attacker then
+			if currentAction.recorded_ap then
+				-- If already recorded then just update the time
+				local timestampIndex = currentAction.recorded_ap + 1
+				if g_AttackSpentAPQueue[timestampIndex] then
+					g_AttackSpentAPQueue[timestampIndex] = GameTime()
+				end
+			else
+				local idxRecordedAt = #g_AttackSpentAPQueue + 1
+				g_AttackSpentAPQueue[#g_AttackSpentAPQueue + 1] = attacker
+				g_AttackSpentAPQueue[#g_AttackSpentAPQueue + 1] = GameTime() -- spent when
+				g_AttackSpentAPQueue[#g_AttackSpentAPQueue + 1] = currentAction.cost_ap -- cost
+				
+				currentAction.recorded_ap = idxRecordedAt
+			end
 		end
 	end
 	Msg("Attack", action, results, attack_args, combat_starting, attacker, target)
+	if IsKindOf(attacker, "Unit") then
+		attacker:CallReactions("OnUnitAttackResolved", attacker, target, action, attack_args, results, can_retaliate, combat_starting)
+	end
+	if IsKindOf(target, "Unit") then
+		target:CallReactions("OnUnitAttackResolved", attacker, target, action, attack_args, results, can_retaliate, combat_starting)
+	end
+	
 	attacker:InterruptEnd() -- it's safe to InterruptEnd multiple times
 	
 	if g_Combat and g_Combat.enemies_engaged and not attack_args.unit_moved then

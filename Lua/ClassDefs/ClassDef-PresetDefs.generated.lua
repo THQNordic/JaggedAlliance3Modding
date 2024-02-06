@@ -336,6 +336,7 @@ end, no_edit = true, },
 	EditorIcon = "CommonAssets/UI/Icons/chat comment review text",
 	EditorMenubar = "Scripting",
 	EditorMenubarSortKey = "3000",
+	Documentation = "Creates a new banter preset that is played between a defined set of actors. See the New Quest sample mod in the Sample Mods section for an example on how to build a banter.",
 }
 
 DefineModItemPreset("BanterDef", { EditorName = "Banter", EditorSubmenu = "Campaign & Maps" })
@@ -417,6 +418,7 @@ DefineClass.Caliber = {
 		{ id = "ImpactForce", help = "impact force modifier", 
 			editor = "number", default = 0, },
 	},
+	Documentation = "Defines a new caliber type that an inventory item of type Ammo could use.",
 }
 
 DefineModItemPreset("Caliber", { EditorName = "Caliber mod", EditorSubmenu = "Item" })
@@ -429,7 +431,7 @@ DefineClass.CampaignPreset = {
 		{ category = "Satellite Settings", id = "sectors_offset", name = "Sectors offset", 
 			editor = "point", default = point(0, 0, 0), },
 		{ category = "Satellite Settings", id = "sector_size", name = "Sector size", 
-			editor = "point", default = point(0, 0), },
+			editor = "point", default = point(356, 356), read_only = true, },
 		{ category = "Satellite Settings", id = "map_size", name = "Map size", 
 			editor = "point", default = point(0, 0), },
 		{ category = "Preset", id = "DisplayName", name = "Display name", 
@@ -438,7 +440,7 @@ DefineClass.CampaignPreset = {
 			editor = "ui_image", default = false, },
 		{ category = "Satellite Settings", id = "underground_file", name = "Underground map image", 
 			editor = "ui_image", default = false, },
-		{ category = "Satellite Settings", id = "decorations", 
+		{ category = "Satellite Settings", id = "decorations", name = "Custom images on map", 
 			editor = "nested_list", default = false, base_class = "SatelliteViewDecorationDef", },
 		{ category = "Preset", id = "Description", name = "Description", 
 			editor = "text", default = "", translate = true, },
@@ -484,9 +486,25 @@ end end, },
 		{ id = "EffectsOnStart", name = "Effects on campaign start", help = "Effects that are executed when the campaign is started.", 
 			editor = "nested_list", default = false, base_class = "Effect", inclusive = true, },
 		{ id = "Initialize", help = "Called once when the campaign starts for the first time.", 
-			editor = "func", default = function (self)  end, },
+			editor = "func", default = function (self)
+RevealAllSectors()
+end, },
 		{ id = "FirstRunInterface", help = "Called after initialize, setups the initial interface.", 
-			editor = "func", default = function (self, interfaceType)  end, params = "self, interfaceType", },
+			editor = "func", default = function (self, interfaceType)
+--used for debugging
+if interfaceType == "QuickStart" then
+	TutorialHintsState.LandingPageShown = true
+	Game.CampaignTime = Game.CampaignTimeStart + const.Satellite.MercArrivalTime / 2
+	SetUILCustomTime(Game.CampaignTime)
+	return
+end
+
+SetCampaignSpeed(0, "UI")
+g_PDALoadingFlavor = false
+if not gv_SatelliteView then OpenSatelliteView(nil, "openLandingPage") end
+OpenAIMAndSelectMerc()
+g_PDALoadingFlavor = true
+end, params = "self, interfaceType", },
 		{ id = "starting_year", name = "Starting date, year", 
 			editor = "number", default = 2001, },
 		{ id = "starting_month", name = "Starting date, month, 1-12", 
@@ -506,6 +524,8 @@ end end, },
 	EditorMenubar = "Scripting",
 	editing_size = false,
 	EnableReloading = false,
+	Documentation = "Creates a new campaign which you can associate with new sectors, quests, conversations, banters and many more features.",
+	DocumentationLink = "Docs/ModTools/index.md.html",
 }
 
 function CampaignPreset:EditSize(root, prop_id, ged)
@@ -550,6 +570,17 @@ function CampaignPreset:OnEditorSetProperty(prop_id, old_value, ged)
 	if prop_id == "InheritSectorsFrom" then
 		self:PostLoad()
 		ObjModified(self.Sectors)
+	end
+end
+
+function CampaignPreset:OnEditorNew(parent, ged, is_paste)
+	if not is_paste then
+		self.starting_timestamp = os.time { 
+			year = self.starting_year, 
+			month = self.starting_month, 
+			day = self.starting_day, 
+			hour = self.starting_hour 
+		}
 	end
 end
 
@@ -1043,7 +1074,7 @@ DefineClass.Conversation = {
 		{ id = "StartOnMsg", name = "Start OnMsg", help = "Starts when any of these messages is invoked.", 
 			editor = "string_list", default = {}, item_default = "", items = false, arbitrary_value = true, },
 		{ id = "IncludeInVoiceScripts", name = "Include in voice recording scripts", 
-			editor = "bool", default = true, },
+			editor = "bool", default = true, no_edit = function(self) return config.ModdingToolsInUserMode end, },
 	},
 	HasParameters = true,
 	SingleFile = false,
@@ -1070,6 +1101,8 @@ DefineClass.Conversation = {
 	},
 },
 	EditorView = Untranslated("<id><color 0 128 0><opt(u(Comment),' ','')><color 128 128 128><opt(u(save_in),' - ','')>"),
+	Documentation = "Allows adding a new conversation triggered by an actor or a group of actors. See the New Quest sample mod in the Sample Mods section for an example on how to build a conversation.",
+	DocumentationLink = "Docs/ModTools/index.md.html",
 }
 
 function Conversation:OnEditorNew(parent, ged, is_paste, duplicate_id)
@@ -1157,16 +1190,25 @@ function Conversation:GetError()
 	if not has_end_phrase then
 		return "Conversation doesn't have any phrase with <end conversation> GoTo property."
 	end
-	-- check characters image
-	local missing = {}
-	self:ForEachSubObject("ConversationLine", function(obj, parents, key,  missing)
+end
+
+function Conversation:GetWarning()
+	--using default portrait for goldmaster is only a warning (mods)
+	if not config.ModdingToolsInUserMode then return end
+	return self:UsingDefaultBigPortrait()
+end
+
+function Conversation:UsingDefaultBigPortrait()
+	local defaults = {}
+	self:ForEachSubObject("ConversationLine", function(obj, parents, key,  defaults)
 		local unit_def = UnitDataDefs[obj.Character]
-		if obj.Character and unit_def and not unit_def.BigPortrait then -- default is used
-			table.insert_unique(missing, obj.Character)
+		if obj.Character and unit_def and 
+			unit_def:IsDefaultPropertyValue("BigPortrait", unit_def:GetPropertyMetadata("BigPortrait"), unit_def:GetProperty("BigPortrait")) then
+			table.insert_unique(defaults, obj.Character)
 		end
-	end, missing)
-	if next(missing) then
-		return "Missing BigPortrait property for: " .. table.concat(missing, ",")
+	end, defaults)
+	if next(defaults) then
+		return "Using default BigPortrait property for: " .. table.concat(defaults, ",")
 	end
 end
 
@@ -1365,9 +1407,9 @@ DefineClass.ConversationPhrase = {
 			editor = "bool", default = false, },
 	},
 	StoreAsTable = true,
-	ContainerClass = "ConversationPhrase",
 	ComboFormat = Untranslated("<Keyword>"),
 	ContainerClass = "ConversationPhrase",
+	EditorName = "Phrase",
 }
 
 function ConversationPhrase:GetFullId(root)
@@ -1420,7 +1462,7 @@ end
 
 function ConversationPhrase:GetEditorView()
 	local texts = {}
-	texts[#texts+1] = Untranslated("<color 100 100 200><if(Enabled)>+</if><Keyword></color>")
+	texts[#texts+1] = Untranslated("<color 100 100 200><if(Enabled)>+</if><def(Keyword,'[new phrase]')></color>")
 	
 	local condition = self.Conditions and self.Conditions[1]
 	local txt  = condition and _InternalTranslate(condition:GetEditorView(), condition) or ""
@@ -1499,7 +1541,7 @@ function ConversationPhrase:OnAfterEditorNew(root, ged, is_paste)
 end
 
 function ConversationPhrase:OnEditorSetProperty(prop_id, old_value, ged)
-	local conversation = ged:ResolveObj("SelectedPreset")
+	local conversation = GetParentTableOfKind(self, "Conversation")
 	if prop_id == "Keyword" and self.Keyword ~= "" then
 		if not self.id then
 			self:GenerateId(conversation)
@@ -1648,6 +1690,7 @@ end,
 	EditorIcon = "CommonAssets/UI/Icons/auction court hammer judge justice law.png",
 	EditorMenubar = "Scripting",
 	EditorMenubarSortKey = "4061",
+	Documentation = "Creates a new Crafting Operation Recipe that is accessed through the sector operations menu.",
 }
 
 DefineModItemPreset("CraftOperationsRecipeDef", { EditorName = "Crafting operation recipe", EditorSubmenu = "Satellite" })
@@ -1699,6 +1742,7 @@ DefineClass.Email = {
 	EditorIcon = "CommonAssets/UI/Icons/email envelope mail message.png",
 	EditorMenubar = "Scripting",
 	EditorMenubarSortKey = "4000",
+	Documentation = "Allows creating new emails received in the Email tab.",
 }
 
 DefineClass.EmailLabel = {
@@ -1976,6 +2020,7 @@ end, params = "self, context", },
 	EditorMenubarName = "History Occurence",
 	EditorMenubar = "Scripting",
 	EditorMenubarSortKey = "5000",
+	Documentation = "Setting up conditions for new history occurrences in the History tab.",
 }
 
 DefineClass.IMPErrorNetClientTexts = {
@@ -2157,7 +2202,10 @@ DefineClass.LightmodelSelectionRule = {
 	},
 	GlobalMap = "LightmodelSelectionRules",
 	EditorMenubarName = "Lightmodel Selection Rules",
+	Documentation = "Contains information on use of Light models and tweaking of properties like World Region, Weather Condition and Time Of Day.",
 }
+
+DefineModItemPreset("LightmodelSelectionRule", { EditorName = "Lightmodel Selection Rule", EditorSubmenu = "Campaign & Maps" })
 
 function LightmodelSelectionRule:GetEditorView()
 	local tag = function(value, preset_table)
@@ -2365,6 +2413,7 @@ DefineClass.LootEntryInventoryItem = {
 			editor = "number", default = 0, read_only = true, },
 	},
 	EntryView = Untranslated("<color 75 105 198><item><stack_suffix>"),
+	EditorName = "Item",
 }
 
 function LootEntryInventoryItem:Setitem(value)
@@ -2397,12 +2446,12 @@ function LootEntryInventoryItem:GenerateLoot(looter, looted, seed, items)
 	end
 	
 	if self.Double then
-			local roll
-			roll, seed = BraidRandom(seed, 100)
-			local value = GameDifficulties[Game.game_difficulty]:ResolveValue("chanceToHalveDoubleLoot") or 0
-			if roll < value then
-				amount = amount / 2
-			end
+		local roll
+		roll, seed = BraidRandom(seed, 100)
+		local value = GameDifficulties[Game.game_difficulty]:ResolveValue("chanceToHalveDoubleLoot") or 0
+		if roll < value then
+			amount = amount / 2
+		end
 	end
 	
 	local chance = self:GetDropChance()
@@ -2498,6 +2547,7 @@ end,
 			editor = "number", default = 0, read_only = true, },
 	},
 	EntryView = Untranslated("Upgraded <weapon>"),
+	EditorName = "Upgraded Weapon",
 }
 
 function LootEntryUpgradedWeapon:ListChances(items, env, chance)
@@ -2553,7 +2603,7 @@ end
 function LootEntryUpgradedWeapon:GetError()
 	local compatible
 	
-	for _, slot in ipairs(g_Classes[self.weapon].ComponentSlots) do
+	for _, slot in ipairs(g_Classes[self.weapon] and g_Classes[self.weapon].ComponentSlots) do
 		for _, component in ipairs(slot.AvailableComponents) do
 			compatible = compatible or {}
 			compatible[component] = slot	
@@ -2595,6 +2645,7 @@ DefineClass.LootEntryWeaponComponent = {
 			editor = "choice", default = "", items = function (self) return PresetGroupCombo("WeaponComponent", "Default") end, },
 	},
 	EntryView = Untranslated("<color 75 105 198><item>"),
+	EditorName = "Weapon Component",
 }
 
 function LootEntryWeaponComponent:GenerateLoot(looter, looted, seed, items)
@@ -2821,6 +2872,7 @@ end, no_edit = true, },
 	EditorIcon = "CommonAssets/UI/Icons/blog news newspaper page",
 	EditorMenubar = "Scripting",
 	EditorMenubarSortKey = "4020",
+	Documentation = "Allows adding of new presets with tile, text and image that are used mainly in tutorials and starting help.",
 }
 
 DefineModItemPreset("PopupNotification", { EditorName = "Popup notification", EditorSubmenu = "Campaign & Maps" })
@@ -3075,7 +3127,7 @@ DefineClass.QuestsDef = {
 		{ category = "General", id = "Main", name = "Main", help = "Whether this quest is part of the main quest line.", 
 			editor = "bool", default = false, },
 		{ id = "Author", 
-			editor = "preset_id", default = false, no_edit = function(self) return not Platform.developer end, preset_class = "HGMember", },
+			editor = "preset_id", default = false, no_edit = function(self) return config.ModdingToolsInUserMode end, preset_class = "HGMember", },
 		{ category = "Status", id = "LineVisibleOnGive", name = "Line visible on 'given'", help = 'Showing which log line is automatically set to visible when the quest enters "given"', 
 			editor = "choice", default = 0, items = function (self) return GetQuestNoteLinesCombo(self.id) end, },
 		{ category = "Status", id = "EffectOnChangeVarValue", name = "Effect On rise bool var", 
@@ -3094,6 +3146,7 @@ DefineClass.QuestsDef = {
 	EditorMenubar = "Scripting",
 	EditorMenubarSortKey = "3020",
 	FilterClass = "QuestEditorFilter",
+	Documentation = "Allows adding of new quests, as well as setting up variables in them. Each quest can be set up with its conditions as Given, Completed or Failed. See the New Quest sample mod in the Sample Mods section for an example on how to build a quest.",
 }
 
 function QuestsDef:OnChangeVarValue(var_id, prev_val, new_val)
@@ -3263,6 +3316,7 @@ DefineClass.RecipeDef = {
 	EditorIcon = "CommonAssets/UI/Icons/appliance electrical juicer kitchen mixer.png",
 	EditorMenubar = "Scripting",
 	EditorMenubarSortKey = "4060",
+	Documentation = "Defines a new recipe with ingredients and result items that can be performed in the inventory.",
 }
 
 DefineModItemPreset("RecipeDef", { EditorName = "Combine recipe", EditorSubmenu = "Item" })
@@ -4000,8 +4054,8 @@ function TriggeredConditionalEvent:GetError()
 	end
 end
 
-function TriggeredConditionalEvent:OnEditorNew(parent, ged, is_paste)
-	local quest_def = ged:ResolveObj("SelectedPreset") or ged:ResolveObj("SelectedObject")
+function TriggeredConditionalEvent:OnAfterEditorNew(parent, ged, is_paste)
+	local quest_def = GetParentTableOfKind(self, "QuestsDef")
 	self.QuestId = quest_def.id
 end
 
@@ -4039,6 +4093,7 @@ DefineClass.TutorialHint = {
 	EditorIcon = "CommonAssets/UI/Icons/alert attention danger error warning.png",
 	EditorMenubar = "Scripting",
 	EditorMenubarSortKey = "4030",
+	Documentation = "Allows adding new tutorial hint pop-up in the HUD or setting up a pop-up window preset created in the Popup Notification mod item.",
 }
 
 function TutorialHint:GetWarning()
@@ -4177,6 +4232,7 @@ DefineClass.WeaponComponent = {
 	EditorMenubar = "Combat",
 	FilterClass = "WeaponComponentFilter",
 	GetWarning = false,
+	Documentation = "Creates a new weapon component that could be used in a weapon as a base component or through the Modify UI screen of a weapon. The Z_Blockings group is used to make certain components incompatible with others at the same time.",
 }
 
 DefineModItemPreset("WeaponComponent", { EditorName = "Weapon component", EditorSubmenu = "Item" })
@@ -4397,6 +4453,7 @@ DefineClass.WeaponUpgradeSlot = {
 		{ id = "DisplayName", 
 			editor = "text", default = false, translate = true, },
 	},
+	Documentation = "Creates a new possible weapon slot that could be defined for a weapon preset and referenced in a Weapon Component preset.",
 }
 
 DefineModItemPreset("WeaponUpgradeSlot", { EditorName = "Weapon slot", EditorSubmenu = "Item" })

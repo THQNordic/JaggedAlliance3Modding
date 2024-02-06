@@ -64,9 +64,21 @@ PlaceObj('XTemplate', {
 				'IdNode', false,
 				'MouseCursor', "UI/Cursors/Pda_Cursor.tga",
 				'Image', "UI/PDA/T_PDA_Frame",
-				'SqueezeX', false,
-				'SqueezeY', false,
+				'ImageFit', "stretch",
 			}, {
+				PlaceObj('XTemplateWindow', {
+					'__class', "XImage",
+					'Id', "idDiode",
+					'Dock', "ignore",
+					'HAlign', "left",
+					'VAlign', "top",
+					'DrawOnTop', true,
+					'Image', "UI/PDA/T_PDA_Frame_Diode.png",
+					'ImageFit', "stretch",
+					'Columns', 2,
+					'Animate', true,
+					'FPS', 0,
+				}),
 				PlaceObj('XTemplateWindow', {
 					'comment', "pda display",
 					'Id', "idDisplay",

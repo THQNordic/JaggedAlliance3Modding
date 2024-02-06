@@ -9,10 +9,10 @@ PlaceObj('QuestsDef', {
 		PlaceObj('QuestIsVariableBool', {
 			Condition = "or",
 			QuestId = "TheTwelveChairs",
-			Vars = set( "Completed", "Failed" ),
+			Vars = set( "Completed" ),
 			__eval = function ()
 				local quest = gv_Quests['TheTwelveChairs'] or QuestGetState('TheTwelveChairs')
-				return quest.Completed or quest.Failed
+				return quest.Completed
 			end,
 		}),
 	},
@@ -924,11 +924,12 @@ PlaceObj('QuestsDef', {
 			},
 			HideConditions = {
 				PlaceObj('QuestIsVariableBool', {
+					Condition = "or",
 					QuestId = "TheTwelveChairs",
-					Vars = set( "Given" ),
+					Vars = set( "Failed", "Given" ),
 					__eval = function ()
 						local quest = gv_Quests['TheTwelveChairs'] or QuestGetState('TheTwelveChairs')
-						return quest.Given
+						return quest.Failed or quest.Given
 					end,
 				}),
 			},
@@ -996,22 +997,24 @@ PlaceObj('QuestsDef', {
 					end,
 				}),
 			},
+			HideConditions = {
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "TheTwelveChairs",
+					Vars = set( "Failed" ),
+					__eval = function ()
+						local quest = gv_Quests['TheTwelveChairs'] or QuestGetState('TheTwelveChairs')
+						return quest.Failed
+					end,
+				}),
+			},
 			Idx = 7,
 			ShowConditions = {
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "TheTwelveChairs",
-					Vars = set( "Given" ),
+					Vars = set( "FoundNecklace", "Given" ),
 					__eval = function ()
 						local quest = gv_Quests['TheTwelveChairs'] or QuestGetState('TheTwelveChairs')
-						return quest.Given
-					end,
-				}),
-				PlaceObj('QuestIsVariableBool', {
-					QuestId = "TheTwelveChairs",
-					Vars = set( "FoundNecklace" ),
-					__eval = function ()
-						local quest = gv_Quests['TheTwelveChairs'] or QuestGetState('TheTwelveChairs')
-						return quest.FoundNecklace
+						return quest.FoundNecklace and quest.Given
 					end,
 				}),
 			},
@@ -1191,6 +1194,33 @@ PlaceObj('QuestsDef', {
 			ParamId = "TCE_FoundNecklace",
 			QuestId = "TheTwelveChairs",
 		}),
+		PlaceObj('TriggeredConditionalEvent', {
+			Conditions = {
+				PlaceObj('CheckIsPersistentUnitDead', {
+					per_ses_id = "NPC_Lalee",
+				}),
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "TheTwelveChairs",
+					Vars = set({
+	Completed = false,
+	Given = true,
+}),
+					__eval = function ()
+						local quest = gv_Quests['TheTwelveChairs'] or QuestGetState('TheTwelveChairs')
+						return not quest.Completed and quest.Given
+					end,
+				}),
+			},
+			Effects = {
+				PlaceObj('QuestSetVariableBool', {
+					Prop = "Failed",
+					QuestId = "TheTwelveChairs",
+				}),
+			},
+			Once = true,
+			ParamId = "TCE_Failed",
+			QuestId = "TheTwelveChairs",
+		}),
 	},
 	Variables = {
 		PlaceObj('QuestVarBool', {
@@ -1255,6 +1285,9 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('QuestVarBool', {
 			Name = "ChairPicked",
+		}),
+		PlaceObj('QuestVarTCEState', {
+			Name = "TCE_Failed",
 		}),
 	},
 	group = "Global",

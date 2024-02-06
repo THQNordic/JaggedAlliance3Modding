@@ -996,3 +996,36 @@ function GameTestsNightly_TestLootTablesUsage()
 end
 
 GameTests.CheckSpots = nil
+
+function GameTests.CheckNonReachableAnimFXMoment()
+	local anim_moment = {}
+	for entity, anims in pairs(Presets.AnimMetadata) do
+		for _, anim in ipairs(anims) do
+			for _, moment in ipairs(anim.Moments) do
+				anim_moment[anim.id] = anim_moment[anim.id] or {}
+				anim_moment[anim.id][moment.Type] = true
+			end
+		end
+	end
+	
+	local missing_anims, missing_moments = 0, 0
+	for fx, moments in sorted_pairs(FXRules) do
+		local anim = string.match(fx, "Anim:(.+)")
+		if anim then
+			if not anim_moment[anim] then
+				GameTestsPrintf("No such anim in AME: %s, required for: %s[%s]", anim, fx, table.concat(table.keys(moments, "sorted"), ","))
+				missing_anims = missing_anims + 1
+			else
+				for moment, actors in sorted_pairs(moments) do
+					for actor in sorted_pairs(actors) do
+						if not anim_moment[anim][moment] then
+							GameTestsPrintf("Missing FX moment in AME for '%s': %s-%s-%s", anim, fx, moment, actor)
+							missing_moments = missing_moments + 1
+						end
+					end
+				end
+			end
+		end
+	end
+	GameTestsPrintf("Missing FX anims: %d, Missing FX moments: %d", missing_anims, missing_moments)
+end

@@ -139,7 +139,11 @@ function XSatelliteViewMap:Open()
 	assert(IsGameTimeThread() or GetDialog("PDADialogSatelliteEditor")) -- Assure satellite open is sync
 	
 	XShortcutsSetMode("Satellite")
-	SetRenderMode("ui")
+
+	-- In a thread so player isnt looking at a black screen while sat view initialized
+	self:CreateThread("set-render-mode", function()
+		SetRenderMode("ui")
+	end)
 	
 	self:SetTimeFactor(GetCampaignSpeedXMapFactor())
 	self:InitCacheOfShortcutSquads()
@@ -197,14 +201,31 @@ function XSatelliteViewMap:Open()
 			
 			local gamepadState = GetUIStyleGamepad() and GetActiveGamepadState()
 			
+			local upKeyName1, upKeyName2 = table.unpack(GetShortcuts("actionPanUp") or empty_table)
+			local leftKeyName1, leftKeyName2 = table.unpack(GetShortcuts("actionPanLeft") or empty_table)
+			local downKeyName1, downKeyName2 = table.unpack(GetShortcuts("actionPanDown") or empty_table)
+			local rightKeyName1, rightKeyName2 = table.unpack(GetShortcuts("actionPanRight") or empty_table)
+			
+			local vkUpKey1 = VKStrNamesInverse[upKeyName1] or 0
+			local vkUpKey2 = VKStrNamesInverse[upKeyName2] or 0
+			
+			local vkLeftKey1 = VKStrNamesInverse[leftKeyName1] or 0
+			local vkLeftKey2 = VKStrNamesInverse[leftKeyName2] or 0
+			
+			local vkDownKey1 = VKStrNamesInverse[downKeyName1] or 0
+			local vkDownKey2 = VKStrNamesInverse[downKeyName2] or 0
+			
+			local vkRightKey1 = VKStrNamesInverse[rightKeyName1] or 0
+			local vkRightKey2 = VKStrNamesInverse[rightKeyName2] or 0
+			
 			if lKeyboardFocusedFuzzy(dlg) and not movingAlready then
-				if terminal.IsKeyPressed(const.vkW) or terminal.IsKeyPressed(const.vkUp) then
+				if terminal.IsKeyPressed(vkUpKey1) or terminal.IsKeyPressed(vkUpKey2) then
 					self:ScrollMap(0, moveAmount, interval)
-				elseif terminal.IsKeyPressed(const.vkS) or terminal.IsKeyPressed(const.vkDown) then
-					self:ScrollMap(0, -moveAmount, interval)
-				elseif terminal.IsKeyPressed(const.vkA) or terminal.IsKeyPressed(const.vkLeft) then
+				elseif terminal.IsKeyPressed(vkLeftKey1) or terminal.IsKeyPressed(vkLeftKey2) then
 					self:ScrollMap(moveAmount, 0, interval)
-				elseif terminal.IsKeyPressed(const.vkD) or terminal.IsKeyPressed(const.vkRight) then
+				elseif terminal.IsKeyPressed(vkDownKey1) or terminal.IsKeyPressed(vkDownKey2) then
+					self:ScrollMap(0, -moveAmount, interval)
+				elseif terminal.IsKeyPressed(vkRightKey1) or terminal.IsKeyPressed(vkRightKey2) then
 					self:ScrollMap(-moveAmount, 0, interval)
 				end
 				self.translation_change_notWASD = false
@@ -417,7 +438,8 @@ function XSatelliteViewMap:GenerateSectorGrid()
 	self.decorations = decorations
 end
 
--- slow, to be used from Satellite Sector editor onlyfunction XSatelliteViewMap:RebuildSectorGrid()
+-- slow, to be used from Satellite Sector editor only
+function XSatelliteViewMap:RebuildSectorGrid()
 	for _, win in pairs(self.sector_to_wnd) do
 		win:delete()
 	end
@@ -688,19 +710,20 @@ function XSatelliteViewMap:ShowCursorHint(show, reason)
 	if show and not g_ZuluMessagePopup and not RolloverWin then
 		local text = false
 		local style = false
-		if IsSquadTravelling(self.selected_squad, "skip_satellite_tick")
-			and CanCancelSatelliteSquadTravel(self.selected_squad) == "enabled"
-			and (reason == "travel" or reason == "none") then
-			text = GetUIStyleGamepad() and
-					T(614351336268, "<ButtonBSmall> Cancel Travel") or
-					T(392145576074, "<left_click> Cancel Travel")
-		elseif reason == "travel" then
+		local isTravelling = IsSquadTravelling(self.selected_squad, "skip_satellite_tick")
+		
+		if isTravelling and (reason == "travel" or reason == "none") then -- if travelling click is cancel or nothing
+			if CanCancelSatelliteSquadTravel(self.selected_squad) == "enabled" then
+				text = GetUIStyleGamepad() and
+						T(614351336268, "<ButtonBSmall> Cancel Travel") or
+						T(392145576074, "<left_click> Cancel Travel")
+			end
+		elseif reason == "travel" then -- no mode selected, click is set route
 			text = GetUIStyleGamepad() and
 					T(109122385021, "<ButtonASmall> Travel<newline><ButtonXSmall> Sector menu") or
 					T(828415810044, "<left_click> Travel")
-		elseif reason == "travel_mode" then
-			
-			if self.travel_mode then
+		elseif reason == "travel_mode" then -- plotting travel, get errors to show on cursor
+			if self.travel_mode then 
 				local travelMode = self.travel_mode
 				local invalidRoute, errs = IsRouteForbidden(travelMode.route, travelMode.squad)
 				if invalidRoute and #(errs or "") > 0 then
@@ -714,8 +737,9 @@ function XSatelliteViewMap:ShowCursorHint(show, reason)
 						T(938773041595, "<ButtonASmall> Set <newline><ButtonBSmall> Cancel") or
 						T(103054576698, "<left_click> Set<newline><right_click> Cancel")
 			end
-				
-		elseif GetUIStyleGamepad() then 
+		end
+		
+		if not text and GetUIStyleGamepad() then
 			text = T(427350777180, "<ButtonXSmall> Sector menu")
 		end
 		
@@ -763,6 +787,8 @@ function XSatelliteViewMap:UpdateSectorVisuals(sector_id)
 	local sector = gv_Sectors[sector_id]
 	local sectorVisible = IsSectorRevealed(sector)
 	local window = self.sector_to_wnd[sector_id]
+	window:SetVisible(window.layer == self.layer_mode)
+	
 	local windowIsVisible = window.visible
 	local inConflict = IsConflictMode(sector_id)
 	
@@ -1171,7 +1197,6 @@ function OnMsg.SquadStartedTravelling(squad)
 end
 
 function OnMsg.SquadFinishedTraveling(squad)
-	print(OnMsg.SquadFinishedTraveling)
 	local squadWin = g_SatelliteUI.squad_to_wnd[squad.UniqueId]
 	squadWin:SetAnim(false)
 end
@@ -1290,6 +1315,8 @@ function XSatelliteViewMap:DrawContent()
 
 	local dst_rect = sizebox(start_x, start_y, sector_size_x * self.sector_max_x, sector_size_y * self.sector_max_y)
 	local src_rect = satviewSpaceToSrcrc(dst_rect)
+	
+	local smallImage = dst_rect:size() == src_rect:size()
 
 	local draw_as_paused = IsCampaignPaused()
 	--- DrawBackground
@@ -1298,7 +1325,7 @@ function XSatelliteViewMap:DrawContent()
 		box(0, 0, width, height), width, height, satviewSpaceToSrcrc(src),
 		color, color, color, color,
 		self:CalcDesaturation(), self.Angle, self.FlipX, self.FlipY,
-		self.EffectType, self.EffectPixels, self.EffectColor, true,
+		self.EffectType, self.EffectPixels, self.EffectColor, not smallImage,
 		RGBA(255,255,255,0), src_rect:minx(), src_rect:miny(), satview_image_size:x() - src_rect:maxx(), satview_image_size:y() - src_rect:maxy())
 	ModifiersSetTop(top)
 	--- EndDrawBackground
@@ -1377,12 +1404,11 @@ function XSatelliteViewMap:DrawContent()
 
 	-- Debug visualize satellite shortcut path
 --[[	local shortcutPreset = SatelliteShortcuts[1]
-	local path = shortcutPreset:GetPath()
 	local resolution = 200
 	local increment = 1000 / resolution
 	for i = 0, 1000 - increment, increment do
-		local pt1 = GetShortcutCurvePointAt(path, i)
-		local pt2 = GetShortcutCurvePointAt(path, i + increment)
+		local pt1 = GetShortcutCurvePointAt(shortcutPreset, i)
+		local pt2 = GetShortcutCurvePointAt(shortcutPreset, i + increment)
 		UIL.DrawLineAntialised(10, pt1, pt2, green)
 	end]]
 end
@@ -1855,7 +1881,7 @@ function XSatelliteViewMap:TravelWithSquad(squadId)
 	if self.travel_mode or SatelliteCanTravelState(squadId) ~= "enabled" then return end
 	self:RemoveContextMenu()
 	self.travel_mode = { squad = gv_Squads[squadId], route = false }
-	self.parent.idSpeedControls:SetTransparency(125)
+	self:ResolveId("node").idSpeedControls:SetTransparency(125)
 	SetCampaignSpeed(0, GetUICampaignPauseReason("SatelliteTravel"))
 	self.desktop:SetMouseCursor("UI/Cursors/Pda_Travel.tga")
 
@@ -1872,7 +1898,7 @@ function XSatelliteViewMap:ExitTravelMode()
 	self.travel_mode = false
 	
 	if self.window_state ~= "destroying" then
-		self.parent.idSpeedControls:SetTransparency(0)
+		self:ResolveId("node").idSpeedControls:SetTransparency(0)
 		if travellingSquad then
 			local squadWnd = self.squad_to_wnd[travellingSquad.UniqueId]
 			if squadWnd then
@@ -1932,11 +1958,6 @@ function XSatelliteViewMap:TravelDestinationSelect(sectorId)
 		end
 	
 		local newCalculatedRoute = GenerateSquadRoute(travelCtx.route, false, sectorId, squad)
-		
-		local otherSectorId = GetUnderOrOvergroundId(sectorId)
-		if (otherSectorId and otherSectorId == squad.CurrentSector) or sectorId == squad.CurrentSector then
-			newCalculatedRoute = false 
-		end
 		
 		-- If no valid route then display a fake route with errors
 		if not newCalculatedRoute then
@@ -2239,7 +2260,7 @@ DefineClass.SatelliteViewDecoration = {
 
 AppendClass.SatelliteSector = {
 	properties = {
-		{ category = "Satellite Settings", id = "UndergroundImage", name = "UndergroundImage", editor = "ui_image", default = false }
+		{ category = "Satellite Settings", id = "UndergroundImage", name = "Underground image", editor = "ui_image", default = false }
 	}
 }
 
@@ -2247,10 +2268,10 @@ DefineClass.SatelliteViewDecorationDef = {
 	__parents = { "PropertyObject" },
 	
 	properties = {
-		{ id = "image", editor = "ui_image", default = false },
-		{ id = "relativeSector", name = "Relative To Sector", editor = "combo", items = function() return GetCampaignSectorsCombo() end, default = false },
-		{ id = "offset", editor = "point", default = point20 },
-		{ id = "sat_layer", editor = "text", default = false },
+		{ id = "image", name = "Image", editor = "ui_image", default = false },
+		{ id = "relativeSector", name = "Relative to sector", editor = "combo", items = function() return GetCampaignSectorsCombo() end, default = false },
+		{ id = "offset", name = "Offset", editor = "point", default = point20 },
+		{ id = "sat_layer", name = "Satellite layer", editor = "choice", default = "satellite", items = { "satellite", "underground" }},
 	}
 }
 

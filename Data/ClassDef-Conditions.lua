@@ -12,6 +12,11 @@ PlaceObj('ConditionDef', {
 		'type', "text",
 		'value', "Check if a banter has played, ever",
 	}),
+	PlaceObj('ClassConstDef', {
+		'name', "EditorNestedObjCategory",
+		'type', "text",
+		'value', "Banter",
+	}),
 	PlaceObj('PropertyDefPresetIdList', {
 		'id', "Banters",
 		'name', "Banters",
@@ -83,6 +88,11 @@ PlaceObj('ConditionDef', {
 		'type', "text",
 		'value', "Check if a banter is currently playing. Useful for repeatable effects. For one time effects use BanterHasPlayed.",
 	}),
+	PlaceObj('ClassConstDef', {
+		'name', "EditorNestedObjCategory",
+		'type', "text",
+		'value', "Banter",
+	}),
 	PlaceObj('PropertyDefPresetIdList', {
 		'id', "Banters",
 		'name', "Banters",
@@ -147,6 +157,11 @@ PlaceObj('ConditionDef', {
 		'type', "text",
 		'value', "Unit with persistent id <u(per_ses_id)> is NOT dead",
 		'untranslated', true,
+	}),
+	PlaceObj('ClassConstDef', {
+		'name', "EditorNestedObjCategory",
+		'type', "text",
+		'value', "Units",
 	}),
 	PlaceObj('PropertyDefCombo', {
 		'id', "per_ses_id",
@@ -281,6 +296,11 @@ PlaceObj('ConditionDef', {
 		'type', "text",
 		'value', "Checks the loyalty of a specific city",
 	}),
+	PlaceObj('ClassConstDef', {
+		'name', "EditorNestedObjCategory",
+		'type', "text",
+		'value', "Sectors",
+	}),
 	PlaceObj('ClassMethodDef', {
 		'name', "__eval",
 		'params', "obj, context",
@@ -375,6 +395,11 @@ PlaceObj('ConditionDef', {
 		'type', "text",
 		'value', "Checks the amount of civilians the player has killed.",
 	}),
+	PlaceObj('ClassConstDef', {
+		'name', "EditorNestedObjCategory",
+		'type', "text",
+		'value', "Player",
+	}),
 	PlaceObj('ClassMethodDef', {
 		'name', "GetError",
 		'code', function (self)
@@ -426,6 +451,11 @@ PlaceObj('ConditionDef', {
 		'type', "text",
 		'value', "Checks for an active combat (turn-based mode).",
 	}),
+	PlaceObj('ClassConstDef', {
+		'name', "EditorNestedObjCategory",
+		'type', "text",
+		'value', "Combat",
+	}),
 	PlaceObj('TestHarness', {
 		'name', "TestHarness",
 		'TestedOnce', true,
@@ -472,6 +502,7 @@ PlaceObj('ConditionDef', {
 	PlaceObj('ClassConstDef', {
 		'name', "EditorNestedObjCategory",
 		'type', "text",
+		'value', "Combat",
 	}),
 	PlaceObj('TestHarness', {
 		'name', "TestHarness",
@@ -497,6 +528,11 @@ PlaceObj('ConditionDef', {
 		'name', "Documentation",
 		'type', "text",
 		'value', "Checks the current turn in combat",
+	}),
+	PlaceObj('ClassConstDef', {
+		'name', "EditorNestedObjCategory",
+		'type', "text",
+		'value', "Combat",
 	}),
 	PlaceObj('PropertyDefChoice', {
 		'id', "Condition",
@@ -577,6 +613,7 @@ PlaceObj('ConditionDef', {
 	PlaceObj('ClassConstDef', {
 		'name', "EditorNestedObjCategory",
 		'type', "text",
+		'value', "Player",
 	}),
 	PlaceObj('TestHarness', {
 		'name', "TestHarness",
@@ -706,7 +743,7 @@ PlaceObj('ConditionDef', {
 	PlaceObj('ClassConstDef', {
 		'name', "Documentation",
 		'type', "text",
-		'value', 'For each unit in each squad in the given secetor evaluates  nested conditions in order( evaluating to true if all of them evaluates to true).Target unit conditions must be with TargetUnit = "current unit"',
+		'value', 'For each unit in each squad in the given sector, evaluates the nested conditions in order, evaluating to true if all of them evaluate to true. Target unit conditions must be with TargetUnit = "current unit"',
 	}),
 	PlaceObj('ClassConstDef', {
 		'name', "EditorView",
@@ -719,6 +756,11 @@ PlaceObj('ConditionDef', {
 		'type', "text",
 		'value', "if for <u(CheckFor)> units from sector '<u(Sector)>' at least one condition is false.",
 		'untranslated', true,
+	}),
+	PlaceObj('ClassConstDef', {
+		'name', "EditorNestedObjCategory",
+		'type', "text",
+		'value', "Units",
 	}),
 	PlaceObj('TestHarness', {
 		'name', "TestHarness",
@@ -735,11 +777,6 @@ PlaceObj('ConditionDef', {
 				}),
 			},
 		}),
-	}),
-	PlaceObj('ClassConstDef', {
-		'name', "EditorNestedObjCategory",
-		'type', "text",
-		'value', "Sectors",
 	}),
 })
 
@@ -948,6 +985,11 @@ PlaceObj('ConditionDef', {
 		'value', "if '<u(InteractableGroup)>' doesn't have visual objects",
 		'untranslated', true,
 	}),
+	PlaceObj('ClassConstDef', {
+		'name', "EditorNestedObjCategory",
+		'type', "text",
+		'value', "Interactions",
+	}),
 	PlaceObj('TestHarness', {
 		'name', "TestHarness",
 		'TestedOnce', true,
@@ -991,6 +1033,11 @@ PlaceObj('ConditionDef', {
 		'name', "Documentation",
 		'type', "text",
 		'value', "If the merc interacting with an interactable has an item of a specific class",
+	}),
+	PlaceObj('ClassConstDef', {
+		'name', "EditorNestedObjCategory",
+		'type', "text",
+		'value', "Mercs",
 	}),
 	PlaceObj('ClassMethodDef', {
 		'name', "__eval",
@@ -1066,6 +1113,7 @@ PlaceObj('ConditionDef', {
 	PlaceObj('TestHarness', {
 		'name', "TestHarness",
 		'TestedOnce', true,
+		'Tested', true,
 		'GetTestSubject', function (self) return SelectedObj end,
 		'TestObject', PlaceObj('IsCurrentMap', {
 			MapFile = "I-1 - Flag Hill",
@@ -1074,7 +1122,7 @@ PlaceObj('ConditionDef', {
 	PlaceObj('ClassConstDef', {
 		'name', "EditorNestedObjCategory",
 		'type', "text",
-		'value', "Sector effects",
+		'value', "Sectors",
 	}),
 	PlaceObj('PropertyDefBool', {
 		'id', "Negate",
@@ -1316,6 +1364,15 @@ PlaceObj('ConditionDef', {
 		'default', 1,
 		'min', 1,
 	}),
+	PlaceObj('PropertyDefNumber', {
+		'id', "eval_count",
+		'name', "eval_count",
+		'help', "Amount of that item.",
+		'dont_save', true,
+		'no_edit', true,
+		'default', 0,
+		'min', 0,
+	}),
 	PlaceObj('ClassConstDef', {
 		'name', "EditorView",
 		'type', "text",
@@ -1334,9 +1391,9 @@ PlaceObj('ConditionDef', {
 		'value', "if the item is in any merc or opened container in that sector",
 	}),
 	PlaceObj('ClassConstDef', {
-		'name', "eval_count",
-		'type', "number",
-		'value', 0,
+		'name', "EditorNestedObjCategory",
+		'type', "text",
+		'value', "Player",
 	}),
 	PlaceObj('ClassMethodDef', {
 		'name', "__eval",
@@ -1435,9 +1492,18 @@ PlaceObj('ConditionDef', {
 		'value', "if the item is in any merc in that sector",
 	}),
 	PlaceObj('ClassConstDef', {
+		'name', "EditorNestedObjCategory",
+		'type', "text",
+		'value', "Mercs",
+	}),
+	PlaceObj('PropertyDefNumber', {
+		'id', "eval_count",
 		'name', "eval_count",
-		'type', "number",
-		'value', 0,
+		'help', "Amount of that item.",
+		'dont_save', true,
+		'no_edit', true,
+		'default', 0,
+		'min', 0,
 	}),
 	PlaceObj('ClassMethodDef', {
 		'name', "__eval",
@@ -1915,6 +1981,11 @@ PlaceObj('ConditionDef', {
 		'type', "text",
 		'value', "Checks if a specific merc has another one in his Likes/Dislikes tables.",
 	}),
+	PlaceObj('ClassConstDef', {
+		'name', "EditorNestedObjCategory",
+		'type', "text",
+		'value', "Mercs",
+	}),
 	PlaceObj('ClassMethodDef', {
 		'name', "GetError",
 		'code', function (self)
@@ -1932,7 +2003,6 @@ PlaceObj('ConditionDef', {
 	PlaceObj('TestHarness', {
 		'name', "TestHarness",
 		'TestedOnce', true,
-		'Tested', true,
 		'GetTestSubject', function (self) return SelectedObj end,
 		'TestObject', PlaceObj('MercIsLikedDisliked', {
 			Negate = true,
@@ -2120,10 +2190,14 @@ PlaceObj('ConditionDef', {
 		'type', "text",
 		'value', "Checks if the player has at least one merc that is not on full health",
 	}),
+	PlaceObj('ClassConstDef', {
+		'name', "EditorNestedObjCategory",
+		'type', "text",
+		'value', "Mercs",
+	}),
 	PlaceObj('TestHarness', {
 		'name', "TestHarness",
 		'TestedOnce', true,
-		'Tested', true,
 		'GetTestSubject', function (self) return SelectedObj end,
 		'TestObject', PlaceObj('PlayerHasALowHealthMerc', {}),
 	}),
@@ -2185,6 +2259,11 @@ PlaceObj('ConditionDef', {
 		'name', "Documentation",
 		'type', "text",
 		'value', "Checks if the player has at least one wounded merc",
+	}),
+	PlaceObj('ClassConstDef', {
+		'name', "EditorNestedObjCategory",
+		'type', "text",
+		'value', "Mercs",
 	}),
 	PlaceObj('TestHarness', {
 		'name', "TestHarness",
@@ -2256,6 +2335,11 @@ PlaceObj('ConditionDef', {
 		'type', "text",
 		'value', "Checks the amount of money that the player has.",
 	}),
+	PlaceObj('ClassConstDef', {
+		'name', "EditorNestedObjCategory",
+		'type', "text",
+		'value', "Player",
+	}),
 	PlaceObj('ClassMethodDef', {
 		'name', "GetError",
 		'code', function (self)
@@ -2267,7 +2351,6 @@ PlaceObj('ConditionDef', {
 	PlaceObj('TestHarness', {
 		'name', "TestHarness",
 		'TestedOnce', true,
-		'Tested', true,
 		'GetTestSubject', function (self) return SelectedObj end,
 		'TestObject', PlaceObj('PlayerHasMoney', {
 			Amount = 110,
@@ -2315,6 +2398,11 @@ PlaceObj('ConditionDef', {
 		'name', "Documentation",
 		'type', "text",
 		'value', "Checks if the game play is in any of sectors.",
+	}),
+	PlaceObj('ClassConstDef', {
+		'name', "EditorNestedObjCategory",
+		'type', "text",
+		'value', "Sectors",
 	}),
 	PlaceObj('TestHarness', {
 		'name', "TestHarness",
@@ -2380,6 +2468,11 @@ PlaceObj('ConditionDef', {
 		'type', "text",
 		'value', "Checks if in tactical view on a sector of a specific tier.",
 	}),
+	PlaceObj('ClassConstDef', {
+		'name', "EditorNestedObjCategory",
+		'type', "text",
+		'value', "Sectors",
+	}),
 	PlaceObj('TestHarness', {
 		'name', "TestHarness",
 		'TestedOnce', true,
@@ -2427,6 +2520,11 @@ PlaceObj('ConditionDef', {
 		'type', "text",
 		'value', "Checks  it is the player's turn in combat",
 	}),
+	PlaceObj('ClassConstDef', {
+		'name', "EditorNestedObjCategory",
+		'type', "text",
+		'value', "Combat",
+	}),
 	PlaceObj('TestHarness', {
 		'name', "TestHarness",
 		'TestedOnce', true,
@@ -2472,6 +2570,11 @@ PlaceObj('ConditionDef', {
 		'name', "Documentation",
 		'type', "text",
 		'value', "Checks if the player has a squad in the specified sector",
+	}),
+	PlaceObj('ClassConstDef', {
+		'name', "EditorNestedObjCategory",
+		'type', "text",
+		'value', "Sectors",
 	}),
 	PlaceObj('TestHarness', {
 		'name', "TestHarness",
@@ -3067,6 +3170,11 @@ PlaceObj('ConditionDef', {
 		'type', "text",
 		'value', "Kill TCEs check is on quest completed.",
 	}),
+	PlaceObj('ClassConstDef', {
+		'name', "EditorNestedObjCategory",
+		'type', "text",
+		'value', "Quests",
+	}),
 	PlaceObj('ClassMethodDef', {
 		'name', "GetEditorView",
 		'code', function (self)
@@ -3076,7 +3184,6 @@ PlaceObj('ConditionDef', {
 	PlaceObj('TestHarness', {
 		'name', "TestHarness",
 		'TestedOnce', true,
-		'Tested', true,
 		'GetTestSubject', function (self) return SelectedObj end,
 		'TestObject', PlaceObj('QuestKillTCEsOnCompleted', {}),
 	}),
@@ -3114,6 +3221,11 @@ PlaceObj('ConditionDef', {
 		'name', "Documentation",
 		'type', "text",
 		'value', "Checks if the player is in satellite view and there is no conflict",
+	}),
+	PlaceObj('ClassConstDef', {
+		'name', "EditorNestedObjCategory",
+		'type', "text",
+		'value', "Player",
 	}),
 	PlaceObj('TestHarness', {
 		'name', "TestHarness",
@@ -3784,6 +3896,11 @@ PlaceObj('ConditionDef', {
 		'type', "text",
 		'value', "Checks if specified squad is defeated",
 	}),
+	PlaceObj('ClassConstDef', {
+		'name', "EditorNestedObjCategory",
+		'type', "text",
+		'value', "Player",
+	}),
 	PlaceObj('ClassMethodDef', {
 		'name', "__eval",
 		'params', "obj, context",
@@ -3799,10 +3916,6 @@ PlaceObj('ConditionDef', {
 				return "Specify Custom Squad Id"
 			end
 		end,
-	}),
-	PlaceObj('ClassConstDef', {
-		'name', "EditorNestedObjCategory",
-		'type', "text",
 	}),
 	PlaceObj('PropertyDefText', {
 		'id', "custom_squad_id",
@@ -5081,7 +5194,6 @@ PlaceObj('ConditionDef', {
 	PlaceObj('TestHarness', {
 		'name', "TestHarness",
 		'TestedOnce', true,
-		'Tested', true,
 		'GetTestSubject', function (self) return SelectedObj end,
 		'TestObject', PlaceObj('UnitIsMerc', {
 			TargetUnit = "any merc",
@@ -5553,11 +5665,7 @@ PlaceObj('ConditionDef', {
 	PlaceObj('ClassConstDef', {
 		'name', "EditorNestedObjCategory",
 		'type', "text",
-	}),
-	PlaceObj('ClassConstDef', {
-		'name', "EditorNestedObjCategory",
-		'type', "text",
-		'value', "Units",
+		'value', "Mercs",
 	}),
 	PlaceObj('TestHarness', {
 		'name', "TestHarness",
@@ -5778,7 +5886,7 @@ PlaceObj('ConditionDef', {
 	PlaceObj('ClassConstDef', {
 		'name', "EditorNestedObjCategory",
 		'type', "text",
-		'value', "Villains",
+		'value', "Player",
 	}),
 	PlaceObj('ClassConstDef', {
 		'name', "Documentation",
@@ -5835,6 +5943,11 @@ PlaceObj('ConditionDef', {
 		'name', "Documentation",
 		'type', "text",
 		'value', "Check if a set amount of mercs are wounded. And have a set amount of wounds.",
+	}),
+	PlaceObj('ClassConstDef', {
+		'name', "EditorNestedObjCategory",
+		'type', "text",
+		'value', "Mercs",
 	}),
 	PlaceObj('ClassMethodDef', {
 		'name', "__eval",

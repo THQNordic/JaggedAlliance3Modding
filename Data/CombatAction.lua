@@ -769,7 +769,7 @@ PlaceObj('CombatAction', {
 	GetUIState = function (self, units, args)
 		local unit = units[1]
 		local weapon = self:GetAttackWeapons(unit, args)
-		if not weapon.ammo or weapon.ammo.Amount < 2 then
+		if not weapon or not weapon.ammo or weapon.ammo.Amount < 2 then
 			return "disabled", AttackDisableReasons.InsufficientAmmo
 		end
 		
@@ -5234,7 +5234,7 @@ PlaceObj('CombatAction', {
 	QueuedBadgeText = T(114028599146, --[[CombatAction StanceCrouch QueuedBadgeText]] "CHANGE STANCE"),
 	RequireState = "any",
 	Run = function (self, unit, ap, ...)
-		if not g_Combat and unit.goto_target then
+		if not g_Combat and unit.goto_target and not IsActivePaused() then
 			unit.goto_stance = "Crouch"
 			return
 		end
@@ -5296,7 +5296,7 @@ PlaceObj('CombatAction', {
 	QueuedBadgeText = T(438930896929, --[[CombatAction StanceProne QueuedBadgeText]] "CHANGE STANCE"),
 	RequireState = "any",
 	Run = function (self, unit, ap, ...)
-		if not g_Combat and unit.goto_target then
+		if not g_Combat and unit.goto_target and not IsActivePaused() then
 			unit.goto_stance = "Prone"
 			return
 		end

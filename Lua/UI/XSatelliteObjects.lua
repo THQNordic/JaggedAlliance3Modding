@@ -1,3 +1,8 @@
+function XMapObject:OnSetRollover(rollover)
+	self.desktop:SetMouseCursor(rollover and "UI/Cursors/Inspect.tga")
+end
+
+
 -- ZOrder Guide
 -- -1: Underground image
 -- 0: Route segments
@@ -1649,6 +1654,7 @@ function PointOfInterestIconClass:UpdateStyle()
 		sector = context.sector
 	})
 	self.idBase:SetImage(base)
+	self.idUpperIcon:SetImage(up)
 
 	local sector = context.sector
 	local poi = context.building

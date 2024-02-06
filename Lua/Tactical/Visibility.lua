@@ -104,6 +104,14 @@ function GetAOETiles(step_pos, stance, distance, cone_angle, target, force2d)
 	return step_positions, step_objs, los_values or empty_table
 end
 
+function OnMsg.ChangeMapDone()
+	MapForEach("map", "CombatObject", function(o)
+		if o:GetDetailClass() ~= "Essential" then
+			o:SetDetailClass("Essential") --non essential combat objects will change attack results.
+		end
+	end)
+end
+
 function GetAreaAttackResults(aoe_params, damage_bonus, applied_status, damage_override)
 	local prediction = aoe_params.prediction
 	local attacker = aoe_params.attacker
@@ -163,6 +171,7 @@ function GetAreaAttackResults(aoe_params, damage_bonus, applied_status, damage_o
 		hit.obj = obj
 		hit.aoe = true
 		hit.area_attack_modifier = GetAreaAttackHitModifier(obj, los_values[i])
+		hit.aoe_type = aoe_params.aoe_type
 		if explosion then
 			local center_range = aoe_params.center_range or 1
 			if center_range > 1 then
@@ -433,7 +442,7 @@ local function UpdateUnitsLOS(unitsLOS)
 			if side == "neutral" then
 				for _, unit in ipairs(team.units) do
 					local los_tbl
-					if unit.HitPoints > 0 then
+					if not unit:IsDead() then
 						local is_script_target
 						if script_target_groups then
 							for _, group in ipairs(unit.Groups) do
@@ -619,11 +628,17 @@ function ComputeUnitsVisibility()
 					end
 				end
 			end
-			if innerInfo and team.player_team then
+
+			if team.player_team then
 				for _, unit in ipairs(g_Units) do
-					if (team_visibility[unit] or 0) < uvVisible then
-						table.insert_unique(team_visibility, unit)
-						team_visibility[unit] = bor(team_visibility[unit] or 0, uvRevealed)
+					if unit:IsValidPos() and not unit:IsDead() and (team_visibility[unit] or 0) < uvVisible then
+						if unit:HasStatusEffect("ForcedVisibleNPC") then
+							table.insert_unique(team_visibility, unit)
+							team_visibility[unit] = bor(team_visibility[unit] or 0, uvVisible)
+						elseif innerInfo then
+							table.insert_unique(team_visibility, unit)
+							team_visibility[unit] = bor(team_visibility[unit] or 0, uvRevealed)
+						end
 					end
 				end
 			end
@@ -860,6 +875,10 @@ function OnMsg.SetObjectDetail(action, params)
 	if action == "done" then
 		SetCameraObscureSpots(CameraObscureSpots[EngineOptions.ObjectDetail] or CameraObscureSpots[false])
 	end
+end
+
+function GetCameraObscureSpots()
+	return CameraObscureSpots[EngineOptions.ObjectDetail] or CameraObscureSpots[false]
 end
 
 function ApplyUnitVisibility(active_units, pov_team, visibility, force)

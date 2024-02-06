@@ -40,7 +40,7 @@ function ShowModInfo(dlg)
 		
 		dlg.idImage:SetImage(modContext.Thumbnail)
 		dlg.idEnabled:SetVisible(not not table.find(AccountStorage.LoadMods, modContext.ModID))
-		dlg.idModTitle:SetText(modContext.DisplayName)
+		dlg.idModTitle:SetText(Literal(modContext.DisplayName))
 		dlg.idAuthorName:SetText(modContext.Author)
 		dlg.idVersion:SetText(modContext.ModVersion or _InternalTranslate(T(77, "Unknown")))
 		local rawDescr = g_ModsUIContextObj.mod_defs[modContext.ModID].description
@@ -102,7 +102,7 @@ function PopulateModEntry(entry, context)
 		end
 		
 		entry.context = context
-		entry.idName:SetText(context.DisplayName)
+		entry.idName:SetText(Literal(context.DisplayName))
 		local versionText
 		if context.ModVersion then
 			versionText = "(v. " .. context.ModVersion .. ")"
@@ -110,7 +110,7 @@ function PopulateModEntry(entry, context)
 			versionText = _InternalTranslate(T(77, "Unknown"))
 		end
 		entry.idVersion:SetText(versionText)
-		entry.idAuthor:SetText(context.Author)
+		entry.idAuthor:SetText(Literal(context.Author))
 		local isEnabled = not not table.find(AccountStorage.LoadMods, context.ModID)
 		entry.idEnabledCheck:SetColumn(isEnabled and 2 or 1)
 		entry.idEnabledText:SetText(isEnabled and T(236767235164, "Enabled") or (g_CantLoadMods[context.ModID] and T(852686094555, "Failed to load") or T(569172870130, "Disabled")))
@@ -118,6 +118,33 @@ function PopulateModEntry(entry, context)
 		entry.idImgBcgrSelected:SetVisible(g_SelectedMod and g_SelectedMod.ModID == context.ModID)
 		ObjModified("NewSelectedMod")
 	end, entry, context)
+end
+
+if FirstLoad then
+	UnloadedMods = {}
+end
+
+function OnMsg.OnGedUnloadMod(modId)
+	UnloadedMods[modId] = true
+end
+
+function ForceRestartGame()
+	WaitSaveAccountStorage()
+	local dlg = GetPreGameMainMenu()
+	if dlg then
+		WaitMessage(dlg,
+			T(6899, "Warning"), 
+			T(970090440503, "Mods have been unloaded. The game will be restarted!"), 
+			T(6900, "OK")
+		)
+		restart(GetAppCmdLine())
+	end
+end
+
+function OnMsg.PreGameMenuOpen()
+	if next(UnloadedMods) then
+		CreateRealTimeThread(ForceRestartGame)
+	end
 end
 
 function OnModManagerClose(dialog)
@@ -129,6 +156,14 @@ function OnModManagerClose(dialog)
 			T(172783978172, "Mods are player created software packages that modify your game experience. USE THEM AT YOUR OWN RISK! We do not examine, monitor, support or guarantee this user created content. You should take all precautions you normally take regarding downloading files from the Internet before using mods."), 
 			T(6900, "OK"))
 		reloadDefs = true
+	end
+	
+	local unloadedModFound
+	for _, modId in ipairs(g_InitialMods) do
+		if not table.find(new_mods, modId) then
+			ForceRestartGame()
+			break
+		end
 	end
 	
 	LoadingScreenOpen("idLoadingScreen", "reload mods")

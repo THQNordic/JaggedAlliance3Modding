@@ -574,7 +574,7 @@ function SectorStash:AddItem(slot_name, item, left, top, local_execution, use_po
 end
 
 function SectorStash:RemoveItem(slot_name, item, no_update)
-	local item, pos = Inventory.RemoveItem(self, slot_name, item, no_update)
+	local _, pos = Inventory.RemoveItem(self, slot_name, item, no_update)
 	-- remove from dead units
 	local itm, pos = self:RemoveDeadUnitsItem(item)
 	if itm then 

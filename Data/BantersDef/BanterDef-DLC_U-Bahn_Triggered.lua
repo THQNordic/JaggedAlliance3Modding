@@ -122,6 +122,18 @@ PlaceObj('BanterDef', {
 PlaceObj('BanterDef', {
 	Lines = {
 		PlaceObj('BanterLine', {
+			'Text', T(509039118359, --[[BanterDef Interaction_CollapseLandsbach Text]] "Some tunnel sections are collapsed."),
+			'Voiced', false,
+			'FloatUp', true,
+		}),
+	},
+	group = "DLC_U-Bahn_Triggered",
+	id = "Interaction_CollapseLandsbach",
+})
+
+PlaceObj('BanterDef', {
+	Lines = {
+		PlaceObj('BanterLine', {
 			'Text', T(782168044428, --[[BanterDef Interaction_CryoChamber_mechanical_failure Text]] "<em>Mechanical</em> check failed\nThe machine has sheets of paper inside with little holes punched in them."),
 			'Voiced', false,
 			'FloatUp', true,
@@ -134,7 +146,7 @@ PlaceObj('BanterDef', {
 PlaceObj('BanterDef', {
 	Lines = {
 		PlaceObj('BanterLine', {
-			'Text', T(476416394611, --[[BanterDef Interaction_CryoChamber_medical_failure Text]] "<em>Mechanical</em> check successful, <em>Medical</em> failed\nThe punch cards of the machine contain incomprehensible medical data."),
+			'Text', T(476416394611, --[[BanterDef Interaction_CryoChamber_medical_failure Text]] "<em>Mechanical</em> check successful, <em>Medical</em> check failed\nThe punch cards of the machine contain incomprehensible medical data."),
 			'Voiced', false,
 			'FloatUp', true,
 		}),

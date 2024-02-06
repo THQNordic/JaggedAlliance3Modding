@@ -40,6 +40,19 @@ PlaceObj('ChanceToHitModifier', {
 			metaText[#metaText + 1] = compDef.DisplayName
 		end
 		
+		-- Quick prism
+		modifyVal, compDef = GetComponentEffectValue(weapon1, "FirstShotIncreasedAim", "min_aim")
+		if modifyVal then
+			local reaction = table.find_value(WeaponComponentEffects.FirstShotIncreasedAim.unit_reactions, "Event", "OnCalcMinAimActions")
+			reaction = reaction and reaction.Handler
+			if reaction then
+				local result = reaction(weapon1, target, 0, attacker, target, action, weapon1)
+				if result and result == num then
+					metaText[#metaText + 1] = compDef.DisplayName
+				end
+			end
+		end
+		
 		-- Heavy Stock
 		if IsFullyAimedAttack(num) then
 			modifyVal, compDef = GetComponentEffectValue(weapon1, "BonusAccuracyWhenFullyAimed", "bonus_cth")
@@ -279,6 +292,26 @@ PlaceObj('ChanceToHitModifier', {
 	display_name = T(330773997382, --[[ChanceToHitModifier Default EvasiveMovement display_name]] "Evasive Movement"),
 	group = "Default",
 	id = "EvasiveMovement",
+})
+
+PlaceObj('ChanceToHitModifier', {
+	CalcValue = function (self, attacker, target, body_part_def, action, weapon1, weapon2, lof, aim, opportunity_attack, attacker_pos, target_pos)
+		if not IsGameRuleActive("HeavyWounds") then 
+			return false, 0 
+		end
+		local wounds = attacker:GetStatusEffect("Wounded")
+		if not wounds or wounds.stacks<=0 then 
+			return false, 0 
+		end
+		
+		local max_wounds = GameRuleDefs.HeavyWounds:ResolveValue("MaxWoundsEffect")
+		local per_wound_percent =  GameRuleDefs.HeavyWounds:ResolveValue("AccuracyPenalty")
+		local total_percent = Min(wounds.stacks,max_wounds) *per_wound_percent
+		return true, -total_percent
+	end,
+	display_name = T(738595150432, --[[ChanceToHitModifier Default GameRuleHeavyWounds display_name]] "Heavy Wounds"),
+	group = "Default",
+	id = "GameRuleHeavyWounds",
 })
 
 PlaceObj('ChanceToHitModifier', {

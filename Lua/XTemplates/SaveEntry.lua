@@ -179,7 +179,7 @@ PlaceObj('XTemplate', {
 						if canBeModified then
 							GetDialog(self):ResolveId("idSubSubContent"):SetVisible(true)
 							if isEditing then
-								editField:SetText(SavenameToName(editField.context.savename))
+								editField:SetText(editField.context.text)
 								editField:SetVisible(true)
 								editField:SetFocus(true) 
 								editField:SelectAll()
@@ -203,8 +203,8 @@ PlaceObj('XTemplate', {
 								button:SetSelected(false)
 							end
 							if button and entry:ResolveId("idNewSave").context.metadata.timestamp == lastSelectedSave then
-								local oldSavename = SavenameToName(button.context.savename)
-								entry:ResolveId("idNewSave").context.savename = oldSavename
+								local old_displayname = button.context.text
+								entry:ResolveId("idNewSave").context.text = old_displayname
 							end
 						end
 						if isEditing and GetUIStyleGamepad() then
@@ -212,6 +212,7 @@ PlaceObj('XTemplate', {
 						elseif GetUIStyleGamepad() then
 							self:SetFocus(true)
 						end
+						ObjModified("NewSelectedSave")
 						return "break"
 					else
 						g_CurrentlyEditingName = false
@@ -274,10 +275,9 @@ PlaceObj('XTemplate', {
 				--revert the prev selected save entry name
 				if not (selected or g_SelectedSave == self.context) then
 					local saveEntryEdit = self.parent and self.parent:ResolveId("idNewSave")
-					if not saveEntryEdit then return end
-					local oldSavename = self.context.newSave and _InternalTranslate(T(914064246115, "NEW SAVE")) or SavenameToName(self.context.metadata.displayname or self.context.metadata.savename)
-					saveEntryEdit.context.savename = SavenameToName(self.context.savename)
-					self.idName:SetText(oldSavename)
+					if not saveEntryEdit or saveEntryEdit.context.newSave then return end
+					saveEntryEdit.context.text = self.context.metadata.displayname
+					self.idName:SetText(saveEntryEdit.context.text)
 				end
 			end,
 		}),

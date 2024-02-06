@@ -366,6 +366,9 @@ function OnMsg.DeploymentModeSet()
 		if u:HasStatusEffect("ManningEmplacement") then
 			u:RemoveStatusEffect("ManningEmplacement")
 		end
+		if u:HasStatusEffect("StationedMachineGun") then
+			u:RemoveStatusEffect("StationedMachineGun")
+		end
 	end
 end
 

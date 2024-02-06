@@ -68,7 +68,9 @@ PlaceObj('WeaponComponentEffect', {
 		PlaceObj('UnitReaction', {
 			Event = "OnCalcMinAimActions",
 			Handler = function (self, target, value, attacker, attack_target, action, weapon)
-				return Max(value, WeaponComponentEffects.MinAim:ResolveValue("min_aim"))
+				if self == weapon then
+					return Max(value, WeaponComponentEffects.MinAim:ResolveValue("min_aim"))
+				end
 			end,
 		}),
 	},
@@ -339,7 +341,11 @@ PlaceObj('WeaponComponentEffect', {
 		PlaceObj('UnitReaction', {
 			Event = "OnCalcMinAimActions",
 			Handler = function (self, target, value, attacker, attack_target, action, weapon)
-				if self == weapon and not target.performed_action_this_turn and not IsOverwatchAction(action.id) then
+				if attacker.performed_action_this_turn then
+					return
+				end
+				
+				if self == weapon and not IsOverwatchAction(action.id) then
 					return Max(value, WeaponComponentEffects.FirstShotIncreasedAim:ResolveValue("min_aim"))
 				end
 			end,

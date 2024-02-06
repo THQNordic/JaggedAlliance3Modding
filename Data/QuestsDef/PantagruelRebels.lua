@@ -53,12 +53,11 @@ PlaceObj('QuestsDef', {
 						PlaceObj('QuestIsVariableBool', {
 							QuestId = "PantagruelRebels",
 							Vars = set({
-	MaquieAllies = true,
 	MaquieEnemies = false,
 }),
 							__eval = function ()
 								local quest = gv_Quests['PantagruelRebels'] or QuestGetState('PantagruelRebels')
-								return quest.MaquieAllies and not quest.MaquieEnemies
+								return not quest.MaquieEnemies
 							end,
 						}),
 					},
@@ -66,29 +65,6 @@ PlaceObj('QuestsDef', {
 						PlaceObj('SectorSetSide', {
 							disable_sticky = true,
 							sector_id = "D8",
-						}),
-					},
-					'EffectsElse', {
-						PlaceObj('ConditionalEffect', {
-							'Conditions', {
-								PlaceObj('QuestIsVariableBool', {
-									QuestId = "PantagruelRebels",
-									Vars = set({
-	MaquieEnemies = false,
-}),
-									__eval = function ()
-										local quest = gv_Quests['PantagruelRebels'] or QuestGetState('PantagruelRebels')
-										return not quest.MaquieEnemies
-									end,
-								}),
-							},
-							'Effects', {
-								PlaceObj('SectorSetSide', {
-									disable_sticky = true,
-									sector_id = "D8",
-									side = "neutral",
-								}),
-							},
 						}),
 					},
 				}),

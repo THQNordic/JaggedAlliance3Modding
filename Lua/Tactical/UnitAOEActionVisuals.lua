@@ -1065,7 +1065,7 @@ DefineClass.CRM_DeploymentGrid = {
 
 DefineClass.GridMarkerDeploymentVisuals = {
 	__parents = {"AOEActionVisuals"},
-	flags = { gofAlwaysRenderable = true, },
+	flags = { gofAlwaysRenderable = true, efApplyToGrids = false, efCollision = false},
 
 	mesh = false,
 	marker = false,

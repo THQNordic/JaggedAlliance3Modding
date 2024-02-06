@@ -699,7 +699,7 @@ PlaceObj('XTemplate', {
 						'ContextUpdateOnOpen', true,
 						'OnContextUpdate', function (self, context, ...)
 							local cart_count, cart_cost = BobbyRayCartGetAggregate()
-							local delivery_cost = BobbyRayCartGetDeliveryOption().Price
+							local delivery_cost = BobbyRayStoreDeliveryPrice()
 							local units_cost = cart_cost - delivery_cost
 							self:SetText(T{506356054484, "<Amount> / <money(Cost)>", Amount = cart_count, Cost = cart_cost})
 							XText.OnContextUpdate(self, context, ...)

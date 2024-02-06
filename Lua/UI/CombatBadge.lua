@@ -677,6 +677,13 @@ function OnMsg.UnitDowned(unit)
 	end
 end
 
+function OnMsg.OnDownedRally(medic, unit)
+	if unit and unit.ui_badge then
+		unit.ui_badge:UpdateMode()
+		unit.ui_badge:UpdateEnemyVisibility() -- updates death chance text
+	end
+end
+
 function CombatBadge:UpdateLevelIndicator()
 	local iconWin = self.idMercIcon
 	if self.mode == "enemy" then

@@ -1912,7 +1912,10 @@ PlaceObj('EffectDef', {
 			else
 				local params = self:GetAnimParams()
 				for _, unit in ipairs(units) do
-					if not unit:IsDead() then
+					if unit.command == "ExplosionFly" then
+						unit:SetCommandParams("ExitMap", params)
+						unit:SetBehavior("ExitMap", { marker, start_time })
+					elseif not unit:IsDead() then
 						unit:SetCommandParams("ExitMap", params)
 						unit:SetCommand("ExitMap", marker, start_time)
 					end
@@ -3832,7 +3835,7 @@ PlaceObj('EffectDef', {
 		'name', "OnAfterEditorNew",
 		'params', "parent, ged, is_paste",
 		'code', function (self, parent, ged, is_paste)
-			local preset = ged:ResolveObj("SelectedPreset")
+			local preset = GetParentTableOfKind(self, "Conversation")
 			if preset:IsKindOf("Conversation") then
 				self.Conversation = preset.id
 			end
@@ -3895,7 +3898,7 @@ PlaceObj('EffectDef', {
 		'name', "OnAfterEditorNew",
 		'params', "parent, ged, is_paste",
 		'code', function (self, parent, ged, is_paste)
-			local preset = ged:ResolveObj("SelectedPreset")
+			local preset = GetParentTableOfKind(self, "Conversation")
 			if preset:IsKindOf("Conversation") then
 				self.Conversation = preset.id
 			end
@@ -7937,6 +7940,64 @@ PlaceObj('EffectDef', {
 })
 
 PlaceObj('EffectDef', {
+	group = "Effects",
+	id = "SetSectorDiscovered",
+	PlaceObj('PropertyDefCombo', {
+		'id', "sector_id",
+		'name', "Sector Id",
+		'help', "Sector id.",
+		'items', function (self) return GetCampaignSectorsCombo() end,
+	}),
+	PlaceObj('ClassConstDef', {
+		'name', "Documentation",
+		'type', "text",
+		'value', "Sets a sector to discovered",
+	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "__exec",
+		'params', "obj, context",
+		'code', function (self, obj, context)
+			local sectorPreset = gv_Sectors[self.sector_id]
+			if sectorPreset then
+				sectorPreset.discovered = true
+				
+				if g_SatelliteUI then
+					g_SatelliteUI:UpdateSectorVisuals(self.sector_id)
+				end
+			end
+		end,
+	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "GetEditorView",
+		'code', function (self)
+			return Untranslated("Set <u(sector_id)> to discovered", self)
+		end,
+	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "GetError",
+		'code', function (self)
+			if not self.sector_id then
+				return "Specify sector!"
+			end
+		end,
+	}),
+	PlaceObj('ClassConstDef', {
+		'name', "EditorNestedObjCategory",
+		'type', "text",
+		'value', "Sector effects",
+	}),
+	PlaceObj('TestHarness', {
+		'name', "TestHarness",
+		'TestedOnce', true,
+		'Tested', true,
+		'GetTestSubject', function (self) return SelectedObj end,
+		'TestObject', PlaceObj('SetSectorDiscovered', {
+			sector_id = "F12_Underground",
+		}),
+	}),
+})
+
+PlaceObj('EffectDef', {
 	id = "SetTimer",
 	PlaceObj('PropertyDefText', {
 		'id', "Name",
@@ -8814,7 +8875,7 @@ PlaceObj('EffectDef', {
 		'code', function (self, obj, context)
 			local group = Groups[self.TargetGroup] or empty_table
 			for i, v in ipairs(group) do
-				if IsKindOf(v, "Unit") then
+				if IsKindOf(v, "Unit") and not v:IsDead() then
 					v.villain = false
 					if self.killImmortal then
 						v.immortal = false

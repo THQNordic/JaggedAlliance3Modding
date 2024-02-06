@@ -147,7 +147,7 @@ MapGameTimeRepeat("StealthLights", -1, function()
 		end
 		NetSyncEvent("SyncLights", data)
 		
-		Sleep(250)
+		Sleep(500)
 	end
 	
 	WaitWakeup()

@@ -1,0 +1,159 @@
+# Grid Markers
+
+## Overview
+
+Game logic in *Jagged Alliance 3* is connected to objects and locations on the maps via various **`Grid Markers`**. For example, you define merc deployment zones via a **`DeploymentMarker`**, spawn enemy units via a **`UnitMarker`**, or define patrol routes via a set of **`WaypointMarker`** objects. **`Grid Markers`** are part of the map, but are usually invisible during gameplay; you need to enter editor mode to see them when editing a map.
+
+Some more generic **`Grid Markers`** are objects of the base class **`GridMarker`** with their **`Type`** property set to one of the possible **`GridMarkerTypes`** to indicate their logical function, while others that perform more specific functions have their own Lua classes.
+
+## Voxel Grid
+
+*Jagged Alliance 3* maps consist of freely placed and oriented objects, but the gameplay, especially in combat mode, treats the map as a 3D grid - or rather a series of "floors", each being a 2D grid. The elements of this grid are called "voxels" throughout the source, even though JA3 is not a traditional voxel-based game. A related term is a "slab" - those are the pieces from which buildings in JA3 are constructed. A voxel is `1.2 x 1.2 x 0.7 m` (accessible via `const.SlabSizeX/Y/Z` constants from the Lua code).
+
+## GridMarkers in the world
+
+All markers are visualized in the game world as small flagpost-like objects. The flags are color-coded to show the marker type or class and may have a text showing the marker type, or an ID above them.
+
+Some **`GridMarkers`**, such as the **`TrapSpawnMarker`**, denote just a position in the world.
+
+![Marker as shown in editor](Images/Marker.jpg width=50%)
+
+Others define an area, specified in voxels and centered on the marker. The area is always rectangular and aligned with the world directions. It is shown around the marker in editor mode. To avoid clutter, some marker areas are only shown when the marker is selected.
+
+![Marker with area, shown in editor](Images/MarkerArea.jpg width=50%)
+
+Finally, some markers are there to associate specific gameplay logic with some objects, e.g. making them interactable. In this case, they are placed in the same collection as the objects.
+
+![Marker in the same collection with some objects - here the burial cross](Images/MarkerObjects.jpg width=50%)
+
+## GridMarkers Logic
+
+In addition to specific logic connected to specific marker types and classes, **`GridMarkers`** can have some generic logic-related properties in the form of lists of *Conditions* and *Effects*.
+
+*Conditions* are a collection of logical checks performed to determine whether some logic needs to trigger, e.g. spawn objects or enable the marker. The *Conditions* in a list are combined with a logical **`AND`**, i.e. all of the conditions need to be fulfilled at once, for the entire list of conditions to be considered satisfied. If you need to combine conditions with logical **`OR`**, use an **`OR`** Condition and nest other conditions inside it.
+
+*Effects* are a collection of changes to the game world that can be executed by some markers - e.g. set a group of units to be your enemies, heal a merc, or change the state of a quest.
+
+There are dozens of *Conditions* and *Effects*, so when adding one via the plus sign button, a fullscreen picker interface will be opened and will list all of them in logical groups. You can also use the generic *CheckExpression* condition and *ExecudeCode* effect which let you enter almost arbitrary Lua code. Try to stick to the more specific conditions and effects, though - they are more likely to play nicely with how the rest of the game works.
+
+## GridMarker Properties
+
+Here are some of the important properties of GridMarker classes and their descendants. Not all of them apply to all the classes and types.
+
+Pos
+: Since **`GridMarkers`** give meaning to locations and other objects on the map, their position is their most important property. Edit it by simply dragging the object around the map.
+
+AreaWidth, AreaHeight
+: For some **`GridMarkers`**, this is the area of effect, specified in voxels around the marker. The area is visualized in editor mode, for some types - only when the marker is selected.
+
+Reachable
+: The marker area includes only tiles reachable via pathfinding from the marker position, not the entire rectangle.
+
+Type
+: For markers of the base class GridMarker, it determines their mode of operation (see below).
+
+Trigger
+: **`TriggerEffects`** are executed: **once** - once per game playthrough, when the **`TriggerConditions`** are true; **activation** - each time when the **`TriggerConditions`** change from false to true;  **deactivation** - each time when the **`TriggerConditions`** change from true to false;  **always** - repeatedly, each time when the **`TriggerConditions`** are true;  **change** - whenever the **`TriggerConditions`** change between true and false.
+
+TriggerConditions
+: Set of conditions determining when to trigger the effects (see **`Trigger`** for more details).
+
+TriggerEffects
+: Set of effects to execute when the **`TriggerConditions`** and execution policies from **`Trigger`** are satisfied.
+
+EnabledConditions
+: Set of conditions determining whether the marker will be allowed to perform its function.
+
+## GridMarker Types
+
+Some of the more basic GridMarkers are objects of the base **`GridMarker`** class with the property Type set to one of the following:
+
+BorderArea
+: This marker should be placed once on every map. Its area defines the playable zone of the map. Its borders are visualized at runtime even in game mode when the cursor approaches them.
+
+Defender, DefenderPriority
+: Whenever two squads of two opposing sides find themselves on the same sector, the side currently holding the sector is "defending" it, and its units are placed on the **`DefenderPriority`** (filled first) and **`Defender`** markers.
+
+Entrance
+: Defines an area where enemies enter the map and where ambient life and NPCs can leave the map.
+
+Logic
+: A generic marker which does nothing by itself, and is used to bind effects to conditions. Some of these conditions and events might use the area of the marker itself (e.g. is a merc nearby).
+
+Position
+: The default marker type, with no particular usage implied or implemented. If you want to use markers indicating position in your mods in conjunction with some custom code, use this type.
+
+## GridMarker Child Classes
+
+Some GridMarker-like functionality is implemented in child classes of **`GridMarker`**:
+
+AIBiasMarker
+: Used to tweak AI evaluations to make AI units prefer or avoid certain areas.
+
+AmbientZoneMarker
+: Defines rules for spawning and behavior of random, non-specific NPCs (aka "ambient life") in its area.
+
+AmbientZone_Animal
+: A subclass of **`AmbientZoneMarker`** specific for spawning ambient animals.
+
+AmbientLifeRepulsor
+: Defines an area where ambient life will attempt not to go.
+
+DeploymentMarker
+: Defines an area where the player can deploy their mercs.
+
+BombardMarker
+: Defines an area where bombardment with heavy ordnance can be executed using a **`BombardEffect`**.
+
+ConditionalSpawnMarker, ShowHideCollectionMarker
+: Define objects that will be spawned (more precisely, turned visible) when some conditions are satisfied.
+
+ContainerMarker, ContainerIntelMarker
+: Defines objects that function as a container from which items can be taken. What items are provided is controlled via conditions and loot tables. The ContainerIntelMarker variation only works if corresponding Intel has been revealed.
+
+CustomInteractable
+: Defines objects that upon interaction check a list of conditions and execute a number of effects. Custom texts and interaction icons can also be provided.
+
+ExamineMarker
+: Defines objects that, when interacted with, check a list of conditions and execute a number of effects. The interaction text is always "Examine".
+
+ExitZoneInteractable
+: Defines objects that upon interaction will lead the mercs to exit the map - usually presented as small visual objects at the map's edges like milestones, road signs, trapdoors (for accessing underground sectors) etc.
+
+GrenadeThrowMarker
+: Defines a location where a grenade hit can be simulated using a scripting effect.
+
+IntelMarker, ImplicitIntelMarker, ImplicitEnemyDefenderIntelMarker, EnemyIntelMarker
+: Defines an area which can display custom text on the ground when an Intel-gathering activity succeeds. The Implicit variations are placed automatically around interesting locations (defined by other markers, of course) - mounted machine guns, defender positions, searchlights etc. The EnemyIntelMarker variation displays information about the number of enemies in the area.
+
+LightsMarker
+: Defines an area where the lights can be turned on and off via a scripting effect - **`LightsSetState`**.
+
+OverheardMarker
+: Defines a position which, when approached by mercs, will start a banter (an in-world mini-conversation) between other units in the vicinity.
+
+RangeGrantMarker
+: Defines objects that upon interaction perform a skill check for a specific skill and grant specific items or effects on success. Base class for several other markers with predefined skill/item combinations.
+
+HackMarker, HerbMarker, SalvageMarker
+: Child classes of RangeGrantMarker customized for giving money or Intel (HackMarker), Meds (HerbMarker) or Parts (SalvageMarker).
+
+RepositionMarker
+: Defines a position that should be occupied during Reposition phase if possible. A Repositioning unit that can reach this position will claim it and move there.
+
+TrapSpawnMarker
+: Defines objects that will be spawned under specific conditions to act as a trap - e.g. explode, can be defused etc.
+
+UnitMarker
+: Used to spawn specific units with configurable appearance, interaction and behavior. Most campaign NPCs and some enemies are spawned in this way.
+
+WaypointMarker
+: Markers of this type can be used to define patrol routes which can then be used by patrolling enemies or ambient life.
+
+
+<div class="footer"></div>
+<div class="sticky"><a href="#toc1">^ *Back to top* ^</a>
+
+[<< *Back to Index*](index.md.html)</div>
+<link rel="stylesheet" type="text/css" href="Style.css" />
+<!-- Markdeep: --><style class="fallback">body{visibility:hidden;white-space:pre;font-family:monospace}</style><script src="markdeep.min.js" charset="utf-8"></script><script>window.alreadyProcessedMarkdeep||(document.body.style.visibility="visible")</script>

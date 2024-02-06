@@ -403,6 +403,9 @@ PlaceObj('QuestsDef', {
 					TargetUnit = "DiamondRedBoss",
 					closest = true,
 				}),
+				PlaceObj('ExecuteCode', {
+					FuncCode = '-- Remove the Graaf squad from the satellite gameplay\nDespawnUnitData("A2", "DiamondRedBoss")',
+				}),
 			},
 			Once = true,
 			ParamId = "TCE_GraafForeman",

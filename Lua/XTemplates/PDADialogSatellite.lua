@@ -63,9 +63,21 @@ PlaceObj('XTemplate', {
 				'IdNode', false,
 				'MouseCursor', "UI/Cursors/Pda_Cursor.tga",
 				'Image', "UI/PDA/T_PDA_Frame",
-				'SqueezeX', false,
-				'SqueezeY', false,
+				'ImageFit', "stretch",
 			}, {
+				PlaceObj('XTemplateWindow', {
+					'__class', "XImage",
+					'Id', "idDiode",
+					'Dock', "ignore",
+					'HAlign', "left",
+					'VAlign', "top",
+					'DrawOnTop', true,
+					'Image', "UI/PDA/T_PDA_Frame_Diode.png",
+					'ImageFit', "stretch",
+					'Columns', 2,
+					'Animate', true,
+					'FPS', 0,
+				}),
 				PlaceObj('XTemplateWindow', {
 					'comment', "pda display",
 					'Id', "idDisplay",
@@ -282,6 +294,10 @@ PlaceObj('XTemplate', {
 						end,
 						'DisabledBackground', RGBA(255, 255, 255, 200),
 						'OnPress', function (self, gamepad)
+							local dlg = GetDialog(self)
+							if dlg.context and dlg.context.satellite_editor then
+								CloseGedSatelliteSectorEditor()
+							end
 							if g_SatelliteUI then g_SatelliteUI:RemoveContextMenu() end
 							UIEnterSector(false, "force")
 						end,

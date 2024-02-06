@@ -600,16 +600,27 @@ end
 function PDAAIMBrowser:CanClose(mode, mode_param)
 	if not self.release_expired and not self.mercs_hired then return true end
 	
-	local popup, popup_expected_response = false, false
+	local stillGoingToExpire = {}
 	if self.release_expired then
-		local stillGoingToExpire = {}
 		for i, ud in ipairs(self.release_expired) do
 			if ud.HiredUntil and Game.CampaignTime >= ud.HiredUntil then
 				stillGoingToExpire[#stillGoingToExpire + 1] = ud
 			end
 		end
-		if #stillGoingToExpire == 0 then return true end
-		
+	end
+	
+	local stillHired = {}
+	if self.mercs_hired then
+		for i, uId in ipairs(self.mercs_hired) do
+			local ud = gv_UnitData[uId]
+			if ud.HiredUntil then
+				stillHired[#stillHired + 1] = ud
+			end
+		end
+	end
+	
+	local popup, popup_expected_response = false, false
+	if self.release_expired and #stillGoingToExpire > 0 then
 		local popupHost = GetDialog("PDADialog")
 		popupHost = popupHost and popupHost:ResolveId("idDisplayPopupHost")
 		if not popupHost then return true end
@@ -620,20 +631,12 @@ function PDAAIMBrowser:CanClose(mode, mode_param)
 		})
 		popup:Open()
 		popup_expected_response = "ok"
-	elseif self.mercs_hired then
-		local stillHired = {}
-		for i, uId in ipairs(self.mercs_hired) do
-			local ud = gv_UnitData[uId]
-			if ud.HiredUntil then
-				stillHired[#stillHired + 1] = ud
-			end
-		end
-		if #stillHired == 0 then return true end
-	
+	elseif self.mercs_hired and #stillHired > 0 then
 		popup = SpecifyMercSectorPopup(self.mercs_hired)
 		if not popup then return true end
 		popup_expected_response = false -- logic is handled internally
 	end
+	if not popup then return true end
 	
 	self:CreateThread("popup-response", function()
 		local resp = popup:Wait()
@@ -782,7 +785,9 @@ function PDAAIMBrowser:UpdateSelectedFilter()
 			buttonIdx = buttonIdx + 1
 		end
 	end
+	self.idMercList.KeepSelectionOnRespawn = false
 	self.idMercList:SetContext(mercsPerFilter[self.current_filter])
+	self.idMercList.KeepSelectionOnRespawn = true
 end
 
 function GetMercSpecIcon(merc)
@@ -793,13 +798,17 @@ end
 
 ------
 
-local function lEvaluateConversationBranches(branches, obj, ctx, branchType, dbgEvaluate)
+local function lEvaluateConversationBranches(branches, obj, ctx, branchType, check_rule, dbgEvaluate)
 	branches = branches or empty_table
 	for i, b in ipairs(branches) do
 		if b:HasMember("Type") and b.Type ~= branchType then goto continue end
 		
 		if b:HasMember("CustomBranchCondition") then
 			if not b:CustomBranchCondition(obj, ctx) then goto continue end
+		end
+		
+		if check_rule and IsGameRuleActive("AlwaysOnline") and not next(b.Conditions) then
+			goto continue
 		end
 		
 		-- DEBUG
@@ -854,20 +863,23 @@ function OnMsg.BrowserOpened()
 end
 
 
-TFormat.MercPriceAIMMessenger = function(ctx, days, include_medical)
+TFormat.MercPriceAIMMessenger = function(ctx, level)
 	if not ctx then
 		return
 	end
 
 	ctx = ctx and ctx.merc
-	days = days or 7
-	include_medical = true
-	return TFormat.money(ctx, GetMercPrice(ctx, days, include_medical))
+	return TFormat.money(ctx, GetMercPrice(ctx, 7,false, level))
 end
 
 
 local lEmptyPreset = { Lines = { } }
-local lPresetLevelChanges = { Lines = { { meta = "aimbot", Text = T(487770557196, "A.I.M. has increased merc salary based on their recent accomplishments. 7-Day fee is now <MercPriceAIMMessenger()>.") } } }
+local function lPresetLevelChanges(price_increased_level) 
+	return { Lines = { {
+					meta = "aimbot", 
+					Text = T{487770557196, "A.I.M. has increased merc salary based on their recent accomplishments. 7-Day fee is now <MercPriceAIMMessenger(price_increased_level)>.", price_increased_level = price_increased_level}
+	      	 } } }	
+end
 
 local function lPrependAimBotMessage(preset, message, red)
 	local lines = table.copy(preset.Lines)
@@ -897,7 +909,7 @@ local lNextNodeMap = {
 				return "ByeBad", lEmptyPreset
 			end]]
 		
-			local anyRefusal = lEvaluateConversationBranches(m.Refusals, m, conversation_context, "rehire")
+			local anyRefusal = lEvaluateConversationBranches(m.Refusals, m, conversation_context, "rehire", "check rule")
 			if anyRefusal then
 				local anyMitig = lEvaluateConversationBranches(m.Mitigations, m, conversation_context)
 				if anyMitig then
@@ -922,11 +934,11 @@ local lNextNodeMap = {
 				history.last_wont_join = false
 			end
 
-			return "RehireIntroLevelCheck", conversation_context.price_increased and lPresetLevelChanges
+			return "RehireIntroLevelCheck", conversation_context.price_increased and lPresetLevelChanges(conversation_context.price_increased)
 		end
 		
 		if GetMercStateFlag(m.session_id, "LastHiredAt") then -- If ever hired before, check rehire refusals too
-			local anyRefusal = lEvaluateConversationBranches(m.Refusals, m, conversation_context, "rehire")
+			local anyRefusal = lEvaluateConversationBranches(m.Refusals, m, conversation_context, "rehire", "check rule")
 			if anyRefusal then
 				local anyMitig = lEvaluateConversationBranches(m.Mitigations, m, conversation_context)
 				if anyMitig then
@@ -943,7 +955,7 @@ local lNextNodeMap = {
 		end
 
 		-- Check if retired.
-		local anyRefusal = lEvaluateConversationBranches(m.Refusals, m, conversation_context, "normal")
+		local anyRefusal = lEvaluateConversationBranches(m.Refusals, m, conversation_context, "normal","check rule")
 		local anyMitig = false
 		if anyRefusal then
 			local anyMitig = lEvaluateConversationBranches(m.Mitigations, m, conversation_context)
@@ -976,10 +988,10 @@ local lNextNodeMap = {
 		end
 		
 		if #MessengerChatHistory[m.session_id] > 0 and m.ConversationRestart and #m.ConversationRestart > 0 then
-			return "ConversationRestartLevelCheck", conversation_context.price_increased and lPresetLevelChanges
+			return "ConversationRestartLevelCheck", conversation_context.price_increased and lPresetLevelChanges(conversation_context.price_increased)
 		end
 		
-		return "GreetingAndOfferLevelCheck", conversation_context.price_increased and lPresetLevelChanges
+		return "GreetingAndOfferLevelCheck", conversation_context.price_increased and lPresetLevelChanges(conversation_context.price_increased)
 	end,
 	["GreetingAndOfferLevelCheck"] = function(m, conversation_context) return "GreetingAndOffer" end,
 	["GreetingAndOffer"] = function(m, conversation_context) return "SetupDurationPick" end,
@@ -996,7 +1008,7 @@ local lNextNodeMap = {
 	end,
 	["PickDuration"] = function(m) return "DurationPicked", { Lines = { { meta = "aimbot", Text = T{297781679306, "Offer has been sent to <Name>", m} } } } end,
 	["DurationPicked"] = function(m, conversation_context)
-		local anyRefusal = lEvaluateConversationBranches(m.Refusals, m, conversation_context, "duration")
+		local anyRefusal = lEvaluateConversationBranches(m.Refusals, m, conversation_context, "duration","check rule")
 		if anyRefusal then		
 			local anyMitig = lEvaluateConversationBranches(m.Mitigations, m, conversation_context)
 			if anyMitig then
@@ -1098,7 +1110,7 @@ local lNextNodeMap = {
 	end,
 	["RehireOffer"] = function(m) return "RehireOffered", { Lines = { { meta = "aimbot", Text = T{297781679306, "Offer has been sent to <Name>", m} } } } end,
 	["RehireOffered"] = function(m, conversation_context)
-		local anyRefusal = lEvaluateConversationBranches(m.Refusals, m, conversation_context, "rehire")
+		local anyRefusal = lEvaluateConversationBranches(m.Refusals, m, conversation_context, "rehire","check rule")
 		if anyRefusal then
 			local anyMitig = lEvaluateConversationBranches(m.Mitigations, m, conversation_context)
 			if anyMitig then
@@ -1417,7 +1429,6 @@ function MercPriceIncreaseCheck(merc)
 		if sch.level > currentLevelPrice then
 			if sch.due < Game.CampaignTime then
 				index = i
-				break
 			end	
 		end
 	end
@@ -1427,7 +1438,7 @@ function MercPriceIncreaseCheck(merc)
 		currentLevelPrice = data.level
 		SetMercStateFlag(uId, "LevelUpPriceIncreaseSchedule", {table.unpack(increaseSchedule, index + 1, #increaseSchedule)})
 		SetMercStateFlag(uId, "LevelUpPriceIncreaseCurrent", currentLevelPrice)
-		return true
+		return currentLevelPrice
 	end
 	
 	return false
@@ -1725,9 +1736,9 @@ function PDAMessengerClass:StartResumeConversation(sameThread)
 		PlayFX("PDAMessengerOfferAccepted", "start")
 	
 		local wasPreviouslyHired = merc.HireStatus == "Hired"
-		local price = self:GetCurrentMercPrice()
+		local price, medical = self:GetCurrentMercPrice()
 		local days = self.conversation_context.ContractDuration
-		NetSyncEvent("HireMerc", merc.session_id, price, days, netUniqueId)
+		NetSyncEvent("HireMerc", merc.session_id, price, medical, days, netUniqueId)
 		
 		-- Record the hiring for the popup that clarifies arrival position.
 		-- It should only show up for the player who hired the merc.

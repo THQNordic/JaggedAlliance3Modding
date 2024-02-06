@@ -115,7 +115,7 @@ function OnMsg.NewGame(game)
 	game.Components = game.Components or 0
 	game.DailyIncome = game.DailyIncome or 0
 	game.CampaignTime = game.CampaignTime or const.StoryBits.StartDate
-	hr.UIL_CustomTime = game.CampaignTime
+	SetUILCustomTime(game.CampaignTime)
 	game.CampaignTimeStart = game.CampaignTime
 	game.CampaignTimeFactor = game.CampaignTimeFactor or const.Satellite.CampaignTimeNormalSpeed
 	game.PersistableCampaignPauseReasons = {}
@@ -709,7 +709,7 @@ function ZuluNewGame(new_game_params, campaign)
 	if campaign then 
 		Game.Campaign = campaign.id
 		Game.CampaignTime = campaign.starting_timestamp
-		hr.UIL_CustomTime = Game.CampaignTime
+		SetUILCustomTime(Game.CampaignTime)
 		Game.CampaignTimeStart = Game.CampaignTime
 	end
 	if unit_data then
@@ -780,6 +780,7 @@ function StartCampaign(campaign_id, new_game_params)
 	ClearItemIdData()
 	NewGameSession(campaign, new_game_params)
 	campaign:OnStartCampaign()
+	NewGameObj = false
 	LoadingScreenClose("idLoadingScreen", "new game")
 end
 
@@ -993,7 +994,7 @@ function ApplyDynamicData()
 	-- load dynamic data
 	-- NOTE:	First load the AL markers so the units can properly restore their Visit command using the visitables
 	--			AL_Mourn_FromCorspe/AL_Maraud_FromCorspe are spawned dynamicly and get handles greater than Units
-	--			Hence AL markers need to loaded before Units(editor AL markers are always with smaller handles than Units)
+	--			Hence AL markers need to be loaded before Units(editor AL markers are always with smaller handles than Units)
 	local loaded = {}
 	for _, data in ipairs(sector_data.dynamic_data) do
 		local handle = data.handle
@@ -1010,7 +1011,8 @@ function ApplyDynamicData()
 					procall(obj.corpse.SetDynamicData, obj.corpse, dataToHandle[corpse_handle])
 				end
 			elseif IsKindOf(obj, "Unit") and data.behavior == "Visit" then
-				local marker_handle = data.behavior_params[1] and data.behavior_params[1][1]
+				-- NOTE: bug from r335315 was setting :SetBehavior(visitable) instead of :SetBehavior({visitable})
+				local marker_handle = type(data.behavior_params[1]) == "table" and data.behavior_params[1][1] or data.behavior_params[1]
 				if marker_handle and deleted_corpse_marker[marker_handle] then
 					data.behavior = false
 					data.behavior_params = false
@@ -1344,14 +1346,14 @@ end
 
 AppendClass.MapDataPreset = {
 	properties = {
-		{ category = "Zulu", id = "Region", editor = "preset_id", default = "Jungle",
+		{ category = "Jagged Alliance 3", id = "Region", editor = "preset_id", default = "Jungle",
 			preset_class = "GameStateDef", preset_group = "region",
 		},
-		{ category = "Zulu", id = "MainMenuRegion", editor = "combo", default = "Default", items = function (self) return PresetsCombo("GameStateDef", "region", "Default") end, 
+		{ category = "Jagged Alliance 3", id = "MainMenuRegion", editor = "combo", default = "Default", items = function (self) return PresetsCombo("GameStateDef", "region", "Default") end, 
 			name = "Region for main menu", help = "Choose a region to use as a main menu scene for this map, overriding the normal region of the map",
 		},
-		{ category = "Zulu", id = "Weather", name = "Force weather", editor = "combo", default = "none", items = function (self) return PresetsCombo("GameStateDef", "weather", "none") end },
-		{ category = "Zulu", id = "Tod", name = "Force time of day", editor = "combo", default = "none", items = function (self) return PresetsCombo("GameStateDef", "time of day", "none") end },
+		{ category = "Jagged Alliance 3", id = "Weather", name = "Force weather", editor = "combo", default = "none", items = function (self) return PresetsCombo("GameStateDef", "weather", "none") end },
+		{ category = "Jagged Alliance 3", id = "Tod", name = "Force time of day", editor = "combo", default = "none", items = function (self) return PresetsCombo("GameStateDef", "time of day", "none") end },
 		{ category = "Audio", id = "Reverb" },	
 		{ category = "Audio", id = "ReverbIndoor", name = "Reverb Indoor", editor = "preset_id", 
 			extra_item = "default from Region", default = "default from Region",
@@ -1523,6 +1525,11 @@ function lGetGameStartTypes()
 	return types
 end
 
+function MultipleCampaignPresetsPresent()
+	local t = table.keys(CampaignPresets)
+	return t and #t > 1
+end
+
 function StartNewGame()
 	EditorDeactivate()
 	local IGmain = GetDialog("InGameMenu")
@@ -1530,19 +1537,21 @@ function StartNewGame()
 		CloseDialog("InGameMenu")
 	end
 	local dlg = GetDialog("PreGameMenu")
+	local multipleCampaignPresets = MultipleCampaignPresetsPresent()
+	
 	if not dlg then
 		CreateRealTimeThread(function()
 			ResetGameSession()
 			local dlg = OpenDialog("PreGameMenu")
 			dlg:SetMode("NewGame")
 			dlg:ResolveId("idSubMenuTittle"):SetText(T(831335436250, "NEW GAME"))
-			dlg:ResolveId("idSubContent"):SetMode("newgame")
+			dlg:ResolveId("idSubContent"):SetMode(multipleCampaignPresets and "newgame01" or "newgame02")
 			Msg("PreGameMenuOpen")
 		end)
 	elseif dlg.Mode ~= "NewGame" then
 		dlg:SetMode("NewGame")
 		dlg:ResolveId("idSubMenuTittle"):SetText(T(831335436250, "NEW GAME"))
-		dlg:ResolveId("idSubContent"):SetMode("newgame")
+		dlg:ResolveId("idSubContent"):SetMode(multipleCampaignPresets and "newgame01" or "newgame02")
 	end
 end
 
@@ -1573,8 +1582,7 @@ function ApplyNewGameOptions(newGameObj)
 			end
 		end
 		
-		SetForgivingModeOption()
-		SetActivePauseModeOption()
+		SetGameRulesOptions()
 		
 		--do not apply settings in multiplayer game as they are locked
 		if newGameObj["settings"] and not IsInMultiplayerGame() then

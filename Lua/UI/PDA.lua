@@ -1,7 +1,7 @@
 -- Super specific hack for the PDA screen where we want its children to be inside it,
 -- but the frame to be on the outside below specific children (DrawOnTop).
 DefineClass.PDAScreen = {
-	__parents = { "XFrame", "XAspectWindow" },
+	__parents = { "XImage", "XAspectWindow" },
 	vignette_image = "UI/PDA/pda_vignette",
 	vignette_image_id = false,
 	
@@ -78,7 +78,20 @@ function PDAScreen:SetLayoutSpace(x, y, width, height)
 	local scaleY = MulDivRound(height, 1000, 1080)
 	
 	for _, child in ipairs(self) do
-		child:SetOutsideScale(point(scaleX, scaleY))
+		if child.Id ~= "idDiode" then
+			child:SetOutsideScale(point(scaleX, scaleY))
+		else
+			-- pda image size, which the diode is cut from
+			local diodeScaleX = MulDivRound(width, 1000, 1900)
+			local diodeScaleY = MulDivRound(height, 1000, 990)
+			
+			-- diode image size 338x233 with two columns
+			local diodeWidth = MulDivRound(338 / 2, diodeScaleX, 1000)
+			local diodeHeight = MulDivRound(233, diodeScaleY, 1000)
+			
+			child:SetOutsideScale(point(1000, 1000))
+			child:SetBox(x, y, diodeWidth + 1, diodeHeight + 1)
+		end
 	end
 
 	self:SetBox(x, y, width, height)
@@ -103,7 +116,7 @@ function PDAScreen:Open()
 	}
 
 	self:TurnOnScreen()
-	XFrame.Open(self)
+	XImage.Open(self)
 end
 
 function PDAScreen:TurnOffScreen()
@@ -190,12 +203,12 @@ function PDAScreen:DrawChildren(clip_box)
 		UIL.ModifiersSetTop(topMod)
 
 		UIL.DrawFrame(self.vignette_image_id, node.idDisplay.box, self.Rows, self.Columns, self:GetRow(), self:GetColumn(),
-			self.FrameBox, not self.TileFrame, self.TransparentCenter, scaleX, scaleY, self.FlipX, self.FlipY)
+			empty_box, not self.TileFrame, self.TransparentCenter, scaleX, scaleY, self.FlipX, self.FlipY)
 	end
 
 	-- The PDA frame.
-	XFrame.DrawBackground(self)
-	XFrame.DrawContent(self)
+	XImage.DrawBackground(self)
+	XImage.DrawContent(self)
 
 	-- DrawOnTop windows. These are on top of the PDA frame. Stuff like the dog tags and other decoration.
 	for _, win in ipairs(self) do
@@ -213,7 +226,7 @@ function PDAScreen:DrawChildren(clip_box)
 			UIL.PushModifier(self.light_color_interp)
 		end
 		UIL.DrawFrame(self.light_image_id, self.box, self.Rows, self.Columns, self:GetRow(), self:GetColumn(),
-			self.FrameBox, not self.TileFrame, self.TransparentCenter, scaleX, scaleY, self.FlipX, self.FlipY)
+			empty_box, not self.TileFrame, self.TransparentCenter, scaleX, scaleY, self.FlipX, self.FlipY)
 		if topMod then
 			UIL.ModifiersSetTop(topMod)
 		end
@@ -244,7 +257,7 @@ function PDAScreen:GetMouseTarget(pt)
 		if tar then return tar, cur end
 	end
 
-	local mT, mC = XFrame.GetMouseTarget(self, pt)
+	local mT, mC = XImage.GetMouseTarget(self, pt)
 	if mT then return mT, mC end
 end
 
@@ -1784,9 +1797,9 @@ end
 function SquadsAndMercsClass:SelectSquad(squad, skipRespawn)
 	local old_squad = self.selected_squad or (g_CurrentSquad and gv_Squads[g_CurrentSquad])
 	
-	-- Ensure the squad with the selected units is current, in exploration.
+	-- Ensure the squad with the selected units is current, in tactical view.
 	if not g_SatelliteUI then
-		UpdateSquad()
+		EnsureCurrentSquad()
 	end
 	
 	if not squad then
@@ -2582,11 +2595,6 @@ if FirstLoad then
 	g_PDALoadingFlavor = true
 end
 
-PDADiodeImages = {
-	[true] = "UI/PDA/T_PDA_Frame_2",
-	[false] = "UI/PDA/T_PDA_Frame"
-}
-
 function PDAClass:IsPDALoadingAnim()
 	local popupHost = self:ResolveId("idDisplayPopupHost")
 	if popupHost.idLoadingBar then
@@ -2608,12 +2616,10 @@ function PDAClass:StartPDALoading(callback, text)
 	loadingBar.idText:SetText(text or T(465707401297, "LOADING"))
 	loadingBar:Open()
 	
-	local diod = self.idPDAScreen
-	local diodOn = false
-	local diodFreq, diodFreqTrack = 150, 0
+	local diod = self.idDiode
 
 	loadingBar.OnDelete = function()
-		diod:SetImage(PDADiodeImages[false])
+		diod:SetAnimate(false)
 	end
 
 	local func = function()
@@ -2621,18 +2627,15 @@ function PDAClass:StartPDALoading(callback, text)
 		local increment = 10 -- animation regularity.
 		local currentTime = 0
 		loadingBar:UpdateAnim(0)
+		diod:SetAnimate(true)
+		diod:SetFPS(6)
 		while currentTime < totalTime do
 			Sleep(increment)
 			currentTime = currentTime + increment
 			loadingBar:UpdateAnim(MulDivRound(currentTime, 1000, totalTime))
-
-			local diodT = currentTime / diodFreq
-			if diodT > diodFreqTrack then
-				diodOn = not diodOn
-				diodFreqTrack = diodT;
-			end
-			diod:SetImage(PDADiodeImages[diodOn])
 		end
+		diod:SetAnimate(false)
+		
 		loadingBar:UpdateAnim(1000)
 		if loadingBar.window_state ~= "destroying" then
 			loadingBar:Close()

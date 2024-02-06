@@ -11,7 +11,9 @@ DefineClass.Spiritual = {
 		PlaceObj('UnitReaction', {
 			Event = "OnCalcChanceToHit",
 			Handler = function (self, target, attacker, action, attack_target, weapon1, weapon2, data)
-				data.min = self:ResolveValue("minAccuracy")
+				if target == attacker then
+					data.min = self:ResolveValue("minAccuracy")
+				end
 			end,
 		}),
 	},

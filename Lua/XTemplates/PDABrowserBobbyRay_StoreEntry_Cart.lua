@@ -17,10 +17,11 @@ PlaceObj('XTemplate', {
 			'name', "Rebuild(self)",
 			'func', function (self)
 				local item = self.parent:GetContext()
-				local stock = BobbyRayStoreGetEntry(item) and BobbyRayStoreGetEntry(item).Stock or 0
+				local br_item = BobbyRayStoreGetEntry(item)
+				local stock = br_item and br_item.Stock or 0
 				local cart_number = (BobbyRayCartGetUnits()[item.id] or 0)
 				stock = stock - cart_number
-				local cost = BobbyRayStoreGetEntry(item) and BobbyRayStoreGetEntry(item).Cost or 0
+				local cost = BobbyRayStoreGetEntryCost(item)
 				local stack = item.ShopStackSize or 1
 				
 				-- money

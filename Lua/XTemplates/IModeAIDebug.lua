@@ -4,7 +4,7 @@ PlaceObj('XTemplate', {
 	group = "Zulu Dev",
 	id = "IModeAIDebug",
 	PlaceObj('XTemplateWindow', {
-		'__condition', function (parent, context) return Platform.developer end,
+		'__condition', function (parent, context) return Platform.developer or Platform.debug end,
 		'__class', "IModeAIDebug",
 		'OnContextUpdate', function (self, context, ...)
 			self:ResolveId("idCommonUnitControl"):SetContext(Selection, true)

@@ -965,6 +965,16 @@ PlaceObj('QuestsDef', {
 					end,
 				}),
 				PlaceObj('QuestIsVariableBool', {
+					QuestId = "PaixDisease",
+					Vars = set({
+	Failed = false,
+}),
+					__eval = function ()
+						local quest = gv_Quests['PaixDisease'] or QuestGetState('PaixDisease')
+						return not quest.Failed
+					end,
+				}),
+				PlaceObj('QuestIsVariableBool', {
 					Condition = "or",
 					QuestId = "PaixDisease",
 					Vars = set( "doctordead" ),
@@ -1121,11 +1131,12 @@ PlaceObj('QuestsDef', {
 	Completed = false,
 	attack = false,
 	doctordead = true,
+	foundpage = false,
 	townflip = false,
 }),
 					__eval = function ()
 						local quest = gv_Quests['PaixDisease'] or QuestGetState('PaixDisease')
-						return not quest.Completed and not quest.attack and quest.doctordead and not quest.townflip
+						return not quest.Completed and not quest.attack and quest.doctordead and not quest.foundpage and not quest.townflip
 					end,
 				}),
 			},

@@ -779,20 +779,21 @@ function AttachVisualItems(obj, attaches, crossfading, holster, avatar)
 		end
 		local parts = attach.parts
 		if parts then
+			local is_holstered = attach.equip_index ~= 1 and attach.equip_index ~= 2
 			if parts.Bipod and parts.Bipod:HasState("folded") then
-				local bipod_state = IsKindOf(obj, "Unit") and obj.stance == "Prone" and "idle" or "folded"
+				local bipod_state = not is_holstered and IsKindOf(obj, "Unit") and obj.stance == "Prone" and "idle" or "folded"
 				if parts.Bipod:GetStateText() ~= bipod_state then
 					parts.Bipod:SetState(bipod_state)
 				end
 			end
 			if parts.Under and parts.Under:HasState("folded") then
-				local bipod_state = IsKindOf(obj, "Unit") and obj.stance == "Prone" and "idle" or "folded"
+				local bipod_state = not is_holstered and IsKindOf(obj, "Unit") and obj.stance == "Prone" and "idle" or "folded"
 				if parts.Under:GetStateText() ~= bipod_state then
 					parts.Under:SetState(bipod_state)
 				end
 			end
 			if parts.Barrel and parts.Barrel:HasState("folded") then
-				local bipod_state = IsKindOf(obj, "Unit") and obj.stance == "Prone" and "idle" or "folded"
+				local bipod_state = not is_holstered and IsKindOf(obj, "Unit") and obj.stance == "Prone" and "idle" or "folded"
 				if parts.Barrel:GetStateText() ~= bipod_state then
 					parts.Barrel:SetState(bipod_state)
 				end
@@ -1558,6 +1559,9 @@ function Unit:GetAimResults()
 	if not action then
 		return
 	elseif not self.aim_results then
+		-- check for valid aim target
+		local target = self.aim_action_params and self.aim_action_params.target
+		if not IsPoint(target) and not IsValid(target) then return end
 		self.aim_results, self.aim_attack_args = action:GetActionResults(self, self.aim_action_params)
 	end
 	return self.aim_attack_args, self.aim_results
@@ -2269,26 +2273,46 @@ function Unit:FallDown(pos, cower)
 			self:InterruptPreparedAttack()
 		end
 		self:LeaveEmplacement(true)
-		if not self:IsDead() then
-			local base_idle = self:GetIdleBaseAnim()
-			if not IsAnimVariant(self:GetStateText(), base_idle) then
-				local anim = self:GetNearbyUniqueRandomAnim(base_idle)
-				self:SetState(anim)
+		local orientation_angle = self:GetOrientationAngle()
+		local stance = self:GetValidStance(self.stance, pos)
+		if self:IsDead() then
+			local norm = self:GetGroundOrientation(self, pos, orientation_angle)
+			self:SetOrientation(norm, orientation_angle, 300)
+			GravityFall(self, pos)
+		else
+			if stance == "Prone" then
+				orientation_angle = FindProneAngle(self, pos, orientation_angle, 60*60)
+				local norm = self:GetGroundOrientation(self, pos, orientation_angle)
+				self:SetOrientation(norm, orientation_angle, 300)
+			else
+				self:SetOrientation(axis_z, orientation_angle, 300)
+			end
+			local anim_style = GetAnimationStyle(self, self.cur_idle_style)
+			local base_idle = anim_style and anim_style:GetMainAnim() or self:GetIdleBaseAnim(stance)
+			self:SetRandomAnim(base_idle)
+			self:SetTargetDummy(pos, orientation_angle, base_idle, 0, stance)
+			GravityFall(self, pos)
+			local floors = DivCeil(height, 4 * const.SlabSizeZ)
+			local damage = 1 + self:Random(floors * 10)
+			local floating_text = T{443902454775, "<damage> (High Fall)", damage = damage}
+			self:TakeDirectDamage(damage, floating_text)
+			if not self:IsDead() then
+				if stance ~= self.stance then
+					self:DoChangeStance(stance)
+				end
+				self:UninterruptableGoto(self:GetPos())
 			end
 		end
-		self:SetTargetDummyFromPos(pos)
-		GravityFall(self, pos)
-		local floors = DivCeil(height, 4 * const.SlabSizeZ)
-		local damage = 1 + self:Random(floors * 10)
-		local floating_text = T{443902454775, "<damage> (High Fall)", damage = damage}
-		self:TakeDirectDamage(damage, floating_text)
-		if not self:IsDead() then
-			self:UninterruptableGoto(self:GetPos())
-		end
 	elseif pos ~= myPos then
+		if self:HasPreparedAttack() then
+			self:InterruptPreparedAttack()
+		end
 		self:LeaveEmplacement()
 		if not self:IsDead() then
-			self:UpdateMoveAnim()
+			local stance = self:GetValidStance(self.stance, pos)
+			if stance ~= self.stance then
+				self:DoChangeStance(stance)
+			end
 			self:UninterruptableGoto(pos, true)
 		end
 	end

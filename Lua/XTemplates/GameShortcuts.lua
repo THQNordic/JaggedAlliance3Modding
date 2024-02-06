@@ -36,7 +36,7 @@ PlaceObj('XTemplate', {
 		'ActionIcon', "CommonAssets/UI/Menu/default.tga",
 		'ActionShortcut', "-~",
 		'OnAction', function (self, host, source, ...)
-			if Platform.developer and not Platform.ged and AreCheatsEnabled() then
+			if not Platform.ged and (Platform.developer and AreCheatsEnabled() or AreModdingToolsActive()) then
 				if IsEditorActive() then
 					XShortcutsTarget:FocusSearch()
 				else
@@ -58,7 +58,7 @@ PlaceObj('XTemplate', {
 				ShowConsole(true)
 			end
 		end,
-		'__condition', function (parent, context) return AreCheatsEnabled() or ConsoleEnabled or config.LuaDebugger end,
+		'__condition', function (parent, context) return AreCheatsEnabled() or ConsoleEnabled or config.EnableHaerald end,
 		'replace_matching_id', true,
 	}),
 	PlaceObj('XTemplateAction', {
@@ -381,18 +381,6 @@ PlaceObj('XTemplate', {
 			'replace_matching_id', true,
 		}),
 		PlaceObj('XTemplateAction', {
-			'comment', "rendering stats markers debug",
-			'RolloverText', "Rendering stats markers debug",
-			'ActionId', "StatsMarkersDebug",
-			'ActionSortKey', "1170",
-			'ActionTranslate', false,
-			'ActionName', "Stats Markers Debug",
-			'ActionShortcut', "Alt-Shift-R",
-			'OnAction', function (self, host, source, ...)
-				StatsMarkerDebugNext()
-			end,
-		}),
-		PlaceObj('XTemplateAction', {
 			'comment', "Level Up",
 			'RolloverText', "Level up selected unit",
 			'ActionId', "LevelUp",
@@ -641,17 +629,6 @@ PlaceObj('XTemplate', {
 			'replace_matching_id', true,
 		}),
 		PlaceObj('XTemplateAction', {
-			'RolloverText', "Reveals Intel for current sector",
-			'ActionId', "ResetBants",
-			'ActionSortKey', "1360",
-			'ActionTranslate', false,
-			'ActionName', "Reset Banter Markers",
-			'OnAction', function (self, host, source, ...)
-				CheatResetBanterMarkers()
-			end,
-			'replace_matching_id', true,
-		}),
-		PlaceObj('XTemplateAction', {
 			'RolloverText', "Start recording a game replay or save the current replay if recording.",
 			'ActionId', "RecordReplay",
 			'ActionSortKey', "1370",
@@ -752,13 +729,13 @@ PlaceObj('XTemplate', {
 			'__condition', function (parent, context) return Platform.developer end,
 		}),
 		PlaceObj('XTemplateAction', {
-			'comment', "Show Grid Marker Areas (Alt-Shift-G)",
-			'RolloverText', "Show Grid Marker Areas (Alt-Shift-G)",
+			'comment', "Show grid marker areas (Alt-Shift-G)",
+			'RolloverText', "Show grid marker areas (Alt-Shift-G)",
 			'ActionId', "E_ShowGridMarkersAreas",
 			'ActionMode', "Editor",
 			'ActionSortKey', "1410",
 			'ActionTranslate', false,
-			'ActionIcon', "CommonAssets/UI/Editor/Tools/Smooth",
+			'ActionIcon', "CommonAssets/UI/Editor/Tools/ShowGridMarkerAreas",
 			'ActionToolbar', "EditorStatusbar",
 			'ActionShortcut', "Alt-Shift-G",
 			'ActionToggle', true,
@@ -783,7 +760,7 @@ PlaceObj('XTemplate', {
 		'OnAction', function (self, host, source, ...)
 			VisualizeCMTCube()
 		end,
-		'__condition', function (parent, context) return Platform.developer end,
+		'__condition', function (parent, context) return Platform.developer or Platform.debug end,
 	}),
 	PlaceObj('XTemplateAction', {
 		'comment', "Toggle Blacklisted Entities Visualization",
@@ -1001,7 +978,7 @@ PlaceObj('XTemplate', {
 		'ActionName', "Scripting",
 		'ActionMenubar', "DevMenu",
 		'OnActionEffect', "popup",
-		'__condition', function (parent, context) return Platform.developer end,
+		'__condition', function (parent, context) return Platform.developer or Platform.debug end,
 	}, {
 		PlaceObj('XTemplateAction', {
 			'ActionId', "GridMarkersEditor",
@@ -1041,7 +1018,7 @@ PlaceObj('XTemplate', {
 		'ActionName', T(856201102974, --[[XTemplate GameShortcuts ActionName]] "Characters"),
 		'ActionMenubar', "DevMenu",
 		'OnActionEffect', "popup",
-		'__condition', function (parent, context) return Platform.developer end,
+		'__condition', function (parent, context) return Platform.developer or Platform.debug end,
 	}, {
 		PlaceObj('XTemplateAction', {
 			'ActionId', "AnimMetadataEditor",
@@ -1559,7 +1536,13 @@ PlaceObj('XTemplate', {
 					return "disabled"
 				end
 				if not AnyPlayerSquads() then return "disabled" end
-				return not GetDialog("PDADialog") and not GetMercInventoryDlg() and "enabled" or "disabled"
+				
+				local igi = GetInGameInterfaceModeDlg()
+				if IsKindOf(igi, "IModeDeployment") then return "disabled" end
+				if GetDialog("PDADialog") then return "disabled" end
+				if GetMercInventoryDlg() then return "disabled" end
+				
+				return "enabled"
 			end,
 			'OnAction', function (self, host, source, ...)
 				local pdaDiag = GetDialog("PDADialogSatellite")
@@ -1621,7 +1604,7 @@ PlaceObj('XTemplate', {
 		'ActionName', T(920262040504, --[[XTemplate GameShortcuts ActionName]] "Combat"),
 		'ActionMenubar', "DevMenu",
 		'OnActionEffect', "popup",
-		'__condition', function (parent, context) return Platform.developer end,
+		'__condition', function (parent, context) return Platform.developer or Platform.debug end,
 	}, {
 		PlaceObj('XTemplateAction', {
 			'comment', "Shows All Debug Covers",
@@ -1715,7 +1698,6 @@ PlaceObj('XTemplate', {
 			'ActionName', "Toggle Grenade Volumes",
 			'ActionIcon', "CommonAssets/UI/Icons/bill currency invoice money payment.png",
 			'OnAction', function (self, host, source, ...)
-				if not Platform.developer then return end
 				local value = not (rawget(_G, "g_ShowGrenadeVolume") or false)
 				rawset(_G, "g_ShowGrenadeVolume", value)
 			end,
@@ -1805,7 +1787,9 @@ PlaceObj('XTemplate', {
 			'OnAction', function (self, host, source, ...)
 				DbgCycleEnvSoundsVis()
 			end,
-			'__condition', function (parent, context) return Platform.developer end,
+			'__condition', function (parent, context)
+				return true
+			end,
 			'replace_matching_id', true,
 		}),
 		PlaceObj('XTemplateAction', {
@@ -1828,7 +1812,6 @@ PlaceObj('XTemplate', {
 			'ActionTranslate', false,
 			'ActionName', "Toggle Target Dummies",
 			'OnAction', function (self, host, source, ...)
-				if not Platform.developer then return end
 				DbgDrawToggleTargetDummies()
 			end,
 			'replace_matching_id', true,
@@ -1840,7 +1823,6 @@ PlaceObj('XTemplate', {
 			'ActionTranslate', false,
 			'ActionName', "Toggle LOS Lines",
 			'OnAction', function (self, host, source, ...)
-				if not Platform.developer then return end
 				DbgDrawToggleLOS()
 			end,
 			'replace_matching_id', true,
@@ -1853,7 +1835,6 @@ PlaceObj('XTemplate', {
 			'ActionName', "Toggle LOF Lines",
 			'ActionIcon', "CommonAssets/UI/Icons/bill currency invoice money payment.png",
 			'OnAction', function (self, host, source, ...)
-				if not Platform.developer then return end
 				DbgDrawToggleLOF()
 			end,
 			'replace_matching_id', true,
@@ -1866,7 +1847,6 @@ PlaceObj('XTemplate', {
 			'ActionName', "Toggle LOF Eye Lines",
 			'ActionIcon', "CommonAssets/UI/Icons/bill currency invoice money payment.png",
 			'OnAction', function (self, host, source, ...)
-				if not Platform.developer then return end
 				s_DbgDrawLOF_EYE = not s_DbgDrawLOF_EYE
 				DbgDrawToggleLOF()
 				if not s_DbgDrawLOF then
@@ -1897,7 +1877,6 @@ PlaceObj('XTemplate', {
 			'ActionName', "Cycle Through Experimental Line of Sight Modes",
 			'ActionIcon', "CommonAssets/UI/Icons/bill currency invoice money payment.png",
 			'OnAction', function (self, host, source, ...)
-				if not Platform.developer then return end
 				DbgCycleExperimentalLOS()
 			end,
 			'replace_matching_id', true,
@@ -1911,7 +1890,6 @@ PlaceObj('XTemplate', {
 			'ActionName', "Toggle AP Costs",
 			'ActionIcon', "CommonAssets/UI/Icons/bill currency invoice money payment.png",
 			'OnAction', function (self, host, source, ...)
-				if not Platform.developer then return end
 				local value = SelectedObj and not rawget(_G, "g_APCostsShown") or false
 				rawset(_G, "g_APCostsShown", value)
 				if value then
@@ -2161,7 +2139,7 @@ PlaceObj('XTemplate', {
 				NetSyncEvent("EndTurn", netUniqueId)
 			end,
 			'IgnoreRepeated', true,
-			'__condition', function (parent, context) return Platform.developer end,
+			'__condition', function (parent, context) return Platform.developer or AreModdingToolsActive() end,
 		}),
 		PlaceObj('XTemplateAction', {
 			'ActionId', "CombatFastForward",
@@ -2221,7 +2199,7 @@ PlaceObj('XTemplate', {
 				NetSyncEvent("EndTurn", netUniqueId)
 			end,
 			'IgnoreRepeated', true,
-			'__condition', function (parent, context) return not Platform.developer end,
+			'__condition', function (parent, context) return not Platform.developer and not AreModdingToolsActive() end,
 		}),
 		PlaceObj('XTemplateAction', {
 			'ActionId', "actionAttackAim",
@@ -2306,7 +2284,7 @@ PlaceObj('XTemplate', {
 				return IsActivePauseAvailable() and "enabled" or "disabled"
 			end,
 			'OnAction', function (self, host, source, ...)
-				NetSyncEvent("ActivePause", netInGame and netUniqueId)
+				NetSyncEvent("ActivePause", not IsActivePaused(), netInGame and netUniqueId)
 			end,
 			'IgnoreRepeated', true,
 		}),
@@ -2615,7 +2593,7 @@ PlaceObj('XTemplate', {
 			'__condition', function (parent, context)
 				if Platform.steam then
 					local beta, branch_name = SteamGetCurrentBetaName()
-					if branch_name:find("lqa") then
+					if branch_name and branch_name:find("lqa") then
 						return true
 					end
 				end
@@ -2751,7 +2729,7 @@ PlaceObj('XTemplate', {
 			'ActionMouseBindable', false,
 			'ActionBindSingleKey', true,
 			'ActionState', function (self, host)
-				return Selection and #Selection > 0 and "enabled" or "disabled"
+				return (Selection and #Selection > 0 and not gv_DeploymentStarted) and "enabled" or "disabled"
 			end,
 			'OnAction', function (self, host, source, ...)
 				local igi = GetInGameInterfaceModeDlg()
@@ -2772,7 +2750,7 @@ PlaceObj('XTemplate', {
 			'ActionGamepad', "ButtonX",
 			'ActionMouseBindable', false,
 			'ActionState', function (self, host)
-				if not Selection or #Selection == 0 then return "disabled" end
+				if (not Selection or #Selection == 0 or gv_DeploymentStarted) then return "disabled" end
 				
 				local igi = GetInGameInterfaceModeDlg()
 				local IsInFreeAim = IsKindOf(igi, "IModeCombatFreeAim")
@@ -3196,7 +3174,7 @@ PlaceObj('XTemplate', {
 					else
 						SetupInitialCamera()
 					end
-				else
+				elseif not netInGame then
 					cameraFly.Activate(1)
 					if rawget(_G, "GetPlayerControlObj") and GetPlayerControlObj() then
 						PlayerControl_RecalcActive(true)
@@ -3285,6 +3263,7 @@ PlaceObj('XTemplate', {
 			'ActionGamepad', "+ButtonA",
 			'ActionState', function (self, host)
 				if not GetUIStyleGamepad() then return "disabled" end
+				if GetGameBlockingLoadingScreen() then return "disabled" end
 				
 				local igi = GetInGameInterfaceModeDlg()
 				local enabled = IsKindOfClasses(igi, "IModeExploration", "IModeCombatBase", "IModeDeployment")
@@ -3307,14 +3286,16 @@ PlaceObj('XTemplate', {
 			'ActionId', "GamepadTeleport",
 			'ActionSortKey', "2430",
 			'ActionGamepad', "LeftTrigger-RightTrigger-ButtonA",
-			'OnAction', function (self, host, source, ...)
+			'ActionState', function (self, host)
 				if not GetUIStyleGamepad() then return "disabled" end
 				
+				return CheatEnabled("Teleport") and "enabled" or "disabled"
+			end,
+			'OnAction', function (self, host, source, ...)
 				local igi = GetInGameInterfaceModeDlg()
 				if not IsKindOf(igi, "GamepadUnitControl") then return end
 				CheatTeleportToCursor()
 			end,
-			'__condition', function (parent, context) return CheatEnabled("Teleport") end,
 		}),
 		PlaceObj('XTemplateAction', {
 			'ActionId', "CloseAreaAimCrosshair",
@@ -3623,7 +3604,7 @@ PlaceObj('XTemplate', {
 			QuickSave()
 		end,
 		'IgnoreRepeated', true,
-		'__condition', function (parent, context) return Platform.developer end,
+		'__condition', function (parent, context) return Platform.developer or AreModdingToolsActive() end,
 	}),
 	PlaceObj('XTemplateAction', {
 		'ActionId', "actionQuickSave",
@@ -3635,7 +3616,7 @@ PlaceObj('XTemplate', {
 			QuickSave()
 		end,
 		'IgnoreRepeated', true,
-		'__condition', function (parent, context) return not Platform.developer end,
+		'__condition', function (parent, context) return not Platform.developer and not AreModdingToolsActive() end,
 	}),
 	PlaceObj('XTemplateAction', {
 		'ActionId', "actionQuickLoad",
@@ -3647,7 +3628,7 @@ PlaceObj('XTemplate', {
 			QuickLoad()
 		end,
 		'IgnoreRepeated', true,
-		'__condition', function (parent, context) return Platform.developer end,
+		'__condition', function (parent, context) return Platform.developer or AreModdingToolsActive() end,
 	}),
 	PlaceObj('XTemplateAction', {
 		'ActionId', "actionQuickLoad",
@@ -3822,8 +3803,14 @@ PlaceObj('XTemplate', {
 				'ActionState', function (self, host)
 					local travelActionState = SatelliteCanTravelState()
 					if travelActionState ~= "enabled" then
-						return CanCancelSatelliteSquadTravel()
+						return travelActionState
 					end
+					
+					local cancelTravelActionState = CanCancelSatelliteSquadTravel()
+					if cancelTravelActionState ~= "enabled" then
+						return cancelTravelActionState
+					end
+					
 					return "enabled"
 				end,
 				'OnAction', function (self, host, source, ...)
@@ -4212,7 +4199,7 @@ PlaceObj('XTemplate', {
 		'ActionName', T(666895910911, --[[XTemplate GameShortcuts ActionName]] "Animation"),
 		'ActionMenubar', "DevMenu",
 		'OnActionEffect', "popup",
-		'__condition', function (parent, context) return Platform.developer end,
+		'__condition', function (parent, context) return Platform.developer or Platform.debug end,
 	}, {
 		PlaceObj('XTemplateAction', {
 			'comment', "toggle RTS camera",

@@ -310,6 +310,7 @@ DefineClass.InventoryItemCompositeDef = {
 	EditorShortcut = "Ctrl-Alt-Y",
 	FilterClass = "InventoryFilter",
 	GlobalMap = "InventoryItemDefs",
+	Documentation = "Creates a new inventory item preset.",
 	
 	-- 'true' is much faster, but it doesn't call property setters & clears default properties upon saving
 	StoreAsTable = false,
@@ -320,6 +321,7 @@ DefineClass.InventoryItemCompositeDef = {
 DefineModItemCompositeObject("InventoryItemCompositeDef", {
 	EditorName = "Inventory item",
 	EditorSubmenu = "Item",
+	TestDescription = "Places the item inside the inventory of the selected merc."
 })
 
 if config.Mods then 
@@ -404,7 +406,7 @@ function PlaceInventoryItem(item_id, instance, ...)
 			obj:InitializeItemId()
 		end
 		
-		if #(obj.applied_modifiers or "") > 0 then
+		if next(obj.applied_modifiers) then
 			obj:ApplyModifiersList(obj.applied_modifiers)
 		end
 		
@@ -593,7 +595,7 @@ end
 function InventoryItem:UnregisterReactions(owner)
 	owner = owner or self.owner and ZuluReactionResolveUnitActorObj(self.owner)
 	if owner then
-		owner:AddReactions(self, self.unit_reactions)
+		owner:RemoveReactions(self)
 	end
 end
 
@@ -1044,6 +1046,9 @@ function Inventory:AddItem(slot_name, item, left, top, local_execution)
 		self[slot_name] = slot_items
 	end
 
+	if item.class == "Parts" then
+		UpdateWeaponModificationPartsCounter()
+	end
 	--ObjModified(self)
 	return pos, reason
 end
@@ -1812,7 +1817,7 @@ function RepairItems_RemoveRepairedItems(units, synced)
 		for i = #repair_queue, 1, -1 do
 			local items_data = repair_queue[i]
 			local itm = SectorOperationRepairItems_GetItemFromData(items_data)
-			if unit_data.session_id==itm.owner then
+			if itm and unit_data.session_id==itm.owner then
 				table.remove_value(repair_queue,"id", itm.id)
 			end
 		end		
@@ -2702,6 +2707,7 @@ function ScrapItem(inventory, slot_name, item, amount, squadBag, squadId)
 	end
 	
 	ObjModified("inventory tabs")
+	UpdateWeaponModificationPartsCounter()
 end
 
 function MulDivScaled(a,b,c,scale)
@@ -2798,6 +2804,9 @@ function UnpackItem(inventory, slot_name, item, amount)
 		CombatLog("debug", Untranslated("Unpack item: unpacking from weird container"))
 		return
 	end
+
+	local items = {}
+	lootDef:GenerateLoot(inventory, {}, InteractionRand(nil, "UnpackItem"), items)
 	
 	local putItemsHere = false
 	if gv_SatelliteView then
@@ -2810,15 +2819,12 @@ function UnpackItem(inventory, slot_name, item, amount)
 			putItemsHere = GetSectorInventory(sectorId)
 		end
 	else
-		putItemsHere = GetDropContainer(inventory)
+		putItemsHere = inventory
 	end
 	if not putItemsHere then
 		CombatLog("debug", Untranslated("Unpack item: Nowhere to put?"))
 		return
 	end
-
-	local items = {}
-	lootDef:GenerateLoot(inventory, {}, InteractionRand(nil, "UnpackItem"), items)
 	
 	for i, item in ipairs(items) do
 		local added = putItemsHere:AddItem("Inventory", item)
@@ -2829,6 +2835,16 @@ function UnpackItem(inventory, slot_name, item, amount)
 			})
 		else
 			CombatLog("important", T{455452587774, "Unpacked <itemDisplayName>", itemDisplayName = item.DisplayName})
+		end
+
+		-- Item dropped on the ground because no space in tactical view
+		if not added and not gv_SatelliteView then
+			local unit = inventory
+			local amount = item.Amount or 1
+			CombatLog("important", T{740183432105, "  Inventory full. <amount><em><item></em> dropped by <name>",
+				amount = amount>1 and Untranslated(amount.." x ") or "", item = amount>1 and item.DisplayNamePlural or item.DisplayName, 
+				name = unit:GetDisplayName()
+			})
 		end
 	end
 	
@@ -3026,12 +3042,14 @@ function NetSyncEvents.InventoryTakeAllNet(playerId, net_units, net_containers)
 		end, units)
 	end
 	if is_local_player then
-		if itemsNonTakenCount <= 0 and not sector_stash then
-			local dlg = GetDialog("FullscreenGameDialogs")
-			if dlg then
-				dlg:SetMode("empty")
-				dlg:Close()
-			end
+		if itemsNonTakenCount <= 0 then
+			if not sector_stash then
+				local dlg = GetDialog("FullscreenGameDialogs")
+				if dlg then
+					dlg:SetMode("empty")
+					dlg:Close()
+				end
+			end	
 		else
 			CombatLog("important", T(928914188428, "The inventory of the nearby mercs is full"))
 		end
@@ -3202,7 +3220,7 @@ function InvContextMenuEquippable(context)
 		return false
 	end	
 	
-	return context.item:IsKindOfClasses("Grenade", "QuickSlotItem", "Armor") or -- Equippable
+	return context.item:IsKindOfClasses("Grenade", "QuickSlotItem", "Armor", "Firearm","MeleeWeapon","HeavyWeapon") or -- Equippable
 		not context.item:IsKindOfClasses("InventoryStack", "ToolItem", "Medicine", -- Equippable by omission lol
 												 "Valuables", "ValuableItemContainer", "QuestItem", "ConditionAndRepair",
 												 "MiscItem", "TrapDetonator", "ValuablesStack")

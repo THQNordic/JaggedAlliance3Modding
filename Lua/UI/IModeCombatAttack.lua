@@ -72,7 +72,52 @@ function IModeCombatAttack:OnMouseButtonDown(pt, button)
 	end
 end
 
+function IsThereBlackPlaneBetweenObjAndCam(obj, cam_pos)
+	local result = false
+	local eye = cam_pos or camera.GetEye()
+	local spots = GetCameraObscureSpots()
+	local spotPositions = {}
+	local qbbox = box()
+	qbbox = Extend(qbbox, eye)
+	for i, v in ipairs(spots) do
+		local startSpot = obj:GetSpotBeginIndex(v)
+		local endSpot = obj:GetSpotEndIndex(v)
+		if startSpot ~= -1 and endSpot ~= -1 then
+			for j = startSpot, endSpot do
+				local pnt = obj:GetSpotVisualPos(j)
+				table.insert(spotPositions, pnt)
+				qbbox = Extend(qbbox, pnt)
+			end
+		end
+	end
+	
+	if #spotPositions <= 0 then
+		return result
+	end
+	
+	MapForEach("map", "BlackPlaneBase", function(o, eye, spotPositions)
+		local bb = o:GetBBox()
+		if bb:sizez() == 0 then
+			bb = bb:grow(0, 0, 1) --this func doesn't see zero height bbs
+		end
+		
+		local intersection = IntersectRects(bb, qbbox) --only consider planes whos box intersects query space
+		if intersection:IsValid() then
+			for i, targetPos in ipairs(spotPositions) do
+				local rez, pt1, pt2 = IntersectSegmentBoxInt(eye, targetPos, bb)
+				if rez then
+					result = true
+					return "break"
+				end
+			end
+		end
+	end, eye, spotPositions)
+	
+	return result
+end
+
 function IModeCombatAttack:SetTarget(target, dontMove)
+	if not IsValid(target) then return end
 	if target == self.target then return true end
 
 	if self.context.changing_action then
@@ -134,14 +179,14 @@ function IModeCombatAttack:SetTarget(target, dontMove)
 				--hr.CameraTacClampToTerrain = false
 				local pause = false
 				if DoesTargetFitOnScreen(self, target) then
-					if IsVisibleFromCamera(target, true) then
+					if IsVisibleFromCamera(target, true) and not IsThereBlackPlaneBetweenObjAndCam(target) then
 						pause = true
 					end
 					camMoved = false
 					self.dont_return_camera_on_close = true
 				else
 					local t, cp, lap = SnapCameraToObj(target, true)
-					if cp and IsVisibleFromCamera(target, true, cp) then
+					if cp and IsVisibleFromCamera(target, true, cp) and not IsThereBlackPlaneBetweenObjAndCam(target, cp) then
 						pause = true
 					end
 				end

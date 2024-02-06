@@ -214,6 +214,11 @@ function OpenCharacterScreen(unit, subMode)
 		full_screen:Close()
 	end
 
+	local dlg = GetInGameInterfaceModeDlg()
+	if IsKindOf(dlg, "IModeCombatAttackBase") then
+		SetInGameInterfaceMode(g_Combat and "IModeCombatMovement" or "IModeExploration", {suppress_camera_init = true})
+	end
+
 	local pda = GetDialog("PDADialog")
 	local mode_param = { browser_page = "evaluation", sub_page = subMode }
 	if IsMerc(unit) then

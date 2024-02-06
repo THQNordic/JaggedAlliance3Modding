@@ -1435,7 +1435,7 @@ DefineConst{
 DefineConst{
 	Comment = "In millisec, the time to display new quest notes in the corner menu before hiding them.",
 	id = "NewQuestShowTime",
-	value = 7000,
+	value = 10000,
 }
 DefineConst{
 	id = "RequiredPerksForGold",

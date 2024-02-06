@@ -217,7 +217,7 @@ function Targeting_CombatMove(dialog, blackboard, command, pt)
 	dialog:UpdateContoursFX(show_contours)
 	
 	-- Debug
-	if Platform.developer and rawget(_G, "g_APCostsShown") and g_Combat then
+	if (Platform.developer or Platform.debug) and rawget(_G, "g_APCostsShown") and g_Combat then
 		DbgDrawCombatNodes(combatPath)
 	end
 	

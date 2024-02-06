@@ -2,7 +2,7 @@ function CanOpenPhotoMode()
 	if gv_SatelliteView then return "disabled" end
 	if GetDialog("ConversationDialog") then return "disabled" end
 	if GetDialog("ModifyWeaponDlg") then return "disabled" end
-	if GetDialog("CoopMercsManagement") then return "disabled" end
+	if netInGame then return "disabled" end
 	return "enabled"
 end
 

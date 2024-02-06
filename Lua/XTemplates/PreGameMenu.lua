@@ -142,22 +142,30 @@ PlaceObj('XTemplate', {
 						if GetLoadingScreenDialog("noAccStorage") then
 							return
 						end
+						local newGameCampaignMode
 						if not Game and not GetPreGameMainMenu() then
 							MultiplayerLobbySetUI("multiplayer")
 						else
 							local mp = GetMultiplayerLobbyDialog()
-							if not mp or (mp:ResolveId("idSubContent").Mode ~= "multiplayer_guest" and
-										mp:ResolveId("idSubContent").Mode ~= "multiplayer_host") then
+							if not mp then
+								local dlg = GetDialog(self.host)
+								local subMenuDlg = dlg and dlg.idSubContent
+								newGameCampaignMode = subMenuDlg and GetDialogMode(subMenuDlg)
+								newGameCampaignMode = newGameCampaignMode and newGameCampaignMode == "newgame01"
+							end
+							
+							if not newGameCampaignMode and (not mp or (mp:ResolveId("idSubContent").Mode ~= "multiplayer_guest" and
+									mp:ResolveId("idSubContent").Mode ~= "multiplayer_host")) then
 								if host.isMMFocused or not GetUIStyleGamepad() then
 									MultiplayerLobbySetUI("empty", "unlist")
 								else
-										local gameList = host:ResolveId("idSubMenu"):ResolveId("idScrollArea")
-										gameList:SetSelection(false)
+									local gameList = host:ResolveId("idSubMenu"):ResolveId("idScrollArea")
+									gameList:SetSelection(false)
 								
-										local list = host:ResolveId("idMainMenuButtonsContent"):ResolveId("idList")
-										list:SetFocus(true)
-										list:SelectFirstValidItem()
-										host.isMMFocused = true
+									local list = host:ResolveId("idMainMenuButtonsContent"):ResolveId("idList")
+									list:SetFocus(true)
+									list:SelectFirstValidItem()
+									host.isMMFocused = true
 								end
 							else
 								MultiplayerLobbySetUI("multiplayer")

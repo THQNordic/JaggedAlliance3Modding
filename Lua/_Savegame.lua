@@ -13,13 +13,13 @@ function DbgToggleGameSessionExport()
 	s_GameSessionExport = not s_GameSessionExport
 end
 
-function NetSaveGameRequest(name, lastSave, overwrite)
-	SaveGameParams = {name = name, lastSave = lastSave, overwrite = overwrite}
+function NetSaveGameRequest(displayname, lastSave, overwrite)
+	SaveGameParams = {displayname = displayname, lastSave = lastSave, overwrite = overwrite}
 	NetSyncEvent("SaveGameRequest")
 end
 
-function SaveLoadObject:DoSavegame(name, lastSave, overwrite)
-	return NetSaveGameRequest(name, lastSave, overwrite)
+function SaveLoadObject:DoSavegame(displayname, lastSave, overwrite)
+	return NetSaveGameRequest(displayname, lastSave, overwrite)
 end
 
 function NetSyncEvents.ZuluGameLoaded(file_name, lua_revision)
@@ -62,18 +62,18 @@ end
 function MPSaveGame()
 	if not next(SaveGameParams) then return false end
 	CreateRealTimeThread(function(SaveGameParams)
-		if SaveGameParams.name then
+		if SaveGameParams.displayname then
 			local parent = GetPreGameMainMenu() or GetInGameMainMenu()
 			-- We request the savegame as "silent" meaning without a loading screen
 			-- to prevent them from being screenshotted in satellite mode.
 			-- We apply our own loading screen (with the same id) in the game specific save function.
 			local err = SaveGameParams.overwrite and DeleteGame(SaveGameParams.lastSave.savename)
 			if not err or err == "File Not Found" then
-				err = SaveGame(SaveGameParams.name, { silent = true })
+				err = SaveGame(SaveGameParams.displayname, { silent = true })
 			end
 			
 			if err and err ~= "File Not Found" then
-				CreateErrorMessageBox(err, "savegame", nil, parent, {savename = T{129666099950, '"<name>"', name = Untranslated(SaveGameParams.name)}, error_code = Untranslated(err)})
+				CreateErrorMessageBox(err, "savegame", nil, parent, {savename = T{129666099950, '"<name>"', name = Untranslated(SaveGameParams.displayname)}, error_code = Untranslated(err)})
 			else
 				CloseMenuDialogs()
 			end
@@ -450,7 +450,7 @@ function GetSaveGamesGrouped(saveObject, filter, newSave)
 	if (filter or "") ~= "" then
 		matched = table.ifilter(matched, function(idx, save)
 			local savemeta = save.metadata
-			return string.find_lower(savemeta.savename or "", filter)
+			return string.find_lower(savemeta.displayname or "", filter)
 		end)
 	end
 	
@@ -504,12 +504,12 @@ function GetSaveGamesGrouped(saveObject, filter, newSave)
 		save.metadata.playtime = GetCurrentPlaytime()
 		local sameNameCounter = 1 
 		for _, save in ipairs(saveObject.items) do
-			if string.match(save.savename, "NEW SAVE.*") then
+			if string.match(save.metadata.displayname:lower(), "new save.*") then
 				sameNameCounter = sameNameCounter + 1
 			end
 		end
-		save.metadata.savename = _InternalTranslate(T{999214427188, "NEW SAVE<u(idx)>", idx = sameNameCounter > 1 and "(" .. sameNameCounter .. ")" or ""})
-		save.savename = save.metadata.savename
+		save.metadata.displayname = _InternalTranslate(T{999214427188, "NEW SAVE<u(idx)>", idx = sameNameCounter > 1 and "(" .. sameNameCounter .. ")" or ""})
+		save.text = save.metadata.displayname
 		local playthrough = playthroughs[gameId] or playthroughs["Dev"]
 		if not playthrough then
 			playthroughs[gameId] = { id = gameId, displayName = Game.testModGame and "Mod Tests" or save.metadata.playthrough_name, saves = {} }
@@ -521,8 +521,8 @@ function GetSaveGamesGrouped(saveObject, filter, newSave)
 	
 	for i, playthrough in ipairs(playthroughs) do
 		table.sort(playthrough.saves, function(a, b)
-			local aIsTest = string.find(a.metadata.savename, "%[TS%]")
-			local bIsTest = string.find(b.metadata.savename, "%[TS%]")
+			local aIsTest = string.find(a.metadata.displayname, "%[TS%]")
+			local bIsTest = string.find(b.metadata.displayname, "%[TS%]")
 			if aIsTest and bIsTest or not (aIsTest or bIsTest) or a.newSave or b.newSave then
 				return a.metadata.timestamp > b.metadata.timestamp
 			end
@@ -533,7 +533,6 @@ function GetSaveGamesGrouped(saveObject, filter, newSave)
 		local latestSave = playthrough.saves[1]
 		playthrough.time_end = latestSave.metadata.timestamp
 		playthrough.playtime = latestSave.metadata.playtime
-		playthrough.last_save_name = latestSave.metadata.savename
 		
 		local oldestSave = playthrough.saves[#playthrough.saves]
 		playthrough.time_started = oldestSave.metadata.timestamp
@@ -745,16 +744,6 @@ function SaveLoadObject:Save(item, name)
 	end
 end
 
-function SavenameToName(savename)
-	local new_savename = savename:match("(.*)%.savegame%.sav$")
-	if not new_savename then return savename end
-	new_savename = new_savename:gsub("%+", " ")
-	new_savename = new_savename:gsub("%%(%d%d)", function(hex_code)
-		return string.char(tonumber("0x" .. hex_code))
-	end)
-	return new_savename
-end
-
 local function intToDate(numberDate)
 	local date = T(77, "Unknown")
 	if numberDate then
@@ -867,29 +856,20 @@ function ShowSavegameDescription(item, dialog)
 			local data = {}
 			local err
 			if item.newSave then
-				data = item.metadata
+				data = table.copy(item.metadata)
 				data.newSave = true
-				data.displayname = item.savename
 				--GetFullMetadata(g_SaveGameObj.items[1].metadata, "reload")
 			else
-				if not metadata then
-					-- new save
-					data.displayname = _InternalTranslate(T(4182, "<<< New Savegame >>>"))
-					data.timestamp = os.time()
-					data.playtime = GetCurrentPlaytime()
-					data.new_save = true
-					data.lua_revision = config.SupportedSavegameLuaRevision
+				assert(metadata, "Should not be here!")
+				
+				err = GetFullMetadata(metadata, "reload")
+				if metadata.corrupt then
+					data.corrupt = true
+					data.displayname = _InternalTranslate(T(6907, "Damaged savegame"))
+				elseif metadata.incompatible then
+					data.displayname = _InternalTranslate(T(8648, "Incompatible savegame"))
 				else
-					err = GetFullMetadata(metadata, "reload")
-					if metadata.corrupt then
-						data.corrupt = true
-						data.displayname = _InternalTranslate(T(6907, "Damaged savegame"))
-					elseif metadata.incompatible then
-						data.displayname = _InternalTranslate(T(8648, "Incompatible savegame"))
-					else
-						data = table.copy(metadata)
-						data.displayname = SavenameToName(item.savename)
-					end
+					data = table.copy(metadata)
 				end
 			end
 			
@@ -982,7 +962,7 @@ function SaveLoadObject:Delete(dlg, list)
 					LoadingScreenClose("idDeleteScreen", "delete savegame")
 				else
 					LoadingScreenClose("idDeleteScreen", "delete savegame")
-					CreateErrorMessageBox("", "deletegame", nil, dlg.desktop, {name = '"' .. Untranslated(SavenameToName(item.savename)) .. '"'})
+					CreateErrorMessageBox("", "deletegame", nil, dlg.desktop, {name = '"' .. Untranslated(item.text) .. '"'})
 				end
 			end
 		end, dlg, item, savename)
@@ -1046,6 +1026,30 @@ function SavegameSessionDataFixups.KalinkaV2(data, metadata, lua_ver)
 	UnitDataDefs.Kalinka = obj
 end
 
+function SavegameSessionDataFixups.StartingPerkStatusImmunities(data, metadata)
+	local unit_datas = table.get(data, "gvars", "gv_UnitData")
+	if not unit_datas then return end
+	
+	for unit_id, unit_data in pairs(unit_datas) do
+		if table.get(unit_data, "StatusEffects", "DieselPerk") then
+			table.set(unit_data, "StatusEffectImmunity", "Supressed", "DieselPerk", true)
+			table.set(unit_data, "StatusEffectImmunity", "Bleeding", "DieselPerk", true)
+			table.set(unit_data, "StatusEffectImmunity", "Inaccurate", "DieselPerk", true)
+			table.set(unit_data, "StatusEffectImmunity", "Flanked", "DieselPerk", true)
+		end
+		if table.get(unit_data, "StatusEffects", "FoxPerk") then
+			table.set(unit_data, "StatusEffectImmunity", "SpentAP", "FoxPerk", true)
+		end
+		if table.get(unit_data, "StatusEffects", "ZombiePerk") then
+			table.set(unit_data, "StatusEffectImmunity", "Supressed", "ZombiePerk", true)
+			table.set(unit_data, "StatusEffectImmunity", "Bleeding", "ZombiePerk", true)
+			table.set(unit_data, "StatusEffectImmunity", "Inaccurate", "ZombiePerk", true)
+			table.set(unit_data, "StatusEffectImmunity", "Flanked", "ZombiePerk", true)
+			table.set(unit_data, "StatusEffectImmunity", "SuppressionChangeStance", "ZombiePerk", true)
+		end
+	end
+end
+
 function SavegameSessionDataFixups.NewGameStartedProp(data, metadata, lua_ver)
 	if data.gvars.gv_Sectors and data.gvars.gv_Sectors.I1.reveal_allowed then
 		data.game.CampaignStarted = true
@@ -1101,17 +1105,16 @@ function SavegameSectorDataFixups.CameraOverviewFix(data, lua_revision)
 end
 
 function OverwriteSaveQuestion(saveObj)
-	local newName = g_SelectedSave.newSaveName or SavenameToName(g_SelectedSave.savename)
 	if g_SelectedSave.newSave then
-		saveObj:DoSavegame(newName)
+		saveObj:DoSavegame(g_SelectedSave.text)
 		WaitMsg("MPSaveGameDone")	
 	else
 		if WaitQuestion(terminal.desktop,
 			T(824112417429, "Warning"),
-			T{883071764117, "Are you sure you want to overwrite <savename>?", savename = '"' .. Untranslated(SavenameToName(g_SelectedSave.savename) or g_SelectedSave.displayname) .. '"'},
+			T{883071764117, "Are you sure you want to overwrite <savename>?", savename = '"' .. Untranslated(g_SelectedSave.metadata.displayname) .. '"'},
 			T(689884995409, "Yes"),
 			T(782927325160, "No")) == "ok" then
-				saveObj:DoSavegame(newName, g_SelectedSave, true)
+				saveObj:DoSavegame(g_SelectedSave.text, g_SelectedSave, true)
 				WaitMsg("MPSaveGameDone")	
 		else
 			return "break"
@@ -1157,7 +1160,7 @@ function GameSpecificValidateSaveMetadata(metadata, broken, missing_mods_list)
 						WaitMessage(
 							dlg or terminal.desktop, 
 							Untranslated("Warning - Developer only pop-up"), 
-							Untranslated{"Some of the mods failed to download/enable and will be consider as ignored:\n\n<u(mod_list)>", mod_list = missing_mods_titles}, 
+							Untranslated{"Some of the mods failed to download/enable and will be considered as ignored:\n\n<u(mod_list)>", mod_list = missing_mods_titles}, 
 							Untranslated("Ok")
 						)
 					end
@@ -1177,6 +1180,34 @@ function GameSpecificValidateSaveMetadata(metadata, broken, missing_mods_list)
 				T(1000136, "OK"))
 			return "missing mods"
 		end
+	end
+	
+	local campaignAlteringModItems = {}
+	local savegameCampaign = metadata.campaign
+	for _, mod in ipairs(ModsLoaded) do
+		if not table.find(metadata.active_mods, "id", mod.id) then
+			mod:ForEachModItem(function(modItem)
+				if (IsKindOf(modItem, "ModItemSector") and modItem.campaignId == savegameCampaign) then
+					campaignAlteringModItems[#campaignAlteringModItems + 1] = string.format("<em>%s</em>: %s", modItem.EditorName, modItem.sectorId)
+				elseif IsKindOf(modItem, "ModItemMapPatch") or IsKindOf(modItem, "ModItemSetpiecePrg") then
+					campaignAlteringModItems[#campaignAlteringModItems + 1] = string.format("<em>%s</em>: %s", modItem.EditorName, modItem.Map)
+				elseif modItem.campaign and modItem.campaign == savegameCampaign then
+					campaignAlteringModItems[#campaignAlteringModItems + 1] = string.format("<em>%s</em>: %s", modItem.EditorName, modItem.id)
+				end
+			end)
+		end
+	end
+	
+	if next(campaignAlteringModItems) then
+		campaignAlteringModItems = table.concat(campaignAlteringModItems, "\n")
+		local campaign_warning = T{911634515545, "We recommend using mods that alter the game's campaign or maps in a <em>new playthrough</em>.\n\nThe following newly enabled mods include such changes:\n\n<mods>\n\n", mods = Untranslated(campaignAlteringModItems)}
+		local dlg = GetDialog("XZuluLoadingScreen")
+		WaitMessage(
+			dlg or terminal.desktop, 
+			T(1000599, "Warning"), 
+			campaign_warning, 
+			Untranslated("Ok")
+		)
 	end
 end
 

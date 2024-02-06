@@ -490,7 +490,7 @@ function Grenade:GetAttackResults(action, attack_args)
 			end
 		end
 
-		trajectory = self:GetTrajectory(attack_args, attack_pos, target_pos)
+		trajectory = self:GetTrajectory(attack_args, attack_pos, target_pos, mishap)
 		if #trajectory > 0 then
 			explosion_pos = trajectory[#trajectory].pos
 		end

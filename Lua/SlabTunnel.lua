@@ -931,7 +931,8 @@ function Door:SetDoorState(state, animated)
 	else
 		self.lockpickState = state
 	end
-
+	if self.is_destroyed then return end
+	
 	self.pass_through_state = state
 	local isOpening = state == "open"
 	DeleteThread(self.thread)
@@ -1207,7 +1208,7 @@ DefineClass.WindowTunnelObject = {
 			name = "Impassable",
 			editor = "bool",
 			default = true,
-			help = "This window is impassable due to being invulnerable and in an 'Ignore Zulu Visibility Logic' room.",
+			help = "This window is impassable due to being invulnerable and in an 'Ignore Visibility Logic' room.",
 			read_only = true,
 			dont_save = true,
 			no_edit = function(self) return not lWindowSpecialImpassable(self) end

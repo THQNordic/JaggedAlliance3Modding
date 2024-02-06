@@ -74,6 +74,7 @@ function IModeCombatBase:Open()
 	self.action_params = action and self.context.action_params or {}
 	IModeCommonUnitControl.Open(self)
 	local target = self.context and self.context.target
+
 	self:SetTarget(target)
 	self:ResetTargeting()
 	PrecalcLOFUI(attacker, action)
@@ -628,6 +629,22 @@ function RestoreDefaultMode(unit, next_unit)
 		return
 	elseif not GetInGameInterfaceModeDlg("IModeExploration") then
 		SetInGameInterfaceMode("IModeExploration", {suppress_camera_init = true})
+	end
+end
+
+function RestoreDefaultModeSimple()
+	if g_Combat then
+		if not GetInGameInterfaceModeDlg("IModeCombatMovement") then
+			SetInGameInterfaceMode("IModeCombatMovement")
+		end
+	elseif gv_Deployment then
+		if not GetInGameInterfaceModeDlg("IModeDeployment") then
+			SetInGameInterfaceMode("IModeDeployment")
+		end
+	else
+		if not GetInGameInterfaceModeDlg("IModeExploration") then
+			SetInGameInterfaceMode("IModeExploration", {suppress_camera_init = true})
+		end
 	end
 end
 

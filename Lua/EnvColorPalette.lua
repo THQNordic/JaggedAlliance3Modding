@@ -178,7 +178,8 @@ DefineClass.EnvironmentColorPalette = {
 		{ category = "Match (AND)", id = "lightmodels", editor = "preset_id_list",  preset_class = "LightmodelPreset", default = false, help = "Match if current lightmodel is any of the list. Leave empty to always match." },
 		{ category = "Match (AND)", id = "enabled", editor = "bool", default = true, help = "Should match?" },
 	},
-
+	
+	GlobalMap = "EnvironmentColorPalettes",
 	ContainerClass = "EnvironmentColorEntryBase",
 	HasSortKey = true,
 	HasGroups = false,
@@ -191,6 +192,7 @@ DefineClass.EnvironmentColorPalette = {
 			Toolbar = "main",
 		},
 	},
+	Documentation = "Changes the color of various aspects of the environment like vegetation, terrains or rocks.",
 }
 
 function EnvironmentColorPalette:GetEditorView()

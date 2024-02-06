@@ -854,6 +854,8 @@ function Unit:PlayAnimStyleEndAnim(idle_style)
 end
 
 function Unit:CanCower()
+	if self.cower_forbidden then return end
+	
 	return (g_Combat or not self.conflict_ignore) and self.species == "Human" and not self:IsDead()
 end
 
@@ -1159,7 +1161,7 @@ function Unit:ExitMap(marker, start_time)
 	if self.species == "Human" then
 		self:OverwritePFClass(CalcPFClass("player1"))
 	end
-	self:GotoSlab(marker:GetPos())
+	self:GotoSlab(marker:GetPos(), nil, nil, self:GetCommandParam("move_anim") or "Walk")
 	self:PopAndCallDestructor()
 	self:Despawn()
 end

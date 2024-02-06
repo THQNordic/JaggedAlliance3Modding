@@ -42,6 +42,7 @@ PlaceObj('UnitDataCompositeDef', {
 	'pollyvoice', "Joey",
 	'gender', "Male",
 	'PersistentSessionId', "NPC_Siegfried",
+	'HealPersistentOnSpawn', true,
 	'VoiceResponseId', "Gunther",
 })
 

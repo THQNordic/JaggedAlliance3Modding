@@ -75,11 +75,41 @@ AppendClass.OptionsObject = {
 		{ category = "Gameplay", id = "PauseConversation",        name = T(146071242733, "Pause conversations"),            editor = "bool",   default = true,      storage = "account", help = T(118088730513, "Wait for input before continuing to the next conversation line.")},
 		{ category = "Gameplay", id = "AutoSave",                 name = T(571339674334, "AutoSave"),                       editor = "bool",   default = true,      storage = "account", SortKey = -1500, help = T(690186765577, "Automatically create a savegame when a new day starts, when a sector is entered, when a combat starts or ends, when a conflict starts in SatView, and on exit.") },
 		{ category = "Gameplay", id = "InteractableHighlight",    name = T(770074868053, "Highlight mode"),                 editor = "choice", default = "Toggle",  storage = "account", items = lInteractableHighlightMode, help = T(705105646677, "Interactables can highlighted for a time when a button is pressed or held down.") },
-		{ category = "Gameplay", id = "ForgivingModeToggle",      name = T(836950884858, "Forgiving Mode"),                 editor = "bool",   default = false, storage = "account", no_edit = function (self) return not Game end, read_only = function() return netInGame and not NetIsHost() end, SortKey = -1600, help = T(210522024503, "<ForgivingModeText()>")},
-		{ category = "Gameplay", id = "ActivePauseMode",          name = T(133670189455, "Active Pause"),                   editor = "bool",   default = true,  storage = "account", no_edit = function (self) return not Game end, read_only = function() return netInGame and not NetIsHost() end, SortKey = -1590, help = T(466566359686, "Allows pausing the game in Exploration mode. Actions can be ordered while in pause but any attack will unpause the game.<newline><newline><flavor>You can change this option at any time during gameplay.</flavor>")},
 		{ category = "Display",  id = "AspectRatioConstraint",    name = T(125094445172, "UI Aspect Ratio"),                editor = "choice", default = 1, items = lAspectRatioItems, storage = "local", no_edit = Platform.console, help = T(433997797079, "Constrain UI elements like the HUD to the set aspect ratio. Useful for Ultra Wide and Super Ultra Wide resolutions.") },
 	},
 }
+
+local oldOptionsGetProperties = OptionsObject.GetProperties
+function OptionsObject:GetProperties()
+	if self.props_cache then
+		return self.props_cache
+	end
+	oldOptionsGetProperties(self)
+	local props = {}
+	for idx, rule in ipairs(Presets.GameRuleDef.Default) do
+		if rule.option then
+			local help_text = rule.description
+			if rule.flavor_text~="" then
+				help_text = T{334322641039, "<description><newline><newline><flavor><flavor_text></flavor>", rule}
+			end
+			if rule.advanced then
+				help_text = help_text.."\n\n"..T(292693735449, "<flavor>The advanced game rules are not recommended for your first playthrough!</flavor>")
+			end
+			if rule.id~="ForgivingMode" and rule.id~="ActivePause" then
+				help_text = help_text.."\n\n"..T(373450409022, "<flavor>You can change this option at any time during gameplay.</flavor>")
+			end
+			table.insert(props, 
+				{ category = "Gameplay", id = rule.option_id or rule.id, name = rule.display_name, editor = "bool",  default = rule.init_as_active, storage = "account", 
+				  no_edit = function (self) return not Game end, read_only = function() return netInGame and not NetIsHost() end, 
+				  SortKey =rule.SortKey, help = help_text})
+		end
+	end		
+	table.stable_sort(props, function(a,b)
+		return (a.SortKey or 0) < (b.SortKey or 0)
+	end)
+	self.props_cache = table.iappend(self.props_cache,props)
+	return self.props_cache
+end
 
 const.MaxUserUIScaleHighRes = 100
 
@@ -394,51 +424,50 @@ function ChangeGameRule(rule, value)
 	end
 end
 
-function SetForgivingModeOption(val)
+function SetGameRulesOptions()
 	OptionsObj = OptionsObj or OptionsCreateAndLoad()
-	OptionsObj:SetProperty("ForgivingModeToggle", val ~= nil and val or IsGameRuleActive("ForgivingMode"))
+	for idx, def in ipairs (Presets.GameRuleDef.Default) do
+		if def.option then
+			OptionsObj:SetProperty(def.option_id or def.id, IsGameRuleActive(def.id))
+		end
+	end
 	ApplyOptionsObj(OptionsObj)
 end	
 
-function SetActivePauseModeOption(val)
-	OptionsObj = OptionsObj or OptionsCreateAndLoad()
-	OptionsObj:SetProperty("ActivePauseMode", val ~= nil and val or IsGameRuleActive("ActivePause"))
-	ApplyOptionsObj(OptionsObj)
-end	
-
-
-function ApplyGameplayOption()
-	local newValue = OptionsObj and OptionsObj.ForgivingModeToggle
-	NetSyncEvent("ChangeForgivingMode", newValue)
-	NetSyncEvent("ChangeActivePauseMode", OptionsObj and OptionsObj.ActivePauseMode)
+function ApplyGameplayOption()	
+	local values = {}
+	for idx, ruledef  in ipairs(Presets.GameRuleDef.Default) do
+		if ruledef.option then
+			values[#values +1 ] = {rule = ruledef.id,  value = OptionsObj and OptionsObj[ruledef.option_id or ruledef.id]}
+		end
+	end
+	NetSyncEvent("ChangeGameRulesMode", values)
+	NetSyncEvent("ChangeActivePauseMode")
 end
 
-function NetSyncEvents.ChangeForgivingMode(newValue)
-	ChangeGameRule("ForgivingMode", newValue)
-	if OptionsObj then
-		OptionsObj:SetProperty("ForgivingModeToggle", newValue)
-		ObjModified(OptionsObj)
+function NetSyncEvents.ChangeGameRulesMode(values)
+	for idx, def in ipairs(values) do
+		local rule_id = def.rule
+		local val = def.value
+		ChangeGameRule(rule_id, val)
+		local preset = GameRuleDef[rule_id]
+		if OptionsObj and preset and preset.option then		
+			OptionsObj:SetProperty(preset.option_id or rule_id, value)
+			ObjModified(OptionsObj)
+		end
+		ApplyOptionsObj(OptionsObj)
 	end
-	SetForgivingModeOption(newValue)
 end
 
-function NetSyncEvents.ChangeActivePauseMode(newValue)
-	ChangeGameRule("ActivePause", newValue)
-	if OptionsObj then
-		OptionsObj:SetProperty("ActivePauseMode", newValue)
-		ObjModified(OptionsObj)
-	end
-	SetActivePauseModeOption(newValue)
-	
+function NetSyncEvents.ChangeActivePauseMode()
 	if not IsGameRuleActive("ActivePause") and IsActivePaused() then
-		CreateGameTimeThread(ToggleActivePause)
-	end	
+		CreateGameTimeThread(SetActivePause)
+	end
 end
 
 function OnMsg.ZuluGameLoaded(game)
-	SetForgivingModeOption()
+	SetGameRulesOptions()
 	SetDifficultyOption()
-	SetActivePauseModeOption()
 end
 
 function SetDifficultyOption()
@@ -450,16 +479,15 @@ end
 function OnMsg.NetGameLoaded()
 	--in mp aply these options to the guest
 	if not NetIsHost() then
-		SetForgivingModeOption()
+		SetGameRulesOptions()
 		SetDifficultyOption()
-		SetActivePauseModeOption()
 	end
 end
 
 local s_oldHideObjectsByDetailClass = HideObjectsByDetailClass
 
 function HideObjectsByDetailClass(optionals, future_extensions, eye_candies, ...)
-	return s_oldHideObjectsByDetailClass(optionals, future_extensions, eye_candies, true)
+	s_oldHideObjectsByDetailClass(optionals, future_extensions, eye_candies, true)
 end
 
 function UltraPresetWarning(new_obj, original_obj, category)

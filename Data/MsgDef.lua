@@ -1478,7 +1478,7 @@ PlaceObj('MsgDef', {
 
 PlaceObj('MsgDef', {
 	Description = "A unit has dealt damage to target.",
-	Params = "target, dmg, hit_descr",
+	Params = "attack_target, dmg, hit_descr",
 	Target = "UnitBase",
 	group = "Zulu - Unit Reaction",
 	id = "OnDamageDone",
@@ -1592,10 +1592,18 @@ PlaceObj('MsgDef', {
 
 PlaceObj('MsgDef', {
 	Description = "Called after an attack has concluded when retaliation effects can take place.",
-	Params = "atacker, attack_target, action, attack_args, results, can_retaliate",
+	Params = "attacker, attack_target, action, attack_args, results, can_retaliate",
 	Target = "UnitBase",
 	group = "Zulu - Unit Reaction",
 	id = "OnUnitAttackReaction",
+})
+
+PlaceObj('MsgDef', {
+	Description = "Called after an attack has concluded (including Awareness effects).",
+	Params = "attacker, attack_target, action, attack_args, results, can_retaliate, combat_starting",
+	Target = "UnitBase",
+	group = "Zulu - Unit Reaction",
+	id = "OnUnitAttackResolved",
 })
 
 PlaceObj('MsgDef', {
@@ -1604,6 +1612,22 @@ PlaceObj('MsgDef', {
 	Target = "UnitBase",
 	group = "Zulu - Unit Reaction",
 	id = "OnUnitBandaged",
+})
+
+PlaceObj('MsgDef', {
+	Description = "When the fx actor for the weapon used in melee attack is chosen",
+	Params = "fx_actor, action, weapon, target",
+	Target = "UnitBase",
+	group = "Zulu - Unit Reaction",
+	id = "OnUnitChooseMeleeAttackFxActor",
+})
+
+PlaceObj('MsgDef', {
+	Description = "When the fx actor for a fired projectile is chosen",
+	Params = "fx_actor",
+	Target = "UnitBase",
+	group = "Zulu - Unit Reaction",
+	id = "OnUnitChooseProjectileFxActor",
 })
 
 PlaceObj('MsgDef', {
@@ -1619,6 +1643,14 @@ PlaceObj('MsgDef', {
 	Target = "UnitBase",
 	group = "Zulu - Unit Reaction",
 	id = "OnUnitEnterSector",
+})
+
+PlaceObj('MsgDef', {
+	Description = "When the range of a weapon is calculated.",
+	Params = "value, weapon, action",
+	Target = "UnitBase",
+	group = "Zulu - Unit Reaction",
+	id = "OnUnitGetWeaponRange",
 })
 
 PlaceObj('MsgDef', {
@@ -1639,7 +1671,7 @@ PlaceObj('MsgDef', {
 
 PlaceObj('MsgDef', {
 	Description = "Called after an attack has concluded when retaliation effects can take place.",
-	Params = "atacker, attack_target, action, target_spot_group",
+	Params = "attacker, attack_target, action, target_spot_group",
 	Target = "UnitBase",
 	group = "Zulu - Unit Reaction",
 	id = "OnUnitRetaliation",

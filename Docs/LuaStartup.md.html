@@ -95,7 +95,8 @@ Loading the code for a single mod consists of:
     This means that Mod code cannot reliably access any mod items at this stage.
 
 !!! WARNING
-    Note: There are no circumstances under which Mod Lua will be loaded while `FirstLoad` is true.
+    Note: Upon first loading of each Mod Lua, that code will observe `FirstLoad == true`.
+    This is done through the sandbox environment each Mod Lua runs inside and is different to the global mentioned above.
 
 Post load
 ---------

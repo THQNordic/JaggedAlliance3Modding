@@ -3,238 +3,356 @@
 PlaceObj('GradingLUTSource', {
 	group = "Dry",
 	id = "Dry_Savanna_Day",
-	name = "Dry_Savanna_Day",
 	src_path = "svnAssets/Source/Textures/LUTs/Zulu_19.Dry_Savanna_Day.cube",
 })
 
 PlaceObj('GradingLUTSource', {
 	group = "Dry",
 	id = "Dry_Savanna_Day_Duststorm",
-	name = "Dry_Savanna_Day_Duststorm",
 	src_path = "svnAssets/Source/Textures/LUTs/Zulu_21.Dry_Savanna_Duststorm.cube",
 })
 
 PlaceObj('GradingLUTSource', {
 	group = "Dry",
 	id = "Dry_Savanna_Day_Firestorm",
-	name = "Dry_Savanna_Day_Firestorm",
 	src_path = "svnAssets/Source/Textures/LUTs/Zulu_23.Dry_Savanna_Firestorm.cube",
 })
 
 PlaceObj('GradingLUTSource', {
 	group = "Dry",
 	id = "Dry_Savanna_Day_HeatWave",
-	name = "Dry_Savanna_Day_HeatWave",
 	src_path = "svnAssets/Source/Textures/LUTs/Zulu_20.Dry_Savanna_Day_HeatWave.cube",
 })
 
 PlaceObj('GradingLUTSource', {
 	group = "Dry",
 	id = "Dry_Savanna_Night",
-	name = "Dry_Savanna_Night",
 	src_path = "svnAssets/Source/Textures/LUTs/Zulu_25.Dry_Savanna_Night.cube",
 })
 
 PlaceObj('GradingLUTSource', {
 	group = "Dry",
 	id = "Dry_Savanna_Night_Duststorm",
-	name = "Dry_Savanna_Night_Duststorm",
 	src_path = "svnAssets/Source/Textures/LUTs/Zulu_22.Dry_Savanna_Duststorm_Night.cube",
 })
 
 PlaceObj('GradingLUTSource', {
 	group = "Dry",
 	id = "Dry_Savanna_Night_Firestorm",
-	name = "Dry_Savanna_Night_Firestorm",
 	src_path = "svnAssets/Source/Textures/LUTs/Zulu_24.Dry_Savanna_Firestorm_Night.cube",
 })
 
 PlaceObj('GradingLUTSource', {
 	group = "Dry",
 	id = "Dry_Savanna_Sunrise",
-	name = "Dry_Savanna_Sunrise",
 	src_path = "svnAssets/Source/Textures/LUTs/Zulu_26.Dry_Savanna_Sunrise.cube",
 })
 
 PlaceObj('GradingLUTSource', {
 	group = "Dry",
 	id = "Dry_Savanna_Sunset",
-	name = "Dry_Savanna_Sunset",
 	src_path = "svnAssets/Source/Textures/LUTs/Zulu_27.Dry_Savanna_Sunset.cube",
 })
 
 PlaceObj('GradingLUTSource', {
 	group = "Dry",
 	id = "Dry_Underground",
-	name = "Dry_Underground",
 	src_path = "svnAssets/Source/Textures/LUTs/Zulu_28.Dry_Underground.cube",
 })
 
 PlaceObj('GradingLUTSource', {
 	group = "Dry",
 	id = "Dry_Wasteland_Day",
-	name = "Dry_Wasteland_Day",
 	src_path = "svnAssets/Source/Textures/LUTs/Zulu_30.Dry_Wasteland_Day.cube",
 })
 
 PlaceObj('GradingLUTSource', {
 	group = "Dry",
 	id = "Dry_Wasteland_Dustorm",
-	name = "Dry_Wasteland_Dustorm",
 	src_path = "svnAssets/Source/Textures/LUTs/Zulu_31.Dry_Wasteland_Duststorm.cube",
 })
 
 PlaceObj('GradingLUTSource', {
 	group = "Dry",
 	id = "Dry_Wasteland_Duststorm_Night",
-	name = "Dry_Wasteland_Duststorm_Night",
 	src_path = "svnAssets/Source/Textures/LUTs/Zulu_32.Dry_Wasteland_Duststorm_Night.cube",
 })
 
 PlaceObj('GradingLUTSource', {
 	group = "Dry",
 	id = "Dry_Wasteland_Night",
-	name = "Dry_Wasteland_Night",
 	src_path = "svnAssets/Source/Textures/LUTs/Zulu_33.Dry_Wasteland_Night.cube",
 })
 
 PlaceObj('GradingLUTSource', {
 	group = "Dry",
 	id = "Dry_Wasteland_Sunrise",
-	name = "Dry_Wasteland_Sunrise",
 	src_path = "svnAssets/Source/Textures/LUTs/Zulu_34.Dry_Wasteland_Sunrise.cube",
 })
 
 PlaceObj('GradingLUTSource', {
 	group = "Dry",
 	id = "Dry_Wasteland_Sunset",
-	name = "Dry_Wasteland_Sunset",
 	src_path = "svnAssets/Source/Textures/LUTs/Zulu_35.Dry_Wasteland_Sunset.cube",
 })
 
 PlaceObj('GradingLUTSource', {
 	group = "Wet",
 	id = "Wet_CursedForest_Day",
-	name = "Wet_CursedForest_Day",
 	src_path = "svnAssets/Source/Textures/LUTs/Zulu_15.Wet_CursedForest_Day.cube",
 })
 
 PlaceObj('GradingLUTSource', {
 	group = "Wet",
 	id = "Wet_CursedForest_Night",
-	name = "Wet_CursedForest_Night",
 	src_path = "svnAssets/Source/Textures/LUTs/Zulu_16.Wet_CursedForest_Night.cube",
 })
 
 PlaceObj('GradingLUTSource', {
 	group = "Wet",
 	id = "Wet_CursedForest_Sunrise",
-	name = "Wet_CursedForest_Sunrise",
 	src_path = "svnAssets/Source/Textures/LUTs/Zulu_17.Wet_CursedForest_Sunrise.cube",
 })
 
 PlaceObj('GradingLUTSource', {
 	group = "Wet",
 	id = "Wet_CursedForest_Sunset",
-	name = "Wet_CursedForest_Sunset",
 	src_path = "svnAssets/Source/Textures/LUTs/Zulu_18.Wet_CursedForest_Sunset.cube",
 })
 
 PlaceObj('GradingLUTSource', {
 	group = "Wet",
 	id = "Wet_Farmlands_Day",
-	name = "Wet_Farmlands_Day",
 	src_path = "svnAssets/Source/Textures/LUTs/Zulu_7.Wet_Farmlands_Day_01.cube",
 })
 
 PlaceObj('GradingLUTSource', {
 	group = "Wet",
 	id = "Wet_Farmlands_Night",
-	name = "Wet_Farmlands_Night",
 	src_path = "svnAssets/Source/Textures/LUTs/Zulu_8.Wet_Farmlands_Night_01.cube",
 })
 
 PlaceObj('GradingLUTSource', {
 	group = "Wet",
 	id = "Wet_Farmlands_Sunrise",
-	name = "Wet_Farmlands_Sunrise",
 	src_path = "svnAssets/Source/Textures/LUTs/Zulu_9.Wet_Farmlands_Sunrise_01.cube",
 })
 
 PlaceObj('GradingLUTSource', {
 	group = "Wet",
 	id = "Wet_Farmlands_Sunset",
-	name = "Wet_Farmlands_Sunset",
 	src_path = "svnAssets/Source/Textures/LUTs/Zulu_10.Wet_Farmlands_Sunset_01.cube",
 })
 
 PlaceObj('GradingLUTSource', {
 	group = "Wet",
 	id = "Wet_Jungle_Day",
-	name = "Wet_Jungle_Day",
 	src_path = "svnAssets/Source/Textures/LUTs/Zulu_7.Wet_Jungle_Day_05.cube",
 })
 
 PlaceObj('GradingLUTSource', {
 	group = "Wet",
 	id = "Wet_Jungle_Night",
-	name = "Wet_Jungle_Night",
 	src_path = "svnAssets/Source/Textures/LUTs/Zulu_5.Wet_Jungle_Night_01.cube",
 })
 
 PlaceObj('GradingLUTSource', {
 	group = "Wet",
 	id = "Wet_Jungle_Rainstorm",
-	name = "Wet_Jungle_Rainstorm",
 	src_path = "svnAssets/Source/Textures/LUTs/Zulu_6.Wet_Jungle_Rainstorm_01.cube",
 })
 
 PlaceObj('GradingLUTSource', {
 	group = "Wet",
 	id = "Wet_Jungle_Sunrise",
-	name = "Wet_Jungle_Sunrise",
 	src_path = "svnAssets/Source/Textures/LUTs/Zulu_1.Wet_Jungle_Sunrise_01.cube",
 })
 
 PlaceObj('GradingLUTSource', {
 	group = "Wet",
 	id = "Wet_Jungle_Sunset",
-	name = "Wet_Jungle_Sunset",
 	src_path = "svnAssets/Source/Textures/LUTs/Zulu_4.Wet_Jungle_Sunset_01.cube",
 })
 
 PlaceObj('GradingLUTSource', {
 	group = "Wet",
 	id = "Wet_Marshlands_Day",
-	name = "Wet_Marshlands_Day",
 	src_path = "svnAssets/Source/Textures/LUTs/Zulu_11.Wet_Marshlands_Day.cube",
 })
 
 PlaceObj('GradingLUTSource', {
 	group = "Wet",
 	id = "Wet_Marshlands_Night",
-	name = "Wet_Marshlands_Night",
 	src_path = "svnAssets/Source/Textures/LUTs/Zulu_12.Wet_Marshlands_Night.cube",
 })
 
 PlaceObj('GradingLUTSource', {
 	group = "Wet",
 	id = "Wet_Marshlands_Sunrise",
-	name = "Wet_Marshlands_Sunrise",
 	src_path = "svnAssets/Source/Textures/LUTs/Zulu_13.Wet_Marshlands_Sunrise.cube",
 })
 
 PlaceObj('GradingLUTSource', {
 	group = "Wet",
 	id = "Wet_Marshlands_Sunset",
-	name = "Wet_Marshlands_Sunset",
 	src_path = "svnAssets/Source/Textures/LUTs/Zulu_14.Wet_Marshlands_Sunset.cube",
 })
 
 PlaceObj('GradingLUTSource', {
 	group = "Wet",
 	id = "Wet_Underground",
-	name = "Wet_Underground",
 	src_path = "svnAssets/Source/Textures/LUTs/Zulu_29.Wet_Underground.cube",
+})
+
+PlaceObj('GradingLUTSource', {
+	SortKey = 10,
+	display_name = T(903732421765, --[[GradingLUTSource BlackNWhite_01 display_name]] "Grim Chien"),
+	group = "PhotoMode",
+	id = "BlackNWhite_01",
+	src_path = "svnAssets/Source/Textures/LUTs/Zulu_Photomode.BnW_01.cube",
+})
+
+PlaceObj('GradingLUTSource', {
+	SortKey = 13,
+	display_name = T(968664264156, --[[GradingLUTSource BlackNWhite_02 display_name]] "Chien Noir"),
+	group = "PhotoMode",
+	id = "BlackNWhite_02",
+	src_path = "svnAssets/Source/Textures/LUTs/Zulu_Photomode.BnW_02.cube",
+})
+
+PlaceObj('GradingLUTSource', {
+	SortKey = 16,
+	display_name = T(844766437948, --[[GradingLUTSource BlackNWhite_03 display_name]] "Gray Chien"),
+	group = "PhotoMode",
+	id = "BlackNWhite_03",
+	src_path = "svnAssets/Source/Textures/LUTs/Zulu_Photomode.BnW_03.cube",
+})
+
+PlaceObj('GradingLUTSource', {
+	SortKey = 20,
+	display_name = T(813423035782, --[[GradingLUTSource Sepia_01 display_name]] "Retro"),
+	group = "PhotoMode",
+	id = "Sepia_01",
+	src_path = "svnAssets/Source/Textures/LUTs/Zulu_Photomode.Sepia.cube",
+})
+
+PlaceObj('GradingLUTSource', {
+	SortKey = 25,
+	display_name = T(929203377445, --[[GradingLUTSource Sepia_02 display_name]] "Western"),
+	group = "PhotoMode",
+	id = "Sepia_02",
+	src_path = "svnAssets/Source/Textures/LUTs/Zulu_Photomode.Sepia_02.cube",
+})
+
+PlaceObj('GradingLUTSource', {
+	SortKey = 30,
+	display_name = T(946716015037, --[[GradingLUTSource Sepia_03 display_name]] "Inky"),
+	group = "PhotoMode",
+	id = "Sepia_03",
+	src_path = "svnAssets/Source/Textures/LUTs/Zulu_Photomode.Sepia_03.cube",
+})
+
+PlaceObj('GradingLUTSource', {
+	SortKey = 40,
+	display_name = T(964684490308, --[[GradingLUTSource Bleach_01 display_name]] "Bleach"),
+	group = "PhotoMode",
+	id = "Bleach_01",
+	src_path = "svnAssets/Source/Textures/LUTs/Zulu_Photomode.Bleach_01.cube",
+})
+
+PlaceObj('GradingLUTSource', {
+	SortKey = 50,
+	display_name = T(937298066680, --[[GradingLUTSource Bleach_02 display_name]] "Sunburnt"),
+	group = "PhotoMode",
+	id = "Bleach_02",
+	src_path = "svnAssets/Source/Textures/LUTs/Zulu_Photomode.Bleach_03.cube",
+})
+
+PlaceObj('GradingLUTSource', {
+	SortKey = 60,
+	display_name = T(992427172509, --[[GradingLUTSource Overbright display_name]] "Overbright"),
+	group = "PhotoMode",
+	id = "Overbright",
+	src_path = "svnAssets/Source/Textures/LUTs/Zulu_Photomode.Overbright.cube",
+})
+
+PlaceObj('GradingLUTSource', {
+	SortKey = 70,
+	display_name = T(936816509342, --[[GradingLUTSource WashedBlue display_name]] "Vacation"),
+	group = "PhotoMode",
+	id = "WashedBlue",
+	src_path = "svnAssets/Source/Textures/LUTs/Zulu_Photomode.WashedBlue.cube",
+})
+
+PlaceObj('GradingLUTSource', {
+	SortKey = 73,
+	display_name = T(995524112117, --[[GradingLUTSource WashedPurple display_name]] "Lavender"),
+	group = "PhotoMode",
+	id = "WashedPurple",
+	src_path = "svnAssets/Source/Textures/LUTs/Zulu_Photomode.WashedPurple.cube",
+})
+
+PlaceObj('GradingLUTSource', {
+	SortKey = 76,
+	display_name = T(909839914313, --[[GradingLUTSource WashedRed display_name]] "Tangerine"),
+	group = "PhotoMode",
+	id = "WashedRed",
+	src_path = "svnAssets/Source/Textures/LUTs/Zulu_Photomode.WashedRed.cube",
+})
+
+PlaceObj('GradingLUTSource', {
+	SortKey = 80,
+	display_name = T(938348874133, --[[GradingLUTSource TealNOrange display_name]] "Teal and Orange"),
+	group = "PhotoMode",
+	id = "TealNOrange",
+	src_path = "svnAssets/Source/Textures/LUTs/Zulu_Photomode.OrangeTeal_01.cube",
+})
+
+PlaceObj('GradingLUTSource', {
+	SortKey = 110,
+	display_name = T(918557606659, --[[GradingLUTSource Nightvision display_name]] "Night Vision"),
+	group = "PhotoMode",
+	id = "Nightvision",
+	src_path = "svnAssets/Source/Textures/LUTs/Zulu_Photomode.Nightvision.cube",
+})
+
+PlaceObj('GradingLUTSource', {
+	SortKey = 120,
+	display_name = T(918071848682, --[[GradingLUTSource Candy display_name]] "Candy"),
+	group = "PhotoMode",
+	id = "Candy",
+	src_path = "svnAssets/Source/Textures/LUTs/Zulu_Photomode.Candy.cube",
+})
+
+PlaceObj('GradingLUTSource', {
+	SortKey = 130,
+	display_name = T(940608820827, --[[GradingLUTSource Vibrant display_name]] "Fiesta"),
+	group = "PhotoMode",
+	id = "Vibrant",
+	src_path = "svnAssets/Source/Textures/LUTs/Zulu_Photomode.Vibrant.cube",
+})
+
+PlaceObj('GradingLUTSource', {
+	SortKey = 140,
+	display_name = T(933402502093, --[[GradingLUTSource RedNBlack_01 display_name]] "Red and Black"),
+	group = "PhotoMode",
+	id = "RedNBlack_01",
+	src_path = "svnAssets/Source/Textures/LUTs/Zulu_Photomode.RednBlack.cube",
+})
+
+PlaceObj('GradingLUTSource', {
+	SortKey = 150,
+	display_name = T(942639446893, --[[GradingLUTSource RedNBlack_02 display_name]] "Savanna Sunset"),
+	group = "PhotoMode",
+	id = "RedNBlack_02",
+	src_path = "svnAssets/Source/Textures/LUTs/Zulu_Photomode.RednBlack_02.cube",
+})
+
+PlaceObj('GradingLUTSource', {
+	SortKey = 160,
+	display_name = T(818024027350, --[[GradingLUTSource RedNBlack_03 display_name]] "Savanna Inferno"),
+	group = "PhotoMode",
+	id = "RedNBlack_03",
+	src_path = "svnAssets/Source/Textures/LUTs/Zulu_Photomode.RednBlack_03.cube",
 })
 

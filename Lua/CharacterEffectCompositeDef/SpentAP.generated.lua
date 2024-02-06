@@ -12,8 +12,9 @@ DefineClass.SpentAP = {
 			Event = "OnBeginTurn",
 			Handler = function (self, target)
 				if self.stacks > 0 then
-					target:RemoveStatusEffect("FreeMoveOnCombatStart")
-					target:RemoveStatusEffect("FreeMove")
+					if not target:HasStatusEffect("FreeMoveOnCombatStart") then
+						target:RemoveStatusEffect("FreeMove")
+					end
 					target:RemoveStatusEffect("Focused")
 					target:ConsumeAP(self.stacks)
 					target.performed_action_this_turn = true

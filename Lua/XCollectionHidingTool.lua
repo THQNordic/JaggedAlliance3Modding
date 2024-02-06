@@ -713,7 +713,7 @@ DefineClass.XCollectionHidingTool = {
 	ToolTitle = "Link collection to wall",
 	ToolSection = "Misc",
 	Description = {
-		"Click on a wall slab to link the selected collection(s) to the wall, so that they are hidden together.",
+		"Hold <style GedHighlight>C</style> and click on a wall slab to link the selected collection(s) to the wall, so that they are hidden together.",
 		"(click again to unlink)",
 	},
 	ActionSortKey = "2",

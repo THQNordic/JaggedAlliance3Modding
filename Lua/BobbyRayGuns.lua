@@ -181,13 +181,37 @@ end
 ---------------------------------------------------------- Shop Contents
 
 function lGetShopItemFromId(id)
-	if g_BobbyRayStore.used[id] then return g_BobbyRayStore.used[id] end
+	if g_BobbyRayStore.used[id] then 
+		return g_BobbyRayStore.used[id] 
+	end
 	return g_BobbyRayStore.standard[g_BobbyRayStore.standard_ids[id]]
 end
 
 function BobbyRayStoreGetEntry(entry)
-	if entry.Used then return entry
-	else return g_BobbyRayStore.standard[entry.class] end
+	return entry.Used and entry or g_BobbyRayStore.standard[entry.class] 
+end
+
+function BobbyRayStoreGetEntryCost(entry)
+	local br_entry = BobbyRayStoreGetEntry(entry)
+	local cost = br_entry and br_entry.Cost or 0
+	if IsGameRuleActive("BobbyPays") then
+		local percent = GameRuleDefs.BobbyPays:ResolveValue("PricePercentMultiplier") or 0
+		cost = MulDivRound(cost, percent, 100)
+	end	
+	return cost
+end
+
+function BobbyRayStoreDeliveryPrice(delivery_option)
+	if not delivery_option then
+		g_BobbyRayCart.delivery_option = g_BobbyRayCart.delivery_option or "Standard"
+		delivery_option = g_BobbyRayCart.delivery_option
+	end
+	local price = FindPreset("BobbyRayShopDeliveryDef", delivery_option).Price
+	if IsGameRuleActive("BobbyPays") then
+		local percent = GameRuleDefs.BobbyPays:ResolveValue("PricePercentMultiplier") or 0
+		price = MulDivRound(price,percent, 100)
+	end	
+	return price
 end
 
 function BobbyRayStoreClear()
@@ -220,8 +244,9 @@ function BobbyRayStoreToArray(categoryId, subcategoryId, context)
 		local bEntry = BobbyRayStoreGetEntry(b)
 		
 		-- 0-th first, sort by presence in cart
-		local aInCart = g_BobbyRayCart.units[a.id] and g_BobbyRayCart.units[a.id] ~= 0
-		local bInCart = g_BobbyRayCart.units[b.id] and g_BobbyRayCart.units[b.id] ~= 0
+		local units = g_BobbyRayCart.units
+		local aInCart = units[a.id] and units[a.id] ~= 0
+		local bInCart = units[b.id] and units[b.id] ~= 0
 		if aInCart and not bInCart then return true
 		elseif bInCart and not aInCart then return false end
 		
@@ -267,11 +292,12 @@ function BobbyRayCartUnitsToOrders()
 end
 
 function BobbyRayCartGetAggregate()
-	local acc = MulDivRound(BobbyRayCartGetDeliveryOption().Price, gv_Sectors[BobbyRayCartGetDeliverySector()].BobbyRayDeliveryCostMultiplier, 100)
+	local acc = MulDivRound(BobbyRayStoreDeliveryPrice(), gv_Sectors[BobbyRayCartGetDeliverySector()].BobbyRayDeliveryCostMultiplier, 100)
 	local count = 0
 	for item_id, number in pairs(BobbyRayCartGetUnits()) do
-		local entry = lGetShopItemFromId(item_id)
-		acc = acc + BobbyRayStoreGetEntry(entry).Cost * number
+		local entry = lGetShopItemFromId(item_id)	
+		local br_entry_cost = BobbyRayStoreGetEntryCost(entry)
+		acc = acc + br_entry_cost * number
 		count = count + number
 	end
 	return count, acc
@@ -279,7 +305,7 @@ end
 
 function BobbyRayCartHasEnoughMoney(entry)
 	local cart_count, cart_cost = BobbyRayCartGetAggregate()
-	local entry_cost = BobbyRayStoreGetEntry(entry) and BobbyRayStoreGetEntry(entry).Cost or 0
+	local entry_cost = BobbyRayStoreGetEntryCost(entry)
 	return Game.Money - cart_cost - entry_cost >= 0
 end
 
@@ -414,12 +440,11 @@ end
 
 ---------------------------------------------------------- Sector Delivery
 
-g_UnlockedSectors = false -- !TODO: debug only, remove before release
 function BobbyRayGetAvailableDeliverySectors()
 	local initial_sector = GetCurrentCampaignPreset().InitialSector
 	local sectors = { initial_sector }
 	for id, sector in pairs(gv_Sectors) do
-		if (g_UnlockedSectors and sector.CanBeUsedForArrival and id ~= initial_sector) or (sector.Side == "player1" and sector.CanBeUsedForArrival and not sector.PortLocked and sector.last_own_campaign_time ~= 0 and id ~= initial_sector) then
+		if sector.Side == "player1" and sector.CanBeUsedForArrival and not sector.PortLocked and sector.last_own_campaign_time ~= 0 and id ~= initial_sector then
 			table.insert(sectors, id)
 		end
 	end
@@ -891,9 +916,10 @@ function BobbyRayShopFinishPurchase()
 	for unit, amount in pairs(units) do
 		if amount ~= 0 then
 			local actual_unit = lGetShopItemFromId(unit)
+			
 			table.insert(gossip_table,{
 				item = actual_unit.class,
-				cost = actual_unit.Cost,
+				cost = BobbyRayStoreGetEntryCost(actual_unit),
 				used = actual_unit.Used and true or false,
 				amount = amount,
 				shop_stack = actual_unit.ShopStackSize and actual_unit.ShopStackSize or 1,
@@ -910,8 +936,6 @@ function BobbyRayShopFinishPurchase()
 		"store_shipment", 
 		shipment_context
 	)
-	
-	-- !TODO send e-mail
 	
 	-- update store
 	for item_id, amount in pairs(units) do
@@ -967,7 +991,7 @@ function OnMsg.SatelliteTick()
 	lCheckShipments()
 	BobbyRayCartClearEverything()
 	lForgetBobbyRayOrderTabState()
-	NetSyncEvent("BobbyRayUpdateNew")
+	NetSyncEvents.BobbyRayUpdateNew() --sat tick is sync-ish
 end
 
 function OnMsg.MoneyChanged(amount, logReason, previousBalance)
@@ -984,9 +1008,35 @@ local function lCloseBobbyCountdowns()
 	end
 end
 
+function NetSyncEvents.FinishBBROrder(mode)
+	if mode == "clear-store" then
+		if IsBobbyRayOpen("cart") then OpenBobbyRayPage() end
+		BobbyRayStoreClear()
+		ObjModified(g_BobbyRayStore)
+	elseif mode == "clear-order" then
+		if IsBobbyRayOpen("cart") then OpenBobbyRayPage() end
+		BobbyRayCartClearEverything()
+		ObjModified(g_BobbyRayCart)
+	elseif mode == "finish-order" then
+		if IsBobbyRayOpen() then OpenBobbyRayPage() end
+		ObjModified("BobbyRayShopFinishPurchaseUI")
+		BobbyRayShopFinishPurchase()
+	elseif mode == "consume-stock" then
+		BobbyRayStoreConsumeRandomStock()
+		ObjModified(g_BobbyRayStore)
+		ObjModified(g_BobbyRayCart)
+	elseif mode == "restock" then
+		BobbyRayStoreRestock()
+		ObjModified(g_BobbyRayStore)
+		ObjModified(g_BobbyRayCart)
+	else
+		assert("unknown mode:", mode)
+	end
+end
+
 function NetSyncEvents.CreateTimerBeforeAction(mode)
 	if not CanYield() then
-		CreateRealTimeThread(NetSyncEvents.CreateTimerBeforeAction, mode)
+		CreateGameTimeThread(NetSyncEvents.CreateTimerBeforeAction, mode)
 		return
 	end
 	
@@ -1001,7 +1051,7 @@ function NetSyncEvents.CreateTimerBeforeAction(mode)
 		ResumeCampaignTime(reason)
 	end
 	
-	local countdown_seconds = 3 -- !TODO: save this as a const?
+	local countdown_seconds = 3
 	dialog:CreateThread("bobby-countdown", function()
 		if netInGame and table.count(netGamePlayers) > 1 then
 			local idText = dialog.idMain.idText
@@ -1030,33 +1080,12 @@ function NetSyncEvents.CreateTimerBeforeAction(mode)
 			end
 		end
 		dialog:Close()
-
-		if mode == "clear-store" then
-			if IsBobbyRayOpen("cart") then OpenBobbyRayPage() end
-			BobbyRayStoreClear()
-			ObjModified(g_BobbyRayStore)
-		elseif mode == "clear-order" then
-			if IsBobbyRayOpen("cart") then OpenBobbyRayPage() end
-			BobbyRayCartClearEverything()
-			ObjModified(g_BobbyRayCart)
-		elseif mode == "finish-order" then
-			OpenBobbyRayPage()
-			ObjModified("BobbyRayShopFinishPurchaseUI")
-			BobbyRayShopFinishPurchase()
-		elseif mode == "consume-stock" then
-			BobbyRayStoreConsumeRandomStock()
-			ObjModified(g_BobbyRayStore)
-			ObjModified(g_BobbyRayCart)
-		elseif mode == "restock" then
-			BobbyRayStoreRestock()
-			ObjModified(g_BobbyRayStore)
-			ObjModified(g_BobbyRayCart)
-		else
-			assert("unknown mode:", mode)
-		end
+		
+		FireNetSyncEventOnHost("FinishBBROrder", mode)
 	end)
 	
-	local res = dialog:Wait()
+	WaitMsg(dialog)
+	local res = dialog.result
 	if res == "ok" then
 		NetSyncEvent("CancelBobbyCountdown", mode, netUniqueId)
 	end

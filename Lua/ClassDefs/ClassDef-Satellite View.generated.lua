@@ -168,37 +168,40 @@ end
 if g_SatelliteUI then
 	g_SatelliteUI:UpdateSectorVisuals(self.Id)
 end
+if prop_id == "WeatherZone" then
+	g_WeatherZones = false
+end
 end, no_edit = true, params = "self, prop_id", },
 		{ category = "Data", id = "generated_hint", help = "<center>This is an automatically-generated empty sector.", 
 			editor = "help", default = false, no_edit = function(self) return not self.generated end, },
 		{ category = "Data", id = "inherited_hint", help = "<center>This is an inherited sector - use the button below to override it in this DLC.", 
 			editor = "help", default = false, no_edit = function(self) return not self.inherited end, },
 		{ category = "Data", id = "edit_sector_button", 
-			editor = "buttons", default = false, buttons = { {name = "Edit sector", func = "EditGeneratedSector", is_hidden = function(self) if self.modId or config.PresetEditorsModdingMode then return true end
+			editor = "buttons", default = false, buttons = { {name = "Edit sector", func = "EditGeneratedSector", is_hidden = function(self) if self.modId or config.ModdingToolsInUserMode then return true end
 
 return IsKindOf(self, "GedMultiSelectAdapter") or not self.inherited and not self.generated end }, }, },
 		{ id = "Id", 
 			editor = "text", default = false, read_only = true, },
-		{ category = "Underground", id = "HideUnderground", 
+		{ category = "Underground", id = "HideUnderground", name = "Hide underground", 
 			editor = "bool", default = false, no_edit = function(self) return self.GroundSector end, },
-		{ category = "Underground", id = "CanGoUp", name = "Can Go Overground", help = "Whether this underground sector has a travel connection to its overground sector.", 
+		{ category = "Underground", id = "CanGoUp", name = "Can go overground", help = "Whether this underground sector has a travel connection to its overground sector.", 
 			editor = "bool", default = true, no_edit = function(self) return not self.GroundSector end, },
 		{ category = "Underground", id = "underground_sector_buttons", 
 			editor = "buttons", default = false, buttons = { {name = "Add underground sector", func = "AddUndergroundSector", is_hidden = function(self) if IsKindOf(self, "GedMultiSelectAdapter") then return true end
 
-if self.modId or config.PresetEditorsModdingMode then return true end
+if self.modId or config.ModdingToolsInUserMode then return true end
 
 local campaign = GetParentTableOfKind(self, "CampaignPreset")
 return not self.Id or
 			self.Id:ends_with("_Underground") or
 		(campaign and table.find(campaign.Sectors, "Id", self.Id .. "_Underground")) end },  {name = "Select underground sector", func = "SelectUndergroundSector", is_hidden = function(self) if IsKindOf(self, "GedMultiSelectAdapter") then return true end
 
-if self.modId or config.PresetEditorsModdingMode then return true end
+if self.modId or config.ModdingToolsInUserMode then return true end
 
 local campaign = GetParentTableOfKind(self, "CampaignPreset")
 return not self.Id or
 			self.Id:ends_with("_Underground") or
-		not (campaign and table.find(campaign.Sectors, "Id", self.Id .. "_Underground")) end },  {name = "Remove sector", func = "RemoveSector", is_hidden = function(self) if self.modId or config.PresetEditorsModdingMode then return true end
+		not (campaign and table.find(campaign.Sectors, "Id", self.Id .. "_Underground")) end },  {name = "Remove sector", func = "RemoveSector", is_hidden = function(self) if self.modId or config.ModdingToolsInUserMode then return true end
 
 return IsKindOf(self, "GedMultiSelectAdapter") or not self.Id or self.inherited or not self.Id:ends_with("_Underground") end }, }, },
 		{ id = "MapPosition", help = "delete me", 
@@ -209,15 +212,15 @@ return IsKindOf(self, "GedMultiSelectAdapter") or not self.Id or self.inherited 
 			editor = "point", default = false, dont_save = true, no_edit = true, },
 		{ id = "Map", name = "Map", 
 			editor = "combo", default = false, items = function (self) return ListMaps() end, },
-		{ id = "MapTier", name = "Tier", 
+		{ id = "MapTier", name = "Tier", help = "Used in the 'PlayerIsInSectorsOfTier' conditional effect to, for example, spawn loot on the map.", 
 			editor = "number", default = 0, scale = 10, step = 5, min = 0, max = 50, },
 		{ id = "Label1", name = "Label 1", 
-			editor = "text", default = false, },
+			editor = "text", default = false, no_edit = function(self) return config.ModdingToolsInUserMode end, },
 		{ id = "modId", 
 			editor = "text", default = false, no_edit = true, },
 		{ id = "Label2", name = "Label 2", 
-			editor = "text", default = false, },
-		{ id = "RunLoyaltyLogic", help = "Whether this sector will grant/remove loyalty on conflict resolution", 
+			editor = "text", default = false, no_edit = function(self) return config.ModdingToolsInUserMode end, },
+		{ id = "RunLoyaltyLogic", name = "Run loyalty logic", help = "Whether this sector will grant/remove loyalty on conflict resolution", 
 			editor = "bool", default = true, },
 		{ id = "GroundSector", 
 			editor = "text", default = false, no_edit = true, },
@@ -227,13 +230,22 @@ return IsKindOf(self, "GedMultiSelectAdapter") or not self.Id or self.inherited 
 			editor = "text", default = false, translate = true, context = SatelliteSectorLocContext(), },
 		{ id = "Side", 
 			editor = "combo", default = "enemy1", items = function (self) return Sides end, },
-		{ id = "StickySide", name = "Sticky side", 
+		{ id = "StickySide", name = "Sticky side", help = "Prevents changing the side of the sector unless it is forced from a conditinal effect or 'SatelliteSectorSetSide' with 'force' param.", 
 			editor = "bool", default = false, },
 		{ category = "Travel", id = "TerrainType", name = "Terrain type", help = "Terrain type modifies the travel time", 
 			editor = "preset_id", default = "Savanna", 
 			no_edit = function(self) return self.GroundSector end, preset_class = "SectorTerrain", },
-		{ id = "WeatherZone", name = "Weather zone", help = "Weather Zone the sector belongs to. Sectors within the same Weather Zone have the same weather conditions.", 
-			editor = "text", default = false, },
+		{ id = "WeatherZone", name = "Weather zone", help = "Weather Zone the sector belongs to. Sectors within the same Weather Zone have the same weather cycle.", 
+			editor = "combo", default = "Default", items = function (self)
+local campaignPreset
+if self.modId then
+	local modItem = GetParentTableOfKind(self, "ModItemSector")
+	campaignPreset = modItem and CampaignPresets[modItem.campaignId]
+else
+	campaignPreset = GetCurrentCampaignPreset()
+end
+return campaignPreset and WeatherZoneCombo(campaignPreset) or {}
+end, },
 		{ category = "Travel", id = "Passability", 
 			editor = "combo", default = "Land", 
 			no_edit = function(self) return self.GroundSector end, items = function (self) return {"Land", "Water", "Land and Water", "Blocked"} end, },
@@ -243,11 +255,11 @@ return IsKindOf(self, "GedMultiSelectAdapter") or not self.Id or self.inherited 
 			editor = "bool", default = false, },
 		{ id = "reveal_allowed", help = "This sector can be revealed by the player, and traits on them are shown in the satellite view. At the start of the campaign mainland sectors are not visible.", 
 			editor = "bool", default = false, no_edit = true, },
-		{ id = "never_autoresolve", help = "Conflicts on this sector can never be autoresolved", 
+		{ id = "never_autoresolve", name = "Never autoresolve", help = "Conflicts on this sector can never be autoresolved", 
 			editor = "bool", default = false, },
-		{ id = "discovered", help = "The player has been to this sector, or has started travelling to it via some method. In use only for underground sectors.", 
+		{ id = "discovered", name = "Discovered", help = "The player has been to this sector, or has started travelling to it via some method. In use only for underground sectors.", 
 			editor = "bool", default = true, },
-		{ category = "Conflict", id = "AutoResolveDefenderBonus", help = "Percent by which defender power is increased in this sector", 
+		{ category = "Conflict", id = "AutoResolveDefenderBonus", name = "AutoResolve defender bonus", help = "Percent by which defender power is increased in this sector", 
 			editor = "number", default = 0, min = 0, },
 		{ category = "Mine", id = "Mine", 
 			editor = "bool", default = false, },
@@ -275,7 +287,7 @@ return IsKindOf(self, "GedMultiSelectAdapter") or not self.Id or self.inherited 
 		{ category = "Hospital", id = "Hospital", 
 			editor = "bool", default = false, 
 			no_edit = function(self) return self.GroundSector end, },
-		{ category = "Hospital", id = "HospitalLocked", 
+		{ category = "Hospital", id = "HospitalLocked", name = "Hospital locked", 
 			editor = "bool", default = false, 
 			no_edit = function(self) return self.GroundSector end, },
 		{ category = "Guardpost", id = "Guardpost", 
@@ -308,7 +320,7 @@ return IsKindOf(self, "GedMultiSelectAdapter") or not self.Id or self.inherited 
 		{ category = "Militia", id = "MilitiaTrainingCost", name = "Training cost", 
 			editor = "number", default = 750, 
 			no_edit = function(self) return not self.Militia end, min = 1, max = 10000, },
-		{ category = "Conflict", id = "ForceConflict", 
+		{ category = "Conflict", id = "ForceConflict", name = "Force conflict", 
 			editor = "bool", default = false, },
 		{ category = "Conflict", id = "InitialSquads", name = "Initial squads", 
 			editor = "string_list", default = {}, item_default = "", items = function (self) return table.keys(EnemySquadDefs, true) end, },
@@ -319,6 +331,8 @@ return IsKindOf(self, "GedMultiSelectAdapter") or not self.Id or self.inherited 
 		{ category = "Militia", id = "militia_training_progress", 
 			editor = "number", default = 0, no_edit = true, },
 		{ category = "Militia", id = "militia_squad_id", 
+			editor = "number", default = false, no_edit = true, },
+		{ category = "Militia", id = "militia_training_payed_cost", 
 			editor = "number", default = false, no_edit = true, },
 		{ category = "Operation", id = "training_stat", 
 			editor = "text", default = false, no_edit = true, },
@@ -336,11 +350,11 @@ return IsKindOf(self, "GedMultiSelectAdapter") or not self.Id or self.inherited 
 			editor = "bool", default = false, no_edit = true, },
 		{ id = "autoresolve_disabled", 
 			editor = "bool", default = false, no_edit = true, },
-		{ id = "InterestingSector", name = "Interesting sector", help = "Marks whether a sector has something interesting in it", 
+		{ id = "InterestingSector", name = "Interesting sector", help = "Will be listed as one after GatherIntel operation completes and will start voice responses if passed by.", 
 			editor = "bool", default = false, },
-		{ id = "MinFlareCarriers", help = "Minimum number of Roaming NPCs to carry a light during Night or Underground", 
+		{ id = "MinFlareCarriers", name = "Min flare carriers", help = "Minimum number of Roaming NPCs to carry a light during Night or Underground", 
 			editor = "number", default = 1, slider = true, min = 0, max = 20, },
-		{ id = "MaxFlareCarriers", help = "Minimum number of Roaming NPCs to carry a light during Night or Underground", 
+		{ id = "MaxFlareCarriers", name = "Max flare carriers", help = "Minimum number of Roaming NPCs to carry a light during Night or Underground", 
 			editor = "number", default = 3, slider = true, min = function(self) return self.MinFlareCarriers end, max = function(self) return 20 end, },
 		{ id = "RAndRAllowed", name = "R&R allowed", help = "R&R operation is available in this sector", 
 			editor = "bool", default = false, },
@@ -394,18 +408,18 @@ return IsKindOf(self, "GedMultiSelectAdapter") or not self.Id or self.inherited 
 			editor = "bool", default = false, },
 		{ category = "Port", id = "PortLocked", name = "Port locked", 
 			editor = "bool", default = false, },
-		{ category = "Port", id = "CanBeUsedForArrival", 
+		{ category = "Port", id = "CanBeUsedForArrival", name = "Can be used for arrival", 
 			editor = "bool", default = false, },
-		{ category = "Port", id = "BobbyRayDeliveryCostMultiplier", 
+		{ category = "Port", id = "BobbyRayDeliveryCostMultiplier", name = "Bobby Ray delivery cost multiplier", 
 			editor = "number", default = 100, no_edit = function(self) return not self.CanBeUsedForArrival end, scale = "%", },
-		{ category = "Port", id = "SectorImagePreview", 
+		{ category = "Port", id = "SectorImagePreview", name = "Sector image preview", 
 			editor = "ui_image", default = "UI/PDA/ss_i1.png", no_edit = function(self) return not self.CanBeUsedForArrival end, },
 		{ category = "Diamond Briefcase", id = "DBSourceSector", name = "Source sector", help = "Travelling squads carrying diamond shipments will spawn on this sector.", 
 			editor = "bool", default = false, },
 		{ category = "Diamond Briefcase", id = "DBDestinationSector", name = "Destination sector", help = "Travelling squads carrying diamond shipments will path to this sector.", 
 			editor = "bool", default = false, },
 		{ category = "Diamond Briefcase", id = "DBRecalc", help = "You only need to run this once when applying multiple changes. It will take a while!", 
-			editor = "buttons", default = false, buttons = { {name = "Recalculate Diamond Routes", func = "GenerateDBCacheStatic", is_hidden = function(self) if not Platform.developer then return true end end }, }, },
+			editor = "buttons", default = false, buttons = { {name = "Recalculate Diamond Routes", func = "GenerateDBCacheStatic", is_hidden = function(self) return config.ModdingToolsInUserMode end }, }, },
 		{ category = "Port", id = "PricePerTile", name = "Price per tile", 
 			editor = "number", default = false, },
 		{ id = "enabled_auto_deploy", 
@@ -416,7 +430,7 @@ return IsKindOf(self, "GedMultiSelectAdapter") or not self.Id or self.inherited 
 			editor = "number", default = 0, no_edit = true, },
 		{ id = "last_own_campaign_time", 
 			editor = "number", default = 0, no_edit = true, },
-		{ category = "Music", id = "MusicCombat", name = "Music Combat", help = "Music in turn based mode", 
+		{ category = "Music", id = "MusicCombat", name = "Music combat", help = "Music in turn based mode", 
 			editor = "combo", default = "Battle_Easy", items = function (self) return PresetsCombo("RadioStationPreset") end, },
 		{ category = "Music", id = "MusicConflict", name = "Music conflict", help = "In real time exploration but the sector is still in conflict", 
 			editor = "combo", default = "Village_Conflict", items = function (self) return PresetsCombo("RadioStationPreset") end, },
@@ -493,6 +507,18 @@ function SatelliteSector:GetError()
 	return next(errors) and table.concat(errors, "\n") or nil
 end
 
+function SatelliteSector:OnEditorNew(parent, ged, is_paste)
+	if parent.mod and IsKindOf(parent, "ModItemSector") then
+		self.Id = parent.sectorId
+		self.Map = parent:GetMapName()
+		self.modId = parent.mod.id
+		self.bidirectionalRoadApply = true
+		self.bidirectionalBlockApply = true
+		parent.SatelliteSectorObj = self
+		parent:PostLoad()
+	end
+end
+
 function SatelliteSector:EditGeneratedSector(root, prop_id, ged)
 	self.inherited = nil
 	self.generated = nil
@@ -557,7 +583,7 @@ function SatelliteSector:RemoveSector(root, prop_id, ged)
 end
 
 function SatelliteSector:GenerateDBCacheStatic(root, prop_id, ged)
-	GenerateDynamicDBPathCache("save")
+	GenerateDynamicDBPathCache("save", ged)
 end
 
 function SatelliteSector:GetTravelPrice(squad)
@@ -596,7 +622,7 @@ function SatelliteSector:GetTravelPrice(squad)
 end
 
 function SatelliteSector:IsReadOnly()
-	return self.generated or self.inherited or (config.PresetEditorsModdingMode and not self.modId)
+	return self.generated or self.inherited or (config.ModdingToolsInUserMode and not self.modId)
 end
 
 DefineClass.SatelliteSectorGedFilter = {
@@ -1089,6 +1115,7 @@ end, params = "self, merc, sector", },
 	EditorIcon = "CommonAssets/UI/Icons/location marker pin.png",
 	EditorMenubar = "Scripting",
 	EditorMenubarSortKey = "4500",
+	Documentation = "Creates a new sector operation that could be accessed through the sector operation menu. Allows adding new quests along with setting up variables that are related to them.",
 }
 
 DefineModItemPreset("SectorOperation", { EditorName = "Sector operation", EditorSubmenu = "Campaign & Maps" })

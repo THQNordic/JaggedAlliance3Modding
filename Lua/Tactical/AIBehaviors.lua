@@ -89,11 +89,15 @@ function AIBehavior:TakeStance(unit)
 			local ap = Max(0, GetStanceToStanceAP(unit.stance, context.archetype.PrefStance) or 0)
 			local cost = context.default_attack_cost
 			local reserved = IsValidTarget(target) and cost or 0
-			if unit:GetUIActionPoints() > ap + cost then
+			local uiAP = unit:GetUIActionPoints()
+			if uiAP > ap + cost then
 				-- check LOF for non-melee weapons first
 				local max_check_range, is_melee = AIGetWeaponCheckRange(unit, context.weapon, context.default_attack)
 				if not is_melee then
 					local targets = context.default_attack:GetTargets({unit})
+					if #targets == 0 then
+						return
+					end
 					local targets_attack_data = GetLoFData(unit, targets, {
 						obj = unit,
 						action_id = context.default_attack.id,
@@ -118,16 +122,15 @@ function AIBehavior:TakeStance(unit)
 			end
 		end
 	else
-		-- go in move stance if not in ai_destination and not in move stance
-		local x, y, z, stance_idx = stance_pos_unpack(dest)
 		local move_stance_idx = context.dest_combat_path[dest]
-		local cpath = context.combat_paths[move_stance_idx]
-		local pt = SnapToPassSlab(x, y, z)
-		local path = pt and cpath and cpath:GetCombatPathFromPos(pt)
-		if path then
-			local goto_stance = StancesList[move_stance_idx]
-			if goto_stance ~= unit.stance then
-				if not AIPlayChangeStance(unit, goto_stance, point(point_unpack(path[2]))) then
+		local goto_stance = StancesList[move_stance_idx]
+		if goto_stance ~= unit.stance then
+			local x, y, z, stance_idx = stance_pos_unpack(dest)
+			local px, py, pz = SnapToPassSlabXYZ(x, y, z)
+			local cpath = context.combat_paths[move_stance_idx]
+			local dest_prev_ppos = px and cpath and cpath.paths_prev_pos and cpath.paths_prev_pos[point_pack(px, py, pz)]
+			if dest_prev_ppos then
+				if not AIPlayChangeStance(unit, goto_stance, point(point_unpack(dest_prev_ppos))) then
 					-- failed, abort movement
 					assert(CanOccupy(unit, GetPassSlab(unit)))
 					context.ai_destination = false

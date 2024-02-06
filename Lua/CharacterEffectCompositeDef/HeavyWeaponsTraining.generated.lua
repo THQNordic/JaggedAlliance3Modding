@@ -11,9 +11,11 @@ DefineClass.HeavyWeaponsTraining = {
 		PlaceObj('UnitReaction', {
 			Event = "OnCalcAPCost",
 			Handler = function (self, target, current_ap, action, weapon, aim)
-				local reduction = self:ResolveValue("ap_cost_reduction") * const.Scale.AP
-				local minCost = self:ResolveValue("min_ap_cost") * const.Scale.AP
-				return Max(minCost, current_ap - reduction)
+				if IsKindOfClasses(weapon, "HeavyWeapon", "MachineGun") then
+					local reduction = self:ResolveValue("ap_cost_reduction") * const.Scale.AP
+					local minCost = self:ResolveValue("min_ap_cost") * const.Scale.AP
+					return Max(minCost, current_ap - reduction)
+				end
 			end,
 		}),
 	},

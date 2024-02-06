@@ -58,6 +58,7 @@ DefineClass.CharacterEffectCompositeDef = {
 	EditorIcon = "CommonAssets/UI/Icons/atom molecule science.png",
 	EditorPreview = Untranslated("<Group> <StatValue>"),
 	GlobalMap = "CharacterEffectDefs",
+	Documentation = CompositeDef.Documentation .. "\n\nCreates a new character effect preset that could be added/removed from a unit.",
 	
 	HasParameters = true,
 	HasSortKey = true,
@@ -71,6 +72,7 @@ DefineClass.CharacterEffectCompositeDef = {
 DefineModItemCompositeObject("CharacterEffectCompositeDef", {
 	EditorName = "Character effect",
 	EditorSubmenu = "Unit",
+	TestDescription = "Adds the status effect to the selected merc."
 })
 
 if config.Mods then 

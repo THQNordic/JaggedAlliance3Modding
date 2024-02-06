@@ -1,6 +1,6 @@
 if not config.Mods then return end
 
---MODS
+--Tags
 function ModDef:GetTags()
 	local tags_used = { }
 	for i,tag in ipairs(PredefinedModTags) do
@@ -10,6 +10,43 @@ function ModDef:GetTags()
 	end
 	
 	return tags_used
+end
+
+PredefinedModTags = {
+    { id = "TagIMPCharacter", display_name = "IMP Character" },
+    { id = "TagMercs", display_name = "Mercs" },
+    { id = "TagWeapons&Items", display_name = "Weapons & Items" },
+    { id = "TagPerks&Talents&Skills", display_name = "Perks, Talents & Skills" },
+    { id = "TagMines&Economy", display_name = "Mines & Economy" },
+    { id = "TagSatview&Operations", display_name = "Sat view & Operations" },
+    { id = "TagBalancing&Difficulty", display_name = "Balancing & Difficulty" },
+    { id = "TagCombat&AI", display_name = "Combat & AI" },
+    { id = "TagEnemies", display_name = "Enemies" },    
+    { id = "TagGameSettings", display_name = "Game Settings" },
+    { id = "TagUI", display_name = "UI" },
+    { id = "TagVisuals&Graphics", display_name = "Visuals & Graphics" },
+    { id = "TagLocalization", display_name = "Localization" },
+    { id = "TagMusic&Sound&Voices", display_name = "Music, Sound & Voices" },
+    { id = "TagQuest&Campaigns", display_name = "Quest & Campaigns" },
+    { id = "TagLibs&ModdingTools", display_name = "Libs & Modding Tools" },
+    { id = "TagOther", display_name = "Other" }
+}
+
+table.sortby_field(PredefinedModTags, "display_name")
+
+PredefinedModTagsByName = { }
+for i,tag in ipairs(PredefinedModTags) do
+	PredefinedModTagsByName[tag.display_name] = tag
+end
+
+function OnMsg.ClassesGenerate(classdefs)
+	local mod = classdefs["ModDef"]
+	local properties = mod.properties
+	
+	for i,tag in ipairs(PredefinedModTags) do
+		local prop_meta = { category = "Tags", id = tag.id, name = Untranslated(tag.display_name), editor = "bool", default = false }
+		table.insert(properties, prop_meta)
+	end
 end
 
 --Cheats
@@ -31,6 +68,7 @@ end
 
 function CheatResetMap()
 	CreateRealTimeThread(function()
+		ResetGameSession()
 		ChangeMap(ModEditorMapName)
 	end)
 end
@@ -61,6 +99,10 @@ function CheatAddItem(id)
 	UIPlaceInInventory(nil, InventoryItemDefs[id])
 end
 
+function CheatIsolatedScreenshot()
+	IsolatedObjectScreenshot()
+end
+
 function CheatNewModGame(start_type)
 	CreateRealTimeThread(function()
 		local campaignPresets = {}
@@ -86,11 +128,11 @@ function CheatNewModGame(start_type)
 	end)
 end
 
-function CheatSpawnEnemy()
+function CheatSpawnEnemy(id)
 	local p = GetTerrainCursorXY(UIL.GetScreenSize()/2)
 	local freePoint = DbgFindFreePassPositions(p, 1, 20, xxhash(p))
 	if not next(freePoint) then return end
-	local unit = SpawnUnit("LegionRaider", tostring(RealTime()), freePoint[1])
+	local unit = SpawnUnit(id or "LegionRaider", tostring(RealTime()), freePoint[1])
 	unit:SetSide("enemy1")
 end
 
@@ -112,7 +154,7 @@ function ModEditorOpen(mod)
 			local ged = OpenGedApp("ModManager", ModsList, context)
 			if ged then ged:BindObj("log", ModMessageLog) end
 			if LocalStorage.OpenModdingDocs == nil or LocalStorage.OpenModdingDocs then
-				if not Platform.developer then
+				if Platform.goldmaster then
 					GedOpHelpMod()
 				end
 			end
@@ -209,27 +251,16 @@ function OnMsg.ClassesPreprocess(classdefs)
 	UndefineClass('ModItemStoryBitCategory')
 	UndefineClass('ModItemActionFXColorization')
 	UndefineClass("ModItemGameValue")
+	UndefineClass("ModItemCompositeBodyPreset")
 end
 
-DefineModItemPreset("AppearancePreset", { EditorName = "Appearance preset", EditorSubmenu = "Unit" })
-
-AppendClass.ModItemAppearancePreset = {
-	properties = {
-				{ id = "helpInfo", editor = "help", category = "Mod",
-					help = [[ <style GedHighlight>To see the different newly exported entities in the dropdowns below you need to add their appropriate class in the entity mod item.</style>
-					
-					<style GedHighlight>Part  -   Class</style>
-					Body  -   CharacterBodyMale/Female
-					Head  -   CharacterHeadMale/Female
-					Pants -   CharacterPantsMale/Female
-					Armor -   CharacterArmorMale/Female
-					Chest -   CharacterChestMale/Female
-					Hip   -   CharacterHipMale/Female
-					Hair  -   CharacterHairMale/Female
-					Hat   -   CharacterHat
-					]], },
-					},
-}
+DefineModItemPreset("AppearancePreset", { 
+	EditorName = "Appearance preset", 
+	EditorSubmenu = "Unit", 
+	TestDescription = "Updates the appearance of the object if already spawned.", 
+	Documentation = "This mod item allows to change the appearance of existing units in the game and create new appearances for custom units.",
+	DocumentationLink = "Docs/ModItemAppearancePreset.md.html"
+})
 
 local function UpdateAppearanceOnSpawnedObj(id)
 	for _, unit in ipairs(g_Units) do
@@ -240,7 +271,6 @@ local function UpdateAppearanceOnSpawnedObj(id)
 end
 
 function ModItemAppearancePreset:TestModItem(ged)
-	ModItem.TestModItem(self, ged)
 	UpdateAppearanceOnSpawnedObj(self.id)
 end
 
@@ -306,6 +336,10 @@ DefineClass.ModItemTranslatedVoices =  {
 	}, 
 }
 
+function ModItemTranslatedVoices:OnEditorNew(parent, ged, is_paste)
+	self.name = "TranslatedVoices"
+end
+
 function ModItemTranslatedVoices:GetMountLabel()
 	return self.mod.id .. "/" .. self.language
 end
@@ -337,8 +371,8 @@ end
 function OnMsg.TranslationChanged()
 	for _, loadedMod in ipairs(ModsLoaded) do
 		if loadedMod:ItemsLoaded() then
-			loadedMod:ForEachModItem(function(loadedItem)
-				if IsKindOf(loadedItem, "ModItemTranslatedVoices") then
+			loadedMod:ForEachModItem("ModItemTranslatedVoices", function(loadedItem)
+				if loadedItem.mod then
 					loadedItem:UnmountFolders()
 					loadedItem:TryMountFolder()
 				end
@@ -358,3 +392,304 @@ function OnMsg.UnableToUnlockAchievementReasons(reasons, achievement)
 		reasons["modding tools active"] = true
 	end
 end
+
+-- Mods Presets (UI)
+-- A preset contains a list of mod id's with the idea to easily 
+-- enable a specific set of mods.
+
+function InitModPresets()
+	local firstTimeDefaultPreset = not LocalStorage.ModPresets
+	LocalStorage.ModPresets = LocalStorage.ModPresets or { 
+		{id = "default", mod_ids = {}}, 
+		{id = "create new preset", mod_ids = {}, input_field = true}, 
+	}
+	if firstTimeDefaultPreset then
+		FirstLoadOfDefaultPreset()
+	end
+	SaveLocalStorageDelayed()
+end
+
+function FirstLoadOfDefaultPreset()
+	for _, modDef in ipairs(ModsLoaded) do
+		AddModToModPreset("Default", modDef.id)
+	end
+	
+	SortModPresets()
+	SelectModPreset("default", "firstime")
+end
+
+function CreateModPreset(preset_id)
+	preset_id = string.lower(preset_id)
+	if table.find(LocalStorage.ModPresets, "id", preset_id) then
+		return false, T{846096667197, "A mod preset with the name <em><u(name)></em> already exists.", name = preset_id}
+	end
+	
+	table.insert(LocalStorage.ModPresets, { id = preset_id, mod_ids = {}, timestamp = os.time() })
+	SortModPresets()
+	SaveLocalStorageDelayed()
+	return true
+end
+
+function DeleteModPreset(preset_id)
+	preset_id = string.lower(preset_id)
+	local presetDataIdx = table.find(LocalStorage.ModPresets, "id", preset_id)
+	if not presetDataIdx then return end
+	
+	table.remove(LocalStorage.ModPresets, presetDataIdx)
+	SaveLocalStorageDelayed()
+end
+
+function AddModToModPreset(preset_id, mod_id)
+	preset_id = string.lower(preset_id)
+	local presetData = table.find_value(LocalStorage.ModPresets, "id", preset_id)
+	if not presetData then return end
+	
+	table.insert(presetData.mod_ids, mod_id)
+	SaveLocalStorageDelayed()
+end
+
+function RemoveModFromModPreset(preset_id, mod_id)
+	preset_id = string.lower(preset_id)
+	local presetData = table.find_value(LocalStorage.ModPresets, "id", preset_id)
+	if not presetData then return end
+	
+	local modIdx = table.find(presetData.mod_ids, mod_id)
+	if not modIdx then return end
+	
+	table.remove(presetData.mod_ids,modIdx)
+	SaveLocalStorageDelayed()
+end
+
+function SelectModPreset(preset_id, firstTime)
+	preset_id = string.lower(preset_id) 
+	AllModsOff()
+	
+	--clear tags when selecting preset
+	ModsUIClearFilter("temp_installed_tags")
+	ModsUISetInstalledTags()
+	if g_ModsUIContextObj then
+		g_ModsUIContextObj:GetInstalledMods()
+	end
+	ObjModified(PredefinedModTags)
+	
+	local presetData = table.find_value(LocalStorage.ModPresets, "id", preset_id)
+	if not presetData then return end
+	
+	for _, mod_id in ipairs(presetData.mod_ids) do
+		if Mods[mod_id] and not ModIdBlacklist[mod_id] then
+			TurnModOn(mod_id)
+		end
+	end
+	LocalStorage.LastSelectedModPreset = preset_id
+	SaveLocalStorageDelayed()
+	if not firstTime then g_CantLoadMods = {} end
+	CreateRealTimeThread(WaitErrorLoadingMods, T(907697247489, "The following mods from the preset couldn't be loaded and have been disabled:\n"))
+end
+
+function SortModPresets()
+	if next(LocalStorage.ModPresets) then
+		table.sort(LocalStorage.ModPresets, function(a, b) 
+			local specialFieldA = a.input_field or not a.timestamp
+			local specialFieldB = b.input_field or not b.timestamp
+			if specialFieldA and specialFieldB then
+				return string.lower(a.id) < string.lower(b.id)
+			elseif not specialFieldA and not specialFieldB then
+				return a.timestamp > b.timestamp
+			end
+			if specialFieldA then return true end
+			if specialFieldB then return false end
+		end)
+	end
+	SaveLocalStorageDelayed()
+end
+
+function GetModPresetName(preset_id)
+	preset_id = string.lower(preset_id)
+	local presetData = table.find_value(LocalStorage.ModPresets, "id", preset_id)
+	if presetData then
+		if presetData.id == "default" then
+			return T(366064427094, "Default")
+		elseif presetData.id == "create new preset" then
+			return T(804320297184, "Create New Preset")
+		else
+			return Untranslated(presetData.id)
+		end
+	end
+end
+
+function TurnModOn(id, updatePreset)
+	table.insert_unique(AccountStorage.LoadMods, id)
+	if updatePreset then
+		AddModToModPreset(LocalStorage.LastSelectedModPreset, id)
+	end
+end
+
+function TurnModOff(id, updatePreset)
+	table.remove_entry(AccountStorage.LoadMods, id)
+	if updatePreset then
+		RemoveModFromModPreset(LocalStorage.LastSelectedModPreset, id)
+	end
+end
+
+OnMsg.ModsUIDialogStarted = InitModPresets
+
+function AreAllTagsEnabled()
+	if not g_ModsUIContextObj then return false end
+	local predifinedCount = PredefinedModTags and #PredefinedModTags or 0
+	local enabledCount = 0
+	if g_ModsUIContextObj and next(g_ModsUIContextObj.temp_installed_tags) then
+		enabledCount = #table.keys(g_ModsUIContextObj.temp_installed_tags)
+	end
+	return predifinedCount == enabledCount
+end
+
+DefineModItemPreset("CampaignPreset", { EditorName = "Campaign", EditorSubmenu = "Campaign & Maps", TestDescription = "Starts the created campaign." })
+DefineModItemPreset("QuestsDef", { EditorName = "Quest", EditorSubmenu = "Campaign & Maps" })
+DefineModItemPreset("Conversation", { EditorName = "Conversation", EditorSubmenu = "Campaign & Maps" })
+DefineModItemPreset("Email", { EditorName = "Email", EditorSubmenu = "Campaign & Maps" })
+DefineModItemPreset("HistoryOccurence", { EditorName = "History occurrence", EditorSubmenu = "Campaign & Maps" })
+DefineModItemPreset("TutorialHint", { EditorName = "Tutorial hint", EditorSubmenu = "Campaign & Maps" })
+DefineModItemPreset("EnvironmentColorPalette", { EditorSubmenu = "Campaign & Maps", EditorName = "Environment Palette" })
+
+function ModItemCampaignPreset:TestModItem()
+	CreateRealTimeThread(function(self)
+		ProtectedModsReloadItems(nil, "force_reload")
+		QuickStartCampaign(self.id, {difficulty = "Normal"})
+	end, self)
+end
+
+function ModItemQuestsDef:GetEditorView()
+	return T{506003151811, "<mod_text> <original_text>", mod_text = Untranslated("<color 128 128 128>" .. self.EditorName .. "</color>"), original_text = QuestsDef.GetEditorView(self)}
+end
+
+function ModItem:OnEditorNew(parent, ged, is_paste, duplicate_id, mod_id)
+	-- Mod item presets can also be added through Preset Editors (see GedOpClonePresetInMod)
+	-- In those cases the reference to the mod will be set from the mod_id parameter
+
+	self.mod = (IsKindOf(parent, "ModDef") and parent or parent.mod) or (mod_id and Mods and Mods[mod_id])
+	assert(self.mod, "Mod item has no reference to a mod")
+
+	if not is_paste and self.campaign then
+		local lastCampaign
+		self.mod:ForEachModItem("ModItemCampaignPreset", function(modItem)
+			lastCampaign = modItem.id
+		end)
+		if lastCampaign then
+			self.campaign = lastCampaign
+		end
+	end
+end
+
+OnMsg.ModsReloaded = RebuildGroupToConversation
+OnMsg.NewGame = RebuildGroupToConversation
+
+function OnMsg.ModsReloaded()
+	for _, mod_def in ipairs(ModsLoaded) do
+		if mod_def.saved_with_revision < 348693 then -- A random revision from the day this fixup was written.
+			local property_to_scale = {
+				vignette_circularity = 100.0,
+				vignette_darken_feather = 1000.0,
+				vignette_darken_start = 1000.0,
+				vignette_tint_feather = 1000.0,
+				vignette_tint_start = 1000.0,
+				chromatic_aberration_circularity = 100.0,
+				chromatic_aberration_feather = 1000.0,
+				chromatic_aberration_start = 1000.0,
+				chromatic_aberration_intensity = 1000.0,
+				translucency_scale = 1000.0,
+				translucency_distort_sun_dir = 1000.0,
+				translucency_sun_falloff = 1000.0,
+				translucency_sun_scale = 1000.0,
+				translucency_ambient_scale = 1000.0,
+				translucency_base_luminance = 1000.0,
+				translucency_base_k = 1.0,
+				translucency_reduce_k = 1.0,
+				translucency_desaturation = 1000.0,
+			}
+			mod_def:ForEachModItem("ModItemLightmodelPreset", function(item)
+				for prop_id, scale in pairs(property_to_scale) do
+					if rawget(item, prop_id) then
+						item[prop_id] = item[prop_id] / scale
+					end
+				end
+				if rawget(item, "vignette_darken_opacity") then
+					item.vignette_darken_opacity = MulDivRound(item.vignette_darken_opacity, 1000, 255) / 1000.0
+				end
+			end)
+		end
+	end
+end
+
+
+---- Map Editor
+
+-- add custom button to open map editor documentation (uses Zulu-specific parameter of CreateMessageBox)
+function XEditor:ShowHelpText()
+	self.help_popup = CreateMessageBox(XShortcutsTarget,
+		Untranslated("Welcome to the Map Editor!"),
+		Untranslated([[Here are some short tips to get you started.
+
+Camera controls:
+  • <mouse_wheel_up> - zoom in/out
+  • hold <middle_click> - pan the camera
+  • hold Ctrl - faster movement
+  • hold Alt - look around
+  • hold Ctrl+Alt - rotate camera
+
+Look through the editor tools on the left - for example, press N to place objects.
+
+Use <right_click> to access object properties and actions.
+
+Read More opens detailed game-specific help.]]),
+		Untranslated("OK"),
+		nil, -- context obj
+		XAction:new({
+			ActionId = "idReadMore",
+			ActionTranslate = false,
+			ActionName = "Read More",
+			ActionToolbar = "ActionBar",
+			OnAction = function(self, host)
+				GedOpHelpMod(nil, nil, "MapEditor.md.html")
+				host:Close()
+			end,
+		})
+	)
+end
+
+-- override editor.StartModdingEditor to close some game-specific UIs
+old_StartModdingEditor = editor.StartModdingEditor
+
+function editor.StartModdingEditor(mod_item, map)
+	CloseGedSatelliteSectorEditor()
+	CloseSatelliteView(true)
+	CloseDialog("ModifyWeaponDlg", true)
+	Sleep(1000)
+	old_StartModdingEditor(mod_item, map)
+end
+
+-- override to check for mod maps
+function MountMap(map, folder)
+	folder = folder or GetMapFolder(map)
+	if not IsFSUnpacked() and not MapData[map].ModMapPath then
+		local map_pack = MapPackfile[map] or string.format("Packs/Maps/%s.hpk", map)
+		local err = AsyncMountPack(folder, map_pack, "seethrough")
+		assert(not err, "Map data is missing!")
+		if err then return err end
+	elseif not io.exists(folder) then
+		assert(false, "Map folder is missing!")
+		return "Path Not Found"
+	end
+end
+
+AppendClass.Lightmodel = {
+	properties = {
+		{ id = "ice_color", editor = false, default = RGB(255, 255, 255) },
+		{ id = "ice_strength", default = 0, editor = false },
+		{ id = "snow_color", editor = false, default = RGB(167, 167, 167) },
+		{ id = "snow_dir_x", 	editor = false, default = 0 },
+		{ id = "snow_dir_y", 	editor = false, default = 0 },
+		{ id = "snow_dir_z", 	editor = false, default = 1000 },
+		{ id = "snow_str",	editor = false, default = 0 },
+		{ id = "snow_enable", editor = false, default = false, },
+	},
+}

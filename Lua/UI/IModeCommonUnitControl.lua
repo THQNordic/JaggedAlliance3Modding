@@ -157,11 +157,16 @@ end
 function EnsureUnitHasAwareBadge(unit)
 	if not TargetHasBadgeOfPreset("AwareBadge", unit) then
 		CreateBadgeFromPreset("AwareBadge", unit, unit)
-		
-		if IsKindOf(unit, "Unit") then
+	end
+end
+
+function PlayUnitStartleAnim(unit)
+	if IsKindOf(unit, "Unit") and unit.command ~= "IdleSuspicious" then
+		CreateGameTimeThread(function()
+			-- make sure the InterruptCommand call comes from another thread, as it may assert if it's the unit's command thread through a pcall (msg)
 			PlayVoiceResponse(unit, "Startled")
 			unit:InterruptCommand("IdleSuspicious")
-		end
+		end)
 	end
 end
 
@@ -220,6 +225,7 @@ end
 function OnMsg.UnitAwarenessChanged(obj)
 	if obj:HasStatusEffect("Suspicious") then
 		EnsureUnitHasAwareBadge(obj)
+		PlayUnitStartleAnim(obj)
 	end
 end
 
@@ -1906,19 +1912,17 @@ end
 
 function OnMsg.SelectionChange()
 	if g_Combat then return end
+	EnsureCurrentSquad()
 	ObjModified("hud_squads")
 	ObjModified("combat_bar_enemies")
 end
 
 function OnMsg.SelectedObjChange()
 	if not g_Combat then return end
+	EnsureCurrentSquad()
 	ObjModified("hud_squads")
 	ObjModified(Selection)
 	ObjModified("combat_bar_enemies")
-end
-
-function OnMsg.CloseSatelliteView()
-	ObjModified("hud_squads")
 end
 
 function OnMsg.TeamsUpdated()

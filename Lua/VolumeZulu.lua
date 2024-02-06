@@ -8,7 +8,7 @@ local halfVoxelSizeZ = voxelSizeZ / 2
 AppendClass.Room = {
 	__parents = { "Object" },
 	properties = {
-		{ category = "General", id = "ignore_zulu_invisible_wall_logic", name = "Ignore Zulu Invisible Wall Logic", editor = "bool", default = false, },
+		{ category = "General", id = "ignore_zulu_invisible_wall_logic", name = "Ignore Invisible Wall Logic", editor = "bool", default = false, },
 	},
 	
 	visible_walls = false,
@@ -210,6 +210,10 @@ DefineClass.BlackPlane = {
 	__parents = { "BlackPlaneBase", "Mesh", "AlignedObj" },
 	flags = { gofPermanent = true },
 	
+	properties = {
+		{ id = "ShaderName", editor = "choice", default = "default_mesh", items = function() return table.keys2(ProceduralMeshShaders, "sorted") end, dont_save = true, },
+	},
+
 	--wallbox = false,
 	original_pos = false, -- snap according to this
 }
@@ -311,7 +315,7 @@ function BlackPlane:Setup()
 	end
 
 	self:SetMesh(vpstr)
-	self:SetShader(ProceduralMeshShaders.default_mesh)
+	self:SetShader(ProceduralMeshShaders.solid_mesh)
 	self:SetDepthTest(true)
 end
 
@@ -987,7 +991,7 @@ function CleanBlackPlanes(floor)
 end
 
 AppendClass.MapDataPreset = { properties = {
-	{ category = "Camera", name = "Dont Hide Black Planes", id = "DontHideBlackPlanes", editor = "bool", default = false, help = "If planes were invisible when toggled, reload map to pop them up" },
+	{ category = "Camera", name = "Dont hide black planes", id = "DontHideBlackPlanes", editor = "bool", default = false, help = "If planes were invisible when toggled, reload map to pop them up" },
 }}
 
 function HideBlackPlanesNotOnFloor(floor)

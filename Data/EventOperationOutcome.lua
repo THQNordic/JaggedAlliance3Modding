@@ -14,7 +14,7 @@ PlaceObj('EventOperationOutcome', {
 	Desending = true,
 	Effect = function (self,operation_id,sector, mercs)
 		for _, unit in ipairs(mercs) do
-			unit.Experience = unit.Experience +self:ResolveValue("XP")
+			UnitGainXP(unit, self:ResolveValue("XP"))
 			unit:AddWounds(self:ResolveValue("Wounds"))	
 			unit.HitPoints = Max(1, MulDivRound(unit.HitPoints, (100-self:ResolveValue("health_decrease")), 100 ))
 		end
@@ -95,7 +95,7 @@ PlaceObj('EventOperationOutcome', {
 		local unit = table.interaction_rand(mercs, "EventOutcome")
 		if not unit then return end
 		
-		unit.Experience = unit.Experience +self:ResolveValue("XP")
+		UnitGainXP(unit, self:ResolveValue("XP"))
 		unit:AddWounds(self:ResolveValue("wounds"))
 		unit.HitPoints = Max(1, MulDivRound(unit.HitPoints, (100-self:ResolveValue("health_decrease")), 100 ))
 	end,

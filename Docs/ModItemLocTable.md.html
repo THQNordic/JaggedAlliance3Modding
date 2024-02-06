@@ -2,7 +2,7 @@
 
 LocTable
 ========
-This mod item allows you to specify a translation table to load to translate strings from the base game or strings from your mod.
+This mod item allows you to specify a translation table that will be loaded to translate strings from the base game or strings from your mod.
 
 Localization works by replacing texts identified by their "localization IDs" with their translated variants. Texts sometimes contain tags, delimited in diamond brackets `<tag>`text`</tag>`. Nothing in tags can be modified, or the string will be corrupted. The tags in the translated string must be exactly the same as the ones in the original strings, without any deletions or additions. You are free, however, to change the order of tags, if that is required by your language.
 
@@ -18,9 +18,9 @@ The localization tables will be loaded in order: first the ones from the base ga
 
 When adding translations for a new language that is not supported by the game, set the language to English when uploading the table and then set the in-game language to English from the main menu to see your new translations.
 
-The game ships with fonts covering Western, Cyrillic, Korean, Japanese, Simplified Chinese characters. To add new fonts for other languages and scripts use the [Font mod item](ModItemFont.md.html).
+The game ships with fonts covering Western, Cyrillic, Korean, Japanese, Simplified Chinese characters. To add new fonts for other languages and scripts, use the [Font mod item](ModItemFont.md.html).
 
-To use Simplified Chinese you need to add translations to the lines in the translation table describing the "font styles" used in the game; they look like this:
+To use Simplified Chinese, you need to add translations to the lines in the translation table describing the "font styles" used in the game; they look like this:
 
 ~~~~
 1000674,"SchemeBk, 13, aa",
@@ -30,7 +30,7 @@ To use Simplified Chinese you need to add translations to the lines in the trans
 ~~~~
 
 The string after the first comma is the font style; it consists of a font name (SchemeBk or LibelSuitRg in the examples above), a font size, and an instruction for the font to be antialiased ('aa').
-For Latin and Cyrillic-based languages, there's no need to change the font styles. For CJK lanuages, use the following font names:
+For Latin and Cyrillic-based languages, there's no need to change the font styles. For CJK languages, use the following font names:
 
 Simplified Chinese
 : Noto Sans CJK SC Regular
@@ -50,7 +50,7 @@ For example, Simplified Chinese "translation" of the font styles should look lik
 8572,"LibelSuitRg, 30, aa","Noto Sans CJK SC Regular, 30, aa"
 ~~~~
 
-You can adjust slightly the font sizes to compensate, or leave them as they are.
+You can slightly adjust the font sizes to compensate, or leave them as they are.
 
 Properties
 ----------

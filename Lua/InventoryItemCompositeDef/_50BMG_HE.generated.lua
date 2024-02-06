@@ -32,5 +32,6 @@ DefineClass._50BMG_HE = {
 			target_prop = "PenetrationClass",
 		}),
 	},
+	ammo_type_icon = "UI/Icons/Items/ta_subsonic.png",
 }
 

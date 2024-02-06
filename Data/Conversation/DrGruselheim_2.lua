@@ -42,6 +42,29 @@ PlaceObj('Conversation', {
 		id = "Greeting2",
 	}),
 	PlaceObj('ConversationPhrase', {
+		Effects = {
+			PlaceObj('ConditionalEffect', {
+				'Conditions', {
+					PlaceObj('QuestIsVariableBool', {
+						QuestId = "U-Bahn",
+						Vars = set({
+	LeadCryoLab = true,
+	MentionCryoLab = false,
+}),
+						__eval = function ()
+							local quest = gv_Quests['U-Bahn'] or QuestGetState('U-Bahn')
+							return quest.LeadCryoLab and not quest.MentionCryoLab
+						end,
+					}),
+				},
+				'Effects', {
+					PlaceObj('PhraseSetSeen', {
+						Conversation = "DrGruselheim_2",
+						PhraseId = "Tellusaboutyourresearch",
+					}),
+				},
+			}),
+		},
 		Keyword = "Greeting",
 		KeywordT = T(774381032385, --[[Conversation DrGruselheim_2 KeywordT]] "Greeting"),
 		Lines = {
@@ -59,7 +82,7 @@ PlaceObj('Conversation', {
 		Lines = {
 			PlaceObj('ConversationLine', {
 				Character = "DrGruselheim",
-				Text = T(374693827921, --[[Conversation DrGruselheim_2 Text voice:DrGruselheim section:DrGruselheim_2 keyword:Who are you?]] "My name is Dr. Rudolph <em>Gruselheim</em>. I have personally designed this complex, and sadly, I am both its director and, um, prisoner."),
+				Text = T(374693827921, --[[Conversation DrGruselheim_2 Text voice:DrGruselheim section:DrGruselheim_2 keyword:Who are you?]] "My name is Dr. Rudolph <em>Gruselheim</em>. I have personally designed this complex, and sadly, I am both its director and prisoner."),
 			}),
 		},
 		id = "Whoareyou2",
@@ -135,7 +158,7 @@ PlaceObj('Conversation', {
 				}),
 				PlaceObj('ConversationLine', {
 					Character = "DrGruselheim",
-					Text = T(128365706396, --[[Conversation DrGruselheim_2 Text voice:DrGruselheim section:DrGruselheim_2 keyword:Weapons Lab]] "Of course, nothing is indestructible, but one must admit that <em>Kompositum 58</em> comes very close when applied to various polymers."),
+					Text = T(128365706396, --[[Conversation DrGruselheim_2 Text voice:DrGruselheim section:DrGruselheim_2 keyword:Weapons Lab]] "Of course, nothing is indestructible, but one must admit, <em>Kompositum 58</em> comes very close when applied to various polymers."),
 				}),
 			},
 			id = "WeaponsLab",
@@ -172,7 +195,7 @@ PlaceObj('Conversation', {
 				}),
 				PlaceObj('ConversationLine', {
 					Character = "DrGruselheim",
-					Text = T(452771297970, --[[Conversation DrGruselheim_2 Text voice:DrGruselheim section:DrGruselheim_2 keyword:Bio Lab]] "I started with the common Rabies genome and developed its much more aggressive <em>Red Rabies</em> variant... And I only agreed because he promised he won't use the virus unless the very existence of my fatherland was threatened."),
+					Text = T(452771297970, --[[Conversation DrGruselheim_2 Text voice:DrGruselheim section:DrGruselheim_2 keyword:Bio Lab]] "I started with the common Rabies genome and developed the much more aggressive <em>Red Rabies</em> variant... And of course, I only agreed because he promised he won't use the virus unless the very existence of my fatherland was threatened."),
 				}),
 				PlaceObj('ConversationLine', {
 					Character = "DrGruselheim",
@@ -183,14 +206,26 @@ PlaceObj('Conversation', {
 		}),
 		PlaceObj('ConversationPhrase', {
 			Conditions = {
-				PlaceObj('QuestIsVariableBool', {
-					Condition = "or",
-					QuestId = "U-Bahn",
-					Vars = set( "LeadCryoLab", "MentionCryoLab" ),
-					__eval = function ()
-						local quest = gv_Quests['U-Bahn'] or QuestGetState('U-Bahn')
-						return quest.LeadCryoLab or quest.MentionCryoLab
-					end,
+				PlaceObj('OR', {
+					Conditions = {
+						PlaceObj('QuestIsVariableBool', {
+							Condition = "or",
+							QuestId = "U-Bahn",
+							Vars = set( "LeadCryoLab", "MentionCryoLab" ),
+							__eval = function ()
+								local quest = gv_Quests['U-Bahn'] or QuestGetState('U-Bahn')
+								return quest.LeadCryoLab or quest.MentionCryoLab
+							end,
+						}),
+						PlaceObj('QuestIsVariableBool', {
+							QuestId = "U-Bahn",
+							Vars = set( "ClueCryoNazis", "LeadVitrification", "MentionProject" ),
+							__eval = function ()
+								local quest = gv_Quests['U-Bahn'] or QuestGetState('U-Bahn')
+								return quest.ClueCryoNazis and quest.LeadVitrification and quest.MentionProject
+							end,
+						}),
+					},
 				}),
 			},
 			Effects = {
@@ -200,6 +235,10 @@ PlaceObj('Conversation', {
 				}),
 				PlaceObj('QuestSetVariableBool', {
 					Prop = "MentionCryoLab",
+					QuestId = "U-Bahn",
+				}),
+				PlaceObj('QuestSetVariableBool', {
+					Prop = "LeadVitrification",
 					QuestId = "U-Bahn",
 				}),
 			},
@@ -212,11 +251,11 @@ PlaceObj('Conversation', {
 				}),
 				PlaceObj('ConversationLine', {
 					Character = "DrGruselheim",
-					Text = T(479299127849, --[[Conversation DrGruselheim_2 Text voice:DrGruselheim section:DrGruselheim_2 keyword:Cryo Lab]] "The <em>WFSM</em> is a wonderful cryo-protective regenerative agent. It makes the <em>vitrification</em> procedure possible with negligible intra-cell ice formation."),
+					Text = T(479299127849, --[[Conversation DrGruselheim_2 Text voice:DrGruselheim section:DrGruselheim_2 keyword:Cryo Lab]] "The Wunderfrostschutzmittel is a wonderful cryo-protective regenerative agent. It makes the <em>vitrification</em> procedure possible with negligible intra-cell ice formation."),
 				}),
 				PlaceObj('ConversationLine', {
 					Character = "DrGruselheim",
-					Text = T(815149002842, --[[Conversation DrGruselheim_2 Text voice:DrGruselheim section:DrGruselheim_2 keyword:Cryo Lab]] "Die Wehrmacht was very interested in the possibilities that they built the whole U-Bahn from the coast to the mountains. And <em>Projekt Eisdrache</em> was born."),
+					Text = T(815149002842, --[[Conversation DrGruselheim_2 Text voice:DrGruselheim section:DrGruselheim_2 keyword:Cryo Lab]] "Die Wehrmacht was very interested in the possibilities. They built the whole U-Bahn from the coast to the mountains, and <em>Projekt Eisdrache</em> was born."),
 				}),
 			},
 			id = "CryoLab",
@@ -357,26 +396,23 @@ PlaceObj('Conversation', {
 	PlaceObj('ConversationPhrase', {
 		Align = "right",
 		Conditions = {
-			PlaceObj('OR', {
-				Conditions = {
-					PlaceObj('QuestIsVariableBool', {
-						Condition = "or",
-						QuestId = "U-Bahn",
-						Vars = set( "ClueCryoNazis", "MentionCryoLab" ),
-						__eval = function ()
-							local quest = gv_Quests['U-Bahn'] or QuestGetState('U-Bahn')
-							return quest.ClueCryoNazis or quest.MentionCryoLab
-						end,
-					}),
-					PlaceObj('QuestIsVariableBool', {
-						QuestId = "U-Bahn",
-						Vars = set( "LeadVitrification", "MentionProject" ),
-						__eval = function ()
-							local quest = gv_Quests['U-Bahn'] or QuestGetState('U-Bahn')
-							return quest.LeadVitrification and quest.MentionProject
-						end,
-					}),
-				},
+			PlaceObj('QuestIsVariableBool', {
+				Condition = "or",
+				QuestId = "U-Bahn",
+				Vars = set( "LeadVitrification" ),
+				__eval = function ()
+					local quest = gv_Quests['U-Bahn'] or QuestGetState('U-Bahn')
+					return quest.LeadVitrification
+				end,
+			}),
+			PlaceObj('QuestIsVariableBool', {
+				Condition = "or",
+				QuestId = "U-Bahn",
+				Vars = set( "ClueCryoNazis", "MentionCryoLab" ),
+				__eval = function ()
+					local quest = gv_Quests['U-Bahn'] or QuestGetState('U-Bahn')
+					return quest.ClueCryoNazis or quest.MentionCryoLab
+				end,
 			}),
 			PlaceObj('QuestIsVariableBool', {
 				QuestId = "U-Bahn",
@@ -389,6 +425,32 @@ PlaceObj('Conversation', {
 					local quest = gv_Quests['U-Bahn'] or QuestGetState('U-Bahn')
 					return not quest.NaziDead and not quest.NaziJustice and not quest.NaziSleep
 				end,
+			}),
+		},
+		Effects = {
+			PlaceObj('ConditionalEffect', {
+				'Conditions', {
+					PlaceObj('QuestIsVariableBool', {
+						QuestId = "U-Bahn",
+						Vars = set({
+	LeadCryoLab = false,
+}),
+						__eval = function ()
+							local quest = gv_Quests['U-Bahn'] or QuestGetState('U-Bahn')
+							return not quest.LeadCryoLab
+						end,
+					}),
+				},
+				'Effects', {
+					PlaceObj('QuestSetVariableBool', {
+						Prop = "LeadCryoLab",
+						QuestId = "U-Bahn",
+					}),
+					PlaceObj('PhraseSetSeen', {
+						Conversation = "DrGruselheim_2",
+						PhraseId = "Tellusaboutyourresearch",
+					}),
+				},
 			}),
 		},
 		Keyword = "Who are these people in the cryo chambers?",
@@ -453,6 +515,7 @@ PlaceObj('Conversation', {
 			Lines = {
 				PlaceObj('ConversationLine', {
 					Character = "DrGruselheim",
+					SoundAfter = "Sounds/ConversationEffects/VO_cryochamberbreak.wav",
 					Text = T(549409676124, --[[Conversation DrGruselheim_2 Text voice:DrGruselheim section:DrGruselheim_2 keyword:Cut their bio support]] "Technically, the is no bio support - only temperature control. You see, they are effectively turned to glass. But if I take this hammer here..."),
 				}),
 			},
@@ -583,7 +646,7 @@ PlaceObj('Conversation', {
 				}),
 				PlaceObj('ConversationLine', {
 					Character = "DrGruselheim",
-					Text = T(673625713348, --[[Conversation DrGruselheim_2 Text voice:DrGruselheim section:DrGruselheim_2 keyword:You will go to jail as Nazi collaborator]] "Well, it is what it is. It can't be worse than spending my life underground and being frozen to glass every ten years."),
+					Text = T(673625713348, --[[Conversation DrGruselheim_2 Text voice:DrGruselheim section:DrGruselheim_2 keyword:You will go to jail as Nazi collaborator]] "Well, it is what it is. It cannot be worse than spending my life underground and being frozen to glass every ten years."),
 				}),
 			},
 			PhraseRolloverText = T(518430342845, --[[Conversation DrGruselheim_2 PhraseRolloverText]] "This action may have major consequences!"),

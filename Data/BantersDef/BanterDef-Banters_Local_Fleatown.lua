@@ -26,6 +26,7 @@ PlaceObj('BanterDef', {
 			'Optional', true,
 		}),
 	},
+	Once = true,
 	conditions = {
 		PlaceObj('SectorIsInConflict', {
 			Negate = true,

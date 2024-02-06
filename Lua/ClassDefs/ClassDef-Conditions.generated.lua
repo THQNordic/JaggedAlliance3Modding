@@ -13,6 +13,7 @@ DefineClass.BanterHasPlayed = {
 			editor = "bool", default = false, },
 	},
 	Documentation = "Check if a banter has played, ever",
+	EditorNestedObjCategory = "Banter",
 }
 
 function BanterHasPlayed:GetEditorView()
@@ -51,6 +52,7 @@ DefineClass.BanterIsPlaying = {
 			editor = "bool", default = false, },
 	},
 	Documentation = "Check if a banter is currently playing. Useful for repeatable effects. For one time effects use BanterHasPlayed.",
+	EditorNestedObjCategory = "Banter",
 }
 
 function BanterIsPlaying:GetEditorView()
@@ -88,6 +90,7 @@ DefineClass.CheckIsPersistentUnitDead = {
 	EditorView = Untranslated("Is unit with persistent id <u(per_ses_id)> dead"),
 	Documentation = "Checks if a unit with a given persistent id is dead",
 	EditorViewNeg = Untranslated("Unit with persistent id <u(per_ses_id)> is NOT dead"),
+	EditorNestedObjCategory = "Units",
 }
 
 function CheckIsPersistentUnitDead:__eval(obj, context)
@@ -154,6 +157,7 @@ DefineClass.CityHasLoyalty = {
 	},
 	EditorView = Untranslated("if city <u(City)> loyalty is <u(Condition)><Amount>"),
 	Documentation = "Checks the loyalty of a specific city",
+	EditorNestedObjCategory = "Sectors",
 }
 
 function CityHasLoyalty:__eval(obj, context)
@@ -196,6 +200,7 @@ DefineClass.CiviliansKilled = {
 	EditorView = Untranslated("If the player has killed <u(Condition)> <u(Amount)> civilians."),
 	EditorViewNeg = Untranslated("If the player has NOT killed <u(Condition)> <u(Amount)> civilians."),
 	Documentation = "Checks the amount of civilians the player has killed.",
+	EditorNestedObjCategory = "Player",
 }
 
 function CiviliansKilled:__eval(obj, context)
@@ -219,6 +224,7 @@ DefineClass.CombatIsActive = {
 	EditorView = Untranslated("if combat in progress"),
 	EditorViewNeg = Untranslated("if no combat in progress"),
 	Documentation = "Checks for an active combat (turn-based mode).",
+	EditorNestedObjCategory = "Combat",
 }
 
 function CombatIsActive:__eval(obj, context)
@@ -238,7 +244,7 @@ DefineClass.CombatTaskIsActive = {
 	EditorView = Untranslated("Combat Task <task> is active"),
 	EditorViewNeg = Untranslated("Combat Task <task> is not active"),
 	Documentation = "Check if specified CombatTask is currently active for any unit",
-	EditorNestedObjCategory = "",
+	EditorNestedObjCategory = "Combat",
 }
 
 function CombatTaskIsActive:__eval(obj, context)
@@ -257,6 +263,7 @@ DefineClass.CombatTurn = {
 	},
 	EditorView = Untranslated("Combat Turn <Condition> <Amount>"),
 	Documentation = "Checks the current turn in combat",
+	EditorNestedObjCategory = "Combat",
 }
 
 function CombatTurn:__eval(obj, context)
@@ -280,7 +287,7 @@ end,
 	EditorView = Untranslated("If <u(emailId)> email is read."),
 	EditorViewNeg = Untranslated("If <u(emailId)> email is NOT read."),
 	Documentation = "Check if an Email is read.",
-	EditorNestedObjCategory = "",
+	EditorNestedObjCategory = "Player",
 }
 
 function EmailIsRead:__eval(obj, context)
@@ -329,10 +336,10 @@ DefineClass.EvalForEachUnitInSector = {
 		{ id = "Conditions", name = "Conditions", help = "Conditions to evaluate.", 
 			editor = "nested_list", default = false, base_class = "Condition", },
 	},
-	Documentation = 'For each unit in each squad in the given secetor evaluates  nested conditions in order( evaluating to true if all of them evaluates to true).Target unit conditions must be with TargetUnit = "current unit"',
+	Documentation = 'For each unit in each squad in the given sector, evaluates the nested conditions in order, evaluating to true if all of them evaluate to true. Target unit conditions must be with TargetUnit = "current unit"',
 	EditorView = Untranslated("if for <u(CheckFor)> units from sector '<u(Sector)>' all conditions are true."),
 	EditorViewNeg = Untranslated("if for <u(CheckFor)> units from sector '<u(Sector)>' at least one condition is false."),
-	EditorNestedObjCategory = "Sectors",
+	EditorNestedObjCategory = "Units",
 }
 
 function EvalForEachUnitInSector:__eval(obj, context)
@@ -465,6 +472,7 @@ DefineClass.InteractableHasVisualObjects = {
 	Documentation = "Can be used to detect if visuals of an interactable were destroyed etc.",
 	EditorView = Untranslated("if '<u(InteractableGroup)>' has visual objects"),
 	EditorViewNeg = Untranslated("if '<u(InteractableGroup)>' doesn't have visual objects"),
+	EditorNestedObjCategory = "Interactions",
 }
 
 function InteractableHasVisualObjects:__eval(obj, context)
@@ -496,6 +504,7 @@ DefineClass.InteractingMercHasItem = {
 	EditorView = Untranslated("If the merc interacting with this has an item of class <u(ItemId)>"),
 	EditorViewNeg = Untranslated("If the merc interacting with this doesn't have an item of class <u(ItemId)>"),
 	Documentation = "If the merc interacting with an interactable has an item of a specific class",
+	EditorNestedObjCategory = "Mercs",
 }
 
 function InteractingMercHasItem:__eval(obj, context)
@@ -531,7 +540,7 @@ DefineClass.IsCurrentMap = {
 			editor = "bool", default = false, },
 	},
 	Documentation = "Check if currently in tactical view on the specified map",
-	EditorNestedObjCategory = "Sector effects",
+	EditorNestedObjCategory = "Sectors",
 	EditorView = Untranslated("Currently in tactical view in <u(MapFile)>"),
 	EditorViewNeg = Untranslated("Currently not in tactical view in <u(MapFile)>"),
 }
@@ -647,11 +656,13 @@ DefineClass.ItemIsFound = {
 			editor = "preset_id", default = false, preset_class = "InventoryItemCompositeDef", },
 		{ id = "Amount", name = "Amount", help = "Amount of that item.", 
 			editor = "number", default = 1, min = 1, },
+		{ id = "eval_count", name = "eval_count", help = "Amount of that item.", 
+			editor = "number", default = 0, dont_save = true, no_edit = true, min = 0, },
 	},
 	EditorView = Untranslated("if any merc or opened container in <u(Sector)> sector  has <u(ItemId)>(<Amount>) "),
 	EditorViewNeg = Untranslated("if any merc or opened container in <u(Sector)> sector haven't <u(ItemId)>(<Amount>) "),
 	Documentation = "if the item is in any merc or opened container in that sector",
-	eval_count = 0,
+	EditorNestedObjCategory = "Player",
 }
 
 function ItemIsFound:__eval(obj, context)
@@ -702,11 +713,13 @@ DefineClass.ItemIsInMerc = {
 			editor = "preset_id", default = false, preset_class = "InventoryItemCompositeDef", },
 		{ id = "Amount", name = "Amount", help = "Amount of that item.", 
 			editor = "number", default = 1, min = 1, },
+		{ id = "eval_count", name = "eval_count", help = "Amount of that item.", 
+			editor = "number", default = 0, dont_save = true, no_edit = true, min = 0, },
 	},
 	EditorView = Untranslated("if any merc in <u(Sector)> sector  has <u(ItemId)>(<Amount>) "),
 	EditorViewNeg = Untranslated("if any merc  in <u(Sector)> sector haven't <u(ItemId)>(<Amount>) "),
 	Documentation = "if the item is in any merc in that sector",
-	eval_count = 0,
+	EditorNestedObjCategory = "Mercs",
 }
 
 function ItemIsInMerc:__eval(obj, context)
@@ -927,6 +940,7 @@ DefineClass.MercIsLikedDisliked = {
 			editor = "combo", default = false, items = function (self) return MercPresetCombo() end, },
 	},
 	Documentation = "Checks if a specific merc has another one in his Likes/Dislikes tables.",
+	EditorNestedObjCategory = "Mercs",
 }
 
 function MercIsLikedDisliked:__eval(obj, context)
@@ -1024,6 +1038,7 @@ DefineClass.PlayerHasALowHealthMerc = {
 	EditorView = Untranslated("Player has a merc that is not in full health"),
 	EditorViewNeg = Untranslated("All player mercs are at full health"),
 	Documentation = "Checks if the player has at least one merc that is not on full health",
+	EditorNestedObjCategory = "Mercs",
 }
 
 function PlayerHasALowHealthMerc:__eval(obj, context)
@@ -1062,6 +1077,7 @@ DefineClass.PlayerHasAWoundedMerc = {
 	EditorView = Untranslated('Player has a merc with at least 1 stack of "Wounded" character effect'),
 	EditorViewNeg = Untranslated("All player mercs are not wounded"),
 	Documentation = "Checks if the player has at least one wounded merc",
+	EditorNestedObjCategory = "Mercs",
 }
 
 function PlayerHasAWoundedMerc:__eval(obj, context)
@@ -1107,6 +1123,7 @@ DefineClass.PlayerHasMoney = {
 	EditorView = Untranslated("if player's money <u(Condition)> <money(Amount)>"),
 	EditorViewNeg = Untranslated("if player's money are not <u(Condition)> <money(Amount)>"),
 	Documentation = "Checks the amount of money that the player has.",
+	EditorNestedObjCategory = "Player",
 }
 
 function PlayerHasMoney:__eval(obj, context)
@@ -1139,6 +1156,7 @@ DefineClass.PlayerIsInSectors = {
 			editor = "string_list", default = {"A1"}, item_default = "A1", items = function (self) return GetCampaignSectorsCombo() end, },
 	},
 	Documentation = "Checks if the game play is in any of sectors.",
+	EditorNestedObjCategory = "Sectors",
 }
 
 function PlayerIsInSectors:__eval(obj, context)
@@ -1164,6 +1182,7 @@ DefineClass.PlayerIsInSectorsOfTier = {
 			editor = "number", default = 0, scale = 10, step = 5, min = 0, max = 50, },
 	},
 	Documentation = "Checks if in tactical view on a sector of a specific tier.",
+	EditorNestedObjCategory = "Sectors",
 }
 
 function PlayerIsInSectorsOfTier:__eval(obj, context)
@@ -1199,6 +1218,7 @@ DefineClass.PlayerIsPlayerTurn = {
 	EditorView = Untranslated("if player's turn in combat"),
 	EditorViewNeg = Untranslated("if not player's turn in combat"),
 	Documentation = "Checks  it is the player's turn in combat",
+	EditorNestedObjCategory = "Combat",
 }
 
 function PlayerIsPlayerTurn:__eval(obj, context)
@@ -1216,6 +1236,7 @@ DefineClass.PlayerSquadPresentInSectors = {
 			editor = "combo", default = "I1", items = function (self) return GetCampaignSectorsCombo() end, },
 	},
 	Documentation = "Checks if the player has a squad in the specified sector",
+	EditorNestedObjCategory = "Sectors",
 }
 
 function PlayerSquadPresentInSectors:__eval(obj, context)
@@ -1547,6 +1568,7 @@ DefineClass.QuestKillTCEsOnCompleted = {
 	__generated_by_class = "ConditionDef",
 
 	Documentation = "Kill TCEs check is on quest completed.",
+	EditorNestedObjCategory = "Quests",
 }
 
 function QuestKillTCEsOnCompleted:__eval(obj, context)
@@ -1571,6 +1593,7 @@ DefineClass.SatelliteGameplayRunning = {
 	EditorView = Untranslated("Is satellite gameplay running"),
 	EditorViewNeg = Untranslated("Is satellite gameplay not running"),
 	Documentation = "Checks if the player is in satellite view and there is no conflict",
+	EditorNestedObjCategory = "Player",
 }
 
 function SatelliteGameplayRunning:__eval(obj, context)
@@ -1845,7 +1868,7 @@ DefineClass.SquadDefeated = {
 	},
 	EditorView = Untranslated("Check if <u(custom_squad_id)> squad is defeated"),
 	Documentation = "Checks if specified squad is defeated",
-	EditorNestedObjCategory = "",
+	EditorNestedObjCategory = "Player",
 }
 
 function SquadDefeated:__eval(obj, context)
@@ -2605,8 +2628,7 @@ end,
 	EditorView = Untranslated("Find merc <opt(u(Name),u('named '),' ')><opt(u(HasPerk),u('with perk '),' ')><opt(StatValue, u('with min '), ' ')><opt(u(HasStat), '', ' ')> on the map."),
 	EditorViewNeg = Untranslated("Find NO merc <opt(u(Name),u('named '),' ')><opt(u(HasPerk),u('with perk '),' ')><opt(StatValue, u('with min '), ' ')><opt(u(HasStat), '', ' ')> on the map."),
 	Documentation = "Looks for a merc on the map according to name, perks, or a stat value. Succeeds if such a merc is found, storing it in the 'found_merc' field of the context table.",
-	EditorNestedObjCategory = "",
-	EditorNestedObjCategory = "Units",
+	EditorNestedObjCategory = "Mercs",
 }
 
 function UnitSquadHasMerc:__eval(obj, context)
@@ -2841,7 +2863,7 @@ DefineClass.VillainIsDefeated = {
 	EditorView = Untranslated("if '<u(Group)>' is defeated"),
 	EditorViewNeg = Untranslated("if '<u(Group)>' is not defeated"),
 	Documentation = "Check if selected villain is defeated",
-	EditorNestedObjCategory = "Villains",
+	EditorNestedObjCategory = "Player",
 	Documentation = "Check if selected villain is defeated",
 }
 
@@ -2875,6 +2897,7 @@ DefineClass.WoundedMercs = {
 	EditorView = Untranslated("If there are at least <woundedMercs> wounded Mercs with <minWounds> or more wounds."),
 	EditorViewNeg = Untranslated("If there are LESS than <woundedMercs> wounded Mercs with <minWounds> or more wounds."),
 	Documentation = "Check if a set amount of mercs are wounded. And have a set amount of wounds.",
+	EditorNestedObjCategory = "Mercs",
 }
 
 function WoundedMercs:__eval(obj, context)

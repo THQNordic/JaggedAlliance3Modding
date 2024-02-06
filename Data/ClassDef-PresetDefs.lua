@@ -589,6 +589,11 @@ PlaceObj('PresetDef', {
 			end
 		end,
 	}),
+	PlaceObj('ClassConstDef', {
+		'name', "Documentation",
+		'type', "text",
+		'value', "Creates a new banter preset that is played between a defined set of actors. See the New Quest sample mod in the Sample Mods section for an example on how to build a banter.",
+	}),
 })
 
 PlaceObj('PresetDef', {
@@ -687,6 +692,11 @@ PlaceObj('PresetDef', {
 		'help', "impact force modifier",
 		'default', 0,
 	}),
+	PlaceObj('ClassConstDef', {
+		'name', "Documentation",
+		'type', "text",
+		'value', "Defines a new caliber type that an inventory item of type Ammo could use.",
+	}),
 })
 
 PlaceObj('PresetDef', {
@@ -705,7 +715,8 @@ PlaceObj('PresetDef', {
 		'category', "Satellite Settings",
 		'id', "sector_size",
 		'name', "Sector size",
-		'default', point(0, 0),
+		'read_only', true,
+		'default', point(356, 356),
 	}),
 	PlaceObj('PropertyDefPoint', {
 		'category', "Satellite Settings",
@@ -731,6 +742,7 @@ PlaceObj('PresetDef', {
 	PlaceObj('PropertyDefNestedList', {
 		'category', "Satellite Settings",
 		'id', "decorations",
+		'name', "Custom images on map",
 		'base_class', "SatelliteViewDecorationDef",
 	}),
 	PlaceObj('PropertyDefText', {
@@ -935,14 +947,46 @@ PlaceObj('PresetDef', {
 			end
 		end,
 	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "OnEditorNew",
+		'params', "parent, ged, is_paste",
+		'code', function (self, parent, ged, is_paste)
+			if not is_paste then
+				self.starting_timestamp = os.time { 
+					year = self.starting_year, 
+					month = self.starting_month, 
+					day = self.starting_day, 
+					hour = self.starting_hour 
+				}
+			end
+		end,
+	}),
 	PlaceObj('PropertyDefFunc', {
 		'id', "Initialize",
 		'help', "Called once when the campaign starts for the first time.",
+		'default', function (self)
+			RevealAllSectors()
+		end,
 	}),
 	PlaceObj('PropertyDefFunc', {
 		'id', "FirstRunInterface",
 		'help', "Called after initialize, setups the initial interface.",
 		'params', "self, interfaceType",
+		'default', function (self, interfaceType)
+			--used for debugging
+			if interfaceType == "QuickStart" then
+				TutorialHintsState.LandingPageShown = true
+				Game.CampaignTime = Game.CampaignTimeStart + const.Satellite.MercArrivalTime / 2
+				SetUILCustomTime(Game.CampaignTime)
+				return
+			end
+			
+			SetCampaignSpeed(0, "UI")
+			g_PDALoadingFlavor = false
+			if not gv_SatelliteView then OpenSatelliteView(nil, "openLandingPage") end
+			OpenAIMAndSelectMerc()
+			g_PDALoadingFlavor = true
+		end,
 	}),
 	PlaceObj('ClassMethodDef', {
 		'name', "OnStartCampaign",
@@ -1089,6 +1133,16 @@ PlaceObj('PresetDef', {
 		'id', "starting_month",
 		'name', "Starting date, month, 1-12",
 		'default', 4,
+	}),
+	PlaceObj('ClassConstDef', {
+		'name', "Documentation",
+		'type', "text",
+		'value', "Creates a new campaign which you can associate with new sectors, quests, conversations, banters and many more features.",
+	}),
+	PlaceObj('ClassConstDef', {
+		'name', "DocumentationLink",
+		'type', "text",
+		'value', "Docs/ModTools/index.md.html",
 	}),
 	PlaceObj('PropertyDefNumber', {
 		'id', "starting_day",
@@ -1856,17 +1910,14 @@ PlaceObj('PresetDef', {
 			if not has_end_phrase then
 				return "Conversation doesn't have any phrase with <end conversation> GoTo property."
 			end
-			-- check characters image
-			local missing = {}
-			self:ForEachSubObject("ConversationLine", function(obj, parents, key,  missing)
-				local unit_def = UnitDataDefs[obj.Character]
-				if obj.Character and unit_def and not unit_def.BigPortrait then -- default is used
-					table.insert_unique(missing, obj.Character)
-				end
-			end, missing)
-			if next(missing) then
-				return "Missing BigPortrait property for: " .. table.concat(missing, ",")
-			end
+		end,
+	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "GetWarning",
+		'code', function (self)
+			--using default portrait for goldmaster is only a warning (mods)
+			if not config.ModdingToolsInUserMode then return end
+			return self:UsingDefaultBigPortrait()
 		end,
 	}),
 	PlaceObj('ClassConstDef', {
@@ -1874,6 +1925,22 @@ PlaceObj('PresetDef', {
 		'type', "text",
 		'value', "<id><color 0 128 0><opt(u(Comment),' ','')><color 128 128 128><opt(u(save_in),' - ','')>",
 		'untranslated', true,
+	}),
+	PlaceObj('ClassMethodDef', {
+		'name', "UsingDefaultBigPortrait",
+		'code', function (self)
+			local defaults = {}
+			self:ForEachSubObject("ConversationLine", function(obj, parents, key,  defaults)
+				local unit_def = UnitDataDefs[obj.Character]
+				if obj.Character and unit_def and 
+					unit_def:IsDefaultPropertyValue("BigPortrait", unit_def:GetPropertyMetadata("BigPortrait"), unit_def:GetProperty("BigPortrait")) then
+					table.insert_unique(defaults, obj.Character)
+				end
+			end, defaults)
+			if next(defaults) then
+				return "Using default BigPortrait property for: " .. table.concat(defaults, ",")
+			end
+		end,
 	}),
 	PlaceObj('ClassMethodDef', {
 		'name', "GetSaveData",
@@ -1900,7 +1967,19 @@ PlaceObj('PresetDef', {
 	PlaceObj('PropertyDefBool', {
 		'id', "IncludeInVoiceScripts",
 		'name', "Include in voice recording scripts",
+		'no_edit', "expression",
+		'no_edit_expression', function (self, prop_meta) return config.ModdingToolsInUserMode end,
 		'default', true,
+	}),
+	PlaceObj('ClassConstDef', {
+		'name', "Documentation",
+		'type', "text",
+		'value', "Allows adding a new conversation triggered by an actor or a group of actors. See the New Quest sample mod in the Sample Mods section for an example on how to build a conversation.",
+	}),
+	PlaceObj('ClassConstDef', {
+		'name', "DocumentationLink",
+		'type', "text",
+		'value', "Docs/ModTools/index.md.html",
 	}),
 })
 
@@ -2355,11 +2434,6 @@ PlaceObj('ClassDef', {
 		'value', true,
 	}),
 	PlaceObj('ClassConstDef', {
-		'name', "ContainerClass",
-		'type', "text",
-		'value', "ConversationPhrase",
-	}),
-	PlaceObj('ClassConstDef', {
 		'name', "ComboFormat",
 		'type', "text",
 		'value', "<Keyword>",
@@ -2370,11 +2444,16 @@ PlaceObj('ClassDef', {
 		'type', "text",
 		'value', "ConversationPhrase",
 	}),
+	PlaceObj('ClassConstDef', {
+		'name', "EditorName",
+		'type', "text",
+		'value', "Phrase",
+	}),
 	PlaceObj('ClassMethodDef', {
 		'name', "GetEditorView",
 		'code', function (self)
 			local texts = {}
-			texts[#texts+1] = Untranslated("<color 100 100 200><if(Enabled)>+</if><Keyword></color>")
+			texts[#texts+1] = Untranslated("<color 100 100 200><if(Enabled)>+</if><def(Keyword,'[new phrase]')></color>")
 			
 			local condition = self.Conditions and self.Conditions[1]
 			local txt  = condition and _InternalTranslate(condition:GetEditorView(), condition) or ""
@@ -2462,7 +2541,7 @@ PlaceObj('ClassDef', {
 		'name', "OnEditorSetProperty",
 		'params', "prop_id, old_value, ged",
 		'code', function (self, prop_id, old_value, ged)
-			local conversation = ged:ResolveObj("SelectedPreset")
+			local conversation = GetParentTableOfKind(self, "Conversation")
 			if prop_id == "Keyword" and self.Keyword ~= "" then
 				if not self.id then
 					self:GenerateId(conversation)
@@ -2681,6 +2760,11 @@ PlaceObj('PresetDef', {
 			end
 		end,
 	}),
+	PlaceObj('ClassConstDef', {
+		'name', "Documentation",
+		'type', "text",
+		'value', "Creates a new Crafting Operation Recipe that is accessed through the sector operations menu.",
+	}),
 })
 
 PlaceObj('PresetDef', {
@@ -2751,6 +2835,11 @@ PlaceObj('PresetDef', {
 		'name', "Delay After Combat",
 		'help', "When an email should be send during combat. It is instead send after the combat ends.",
 		'default', true,
+	}),
+	PlaceObj('ClassConstDef', {
+		'name', "Documentation",
+		'type', "text",
+		'value', "Allows creating new emails received in the Email tab.",
 	}),
 })
 
@@ -3174,6 +3263,11 @@ PlaceObj('PresetDef', {
 		'items', function (self) return GetCampaignSectorsCombo() end,
 		'translate', true,
 	}),
+	PlaceObj('ClassConstDef', {
+		'name', "Documentation",
+		'type', "text",
+		'value', "Setting up conditions for new history occurrences in the History tab.",
+	}),
 })
 
 PlaceObj('PresetDef', {
@@ -3390,6 +3484,9 @@ PlaceObj('ClassAsGroupPresetDef', {
 PlaceObj('PresetDef', {
 	DefEditorName = "Lightmodel Selection Rules",
 	DefGlobalMap = "LightmodelSelectionRules",
+	DefModItem = true,
+	DefModItemName = "Lightmodel Selection Rule",
+	DefModItemSubmenu = "Campaign & Maps",
 	id = "LightmodelSelectionRule",
 	PlaceObj('PropertyDefChoice', {
 		'id', "region",
@@ -3595,6 +3692,11 @@ PlaceObj('PresetDef', {
 				end
 		end,
 	}),
+	PlaceObj('ClassConstDef', {
+		'name', "Documentation",
+		'type', "text",
+		'value', "Contains information on use of Light models and tweaking of properties like World Region, Weather Condition and Time Of Day.",
+	}),
 })
 
 PlaceObj('PresetDef', {
@@ -3686,6 +3788,11 @@ PlaceObj('ClassDef', {
 		'value', "<color 75 105 198><item><stack_suffix>",
 		'untranslated', true,
 	}),
+	PlaceObj('ClassConstDef', {
+		'name', "EditorName",
+		'type', "text",
+		'value', "Item",
+	}),
 	PlaceObj('ClassMethodDef', {
 		'name', "GenerateLoot",
 		'params', "looter, looted, seed, items",
@@ -3712,12 +3819,12 @@ PlaceObj('ClassDef', {
 			end
 			
 			if self.Double then
-					local roll
-					roll, seed = BraidRandom(seed, 100)
-					local value = GameDifficulties[Game.game_difficulty]:ResolveValue("chanceToHalveDoubleLoot") or 0
-					if roll < value then
-						amount = amount / 2
-					end
+				local roll
+				roll, seed = BraidRandom(seed, 100)
+				local value = GameDifficulties[Game.game_difficulty]:ResolveValue("chanceToHalveDoubleLoot") or 0
+				if roll < value then
+					amount = amount / 2
+				end
 			end
 			
 			local chance = self:GetDropChance()
@@ -3865,6 +3972,11 @@ PlaceObj('ClassDef', {
 		'value', "Upgraded <weapon>",
 		'untranslated', true,
 	}),
+	PlaceObj('ClassConstDef', {
+		'name', "EditorName",
+		'type', "text",
+		'value', "Upgraded Weapon",
+	}),
 	PlaceObj('ClassMethodDef', {
 		'name', "ListChances",
 		'params', "items, env, chance",
@@ -3952,7 +4064,7 @@ PlaceObj('ClassDef', {
 		'code', function (self)
 			local compatible
 			
-			for _, slot in ipairs(g_Classes[self.weapon].ComponentSlots) do
+			for _, slot in ipairs(g_Classes[self.weapon] and g_Classes[self.weapon].ComponentSlots) do
 				for _, component in ipairs(slot.AvailableComponents) do
 					compatible = compatible or {}
 					compatible[component] = slot	
@@ -4005,6 +4117,11 @@ PlaceObj('ClassDef', {
 		'type', "text",
 		'value', "<color 75 105 198><item>",
 		'untranslated', true,
+	}),
+	PlaceObj('ClassConstDef', {
+		'name', "EditorName",
+		'type', "text",
+		'value', "Weapon Component",
 	}),
 	PlaceObj('ClassMethodDef', {
 		'name', "GenerateLoot",
@@ -4351,6 +4468,11 @@ PlaceObj('PresetDef', {
 		'help', "In which quest variable we store how many times the popup has been shown",
 		'default', "",
 		'items', function (self) return GetQuestsVarsCombo(self.Quest, "Num") end,
+	}),
+	PlaceObj('ClassConstDef', {
+		'name', "Documentation",
+		'type', "text",
+		'value', "Allows adding of new presets with tile, text and image that are used mainly in tutorials and starting help.",
 	}),
 })
 
@@ -4769,7 +4891,7 @@ PlaceObj('PresetDef', {
 	PlaceObj('PropertyDefPresetId', {
 		'id', "Author",
 		'no_edit', "expression",
-		'no_edit_expression', function (self, prop_meta) return not Platform.developer end,
+		'no_edit_expression', function (self, prop_meta) return config.ModdingToolsInUserMode end,
 		'preset_class', "HGMember",
 	}),
 	PlaceObj('PropertyDefChoice', {
@@ -4958,6 +5080,11 @@ PlaceObj('PresetDef', {
 			end
 		end,
 	}),
+	PlaceObj('ClassConstDef', {
+		'name', "Documentation",
+		'type', "text",
+		'value', "Allows adding of new quests, as well as setting up variables in them. Each quest can be set up with its conditions as Given, Completed or Failed. See the New Quest sample mod in the Sample Mods section for an example on how to build a quest.",
+	}),
 })
 
 PlaceObj('PresetDef', {
@@ -5015,6 +5142,11 @@ PlaceObj('PresetDef', {
 			}),
 		},
 		'template', true,
+	}),
+	PlaceObj('ClassConstDef', {
+		'name', "Documentation",
+		'type', "text",
+		'value', "Defines a new recipe with ingredients and result items that can be performed in the inventory.",
 	}),
 })
 
@@ -6240,10 +6372,10 @@ PlaceObj('ClassDef', {
 		end,
 	}),
 	PlaceObj('ClassMethodDef', {
-		'name', "OnEditorNew",
+		'name', "OnAfterEditorNew",
 		'params', "parent, ged, is_paste",
 		'code', function (self, parent, ged, is_paste)
-			local quest_def = ged:ResolveObj("SelectedPreset") or ged:ResolveObj("SelectedObject")
+			local quest_def = GetParentTableOfKind(self, "QuestsDef")
 			self.QuestId = quest_def.id
 		end,
 	}),
@@ -6354,6 +6486,11 @@ PlaceObj('PresetDef', {
 		'name', "Completion Condition",
 		'base_class', "Condition",
 		'inclusive', true,
+	}),
+	PlaceObj('ClassConstDef', {
+		'name', "Documentation",
+		'type', "text",
+		'value', "Allows adding new tutorial hint pop-up in the HUD or setting up a pop-up window preset created in the Popup Notification mod item.",
 	}),
 })
 
@@ -6593,6 +6730,11 @@ PlaceObj('PresetDef', {
 				end
 			end
 		end,
+	}),
+	PlaceObj('ClassConstDef', {
+		'name', "Documentation",
+		'type', "text",
+		'value', "Creates a new weapon component that could be used in a weapon as a base component or through the Modify UI screen of a weapon. The Z_Blockings group is used to make certain components incompatible with others at the same time.",
 	}),
 })
 
@@ -6908,6 +7050,11 @@ PlaceObj('PresetDef', {
 	id = "WeaponUpgradeSlot",
 	PlaceObj('PropertyDefText', {
 		'id', "DisplayName",
+	}),
+	PlaceObj('ClassConstDef', {
+		'name', "Documentation",
+		'type', "text",
+		'value', "Creates a new possible weapon slot that could be defined for a weapon preset and referenced in a Weapon Component preset.",
 	}),
 })
 

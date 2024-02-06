@@ -93,7 +93,7 @@ function ReloadTriggerTargetPairs()
 					end
 				end
 			elseif col.HideFromCamera then
-				print("<color 255 0 0> Collection " .. col.Name .. " with index " .. tostring(col.Index) .. " is marked as HideFromCamera but is also linked to rooms, HideFromCamera is ignored!</color>")
+				print("Collection " .. col.Name .. " with index " .. tostring(col.Index) .. " is marked as HideFromCamera but is also linked to rooms, HideFromCamera is ignored!")
 			end
 		end
 		MapForEach("map", "HideTop", function(o)

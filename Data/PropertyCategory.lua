@@ -9,6 +9,12 @@ PlaceObj('PropertyCategory', {
 PlaceObj('PropertyCategory', {
 	SortKey = -1000,
 	group = "Default",
+	id = "Grid Marker",
+})
+
+PlaceObj('PropertyCategory', {
+	SortKey = -1000,
+	group = "Default",
 	id = "Preset",
 })
 

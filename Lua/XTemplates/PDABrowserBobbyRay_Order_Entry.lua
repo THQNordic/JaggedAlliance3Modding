@@ -112,7 +112,7 @@ PlaceObj('XTemplate', {
 						local quantity = BobbyRayCartGetUnits()[context.id] or 0
 						quantity = quantity
 						local stack = context.ShopStackSize or 1
-						local storeEntry = BobbyRayStoreGetEntry(context)
+						--local storeEntry = BobbyRayStoreGetEntry(context)
 						-- self:SetText(tostring(quantity) .. "/" .. tostring(storeEntry.Stock))
 						self:SetText(stack ~= 1 and T{835688467903, "<quant>x<stack>", quant = quantity, stack = stack } or Untranslated(quantity))
 						self:SetTextStyle(stack ~= 1 and "PDABobbyStore_SCP14C" or "PDABobbyStore_SCP18C")
@@ -214,7 +214,7 @@ PlaceObj('XTemplate', {
 					'VAlign', "center",
 					'TextStyle', "PDABobbyStore_SCP18C",
 					'OnContextUpdate', function (self, context, ...)
-						self:SetText(T{770368132801, "<money(Cost)>", Cost = BobbyRayStoreGetEntry(context).Cost})
+						self:SetText(T{770368132801, "<money(Cost)>", Cost = BobbyRayStoreGetEntryCost(context)})
 					end,
 					'Translate', true,
 				}),
@@ -237,7 +237,7 @@ PlaceObj('XTemplate', {
 					'TextStyle', "PDABobbyStore_SCP18C",
 					'OnContextUpdate', function (self, context, ...)
 						local quant = BobbyRayCartGetUnits()[context.id] or 0
-						self:SetText(T{770368132801, "<money(Cost)>", Cost = quant * BobbyRayStoreGetEntry(context).Cost})
+						self:SetText(T{770368132801, "<money(Cost)>", Cost = quant * BobbyRayStoreGetEntryCost(context)})
 					end,
 					'Translate', true,
 				}),

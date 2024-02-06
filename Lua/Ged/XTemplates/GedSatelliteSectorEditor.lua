@@ -60,7 +60,7 @@ PlaceObj('XTemplate', {
 			'ActionToolbar', "main",
 			'ActionShortcut', "Ctrl-S",
 			'OnAction', function (self, host, source, ...)
-				if config.PresetEditorsModdingMode then
+				if config.ModdingToolsInUserMode then
 					host:Send("GedSatSectorSaveMods")
 				else
 					host:Send("GedPresetSave", "SelectedPrg", "CampaignPreset", "force_save")

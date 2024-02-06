@@ -220,3 +220,11 @@ PlaceObj('PhotoFramePreset', {
 	id = "Wanted",
 })
 
+PlaceObj('PhotoFramePreset', {
+	SortKey = 25,
+	display_name = T(485621538387, --[[PhotoFramePreset WishYouWereHere display_name]] "Wish You Were Here"),
+	frame_file = "UI/PhotoFrames/wish_you_were_here",
+	group = "Default",
+	id = "WishYouWereHere",
+})
+

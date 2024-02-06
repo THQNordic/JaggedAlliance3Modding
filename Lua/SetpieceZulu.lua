@@ -12,6 +12,17 @@ AppendClass.SetpiecePrg = {
 AppendClass.XSetpieceDlg = {
 	LeaveDialogsOpen = { "ZuluChoiceDialog" },
 }
+local oldOpen  = XSetpieceDlg.Open
+function XSetpieceDlg:Open()
+	table.remove_value(BlacklistedDialogClasses, "CombatLogMessageFader")
+	oldOpen(self)
+end
+
+local oldClose = XSetpieceDlg.Close or XDialog.Close
+function XSetpieceDlg:Close()
+	table.insert(BlacklistedDialogClasses, "CombatLogMessageFader")
+	return oldClose(self)
+end
 
 function CanBeSetpieceActor(idx, obj)
 	return IsKindOf(obj, "Unit") or not IsKindOf(obj, "EditorObject")
@@ -490,12 +501,18 @@ function SetpieceSetStance:GetEditorView()
 		string.format("Actor(s) '%s' in stance %s with %s", self.Actors == "" and "()" or self.Actors, self.Stance, self.Weapon)
 end
 
+local function lFilterDeadActors(actors)
+	return table.ifilter(actors or empty_table, function(o) return IsValid(o) and not o:IsDead() end)
+end
+
 function SetpieceSetStance.ExecThread(state, Actors, stance, weapon, transition)
+	Actors = lFilterDeadActors(Actors)
 	local duration = 0
 	for i, actor in ipairs(Actors) do
 		if actor.species ~= "Human" then goto continue end
 		if actor:HasStatusEffect("ManningEmplacement") then goto continue end
 		if actor:GetBandageTarget() then goto continue end
+		--if actor:IsDead() then goto continue end
 		-- setup weapons, start transition anims
 		actor:SetCommand("SetpieceIdle")
 		
@@ -542,6 +559,7 @@ function SetpieceSetStance.ExecThread(state, Actors, stance, weapon, transition)
 end
 
 function SetpieceSetStance.Skip(state, Actors, stance, weapon)
+	Actors = lFilterDeadActors(Actors)
 	for i, actor in ipairs(Actors) do
 		local prefix = SetpieceSetStance.SetupActorWeapon(actor, weapon)
 		actor:SetCommandParamValue("SetpieceIdle", "weapon_anim_prefix", prefix)
@@ -551,6 +569,7 @@ function SetpieceSetStance.Skip(state, Actors, stance, weapon)
 end
 
 function SetpieceSetStance.SkipStanceOnly(state, Actors, stance)
+	Actors = lFilterDeadActors(Actors)
 	for i, actor in ipairs(Actors) do
 		actor:SetCommand("SetpieceSetStance", stance)
 	end
@@ -605,7 +624,7 @@ DefineClass.SetpieceGotoPosition = {
 		{ id = "MoveStyle", name = "Move style", editor = "combo", default = "", items = function (self) return GetMoveStyleCombo() end },
 		{ id = "AnimSpeedModifier", name = "Anim Speed Modifier", editor = "number", default = 1000, min = 0, max = 65535, slider = true },
 	},
-	EditorName = "Go to (for Zulu units)",
+	EditorName = "Go to (for Jagged Alliance 3 units)",
 }
 
 function SetpieceGotoPosition:GetEditorView()
@@ -1479,7 +1498,7 @@ function SkipNonBlockingSetpieces()
 end
 
 
------ Play Effects (redefined for Zulu to support effects with __waitexec that take time)
+----- Play Effects (redefined for Jagged Alliance 3 to support effects with __waitexec that take time)
 
 PrgPlayEffect.ForbiddenEffectClasses = { "PlaySetpiece", "UnitStartConversation" } -- list of classnames of effects which can't be placed in a PrgPlayEffect
 

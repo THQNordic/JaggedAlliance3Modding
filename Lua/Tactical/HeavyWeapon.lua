@@ -89,7 +89,7 @@ function HeavyWeapon:GetAttackResults(action, attack_args)
 		end
 	elseif self.trajectory_type == "parabola" then
 		attack_args.can_bounce = ordnance and ordnance.CanBounce
-		trajectory = Grenade:GetTrajectory(attack_args, nil, target_pos)
+		trajectory = Grenade:GetTrajectory(attack_args, nil, target_pos, mishap)
 	elseif self.trajectory_type == "bombard" then
 		-- no parabola for bombard
 	else

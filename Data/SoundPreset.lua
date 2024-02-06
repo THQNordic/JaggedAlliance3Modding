@@ -1568,6 +1568,10 @@ PlaceObj('SoundPreset', {
 		file = "Sounds/animations/AL_infected-male-pain1-01",
 		frequency = 10,
 	}),
+	PlaceObj('SoundFile', {
+		file = "Sounds/animations/AL_infected-male-pain10-01",
+		frequency = 10,
+	}),
 })
 
 PlaceObj('SoundPreset', {
@@ -2933,6 +2937,10 @@ PlaceObj('SoundPreset', {
 	}),
 	PlaceObj('SoundFile', {
 		file = "Sounds/animations/AL_whistling2-01",
+		frequency = 6,
+	}),
+	PlaceObj('SoundFile', {
+		file = "Sounds/animations/AL_whistling1-01",
 		frequency = 6,
 	}),
 })
@@ -16819,15 +16827,13 @@ PlaceObj('SoundPreset', {
 })
 
 PlaceObj('SoundPreset', {
-	animsync = true,
 	group = "ENVIRONMENT",
 	id = "creaks_windturbine",
-	loud_distance = 2000,
+	loud_distance = 3000,
 	random_periodic_delay = 5000,
-	silence_duration = 20000,
-	silence_frequency = 50,
-	type = "Environment",
-	volume = 25,
+	silence_duration = 2000,
+	type = "EnvironmentWindTower",
+	volume = 50,
 	PlaceObj('SoundFile', {
 		file = "Sounds/environment/amb_creaksturbine5-01",
 		frequency = 20,
@@ -19517,26 +19523,6 @@ PlaceObj('SoundPreset', {
 	random_periodic_delay = 3000,
 	silence_duration = 10000,
 	type = "Environment",
-	PlaceObj('SoundFile', {
-		file = "Sounds/weapons/grenade_pipebomb-drop-dirt6-01",
-		frequency = 20,
-	}),
-	PlaceObj('SoundFile', {
-		file = "Sounds/weapons/grenade_pipebomb-drop-dirt5-01",
-		frequency = 20,
-	}),
-	PlaceObj('SoundFile', {
-		file = "Sounds/weapons/grenade_pipebomb-drop-dirt4-01",
-		frequency = 20,
-	}),
-	PlaceObj('SoundFile', {
-		file = "Sounds/weapons/grenade_pipebomb-drop-dirt3-01",
-		frequency = 20,
-	}),
-	PlaceObj('SoundFile', {
-		file = "Sounds/weapons/grenade_pipebomb-drop-dirt2-01",
-		frequency = 20,
-	}),
 })
 
 PlaceObj('SoundPreset', {
@@ -31750,6 +31736,9 @@ PlaceObj('SoundPreset', {
 	id = "ui_itemfusedrop-ground",
 	type = "IngameUI",
 	volume = 68,
+	PlaceObj('SoundFile', {
+		file = "Sounds/UI/ui_itemfusedrop-ground",
+	}),
 })
 
 PlaceObj('SoundPreset', {
@@ -32108,7 +32097,7 @@ PlaceObj('SoundPreset', {
 	type = "IngameUI",
 	volume = 68,
 	PlaceObj('SoundFile', {
-		file = "Sounds/UI/ui_itemKompositum58drop-inventory",
+		file = "Sounds/UI/ui_itemKompositum58drop-ground",
 	}),
 })
 
@@ -32359,7 +32348,7 @@ PlaceObj('SoundPreset', {
 	type = "IngameUI",
 	volume = 51,
 	PlaceObj('SoundFile', {
-		file = "Sounds/UI/ui_itemsyringedrop-inventory",
+		file = "Sounds/UI/ui_itemsyringedrop-ground",
 	}),
 })
 
@@ -32629,7 +32618,7 @@ PlaceObj('SoundPreset', {
 	type = "IngameUI",
 	volume = 68,
 	PlaceObj('SoundFile', {
-		file = "Sounds/UI/ui_itemReanimationssetdrop-inventory",
+		file = "Sounds/UI/ui_itemReanimationssetdrop-ground",
 	}),
 })
 

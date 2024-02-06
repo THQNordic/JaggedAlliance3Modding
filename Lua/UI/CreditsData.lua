@@ -109,10 +109,13 @@ Raya Litova</crn>
 
 <crn>Alexander "Scarver" Apostolov
 Bisser Krastev
+Boris Vasilev
 Borislav Todorov
+David Tankov
 Gergana Tyufekchieva
 Ivan Vankov
 Jordan Malchev
+Konstantin Konstantinov
 Nikolay Karashtranov
 Svetoslav Genchev
 Valeriya Dyulgerova

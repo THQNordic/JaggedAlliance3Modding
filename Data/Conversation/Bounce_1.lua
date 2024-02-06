@@ -1464,10 +1464,16 @@ PlaceObj('Conversation', {
 	}),
 	PlaceObj('ConversationPhrase', {
 		Align = "right",
+		AutoRemove = true,
 		Comment = "maybe add interjections",
 		Effects = {
 			PlaceObj('QuestSetVariableBool', {
 				Prop = "Rumor",
+				QuestId = "Landsbach",
+			}),
+			PlaceObj('QuestSetVariableNum', {
+				Amount = 1,
+				Prop = "Investigation Clues",
 				QuestId = "Landsbach",
 			}),
 		},
@@ -1508,7 +1514,7 @@ PlaceObj('Conversation', {
 				},
 			}),
 		},
-		PhraseConditionRolloverText = T(427108399398, --[[Conversation Bounce_1 PhraseConditionRolloverText]] "<em>+1 clue</em> gained"),
+		PhraseConditionRolloverText = T(406941689187, --[[Conversation Bounce_1 PhraseConditionRolloverText]] "<em>+1 clue</em> gained"),
 		id = "Whatssoimportantaboutthisdiesel",
 	}),
 	PlaceObj('ConversationPhrase', {

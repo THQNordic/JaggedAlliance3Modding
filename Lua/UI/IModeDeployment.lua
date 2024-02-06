@@ -406,10 +406,14 @@ function NetSyncEvents.DeploymentToExploration(quick_deploy, person_who_clicked)
 		if next(defender_markers) then
 			local _, enemy_squads = GetSectorSquadsToSpawnInTactical(gv_CurrentSectorId)
 			for _, squad in ipairs(enemy_squads) do
+				if squad.Side == "neutral" then goto continue end
+			
 				local squad_marker = table.interaction_rand(defender_markers) -- move unit to this marker if it was not grouped with other units in SpawnSquads
 				for _, session_id in ipairs(squad.units or empty_table) do
 					local marker = false
 					local unit = g_Units[session_id]
+					if not unit then goto continue end
+					
 					for idx, group in ipairs(g_GroupedSquadUnits) do
 						if table.find(group, unit.session_id) then
 							if not markers_per_group[idx] then
@@ -423,7 +427,11 @@ function NetSyncEvents.DeploymentToExploration(quick_deploy, person_who_clicked)
 					unit:SetBehavior("AdvanceTo", {marker:GetHandle(), delay})
 					unit:SetCommandParams("AdvanceTo", {move_anim = "Walk"})
 					unit:SetCommand("AdvanceTo", marker:GetHandle(), delay)
+					
+					::continue::
 				end
+				
+				::continue::
 			end
 		end
 	end

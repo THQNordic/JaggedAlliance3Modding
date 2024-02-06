@@ -59,37 +59,6 @@ function CrosshairUI:Open(...)
 	
 	SetAPIndicator(false, "attack")
 	XContextWindow.Open(self, ...)
-	
-	local playVr = IsKindOf(self.parent, "IModeCombatAttack")
-	if playVr and not target:IsPlayerAlly() and (not IsKindOf(target, "Unit") or not target:IsCivilian()) then
-		-- Get attack results from crosshair to determine whether to play VR
-		local attackResult = self and self.cached_results
-		attackResult = attackResult and attackResult[self.context.action.id]
-		
-		local one_non_obstructed = false
-		local bestChance = 0
-		local worstChance = max_int
-		local attackResultCalc = attackResult and attackResult.attackResultCalc
-		local is_blind_fire = attackResultCalc and not not attackResultCalc.BlindFire
-		for id, bodyPartData in pairs(attackResultCalc) do
-			bestChance = Max(bestChance, bodyPartData.chance_to_hit)
-			worstChance = Min(worstChance, bodyPartData.chance_to_hit)
-			one_non_obstructed = one_non_obstructed or not bodyPartData.obstructed
-		end
-		
-		local torsoAttackResult = attackResult and attackResult.attackResultCalc
-		torsoAttackResult = torsoAttackResult and torsoAttackResult.Torso
-		local torso_stealth_kill = torsoAttackResult and torsoAttackResult.stealth_attack
-		
-		local attacker = self.context.attacker
-		local is_hidden = attacker:HasStatusEffect("Hidden") or torso_stealth_kill
-		if not one_non_obstructed or is_blind_fire or bestChance <= 20 then
-			PlayVoiceResponse(attacker, is_hidden and "AimAttack_LowStealth" or "AimAttack_Low")
-		elseif bestChance > 20 then
-			PlayVoiceResponse(attacker, is_hidden and "AimAttackStealth" or "AimAttack")
-		end
-	end
-	
 	-- We need to wait for visible to become true as the SetFocus from SetSelectedPart
 	-- will go through while IsVisible is still false due to the crosshair wait
 	self:CreateThread("wait-visible", function()
@@ -175,6 +144,35 @@ function CrosshairUI:OnLayoutComplete()
 	if not self.dynamic then
 		self:SetInteractionBox(self.box:minx(), self.box:miny(), point(1000, 1000), true)
 	end
+	local target = self.context.target
+	local playVr = IsKindOf(self.parent, "IModeCombatAttack")
+	if playVr and not target:IsPlayerAlly() and (not IsKindOf(target, "Unit") or not target:IsCivilian()) then
+		-- Get attack results from crosshair to determine whether to play VR
+		local attackResult = self and self.cached_results
+		attackResult = attackResult and attackResult[self.context.action.id]
+		
+		local one_non_obstructed = false
+		local bestChance = 0
+		local worstChance = max_int
+		local attackResultCalc = attackResult and attackResult.attackResultCalc
+		local is_blind_fire = attackResultCalc and not not attackResultCalc.BlindFire
+		for id, bodyPartData in pairs(attackResultCalc) do
+			bestChance = Max(bestChance, bodyPartData.chance_to_hit)
+			worstChance = Min(worstChance, bodyPartData.chance_to_hit)
+			one_non_obstructed = one_non_obstructed or not bodyPartData.obstructed
+		end
+		
+		local torsoAttackResult = attackResult and attackResult.attackResultCalc
+		torsoAttackResult = torsoAttackResult and torsoAttackResult.Torso
+		local torso_stealth_kill = torsoAttackResult and torsoAttackResult.stealth_attack
+		local attacker = self.context.attacker
+		local is_hidden = attacker:HasStatusEffect("Hidden") or torso_stealth_kill
+		if not one_non_obstructed or is_blind_fire or bestChance <= 20 then
+			PlayVoiceResponse(attacker, is_hidden and "AimAttack_LowStealth" or "AimAttack_Low")
+		elseif bestChance > 20 then
+			PlayVoiceResponse(attacker, is_hidden and "AimAttackStealth" or "AimAttack")
+		end
+	end	
 end
 
 function CrosshairUI:OnDelete(reason)
@@ -499,7 +497,11 @@ function CrosshairUI:UpdateAim()
 	if not self.cached_results then self.cached_results = {} end
 	
 	local cached_results = self.cached_results[action.id]
-	local invalidCache = not cached_results or cached_results.aim ~= self.aim or cached_results.ap ~= attacker.ActionPoints or cached_results.free_move_ap ~= attacker.free_move_ap
+	local invalidCache = not cached_results or
+									cached_results.aim ~= self.aim or
+									cached_results.ap ~= attacker.ActionPoints or
+									cached_results.free_move_ap ~= attacker.free_move_ap
+									
 		
 	if invalidCache then
 		local cthCalc, attackResultCalc = {}, {}
@@ -998,7 +1000,7 @@ function SpawnCrosshair(self, action, closeOnAttack, meleeTargetPos, target, don
 			end
 			
 			-- in exploration  we need to continuously check if the unit is visible
-			if not g_Combat then
+			if not g_Combat and IsValid(target) then
 				local target_not_seen
 				if IsKindOf(target, "Unit") then
 					-- Checking visible directly will allow this to work with Livewire's perk
@@ -1023,14 +1025,17 @@ function SpawnCrosshair(self, action, closeOnAttack, meleeTargetPos, target, don
 			end
 			
 			if dynamic then
-				local obj = attachPos
-				if IsValid(obj) and attachSpotIdx ~= -1 then
+				local obj = attachPos -- point or obj
+				if IsValid(obj) and attachSpotIdx ~= -1 then -- if obj attach to specific spot specified
 					obj = obj:GetSpotLoc(attachSpotIdx)
 				end
-				local front, sx, sy = GameToScreenXY(obj)
-				local b = ctrl.box
-				if front then
-					ctrl:SetInteractionBox(sx + b:minx(), sy + b:miny(), normalScale, true)
+				
+				if IsValid(obj) or IsPoint(obj) then
+					local front, sx, sy = GameToScreenXY(obj)
+					local b = ctrl.box
+					if front then
+						ctrl:SetInteractionBox(sx + b:minx(), sy + b:miny(), normalScale, true)
+					end
 				end
 			end
 		end

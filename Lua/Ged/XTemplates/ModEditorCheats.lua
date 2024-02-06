@@ -33,25 +33,25 @@ PlaceObj('XTemplate', {
 		end,
 	}, {
 		PlaceObj('XTemplateAction', {
-			'ActionId', "QuickstartMod",
-			'ActionTranslate', false,
-			'ActionName', "Quickstart Mod Game",
-			'OnAction', function (self, host, source, ...)
-				host:Op("GedOpTriggerCheat", "root", "CheatNewModGame", "quickstart")
-			end,
-		}),
-		PlaceObj('XTemplateAction', {
 			'ActionId', "NewGameMod",
 			'ActionTranslate', false,
-			'ActionName', "New Mod Game",
+			'ActionName', "New game (mod testing)",
 			'OnAction', function (self, host, source, ...)
 				host:Op("GedOpTriggerCheat", "root", "CheatNewModGame", "normal")
 			end,
 		}),
 		PlaceObj('XTemplateAction', {
+			'ActionId', "QuickstartMod",
+			'ActionTranslate', false,
+			'ActionName', "New game (mod testing) - quickstart",
+			'OnAction', function (self, host, source, ...)
+				host:Op("GedOpTriggerCheat", "root", "CheatNewModGame", "quickstart")
+			end,
+		}),
+		PlaceObj('XTemplateAction', {
 			'ActionId', "TestExploration",
 			'ActionTranslate', false,
-			'ActionName', "Place Test Units",
+			'ActionName', "Place test mercs",
 			'OnAction', function (self, host, source, ...)
 				host:Op("GedOpTriggerCheat", "root", "CheatTestExploration")
 			end,
@@ -59,7 +59,7 @@ PlaceObj('XTemplate', {
 		PlaceObj('XTemplateAction', {
 			'ActionId', "Teleport",
 			'ActionTranslate', false,
-			'ActionName', "Enable Teleport (with ctrl-t) (toggle)",
+			'ActionName', "Enable teleport (toggle) Ctrl-T",
 			'OnAction', function (self, host, source, ...)
 				host:Op("GedOpTriggerCheat", "root", "CheatEnable", "Teleport")
 			end,
@@ -67,7 +67,7 @@ PlaceObj('XTemplate', {
 		PlaceObj('XTemplateAction', {
 			'ActionId', "Money",
 			'ActionTranslate', false,
-			'ActionName', "Add Money",
+			'ActionName', "Add money",
 			'OnAction', function (self, host, source, ...)
 				host:Op("GedOpTriggerCheat", "root", "CheatActivate", "CheatGetMoney")
 			end,
@@ -75,7 +75,7 @@ PlaceObj('XTemplate', {
 		PlaceObj('XTemplateAction', {
 			'ActionId', "LevelUp",
 			'ActionTranslate', false,
-			'ActionName', "Level Up (selected merc)",
+			'ActionName', "Level up selected merc",
 			'OnAction', function (self, host, source, ...)
 				host:Op("GedOpTriggerCheat", "root", "CheatActivate", "CheatLevelUp")
 			end,
@@ -83,7 +83,7 @@ PlaceObj('XTemplate', {
 		PlaceObj('XTemplateAction', {
 			'ActionId', "AddAmmo",
 			'ActionTranslate', false,
-			'ActionName', "Add All Ammo",
+			'ActionName', "Add all ammo",
 			'OnAction', function (self, host, source, ...)
 				host:Op("GedOpTriggerCheat", "root", "CheatActivate", "CheatAddAmmo")
 			end,
@@ -91,7 +91,7 @@ PlaceObj('XTemplate', {
 		PlaceObj('XTemplateAction', {
 			'ActionId', "AddMerc",
 			'ActionTranslate', false,
-			'ActionName', "Add Merc",
+			'ActionName', "Add merc",
 			'OnActionEffect', "popup",
 		}, {
 			PlaceObj('XTemplateForEach', {
@@ -115,7 +115,7 @@ PlaceObj('XTemplate', {
 		PlaceObj('XTemplateAction', {
 			'ActionId', "AddItem",
 			'ActionTranslate', false,
-			'ActionName', "Add Item",
+			'ActionName', "Add inventory item",
 			'OnActionEffect', "popup",
 		}, {
 			PlaceObj('XTemplateForEach', {
@@ -139,15 +139,23 @@ PlaceObj('XTemplate', {
 		PlaceObj('XTemplateAction', {
 			'ActionId', "FlyCameraToggle",
 			'ActionTranslate', false,
-			'ActionName', "Fly Camera Toggle (Shift-C)",
+			'ActionName', "Fly camera (toggle) Shift-C",
 			'OnAction', function (self, host, source, ...)
 				host:Op("GedOpTriggerCheat", "root", "CheatToggleFlyCamera")
 			end,
 		}),
 		PlaceObj('XTemplateAction', {
+			'ActionId', "IsolatedScreenshot",
+			'ActionTranslate', false,
+			'ActionName', "Isolated object screenshot (Ctrl-Alt-PrtScr)",
+			'OnAction', function (self, host, source, ...)
+				host:Op("GedOpTriggerCheat", "root", "CheatIsolatedScreenshot")
+			end,
+		}),
+		PlaceObj('XTemplateAction', {
 			'ActionId', "ResetMap",
 			'ActionTranslate', false,
-			'ActionName', "Reset Map",
+			'ActionName', "Reset to mod editor map",
 			'OnAction', function (self, host, source, ...)
 				host:Op("GedOpTriggerCheat", "root", "CheatResetMap")
 			end,
@@ -184,7 +192,7 @@ PlaceObj('XTemplate', {
 		PlaceObj('XTemplateAction', {
 			'ActionId', "GodMode",
 			'ActionTranslate', false,
-			'ActionName', "God Mode (toggle)",
+			'ActionName', "God mode (toggle)",
 			'OnAction', function (self, host, source, ...)
 				host:Op("GedOpTriggerCheat", "root", "CheatEnable", "GodMode", "player1")
 			end,
@@ -200,7 +208,7 @@ PlaceObj('XTemplate', {
 		PlaceObj('XTemplateAction', {
 			'ActionId', "AlwaysHit",
 			'ActionTranslate', false,
-			'ActionName', "Always Hit (toggle)",
+			'ActionName', "Always hit (toggle)",
 			'OnAction', function (self, host, source, ...)
 				host:Op("GedOpTriggerCheat", "root", "CheatEnable", "AlwaysHit")
 			end,
@@ -208,7 +216,7 @@ PlaceObj('XTemplate', {
 		PlaceObj('XTemplateAction', {
 			'ActionId', "AlwaysMiss",
 			'ActionTranslate', false,
-			'ActionName', "Always Miss (toggle)",
+			'ActionName', "Always miss (toggle)",
 			'OnAction', function (self, host, source, ...)
 				host:Op("GedOpTriggerCheat", "root", "CheatEnable", "AlwaysMiss")
 			end,
@@ -216,7 +224,7 @@ PlaceObj('XTemplate', {
 		PlaceObj('XTemplateAction', {
 			'ActionId', "SpawnEnemy",
 			'ActionTranslate', false,
-			'ActionName', "Spawn Enemy",
+			'ActionName', "Spawn enemy",
 			'OnAction', function (self, host, source, ...)
 				host:Op("GedOpTriggerCheat", "root", "CheatSpawnEnemy")
 			end,

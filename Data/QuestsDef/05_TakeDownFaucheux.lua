@@ -574,6 +574,16 @@ PlaceObj('QuestsDef', {
 						return quest.K16U_KillSwitchTriggered
 					end,
 				}),
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "05_TakeDownFaucheux",
+					Vars = set({
+	Completed = false,
+}),
+					__eval = function ()
+						local quest = gv_Quests['05_TakeDownFaucheux'] or QuestGetState('05_TakeDownFaucheux')
+						return not quest.Completed
+					end,
+				}),
 			},
 			Effects = {
 				PlaceObj('SectorEnterConflict', {

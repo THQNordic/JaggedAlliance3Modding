@@ -49,7 +49,7 @@ FxId
 : Empty by default. FX Remove requires it to define which FX should be removed.
 
 Detail level category (self.DetailLevel)
-: Determines the options detail levels, at which the FX triggers. "Essential" will trigger always, "Optional" at high/medium setting, and "EyeCandy" at high setting only.
+: Determines the options detail levels at which the FX triggers. "Essential" will trigger always, "Optional" at high/medium setting, and "EyeCandy" at high setting only.
 
 Chance
 : Chance for the FX to be played.
@@ -61,16 +61,16 @@ Lifetime property group
 ---------------
 
 Delay
-: In-game time. FX is not played when the actor is interupted while in the delay.
+: In-game time. FX is not played when the actor is interrupted while in the delay.
 
 Time
-: Lifetime in milliseconds. of the placed FX object. 
+: Lifetime in milliseconds of the placed FX object. 
 
 EndRules
-: ActionFXEndRule objects, which will destroy the current ActionFX object when triggered.
+: ActionFXEndRule objects which will destroy the current ActionFX object when triggered.
 
 Behavior
-: Method, which will be called when the associated BehaviorMoment is hit.
+: Method which will be called when the associated BehaviorMoment is hit.
 
 BehaviorMoment
 : Moment used for calling the specified Behavior method.
@@ -79,7 +79,7 @@ Test property group
 --------------
 
 Solo
-: Debug feature, if any fx's are set to solo, only they will be played.
+: Debug feature. If any FXs are set to solo, only they will be played.
 
 DebugFX
 : Debug feature, print when this FX is about to play.
@@ -92,15 +92,15 @@ Anim Entity
 
 PlayFX code function
 ---------------
-Call this function in order to trigger all FX's matching the given class, moment, actor and target.
+Call this function in order to trigger all FXs matching the given class, moment, actor and target.
 
 function **PlayFX**(actionFXClass, actionFXMoment, actor, target, action_pos, action_dir)
 
 actionFXClass
-: Match FX objects, whose Action property has this value.
+: Match FX objects whose Action property has this value.
 
 actionFXMoment
-: Match FX objects, whose Moment property has this value.
+: Match FX objects whose Moment property has this value.
 
 actor
 : The actor of the specified action.
@@ -112,7 +112,7 @@ action_pos
 : The position in world coordinates for the action.
 
 action_dir
-: The direction vector, used by the action.
+: The direction vector used by the action.
 
 
 Testing Mod Items

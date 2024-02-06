@@ -1,0 +1,205 @@
+[*Back to Index*](index.md.html)
+
+# Map Editor
+
+The Sol Engine's map editor is the very tool which was used to create all of the game maps.
+
+You can access all map editor tools via the user interface, and most of them have help texts and are intuitive and straightforward to use. This document intends to provide more insight into the inner workings of the game and its engine which are under the hood and not obvious by nature. Please look at it more as a guide showcasing "what makes the Jagged Alliance 3 maps tick", and not as a manual "how to create a mountain on the map".
+
+## Accessing the Map Editor
+
+The map editor is integrated into the game executable. To access it, create a mod item that allows you to create or edit a map. There are two such mod items available:
+
+1. **Map Patch** - allows you to edit an existing game map, storing only the objects and areas that are changed in comparison to the original map.
+2. **Satellite Sector** - replaces an existing campaign sector, or creates an entirely new sector.
+
+If you'd like to modify original game maps, using map patches is recommended. They make your changes highly compatible with other mods that change the map, unless the exact same objects or areas are changed by both mods.
+
+## How to quickly create new Maps 
+
+Creating new Jagged Alliance 3 maps from scratch is a significant challenge that can take considerable amounts of time.
+
+If you are just starting, we highly recommend the use of the "Copy terrain & objects" tool, which allows you to copy areas from existing maps, which can then be mixed and matched together. To do that, go to an existing map, use the tool to copy the desired area, then go back to edit your map and paste it with Ctrl-V. You will get a chance to position the pasted area before pressing Ctrl-V again to confirm its location.
+
+## Map Data
+
+Certain parameters related to the map are specified in the map data, accessible through a button next to the map name on the bottom-left.
+
+Most notably, the map's region and weather can be specified from the map data.
+
+## Object Properties
+
+Many Sol engine features are only accessible through the Object Editor, which displays all editable object properties. To open the Object Editor, right-click on a selected object and select "Properties".
+
+Objects tend to have a considerable amount of properties, and sometimes a feature you need will be hidden among them. The properties of an object can also include buttons that manipulate some of its aspects.
+
+The most commonly used properties will be highlighted in this document. Generally, properties in the "Misc" category are editable from the map editor tools and don't need to be manually set, with the exception of Detail class, State/Animation, and Groups. Hover over these properties with the mouse to see a short description of what they do.
+
+## The Voxel Grid and Editor Overlays
+
+*Jagged Alliance 3* maps consist of freely placed and oriented objects, but the gameplay, especially in combat mode, treats the map as a 3D grid - or rather a series of "floors", each being a 2D grid. The elements of this grid are called "voxels" throughout the source, even though JA3 is not a traditional voxel-based game. A related term is a "slab" - those are the pieces from which buildings in JA3 are constructed. A voxel is `1.2 x 1.2 x 0.7 m` (accessible via `const.SlabSizeX/Y/Z` constants from the Lua code).
+
+While this is not a requirement for the non-playable area of the map, most objects in the playable area are aligned to the voxel grid, making the environment suitable for the combat gameplay mechanics. The map editor has a snapping mode that aligns objects to the voxel grid, although many objects snap to it by default.
+
+In the map editor, you can toggle visual overlays for the voxel grid and various types of internal Sol engine data:
+
+Alt-G
+: **Voxel Alignment Grid** - a visual guide to help with positioning objects according to the voxel tiles used in combat mode.
+
+Ctrl-9
+: **Passability Grid** - displays the areas impassable to unis in red. Passability is calculated automatically, but the Forced Passability tool can force certain areas to be passable or impassable.
+
+Ctrl-Shift-9
+: **Passability Tunnels Grid** - tunnels are "shortcuts" that the units can use to move through impassable obstacles by using special animations, e.g. jumping, climbing stairs, or climbing over cliffs.
+
+Ctrl-Shift-K
+: **Collision Surfaces** - displays the collision surfaces which are most notably used for blocking visibility and for simulating bullet penetration. Pressing the shortcut a second time displays different collision types in different colors.
+
+Ctrl-Shift-X
+: **Cover Overlay** - calculates and displays cover positions for each tile in combat. Sometimes you may need to move objects around for them to be accounted for by the Jagged Alliance 3 cover system.
+
+All of the overlays are available via the editor menu as well.
+
+## Rooms
+
+The map editor provides powerful tools for creating and editing **rooms**. They can be combined with each other and with elements such as stairs, doors, windows, columns, friezes, etc. to create buildings.
+
+To place a room, use the Ctrl-Shift-N (New Room) tool. After you exit the tool, you can select the room marker and access various room properties, such as roof type, wall materials and visibility, colorization, etc. via its Object Properties. Many room tools are accessed using controls provided by the tool.
+
+The following additional tools that facilitate room editing are also available:
+Ctrl-\
+: **Room Size Gizmo** - available when then room marker is selected
+Ctrl-[, Ctrl-], Ctrl-P, Ctrl-'
+: **Select Room Wall** - available when then room marker is selected. If the Room Size Gizmo is active, resizes the room from a corner of the selected wall.
+Ctrl-;
+: **Toggles Room Selection Mode** - when turned on, clicking on any room element will instead select the room marker.
+
+A room can have a floor, walls, and a roof, all of which are optional. Rooms are built from slabs - elements that are 1.2 m long and 0.7 m high.
+
+The map editor uses procedural generation to create the rooms and define the individual slabs. However, many aspects such as the colorization and variants of individual slabs can be manually adjusted.
+
+To achieve the high visual fidelity of buildings you see in Jagged Alliance 3, use different slab materials and variants, and place additional objects - especially decals - for decorating the walls, floor, and roof.
+
+### Doors, Windows, Stairs, and Ladders
+
+Place doors and window objects directly from the Place Object tool and position them into a room wall.
+
+Place stairs by placing the StairSlab object, copy it over multiple times by Ctrl-drag, and use the Move Gizmo (W) to position them.
+
+Place ladders by placing the corresponding Ladder object. Ladders height is adjusted by using the Move Gizmo (W), and you don't need to copy the object. For the ladder to function, it must go visually above the floor it is attached to.
+
+Doors, Windows, and Stairs are all slab objects, and thus you can access Object Properties to edit their slab properties, such as material and subvariant. Note that not all combinations of properties for Door and Window objects are valid.
+
+### Wall and Roof-Linked Objects
+
+When objects are placed to decorate room walls and roofs, they need to be hidden along with the wall or roof they are a part of.
+
+To do that, add all objects for the specific wall or ceiling into a collection (press G), then hold C (Link collection to wall tool) and click on the wall or roof you would like to attach them to.
+
+A very handy tool when decorating roofs it the Ctrl-Alt-D (Snap objects to Roof) tool which will skew the object's model according to the roof slope.
+
+### Room Tools
+
+The map editor has a collection of procedural tools to help with room creation and decoration. The tools use short scripts to create visual elements that fit at the precise locations over room walls, floors, and roofs. They were extensively used to create buildings of the Colonial style in Jagged Alliance 3, so that aspect of the scripts is the most developed.
+
+The entirety of all available scripts won't be described in details here, but we will provide the basic concepts behind them.
+
+Most of the scripts work via a two stage process. One script creates **line guides**, which are temporary linear objects aligned along a room's feature. They are represented by a line with a little arrow in the middle which designates the guide **direction**. Then, another script(s) may create visual elements snapped along those guides, or manipulate the guides themselves to move them to a new position.
+
+Open the Room Tools from the button in the status bar, or the Alt-R shortcut. When you hover a script from the first stage, the relevant second stage scripts are highlighted, and vice versa. Make sure to scroll down to see the highlights, as not all scripts fit on the screen.
+
+The scripts work on the currently selected objects (a room for the first stage, and one or more line guides for the second). The scripts in the Room category combine both steps, and will simply add elements to the selected room. Certain scripts only work on rooms with a specific size or height.
+
+Some experimentation is required for certain useful actions - for example, you can place rusty decals on roof edges by combining the RoofEdgedInwardsAlong script to create guides along them, with the LayRust_01 or LayRust_02 scripts as the second stage of the action.
+
+### Destroying Slabs
+
+Room slabs can be switched between their destructed and normal states using the actions from the Objects menu Shift-D (Destroy Selected Objects) and Shift-R (Repair Selected Objects).
+
+## Maps and the Game Logic
+
+A substantial part of the game logic is defined through the map editor. Certain types of objects and map editor features are created with this very purpose.
+
+### Collections
+
+At their very core, collections are a way to group objects that **belong together visually or logically**. They have no predefined behavior - grouping objects together simply makes the map editor select and move them together as a single object.
+
+Certain gameplay features, however, use collections to find objects that need to be affected together. As an example, grid markers of the Interactable type need to be in a collection with the objects they make interactable during gameplay.
+
+Objects that are together in a collection will be hidden by the camera logic together when they obstruct the view, if the collection's HideFromCamera property is set.
+
+The following editor actions are used to work with collections:
+G
+: Groups the selected objects in a collection, or ungroups them if a single collection is currently selected. Collections can be nested - select several collections and/or objects and press G to add them together into a higher level collection.
+Alt-Z
+: Locks a collection for editing. Objects outside of the collection becomes unselectable, and selecting objects and sub-collections from the locked collection is now allowed.
+Alt-Shift-Z
+: Unlocks the currently locked collection.
+
+### Markers
+
+Markers are objects placed via the map editor, which are invisible during gameplay, but **add specific functionality** to the map. The grid markers, which are related to the Jagged Alliance 3 quests and gameplay are described in a separate page.
+
+[*Grid Markers Documentation*](GridMarkers.md.html)
+
+Other notable markers include:
+CameraCollider
+: Defines a plane to which the camera lookat point is snapped to, instead of the terrain's surface; userful to prevent the game camera dipping when it goes over crevices in the terrain.
+CMTPlane
+: Defines a plane that is invisible during gameplay, but will cause the objects that are in a collection with it to disappear if the CMTPlane obstructs the camera view.
+FloatingDummy
+: Objects in a collection with a FloatingDummy will play a floating animation, useful when placing groups of object that should appear floating on the water surface. If the floating objects contain an Interactable type of marker, it needs to be in a separate sub-collection.
+WindMarker, WindlessMarker
+: Define the direction and strength of the wind.
+SoundSource
+: Used to place ambient sounds in the game world. This marker emits a stereo positional sound when the game camera is closeby. The **AutoRuledEmitters editor** has predefined rules to automatically place SoundSource markers to the map, for example jungle sounds near trees of the jungle art set.
+
+### Groups
+
+The object groups are **named sets of objects** to be referenced from markers, effects, or logical conditions related to gameplay. This is the way to specify which object(s) or marker(s) on the map to manipulate through a specific effect, invoked via scripting - through the Quests editor, conversations, logic markers, etc.
+
+All named groups an object belongs to are available in the Groups object property. A single object can belong to multiple named groups. Also, it's worth noting that named groups are most commonly used to refer to single gameplay objects, such as NPC units.
+
+UnitMarker objects, from which actual units are spawned during gameplay, allow you to specify the group names in which to add the spawned units to.
+
+Groups are usually edited from the map editor via a combo box located in the editor's status bar. For example, you can select multiple objects and assign them a common group name by typing it in, or hover the mouse to view existing named groups on the current map.
+
+As the simplest example for using a named group, you can add a Door object into a named group and then use the LockpickableSetState effect to lock or unlock the group with that name, i.e. that exact Door.
+
+## Filters
+
+The editor filters appear on the bottom-left side of the screen.
+
+They are a very useful way to remove objects that create clutter on the screen, so you can focus on what matters for your current work on the map. In particular, you can hide different classes of marker objects, such as CameraCollider markers, which often cover the entire map. To hide objects from a certain filter, right click on its filter button and it will be marked in red.
+
+In addition, you can make classes of objects unselectable by left-clicking on a filter button, which makes it appear grayed out. This is particularly useful for Decal objects, because they usually obstruct the selection of other objects due to their large bounding boxes.
+
+## Lightmodels
+
+The light model of a map can greatly alter its visual appearance.
+
+To try out different light models, open the Lightmodel Selection Rules editor. During gameplay, the lightmodel of your map will be selected according to its Region, the current Weather in its sector, and the time of day according to the rules set in the Lightmodel Selection Rules editor.
+
+### Object Colorization
+
+Some objects have editable colorization, accessible from Object Properties.
+
+For most objects, the colorization depends on the current lightmodel and is uneditable. You can override the colorization of certain objects by clearing the Colorization Palette property.
+
+## Underground maps
+
+The inaccessible areas of underground maps are blacked out by procedurally generated black planes.
+
+Before saving the map, generate these planes using the Create Black Planes action from the editor's menu. You can use the Delete Black Planes action if you want to remove those planes while editing.
+
+## Lights
+
+Light sources can be added near objects and particle effects that should emit light - lanterns, lamps, fires, etc.
+
+While a light source is selected, the area affected by its light is made editable in the game view.
+
+(insert footer.md.html here)
+<!-- Markdeep: --><style class="fallback">body{visibility:hidden;white-space:pre;font-family:monospace}</style>
+<script src="markdeep.min.js"></script>
+<script src="https://casual-effects.com/markdeep/latest/markdeep.min.js"></script>
+<script>window.alreadyProcessedMarkdeep||(document.body.style.visibility="visible")</script>

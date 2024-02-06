@@ -21,6 +21,14 @@ DefineClass.FreeMove = {
 		PlaceObj('CheckExpression', {
 			Expression = function (self, obj) return g_Combat and obj.Tiredness <= 0 end,
 		}),
+		PlaceObj('CheckExpression', {
+			Expression = function (self, obj)
+				if not IsGameRuleActive("HeavyWounds") then return true end
+				local wounds = obj:GetStatusEffect("Wounded")
+				local max_wounds = GameRuleDefs.HeavyWounds:ResolveValue("MaxWoundsEffect")	
+				return not wounds or wounds.stacks <max_wounds
+			end,
+		}),
 	},
 	DisplayName = T(574672731472, --[[CharacterEffectCompositeDef FreeMove DisplayName]] "Free Move"),
 	Description = T(824694494336, --[[CharacterEffectCompositeDef FreeMove Description]] "Move without spending AP. Removed after attacking or after moving the allowed distance (based on <agility>)."),
@@ -36,6 +44,14 @@ DefineClass.FreeMove = {
 		obj:CallReactions("OnCalcFreeMove", data)
 		free_ap = MulDivRound(free_ap + data.add * const.Scale.AP, data.mul, 100)
 		free_ap = Clamp(free_ap, data.min*const.Scale.AP, data.max*const.Scale.AP)
+		if IsGameRuleActive("HeavyWounds") then
+			local wounds = obj:GetStatusEffect("Wounded")
+			if wounds and wounds.stacks >= 1 then
+				local max_wounds = GameRuleDefs.HeavyWounds:ResolveValue("MaxWoundsEffect")
+				local per_wound_percent = GameRuleDefs.HeavyWounds:ResolveValue("FreeMoveLost")
+				free_ap = Max(0, free_ap - MulDivRound(free_ap, Min(wounds.stacks, max_wounds)*per_wound_percent, 100))				
+			end
+		end
 		
 		local prev_ap = obj.ActionPoints
 		obj:GainAP(free_ap - cur_free_ap)

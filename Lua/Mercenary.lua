@@ -583,15 +583,18 @@ DefineClass.UnitData = {
 }
 
 function UnitData:GetBaseDamage(weapon)
+	local base_damage = 0
 	if IsKindOf(weapon, "Firearm") then
-		return weapon.Damage
+		base_damage = weapon.Damage
 	elseif IsKindOfClasses(weapon, "Grenade", "MeleeWeapon", "Ordnance") then
-		return weapon.BaseDamage
+		base_damage = weapon.BaseDamage
 	elseif IsKindOf(weapon, "HeavyWeapon") then
-		return weapon:GetBaseDamage()
+		base_damage = weapon:GetBaseDamage()
 	end
 
-	return 0
+	local data = { base_damage = base_damage, modifier = 100, breakdown = {} }
+	self:CallReactions("OnCalcBaseDamage", weapon, nil, data)	
+	return MulDivRound(data.base_damage, data.modifier, 100)
 end
 
 function UnitData:CalcCritChance(weapon)
@@ -599,6 +602,9 @@ function UnitData:CalcCritChance(weapon)
 end
 
 function UnitData:SetMessengerOnline(val)
+	if IsGameRuleActive("AlwaysOnline") and not val then 
+		return
+	end
 	self.MessengerOnline = val
 	if GetMercStateFlag(self.session_id, "OnlineNotificationSubscribe") then
 		CombatLog("important", T{910877762088, "<Name> is now online.", self})
@@ -620,7 +626,7 @@ function UnitData:InitDerivedProperties()
 	self.Dislikes = table.copy(self.Dislikes)
 	
 	if not self.Experience then
-		local minXP = XPTable[self.StartingLevel]
+		local minXP = GetXPTable(self.StartingLevel)
 		self.Experience = minXP
 	end
 end
@@ -1180,6 +1186,7 @@ DefineClass.UnitDataCompositeDef = {
 		},
 	},
 	GlobalMap = "UnitDataDefs",
+	Documentation = CompositeDef.Documentation .. "\n\nCreates a new unit preset.",
 	
 	-- 'true' is much faster, but it doesn't call property setters & clears default properties upon saving
 	StoreAsTable = false,
@@ -1190,6 +1197,7 @@ DefineClass.UnitDataCompositeDef = {
 DefineModItemCompositeObject("UnitDataCompositeDef", {
 	EditorName = "Unit",
 	EditorSubmenu = "Unit",
+	TestDescription = "Places the unit on the map."
 })
 
 if config.Mods then
@@ -1210,7 +1218,11 @@ if config.Mods then
 			gv_UnitData[id] = nil
 		end
 		
-		CheatAddMerc(id)
+		if IsMerc(self) then
+			CheatAddMerc(id)
+		else
+			CheatSpawnEnemy(id)
+		end
 	end
 end
 
@@ -1246,6 +1258,14 @@ UnitDataCompositeDef.GetUnitPower = function(self) return UnitProperties.GetUnit
 UnitDataCompositeDef.GetStartingPerks = function(self) return UnitProperties.GetStartingPerks(self) end
 UnitDataCompositeDef.GetSalaryPreview = function(self)
 	return GetDailyMercSalary(self, 10)
+end
+
+UnitDataCompositeDef.GetMercStartingSalary = function(self)
+	 return UnitProperties.GetMercStartingSalary(self)
+end
+
+UnitDataCompositeDef.GetSalaryIncreaseProp = function(self)
+	 return UnitProperties.GetSalaryIncreaseProp(self)
 end
 
 UnitDataCompositeDef.PropertyTabs = {
@@ -1346,7 +1366,7 @@ end
 -- UnitDataCompositDefs reference LootDef presets, and their GetError needs the parent table cache populated
 -- make sure it is loaded by hooking something that happens to be called at the right moment
 function UnitDataCompositeDef:EditorContext(...)
-	PopulateParentTableCache(LootDefs)
+	PopulateParentTableCache(Presets.LootDef)
 	return CompositeDef.EditorContext(self, ...)
 end
 
@@ -1448,25 +1468,25 @@ function OnMsg.ClassesGenerate(classdefs)
 	local idx = table.find(props, "id", "TestFile")
 	table.insert(props, idx and idx + 1 or -1, 
 		{ category = "Test", id = "btnGenerateItems", 
-			editor = "buttons", default = false, buttons = { {name = "Generate test loot", func = "GedUIGenerateAndDropLoot"}, }, template = true, }
+			editor = "buttons", default = false, buttons = { {name = "Generate test loot", func = "GedUIGenerateAndDropLoot", is_hidden = function(self) return AreModdingToolsActive() end}, }, template = true, }
 	)
 	if config.Mods then
 		local props = classdefs.ModItemLootDefEdit.properties
 		table.insert(props, 
 			{ category = "Test", id = "btnGenerateItems", 
-				editor = "buttons", default = false, buttons = { {name = "Generate test loot", func = "GedUIGenerateAndDropLoot"}, }, template = true, }
+				editor = "buttons", default = false, buttons = { {name = "Generate test loot", func = "GedUIGenerateAndDropLoot", is_hidden = function(self) return AreModdingToolsActive() end }, }, template = true, }
 		)
 	end
 end
 
-function GedUIGenerateAndDropLoot(root, obj, prop_id, self)
+function GedUIGenerateAndDropLoot(root, obj, prop_id, ged)
 	local table_id = obj.id or obj.TargetId
 	local name = obj.TargetId and obj.name or false
 	if not table_id then return end
-	UIGenerateAndDropLoot(table_id, name)
+	UIGenerateAndDropLoot(table_id, name, ged)
 end
 
-function UIGenerateAndDropLoot(table_id, name)
+function UIGenerateAndDropLoot(table_id, name, ged)
 	if not table_id then return end
 	local loot_tbl = LootDefs[table_id]
 	if not loot_tbl then return end
@@ -1478,23 +1498,32 @@ function UIGenerateAndDropLoot(table_id, name)
 		pos = pos and SnapToPassSlab(pos)
 	end	
 	local bag = GetDropContainer(unit, pos)
-	local items = {}
+	local items, texts = {}, {}
 	loot_tbl:GenerateLoot(bag, {}, InteractionRand(nil, "LootTest"), items)
-	print("Test item generation from loot table: ", name or table_id)
 	for _,item in ipairs(items) do
 		local amount = IsKindOf(item, "InventoryStack") and item.Amount or 1
-		print("\t",string.format("%3d x %s", amount, item.DisplayName and _InternalTranslate(item.DisplayName) or item.class))
+		table.insert(texts, string.format("\t%3d x %s", amount, item.DisplayName and _InternalTranslate(item.DisplayName) or item.class))
 	end
-	AddItemsToInventory(bag,items)
+	AddItemsToInventory(bag, items)
+	
+	if config.ModdingToolsInUserMode then
+		ged:ShowMessage("Loot Generated", table.concat(texts, "\n"))
+	else
+		print("Test item generation from loot table: ", name or table_id)
+		print(table.concat(texts, "\n"))
+	end
 end
 
 if config.Mods then  
+	ModItemLootDef.TestDescription = "Places a loot container on the ground with the defined loot inside."
+	ModItemLootDefEdit.TestDescription = "Places a loot container on the ground with the defined loot inside."
+	
 	function ModItemLootDef:TestModItem(ged)
-		UIGenerateAndDropLoot(self.id)	
+		UIGenerateAndDropLoot(self.id, ged)	
 	end
 
 	function ModItemLootDefEdit:TestModItem(ged)
-		UIGenerateAndDropLoot(self.TargetId, self.name)	
+		UIGenerateAndDropLoot(self.TargetId, self.name, ged)	
 	end
 end
 
@@ -1551,6 +1580,25 @@ function AccumulateTeamMemberXp(unitLogName, xpGained)
 		g_AccumulatedTeamXP[unitLogName] = g_AccumulatedTeamXP[unitLogName] + xpGained
 	else
 		g_AccumulatedTeamXP[unitLogName] = xpGained
+	end
+end
+
+function UnitGainXP(unit, xp)
+	local previousLvl = unit:GetLevel()
+	unit.Experience = (unit.Experience or 0) + xp
+	local newLvl = unit:GetLevel()
+	
+	if xp > 0 then
+		CombatLog("short", T{564767483783, "Gained XP: <unit> (<em><gain></em>)", unit = unit:GetLogName(), gain = xp})
+	end
+	
+	local levelsGained = newLvl - previousLvl
+	if levelsGained > 0 then
+		unit.perkPoints = unit.perkPoints + 1
+		TutorialHintsState.GainLevel = true
+		CombatLog("important", T{134899495484, "<DisplayName> has reached <em>level <level></em>", SubContext(unit, { level = newLvl})})
+		ObjModified(unit)
+		Msg("UnitLeveledUp", unit)
 	end
 end
 
@@ -1648,19 +1696,36 @@ XPTable =
 	27000 -- Level 10
 }
 
-function CalcLevel(xp)
-	for i = 1, #XPTable do
-		if xp < XPTable[i] then return i - 1 end
+function GetXPTable(level)
+	if IsGameRuleActive("HardLessons") then 
+		local percent = 100 + (GameRuleDefs.HardLessons:ResolveValue("XPTableModifier") or 0)
+		if level then
+			return MulDivRound(XPTable[level], percent, 100)
+		else
+			return table.imap(XPTable,function(xp) return MulDivRound(xp, percent, 100) end)
+		end
 	end
-	return #XPTable
+	return level and XPTable[level] or XPTable
+end
+
+function CalcLevel(xp)
+	local nXPTable = #XPTable
+	for i = 1, nXPTable do
+		if xp < GetXPTable(i) then
+			return i - 1
+		end
+	end
+	return nXPTable	
 end
 
 function CalcXpPercentAndLevel(xp) -- multiplied by 10 for precision to tenths
 	local level = CalcLevel(xp)
-	if level == #XPTable then
-		return 100 * 10, #XPTable
+	local nXPTable = #XPTable
+	if level == nXPTable then
+		return 100 * 10, nXPTable
 	else
-		return MulDivRound(xp - XPTable[level], 100 * 10, XPTable[level + 1] - XPTable[level]), level
+		local levelxp = GetXPTable(level)
+		return MulDivRound(xp - levelxp, 100 * 10, GetXPTable(level + 1) - levelxp), level
 	end
 end
 
@@ -1768,8 +1833,9 @@ function GetDailyMercSalary(merc, level)
 	
 	local levelsOver = currentLevel - startingLevel
 
-	local salaryAtStartingLevel = merc:GetProperty("StartingSalary")
-	local salaryIncrease = merc:GetProperty("SalaryIncrease")
+	local salaryAtStartingLevel = merc:GetMercStartingSalary()
+	
+	local salaryIncrease = merc:GetSalaryIncreaseProp()
 	local currentSalary = salaryAtStartingLevel
 	for level = startingLevel, currentLevel - 1 do
 		local increaseAmount = MulDivRound(currentSalary, salaryIncrease, 1000)
@@ -1807,7 +1873,7 @@ function CalculateMedical(merc)
 	if deposit == "none" then return 0 end
 
 	local level = merc:GetLevel()
-	local salary = merc:GetProperty("StartingSalary")
+	local salary = merc:GetMercStartingSalary()
 	
 	if deposit == "small" then
 		-- 1 daily salary
@@ -1898,8 +1964,8 @@ function OnMsg.MercHireStatusChanged(unit_data, previousState, newState)
 	-- Add random amount of xp on first hire 204339
 	local isImp = not not string.find(merc_id, "IMP")
 	if newState == "Hired" and not GetMercStateFlag(merc_id, "RandomEXPGiven") then -- and not isImp then
-		local randomXpRangeMin = XPTable[1]
-		local randomXpRangeMax = XPTable[2]
+		local randomXpRangeMin = GetXPTable(1)
+		local randomXpRangeMax = GetXPTable(2)
 		local range = randomXpRangeMax - randomXpRangeMin
 		range = MulDivRound(range, 600, 1000)
 		range = randomXpRangeMin + InteractionRand(range, "RandomXPOnHire")
@@ -2006,9 +2072,9 @@ function ReceiveStatGainingPoints(unit, xpGain)
 		xpTresholds[#xpTresholds+1] = (xpTresholds[#xpTresholds] or 0) + interval
 	end
 	xpTresholds[#xpTresholds+1] = 1000
-		
-	while level < #XPTable and xpGain > 0 do -- loop per levelup, check all milestones
-		local tempXp = Min(xpGain, XPTable[level + 1] - XPTable[level])
+	local nXPTable = #XPTable
+	while level < nXPTable and xpGain > 0 do -- loop per levelup, check all milestones
+		local tempXp = Min(xpGain, GetXPTable(level + 1) - GetXPTable(level))
 		xp = xp + tempXp
 		xpGain = xpGain - tempXp
 		
@@ -2025,8 +2091,8 @@ function ReceiveStatGainingPoints(unit, xpGain)
 		xpPercent = 0
 	end
 	
-	if level == #XPTable and xpGain > 0 then -- after max level
-		local xpSinceLastMilestone = (xp - XPTable[#XPTable])
+	if level == nXPTable and xpGain > 0 then -- after max level
+		local xpSinceLastMilestone = (xp - GetXPTable(nXPTable))
 		-- Currently after lvl 10 you get a point every <MilestoneAfterMax> xp increasing by <MilestoneAfterMaxIncrement> xp every time
 		local milestone = const.StatGaining.MilestoneAfterMax
 		local increment = const.StatGaining.MilestoneAfterMaxIncrement

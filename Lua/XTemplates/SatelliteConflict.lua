@@ -108,6 +108,7 @@ PlaceObj('XTemplate', {
 				PlaceObj('XTemplateWindow', {
 					'comment', "conflict descr",
 					'__class', "XContextWindow",
+					'Id', "idTopContent",
 					'IdNode', true,
 					'Margins', box(8, 0, 8, 0),
 					'Padding', box(16, 0, 16, 0),
@@ -219,9 +220,19 @@ PlaceObj('XTemplate', {
 				PlaceObj('XTemplateWindow', {
 					'__condition', function (parent, context) return not context.autoResolve end,
 					'__class', "XContextWindow",
+					'RolloverTemplate', "RolloverBobbyRay",
+					'RolloverAnchor', "right",
 					'Margins', box(18, 10, 0, 8),
 					'MaxHeight', 144,
 					'LayoutMethod', "VList",
+					'ContextUpdateOnOpen', true,
+					'OnContextUpdate', function (self, context, ...)
+						local ctrl_title  = self:ResolveId("idTopContent")
+						if not ctrl_title then return end
+						ctrl_title = ctrl_title.idConflictTitle
+						self:SetRolloverTitle(ctrl_title:GetText())
+						self:SetRolloverText(self[1]:GetText() or "")
+					end,
 				}, {
 					PlaceObj('XTemplateWindow', {
 						'comment', "descr",
@@ -231,13 +242,22 @@ PlaceObj('XTemplate', {
 						'HAlign', "left",
 						'VAlign', "top",
 						'MaxWidth', 1020,
+						'MaxHeight', 130,
+						'OnLayoutComplete', function (self)
+							if not self.draw_cache_text_shortened then
+								self.parent:SetRolloverTitle("")
+								self.parent:SetRolloverText("")
+							else
+								local descImg = self:ResolveId("idFullDesc")
+								descImg:SetVisible(true)
+							end
+						end,
 						'HandleKeyboard', false,
 						'HandleMouse', false,
 						'TextStyle', "ConflictDescription",
 						'Translate', true,
 						'Text', T(450572883293, --[[XTemplate SatelliteConflict Text]] "<image UI/PDA/Event/T_Event_TextIcon 1400> <SectorConflictCustomDescr()>"),
 						'Shorten', true,
-						'TextVAlign', "center",
 					}),
 					PlaceObj('XTemplateWindow', {
 						'comment', "warning",
@@ -266,12 +286,32 @@ PlaceObj('XTemplate', {
 							end
 						end,
 						'Translate', true,
+						'HideOnEmpty', true,
 						'TextVAlign', "center",
+					}),
+					PlaceObj('XTemplateWindow', {
+						'__class', "XImage",
+						'Id', "idFullDesc",
+						'Margins', box(8, 0, 18, 18),
+						'Dock', "box",
+						'HAlign', "right",
+						'VAlign', "bottom",
+						'MinWidth', 20,
+						'MinHeight', 20,
+						'MaxWidth', 20,
+						'MaxHeight', 20,
+						'Visible', false,
+						'FoldWhenHidden', true,
+						'HandleMouse', true,
+						'Image', "UI/PDA/WEBSites/Bobby Rays/full_description.png",
+						'ImageFit', "stretch",
 					}),
 					}),
 				PlaceObj('XTemplateWindow', {
 					'__condition', function (parent, context) return context.autoResolve end,
 					'__class', "XContextWindow",
+					'RolloverTemplate', "RolloverBobbyRay",
+					'RolloverAnchor', "right",
 					'Margins', box(18, 10, 0, 8),
 					'MaxHeight', 144,
 					'LayoutMethod', "VList",
@@ -283,8 +323,14 @@ PlaceObj('XTemplate', {
 						else
 							text = ConflictDescriptionDefs.AutoresolveDefeat.description
 						end
-							
-						self[1]:SetText(Untranslated("<image UI/PDA/Event/T_Event_TextIcon 1400> ")..text)
+						local ctrlText = self[1]	
+						ctrlText:SetText(Untranslated("<image UI/PDA/Event/T_Event_TextIcon 1400> ")..text)
+						
+						local ctrl_title  = self:ResolveId("idTopContent")
+						if not ctrl_title then return end
+						ctrl_title = ctrl_title.idConflictTitle
+						self:SetRolloverTitle(ctrl_title:GetText())
+						self:SetRolloverText(self[1]:GetText() or "")
 					end,
 				}, {
 					PlaceObj('XTemplateWindow', {
@@ -295,13 +341,38 @@ PlaceObj('XTemplate', {
 						'HAlign', "left",
 						'VAlign', "top",
 						'MaxWidth', 1020,
+						'OnLayoutComplete', function (self)
+							if not self.draw_cache_text_shortened then
+								self.parent:SetRolloverTitle("")
+								self.parent:SetRolloverText("")
+							else
+								local descImg = self:ResolveId("idFullDesc")
+								descImg:SetVisible(true)
+							end
+						end,
 						'HandleKeyboard', false,
 						'HandleMouse', false,
 						'TextStyle', "ConflictDescription",
 						'Translate', true,
 						'Text', T(646696166172, --[[XTemplate SatelliteConflict Text]] "<image UI/PDA/Event/T_Event_TextIcon 1400> <SectorConflictCustomDescr()>"),
 						'Shorten', true,
-						'TextVAlign', "center",
+					}),
+					PlaceObj('XTemplateWindow', {
+						'__class', "XImage",
+						'Id', "idFullDesc",
+						'Margins', box(8, 0, 18, 18),
+						'Dock', "box",
+						'HAlign', "right",
+						'VAlign', "bottom",
+						'MinWidth', 20,
+						'MinHeight', 20,
+						'MaxWidth', 20,
+						'MaxHeight', 20,
+						'Visible', false,
+						'FoldWhenHidden', true,
+						'HandleMouse', true,
+						'Image', "UI/PDA/WEBSites/Bobby Rays/full_description.png",
+						'ImageFit', "stretch",
 					}),
 					}),
 				PlaceObj('XTemplateWindow', {
@@ -573,7 +644,6 @@ PlaceObj('XTemplate', {
 						}),
 						PlaceObj('XTemplateWindow', {
 							'comment', "arrival warning",
-							'__condition', function (parent, context) local dlg = GetDialog(parent) return context.conflict and context.conflict.waiting and not  context.conflict.player_attacking end,
 							'__class', "XText",
 							'Id', "idArrivingWarning",
 							'Dock', "box",
@@ -650,7 +720,7 @@ PlaceObj('XTemplate', {
 							return (CanGoInMap(sector.Id) and #GetSquadsInSector(sector.Id, "excludeTravelling", not "includeMilitia", "excludeArriving", "excludeRetreating") > 0) and "enabled" or "hidden"
 						end,
 						'OnAction', function (self, host, source, ...)
-							if IsValidThread(host.EnterSectorThread) then
+							if IsValidThread(host.EnterSectorThread) or IsValidThread(LoadSectorThread) then
 								return
 							end
 							

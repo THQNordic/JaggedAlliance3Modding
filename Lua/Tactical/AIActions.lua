@@ -223,7 +223,7 @@ DefineClass.AIActionThrowGrenade = {
 		{ id = "MinDist", editor = "number", scale = "m", default = 2*guim, min = 0 },
 		{ id = "MaxDist", editor = "number", scale = "m", default = 100*guim, min = 0 },
 		{ id = "AllowedAoeTypes", editor = "set", items = {"none", "fire", "smoke", "teargas", "toxicgas"}, default = set("none") },
-		{ id = "TargetLastAttackPos", editpr = "bool", default = false },
+		{ id = "TargetLastAttackPos", editor = "bool", default = false },
  	},
 	hidden = false,
 	voice_response = "AIThrowGrenade",

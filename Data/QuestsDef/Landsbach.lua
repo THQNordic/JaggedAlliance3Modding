@@ -8,7 +8,7 @@ PlaceObj('QuestsDef', {
 		PlaceObj('QuestKillTCEsOnCompleted', {}),
 	},
 	NoteDefs = {
-		LastNoteIdx = 47,
+		LastNoteIdx = 49,
 		PlaceObj('QuestNote', {
 			Badges = {
 				PlaceObj('QuestBadgePlacement', {
@@ -20,11 +20,12 @@ PlaceObj('QuestsDef', {
 			},
 			HideConditions = {
 				PlaceObj('QuestIsVariableBool', {
+					Condition = "or",
 					QuestId = "Landsbach",
-					Vars = set( "DieselMention" ),
+					Vars = set( "Completed", "DieselMention", "Failed" ),
 					__eval = function ()
 						local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
-						return quest.DieselMention
+						return quest.Completed or quest.DieselMention or quest.Failed
 					end,
 				}),
 			},
@@ -34,11 +35,13 @@ PlaceObj('QuestsDef', {
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "Landsbach",
 					Vars = set({
+	Completed = false,
 	DieselMention = false,
+	Failed = false,
 }),
 					__eval = function ()
 						local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
-						return not quest.DieselMention
+						return not quest.Completed and not quest.DieselMention and not quest.Failed
 					end,
 				}),
 			},
@@ -57,10 +60,10 @@ PlaceObj('QuestsDef', {
 				PlaceObj('QuestIsVariableBool', {
 					Condition = "or",
 					QuestId = "Landsbach",
-					Vars = set( "Coin", "NightClub" ),
+					Vars = set( "Coin", "Completed", "Failed", "NightClub" ),
 					__eval = function ()
 						local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
-						return quest.Coin or quest.NightClub
+						return quest.Coin or quest.Completed or quest.Failed or quest.NightClub
 					end,
 				}),
 			},
@@ -85,6 +88,17 @@ PlaceObj('QuestsDef', {
 					__eval = function ()
 						local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
 						return not quest.NightClub
+					end,
+				}),
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "Landsbach",
+					Vars = set({
+	Completed = false,
+	Failed = false,
+}),
+					__eval = function ()
+						local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
+						return not quest.Completed and not quest.Failed
 					end,
 				}),
 			},
@@ -124,12 +138,14 @@ PlaceObj('QuestsDef', {
 				PlaceObj('QuestIsVariableBool', {
 					QuestId = "Landsbach",
 					Vars = set({
+	Completed = false,
 	DieselMention = true,
+	Failed = false,
 	Given = false,
 }),
 					__eval = function ()
 						local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
-						return quest.DieselMention and not quest.Given
+						return not quest.Completed and quest.DieselMention and not quest.Failed and not quest.Given
 					end,
 				}),
 			},
@@ -146,11 +162,12 @@ PlaceObj('QuestsDef', {
 			},
 			HideConditions = {
 				PlaceObj('QuestIsVariableBool', {
+					Condition = "or",
 					QuestId = "Landsbach",
-					Vars = set( "Coin" ),
+					Vars = set( "Coin", "Completed", "Failed" ),
 					__eval = function ()
 						local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
-						return quest.Coin
+						return quest.Coin or quest.Completed or quest.Failed
 					end,
 				}),
 			},
@@ -172,6 +189,17 @@ PlaceObj('QuestsDef', {
 					__eval = function ()
 						local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
 						return quest.NightClub
+					end,
+				}),
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "Landsbach",
+					Vars = set({
+	Completed = false,
+	Failed = false,
+}),
+					__eval = function ()
+						local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
+						return not quest.Completed and not quest.Failed
 					end,
 				}),
 			},
@@ -230,10 +258,10 @@ PlaceObj('QuestsDef', {
 				PlaceObj('QuestIsVariableBool', {
 					Condition = "or",
 					QuestId = "Landsbach",
-					Vars = set( "Completed", "Failed", "Fight" ),
+					Vars = set( "BounceDead", "Completed", "Failed", "Fight", "SiegfriedRetreat", "TCE_GuardsAlert" ),
 					__eval = function ()
 						local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
-						return quest.Completed or quest.Failed or quest.Fight
+						return quest.BounceDead or quest.Completed or quest.Failed or quest.Fight or quest.SiegfriedRetreat or quest.TCE_GuardsAlert
 					end,
 				}),
 			},
@@ -261,10 +289,10 @@ PlaceObj('QuestsDef', {
 				PlaceObj('QuestIsVariableBool', {
 					Condition = "or",
 					QuestId = "Landsbach",
-					Vars = set( "BounceDead", "BouncePartners", "Failed" ),
+					Vars = set( "BounceDead", "BouncePartners", "Failed", "SiegfriedRetreat", "TCE_GuardsAlert" ),
 					__eval = function ()
 						local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
-						return quest.BounceDead or quest.BouncePartners or quest.Failed
+						return quest.BounceDead or quest.BouncePartners or quest.Failed or quest.SiegfriedRetreat or quest.TCE_GuardsAlert
 					end,
 				}),
 			},
@@ -308,10 +336,10 @@ PlaceObj('QuestsDef', {
 				PlaceObj('QuestIsVariableBool', {
 					Condition = "or",
 					QuestId = "Landsbach",
-					Vars = set( "BeatFighter", "BounceDead", "Failed" ),
+					Vars = set( "BeatFighter", "BounceDead", "Failed", "SiegfriedRetreat", "TCE_GuardsAlert" ),
 					__eval = function ()
 						local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
-						return quest.BeatFighter or quest.BounceDead or quest.Failed
+						return quest.BeatFighter or quest.BounceDead or quest.Failed or quest.SiegfriedRetreat or quest.TCE_GuardsAlert
 					end,
 				}),
 			},
@@ -369,10 +397,10 @@ PlaceObj('QuestsDef', {
 				PlaceObj('QuestIsVariableBool', {
 					Condition = "or",
 					QuestId = "Landsbach",
-					Vars = set( "Completed", "Diesel", "Failed" ),
+					Vars = set( "Completed", "Diesel", "Failed", "SiegfriedRetreat", "TCE_GuardsAlert" ),
 					__eval = function ()
 						local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
-						return quest.Completed or quest.Diesel or quest.Failed
+						return quest.Completed or quest.Diesel or quest.Failed or quest.SiegfriedRetreat or quest.TCE_GuardsAlert
 					end,
 				}),
 			},
@@ -399,10 +427,10 @@ PlaceObj('QuestsDef', {
 				PlaceObj('QuestIsVariableBool', {
 					Condition = "or",
 					QuestId = "Landsbach",
-					Vars = set( "BribeGiven", "Completed", "Failed", "MoleDead" ),
+					Vars = set( "BribeGiven", "Completed", "Failed", "MoleDead", "SiegfriedRetreat", "TCE_GuardsAlert" ),
 					__eval = function ()
 						local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
-						return quest.BribeGiven or quest.Completed or quest.Failed or quest.MoleDead
+						return quest.BribeGiven or quest.Completed or quest.Failed or quest.MoleDead or quest.SiegfriedRetreat or quest.TCE_GuardsAlert
 					end,
 				}),
 			},
@@ -430,10 +458,10 @@ PlaceObj('QuestsDef', {
 				PlaceObj('QuestIsVariableBool', {
 					Condition = "or",
 					QuestId = "Landsbach",
-					Vars = set( "Completed", "Failed", "MoleDead", "Travis" ),
+					Vars = set( "Completed", "Failed", "MoleDead", "SiegfriedRetreat", "TCE_GuardsAlert", "Travis" ),
 					__eval = function ()
 						local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
-						return quest.Completed or quest.Failed or quest.MoleDead or quest.Travis
+						return quest.Completed or quest.Failed or quest.MoleDead or quest.SiegfriedRetreat or quest.TCE_GuardsAlert or quest.Travis
 					end,
 				}),
 			},
@@ -461,10 +489,10 @@ PlaceObj('QuestsDef', {
 				PlaceObj('QuestIsVariableBool', {
 					Condition = "or",
 					QuestId = "Landsbach",
-					Vars = set( "Completed", "Failed", "TravisDead", "TravisDirection" ),
+					Vars = set( "Completed", "Failed", "SiegfriedRetreat", "TCE_GuardsAlert", "TravisDead", "TravisDirection" ),
 					__eval = function ()
 						local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
-						return quest.Completed or quest.Failed or quest.TravisDead or quest.TravisDirection
+						return quest.Completed or quest.Failed or quest.SiegfriedRetreat or quest.TCE_GuardsAlert or quest.TravisDead or quest.TravisDirection
 					end,
 				}),
 			},
@@ -492,10 +520,10 @@ PlaceObj('QuestsDef', {
 				PlaceObj('QuestIsVariableBool', {
 					Condition = "or",
 					QuestId = "Landsbach",
-					Vars = set( "Completed", "DieselBounce", "DieselSigfried", "Failed" ),
+					Vars = set( "Completed", "DieselBounce", "DieselSigfried", "Failed", "SiegfriedRetreat", "TCE_GuardsAlert" ),
 					__eval = function ()
 						local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
-						return quest.Completed or quest.DieselBounce or quest.DieselSigfried or quest.Failed
+						return quest.Completed or quest.DieselBounce or quest.DieselSigfried or quest.Failed or quest.SiegfriedRetreat or quest.TCE_GuardsAlert
 					end,
 				}),
 			},
@@ -554,10 +582,10 @@ PlaceObj('QuestsDef', {
 				PlaceObj('QuestIsVariableBool', {
 					Condition = "or",
 					QuestId = "Landsbach",
-					Vars = set( "BounceDead", "Completed", "DieselBounce", "DieselSigfried", "Failed" ),
+					Vars = set( "BounceDead", "Completed", "DieselBounce", "DieselSigfried", "Failed", "SiegfriedRetreat" ),
 					__eval = function ()
 						local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
-						return quest.BounceDead or quest.Completed or quest.DieselBounce or quest.DieselSigfried or quest.Failed
+						return quest.BounceDead or quest.Completed or quest.DieselBounce or quest.DieselSigfried or quest.Failed or quest.SiegfriedRetreat
 					end,
 				}),
 			},
@@ -652,10 +680,10 @@ PlaceObj('QuestsDef', {
 				PlaceObj('QuestIsVariableBool', {
 					Condition = "or",
 					QuestId = "Landsbach",
-					Vars = set( "BounceBattle", "BounceDead", "Completed", "Failed" ),
+					Vars = set( "BounceBattle", "BounceDead", "Completed", "Failed", "SiegfriedRetreat" ),
 					__eval = function ()
 						local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
-						return quest.BounceBattle or quest.BounceDead or quest.Completed or quest.Failed
+						return quest.BounceBattle or quest.BounceDead or quest.Completed or quest.Failed or quest.SiegfriedRetreat
 					end,
 				}),
 			},
@@ -692,10 +720,10 @@ PlaceObj('QuestsDef', {
 				PlaceObj('QuestIsVariableBool', {
 					Condition = "or",
 					QuestId = "Landsbach",
-					Vars = set( "Completed", "Failed" ),
+					Vars = set( "Completed", "Failed", "TCE_GuardsAlert" ),
 					__eval = function ()
 						local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
-						return quest.Completed or quest.Failed
+						return quest.Completed or quest.Failed or quest.TCE_GuardsAlert
 					end,
 				}),
 			},
@@ -725,10 +753,10 @@ PlaceObj('QuestsDef', {
 				PlaceObj('QuestIsVariableBool', {
 					Condition = "or",
 					QuestId = "Landsbach",
-					Vars = set( "Completed", "Diesel", "Failed" ),
+					Vars = set( "Completed", "Diesel", "Failed", "SiegfriedRetreat", "TCE_GuardsAlert" ),
 					__eval = function ()
 						local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
-						return quest.Completed or quest.Diesel or quest.Failed
+						return quest.Completed or quest.Diesel or quest.Failed or quest.SiegfriedRetreat or quest.TCE_GuardsAlert
 					end,
 				}),
 			},
@@ -750,10 +778,10 @@ PlaceObj('QuestsDef', {
 				PlaceObj('QuestIsVariableBool', {
 					Condition = "or",
 					QuestId = "Landsbach",
-					Vars = set( "Completed", "Failed", "SecretPlan" ),
+					Vars = set( "Completed", "Failed", "SecretPlan", "SiegfriedRetreat", "TCE_GuardsAlert" ),
 					__eval = function ()
 						local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
-						return quest.Completed or quest.Failed or quest.SecretPlan
+						return quest.Completed or quest.Failed or quest.SecretPlan or quest.SiegfriedRetreat or quest.TCE_GuardsAlert
 					end,
 				}),
 			},
@@ -772,10 +800,10 @@ PlaceObj('QuestsDef', {
 				PlaceObj('QuestIsVariableBool', {
 					Condition = "or",
 					QuestId = "Landsbach",
-					Vars = set( "Completed", "Failed", "SecretPlan" ),
+					Vars = set( "Completed", "Failed", "SecretPlan", "SiegfriedRetreat", "TCE_GuardsAlert" ),
 					__eval = function ()
 						local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
-						return quest.Completed or quest.Failed or quest.SecretPlan
+						return quest.Completed or quest.Failed or quest.SecretPlan or quest.SiegfriedRetreat or quest.TCE_GuardsAlert
 					end,
 				}),
 			},
@@ -794,10 +822,10 @@ PlaceObj('QuestsDef', {
 				PlaceObj('QuestIsVariableBool', {
 					Condition = "or",
 					QuestId = "Landsbach",
-					Vars = set( "Completed", "Failed", "SecretPlan" ),
+					Vars = set( "Completed", "Failed", "SecretPlan", "SiegfriedRetreat", "TCE_GuardsAlert" ),
 					__eval = function ()
 						local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
-						return quest.Completed or quest.Failed or quest.SecretPlan
+						return quest.Completed or quest.Failed or quest.SecretPlan or quest.SiegfriedRetreat or quest.TCE_GuardsAlert
 					end,
 				}),
 			},
@@ -816,10 +844,10 @@ PlaceObj('QuestsDef', {
 				PlaceObj('QuestIsVariableBool', {
 					Condition = "or",
 					QuestId = "Landsbach",
-					Vars = set( "Completed", "Failed", "SecretPlan" ),
+					Vars = set( "Completed", "Failed", "SecretPlan", "SiegfriedRetreat", "TCE_GuardsAlert" ),
 					__eval = function ()
 						local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
-						return quest.Completed or quest.Failed or quest.SecretPlan
+						return quest.Completed or quest.Failed or quest.SecretPlan or quest.SiegfriedRetreat or quest.TCE_GuardsAlert
 					end,
 				}),
 			},
@@ -838,10 +866,10 @@ PlaceObj('QuestsDef', {
 				PlaceObj('QuestIsVariableBool', {
 					Condition = "or",
 					QuestId = "Landsbach",
-					Vars = set( "Completed", "Failed", "SecretPlan" ),
+					Vars = set( "Completed", "Failed", "SecretPlan", "SiegfriedRetreat", "TCE_GuardsAlert" ),
 					__eval = function ()
 						local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
-						return quest.Completed or quest.Failed or quest.SecretPlan
+						return quest.Completed or quest.Failed or quest.SecretPlan or quest.SiegfriedRetreat or quest.TCE_GuardsAlert
 					end,
 				}),
 			},
@@ -860,10 +888,10 @@ PlaceObj('QuestsDef', {
 				PlaceObj('QuestIsVariableBool', {
 					Condition = "or",
 					QuestId = "Landsbach",
-					Vars = set( "Completed", "Failed", "SecretPlan" ),
+					Vars = set( "Completed", "Failed", "SecretPlan", "SiegfriedRetreat", "TCE_GuardsAlert" ),
 					__eval = function ()
 						local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
-						return quest.Completed or quest.Failed or quest.SecretPlan
+						return quest.Completed or quest.Failed or quest.SecretPlan or quest.SiegfriedRetreat or quest.TCE_GuardsAlert
 					end,
 				}),
 			},
@@ -885,10 +913,10 @@ PlaceObj('QuestsDef', {
 				PlaceObj('QuestIsVariableBool', {
 					Condition = "or",
 					QuestId = "Landsbach",
-					Vars = set( "Completed", "Failed", "SecretPlan" ),
+					Vars = set( "Completed", "Failed", "SecretPlan", "SiegfriedRetreat", "TCE_GuardsAlert" ),
 					__eval = function ()
 						local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
-						return quest.Completed or quest.Failed or quest.SecretPlan
+						return quest.Completed or quest.Failed or quest.SecretPlan or quest.SiegfriedRetreat or quest.TCE_GuardsAlert
 					end,
 				}),
 			},
@@ -910,10 +938,10 @@ PlaceObj('QuestsDef', {
 				PlaceObj('QuestIsVariableBool', {
 					Condition = "or",
 					QuestId = "Landsbach",
-					Vars = set( "Completed", "Failed", "SecretPlan" ),
+					Vars = set( "Completed", "Failed", "SecretPlan", "SiegfriedRetreat", "TCE_GuardsAlert" ),
 					__eval = function ()
 						local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
-						return quest.Completed or quest.Failed or quest.SecretPlan
+						return quest.Completed or quest.Failed or quest.SecretPlan or quest.SiegfriedRetreat or quest.TCE_GuardsAlert
 					end,
 				}),
 			},
@@ -935,10 +963,10 @@ PlaceObj('QuestsDef', {
 				PlaceObj('QuestIsVariableBool', {
 					Condition = "or",
 					QuestId = "Landsbach",
-					Vars = set( "Completed", "Failed", "SecretPlan" ),
+					Vars = set( "Completed", "Failed", "SecretPlan", "SiegfriedRetreat", "TCE_GuardsAlert" ),
 					__eval = function ()
 						local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
-						return quest.Completed or quest.Failed or quest.SecretPlan
+						return quest.Completed or quest.Failed or quest.SecretPlan or quest.SiegfriedRetreat or quest.TCE_GuardsAlert
 					end,
 				}),
 			},
@@ -956,10 +984,10 @@ PlaceObj('QuestsDef', {
 				PlaceObj('QuestIsVariableBool', {
 					Condition = "or",
 					QuestId = "Landsbach",
-					Vars = set( "Completed", "Failed", "SecretPlan" ),
+					Vars = set( "Completed", "Failed", "SecretPlan", "SiegfriedRetreat", "TCE_GuardsAlert" ),
 					__eval = function ()
 						local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
-						return quest.Completed or quest.Failed or quest.SecretPlan
+						return quest.Completed or quest.Failed or quest.SecretPlan or quest.SiegfriedRetreat or quest.TCE_GuardsAlert
 					end,
 				}),
 			},
@@ -981,10 +1009,10 @@ PlaceObj('QuestsDef', {
 				PlaceObj('QuestIsVariableBool', {
 					Condition = "or",
 					QuestId = "Landsbach",
-					Vars = set( "Completed", "Failed", "SecretPlan" ),
+					Vars = set( "Completed", "Failed", "SecretPlan", "SiegfriedRetreat", "TCE_GuardsAlert" ),
 					__eval = function ()
 						local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
-						return quest.Completed or quest.Failed or quest.SecretPlan
+						return quest.Completed or quest.Failed or quest.SecretPlan or quest.SiegfriedRetreat or quest.TCE_GuardsAlert
 					end,
 				}),
 			},
@@ -1149,6 +1177,64 @@ PlaceObj('QuestsDef', {
 			},
 			ShowWhenCompleted = true,
 			Text = T(704433252896, --[[QuestsDef Landsbach Text]] "<em>Outcome:</em> <em>Siegfried</em> was defeated underground in his secret <em>U-Bahn</em> complex"),
+		}),
+		PlaceObj('QuestNote', {
+			AddInHistory = true,
+			Badges = {
+				PlaceObj('QuestBadgePlacement', {
+					BadgeUnit = "DrGruselheim",
+					Sector = "B12_Underground",
+				}),
+			},
+			HideConditions = {
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "U-Bahn_Helpers",
+					Vars = set( "VisitedGruselheim_Diesel" ),
+					__eval = function ()
+						local quest = gv_Quests['U-Bahn_Helpers'] or QuestGetState('U-Bahn_Helpers')
+						return quest.VisitedGruselheim_Diesel
+					end,
+				}),
+			},
+			Idx = 48,
+			ShowConditions = {
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "U-Bahn",
+					Vars = set( "OutcomeDiesel" ),
+					__eval = function ()
+						local quest = gv_Quests['U-Bahn'] or QuestGetState('U-Bahn')
+						return quest.OutcomeDiesel
+					end,
+				}),
+			},
+			ShowWhenCompleted = true,
+			Text = T(748586424178, --[[QuestsDef Landsbach Text]] "Dr. Gruselheim was sent to the <em>Diesel Klinik</em> to stop the spreading of <em>Diesel</em>"),
+		}),
+		PlaceObj('QuestNote', {
+			AddInHistory = true,
+			CompletionConditions = {
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "U-Bahn_Helpers",
+					Vars = set( "VisitedGruselheim_Diesel" ),
+					__eval = function ()
+						local quest = gv_Quests['U-Bahn_Helpers'] or QuestGetState('U-Bahn_Helpers')
+						return quest.VisitedGruselheim_Diesel
+					end,
+				}),
+			},
+			Idx = 49,
+			ShowConditions = {
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "U-Bahn_Helpers",
+					Vars = set( "VisitedGruselheim_Diesel" ),
+					__eval = function ()
+						local quest = gv_Quests['U-Bahn_Helpers'] or QuestGetState('U-Bahn_Helpers')
+						return quest.VisitedGruselheim_Diesel
+					end,
+				}),
+			},
+			ShowWhenCompleted = true,
+			Text = T(962947154174, --[[QuestsDef Landsbach Text]] "<em>Outcome:</em> Dr. Gruselheim reorganized the <em>Diesel Klinik</em> as hospital and stopped the spreading of <em>Diesel</em>"),
 		}),
 		PlaceObj('QuestNote', {
 			CompletionConditions = {
@@ -1354,7 +1440,7 @@ PlaceObj('QuestsDef', {
 				}),
 			},
 			ShowWhenCompleted = true,
-			Text = T(912089095367, --[[QuestsDef Landsbach Text]] "<em>Bounce</em> got punished for his disloyalty to <em>Siegfried</em>"),
+			Text = T(912089095367, --[[QuestsDef Landsbach Text]] "<em>Outcome:</em> <em>Bounce</em> got punished for his disloyalty to <em>Siegfried</em>"),
 		}),
 	},
 	QuestGroup = "Highlands",
@@ -1703,10 +1789,14 @@ PlaceObj('QuestsDef', {
 						}),
 					},
 				}),
+				PlaceObj('GroupSetSide', {
+					Side = "enemy1",
+					TargetUnit = "OldMan_Guard",
+				}),
 				PlaceObj('SectorSetSide', {
 					disable_sticky = true,
 					sector_id = "B13",
-					side = "dont-change",
+					side = "enemy1",
 				}),
 				PlaceObj('ConditionalEffect', {
 					'Conditions', {
@@ -1716,23 +1806,11 @@ PlaceObj('QuestsDef', {
 						}),
 					},
 					'Effects', {
-						PlaceObj('SectorSetSide', {
-							disable_sticky = true,
+						PlaceObj('SectorSetForceConflict', {
+							force = true,
 							sector_id = "B12",
-							side = "enemy1",
 						}),
 					},
-					'EffectsElse', {
-						PlaceObj('SectorSetSide', {
-							disable_sticky = true,
-							sector_id = "B12",
-							side = "dont-change",
-						}),
-					},
-				}),
-				PlaceObj('GroupSetSide', {
-					Side = "enemy1",
-					TargetUnit = "OldMan_Guard",
 				}),
 				PlaceObj('UnitTakeItem', {
 					AnySquad = true,
@@ -1830,6 +1908,10 @@ PlaceObj('QuestsDef', {
 					sector_id = "B12",
 					side = "enemy2",
 				}),
+				PlaceObj('SectorSetForceConflict', {
+					force = true,
+					sector_id = "B12",
+				}),
 				PlaceObj('ConditionalEffect', {
 					'Conditions', {
 						PlaceObj('UnitIsOnMap', {
@@ -1841,6 +1923,36 @@ PlaceObj('QuestsDef', {
 							Running = true,
 							TargetUnit = "Gunther",
 							closest = true,
+						}),
+					},
+				}),
+				PlaceObj('ConditionalEffect', {
+					'Conditions', {
+						PlaceObj('QuestIsVariableBool', {
+							QuestId = "U-Bahn_Helpers",
+							Vars = set({
+	VisitedKlinik = false,
+}),
+							__eval = function ()
+								local quest = gv_Quests['U-Bahn_Helpers'] or QuestGetState('U-Bahn_Helpers')
+								return not quest.VisitedKlinik
+							end,
+						}),
+						PlaceObj('QuestIsVariableBool', {
+							QuestId = "Landsbach",
+							Vars = set({
+	BounceSigfriedBattle = false,
+}),
+							__eval = function ()
+								local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
+								return not quest.BounceSigfriedBattle
+							end,
+						}),
+					},
+					'Effects', {
+						PlaceObj('QuestSetVariableBool', {
+							Prop = "Failed",
+							QuestId = "Landsbach",
 						}),
 					},
 				}),
@@ -2658,10 +2770,10 @@ PlaceObj('QuestsDef', {
 						PlaceObj('QuestIsVariableBool', {
 							Condition = "or",
 							QuestId = "_GroupsAttacked",
-							Vars = set( "Gunther", "OldMan_Guard" ),
+							Vars = set( "OldMan_Guard" ),
 							__eval = function ()
 								local quest = gv_Quests['_GroupsAttacked'] or QuestGetState('_GroupsAttacked')
-								return quest.Gunther or quest.OldMan_Guard
+								return quest.OldMan_Guard
 							end,
 						}),
 						PlaceObj('QuestIsVariableBool', {
@@ -2687,6 +2799,10 @@ PlaceObj('QuestsDef', {
 				}),
 				PlaceObj('PlaySetpiece', {
 					setpiece = "Landsbach_BounceSiegfriedAttack",
+				}),
+				PlaceObj('QuestSetVariableBool', {
+					Prop = "SiegfriedRetreat",
+					QuestId = "Landsbach",
 				}),
 				PlaceObj('SectorSetForceConflict', {
 					force = true,
@@ -3055,6 +3171,9 @@ PlaceObj('QuestsDef', {
 						"B12",
 					},
 				}),
+				PlaceObj('SatelliteGameplayRunning', {
+					Negate = true,
+				}),
 			},
 			Effects = {
 				PlaceObj('GroupSetSide', {
@@ -3069,9 +3188,66 @@ PlaceObj('QuestsDef', {
 				PlaceObj('GroupAlert', {
 					TargetUnit = "OldMan_Guard",
 				}),
+				PlaceObj('SectorSetForceConflict', {
+					force = true,
+					sector_id = "B12",
+				}),
+				PlaceObj('ConditionalEffect', {
+					'Conditions', {
+						PlaceObj('QuestIsVariableBool', {
+							QuestId = "Landsbach",
+							Vars = set({
+	BounceSigfriedBattle = false,
+}),
+							__eval = function ()
+								local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
+								return not quest.BounceSigfriedBattle
+							end,
+						}),
+					},
+					'Effects', {
+						PlaceObj('QuestSetVariableBool', {
+							Prop = "Failed",
+							QuestId = "Landsbach",
+						}),
+					},
+				}),
 			},
 			Once = true,
 			ParamId = "TCE_SiegfriedEscape",
+			QuestId = "Landsbach",
+			requiredSectors = {
+				"B12",
+			},
+		}),
+		PlaceObj('TriggeredConditionalEvent', {
+			Conditions = {
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"B12",
+					},
+				}),
+				PlaceObj('CombatIsActive', {}),
+				PlaceObj('UnitIsAware', {
+					Pending = true,
+					TargetUnit = "OldMan_Guard",
+				}),
+				PlaceObj('UnitIsOnMap', {
+					TargetUnit = "Gunther",
+				}),
+				PlaceObj('UnitHasStatusEffect', {
+					Effect = "Unconscious",
+					TargetUnit = "Gunther",
+				}),
+			},
+			Effects = {
+				PlaceObj('QuestSetVariableBool', {
+					Prop = "SiegfriedRetreat",
+					QuestId = "Landsbach",
+				}),
+			},
+			Once = true,
+			ParamId = "TCE_SiegfriedFailsafe",
 			QuestId = "Landsbach",
 			requiredSectors = {
 				"B12",
@@ -3385,6 +3561,9 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('QuestVarTCEState', {
 			Name = "TCE_SiegfriedAttacked",
+		}),
+		PlaceObj('QuestVarTCEState', {
+			Name = "TCE_SiegfriedFailsafe",
 		}),
 	},
 	group = "Highlands",

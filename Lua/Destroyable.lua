@@ -230,21 +230,42 @@ end
 ---------------------------------------------------------------------------
 --new system, destroy everything, except units, slabs, markers and invulnerable combat material things
 ---------------------------------------------------------------------------
-MapVar("Destruction_DestroyedObjects", {})
-MapVar("Destruction_DestroyedCObjects", {})
+MapVar("Destruction_DestroyedObjects", {}) --> [handle] = true, [idx] = handle, ...
+MapVar("Destruction_DestroyedCObjects", {}) --> [vis_obj_hash] = true, [idx] = vis_obj_hash, ...
 local destroyedMask = const.efVisible | const.efCollision | const.efApplyToGrids
 local GetVisualStateHashForDestroyedObj = rawget(_G, "GetVisualStateHashForDestroyedObj")
 
+local function lLoadSavedTable(t1, t2)
+	--load t2 into t1
+	table.clear(t1)
+	for i, v in ipairs(t2) do
+		t1[i] = v
+		t1[v] = true
+	end
+end
+
 function OnMsg.LoadDynamicData(data)
-	Destruction_DestroyedObjects = data.Destruction_DestroyedObjects or {}
-	Destruction_DestroyedCObjects = data.Destruction_DestroyedCObjects or {}
+	lLoadSavedTable(Destruction_DestroyedObjects, data.Destruction_DestroyedObjects)
+	lLoadSavedTable(Destruction_DestroyedCObjects, data.Destruction_DestroyedCObjects)
 	
 	LoadSavedDestroyedObjects()
 end
 
+local function lCreateSaveTable(t)
+	local tt
+	if #t > 0 then
+		tt = {}
+		for i, h in ipairs(t) do
+			tt[i] = h
+		end
+	end
+	
+	return tt
+end
+
 function OnMsg.SaveDynamicData(data)
-	data.Destruction_DestroyedObjects = Destruction_DestroyedObjects
-	data.Destruction_DestroyedCObjects = Destruction_DestroyedCObjects
+	data.Destruction_DestroyedObjects = lCreateSaveTable(Destruction_DestroyedObjects)
+	data.Destruction_DestroyedCObjects = lCreateSaveTable(Destruction_DestroyedCObjects)
 end
 
 function AppendDestroyedObject(obj) --for generic objs that are not CombatObjects or Slabs

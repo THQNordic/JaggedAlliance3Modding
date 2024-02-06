@@ -1,0 +1,107 @@
+# JA 3 Combat AI
+
+  
+
+## Overview
+
+The AI system in JA3 handles unit actions that are not player-controlled. This includes the actions of enemy units in their turn, as well as certain effects like Panicked which render player units uncontrollable and make them act on their own.
+
+  
+
+The system has two main goals - to enable unit behaviors that feel sensible (while not necessarily optimal), and to present the actual actions taken by the units in a meaningful way to the player (but still adhering to the game's visibility rules).
+
+## Decision Making
+
+Most of the decision-making concerns unit positioning - where the unit wants to go and where the unit can and will try to go this turn? In the AIArchetype editor these decisions are dubbed "Strategy" (the global goal) and "Execution" (the local goal for this turn). 
+
+  
+
+Both decisions are made in a similar manner - possible positions are evaluated according to unit-dependent policies and a random one is picked among the highest-scoring ones. The process is repeated for every unit's turn.
+
+  
+
+The "strategic" decision exists to provide some level of coherence in the unit's actions. For instance, a Sniper unit can have a better score on elevated positions, making them more likely to seek such positions during the fight or move toward them when they're not immediately reachable due to insufficient AP.
+
+  
+
+To reflect this choice in the decision for the current turn's position, the pathfinding distance to the selected "strategic" (also dubbed "optimal") location serves as a base score for every considered destination when evaluating the reachable ones for the Execution step. Because the strategic evaluation usually stays the same, this creates an incentive (in the form of higher scores) to move in the direction of the chosen optimal location.
+
+  
+
+It is worth noting that the Strategy and Execution policies which define the respective scores of possible destinations are generally different. A unit may or may not value being in cover when making a strategic evaluation even though they heavily favor Cover in actual execution.
+  
+
+Both decisions are also heavily parametrized through the unit's Archetype.
+
+### Archetypes
+
+Every unit run by the AI has an Archetype. The unit can actually have more than one archetype at the same time (e.g. a separate archetype that is set from a script or boss encounter), but only one can be in effect. Their current archetype governs the actions they're about to take and the decisions they're making.
+
+  
+
+The Archetype is a preset containing parameters that control various decisions for the AI, most importantly the Optimal Location policies. It also contains various other parameters concerning the unit's targeting, basic attack, movement, and at least one Behavior.
+
+### Behaviors
+
+Behaviors are objects (usually embedded in Archetypes) that contain various policies and parameters controlling the unit's decisions for the current turn. Only one Behavior is active for the unit's turn. It is chosen at the start of the unit's turn (in Unit:StartAI) by evaluating all of the available ones and picking one with weighted random, using the calculated score as a weight. The selected behavior does not change for the remainder of the unit's turn.
+
+  
+
+Behaviors also have a "Priority" property which will skip the random selection and force the Priority Behavior to be chosen if its score is positive, and can be further enforced by the code starting the AI, giving a behavior to the StartAI function. It doesn't even need to be part of the unit's archetype.
+
+  
+
+Behaviors contain policies and parameters affecting the decisions for the current turn.
+
+### Signature Actions
+
+Signature actions are lists of different embedded objects, each of which define a single attack the unit can make (e.g. Bombard, max aimed shot at the head, etc). They can be embedded both in the Archetype and in a Behavior, with the Behavior list taking precedence in case they're both defined.
+
+### Control
+
+#### AI Biases
+
+  
+
+The AIBehavior and AISignatureAction classes inherit a common base class, AIBiasObj. It allows the AI designer to apply temporary modifications to the particular object, altering the way it is handled by the AI decision making. This is implemented via a nested list of AIBiasModification objects which provide support for score modification, disabling the object or making it a Priority choice.
+
+  
+
+The Bias effect is applied when the object is chosen (AIBiasObj:OnActivate), can apply to either the current unit or their whole team, and can last a number of turns. This allows specific effects like turn-based team-wide internal cooldowns on certain more impactful actions, prioritizing other actions at specific choices, etc.
+
+#### AI Keywords
+
+Units can have a list of arbitrary keywords chosen by the AI designer in their own preset. These are used to control AIPositioningPolicy, AIBehavior and AISignatureAction objects via their respective MatchUnit functions. This enables the AI designer to create reusable archetypes that are able to handle different units differently. For instance an archetype can have signature actions for grenade throwing active when the unit it is being executed on is with the Explosive keyword, and a positioning policy that is only active when a Sniper keyword is present.
+
+
+## Execution
+
+The AI turn execution is a process that manages the actions of the AI-controlled units and is responsible for presenting them to the player. It is implemented in a singleton object of the class AIExecutionController, implemented in the AIExecutionController:Execute and __AIExecutionControllerExecute functions). The AI turn follows a set structure - the unit will always move first, optionally perform an action (signature or combat action started by the behavior) and try to utilize their remaining AP in basic attacks. If the unit fails to act, a fallback action will be performed, which is usually placing an Overwatch in the direction of either the player units or important room features (doors and windows).
+
+  
+
+At the start, StartAI is called for every controlled unit, choosing their Archetype and Behavior and creating an AI context. The AI context is a table containing all sorts of cached data - lists of enemy and friendly units, precalculated basic attack, precalculated combat paths, reachable locations and more. These are later used in various policy evaluations.
+
+  
+
+Once the units are prepared, a subgroup of them is selected to act (via AIExecutionController:SelectPlayingUnits) in such way that their actions can be shown on camera and respecting the units' Turn Phase behavior property, which allows units to be placed in one of three phases - Early, Normal and Late. These are used to enforce units with certain behaviors to act after others. For example, Medic's healing behavior is set to Late to make sure the target of the Bandage action will not move afterwards and waste it.
+
+  
+
+Then the evaluations for the current turn are done for the units from the selected subgroup by calling the Think method of the chosen behavior for every unit. The main responsibility of the method is to select the destination where the unit wants to go this turn. Some behaviors may also precalculate actions, but this is not required.
+
+  
+
+The next step of the execution is the unit movement which happens in parallel whenever possible. This works as follows: every unit in turn is asked to perform their movement (via their behavior's BeginMovement() method), and report if that movement is going to be interrupted or not. In case the movement is not interrupted, the same is done for the next unit until all units are processed. If the movement is going to be interrupted (e.g. by triggering an Overwatch attack or triggering a mine), then the process is stopped and the rest of the units are not processed - they'll be processed again as the next subgroup of playing units.
+
+  
+
+The execution then waits for the movement to conclude via WaitAllCombatActionsEnd and WaitUnitsInIdle (including the resolution of any interrupt attacks which are considered as part of the movement), and unit actions are started by calling AIExecuteUnitBehavior. Unit actions always happen sequentially (also enforced by the CombatAction execution system). Behaviors can stop the process or restart it, making the current unit start their turn over or end it prematurely. For example, the ApproachInteractableAI will force the unit to effectively restart their turn when successfully interacting with a stationed machine gun in order to update their attack and reevaluate their targets, allowing them to fire the machine gun immediately. 
+
+  
+
+As the final step of the execution before picking new units to act, the process will update the list of controlled units to reflect the possible changes of the state of the game - units that died before they acted, units that were Unaware and got alerted, etc.
+
+(insert footer.md.html here)
+<link rel="stylesheet" type="text/css" href="Style.css" />
+<!-- Markdeep: --><style class="fallback">body{visibility:hidden;white-space:pre;font-family:monospace}</style><script src="markdeep.min.js" charset="utf-8"></script><script>window.alreadyProcessedMarkdeep||(document.body.style.visibility="visible")</script>

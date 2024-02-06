@@ -357,6 +357,23 @@ PlaceObj('QuestsDef', {
 						"E16",
 					},
 				}),
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "ChienSauvage",
+					Vars = set({
+	PetaLeft = false,
+	PetaLetsHyenasOut = false,
+}),
+					__eval = function ()
+						local quest = gv_Quests['ChienSauvage'] or QuestGetState('ChienSauvage')
+						return not quest.PetaLeft and not quest.PetaLetsHyenasOut
+					end,
+				}),
+				PlaceObj('UnitIsAroundOtherUnit', {
+					DisableContextModification = true,
+					Distance = 12,
+					SecondTargetUnit = "Peta",
+					TargetUnit = "any merc",
+				}),
 				PlaceObj('UnitCanGoToPos', {
 					PositionMarker = "MainHyenasDoor",
 					TargetUnit = "Peta",
@@ -396,7 +413,6 @@ PlaceObj('QuestsDef', {
 					QuestId = "ChienSauvage",
 				}),
 			},
-			Once = true,
 			ParamId = "TCE_PetaReleased",
 			QuestId = "ChienSauvage",
 			requiredSectors = {

@@ -38,7 +38,7 @@ DefineClass.NoiseTypes = {
 	},
 }
 
-if Platform.developer then
+if Platform.developer or Platform.debug then
 	local AwarenessLogMaxLines = 100
 	function dbg_awareness_log(...)
 		local msg = string.format("[%d] ", GameTime())
@@ -552,8 +552,22 @@ function AlertPendingUnits(sync_code)
 		-- thrown off by explosion: the alert will happen after it ends (triggered by Idle or UnitDied msg)
 	for _, unit in ipairs(g_Units) do
 		--if IsValidThread(unit.pain_thread) or (unit:IsDead() and not unit:IsIdleCommand()) or unit.command == "ExplosionFly" then
-		if IsValidThread(unit.pain_thread) or unit.command == "ExplosionFly" or HasCombatActionInProgress(unit) then
+		if IsValidThread(unit.pain_thread) or unit.command == "ExplosionFly" then
 			return
+		end
+		
+		if HasCombatActionInProgress(unit) then
+			if g_Combat then
+				return
+			else -- In exploration block the alert only if the current action is an attack
+				if not unit:IsInterruptable() then return end
+				
+				local action_id = CombatActions_UnitAction[unit]
+				local action = action_id and CombatActions[action_id]
+				if action and (action.ActionType == "Ranged Attack" or action.ActionType == "Melee Attack") then
+					return
+				end
+			end
 		end
 	end
 	
@@ -968,6 +982,8 @@ function Unit:Reposition()
 		-- set target dummy to free the current position (random waits could chnage the move order)
 		local destination = point(point_unpack(path[1]))
 		self:SetTargetDummyFromPos(destination, nil, true)
+		self:ClearEnumFlags(const.efResting)
+		Sleep(0)
 
 		-- debug code
 		local x, y, z = point_unpack(path[1])
@@ -1123,7 +1139,7 @@ function IsRepositionPhase()
 end
 
 -- noise sources debug
-if Platform.developer then
+if Platform.developer or Platform.debug then
 	function ToggleNoiseSources()
 		if not g_NoiseSources then return end
 		

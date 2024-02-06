@@ -288,6 +288,9 @@ PlaceObj('XTemplate', {
 																			end
 																		end
 																	end
+																	if operation=="MilitiaTraining" and next(cost) then
+																		cost[1].value = sector.militia_training_payed_cost
+																	end
 																	local cost_txt = GetOperationCostText(cost, "img_tag", true, "no_name")
 																	local warning_txt = T{399236738734, "Are you sure you want to release <DisplayName> from Operation <activity>?",
 																		merc, activity = operation_preset.display_name}
@@ -296,13 +299,17 @@ PlaceObj('XTemplate', {
 																		restore_txt = T{548330460792, "You will be refunded <cost>.", cost = cost_txt}
 																	end
 																	self:SetSelected(true)
+																	
+																	local popupHost = GetDialog("PDADialogSatellite")
+																	popupHost = popupHost and popupHost:ResolveId("idDisplayPopupHost")
+																	
 																	local dlg = CreateQuestionBox(
-																		GetDialog("PDADialog"),
+																		popupHost,
 																		T(824112417429, "Warning"),
 																		restore_txt and T{653728009504, "<warning>\n<restore>", warning = warning_txt, restore = restore_txt} or warning_txt,
 																		T(689884995409, "Yes"),
 																		T(782927325160, "No"))
-																	dlg:SetModal()	
+															
 																	if dlg:Wait()== "ok" then
 																		if operation=="TreatWounds" then
 																			NetSyncEvent("MercRemoveOperationTreatWounds", merc.session_id, list_prof)

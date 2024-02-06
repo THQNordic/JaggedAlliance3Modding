@@ -29,5 +29,6 @@ PlaceObj('InventoryItemCompositeDef', {
 			target_prop = "PenetrationClass",
 		}),
 	},
+	'ammo_type_icon', "UI/Icons/Items/ta_subsonic.png",
 })
 

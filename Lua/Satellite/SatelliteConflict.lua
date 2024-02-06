@@ -666,6 +666,8 @@ function SatelliteConflict_SurviveDefeatedText(squads, lost_text)
 	return Untranslated(surv.." / "..lost)
 end
 function CheckMapConflictResolved(no_voice)
+	if GameState.entering_sector then return end
+
 	local sector = gv_Sectors[gv_CurrentSectorId]
 	local playerUnits = GetCurrentMapUnits("player")
 	local enemy_win = #playerUnits == 0

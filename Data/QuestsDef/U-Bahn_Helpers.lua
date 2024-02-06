@@ -34,27 +34,42 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
-				PlaceObj('OR', {
+				PlaceObj('AND', {
 					Conditions = {
-						PlaceObj('PlayerIsInSectors', {
-							Sectors = {
-								"B12_Underground",
+						PlaceObj('OR', {
+							Conditions = {
+								PlaceObj('PlayerIsInSectors', {
+									Sectors = {
+										"B12_Underground",
+									},
+								}),
+								PlaceObj('QuestIsVariableBool', {
+									QuestId = "U-Bahn",
+									Vars = set( "SiegfriedAttackStarted" ),
+									__eval = function ()
+										local quest = gv_Quests['U-Bahn'] or QuestGetState('U-Bahn')
+										return quest.SiegfriedAttackStarted
+									end,
+								}),
+								PlaceObj('QuestIsVariableBool', {
+									QuestId = "U-Bahn",
+									Vars = set( "DebugOpenAllUndergroundEntrances" ),
+									__eval = function ()
+										local quest = gv_Quests['U-Bahn'] or QuestGetState('U-Bahn')
+										return quest.DebugOpenAllUndergroundEntrances
+									end,
+								}),
 							},
 						}),
 						PlaceObj('QuestIsVariableBool', {
-							QuestId = "U-Bahn",
-							Vars = set( "SiegfriedAttackStarted" ),
+							QuestId = "Landsbach",
+							Vars = set({
+	Completed = false,
+	Failed = false,
+}),
 							__eval = function ()
-								local quest = gv_Quests['U-Bahn'] or QuestGetState('U-Bahn')
-								return quest.SiegfriedAttackStarted
-							end,
-						}),
-						PlaceObj('QuestIsVariableBool', {
-							QuestId = "U-Bahn",
-							Vars = set( "DebugOpenAllUndergroundEntrances" ),
-							__eval = function ()
-								local quest = gv_Quests['U-Bahn'] or QuestGetState('U-Bahn')
-								return quest.DebugOpenAllUndergroundEntrances
+								local quest = gv_Quests['Landsbach'] or QuestGetState('Landsbach')
+								return not quest.Completed and not quest.Failed
 							end,
 						}),
 					},
@@ -64,6 +79,14 @@ PlaceObj('QuestsDef', {
 				PlaceObj('QuestSetVariableBool', {
 					Prop = "VisitedKlinik",
 					QuestId = "U-Bahn_Helpers",
+				}),
+				PlaceObj('QuestSetVariableBool', {
+					Prop = "StopSiegfriedSpawning",
+					QuestId = "U-Bahn_Helpers",
+				}),
+				PlaceObj('SectorSetForceConflict', {
+					force = true,
+					sector_id = "B12",
 				}),
 			},
 			Once = true,
@@ -110,6 +133,22 @@ PlaceObj('QuestsDef', {
 				"K15_Underground",
 				"I11_Underground",
 			},
+		}),
+		PlaceObj('TriggeredConditionalEvent', {
+			Conditions = {
+				PlaceObj('IsCurrentMap', {
+					MapFile = "K-11U - Cryolabor",
+				}),
+			},
+			Effects = {
+				PlaceObj('QuestSetVariableBool', {
+					Prop = "StopSiegfriedSpawning",
+					QuestId = "U-Bahn_Helpers",
+				}),
+			},
+			Once = true,
+			ParamId = "TCE_CryoLabVisited",
+			QuestId = "U-Bahn_Helpers",
 		}),
 		PlaceObj('TriggeredConditionalEvent', {
 			Conditions = {
@@ -322,9 +361,8 @@ PlaceObj('QuestsDef', {
 						"B12",
 					},
 				}),
-				PlaceObj('GroupIsDead', {
-					Group = "OldMan_Guard",
-					Negate = true,
+				PlaceObj('UnitIsOnMap', {
+					TargetUnit = "OldMan_Guard",
 				}),
 			},
 			Effects = {
@@ -340,6 +378,10 @@ PlaceObj('QuestsDef', {
 					sector_id = "B12",
 					side = "enemy2",
 				}),
+				PlaceObj('SectorSetForceConflict', {
+					force = true,
+					sector_id = "B12",
+				}),
 			},
 			Once = true,
 			ParamId = "TCE_HandleLandsbachAfterCompletion",
@@ -347,6 +389,125 @@ PlaceObj('QuestsDef', {
 			requiredSectors = {
 				"B12",
 			},
+		}),
+		PlaceObj('TriggeredConditionalEvent', {
+			Conditions = {
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "U-Bahn",
+					Vars = set( "OutcomeSanatorium" ),
+					__eval = function ()
+						local quest = gv_Quests['U-Bahn'] or QuestGetState('U-Bahn')
+						return quest.OutcomeSanatorium
+					end,
+				}),
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "U-Bahn_Helpers",
+					Vars = set({
+	VisitedGruselheim_Sanatorium = false,
+}),
+					__eval = function ()
+						local quest = gv_Quests['U-Bahn_Helpers'] or QuestGetState('U-Bahn_Helpers')
+						return not quest.VisitedGruselheim_Sanatorium
+					end,
+				}),
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"H12",
+						"H12_Underground",
+					},
+				}),
+				PlaceObj('UnitIsAroundOtherUnit', {
+					Distance = 12,
+					SecondTargetUnit = "DrGruselheim",
+					TargetUnit = "any merc",
+				}),
+			},
+			Effects = {
+				PlaceObj('QuestSetVariableBool', {
+					Prop = "VisitedGruselheim_Sanatorium",
+					QuestId = "U-Bahn_Helpers",
+				}),
+				PlaceObj('GrantExperienceSector', {
+					logImportant = true,
+				}),
+			},
+			Once = true,
+			ParamId = "TCE_VisitGruselheim_Sanatorium",
+			QuestId = "U-Bahn_Helpers",
+			requiredSectors = {
+				"H12",
+				"H12_Underground",
+			},
+		}),
+		PlaceObj('TriggeredConditionalEvent', {
+			Conditions = {
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "U-Bahn",
+					Vars = set( "OutcomeDiesel" ),
+					__eval = function ()
+						local quest = gv_Quests['U-Bahn'] or QuestGetState('U-Bahn')
+						return quest.OutcomeDiesel
+					end,
+				}),
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "U-Bahn_Helpers",
+					Vars = set({
+	VisitedGruselheim_Diesel = false,
+}),
+					__eval = function ()
+						local quest = gv_Quests['U-Bahn_Helpers'] or QuestGetState('U-Bahn_Helpers')
+						return not quest.VisitedGruselheim_Diesel
+					end,
+				}),
+				PlaceObj('PlayerIsInSectors', {
+					Sectors = {
+						"B12_Underground",
+					},
+				}),
+				PlaceObj('UnitIsAroundOtherUnit', {
+					Distance = 12,
+					SecondTargetUnit = "DrGruselheim",
+					TargetUnit = "any merc",
+				}),
+			},
+			Effects = {
+				PlaceObj('QuestSetVariableBool', {
+					Prop = "VisitedGruselheim_Diesel",
+					QuestId = "U-Bahn_Helpers",
+				}),
+				PlaceObj('GrantExperienceSector', {
+					logImportant = true,
+				}),
+			},
+			Once = true,
+			ParamId = "TCE_VisitGruselheim_Diesel",
+			QuestId = "U-Bahn_Helpers",
+			requiredSectors = {
+				"B12_Underground",
+			},
+		}),
+		PlaceObj('TriggeredConditionalEvent', {
+			Conditions = {
+				PlaceObj('QuestIsVariableBool', {
+					QuestId = "U-Bahn",
+					Vars = set( "ClearCollapse" ),
+					__eval = function ()
+						local quest = gv_Quests['U-Bahn'] or QuestGetState('U-Bahn')
+						return quest.ClearCollapse
+					end,
+				}),
+			},
+			Effects = {
+				PlaceObj('SetSectorDiscovered', {
+					sector_id = "B11_Underground",
+				}),
+				PlaceObj('SatelliteShortcutUnlockEffect', {
+					shortcut_id = "SubwayB11toF12",
+				}),
+			},
+			Once = true,
+			ParamId = "TCE_ClearCollapseUnlock",
+			QuestId = "U-Bahn_Helpers",
 		}),
 	},
 	Variables = {
@@ -416,6 +577,27 @@ PlaceObj('QuestsDef', {
 		}),
 		PlaceObj('QuestVarTCEState', {
 			Name = "TCE_HandleLandsbachAfterCompletion",
+		}),
+		PlaceObj('QuestVarTCEState', {
+			Name = "TCE_CryoLabVisited",
+		}),
+		PlaceObj('QuestVarBool', {
+			Name = "StopSiegfriedSpawning",
+		}),
+		PlaceObj('QuestVarBool', {
+			Name = "VisitedGruselheim_Sanatorium",
+		}),
+		PlaceObj('QuestVarBool', {
+			Name = "VisitedGruselheim_Diesel",
+		}),
+		PlaceObj('QuestVarTCEState', {
+			Name = "TCE_VisitGruselheim_Diesel",
+		}),
+		PlaceObj('QuestVarTCEState', {
+			Name = "TCE_VisitGruselheim_Sanatorium",
+		}),
+		PlaceObj('QuestVarTCEState', {
+			Name = "TCE_ClearCollapseUnlock",
 		}),
 	},
 	group = "DLC_U-Bahn",

@@ -115,7 +115,7 @@ PlaceObj('CampaignPreset', {
 		if interfaceType == "QuickStart" then
 			TutorialHintsState.LandingPageShown = true
 			Game.CampaignTime = Game.CampaignTimeStart + const.Satellite.MercArrivalTime / 2
-			hr.UIL_CustomTime = Game.CampaignTime
+			SetUILCustomTime(Game.CampaignTime)
 			return
 		end
 		
@@ -2321,7 +2321,7 @@ PlaceObj('CampaignPreset', {
 	East = false,
 	North = false,
 }),
-			'BlockTravelRiver', set(),
+			'BlockTravelRiver', set( "East" ),
 			'image', "UI/SatelliteView/SectorImages/E12",
 			'MusicCombat', "Battle_Normal",
 			'MusicConflict', "Jungle_Conflict",
@@ -2718,6 +2718,7 @@ PlaceObj('CampaignPreset', {
 							disable_travel = true,
 							lock_conflict = true,
 							sector_id = "E9",
+							spawn_mode = "attack",
 						}),
 						PlaceObj('SectorEnableAutoDeploy', {
 							deploy = false,
@@ -7083,7 +7084,6 @@ PlaceObj('CampaignPreset', {
 	map_file = "UI/SatelliteView/SatView",
 	map_size = point(9966, 5704),
 	sector_bottomright = "L20",
-	sector_size = point(356, 356),
 	sectors_offset = point(1420, 710),
 	starting_day = 3,
 	starting_hour = 14,
